@@ -1,0 +1,244 @@
+﻿<Page x:Name="SettingPage"
+      x:Class="The_Untamed_Music_Player.Views.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helpers="using:The_Untamed_Music_Player.Helpers"
+      xmlns:local="using:The_Untamed_Music_Player.ViewModels"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:model="using:The_Untamed_Music_Player.Models"
+      xmlns:muxc="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:muxs="using:Microsoft.UI.Xaml.Controls" xmlns:storage="using:Windows.Storage"
+      xmlns:toolkit="using:CommunityToolkit.WinUI.Controls" xmlns:ui="using:CommunityToolkit.WinUI"
+      xmlns:xaml="using:Microsoft.UI.Xaml"
+      mc:Ignorable="d">
+
+
+    <Page.Resources>
+        <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TitleGrid.Margin" Value="16,35"/>
+                        <Setter Target="ContentArea.Margin" Value="16,0,16,0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Normal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="641"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TitleGrid.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
+                        <Setter Target="ContentArea.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid x:Name="TitleGrid" Grid.Row="0">
+            <TextBlock x:Uid="Shell_Settings"
+                       FontSize="40" FontWeight="SemiLight"/>
+        </Grid>
+        <ScrollViewer Grid.Row="1" Padding="0,0,0,16">
+            <StackPanel x:Name="ContentArea"
+                        Orientation="Vertical" Spacing="34">
+
+                <!--  动画  -->
+                <StackPanel.ChildrenTransitions>
+                    <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
+                    <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                </StackPanel.ChildrenTransitions>
+
+                <!--  库  -->
+                <StackPanel Spacing="2">
+                    <StackPanel.ChildrenTransitions>
+                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
+                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                    </StackPanel.ChildrenTransitions>
+
+                    <TextBlock x:Uid="Settings_Library"
+                               Margin="0,12,0,5"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+
+                    <!--  音乐库位置  -->
+                    <toolkit:SettingsExpander x:Name="musicFolder" x:Uid="Settings_MusicLibraryLocation"
+                                              ItemsSource="{x:Bind model:Data.MusicLibrary.Folders, Mode=OneWay}">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <FontIcon Glyph="&#xE8B7;"/>
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <Button x:Name="addMusicFolder" Click="{x:Bind ViewModel.PickMusicFolderButton_Click}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="16" Glyph="&#xE8F4;"/>
+                                <TextBlock x:Uid="Settings_AddFolder"/>
+                            </StackPanel>
+                        </Button>
+                        <toolkit:SettingsExpander.ItemTemplate>
+                            <DataTemplate x:DataType="storage:StorageFolder">
+                                <toolkit:SettingsCard Header="{x:Bind Path}">
+                                    <Button x:Name="removeFolder" x:Uid="Settings_RemoveFolder"
+                                            Width="27" Height="27"
+                                            Margin="0" Padding="0"
+                                            Click="RemoveMusicFolderButton_Click"
+                                            DataContext="{x:Bind}">
+                                        <FontIcon FontSize="15" Glyph="&#xE711;"/>
+                                    </Button>
+                                </toolkit:SettingsCard>
+                            </DataTemplate>
+                        </toolkit:SettingsExpander.ItemTemplate>
+                        <toolkit:SettingsExpander.ItemsFooter>
+                            <Grid Height="35" Visibility="{x:Bind ViewModel.EmptyFolderMessageVisibility, Mode=OneWay}">
+                                <toolkit:SettingsCard x:Name="emptyFolderMessage"
+                                                      Background="Transparent" BorderBrush="Transparent"
+                                                      ContentAlignment="Left"
+                                                      Visibility="{x:Bind ViewModel.EmptyFolderMessageVisibility, Mode=OneWay}">
+                                    <TextBlock x:Uid="Settings_NoFolder" Margin="42,0,0,8"/>
+                                </toolkit:SettingsCard>
+                            </Grid>
+                        </toolkit:SettingsExpander.ItemsFooter>
+                    </toolkit:SettingsExpander>
+
+                    <!--  刷新库  -->
+                    <toolkit:SettingsExpander x:Name="Refresh" x:Uid="Settings_RefreshLibrary">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <FontIcon Glyph="&#xE90F;"/>
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <ProgressRing Width="24" Height="24"
+                                          IsActive="{x:Bind ViewModel.IsProgressRingActive, Mode=OneWay}"/>
+                            <Button x:Name="refresh" x:Uid="Settings_Refresh"
+                                    Click="{x:Bind ViewModel.RefreshButton_Click}"
+                                    IsEnabled="{x:Bind ViewModel.IsRefreshButtonEnabled, Mode=OneWay}"/>
+                        </StackPanel>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard ContentAlignment="Left">
+                                <StackPanel>
+                                    <TextBlock x:Uid="Settings_ReIndex" Margin="0,8,0,8"/>
+                                    <HyperlinkButton x:Uid="Settings_SearchSetting"
+                                                     Margin="-12,0,0,0"
+                                                     Click="HyperlinkButton_Click"/>
+                                </StackPanel>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
+                </StackPanel>
+
+                <!--  个性化  -->
+                <StackPanel Spacing="2">
+                    <StackPanel.ChildrenTransitions>
+                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
+                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                    </StackPanel.ChildrenTransitions>
+                    <TextBlock x:Uid="Settings_Personalization"
+                               Margin="0,12,0,5"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+
+                    <toolkit:SettingsExpander x:Name="AppThemeExpander1" x:Uid="Settings_Theme">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <FontIcon Glyph="&#xE790;"/>
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard ContentAlignment="Left">
+                                <StackPanel>
+                                    <RadioButton x:Uid="Settings_Theme_Light"
+                                                 Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                                                 FontSize="15" GroupName="AppTheme"
+                                                 IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
+                                        <RadioButton.CommandParameter>
+                                            <xaml:ElementTheme>Light</xaml:ElementTheme>
+                                        </RadioButton.CommandParameter>
+                                    </RadioButton>
+                                    <RadioButton x:Uid="Settings_Theme_Dark"
+                                                 Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                                                 FontSize="15" GroupName="AppTheme"
+                                                 IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
+                                        <RadioButton.CommandParameter>
+                                            <xaml:ElementTheme>Dark</xaml:ElementTheme>
+                                        </RadioButton.CommandParameter>
+                                    </RadioButton>
+                                    <RadioButton x:Uid="Settings_Theme_Default"
+                                                 Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                                                 FontSize="15" GroupName="AppTheme"
+                                                 IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
+                                        <RadioButton.CommandParameter>
+                                            <xaml:ElementTheme>Default</xaml:ElementTheme>
+                                        </RadioButton.CommandParameter>
+                                    </RadioButton>
+                                </StackPanel>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
+
+                    <toolkit:SettingsCard Header="窗口材质(更改后建议重启本应用)">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xF5ED;"/>
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <ComboBox x:Name="MaterialComboBox"
+                                  ItemsSource="{x:Bind ViewModel.Materials}"
+                                  Loaded="{x:Bind ViewModel.MaterialComboBox_Loaded}"
+                                  PlaceholderText="选择一个材质"
+                                  SelectionChanged="{x:Bind ViewModel.MaterialComboBox_SelectionChanged}"/>
+                    </toolkit:SettingsCard>
+                </StackPanel>
+
+                <StackPanel Spacing="2">
+                    <StackPanel.ChildrenTransitions>
+                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
+                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                    </StackPanel.ChildrenTransitions>
+                    <TextBlock Margin="0,12,0,5"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"
+                               Text="歌词设置"/>
+                    <toolkit:SettingsCard Header="歌词字体">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xE8D2;"/>
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <ComboBox x:Name="FontComboBox"
+                                  ItemsSource="{x:Bind ViewModel.Fonts}"
+                                  Loaded="{x:Bind ViewModel.FontComboBox_Loaded}"
+                                  PlaceholderText="选择一个字体"
+                                  SelectionChanged="{x:Bind ViewModel.FontComboBox_SelectionChanged}"/>
+                    </toolkit:SettingsCard>
+
+                    <toolkit:SettingsCard Header="歌词背景设为模糊的封面">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xE7C4;"/>
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <ToggleSwitch x:Name="LyricBackgroundSwitch"
+                                      IsOn="{x:Bind ViewModel.IsLyricBackgroundVisible, Mode=TwoWay}"
+                                      Loaded="{x:Bind ViewModel.LyricBackgroundCheckBox_Loaded}"/>
+                    </toolkit:SettingsCard>
+                </StackPanel>
+
+
+                <!--  关于  -->
+                <StackPanel Spacing="2">
+                    <TextBlock x:Uid="Settings_About"
+                               Margin="0,12,0,5"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+
+                    <toolkit:SettingsCard x:Name="About" x:Uid="Settings_AboutDescription"
+                                          Header="Untamed Music Player">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <BitmapIcon AutomationProperties.AccessibilityView="Raw" ShowAsMonochrome="False"
+                                        UriSource="ms-appx:///Assets/WindowIcon.ico"/>
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}"/>
+                    </toolkit:SettingsCard>
+                </StackPanel>
+                <TextBlock Height="20"/>
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</Page>
+

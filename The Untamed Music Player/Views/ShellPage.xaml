@@ -1,0 +1,72 @@
+﻿<Page x:Class="The_Untamed_Music_Player.Views.ShellPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:behaviors="using:The_Untamed_Music_Player.Behaviors"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helpers="using:The_Untamed_Music_Player.Helpers" xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      Loaded="OnLoaded">
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid x:Name="AppTitleBar"
+                  Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
+                  VerticalAlignment="Top"
+                  Canvas.ZIndex="1" IsHitTestVisible="True">
+                <Image Width="16" Height="16"
+                       Margin="12,0,0,0" HorizontalAlignment="Left"
+                       Source="/Assets/WindowIcon.ico"/>
+                <TextBlock x:Name="AppTitleBarText"
+                           Margin="40,0,0,0" VerticalAlignment="Center"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Text="Untamed Music Player" TextWrapping="NoWrap"/>
+            </Grid>
+            <NavigationView x:Name="NavigationViewControl"
+                            Canvas.ZIndex="1" DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
+                            ExpandedModeThresholdWidth="1280" IsBackButtonVisible="Visible"
+                            IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
+                            IsSettingsVisible="True"
+                            Background="{StaticResource NavigationViewContentBackground}"
+                            SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
+                <NavigationView.AutoSuggestBox>
+                    <AutoSuggestBox x:Uid="Shell_Search"
+                                    AutomationProperties.Name="Search" QueryIcon="Find"/>
+                </NavigationView.AutoSuggestBox>
+                <NavigationView.MenuItems>
+                    <NavigationViewItem x:Uid="Shell_主页" helpers:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.主页ViewModel">
+                        <NavigationViewItem.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                    <NavigationViewItem x:Uid="Shell_音乐库" helpers:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.音乐库ViewModel">
+                        <NavigationViewItem.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D6;"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                    <NavigationViewItemSeparator/>
+                    <NavigationViewItem x:Uid="Shell_播放队列" helpers:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.播放队列ViewModel">
+                        <NavigationViewItem.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90B;"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                    <NavigationViewItem x:Uid="Shell_播放列表" helpers:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.播放列表ViewModel">
+                        <NavigationViewItem.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE93C;"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                </NavigationView.MenuItems>
+                <Grid>
+                    <Frame x:Name="NavigationFrame"/>
+                </Grid>
+            </NavigationView>
+        </Grid>
+
+    </Grid>
+</Page>
