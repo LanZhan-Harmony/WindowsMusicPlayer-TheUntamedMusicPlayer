@@ -1,0 +1,26 @@
+﻿<windowex:WindowEx x:Class="The_Untamed_Music_Player.MainWindow"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:helpers="using:The_Untamed_Music_Player.Helpers" xmlns:local="using:The_Untamed_Music_Player"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:model="using:The_Untamed_Music_Player.Models" xmlns:windowex="using:WinUIEx"
+                   MinWidth="500" MinHeight="500"
+                   PersistenceId="MainWindow"
+                   mc:Ignorable="d">
+
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="117"/>
+        </Grid.RowDefinitions>
+        <Frame x:Name="ShellFrame"
+               Grid.Row="0"
+               Width="auto" Height="auto"/>
+        <Frame x:Name="RootPlayBarFrame"
+               Grid.Row="1"
+               Width="auto" Height="auto"/>
+    </Grid>
+
+</windowex:WindowEx>

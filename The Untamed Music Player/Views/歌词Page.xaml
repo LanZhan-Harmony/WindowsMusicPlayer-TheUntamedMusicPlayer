@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" ?>
+<Page x:Class="The_Untamed_Music_Player.Views.歌词Page"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:The_Untamed_Music_Player.Models"
+      xmlns:localmodel="using:The_Untamed_Music_Player.ViewModels"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:media="using:CommunityToolkit.WinUI.Media" xmlns:ui="using:CommunityToolkit.WinUI"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <media:AttachedCardShadow x:Key="CommonShadow" Offset="4"/>
+        <DataTemplate x:Key="LyricViewTemplate" x:DataType="local:LyricSlice">
+            <TextBlock Margin="{x:Bind local:Data.MusicPlayer.GetLyricMargin(Time, local:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
+                       FontFamily="{x:Bind local:Data.SettingsViewModel.SelectedFont, Mode=OneWay}"
+                       FontSize="{x:Bind local:Data.MusicPlayer.GetLyricFont(Time, local:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
+                       Opacity="{x:Bind local:Data.MusicPlayer.GetLyricOpacity(Time, local:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
+                       SizeChanged="TextBlock_SizeChanged"
+                       Text="{x:Bind Content, Mode=OneWay}"
+                       TextWrapping="WrapWholeWords"/>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="AppTitleBar"
+              Grid.Row="0"
+              Height="33"
+              VerticalAlignment="Center"
+              Canvas.ZIndex="1" CornerRadius="8,8,0,0"
+              IsHitTestVisible="True">
+            <StackPanel Orientation="Horizontal">
+                <Button Width="48" Height="34"
+                        Click="{x:Bind local:Data.RootPlayBarViewModel.CoverBtnClickToDetail}"
+                        FontSize="12"
+                        Style="{StaticResource NavigationBackButtonNormalStyle}"/>
+                <Image Width="16" Height="16"
+                       Margin="12,0,0,0" HorizontalAlignment="Left"
+                       Source="/Assets/WindowIcon.ico"/>
+                <TextBlock x:Name="AppTitleBarText"
+                           Margin="12,0,0,0" VerticalAlignment="Center"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Text="Untamed Music Player" TextWrapping="NoWrap"/>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="ContentGrid"
+              Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.Background>
+                <ImageBrush x:Name="ContentGridBackground"
+                            ImageSource="{x:Bind local:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"
+                            Stretch="UniformToFill"/>
+            </Grid.Background>
+            <Grid x:Name="SecondaryContentGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1.2*"/>
+                </Grid.ColumnDefinitions>
+                <Border x:Name="ShadowTarget"/>
+                <Border Grid.Column="0"
+                        Width="400" Height="400"
+                        Margin="0,0,0,0" Padding="0"
+                        CornerRadius="10">
+                    <Canvas>
+                        <Image x:Name="ControllerCover"
+                               Width="400" Height="400"
+                               HorizontalAlignment="Left" VerticalAlignment="Center"
+                               Canvas.ZIndex="1"
+                               Source="{x:Bind local:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"/>
+                        <Grid Width="400" Height="400"
+                              Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
+                              Canvas.ZIndex="0">
+                            <FontIcon Canvas.ZIndex="0" FontSize="100"
+                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                      Glyph="&#xE8D6;"/>
+                        </Grid>
+                    </Canvas>
+                    <ui:Effects.Shadow>
+                        <ui:AttachedDropShadow BlurRadius="15"
+                                               CastTo="{x:Bind ShadowTarget}"
+                                               CornerRadius="10" Opacity="0.2"
+                                               Offset="20,20"/>
+                    </ui:Effects.Shadow>
+                </Border>
+                <ScrollViewer x:Name="LyricViewer"
+                              Grid.Column="1"
+                              Margin="20,20,50,20"
+                              VerticalScrollBarVisibility="Hidden">
+                    <StackPanel>
+                        <StackPanel Height="600"/>
+                        <ListView IsItemClickEnabled="True"
+                                  ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
+                                  ItemTemplate="{StaticResource LyricViewTemplate}"
+                                  ItemsSource="{x:Bind local:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
+                                  SelectionMode="None"/>
+                        <StackPanel Height="600"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
