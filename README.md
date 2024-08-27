@@ -1,5 +1,8 @@
 # WindowsMusicPlayer-UntamedMusicPlayer
 
+## 目前进度
+目前功能: 添加文件夹中的本地音乐(仅支持按添加日期排序), 播放音乐, 显示本地歌词, 随机播放, 循环播放, 更改应用主题和材质, 更改歌词字体等. 想体验的请在Release里下载预览版.
+
 ## 界面展示
 ![屏幕截图 2024-08-27 151559](https://github.com/user-attachments/assets/e97fb507-4204-4ce3-8cc2-fc7d0f1387d3)
 ![屏幕截图 2024-08-27 151616](https://github.com/user-attachments/assets/e06651f4-88c3-44cf-a768-c913457a3ac6)
