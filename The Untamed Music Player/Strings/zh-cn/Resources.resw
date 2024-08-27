@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Untamed Music Player</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Untamed Music Player</value>
+  </data>
+  <data name="Shell_主页.Content" xml:space="preserve">
+    <value>主页</value>
+  </data>
+  <data name="Shell_音乐库.Content" xml:space="preserve">
+    <value>音乐库</value>
+  </data>
+  <data name="Shell_播放队列.Content" xml:space="preserve">
+    <value>播放队列</value>
+  </data>
+  <data name="Shell_播放列表.Content" xml:space="preserve">
+    <value>播放列表</value>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>个性化</value>
+  </data>
+  <data name="Settings_Theme.Header" xml:space="preserve">
+    <value>应用主题</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>使用系统设置</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="Settings_AboutDescription.Description" xml:space="preserve">
+    <value>© 2024 Untamed Corporation。保留所有权利。</value>
+  </data>
+  <data name="Settings_Library.Text" xml:space="preserve">
+    <value>库</value>
+  </data>
+  <data name="Settings_AddFolder.Text" xml:space="preserve">
+    <value>添加文件夹</value>
+  </data>
+  <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
+    <value>音乐库位置</value>
+  </data>
+  <data name="Settings_NoFolder.Text" xml:space="preserve">
+    <value>此库中不包含任何文件夹</value>
+  </data>
+  <data name="Settings_Refresh.Content" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
+    <value>刷新库</value>
+  </data>
+  <data name="Settings_ReIndex.Text" xml:space="preserve">
+    <value>如果看不到库位置中的所有媒体，可以立即重新索引库。</value>
+  </data>
+  <data name="Shell_Search.PlaceholderText" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="PlayBar_Property.Text" xml:space="preserve">
+    <value>属性</value>
+  </data>
+  <data name="PlayBar_Equalizer.Text" xml:space="preserve">
+    <value>均衡器</value>
+  </data>
+  <data name="PlayBar_Speed.Text" xml:space="preserve">
+    <value>速度</value>
+  </data>
+  <data name="PlayBar_CastDevice.Text" xml:space="preserve">
+    <value>投放到设备</value>
+  </data>
+  <data name="PlayBar_SkipBack10s.Text" xml:space="preserve">
+    <value>快退10秒</value>
+  </data>
+  <data name="PlayBar_SkipForw30s.Text" xml:space="preserve">
+    <value>快进30秒</value>
+  </data>
+  <data name="Shell_主页1.Text" xml:space="preserve">
+    <value>主页</value>
+  </data>
+  <data name="Shell_播放列表1.Text" xml:space="preserve">
+    <value>播放列表</value>
+  </data>
+  <data name="Shell_播放队列1.Text" xml:space="preserve">
+    <value>播放队列</value>
+  </data>
+  <data name="Shell_音乐库1.Text" xml:space="preserve">
+    <value>音乐</value>
+  </data>
+  <data name="Shell_Settings.Text" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="无音乐_MusicNotFound.Text" xml:space="preserve">
+    <value>找不到任何音乐</value>
+  </data>
+  <data name="无音乐_NoMusicContent.Text" xml:space="preserve">
+    <value>你的音乐库不包含任何音乐内容</value>
+  </data>
+  <data name="有音乐_Songs.Text" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="有音乐_Albums.Text" xml:space="preserve">
+    <value>专辑</value>
+  </data>
+  <data name="有音乐_Artists.Text" xml:space="preserve">
+    <value>艺术家</value>
+  </data>
+  <data name="Settings_Dialog1Title" xml:space="preserve">
+    <value>删除此文件夹吗？</value>
+  </data>
+  <data name="Settings_Dialog1Content1" xml:space="preserve">
+    <value>如果将“</value>
+  </data>
+  <data name="Settings_Dialog1Content2" xml:space="preserve">
+    <value>”文件夹从音乐中移除，则该文件夹不会再出现在音乐中，但不会被删除。</value>
+  </data>
+  <data name="Settings_Dialog1Primary" xml:space="preserve">
+    <value>删除文件夹</value>
+  </data>
+  <data name="Settings_Dialog1Close" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Settings_SearchSetting.Content" xml:space="preserve">
+    <value>管理系统索引设置</value>
+  </data>
+  <data name="Settings_Dialog2Title" xml:space="preserve">
+    <value>你指的是要切换应用吗？</value>
+  </data>
+  <data name="Settings_Dialog2Content" xml:space="preserve">
+    <value>“媒体播放器”正在尝试打开“设置”。</value>
+  </data>
+  <data name="Settings_Dialog2Primary" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="Settings_Dialog2Close" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
+    <value>音量</value>
+  </data>
+  <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
+    <value>全屏 (F11)</value>
+  </data>
+  <data name="PlayBar_Mini.ToolTipService.ToolTip" xml:space="preserve">
+    <value>最小播放器 (Ctrl+M)</value>
+  </data>
+  <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
+    <value>更多选项</value>
+  </data>
+  <data name="PlayBar_More_1.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ctrl+Shift+J</value>
+  </data>
+  <data name="PlayBar_More_025.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ctrl+Shift+G</value>
+  </data>
+  <data name="PlayBar_More_05.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ctrl+Shift+H</value>
+  </data>
+  <data name="PlayBar_More_15.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ctrl+Shift+K</value>
+  </data>
+  <data name="PlayBar_More_2.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ctrl+Shift+L</value>
+  </data>
+  <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
+    <value>上一个 (Ctrl+B)</value>
+  </data>
+  <data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
+    <value>下一个 (Ctrl+F)</value>
+  </data>
+  <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
+    <value>正在播放 (Ctrl+N)</value>
+  </data>
+  <data name="PlayBar_ShuffleOff" xml:space="preserve">
+    <value>随机播放: 关 (Ctrl+H)</value>
+  </data>
+  <data name="PlayBar_ShuffleOn" xml:space="preserve">
+    <value>随机播放: 开 (Ctrl+H)</value>
+  </data>
+  <data name="PlayBar_RepeatOff" xml:space="preserve">
+    <value>重复: 关 (Ctrl+T)</value>
+  </data>
+  <data name="PlayBar_RepeatAll" xml:space="preserve">
+    <value>重复: 全部 (Ctrl+T)</value>
+  </data>
+  <data name="PlayBar_RepeatOne" xml:space="preserve">
+    <value>重复: 单曲 (Ctrl+T)</value>
+  </data>
+  <data name="Shell_主页.ToolTipService.ToolTip" xml:space="preserve">
+    <value>主页 (Ctrl+Shift+F)</value>
+  </data>
+  <data name="Shell_音乐库.ToolTipService.ToolTip" xml:space="preserve">
+    <value>音乐库 (Ctrl+R)</value>
+  </data>
+  <data name="Shell_播放队列.ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放队列 (Ctrl+Q)</value>
+  </data>
+  <data name="Shell_播放列表.ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放列表 (Ctrl+Y)</value>
+  </data>
+  <data name="PlayBar_Play" xml:space="preserve">
+    <value>播放 (Ctrl+P)</value>
+  </data>
+  <data name="PlayBar_Pause" xml:space="preserve">
+    <value>暂停 (Ctrl+P)</value>
+  </data>
+  <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
+    <value>定位</value>
+  </data>
+  <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
+    <value>删除文件夹</value>
+  </data>
+  <data name="有音乐_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
+    <value>将文件夹添加到音乐库</value>
+  </data>
+</root>
