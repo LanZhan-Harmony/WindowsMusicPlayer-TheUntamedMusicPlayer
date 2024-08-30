@@ -1,4 +1,5 @@
-﻿using Microsoft.UI;
+﻿using System.Diagnostics;
+using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
