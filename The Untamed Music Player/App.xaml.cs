@@ -52,7 +52,6 @@ public partial class App : Application
 
     public App()
     {
-        Debug.WriteLine("App.xaml.cs: Constructor");
         InitializeComponent();
 
         Host = Microsoft.Extensions.Hosting.Host.
@@ -109,17 +108,12 @@ public partial class App : Application
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
         Build();//生成容器
-
-
-        Debug.WriteLine($"AppMainWindow is null: {MainWindow == null}");
-        Debug.WriteLine("App.xaml.cs: Constructor End");
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
         MainWindow = new MainWindow(GetService<ILocalSettingsService>());
-        Debug.WriteLine($"OnMainWindow is null: {MainWindow == null}");
         await GetService<IActivationService>().ActivateAsync(args);
     }
 }

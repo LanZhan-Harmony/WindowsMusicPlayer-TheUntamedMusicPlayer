@@ -19,7 +19,7 @@ public sealed partial class ShellPage : Page
         get;
     }
 
-    public ShellPage()
+    public ShellPage()//注意修改, 不能有参数
     {
         ViewModel = App.GetService<ShellViewModel>();
         InitializeComponent();

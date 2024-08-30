@@ -16,6 +16,18 @@
 		<SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
 		<PlatformTarget>x64</PlatformTarget>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<PackageCertificateKeyFile>The Untamed Music Player_TemporaryKey.pfx</PackageCertificateKeyFile>
+		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<PublishAot>False</PublishAot>
+		<PublishTrimmed>False</PublishTrimmed>
+		<PublishSelfContained>true</PublishSelfContained>
+		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+		<GenerateTestArtifacts>True</GenerateTestArtifacts>
+		<AppxBundle>Auto</AppxBundle>
+		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Remove="Assets\WindowIcon.png" />
@@ -56,7 +68,7 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<Page Update="Styles\ButtonStyle.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\艺术家Page.xaml">
 			<Generator>MSBuild:Compile</Generator>
