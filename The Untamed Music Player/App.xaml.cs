@@ -85,8 +85,8 @@ public partial class App : Application
             services.AddTransient<播放队列Page>();
             services.AddTransient<音乐库ViewModel>();
             services.AddTransient<音乐库Page>();
-            services.AddTransient<主页ViewModel>();
             services.AddTransient<主页Page>();
+            services.AddTransient<主页ViewModel>();
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
             services.AddTransient<RootPlayBarView>();
@@ -101,8 +101,12 @@ public partial class App : Application
             services.AddTransient<歌曲ViewModel>();
             services.AddTransient<专辑Page>();
             services.AddTransient<专辑ViewModel>();
+            services.AddTransient<专辑详情Page>();
+            services.AddTransient<专辑详情ViewModel>();
             services.AddTransient<艺术家Page>();
             services.AddTransient<艺术家ViewModel>();
+            services.AddTransient<艺术家详情Page>();
+            services.AddTransient<艺术家详情ViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

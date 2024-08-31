@@ -74,7 +74,7 @@ public class MusicLibrary : INotifyPropertyChanged
                 await LoadMusic(folder);
             }
         }
-        SortMusicsByModifiedTimeDecending();
+        SortMusicsByModifiedTimeDescending();
         OnPropertyChanged(nameof(Artists));
         OnPropertyChanged(nameof(Albums));
         OnPropertyChanged(nameof(HasMusics));
@@ -92,7 +92,7 @@ public class MusicLibrary : INotifyPropertyChanged
                 await LoadMusic(folder);
             }
         }
-        SortMusicsByModifiedTimeDecending();
+        SortMusicsByModifiedTimeDescending();
         OnPropertyChanged(nameof(Artists));
         OnPropertyChanged(nameof(Albums));
         OnPropertyChanged(nameof(HasMusics));
@@ -335,7 +335,7 @@ public class MusicLibrary : INotifyPropertyChanged
     /// <summary>
     /// 根据修改日期降序排序
     /// </summary>
-    public void SortMusicsByModifiedTimeDecending()
+    public void SortMusicsByModifiedTimeDescending()
     {
         if (Musics != null)
         {

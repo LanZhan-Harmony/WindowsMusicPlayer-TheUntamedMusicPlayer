@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -12,7 +13,7 @@ using Windows.System.Threading;
 
 namespace The_Untamed_Music_Player.Models;
 
-public class MusicPlayer : INotifyPropertyChanged
+public partial class MusicPlayer : INotifyPropertyChanged
 {
     private readonly ILocalSettingsService _localSettingsService;
 
@@ -90,11 +91,7 @@ public class MusicPlayer : INotifyPropertyChanged
     public int PlayQueueIndex
     {
         get => _playQueueIndex;
-        set
-        {
-            _playQueueIndex = value;
-            OnPropertyChanged(nameof(PlayQueueIndex));
-        }
+        set => _playQueueIndex = value;
     }
 
     private bool _shuffleMode = false;
