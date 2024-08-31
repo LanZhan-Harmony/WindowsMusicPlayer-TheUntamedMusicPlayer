@@ -71,12 +71,12 @@ public sealed partial class 歌词Page : Page
             }
             catch//切换到后台
             {
-                LyricViewer.Height = 0;
+                LyricViewer.Height = 200;
             }
         }
         else
         {
-            LyricViewer.Height = 0;
+            LyricViewer.Height = 200;
         }
         if (textblock.FontSize == 50 || textblock.FontSize == 24)
         {
@@ -85,14 +85,8 @@ public sealed partial class 歌词Page : Page
 
             // 计算出目标位置并滚动
             var targetPosition = textblock.TransformToVisual(LyricViewer).TransformPoint(point);
-            if (textblock.FontSize == 24)
-            {
-                LyricViewer.ChangeView(null, targetPosition.Y, null, disableAnimation: false);
-            }
-            else
-            {
-                LyricViewer.ChangeView(null, targetPosition.Y - LyricViewer.Height / 2 + 40, null, disableAnimation: false);
-            }
+
+            LyricViewer.ChangeView(null, targetPosition.Y - LyricViewer.Height / 2 + 40, null, disableAnimation: false);
         }
     }
 }

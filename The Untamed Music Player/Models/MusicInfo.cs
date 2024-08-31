@@ -6,14 +6,8 @@ using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace The_Untamed_Music_Player.Models;
 
-public class BriefMusicInfo : INotifyPropertyChanged
+public class BriefMusicInfo
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
     private string _path = "";
     /// <summary>
     /// 文件位置
@@ -241,11 +235,7 @@ public class BriefMusicInfo : INotifyPropertyChanged
     public string GenreStr
     {
         get => _genreStr;
-        set
-        {
-            _genreStr = value;
-            OnPropertyChanged(nameof(GenreStr));
-        }
+        set => _genreStr = value;
     }
 
     /// <summary>
