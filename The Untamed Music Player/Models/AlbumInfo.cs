@@ -80,6 +80,16 @@ public class AlbumInfo : INotifyPropertyChanged
         }
     }
 
+    private DateTimeOffset _modifiedDate;
+    /// <summary>
+    /// 修改日期
+    /// </summary>
+    public DateTimeOffset ModifiedDate
+    {
+        get => _modifiedDate;
+        set => _modifiedDate = value;
+    }
+
     public AlbumInfo()
     {
     }
@@ -87,6 +97,7 @@ public class AlbumInfo : INotifyPropertyChanged
     {
         Name = briefmusicInfo.Album;
         Year = briefmusicInfo.YearStr;
+        ModifiedDate = briefmusicInfo.ModifiedDate;
         Cover = briefmusicInfo.Cover;
         Artist = briefmusicInfo.ArtistsStr;
         TotalDuration = briefmusicInfo.Duration;

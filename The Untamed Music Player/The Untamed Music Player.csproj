@@ -35,11 +35,13 @@
 	<ItemGroup>
 		<None Remove="Styles\ButtonStyle.xaml" />
 		<None Remove="Views\专辑Page.xaml" />
+		<None Remove="Views\专辑详情Page.xaml" />
 		<None Remove="Views\无音乐Page.xaml" />
 		<None Remove="Views\有音乐Page.xaml" />
 		<None Remove="Views\歌曲Page.xaml" />
 		<None Remove="Views\歌词Page.xaml" />
 		<None Remove="Views\艺术家Page.xaml" />
+		<None Remove="Views\艺术家详情Page.xaml" />
 	</ItemGroup>
 
 
@@ -67,6 +69,12 @@
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\艺术家详情Page.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\专辑详情Page.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Styles\ButtonStyle.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>

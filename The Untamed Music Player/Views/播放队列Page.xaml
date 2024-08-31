@@ -172,6 +172,13 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="TitleGrid.Margin" Value="16,35"/>
+                        <Setter Target="AddTextBlock.Visibility" Value="Collapsed"/>
+                        <Setter Target="MenuPanel.Margin" Value="16,-11,16,0"/>
+                        <Setter Target="ClearButton.Width" Value="68"/>
+                        <Setter Target="AddToButton.Width" Value="68"/>
+                        <Setter Target="ClearTextBlock.Visibility" Value="Collapsed"/>
+                        <Setter Target="AddToTextBlock.Visibility" Value="Collapsed"/>
+                        <Setter Target="PlayqueueListView.Padding" Value="12,0,12,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
@@ -180,6 +187,13 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="TitleGrid.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
+                        <Setter Target="AddTextBlock.Visibility" Value="Visible"/>
+                        <Setter Target="MenuPanel.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
+                        <Setter Target="ClearButton.Width" Value="72"/>
+                        <Setter Target="AddToButton.Width" Value="84"/>
+                        <Setter Target="ClearTextBlock.Visibility" Value="Visible"/>
+                        <Setter Target="AddToTextBlock.Visibility" Value="Visible"/>
+                        <Setter Target="PlayqueueListView.Padding" Value="52,0,52,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -193,10 +207,10 @@
             <TextBlock x:Uid="Shell_播放队列1"
                        Grid.Column="0"
                        FontSize="40" FontWeight="SemiLight"/>
-            <SplitButton Grid.Column="2">
+            <SplitButton Grid.Column="2" Height="30">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="12" Glyph="&#xE838;"/>
-                    <TextBlock Text="添加文件"/>
+                    <TextBlock x:Name="AddTextBlock" Text="添加文件"/>
                 </StackPanel>
                 <SplitButton.Flyout>
                     <MenuFlyout>
@@ -258,22 +272,26 @@
                 </SplitButton.Flyout>
             </SplitButton>
         </Grid>
-        <StackPanel Grid.Row="1"
-                    Margin="{StaticResource NavigationViewPageContentMargin}"
+        <StackPanel x:Name="MenuPanel"
+                    Grid.Row="1"
                     Orientation="Horizontal" Spacing="16">
-            <Button Width="72" Height="36"
+            <Button x:Name="ClearButton"
+                    Height="36"
                     Padding="0"
                     Click="{x:Bind ViewModel.ClearButton_Click}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="16" Glyph="&#xE74D;"/>
-                    <TextBlock FontSize="12" Text="清除"/>
+                    <TextBlock x:Name="ClearTextBlock"
+                               FontSize="12" Text="清除"/>
                 </StackPanel>
             </Button>
-            <Button Width="84" Height="36"
+            <Button x:Name="AddToButton"
+                    Height="36"
                     Padding="0">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="16" Glyph="&#xE710;"/>
-                    <TextBlock FontSize="12" Text="添加到"/>
+                    <TextBlock x:Name="AddToTextBlock"
+                               FontSize="12" Text="添加到"/>
                 </StackPanel>
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
@@ -294,7 +312,7 @@
         </StackPanel>
         <ListView x:Name="PlayqueueListView"
                   Grid.Row="2"
-                  Margin="0,24,0,0" Padding="52,0,52,0"
+                  Margin="0,24,0,0"
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.PlayQueueListView_ItemClick}"
                   ItemTemplate="{StaticResource PlayQueueListViewTemplate}"
