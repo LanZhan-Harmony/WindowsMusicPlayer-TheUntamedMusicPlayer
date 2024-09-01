@@ -336,4 +336,22 @@
   <data name="有音乐_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
     <value>将文件夹添加到音乐库</value>
   </data>
+  <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
+    <value>随机播放: 开</value>
+  </data>
+  <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
+    <value>随机播放: 关</value>
+  </data>
+  <data name="PlayBar_More_RepeatAll" xml:space="preserve">
+    <value>重复: 全部</value>
+  </data>
+  <data name="PlayBar_More_RepeatOne" xml:space="preserve">
+    <value>重复: 单曲</value>
+  </data>
+  <data name="PlayBar_More_RepeatOff" xml:space="preserve">
+    <value>重复: 关</value>
+  </data>
+  <data name="Settings_Materials" xml:space="preserve">
+    <value>无, 云母, 另类云母, 桌面亚克力, 基础亚克力, 薄亚克力, 模糊, 透明, 跑马灯</value>
+  </data>
 </root>

@@ -95,60 +95,6 @@
                        Text="{x:Bind ViewModel.GetRemaining(local:Data.MusicPlayer.Current, local:Data.MusicPlayer.Total), Mode=OneWay}"/>
         </Grid>
 
-        <!--  播放控制  -->
-        <StackPanel x:Name="PlayStackPanel"
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal" Spacing="10">
-            <!--  随机播放  -->
-            <Button x:Name="ShuffleButton"
-                    Click="{x:Bind local:Data.MusicPlayer.ShuffleModeUpdate}"
-                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}">
-                <Grid>
-                    <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
-                    <TextBlock Margin="0,3,0,0"
-                               FontFamily="等线" FontSize="16"
-                               Text="╲"
-                               Visibility="{x:Bind ViewModel.GetShuffleModeIcon(local:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"/>
-                </Grid>
-            </Button>
-
-            <!--  上一曲  -->
-            <Button x:Uid="PlayBar_Prev"
-                    Click="{x:Bind local:Data.MusicPlayer.PlayPreviousSong}"
-                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}">
-                <FontIcon FontSize="16" Glyph="&#xF8AC;"/>
-            </Button>
-
-            <!--  播放/暂停  -->
-            <Button x:Name="PlayButton"
-                    Click="{x:Bind local:Data.MusicPlayer.PlayPauseUpdate}"
-                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}">
-                <FontIcon x:Name="PlayIcon"
-                          FontSize="24"
-                          Glyph="{x:Bind ViewModel.GetPlayPauseIcon(local:Data.MusicPlayer.PlayState), Mode=OneWay}"/>
-            </Button>
-
-            <!--  下一曲  -->
-            <Button x:Uid="PlayBar_Next"
-                    Click="{x:Bind local:Data.MusicPlayer.PlayNextSong}"
-                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}">
-                <FontIcon FontSize="16" Glyph="&#xF8AD;"/>
-            </Button>
-
-            <!--  循环播放  -->
-            <Button x:Name="RepeatButton"
-                    Click="{x:Bind local:Data.MusicPlayer.RepeatModeUpdate}"
-                    Style="{StaticResource PlayButtonStyle}">
-                <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetRepeatModeIcon(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}"/>
-            </Button>
-        </StackPanel>
-
-
         <!--  歌曲信息  -->
         <Button x:Uid="PlayBar_NowPlaying"
                 Grid.Row="1" Grid.Column="0"
@@ -197,6 +143,62 @@
                 </StackPanel>
             </StackPanel>
         </Button>
+
+        <!--  播放控制  -->
+        <StackPanel x:Name="PlayStackPanel"
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal" Spacing="10">
+            <!--  随机播放  -->
+            <Button x:Name="ShuffleButton"
+                    Click="{x:Bind local:Data.MusicPlayer.ShuffleModeUpdate}"
+                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                    Style="{StaticResource PlayButtonStyle}"
+                    ToolTipService.ToolTip="{x:Bind ViewModel.GetShuffleModeToolTip(local:Data.MusicPlayer.ShuffleMode), Mode=OneWay}">
+                <Grid>
+                    <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
+                    <TextBlock Margin="0,3,0,0"
+                               FontFamily="等线" FontSize="16"
+                               Text="╲"
+                               Visibility="{x:Bind ViewModel.GetShuffleModeIcon(local:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"/>
+                </Grid>
+            </Button>
+
+            <!--  上一曲  -->
+            <Button x:Uid="PlayBar_Prev"
+                    Click="{x:Bind local:Data.MusicPlayer.PlayPreviousSong}"
+                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                    Style="{StaticResource PlayButtonStyle}">
+                <FontIcon FontSize="16" Glyph="&#xF8AC;"/>
+            </Button>
+
+            <!--  播放/暂停  -->
+            <Button x:Name="PlayButton"
+                    Click="{x:Bind local:Data.MusicPlayer.PlayPauseUpdate}"
+                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                    Style="{StaticResource PlayButtonStyle}"
+                    ToolTipService.ToolTip="{x:Bind ViewModel.GetPlayPauseTooltip(local:Data.MusicPlayer.PlayState), Mode=OneWay}">
+                <FontIcon x:Name="PlayIcon"
+                          FontSize="24"
+                          Glyph="{x:Bind ViewModel.GetPlayPauseIcon(local:Data.MusicPlayer.PlayState), Mode=OneWay}"/>
+            </Button>
+
+            <!--  下一曲  -->
+            <Button x:Uid="PlayBar_Next"
+                    Click="{x:Bind local:Data.MusicPlayer.PlayNextSong}"
+                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                    Style="{StaticResource PlayButtonStyle}">
+                <FontIcon FontSize="16" Glyph="&#xF8AD;"/>
+            </Button>
+
+            <!--  循环播放  -->
+            <Button x:Name="RepeatButton"
+                    Click="{x:Bind local:Data.MusicPlayer.RepeatModeUpdate}"
+                    Style="{StaticResource PlayButtonStyle}"
+                    ToolTipService.ToolTip="{x:Bind ViewModel.GetRepeatModeToolTip(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}">
+                <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetRepeatModeIcon(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}"/>
+            </Button>
+        </StackPanel>
 
         <!--  其他控制  -->
         <StackPanel Grid.Row="1" Grid.Column="4"
@@ -336,7 +338,7 @@
                         <MenuFlyoutItem x:Name="ShuffleMenu"
                                         Click="{x:Bind local:Data.MusicPlayer.ShuffleModeUpdate}"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                                        Text="随机播放">
+                                        Text="{x:Bind ViewModel.GetMoreShuffleModeText(local:Data.MusicPlayer.ShuffleMode), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
                             </MenuFlyoutItem.Icon>
@@ -348,7 +350,7 @@
                         <!--  循环播放  -->
                         <MenuFlyoutItem x:Name="RepeatMenu"
                                         Click="{x:Bind local:Data.MusicPlayer.RepeatModeUpdate}"
-                                        Text="循环播放">
+                                        Text="{x:Bind ViewModel.GetMoreRepeatModeText(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xF5E7;"/>
                             </MenuFlyoutItem.Icon>

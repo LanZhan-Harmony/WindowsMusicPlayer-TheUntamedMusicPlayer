@@ -336,4 +336,22 @@
   <data name="有音乐_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
     <value>Add a folder to your music library</value>
   </data>
+  <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
+    <value>Shuffle: On</value>
+  </data>
+  <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
+    <value>Shuffle: Off</value>
+  </data>
+  <data name="PlayBar_More_RepeatAll" xml:space="preserve">
+    <value>Repeat: All</value>
+  </data>
+  <data name="PlayBar_More_RepeatOne" xml:space="preserve">
+    <value>Repeat: One</value>
+  </data>
+  <data name="PlayBar_More_RepeatOff" xml:space="preserve">
+    <value>Repeat: Off</value>
+  </data>
+  <data name="Settings_Materials" xml:space="preserve">
+    <value>None, Mica, Mica Alt, Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
+  </data>
 </root>
