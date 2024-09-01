@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 
 using The_Untamed_Music_Player.Contracts.Services;
-using The_Untamed_Music_Player.Core.Contracts.Services;
-using The_Untamed_Music_Player.Core.Helpers;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using Windows.Storage;

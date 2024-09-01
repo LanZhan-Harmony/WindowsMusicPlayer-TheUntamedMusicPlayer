@@ -82,26 +82,15 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         }
     }
 
-    private List<string> _materials =
-    [
-        "None",
-        "Mica",
-        "Mica Alt",
-        "Desktop Acrylic",
-        "Acrylic Base",
-        "Acrylic Thin",
-        "Blur",
-        "Transparent",
-        "Animated"
-    ];
+    private List<string> _materials = [.. "Settings_Materials".GetLocalized().Split(", ")];
     public List<string> Materials
     {
         get => _materials;
         set => _materials = value;
     }
 
-    private string _selectedMaterial = Data.MainWindow?.SelectedMaterial ?? "";
-    public string SelectedMaterial
+    private byte _selectedMaterial = Data.MainWindow.SelectedMaterial;
+    public byte SelectedMaterial
     {
         get => _selectedMaterial;
         set
@@ -217,15 +206,15 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
     {
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is string selectedMaterial)
         {
-            SelectedMaterial = selectedMaterial;
+            SelectedMaterial = (byte)Materials.IndexOf(selectedMaterial);
             if (Data.MainWindow != null)
             {
-                Data.MainWindow.SelectedMaterial = selectedMaterial;
+                Data.MainWindow.SelectedMaterial = SelectedMaterial;
             }
         }
     }
 
-    public void ChangeMaterial(string material)
+    public void ChangeMaterial(byte material)
     {
         if (Data.MainWindow?.SelectedMaterial == SelectedMaterial)
         {
@@ -235,59 +224,59 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         {
             switch (material)
             {
-                case "None":
+                case 0:
                     Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () => Data.MainWindow?.TrySetNoneBackdrop());
                     break;
-                case "Mica":
+                case 1:
                     Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
                     {
                         Data.MainWindow?.TrySetNoneBackdrop();
                         Data.MainWindow?.TrySetMicaBackdrop(false);
                     });
                     break;
-                case "Mica Alt":
+                case 2:
                     Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
                     {
                         Data.MainWindow?.TrySetNoneBackdrop();
                         Data.MainWindow?.TrySetMicaBackdrop(true);
                     });
                     break;
-                case "Desktop Acrylic":
+                case 3:
                     Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
                     {
                         Data.MainWindow?.TrySetNoneBackdrop();
                         Data.MainWindow?.TrySetDesktopAcrylicBackdrop();
                     });
                     break;
-                case "Acrylic Base":
+                case 4:
                     Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
                     {
                         Data.MainWindow?.TrySetNoneBackdrop();
                         Data.MainWindow?.TrySetAcrylicBackdrop(false);
                     });
                     break;
-                case "Acrylic Thin":
+                case 5:
                     Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
                     {
                         Data.MainWindow?.TrySetNoneBackdrop();
                         Data.MainWindow?.TrySetAcrylicBackdrop(true);
                     });
                     break;
-                case "Blur":
+                case 6:
                     Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
                     {
                         Data.MainWindow?.TrySetNoneBackdrop();
                         Data.MainWindow?.TrySetBlurBackdrop();
                     });
                     break;
-                case "Transparent":
+                case 7:
                     Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
                     {
                         Data.MainWindow?.TrySetNoneBackdrop();
                         Data.MainWindow?.TrySetTransparentBackdrop();
                     });
                     break;
-                case "Animated":
+                case 8:
                     Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
                     {
                         Data.MainWindow?.TrySetNoneBackdrop();
@@ -357,11 +346,7 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
     {
         if (sender is ComboBox comboBox)
         {
-            var index = Materials.IndexOf(SelectedMaterial);
-            if (index >= 0)
-            {
-                comboBox.SelectedIndex = index;
-            }
+            comboBox.SelectedIndex = SelectedMaterial;
         }
     }
 
@@ -378,7 +363,7 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         await _localSettingsService.SaveSettingAsync("SelectedFont", fontName);
     }
 
-    private async void SaveSelectedMaterialAsync(string material)
+    private async void SaveSelectedMaterialAsync(byte material)
     {
         await _localSettingsService.SaveSettingAsync("SelectedMaterial", material);
     }

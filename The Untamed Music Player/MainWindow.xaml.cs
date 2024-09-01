@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.UI;
+﻿using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -20,11 +19,11 @@ public sealed partial class MainWindow : WindowEx
     private DesktopAcrylicController? m_acrylicController;
     private SystemBackdropConfiguration? m_configurationSource;
 
-    private string _selectedMaterial = "Desktop Acrylic";
+    private byte _selectedMaterial;
     /// <summary>
     /// 选定的窗口材质
     /// </summary>
-    public string SelectedMaterial
+    public byte SelectedMaterial
     {
         get => _selectedMaterial;
         set => _selectedMaterial = value;
@@ -309,37 +308,37 @@ public sealed partial class MainWindow : WindowEx
     /// 启动应用时更改选定的材质
     /// </summary>
     /// <param name="material"></param>
-    public void ChangeMaterial(string material)
+    public void ChangeMaterial(byte material)
     {
         try
         {
             switch (material)
             {
-                case "None":
+                case 0:
                     TrySetNoneBackdrop();
                     break;
-                case "Mica":
+                case 1:
                     TrySetMicaBackdrop(false);
                     break;
-                case "Mica Alt":
+                case 2:
                     TrySetMicaBackdrop(true);
                     break;
-                case "Desktop Acrylic":
+                case 3:
                     TrySetDesktopAcrylicBackdrop();
                     break;
-                case "Acrylic Base":
+                case 4:
                     TrySetAcrylicBackdrop(false);
                     break;
-                case "Acrylic Thin":
+                case 5:
                     TrySetAcrylicBackdrop(true);
                     break;
-                case "Blur":
+                case 6:
                     TrySetBlurBackdrop();
                     break;
-                case "Transparent":
+                case 7:
                     TrySetTransparentBackdrop();
                     break;
-                case "Animated":
+                case 8:
                     TrySetAnimatedBackdrop();
                     break;
             }
@@ -353,10 +352,14 @@ public sealed partial class MainWindow : WindowEx
     /// <returns></returns>
     public async Task LoadSelectedMaterialAsync()
     {
-        var material = await _localSettingsService.ReadSettingAsync<string>("SelectedMaterial");
-        if (!string.IsNullOrEmpty(material))
+        var notFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
+        if (notFirstUsed)
         {
-            SelectedMaterial = material;
+            SelectedMaterial = await _localSettingsService.ReadSettingAsync<byte>("SelectedMaterial");
+        }
+        else
+        {
+            SelectedMaterial = 3;
         }
     }
 }

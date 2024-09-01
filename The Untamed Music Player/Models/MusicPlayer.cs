@@ -1,11 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Views;
+using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
@@ -34,6 +35,22 @@ public partial class MusicPlayer : INotifyPropertyChanged
     {
         get => _player;
         set => _player = value;
+    }
+
+    /// <summary>
+    /// SMTC控件
+    /// </summary>
+    public SystemMediaTransportControls SystemControls
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// SMTC显示内容更新器
+    /// </summary>
+    public SystemMediaTransportControlsDisplayUpdater DisplayUpdater
+    {
+        get; set;
     }
 
     private string? _playQueueName;
@@ -91,7 +108,23 @@ public partial class MusicPlayer : INotifyPropertyChanged
     public int PlayQueueIndex
     {
         get => _playQueueIndex;
-        set => _playQueueIndex = value;
+        set
+        {
+            _playQueueIndex = value;
+            if (value == 0 && (RepeatMode == 0 || RepeatMode == 2))
+            {
+                SystemControls.IsPreviousEnabled = false;
+            }
+            else if (value == PlayQueueLength - 1 && (RepeatMode == 0 || RepeatMode == 2))
+            {
+                SystemControls.IsNextEnabled = false;
+            }
+            else
+            {
+                SystemControls.IsPreviousEnabled = true;
+                SystemControls.IsNextEnabled = true;
+            }
+        }
     }
 
     private bool _shuffleMode = false;
@@ -114,6 +147,19 @@ public partial class MusicPlayer : INotifyPropertyChanged
         set
         {
             _repeatMode = value;
+            if (PlayQueueIndex == 0 && (value == 0 || value == 2))
+            {
+                SystemControls.IsPreviousEnabled = false;
+            }
+            else if (PlayQueueIndex == PlayQueueLength - 1 && (value == 0 || value == 2))
+            {
+                SystemControls.IsNextEnabled = false;
+            }
+            else
+            {
+                SystemControls.IsPreviousEnabled = true;
+                SystemControls.IsNextEnabled = true;
+            }
             OnPropertyChanged(nameof(RepeatMode));
         }
     }
@@ -273,7 +319,12 @@ public partial class MusicPlayer : INotifyPropertyChanged
         Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
         Player.MediaEnded += OnPlaybackStopped;
         Player.Volume = CurrentVolume / 100;
-        Player.CommandManager.IsEnabled = true;
+        Player.CommandManager.IsEnabled = false;
+        SystemControls = Player.SystemMediaTransportControls;
+        DisplayUpdater = SystemControls.DisplayUpdater;
+        DisplayUpdater.Type = MediaPlaybackType.Music;
+        SystemControls.IsEnabled = true;
+        SystemControls.ButtonPressed += SystemControls_ButtonPressed;
     }
 
     ~MusicPlayer()
@@ -294,13 +345,29 @@ public partial class MusicPlayer : INotifyPropertyChanged
             {
                 Stop();
                 CurrentMusic = new DetailedMusicInfo(path);
+                SystemControls.IsPlayEnabled = true;
+                SystemControls.IsPauseEnabled = true;
                 if (ShuffleMode)
                 {
-                    PlayQueueIndex = ShuffledPlayQueue.ToList().FindIndex(x => x.Path == path);
+                    for (var i = 0; i < ShuffledPlayQueue.Count; i++)
+                    {
+                        if (ShuffledPlayQueue[i].Path == path)
+                        {
+                            PlayQueueIndex = i;
+                            break;
+                        }
+                    }
                 }
                 else
                 {
-                    PlayQueueIndex = PlayQueue.ToList().FindIndex(x => x.Path == path);
+                    for (var i = 0; i < PlayQueue.Count; i++)
+                    {
+                        if (PlayQueue[i].Path == path)
+                        {
+                            PlayQueueIndex = i;
+                            break;
+                        }
+                    }
                 }
                 Play();
             }
@@ -308,10 +375,31 @@ public partial class MusicPlayer : INotifyPropertyChanged
             {
                 Stop();
                 CurrentMusic = new DetailedMusicInfo(path);
-                PlayQueueIndex = PlayQueue.ToList().FindIndex(x => x.Path == path);
+                SystemControls.IsPlayEnabled = true;
+                SystemControls.IsPauseEnabled = true;
+                PlayQueueIndex = 0;
             }
         }
     }
+
+    public void PlaySongByIndex(int index, bool isLast = false)
+    {
+        lock (mediaLock)
+        {
+            Stop();
+            var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
+            CurrentMusic = new DetailedMusicInfo(songToPlay.Path);
+            SetSource(songToPlay.Path);
+            PlayQueueIndex = isLast ? 0 : index;
+            SystemControls.IsPlayEnabled = true;
+            SystemControls.IsPauseEnabled = true;
+            if (!isLast)
+            {
+                Play();
+            }
+        }
+    }
+
 
     /// <summary>
     /// 为播放器设置音乐源
@@ -328,6 +416,9 @@ public partial class MusicPlayer : INotifyPropertyChanged
                 var mediaFile = mediaFileTask.Result;
                 Player.Source = MediaSource.CreateFromStorageFile(mediaFile);
                 Total = Player.PlaybackSession.NaturalDuration;
+                DisplayUpdater.MusicProperties.Title = CurrentMusic.Title;
+                DisplayUpdater.MusicProperties.Artist = CurrentMusic.ArtistsStr == "未知艺术家" ? "" : CurrentMusic.ArtistsStr;
+                DisplayUpdater.Update();
                 positionUpdateTimer = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler, TimeSpan.FromMilliseconds(250), UpdateTimerDestoyed);
             }
             catch { }
@@ -392,16 +483,14 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// <returns></returns>
     public int GetCurrentLyricIndex(double currentTime)
     {
-        var index = CurrentLyric.ToList().FindIndex(x => x.Time > currentTime);
-        if (index > 0)
+        for (var i = 0; i < CurrentLyric.Count; i++)
         {
-            index--;
+            if (CurrentLyric[i].Time > currentTime)
+            {
+                return i > 0 ? i - 1 : 0;
+            }
         }
-        if (index < 0)
-        {
-            index = CurrentLyric.Count - 1;
-        }
-        return index;
+        return CurrentLyric.Count - 1;
     }
 
     /// <summary>
@@ -444,12 +533,14 @@ public partial class MusicPlayer : INotifyPropertyChanged
                     PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
                         PlayState = 1;
+                        SystemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                     });
                     break;
                 case MediaPlaybackState.Paused:
                     PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
                         PlayState = 0;
+                        SystemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
                     });
                     break;
                 default:
@@ -480,6 +571,33 @@ public partial class MusicPlayer : INotifyPropertyChanged
                 }
             }
         });
+    }
+
+    private void SystemControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
+    {
+        switch (args.Button)
+        {
+            case SystemMediaTransportControlsButton.Play:
+                PlayPauseUpdate();
+                break;
+            case SystemMediaTransportControlsButton.Pause:
+                PlayPauseUpdate();
+                break;
+            case SystemMediaTransportControlsButton.Previous:// 注意: 必须在UI线程中调用
+                PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                {
+                    PlayPreviousSong();
+                });
+                break;
+            case SystemMediaTransportControlsButton.Next:
+                PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                {
+                    PlayNextSong();
+                });
+                break;
+            default:
+                break;
+        }
     }
 
     /// <summary>
@@ -517,75 +635,19 @@ public partial class MusicPlayer : INotifyPropertyChanged
     {
         try
         {
-            switch (ShuffleMode, RepeatMode)
+            var newIndex = PlayQueueIndex > 0 ? PlayQueueIndex - 1 : PlayQueueIndex;
+
+            if (RepeatMode == 1) // 列表循环
             {
-                case (false, 0):
-                    {
-                        if (PlayQueueIndex > 0)
-                        {
-                            PlaySongByPath(PlayQueue[PlayQueueIndex - 1].Path);
-                        }
-                        else
-                        {
-                            PlaySongByPath(PlayQueue[PlayQueueIndex].Path);
-                        }
-                        break;
-                    }
-                case (false, 1):
-                    {
-                        {
-                            PlaySongByPath(PlayQueue[(PlayQueueIndex + PlayQueueLength - 1) % PlayQueueLength].Path);
-                            break;
-                        }
-                    }
-                case (false, 2):
-                    {
-                        if (PlayQueueIndex > 0)
-                        {
-                            PlaySongByPath(PlayQueue[PlayQueueIndex - 1].Path);
-                        }
-                        else
-                        {
-                            PlaySongByPath(PlayQueue[PlayQueueIndex].Path);
-                        }
-                        break;
-                    }
-                case (true, 0):
-                    {
-                        if (PlayQueueIndex > 0)
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[PlayQueueIndex - 1].Path);
-                        }
-                        else
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[PlayQueueIndex].Path);
-                        }
-                        break;
-                    }
-                case (true, 1):
-                    {
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[(PlayQueueIndex + PlayQueueLength - 1) % PlayQueueLength].Path);
-                            break;
-                        }
-                    }
-                case (true, 2):
-                    {
-                        if (PlayQueueIndex > 0)
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[PlayQueueIndex - 1].Path);
-                        }
-                        else
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[PlayQueueIndex].Path);
-                        }
-                        break;
-                    }
-                default:
-                    break;
+                newIndex = (PlayQueueIndex + PlayQueueLength - 1) % PlayQueueLength;
             }
+
+            PlaySongByIndex(newIndex);
         }
-        catch { }
+        catch
+        {
+            Debug.WriteLine("播放上一曲失败");
+        }
     }
 
     /// <summary>
@@ -597,26 +659,26 @@ public partial class MusicPlayer : INotifyPropertyChanged
         {
             switch (ShuffleMode, RepeatMode)
             {
-                case (false, 0):
+                case (false, 0):// 不随机, 不循环
                     {
                         if (PlayQueueIndex < PlayQueueLength - 1)
                         {
                             PlaySongByPath(PlayQueue[PlayQueueIndex + 1].Path);
                         }
-                        else
+                        else// 播放队列最后一首歌
                         {
                             PlaySongByPath(PlayQueue[0].Path, true);
                         }
                         break;
                     }
-                case (false, 1):
+                case (false, 1):// 不随机, 列表循环
                     {
                         {
                             PlaySongByPath(PlayQueue[(PlayQueueIndex + 1) % PlayQueueLength].Path);
                             break;
                         }
                     }
-                case (false, 2):
+                case (false, 2):// 不随机, 单曲循环
                     {
                         if (PlayQueueIndex < PlayQueueLength - 1)
                         {
@@ -628,7 +690,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
                         }
                         break;
                     }
-                case (true, 0):
+                case (true, 0):// 随机, 不循环
                     {
                         if (PlayQueueIndex < PlayQueueLength - 1)
                         {
@@ -640,14 +702,14 @@ public partial class MusicPlayer : INotifyPropertyChanged
                         }
                         break;
                     }
-                case (true, 1):
+                case (true, 1):// 随机, 列表循环
                     {
                         {
                             PlaySongByPath(ShuffledPlayQueue[(PlayQueueIndex + 1) % PlayQueueLength].Path);
                             break;
                         }
                     }
-                case (true, 2):
+                case (true, 2):// 随机, 单曲循环
                     {
                         if (PlayQueueIndex < PlayQueueLength - 1)
                         {
@@ -694,7 +756,14 @@ public partial class MusicPlayer : INotifyPropertyChanged
         else
         {
             ShuffledPlayQueue.Clear();
-            PlayQueueIndex = PlayQueue.ToList().FindIndex(x => x.Path == CurrentMusic.Path);
+            for (var i = 0; i < PlayQueue.Count; i++)
+            {
+                if (PlayQueue[i].Path == CurrentMusic.Path)
+                {
+                    PlayQueueIndex = i;
+                    break;
+                }
+            }
         }
         OnPropertyChanged(nameof(ShuffleMode));
     }
@@ -716,7 +785,14 @@ public partial class MusicPlayer : INotifyPropertyChanged
         await Task.Run(() =>
         {
             ShuffledPlayQueue = new ObservableCollection<BriefMusicInfo>([.. PlayQueue.OrderBy(x => Guid.NewGuid())]);
-            PlayQueueIndex = ShuffledPlayQueue.ToList().FindIndex(x => x.Path == CurrentMusic.Path);
+            for (var i = 0; i < ShuffledPlayQueue.Count; i++)
+            {
+                if (ShuffledPlayQueue[i].Path == CurrentMusic.Path)
+                {
+                    PlayQueueIndex = i;
+                    break;
+                }
+            }
         });
     }
 
@@ -726,6 +802,10 @@ public partial class MusicPlayer : INotifyPropertyChanged
     public void ClearPlayQueue()
     {
         Stop();
+        SystemControls.IsPlayEnabled = false;
+        SystemControls.IsPauseEnabled = false;
+        SystemControls.IsPreviousEnabled = false;
+        SystemControls.IsNextEnabled = false;
         Total = TimeSpan.Zero;
         PlayQueue.Clear();
         ShuffledPlayQueue.Clear();

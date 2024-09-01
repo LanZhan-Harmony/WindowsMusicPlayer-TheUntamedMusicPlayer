@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
+using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.ViewModels;
 public partial class RootPlayBarViewModel : INotifyPropertyChanged
@@ -40,6 +41,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
     public RootPlayBarViewModel()
     {
         Data.RootPlayBarViewModel = this;
+
         RootPlayBarView?.GetProgressSlider().AddHandler(UIElement.PointerPressedEvent, new PointerEventHandler(Data.MusicPlayer.ProgressLock), true);
         RootPlayBarView?.GetProgressSlider().AddHandler(UIElement.PointerMovedEvent, new PointerEventHandler(Data.MusicPlayer.SliderUpdate), true);
         RootPlayBarView?.GetProgressSlider().AddHandler(UIElement.PointerReleasedEvent, new PointerEventHandler(Data.MusicPlayer.ProgressUpdate), true);
@@ -81,6 +83,17 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         };
     }
 
+    public string GetPlayPauseTooltip(int playstate)
+    {
+        return playstate switch
+        {
+            0 => "PlayBar_Play".GetLocalized(),
+            1 => "PlayBar_Pause".GetLocalized(),
+            2 => "PlayBar_Play".GetLocalized(),
+            _ => "PlayBar_Play".GetLocalized(),
+        };
+    }
+
     public Visibility GetSliderVisibility(int playstate)
     {
         return playstate switch
@@ -108,6 +121,11 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         return detailedmusicinfo.ArtistAndAlbumStr == "" ? Visibility.Collapsed : Visibility.Visible;
     }
 
+    public string GetShuffleModeToolTip(bool shufflemode)
+    {
+        return shufflemode ? "PlayBar_ShuffleOn".GetLocalized() : "PlayBar_ShuffleOff".GetLocalized();
+    }
+
 
     public Visibility GetShuffleModeIcon(bool shufflemode)
     {
@@ -122,6 +140,17 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
             1 => "\uE8EE",
             2 => "\uE8ED",
             _ => "\uF5E7",
+        };
+    }
+
+    public string GetRepeatModeToolTip(int repeatmode)
+    {
+        return repeatmode switch
+        {
+            0 => "PlayBar_RepeatOff".GetLocalized(),
+            1 => "PlayBar_RepeatAll".GetLocalized(),
+            2 => "PlayBar_RepeatOne".GetLocalized(),
+            _ => "PlayBar_RepeatOff".GetLocalized(),
         };
     }
 
@@ -143,6 +172,22 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         {
             return "\uE74F";
         }
+    }
+
+    public string GetMoreShuffleModeText(bool shufflemode)
+    {
+        return shufflemode ? "PlayBar_More_ShuffleOn".GetLocalized() : "PlayBar_More_ShuffleOff".GetLocalized();
+    }
+
+    public string GetMoreRepeatModeText(int repeatmode)
+    {
+        return repeatmode switch
+        {
+            0 => "PlayBar_More_RepeatOff".GetLocalized(),
+            1 => "PlayBar_More_RepeatAll".GetLocalized(),
+            2 => "PlayBar_More_RepeatOne".GetLocalized(),
+            _ => "PlayBar_More_RepeatOff".GetLocalized(),
+        };
     }
 
     public void CoverBtnClickToDetail(object sender, RoutedEventArgs e)

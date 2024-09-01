@@ -1,12 +1,8 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Activation;
 using The_Untamed_Music_Player.Contracts.Services;
-using The_Untamed_Music_Player.Core.Contracts.Services;
-using The_Untamed_Music_Player.Core.Services;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
