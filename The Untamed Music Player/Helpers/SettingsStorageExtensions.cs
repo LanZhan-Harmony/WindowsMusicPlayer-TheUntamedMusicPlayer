@@ -1,6 +1,4 @@
-﻿using The_Untamed_Music_Player.Core.Helpers;
-
-using Windows.Storage;
+﻿using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Helpers;

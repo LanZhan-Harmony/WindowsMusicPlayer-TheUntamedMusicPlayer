@@ -27,6 +27,42 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="CoverBorder.Width" Value="150"/>
+                        <Setter Target="CoverBorder.Height" Value="150"/>
+                        <Setter Target="ControllerCover.Width" Value="150"/>
+                        <Setter Target="ControllerCover.Height" Value="150"/>
+                        <Setter Target="ControllerCoverGrid.Width" Value="150"/>
+                        <Setter Target="ControllerCoverGrid.Height" Value="150"/>
+                        <Setter Target="ControllerCoverFontIcon.FontSize" Value="50"/>
+                        <Setter Target="DropShadow.Offset" Value="10,10"/>
+                        <Setter Target="LyricViewer.Margin" Value="10,20,20,20"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Normal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="980"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="CoverBorder.Width" Value="400"/>
+                        <Setter Target="CoverBorder.Height" Value="400"/>
+                        <Setter Target="ControllerCover.Width" Value="400"/>
+                        <Setter Target="ControllerCover.Height" Value="400"/>
+                        <Setter Target="ControllerCoverGrid.Width" Value="400"/>
+                        <Setter Target="ControllerCoverGrid.Height" Value="400"/>
+                        <Setter Target="ControllerCoverFontIcon.FontSize" Value="100"/>
+                        <Setter Target="DropShadow.Offset" Value="20,20"/>
+                        <Setter Target="LyricViewer.Margin" Value="20,20,50,20"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid x:Name="AppTitleBar"
               Grid.Row="0"
               Height="33"
@@ -34,7 +70,7 @@
               Canvas.ZIndex="1" CornerRadius="8,8,0,0"
               IsHitTestVisible="True">
             <StackPanel Orientation="Horizontal">
-                <Button Width="48" Height="34"
+                <Button Width="48" Height="39"
                         Click="{x:Bind local:Data.RootPlayBarViewModel.CoverBtnClickToDetail}"
                         FontSize="12"
                         Style="{StaticResource NavigationBackButtonNormalStyle}"/>
@@ -49,38 +85,6 @@
         </Grid>
         <Grid x:Name="ContentGrid"
               Grid.Row="1" Grid.ColumnSpan="2">
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState x:Name="Narrow">
-                        <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowWidth="0"/>
-                        </VisualState.StateTriggers>
-                        <VisualState.Setters>
-                            <Setter Target="CoverBorder.Width" Value="150"/>
-                            <Setter Target="CoverBorder.Height" Value="150"/>
-                            <Setter Target="ControllerCover.Width" Value="150"/>
-                            <Setter Target="ControllerCover.Height" Value="150"/>
-                            <Setter Target="ControllerCoverGrid.Width" Value="150"/>
-                            <Setter Target="ControllerCoverGrid.Height" Value="150"/>
-                            <Setter Target="ControllerCoverFontIcon.FontSize" Value="50"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="Normal">
-                        <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowWidth="1000"/>
-                        </VisualState.StateTriggers>
-                        <VisualState.Setters>
-                            <Setter Target="CoverBorder.Width" Value="400"/>
-                            <Setter Target="CoverBorder.Height" Value="400"/>
-                            <Setter Target="ControllerCover.Width" Value="400"/>
-                            <Setter Target="ControllerCover.Height" Value="400"/>
-                            <Setter Target="ControllerCoverGrid.Width" Value="400"/>
-                            <Setter Target="ControllerCoverGrid.Height" Value="400"/>
-                            <Setter Target="ControllerCoverFontIcon.FontSize" Value="100"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
             <Grid.Background>
                 <ImageBrush x:Name="ContentGridBackground"
                             ImageSource="{x:Bind local:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"
@@ -91,28 +95,28 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="1.2*"/>
                 </Grid.ColumnDefinitions>
-
                 <Border x:Name="ShadowTarget"/>
-                <Border x:Name="CoverBorder" Grid.Column="0"
-                        Width="400" Height="400"
+                <Border x:Name="CoverBorder"
+                        Grid.Column="0"
                         Margin="0,0,0,0" Padding="0"
                         CornerRadius="10">
                     <Canvas>
                         <Image x:Name="ControllerCover"
-                               Width="400" Height="400"
                                HorizontalAlignment="Left" VerticalAlignment="Center"
                                Canvas.ZIndex="1"
                                Source="{x:Bind local:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"/>
-                        <Grid x:Name="ControllerCoverGrid" Width="400" Height="400"
+                        <Grid x:Name="ControllerCoverGrid"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
-                            <FontIcon x:Name="ControllerCoverFontIcon" Canvas.ZIndex="0" FontSize="100"
+                            <FontIcon x:Name="ControllerCoverFontIcon"
+                                      Canvas.ZIndex="0" FontSize="100"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xE8D6;"/>
                         </Grid>
                     </Canvas>
                     <ui:Effects.Shadow>
-                        <ui:AttachedDropShadow BlurRadius="15"
+                        <ui:AttachedDropShadow x:Name="DropShadow"
+                                               BlurRadius="15"
                                                CastTo="{x:Bind ShadowTarget}"
                                                CornerRadius="10" Opacity="0.2"
                                                Offset="20,20"/>
