@@ -352,14 +352,8 @@ public sealed partial class MainWindow : WindowEx
     /// <returns></returns>
     public async Task LoadSelectedMaterialAsync()
     {
-        var notFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
-        if (notFirstUsed)
-        {
-            SelectedMaterial = await _localSettingsService.ReadSettingAsync<byte>("SelectedMaterial");
-        }
-        else
-        {
-            SelectedMaterial = 3;
-        }
+        SelectedMaterial = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed")
+            ? await _localSettingsService.ReadSettingAsync<byte>("SelectedMaterial")
+            : (byte)3;
     }
 }
