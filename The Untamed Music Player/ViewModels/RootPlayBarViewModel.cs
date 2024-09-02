@@ -72,7 +72,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         }
     }
 
-    public string GetPlayPauseIcon(int playstate)
+    public string GetPlayPauseIcon(byte playstate)
     {
         return playstate switch
         {
@@ -83,7 +83,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         };
     }
 
-    public string GetPlayPauseTooltip(int playstate)
+    public string GetPlayPauseTooltip(byte playstate)
     {
         return playstate switch
         {
@@ -94,7 +94,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         };
     }
 
-    public Visibility GetSliderVisibility(int playstate)
+    public Visibility GetSliderVisibility(byte playstate)
     {
         return playstate switch
         {
@@ -105,7 +105,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         };
     }
 
-    public Visibility GetProgressVisibility(int playstate)
+    public Visibility GetProgressVisibility(byte playstate)
     {
         return playstate switch
         {
@@ -132,7 +132,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         return shufflemode ? Visibility.Collapsed : Visibility.Visible;
     }
 
-    public string GetRepeatModeIcon(int repeatmode)
+    public string GetRepeatModeIcon(byte repeatmode)
     {
         return repeatmode switch
         {
@@ -143,7 +143,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         };
     }
 
-    public string GetRepeatModeToolTip(int repeatmode)
+    public string GetRepeatModeToolTip(byte repeatmode)
     {
         return repeatmode switch
         {
@@ -179,7 +179,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         return shufflemode ? "PlayBar_More_ShuffleOn".GetLocalized() : "PlayBar_More_ShuffleOff".GetLocalized();
     }
 
-    public string GetMoreRepeatModeText(int repeatmode)
+    public string GetMoreRepeatModeText(byte repeatmode)
     {
         return repeatmode switch
         {

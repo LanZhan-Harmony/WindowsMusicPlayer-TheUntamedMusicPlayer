@@ -169,11 +169,11 @@ public class BriefMusicInfo
         }
     }
 
-    private uint _year;
+    private ushort _year;
     /// <summary>
     /// 发行年份
     /// </summary>
-    public uint Year
+    public ushort Year
     {
         get => _year;
         set
@@ -308,7 +308,7 @@ public class BriefMusicInfo
             Album = musicFile.Tag.Album ?? "未知专辑";
             Title = string.IsNullOrEmpty(musicFile.Tag.Title) ? System.IO.Path.GetFileNameWithoutExtension(path) : musicFile.Tag.Title;
             Artists = musicFile.Tag.AlbumArtists.Concat(musicFile.Tag.Performers).ToArray().Length != 0 ? [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers] : ["未知艺术家"];
-            Year = musicFile.Tag.Year;
+            Year = (ushort)musicFile.Tag.Year;
             Genre = musicFile.Tag.Genres.Length != 0 ? [.. musicFile.Tag.Genres] : ["未知流派"];
             if (musicFile.Tag.Pictures != null && musicFile.Tag.Pictures.Length != 0)
             {

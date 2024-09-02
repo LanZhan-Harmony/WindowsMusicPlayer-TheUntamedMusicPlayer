@@ -137,11 +137,11 @@ public partial class MusicPlayer : INotifyPropertyChanged
         set => _shuffleMode = value;
     }
 
-    private int _repeatMode = 0;
+    private byte _repeatMode = 0;
     /// <summary>
     /// 循环播放模式, 0为不循环, 1为列表循环, 2为单曲循环
     /// </summary>
-    public int RepeatMode
+    public byte RepeatMode
     {
         get => _repeatMode;
         set
@@ -164,11 +164,11 @@ public partial class MusicPlayer : INotifyPropertyChanged
         }
     }
 
-    private int _playState;
+    private byte _playState;
     /// <summary>
     /// 播放状态, 0为暂停, 1为播放, 2为加载中
     /// </summary>
-    public int PlayState
+    public byte PlayState
     {
         get => _playState;
         set
@@ -315,7 +315,6 @@ public partial class MusicPlayer : INotifyPropertyChanged
     public MusicPlayer(ILocalSettingsService localSettingsService)
     {
         _localSettingsService = localSettingsService;
-        LoadCurrentStateAsync();
         Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
         Player.MediaEnded += OnPlaybackStopped;
         Player.Volume = CurrentVolume / 100;
@@ -325,6 +324,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
         DisplayUpdater.Type = MediaPlaybackType.Music;
         SystemControls.IsEnabled = true;
         SystemControls.ButtonPressed += SystemControls_ButtonPressed;
+        LoadCurrentStateAsync();
     }
 
     ~MusicPlayer()
@@ -336,53 +336,35 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// 按路径播放歌曲
     /// </summary>
     /// <param name="path"></param>
-    /// <param name="isLast">是否是播放列表中最后一曲</param>
-    public void PlaySongByPath(string path, bool isLast = false)
+    public void PlaySongByPath(string path)
     {
         lock (mediaLock)
         {
-            if (!isLast)
+            Stop();
+            CurrentMusic = new DetailedMusicInfo(path);
+            SystemControls.IsPlayEnabled = true;
+            SystemControls.IsPauseEnabled = true;
+
+            var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+            for (var i = 0; i < queue.Count; i++)
             {
-                Stop();
-                CurrentMusic = new DetailedMusicInfo(path);
-                SystemControls.IsPlayEnabled = true;
-                SystemControls.IsPauseEnabled = true;
-                if (ShuffleMode)
+                if (queue[i].Path == path)
                 {
-                    for (var i = 0; i < ShuffledPlayQueue.Count; i++)
-                    {
-                        if (ShuffledPlayQueue[i].Path == path)
-                        {
-                            PlayQueueIndex = i;
-                            break;
-                        }
-                    }
+                    PlayQueueIndex = i;
+                    break;
                 }
-                else
-                {
-                    for (var i = 0; i < PlayQueue.Count; i++)
-                    {
-                        if (PlayQueue[i].Path == path)
-                        {
-                            PlayQueueIndex = i;
-                            break;
-                        }
-                    }
-                }
-                Play();
             }
-            else
-            {
-                Stop();
-                CurrentMusic = new DetailedMusicInfo(path);
-                SystemControls.IsPlayEnabled = true;
-                SystemControls.IsPauseEnabled = true;
-                PlayQueueIndex = 0;
-            }
+
+            Play();
         }
     }
 
-    public void PlaySongByIndex(int index, bool isLast = false)
+    /// <summary>
+    /// 按索引播放歌曲
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="isLast"></param>
+    private void PlaySongByIndex(int index, bool isLast = false)
     {
         lock (mediaLock)
         {
@@ -399,7 +381,6 @@ public partial class MusicPlayer : INotifyPropertyChanged
             }
         }
     }
-
 
     /// <summary>
     /// 为播放器设置音乐源
@@ -457,7 +438,6 @@ public partial class MusicPlayer : INotifyPropertyChanged
                 {
                     PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
-
                         Current = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
                         Total = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
                         CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
@@ -518,11 +498,6 @@ public partial class MusicPlayer : INotifyPropertyChanged
                 case MediaPlaybackState.None:
                     break;
                 case MediaPlaybackState.Opening:
-                    PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
-                    {
-                        PlayState = 2;
-                    });
-                    break;
                 case MediaPlaybackState.Buffering:
                     PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
@@ -557,7 +532,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// <param name="args"></param>
     private void OnPlaybackStopped(MediaPlayer sender, object args)
     {
-        PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
+        PlayBarUI?.DispatcherQueue.TryEnqueue(() =>
         {
             if (Player?.PlaybackSession.PlaybackState == MediaPlaybackState.Paused && !lockable)
             {
@@ -657,76 +632,23 @@ public partial class MusicPlayer : INotifyPropertyChanged
     {
         try
         {
-            switch (ShuffleMode, RepeatMode)
+            var newIndex = PlayQueueIndex < PlayQueueLength - 1 ? PlayQueueIndex + 1 : 0;
+            var isLast = PlayQueueIndex >= PlayQueueLength - 1;
+
+            if (RepeatMode == 1) // 列表循环
             {
-                case (false, 0):// 不随机, 不循环
-                    {
-                        if (PlayQueueIndex < PlayQueueLength - 1)
-                        {
-                            PlaySongByPath(PlayQueue[PlayQueueIndex + 1].Path);
-                        }
-                        else// 播放队列最后一首歌
-                        {
-                            PlaySongByPath(PlayQueue[0].Path, true);
-                        }
-                        break;
-                    }
-                case (false, 1):// 不随机, 列表循环
-                    {
-                        {
-                            PlaySongByPath(PlayQueue[(PlayQueueIndex + 1) % PlayQueueLength].Path);
-                            break;
-                        }
-                    }
-                case (false, 2):// 不随机, 单曲循环
-                    {
-                        if (PlayQueueIndex < PlayQueueLength - 1)
-                        {
-                            PlaySongByPath(PlayQueue[PlayQueueIndex + 1].Path);
-                        }
-                        else
-                        {
-                            PlaySongByPath(PlayQueue[0].Path, true);
-                        }
-                        break;
-                    }
-                case (true, 0):// 随机, 不循环
-                    {
-                        if (PlayQueueIndex < PlayQueueLength - 1)
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[PlayQueueIndex + 1].Path);
-                        }
-                        else
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[0].Path, true);
-                        }
-                        break;
-                    }
-                case (true, 1):// 随机, 列表循环
-                    {
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[(PlayQueueIndex + 1) % PlayQueueLength].Path);
-                            break;
-                        }
-                    }
-                case (true, 2):// 随机, 单曲循环
-                    {
-                        if (PlayQueueIndex < PlayQueueLength - 1)
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[PlayQueueIndex + 1].Path);
-                        }
-                        else
-                        {
-                            PlaySongByPath(ShuffledPlayQueue[0].Path, true);
-                        }
-                        break;
-                    }
-                default:
-                    break;
+                newIndex = (PlayQueueIndex + 1) % PlayQueueLength;
+                isLast = false;
             }
+
+            PlaySongByIndex(newIndex, isLast);
         }
-        catch { }
+        catch
+        {
+            Debug.WriteLine("播放下一曲失败");
+        }
     }
+
 
     /// <summary>
     /// 播放按钮更新
@@ -773,7 +695,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// </summary>
     public void RepeatModeUpdate()
     {
-        RepeatMode = (RepeatMode + 1) % 3;
+        RepeatMode = (byte)((RepeatMode + 1) % 3);
     }
 
     /// <summary>
@@ -879,34 +801,16 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// <returns></returns>
     public double GetLyricFont(double itemTime, int CurrentLyricIdx)
     {
+        double defaultFontSize = Data.MainWindow?.Width <= 1000 ? 16 : 20;
+        double highlightedFontSize = Data.MainWindow?.Width <= 1000 ? 24 : 50;
+
         try
         {
-            if (Data.MainWindow?.Width <= 1000)
-            {
-                if (itemTime == CurrentLyric[CurrentLyricIdx].Time)
-                {
-                    return 24;
-                }
-                else
-                {
-                    return 16;
-                }
-            }
-            else
-            {
-                if (itemTime == CurrentLyric[CurrentLyricIdx].Time)
-                {
-                    return 50;
-                }
-                else
-                {
-                    return 20;
-                }
-            }
+            return itemTime == CurrentLyric[CurrentLyricIdx].Time ? highlightedFontSize : defaultFontSize;
         }
         catch
         {
-            return 20;
+            return defaultFontSize;
         }
     }
 
@@ -918,20 +822,16 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// <returns></returns>
     public Thickness GetLyricMargin(double itemTime, int CurrentLyricIdx)
     {
+        var defaultMargin = new Thickness(0, 20, 0, 20);
+        var highlightedMargin = new Thickness(0, 40, 0, 40);
+
         try
         {
-            if (itemTime == CurrentLyric[CurrentLyricIdx].Time)
-            {
-                return new Thickness(0, 40, 0, 40);
-            }
-            else
-            {
-                return new Thickness(0, 20, 0, 20);
-            }
+            return itemTime == CurrentLyric[CurrentLyricIdx].Time ? highlightedMargin : defaultMargin;
         }
         catch
         {
-            return new Thickness(0, 20, 0, 20);
+            return defaultMargin;
         }
     }
 
@@ -943,22 +843,19 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// <returns></returns>
     public double GetLyricOpacity(double itemTime, int CurrentLyricIdx)
     {
+        const double defaultOpacity = 0.5;
+        const double highlightedOpacity = 1.0;
+
         try
         {
-            if (itemTime == CurrentLyric[CurrentLyricIdx].Time)
-            {
-                return 1;
-            }
-            else
-            {
-                return 0.5;
-            }
+            return itemTime == CurrentLyric[CurrentLyricIdx].Time ? highlightedOpacity : defaultOpacity;
         }
         catch
         {
-            return 0.5;
+            return defaultOpacity;
         }
     }
+
 
     /// <summary>
     /// 获取播放队列
@@ -966,17 +863,8 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// <param name="PlayQueueName"></param>
     /// <param name="ShuffleMode"></param>
     /// <returns></returns>
-    public ObservableCollection<BriefMusicInfo> GetPlayQueue(string PlayQueueName, bool ShuffleMode)
-    {
-        if (ShuffleMode)
-        {
-            return ShuffledPlayQueue;
-        }
-        else
-        {
-            return PlayQueue;
-        }
-    }
+    public ObservableCollection<BriefMusicInfo> GetPlayQueue(string PlayQueueName, bool ShuffleMode) => ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+
 
     /// <summary>
     /// 保存当前播放状态至设置存储
@@ -1034,7 +922,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
         }
         PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>("PlayQueueIndex");*/
         ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
-        RepeatMode = await _localSettingsService.ReadSettingAsync<int>("RepeatMode");
+        RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
         if (notFirstUsed)
         {
             CurrentVolume = await _localSettingsService.ReadSettingAsync<double>("CurrentVolume");
