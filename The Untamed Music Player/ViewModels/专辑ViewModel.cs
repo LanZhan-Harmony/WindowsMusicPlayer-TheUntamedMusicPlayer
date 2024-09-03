@@ -1,10 +1,24 @@
 ﻿using System.Collections.ObjectModel;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
 public class 专辑ViewModel
 {
+    private List<string> _sortBy = [.. "专辑_SortBy".GetLocalized().Split(", ")];
+    public List<string> SortBy
+    {
+        get => _sortBy;
+        set => _sortBy = value;
+    }
+    private byte _sortMode;
+    public byte SortMode
+    {
+        get => _sortMode;
+        set => _sortMode = value;
+    }
+
     private ObservableCollection<AlbumInfo> _albumList = [];
     public ObservableCollection<AlbumInfo> AlbumList
     {
@@ -22,55 +36,89 @@ public class 专辑ViewModel
         await Task.Run(() =>
         {
             AlbumList = new ObservableCollection<AlbumInfo>(albumList.Values);
-            SortAlbumsByModifiedTimeDescending();
+        });
+        SortAlbums();
+    }
+
+    public async void SortAlbums()
+    {
+        var sortTask = SortMode switch
+        {
+            0 => SortAlbumsByTitleAscending(),
+            1 => SortAlbumsByTitleDescending(),
+            2 => SortAlbumsByYearAscending(),
+            3 => SortAlbumsByYearDescending(),
+            4 => SortAlbumsByArtistAscending(),
+            5 => SortAlbumsByArtistDescending(),
+            6 => SortAlbumsByModifiedTimeAscending(),
+            7 => SortAlbumsByModifiedTimeDescending(),
+            _ => SortAlbumsByTitleAscending()
+        };
+
+        await sortTask;
+    }
+
+    public async Task SortAlbumsByTitleAscending()
+    {
+        await Task.Run(() =>
+        {
+            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.Name));
         });
     }
 
-    public void SortAlbumsByTitle()
+    public async Task SortAlbumsByTitleDescending()
     {
-        AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.Name));
-        GC.Collect();
+        await Task.Run(() =>
+        {
+            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.Name));
+        });
     }
 
-    public void SortAlbumsByTitleDescending()
+    public async Task SortAlbumsByYearAscending()
     {
-        AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.Name));
-        GC.Collect();
+        await Task.Run(() =>
+        {
+            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.Year));
+        });
     }
 
-    public void SortAlbumsByYear()
+    public async Task SortAlbumsByYearDescending()
     {
-        AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.Year));
-        GC.Collect();
+        await Task.Run(() =>
+        {
+            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.Year));
+        });
     }
 
-    public void SortAlbumsByYearDescending()
+    public async Task SortAlbumsByArtistAscending()
     {
-        AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.Year));
-        GC.Collect();
+        await Task.Run(() =>
+        {
+            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.Artist));
+        });
     }
 
-    public void SortAlbumsByArtist()
+    public async Task SortAlbumsByArtistDescending()
     {
-        AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.Artist));
-        GC.Collect();
+        await Task.Run(() =>
+        {
+            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.Artist));
+        });
     }
 
-    public void SortAlbumsByArtistDescending()
+    public async Task SortAlbumsByModifiedTimeAscending()
     {
-        AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.Artist));
-        GC.Collect();
+        await Task.Run(() =>
+        {
+            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.ModifiedDate));
+        });
     }
 
-    public void SortAlbumsByModifiedTime()
+    public async Task SortAlbumsByModifiedTimeDescending()
     {
-        AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.ModifiedDate));
-        GC.Collect();
-    }
-
-    public void SortAlbumsByModifiedTimeDescending()
-    {
-        AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.ModifiedDate));
-        GC.Collect();
+        await Task.Run(() =>
+        {
+            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.ModifiedDate));
+        });
     }
 }

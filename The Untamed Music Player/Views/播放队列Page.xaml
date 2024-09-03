@@ -15,65 +15,65 @@
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="播放">
+                        <MenuFlyoutItem x:Uid="歌曲_Play">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE768;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="加入播放队列">
+                        <MenuFlyoutItem x:Uid="歌曲_PlayNext">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutSubItem Text="添加到">
+                        <MenuFlyoutSubItem x:Uid="歌曲_AddTo">
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xE710;"/>
                             </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem Text="播放队列">
+                            <MenuFlyoutItem x:Uid="歌曲_AddTo_PlayQueue">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE90B;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem Text="新建播放列表">
+                            <MenuFlyoutItem x:Uid="歌曲_AddTo_NewPlaylist">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE710;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem Text="删除">
+                        <MenuFlyoutItem x:Uid="播放队列_Remove">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE711;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="上移">
+                        <MenuFlyoutItem x:Uid="播放队列_MoveUp">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE74A;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="下移">
+                        <MenuFlyoutItem x:Uid="播放队列_MoveDown">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE74B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="属性">
+                        <MenuFlyoutItem x:Uid="歌曲_Properties">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE946;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="显示专辑">
+                        <MenuFlyoutItem x:Uid="歌曲_ShowAlbum">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE93C;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="显示艺术家">
+                        <MenuFlyoutItem x:Uid="歌曲_ShowArtist">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE77B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="选择">
+                        <MenuFlyoutItem x:Uid="歌曲_Select">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE762;"/>
                             </MenuFlyoutItem.Icon>
@@ -93,14 +93,14 @@
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
                           IsThreeState="False" Visibility="Collapsed"/>
-                <Button x:Name="PlayButton"
+                <Button x:Name="PlayButton" x:Uid="歌曲_PlayButton"
                         Grid.Column="1"
                         Padding="5"
                         Background="Transparent" BorderBrush="Transparent"
                         Canvas.ZIndex="1" Click="PlayButton_Click"
                         DataContext="{x:Bind}"
                         Style="{StaticResource SmallPlayButtonStyle}"
-                        ToolTipService.ToolTip="播放" Visibility="Collapsed">
+                        Visibility="Collapsed">
                     <FontIcon FontSize="16"
                               Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                               Glyph="&#xE768;"/>
@@ -189,8 +189,6 @@
                         <Setter Target="TitleGrid.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
                         <Setter Target="AddTextBlock.Visibility" Value="Visible"/>
                         <Setter Target="MenuPanel.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
-                        <Setter Target="ClearButton.Width" Value="72"/>
-                        <Setter Target="AddToButton.Width" Value="84"/>
                         <Setter Target="ClearTextBlock.Visibility" Value="Visible"/>
                         <Setter Target="AddToTextBlock.Visibility" Value="Visible"/>
                         <Setter Target="PlayqueueListView.Padding" Value="52,0,52,0"/>
@@ -210,40 +208,41 @@
             <SplitButton Grid.Column="2" Height="30">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="12" Glyph="&#xE838;"/>
-                    <TextBlock x:Name="AddTextBlock" Text="添加文件"/>
+                    <TextBlock x:Name="AddTextBlock" x:Uid="播放队列_AddFiles"/>
                 </StackPanel>
                 <SplitButton.Flyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Margin="3,1,3,2">
                             <MenuFlyoutItem.Template>
                                 <ControlTemplate>
-                                    <Button Style="{StaticResource CoverButtonStyle}">
-                                        <StackPanel Margin="10,4,178,5"
+                                    <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
+                                        <StackPanel Margin="10,4,10,5"
                                                     Orientation="Horizontal" Spacing="12">
                                             <FontIcon FontSize="16" Glyph="&#xE838;"/>
                                             <StackPanel>
-                                                <TextBlock Text="添加文件到播放队列"/>
-                                                <TextBlock FontSize="12"
-                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                           Text="浏览要添加到播放队列的文件"/>
+                                                <TextBlock x:Uid="播放队列_AddFiles_AddFilesToPlayQueue"/>
+                                                <TextBlock x:Uid="播放队列_AddFiles_BrowseForFiles"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
                                 </ControlTemplate>
                             </MenuFlyoutItem.Template>
                         </MenuFlyoutItem>
+
                         <MenuFlyoutItem Margin="3,0,3,2">
                             <MenuFlyoutItem.Template>
                                 <ControlTemplate>
-                                    <Button Style="{StaticResource CoverButtonStyle}">
+                                    <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
                                                     Orientation="Horizontal" Spacing="12">
                                             <FontIcon FontSize="16" Glyph="&#xE8B7;"/>
                                             <StackPanel>
-                                                <TextBlock Text="添加文件夹到播放队列"/>
-                                                <TextBlock FontSize="12"
-                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                           Text="选择一个文件夹，并将该文件夹中的所有媒体添加到播放队列"/>
+                                                <TextBlock x:Uid="播放队列_AddFiles_AddFolderToPlayQueue"/>
+                                                <TextBlock x:Uid="播放队列_AddFiles_ChooseAFolder"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
@@ -253,15 +252,15 @@
                         <MenuFlyoutItem Margin="3,0,3,1">
                             <MenuFlyoutItem.Template>
                                 <ControlTemplate>
-                                    <Button Style="{StaticResource CoverButtonStyle}">
-                                        <StackPanel Margin="10,4,84,5"
+                                    <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
+                                        <StackPanel Margin="10,4,10,5"
                                                     Orientation="Horizontal" Spacing="12">
                                             <FontIcon FontSize="16" Glyph="&#xE774;"/>
                                             <StackPanel>
-                                                <TextBlock Text="从URL将媒体添加到播放队列"/>
-                                                <TextBlock FontSize="12"
-                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                           Text="输入URL，并将该地址中的媒体添加到播放队列"/>
+                                                <TextBlock x:Uid="播放队列_AddFiles_AddMediaFromURL"/>
+                                                <TextBlock x:Uid="播放队列_AddFiles_EnterAURL"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
@@ -277,31 +276,28 @@
                     Orientation="Horizontal" Spacing="16">
             <Button x:Name="ClearButton"
                     Height="36"
-                    Padding="0"
                     Click="{x:Bind ViewModel.ClearButton_Click}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="16" Glyph="&#xE74D;"/>
-                    <TextBlock x:Name="ClearTextBlock"
-                               FontSize="12" Text="清除"/>
+                    <TextBlock x:Name="ClearTextBlock" x:Uid="播放队列_Clear"
+                               FontSize="12"/>
                 </StackPanel>
             </Button>
-            <Button x:Name="AddToButton"
-                    Height="36"
-                    Padding="0">
+            <Button x:Name="AddToButton" Height="36">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="16" Glyph="&#xE710;"/>
-                    <TextBlock x:Name="AddToTextBlock"
-                               FontSize="12" Text="添加到"/>
+                    <TextBlock x:Name="AddToTextBlock" x:Uid="歌曲_AddTo"
+                               FontSize="12"/>
                 </StackPanel>
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Text="播放队列">
+                        <MenuFlyoutItem x:Uid="歌曲_AddTo_PlayQueue">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE90B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="新建播放列表">
+                        <MenuFlyoutItem x:Uid="歌曲_AddTo_NewPlaylist">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE710;"/>
                             </MenuFlyoutItem.Icon>

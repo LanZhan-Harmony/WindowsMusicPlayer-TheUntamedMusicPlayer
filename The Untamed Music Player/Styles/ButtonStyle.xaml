@@ -100,6 +100,56 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="FlyoutButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="Root"
+                          MinWidth="{TemplateBinding MinWidth}"
+                          MaxWidth="{TemplateBinding MaxWidth}"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}"/>
+                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}"/>
+                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushDisabled}"/>
+                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter x:Name="Content"
+                                          HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                          HorizontalContentAlignment="Left"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style x:Key="SmallPlayButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}"/>

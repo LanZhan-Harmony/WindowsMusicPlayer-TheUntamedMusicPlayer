@@ -80,11 +80,11 @@ public class AlbumInfo : INotifyPropertyChanged
         }
     }
 
-    private DateTimeOffset _modifiedDate;
+    private long _modifiedDate;
     /// <summary>
     /// 修改日期
     /// </summary>
-    public DateTimeOffset ModifiedDate
+    public long ModifiedDate
     {
         get => _modifiedDate;
         set => _modifiedDate = value;
