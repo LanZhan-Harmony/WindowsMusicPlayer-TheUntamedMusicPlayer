@@ -43,7 +43,7 @@
             <AutoSuggestBox Grid.Column="1"
                             Height="32"
                             Margin="0,7,0,0" VerticalAlignment="Center"
-                            PlaceholderText="搜索歌曲" QueryIcon="Find"
+                            x:Uid="主页_SearchOnlineSongs" QueryIcon="Find"
                             QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted}"
                             SuggestionChosen="{x:Bind ViewModel.SuggestBox_SuggestionChosen}"
                             TextChanged="{x:Bind ViewModel.SuggestBox_TextChanged}"/>

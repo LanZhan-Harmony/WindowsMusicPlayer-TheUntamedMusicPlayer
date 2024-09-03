@@ -47,7 +47,7 @@
                 </VisualState>
                 <VisualState x:Name="Normal">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="980"/>
+                        <AdaptiveTrigger MinWindowWidth="980" MinWindowHeight="645"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="CoverBorder.Width" Value="400"/>

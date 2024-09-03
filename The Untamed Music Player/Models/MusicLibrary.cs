@@ -25,8 +25,10 @@ public class MusicLibrary : INotifyPropertyChanged
         }
     }
 
-    private ObservableCollection<BriefMusicInfo> _musics = [];
-    public ObservableCollection<BriefMusicInfo> Musics
+    private readonly HashSet<string> _musicPaths = [];
+
+    private List<BriefMusicInfo> _musics = [];
+    public List<BriefMusicInfo> Musics
     {
         get => _musics;
         set
@@ -74,9 +76,7 @@ public class MusicLibrary : INotifyPropertyChanged
                 await LoadMusic(folder);
             }
         }
-        SortMusicsByModifiedTimeDescending();
-        OnPropertyChanged(nameof(Artists));
-        OnPropertyChanged(nameof(Albums));
+        _musicPaths.Clear();
         OnPropertyChanged(nameof(HasMusics));
     }
 
@@ -92,9 +92,7 @@ public class MusicLibrary : INotifyPropertyChanged
                 await LoadMusic(folder);
             }
         }
-        SortMusicsByModifiedTimeDescending();
-        OnPropertyChanged(nameof(Artists));
-        OnPropertyChanged(nameof(Albums));
+        _musicPaths.Clear();
         OnPropertyChanged(nameof(HasMusics));
     }
 
@@ -118,20 +116,20 @@ public class MusicLibrary : INotifyPropertyChanged
         try
         {
             var allFiles = await folder.GetFilesAsync();
-            foreach (var file in allFiles)
+            var supportedFiles = allFiles.Where(file => Data.SupportedAudioTypes.Contains(file.FileType.ToLower()));
+
+            foreach (var file in supportedFiles)
             {
-                if (Data.SupportedAudioTypes.Contains(file.FileType.ToLower()) && Musics != null)
+                if (Musics != null && !_musicPaths.Contains(file.Path))
                 {
-                    // 检查 Musics 集合中是否已经存在相同路径的音乐
-                    if (!Musics.Any(m => m.Path == file.Path))
-                    {
-                        var briefMusicInfo = new BriefMusicInfo(file.Path);
-                        Musics?.Add(briefMusicInfo);
-                        UpdateAlbumInfo(briefMusicInfo);
-                        UpdateArtistInfo(briefMusicInfo);
-                    }
+                    var briefMusicInfo = new BriefMusicInfo(file.Path);
+                    Musics.Add(briefMusicInfo);
+                    _musicPaths.Add(file.Path);
+                    UpdateAlbumInfo(briefMusicInfo);
+                    UpdateArtistInfo(briefMusicInfo);
                 }
             }
+
             var subFolders = await folder.GetFoldersAsync();
             foreach (var subFolder in subFolders)
             {
@@ -213,135 +211,5 @@ public class MusicLibrary : INotifyPropertyChanged
             }
         }
         return list;
-    }
-
-    /// <summary>
-    /// 根据歌曲名升序排序
-    /// </summary>
-    public void SortMusicsByTitle()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderBy(m => m.Title));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
-    }
-
-    /// <summary>
-    /// 根据歌曲名降序排序
-    /// </summary>
-    public void SortMusicsByTitleDescending()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderByDescending(m => m.Title));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
-    }
-
-    /// <summary>
-    /// 根据艺术家名升序排序
-    /// </summary>
-    public void SortMusicsByArtist()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderBy(m => m.ArtistsStr));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
-    }
-
-    /// <summary>
-    /// 根据艺术家名降序排序
-    /// </summary>
-    public void SortMusicsByArtistDescending()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderByDescending(m => m.ArtistsStr));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
-    }
-
-    /// <summary>
-    /// 根据专辑名升序排序
-    /// </summary>
-    public void SortMusicsByAlbum()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderBy(m => m.Album));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
-    }
-
-    /// <summary>
-    /// 根据专辑名降序排序
-    /// </summary>
-    public void SortMusicsByAlbumDescending()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderByDescending(m => m.Album));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
-    }
-
-    /// <summary>
-    /// 根据发行年份升序排序
-    /// </summary>
-    public void SortMusicsByYear()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderBy(m => m.Year));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
-    }
-
-    /// <summary>
-    /// 根据发行年份降序排序
-    /// </summary>
-    public void SortMusicsByYearDescending()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderByDescending(m => m.Year));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
-    }
-
-    /// <summary>
-    /// 根据修改日期升序排序
-    /// </summary>
-    public void SortMusicsByModifiedTime()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderBy(m => m.ModifiedDate));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
-    }
-
-    /// <summary>
-    /// 根据修改日期降序排序
-    /// </summary>
-    public void SortMusicsByModifiedTimeDescending()
-    {
-        if (Musics != null)
-        {
-            var sortedMusics = new ObservableCollection<BriefMusicInfo>(Musics.OrderByDescending(m => m.ModifiedDate));
-            Musics = sortedMusics;
-        }
-        GC.Collect();
     }
 }
