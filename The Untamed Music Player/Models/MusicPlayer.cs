@@ -53,6 +53,13 @@ public partial class MusicPlayer : INotifyPropertyChanged
         get; set;
     }
 
+    private byte _sortMode;
+    public byte SortMode
+    {
+        get => _sortMode;
+        set => _sortMode = value;
+    }
+
     private string? _playQueueName;
     /// <summary>
     /// 播放队列名
@@ -411,17 +418,22 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// </summary>
     /// <param name="name"></param>
     /// <param name="list"></param>
-    public async void SetPlayList(string name, ObservableCollection<BriefMusicInfo> list)
+    public async void SetPlayList(string name, ObservableCollection<BriefMusicInfo> list, byte sortmode)
     {
-        PlayQueueName = name;
-        PlayQueue = new ObservableCollection<BriefMusicInfo>(list);
-        PlayQueueLength = list.Count;
-        if (Data.RootPlayBarViewModel != null)
+        if (PlayQueue.Count != list.Count || PlayQueueName != name || SortMode != sortmode)
         {
-            Data.RootPlayBarViewModel.ButtonVisibility = PlayQueue.Any() ? Visibility.Visible : Visibility.Collapsed;
-            Data.RootPlayBarViewModel.Availability = PlayQueue.Any();
+            SortMode = sortmode;
+            PlayQueueName = name;
+            PlayQueue = new ObservableCollection<BriefMusicInfo>(list);
+            PlayQueueLength = list.Count;
+            var hasMusics = PlayQueue.Any();
+            if (Data.RootPlayBarViewModel != null)
+            {
+                Data.RootPlayBarViewModel.ButtonVisibility = hasMusics ? Visibility.Visible : Visibility.Collapsed;
+                Data.RootPlayBarViewModel.Availability = hasMusics;
+            }
+            await UpdateShufflePlayQueue();
         }
-        await UpdateShufflePlayQueue();
     }
 
     /// <summary>

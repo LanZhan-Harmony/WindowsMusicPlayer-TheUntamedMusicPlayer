@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -114,7 +115,7 @@ public class BriefMusicInfo
     {
         if (_artists == null || _artists.Length == 0)
         {
-            return "未知艺术家";
+            return "MusicInfo_UnknownArtist".GetLocalized();
         }
         var sb = new StringBuilder();
         foreach (var artist in _artists)
@@ -185,7 +186,7 @@ public class BriefMusicInfo
 
     private string _yearStr = "";
     /// <summary>
-    /// 发行年份字符串
+    /// 发行年份字符串, 为0时返回空字符串
     /// </summary>
     public string YearStr
     {
@@ -245,7 +246,7 @@ public class BriefMusicInfo
     {
         if (_genre == null || _genre.Length == 0)
         {
-            return "未知流派";
+            return "MusicInfo_UnknownGenre".GetLocalized();
         }
         var sb = new StringBuilder();
         foreach (var genre in _genre)
@@ -260,11 +261,11 @@ public class BriefMusicInfo
         return sb.ToString();
     }
 
-    private DateTimeOffset _modifiedDate;
+    private long _modifiedDate;
     /// <summary>
     /// 修改日期
     /// </summary>
-    public DateTimeOffset ModifiedDate
+    public long ModifiedDate
     {
         get => _modifiedDate;
         set => _modifiedDate = value;
@@ -303,13 +304,13 @@ public class BriefMusicInfo
         {
             var musicFile = TagLib.File.Create(path);
             Path = path;
-            ModifiedDate = new FileInfo(path).LastWriteTime;
+            ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
             ItemType = System.IO.Path.GetExtension(path).ToLower();
-            Album = musicFile.Tag.Album ?? "未知专辑";
+            Album = musicFile.Tag.Album ?? "MusicInfo_UnknownAlbum".GetLocalized();
             Title = string.IsNullOrEmpty(musicFile.Tag.Title) ? System.IO.Path.GetFileNameWithoutExtension(path) : musicFile.Tag.Title;
-            Artists = musicFile.Tag.AlbumArtists.Concat(musicFile.Tag.Performers).ToArray().Length != 0 ? [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers] : ["未知艺术家"];
+            Artists = musicFile.Tag.AlbumArtists.Concat(musicFile.Tag.Performers).ToArray().Length != 0 ? [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers] : ["MusicInfo_UnknownArtist".GetLocalized()];
             Year = (ushort)musicFile.Tag.Year;
-            Genre = musicFile.Tag.Genres.Length != 0 ? [.. musicFile.Tag.Genres] : ["未知流派"];
+            Genre = musicFile.Tag.Genres.Length != 0 ? [.. musicFile.Tag.Genres] : ["MusicInfo_UnknownGenre".GetLocalized()];
             if (musicFile.Tag.Pictures != null && musicFile.Tag.Pictures.Length != 0)
             {
                 var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
@@ -327,12 +328,12 @@ public class BriefMusicInfo
         catch (Exception)
         {
             Path = path;
-            ModifiedDate = new FileInfo(path).LastWriteTime;
+            ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
             ItemType = System.IO.Path.GetExtension(path).ToLower();
-            Album = "未知专辑";
+            Album = "MusicInfo_UnknownAlbum".GetLocalized();
             Title = System.IO.Path.GetFileNameWithoutExtension(path);
-            Artists = ["未知艺术家"];
-            Genre = ["未知流派"];
+            Artists = ["MusicInfo_UnknownArtist".GetLocalized()];
+            Genre = ["MusicInfo_UnknownGenre".GetLocalized()];
             Duration = TimeSpan.Zero;
         }
     }

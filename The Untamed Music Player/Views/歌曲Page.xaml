@@ -12,61 +12,69 @@
       mc:Ignorable="d">
 
     <Page.Resources>
+        <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
+            <ListViewItem Margin="0,2,0,2">
+                <TextBlock Text="{x:Bind}"/>
+            </ListViewItem>
+        </DataTemplate>
+        <CollectionViewSource x:Name="GroupedSongList"
+                              IsSourceGrouped="True"
+                              Source="{x:Bind ViewModel.GroupedSongList, Mode=OneWay}"/>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefMusicInfo">
             <Grid Height="46"
                   Background="Transparent" PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="播放">
+                        <MenuFlyoutItem x:Uid="歌曲_Play">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE768;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="加入播放队列">
+                        <MenuFlyoutItem x:Uid="歌曲_PlayNext">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutSubItem Text="添加到">
+                        <MenuFlyoutSubItem x:Uid="歌曲_AddTo">
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xE710;"/>
                             </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem Text="播放队列">
+                            <MenuFlyoutItem x:Uid="歌曲_AddTo_PlayQueue">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE90B;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem Text="新建播放列表">
+                            <MenuFlyoutItem x:Uid="歌曲_AddTo_NewPlaylist">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE710;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem Text="编辑信息">
+                        <MenuFlyoutItem x:Uid="歌曲_EditInfo">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE70F;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="属性">
+                        <MenuFlyoutItem x:Uid="歌曲_Properties">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE946;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="显示专辑">
+                        <MenuFlyoutItem x:Uid="歌曲_ShowAlbum">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE93C;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="显示艺术家">
+                        <MenuFlyoutItem x:Uid="歌曲_ShowArtist">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE77B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="选择">
+                        <MenuFlyoutItem x:Uid="歌曲_Select">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE762;"/>
                             </MenuFlyoutItem.Icon>
@@ -86,12 +94,12 @@
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
                           IsThreeState="False" Visibility="Collapsed"/>
-                <Button x:Name="PlayButton"
+                <Button x:Name="PlayButton" x:Uid="歌曲_PlayButton"
                         Grid.Column="1"
                         Click="PlayButton_Click"
                         DataContext="{x:Bind}"
                         Style="{StaticResource SmallPlayButtonStyle}"
-                        ToolTipService.ToolTip="播放" Visibility="Collapsed">
+                        Visibility="Collapsed">
                     <FontIcon FontSize="16"
                               Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                               Glyph="&#xE768;"/>
@@ -182,45 +190,32 @@
                     Style="{StaticResource AccentButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <FontIcon FontSize="12" Glyph="&#xE8B1;"/>
-                    <TextBlock Text=" 随机播放"/>
+                    <TextBlock x:Uid="有音乐_Shuffle"/>
                 </StackPanel>
             </Button>
             <StackPanel Grid.Column="2"
                         Orientation="Horizontal" Spacing="16">
                 <Button Background="Transparent" BorderBrush="Transparent">
                     <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock Text="排序方式："/>
-                        <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="已添加日期"/>
+                        <TextBlock x:Uid="歌曲_SortByChosen"/>
+                        <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetSortByStr(ViewModel.SortMode), Mode=OneWay}"/>
                         <FontIcon Margin="8,0,0,0"
                                   FontSize="12" Glyph="&#xE70D;"/>
                     </StackPanel>
                     <Button.Flyout>
                         <Flyout Placement="Bottom">
-                            <ListView x:Name="SortListView"
+                            <ListView x:Name="SortByListView"
                                       Margin="-12,-13,-12,-15"
-                                      SelectedIndex="4">
-                                <ListViewItem Margin="0,2,0,2">
-                                    <TextBlock Text="A-Z"/>
-                                </ListViewItem>
-                                <ListViewItem Margin="0,2,0,2">
-                                    <TextBlock Text="歌手"/>
-                                </ListViewItem>
-                                <ListViewItem Margin="0,2,0,2">
-                                    <TextBlock Text="专辑"/>
-                                </ListViewItem>
-                                <ListViewItem Margin="0,2,0,2">
-                                    <TextBlock Text="发行年份"/>
-                                </ListViewItem>
-                                <ListViewItem Margin="0,2,0,2">
-                                    <TextBlock Text="已添加日期"/>
-                                </ListViewItem>
-                            </ListView>
+                                      ItemTemplate="{StaticResource SortByListViewItemTemplate}"
+                                      ItemsSource="{x:Bind ViewModel.SortBy}"
+                                      Loaded="{x:Bind ViewModel.SortByListView_Loaded}"
+                                      SelectionChanged="{x:Bind ViewModel.SortByListView_SelectionChanged}"/>
                         </Flyout>
                     </Button.Flyout>
                 </Button>
                 <Button Background="Transparent" BorderBrush="Transparent">
                     <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock Text="流派："/>
+                        <TextBlock x:Uid="歌曲_GenreChosen"/>
                         <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="所有流派"/>
                         <FontIcon Margin="8,0,0,0"
                                   FontSize="12" Glyph="&#xE70D;"/>
@@ -248,8 +243,26 @@
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
-                  ItemsSource="{x:Bind model:Data.MusicLibrary.Musics, Mode=OneWay}"
+                  ItemsSource="{x:Bind GroupedSongList.View, Mode=OneWay}"
                   SelectionMode="None">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel AreStickyGroupHeadersEnabled="True"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate x:DataType="helper:GroupInfoList">
+                            <Border AutomationProperties.AccessibilityView="Raw">
+                                <TextBlock AutomationProperties.AccessibilityView="Raw"
+                                           Foreground="{StaticResource AccentTextFillColorTertiaryBrush}"
+                                           Text="{x:Bind Key}"/>
+                            </Border>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
             <interactivity:Interaction.Behaviors>
                 <helper:AlternatingListViewBehavior AlternateBackground="#FDFEFE" DarkThemeBackground="#303539"/>
             </interactivity:Interaction.Behaviors>

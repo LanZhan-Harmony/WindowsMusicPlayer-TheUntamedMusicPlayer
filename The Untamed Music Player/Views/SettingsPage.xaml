@@ -178,14 +178,13 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
 
-                    <toolkit:SettingsCard Header="窗口材质(更改后建议重启本应用)">
+                    <toolkit:SettingsCard x:Uid="Settings_WindowMaterial">
                         <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xF5ED;"/>
                         </toolkit:SettingsCard.HeaderIcon>
-                        <ComboBox x:Name="MaterialComboBox"
+                        <ComboBox x:Name="MaterialComboBox" x:Uid="Settings_ChooseAMaterial"
                                   ItemsSource="{x:Bind ViewModel.Materials}"
                                   Loaded="{x:Bind ViewModel.MaterialComboBox_Loaded}"
-                                  PlaceholderText="选择一个材质"
                                   SelectionChanged="{x:Bind ViewModel.MaterialComboBox_SelectionChanged}"/>
                     </toolkit:SettingsCard>
                 </StackPanel>
@@ -195,21 +194,20 @@
                         <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
                         <RepositionThemeTransition IsStaggeringEnabled="False"/>
                     </StackPanel.ChildrenTransitions>
-                    <TextBlock Margin="0,12,0,5"
-                               Style="{StaticResource BodyStrongTextBlockStyle}"
-                               Text="歌词设置"/>
-                    <toolkit:SettingsCard Header="歌词字体">
+                    <TextBlock x:Uid="Settings_LyricSettings"
+                               Margin="0,12,0,5"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <toolkit:SettingsCard x:Uid="Settings_LyricFontFamily">
                         <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE8D2;"/>
                         </toolkit:SettingsCard.HeaderIcon>
-                        <ComboBox x:Name="FontComboBox"
+                        <ComboBox x:Name="FontComboBox" x:Uid="Settings_ChooseAFontFamily"
                                   ItemsSource="{x:Bind ViewModel.Fonts}"
                                   Loaded="{x:Bind ViewModel.FontComboBox_Loaded}"
-                                  PlaceholderText="选择一个字体"
                                   SelectionChanged="{x:Bind ViewModel.FontComboBox_SelectionChanged}"/>
                     </toolkit:SettingsCard>
 
-                    <toolkit:SettingsCard Header="歌词背景设为模糊的封面">
+                    <toolkit:SettingsCard x:Uid="Settings_LyricBackgroundFollowsCover">
                         <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE7C4;"/>
                         </toolkit:SettingsCard.HeaderIcon>

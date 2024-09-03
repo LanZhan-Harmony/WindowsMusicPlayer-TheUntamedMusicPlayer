@@ -352,7 +352,7 @@
                                         Click="{x:Bind local:Data.MusicPlayer.RepeatModeUpdate}"
                                         Text="{x:Bind ViewModel.GetMoreRepeatModeText(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xF5E7;"/>
+                                <FontIcon Glyph="{x:Bind ViewModel.GetRepeatModeIcon(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}"/>
                             </MenuFlyoutItem.Icon>
                             <MenuFlyoutItem.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="T" Modifiers="Control"/>
