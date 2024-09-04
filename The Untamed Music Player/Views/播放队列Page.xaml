@@ -196,7 +196,9 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Grid x:Name="TitleGrid" Grid.Row="0">
+        <Grid x:Name="TitleGrid"
+              Grid.Row="0"
+              KeyTipPlacementMode="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -204,8 +206,11 @@
             </Grid.ColumnDefinitions>
             <TextBlock x:Uid="Shell_播放队列1"
                        Grid.Column="0"
-                       FontSize="40" FontWeight="SemiLight"/>
-            <SplitButton Grid.Column="2" Height="30">
+                       FontSize="40"
+                       FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
+            <SplitButton x:Uid="播放队列_AddFilesButton"
+                         Grid.Column="2"
+                         Height="30">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="12" Glyph="&#xE838;"/>
                     <TextBlock x:Name="AddTextBlock" x:Uid="播放队列_AddFiles"/>
@@ -273,17 +278,24 @@
         </Grid>
         <StackPanel x:Name="MenuPanel"
                     Grid.Row="1"
-                    Orientation="Horizontal" Spacing="16">
-            <Button x:Name="ClearButton"
+                    KeyTipPlacementMode="Bottom" Orientation="Horizontal"
+                    Spacing="16">
+            <Button x:Name="ClearButton" x:Uid="播放队列_ClearButton"
                     Height="36"
+                    AccessKey="CX"
                     Click="{x:Bind ViewModel.ClearButton_Click}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="X" Modifiers="Control,Shift"/>
+                </Button.KeyboardAccelerators>
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="16" Glyph="&#xE74D;"/>
                     <TextBlock x:Name="ClearTextBlock" x:Uid="播放队列_Clear"
                                FontSize="12"/>
                 </StackPanel>
             </Button>
-            <Button x:Name="AddToButton" Height="36">
+            <Button x:Name="AddToButton"
+                    Height="36"
+                    AccessKey="CW">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="16" Glyph="&#xE710;"/>
                     <TextBlock x:Name="AddToTextBlock" x:Uid="歌曲_AddTo"

@@ -1,14 +1,20 @@
 ﻿<Page x:Class="The_Untamed_Music_Player.Views.RootPlayBarView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:converters="using:CommunityToolkit.WinUI.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="using:The_Untamed_Music_Player.Models"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:model="using:The_Untamed_Music_Player.Models"
       NavigationCacheMode="Enabled"
       mc:Ignorable="d">
 
+    <Page.Resources>
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+    </Page.Resources>
+
     <Grid Width="Auto" Height="Auto"
-          HorizontalAlignment="Stretch" VerticalAlignment="Center">
+          HorizontalAlignment="Stretch" VerticalAlignment="Center"
+          KeyTipPlacementMode="Top">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
@@ -17,7 +23,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="0.4*" MinWidth="0"/>
-            <ColumnDefinition Width="0.4*" MinWidth="130"/>
+            <ColumnDefinition Width="1.4*" MinWidth="130"/>
             <ColumnDefinition Width="0.4*" MinWidth="0"/>
             <ColumnDefinition Width="2*" MinWidth="80"/>
         </Grid.ColumnDefinitions>
@@ -30,6 +36,8 @@
                     <VisualState.Setters>
                         <Setter Target="ShuffleButton.Visibility" Value="Collapsed"/>
                         <Setter Target="RepeatButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="SkipBackButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="SkipForwardButton.Visibility" Value="Collapsed"/>
                         <Setter Target="FullScreenButton.Visibility" Value="Collapsed"/>
                         <Setter Target="ShuffleMenu.Visibility" Value="Visible"/>
                         <Setter Target="RepeatMenu.Visibility" Value="Visible"/>
@@ -74,34 +82,39 @@
                        Margin="16,0,0,0" HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        FontSize="12"
-                       Text="{x:Bind ViewModel.GetCurrent(local:Data.MusicPlayer.Current), Mode=OneWay}"/>
+                       Text="{x:Bind ViewModel.GetCurrent(model:Data.MusicPlayer.Current), Mode=OneWay}"/>
             <Slider x:Name="ProgressSlider" x:Uid="PlayBar_Seek"
                     Grid.Row="0" Grid.Column="1"
                     Margin="25,0,5,0" VerticalAlignment="Center"
+                    AccessKey="S"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     IsThumbToolTipEnabled="False" Maximum="100"
                     Minimum="0" Orientation="Horizontal"
-                    Visibility="{x:Bind ViewModel.GetSliderVisibility(local:Data.MusicPlayer.PlayState), Mode=OneWay}"
-                    Value="{x:Bind local:Data.MusicPlayer.CurrentPosition, Mode=OneWay}"/>
+                    Visibility="{x:Bind ViewModel.GetSliderVisibility(model:Data.MusicPlayer.PlayState), Mode=OneWay}"
+                    Value="{x:Bind model:Data.MusicPlayer.CurrentPosition, Mode=OneWay}"/>
             <ProgressBar Grid.Row="0" Grid.Column="1"
                          Margin="25,0,5,0"
                          IsIndeterminate="True" ShowError="False"
                          ShowPaused="False"
-                         Visibility="{x:Bind ViewModel.GetProgressVisibility(local:Data.MusicPlayer.PlayState), Mode=OneWay}"/>
+                         Visibility="{x:Bind ViewModel.GetProgressVisibility(model:Data.MusicPlayer.PlayState), Mode=OneWay}"/>
             <TextBlock Grid.Row="0" Grid.Column="2"
                        Margin="16,0,16,0" HorizontalAlignment="Right"
                        VerticalAlignment="Center"
                        FontSize="12"
-                       Text="{x:Bind ViewModel.GetRemaining(local:Data.MusicPlayer.Current, local:Data.MusicPlayer.Total), Mode=OneWay}"/>
+                       Text="{x:Bind ViewModel.GetRemaining(model:Data.MusicPlayer.Current, model:Data.MusicPlayer.Total), Mode=OneWay}"/>
         </Grid>
 
         <!--  歌曲信息  -->
         <Button x:Uid="PlayBar_NowPlaying"
                 Grid.Row="1" Grid.Column="0"
-                Height="80"
+                Height="80" MinWidth="162"
                 Margin="4,0,0,4" HorizontalAlignment="Left"
+                AccessKey="Z"
                 Click="{x:Bind ViewModel.CoverBtnClickToDetail}"
                 Style="{StaticResource CoverButtonStyle}">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Key="N" Modifiers="Control"/>
+            </Button.KeyboardAccelerators>
             <StackPanel HorizontalAlignment="Left"
                         Orientation="Horizontal"
                         Visibility="{x:Bind ViewModel.ButtonVisibility, Mode=OneWay}">
@@ -113,13 +126,14 @@
                         Width="70" Height="70"
                         Margin="4,0,0,0" Padding="0"
                         HorizontalAlignment="Left"
-                        CornerRadius="3">
+                        CornerRadius="3"
+                        Visibility="{x:Bind ViewModel.GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}">
                     <Canvas>
                         <Image x:Name="ControllerCover"
                                Width="70" Height="70"
                                HorizontalAlignment="Left" VerticalAlignment="Center"
                                Canvas.ZIndex="1"
-                               Source="{x:Bind local:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"/>
+                               Source="{x:Bind model:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"/>
                         <Grid Width="70" Height="70"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
@@ -129,17 +143,21 @@
                         </Grid>
                     </Canvas>
                 </Border>
-                <StackPanel Margin="6,0,4,0" HorizontalAlignment="Left"
-                            VerticalAlignment="Center">
-                    <TextBlock Margin="10,0,0,4"
-                               FontSize="20" FontWeight="Medium"
-                               Text="{x:Bind local:Data.MusicPlayer.CurrentMusic.Title, Mode=OneWay}"
-                               TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
-                    <TextBlock Margin="10,0,0,0"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind local:Data.MusicPlayer.CurrentMusic.ArtistAndAlbumStr, Mode=OneWay}"
-                               TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
-                               Visibility="{x:Bind ViewModel.GetArtistAndAlbumStrVisibility(local:Data.MusicPlayer.CurrentMusic), Mode=OneWay}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Width="6" Visibility="{x:Bind ViewModel.GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}"/>
+                    <StackPanel Margin="0,0,4,0" HorizontalAlignment="Left"
+                                VerticalAlignment="Center">
+                        <TextBlock Margin="10,0,0,4"
+                                   FontSize="20" FontWeight="Medium"
+                                   Text="{x:Bind model:Data.MusicPlayer.CurrentMusic.Title, Mode=OneWay}"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                        <TextBlock Margin="10,0,0,0"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Text="{x:Bind model:Data.MusicPlayer.CurrentMusic.ArtistAndAlbumStr, Mode=OneWay}"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                                   Visibility="{x:Bind ViewModel.GetArtistAndAlbumStrVisibility(model:Data.MusicPlayer.CurrentMusic), Mode=OneWay}"/>
+                    </StackPanel>
+                    <TextBlock Width="8" Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}"/>
                 </StackPanel>
             </StackPanel>
         </Button>
@@ -151,52 +169,97 @@
                     Orientation="Horizontal" Spacing="10">
             <!--  随机播放  -->
             <Button x:Name="ShuffleButton"
-                    Click="{x:Bind local:Data.MusicPlayer.ShuffleModeUpdate}"
+                    AccessKey="H"
+                    Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource PlayButtonStyle}"
-                    ToolTipService.ToolTip="{x:Bind ViewModel.GetShuffleModeToolTip(local:Data.MusicPlayer.ShuffleMode), Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind ViewModel.GetShuffleModeToolTip(model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="H" Modifiers="Control"/>
+                </Button.KeyboardAccelerators>
                 <Grid>
                     <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
                     <TextBlock Margin="0,3,0,0"
                                FontFamily="等线" FontSize="16"
                                Text="╲"
-                               Visibility="{x:Bind ViewModel.GetShuffleModeIcon(local:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"/>
+                               Visibility="{x:Bind ViewModel.GetShuffleModeIcon(model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"/>
                 </Grid>
             </Button>
 
             <!--  上一曲  -->
             <Button x:Uid="PlayBar_Prev"
-                    Click="{x:Bind local:Data.MusicPlayer.PlayPreviousSong}"
+                    AccessKey="B"
+                    Click="{x:Bind model:Data.MusicPlayer.PlayPreviousSong}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource PlayButtonStyle}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="B" Modifiers="Control"/>
+                </Button.KeyboardAccelerators>
                 <FontIcon FontSize="16" Glyph="&#xF8AC;"/>
+            </Button>
+
+            <!--  快退10s  -->
+            <Button x:Name="SkipBackButton" x:Uid="PlayBar_SkipBack10s"
+                    AccessKey="I"
+                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                    Style="{StaticResource PlayButtonStyle}"
+                    Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Left" Modifiers="Control"/>
+                </Button.KeyboardAccelerators>
+                <FontIcon FontSize="16" Glyph="&#xED3C;"/>
             </Button>
 
             <!--  播放/暂停  -->
             <Button x:Name="PlayButton"
-                    Click="{x:Bind local:Data.MusicPlayer.PlayPauseUpdate}"
+                    AccessKey="P"
+                    Click="{x:Bind model:Data.MusicPlayer.PlayPauseUpdate}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource PlayButtonStyle}"
-                    ToolTipService.ToolTip="{x:Bind ViewModel.GetPlayPauseTooltip(local:Data.MusicPlayer.PlayState), Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind ViewModel.GetPlayPauseTooltip(model:Data.MusicPlayer.PlayState), Mode=OneWay}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Space"/>
+                    <KeyboardAccelerator Key="P" Modifiers="Control"/>
+                </Button.KeyboardAccelerators>
                 <FontIcon x:Name="PlayIcon"
                           FontSize="24"
-                          Glyph="{x:Bind ViewModel.GetPlayPauseIcon(local:Data.MusicPlayer.PlayState), Mode=OneWay}"/>
+                          Glyph="{x:Bind ViewModel.GetPlayPauseIcon(model:Data.MusicPlayer.PlayState), Mode=OneWay}"/>
+            </Button>
+
+            <!--  快进30s  -->
+            <Button x:Name="SkipForwardButton" x:Uid="PlayBar_SkipForw30s"
+                    AccessKey="O"
+                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                    Style="{StaticResource PlayButtonStyle}"
+                    Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Right" Modifiers="Control"/>
+                </Button.KeyboardAccelerators>
+                <FontIcon FontSize="16" Glyph="&#xED3D;"/>
             </Button>
 
             <!--  下一曲  -->
             <Button x:Uid="PlayBar_Next"
-                    Click="{x:Bind local:Data.MusicPlayer.PlayNextSong}"
+                    AccessKey="F"
+                    Click="{x:Bind model:Data.MusicPlayer.PlayNextSong}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource PlayButtonStyle}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="F" Modifiers="Control"/>
+                </Button.KeyboardAccelerators>
                 <FontIcon FontSize="16" Glyph="&#xF8AD;"/>
             </Button>
 
             <!--  循环播放  -->
             <Button x:Name="RepeatButton"
-                    Click="{x:Bind local:Data.MusicPlayer.RepeatModeUpdate}"
+                    AccessKey="T"
+                    Click="{x:Bind model:Data.MusicPlayer.RepeatModeUpdate}"
                     Style="{StaticResource PlayButtonStyle}"
-                    ToolTipService.ToolTip="{x:Bind ViewModel.GetRepeatModeToolTip(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}">
-                <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetRepeatModeIcon(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}"/>
+                    ToolTipService.ToolTip="{x:Bind ViewModel.GetRepeatModeToolTip(model:Data.MusicPlayer.RepeatMode), Mode=OneWay}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="T" Modifiers="Control"/>
+                </Button.KeyboardAccelerators>
+                <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetRepeatModeIcon(model:Data.MusicPlayer.RepeatMode), Mode=OneWay}"/>
             </Button>
         </StackPanel>
 
@@ -206,25 +269,30 @@
                     Orientation="Horizontal" Spacing="7">
 
             <!--  音量  -->
-            <Button x:Uid="PlayBar_Volume" Style="{StaticResource PlayButtonStyle}">
-                <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetVolumeIcon(local:Data.MusicPlayer.CurrentVolume), Mode=OneWay}"/>
+            <Button x:Uid="PlayBar_Volume"
+                    AccessKey="V"
+                    Style="{StaticResource PlayButtonStyle}">
+                <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetVolumeIcon(model:Data.MusicPlayer.CurrentVolume, model:Data.MusicPlayer.IsMute), Mode=OneWay}"/>
                 <Button.Flyout>
                     <Flyout>
-                        <StackPanel Height="28"
-                                    Orientation="Horizontal" Spacing="15">
-                            <FontIcon Margin="8,0,7,0"
-                                      FontSize="16"
-                                      Glyph="{x:Bind ViewModel.GetVolumeIcon(local:Data.MusicPlayer.CurrentVolume), Mode=OneWay}"/>
+                        <StackPanel Margin="-5,-4,-3,-5"
+                                    KeyTipPlacementMode="Top" Orientation="Horizontal"
+                                    Spacing="12">
+                            <Button AccessKey="M"
+                                    Click="{x:Bind model:Data.MusicPlayer.MuteButton_Click}"
+                                    Style="{StaticResource PlayButtonStyle}">
+                                <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetVolumeIcon(model:Data.MusicPlayer.CurrentVolume, model:Data.MusicPlayer.IsMute), Mode=OneWay}"/>
+                            </Button>
                             <Slider x:Name="VolumeSlider" x:Uid="PlayBar_Volume"
                                     Width="180"
-                                    Margin="0,-1,0,0"
-                                    IsThumbToolTipEnabled="False" Maximum="100"
-                                    Minimum="0"
-                                    Value="{x:Bind local:Data.MusicPlayer.CurrentVolume, Mode=TwoWay}"/>
+                                    Margin="0,3,0,0"
+                                    AccessKey="V" IsThumbToolTipEnabled="False"
+                                    Maximum="100" Minimum="0"
+                                    Value="{x:Bind model:Data.MusicPlayer.CurrentVolume, Mode=TwoWay}"/>
                             <TextBlock Width="20"
-                                       VerticalAlignment="Center"
+                                       Margin="-1,0,0,0" VerticalAlignment="Center"
                                        FontSize="12"
-                                       Text="{x:Bind local:Data.MusicPlayer.CurrentVolume, Mode=OneWay}"
+                                       Text="{x:Bind model:Data.MusicPlayer.CurrentVolume, Mode=OneWay}"
                                        TextAlignment="Center"/>
                         </StackPanel>
                     </Flyout>
@@ -233,20 +301,30 @@
 
             <!--  全屏  -->
             <Button x:Name="FullScreenButton" x:Uid="PlayBar_FullScreen"
+                    AccessKey="U"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource PlayButtonStyle}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="F11"/>
+                </Button.KeyboardAccelerators>
                 <FontIcon FontSize="16" Glyph="&#xE740;"/>
             </Button>
 
             <!--  最小化置顶  -->
             <Button x:Uid="PlayBar_Mini"
+                    AccessKey="M"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource PlayButtonStyle}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="M" Modifiers="Control"/>
+                </Button.KeyboardAccelerators>
                 <FontIcon FontSize="16" Glyph="&#xEE49;"/>
             </Button>
 
             <!--  更多菜单  -->
-            <Button x:Uid="PlayBar_More" Style="{StaticResource PlayButtonStyle}">
+            <Button x:Uid="PlayBar_More"
+                    AccessKey="R"
+                    Style="{StaticResource PlayButtonStyle}">
                 <FontIcon FontSize="16" Glyph="&#xE712;"/>
                 <Button.Flyout>
                     <MenuFlyout>
@@ -315,7 +393,7 @@
                         </MenuFlyoutItem>
 
                         <!--  快退10s  -->
-                        <MenuFlyoutItem x:Uid="PlayBar_SkipBack10s" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
+                        <MenuFlyoutItem x:Uid="PlayBar_More_SkipBack10s" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xED3C;"/>
                             </MenuFlyoutItem.Icon>
@@ -325,7 +403,7 @@
                         </MenuFlyoutItem>
 
                         <!--  快进30s  -->
-                        <MenuFlyoutItem x:Uid="PlayBar_SkipForw30s" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
+                        <MenuFlyoutItem x:Uid="PlayBar_More_SkipForw30s" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xED3D;"/>
                             </MenuFlyoutItem.Icon>
@@ -336,9 +414,9 @@
 
                         <!--  随机播放  -->
                         <MenuFlyoutItem x:Name="ShuffleMenu"
-                                        Click="{x:Bind local:Data.MusicPlayer.ShuffleModeUpdate}"
+                                        Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                                        Text="{x:Bind ViewModel.GetMoreShuffleModeText(local:Data.MusicPlayer.ShuffleMode), Mode=OneWay}">
+                                        Text="{x:Bind ViewModel.GetMoreShuffleModeText(model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
                             </MenuFlyoutItem.Icon>
@@ -349,10 +427,10 @@
 
                         <!--  循环播放  -->
                         <MenuFlyoutItem x:Name="RepeatMenu"
-                                        Click="{x:Bind local:Data.MusicPlayer.RepeatModeUpdate}"
-                                        Text="{x:Bind ViewModel.GetMoreRepeatModeText(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}">
+                                        Click="{x:Bind model:Data.MusicPlayer.RepeatModeUpdate}"
+                                        Text="{x:Bind ViewModel.GetMoreRepeatModeText(model:Data.MusicPlayer.RepeatMode), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="{x:Bind ViewModel.GetRepeatModeIcon(local:Data.MusicPlayer.RepeatMode), Mode=OneWay}"/>
+                                <FontIcon Glyph="{x:Bind ViewModel.GetRepeatModeIcon(model:Data.MusicPlayer.RepeatMode), Mode=OneWay}"/>
                             </MenuFlyoutItem.Icon>
                             <MenuFlyoutItem.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="T" Modifiers="Control"/>
