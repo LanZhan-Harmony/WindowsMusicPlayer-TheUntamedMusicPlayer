@@ -192,10 +192,10 @@
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
     <value>Cast to device</value>
   </data>
-  <data name="PlayBar_SkipBack10s.Text" xml:space="preserve">
+  <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
     <value>Skip back 10 seconds</value>
   </data>
-  <data name="PlayBar_SkipForw30s.Text" xml:space="preserve">
+  <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
     <value>Skip forward 30 seconds</value>
   </data>
   <data name="Shell_主页1.Text" xml:space="preserve">
@@ -355,7 +355,7 @@
     <value>None, Mica, Mica Alt, Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
   </data>
   <data name="歌曲_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Album (Asc), Album (Desc), Release year (Asc), Release year (Desc), Date added (Asc), Date added (Desc), Folder</value>
+    <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Album (Asc), Album (Desc), Release year (Asc), Release year (Desc), Date added (Asc), Date added (Desc), Folder (Asc), Folder (Desc)</value>
   </data>
   <data name="专辑_SortBy" xml:space="preserve">
     <value>A - Z, Z - A, Release year (Asc), Release year (Desc), Artist (Asc), Artist (Desc), Date added (Asc), Date added (Desc)</value>
@@ -467,5 +467,23 @@
   </data>
   <data name="歌曲_Pinyin" xml:space="preserve">
     <value>...</value>
+  </data>
+  <data name="Data_Language" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Settings_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="播放队列_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear (Ctrl+Shift+X)</value>
+  </data>
+  <data name="播放队列_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Browse for files to add to the play queue</value>
+  </data>
+  <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Skip forward 30 seconds (Ctrl+Right)</value>
+  </data>
+  <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Skip back 10 seconds (Ctrl+Left)</value>
   </data>
 </root>

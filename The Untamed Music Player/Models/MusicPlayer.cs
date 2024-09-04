@@ -309,8 +309,33 @@ public partial class MusicPlayer : INotifyPropertyChanged
         set
         {
             _currentVolume = value;
-            Player.Volume = CurrentVolume / 100;
+            if (!IsMute)
+            {
+                Player.Volume = value / 100;
+            }
             OnPropertyChanged(nameof(CurrentVolume));
+        }
+    }
+
+    private bool _isMute;
+    /// <summary>
+    /// 是否静音, true为静音, false为非静音
+    /// </summary>
+    public bool IsMute
+    {
+        get => _isMute;
+        set
+        {
+            _isMute = value;
+            if (value)
+            {
+                Player.Volume = 0;
+            }
+            else
+            {
+                Player.Volume = CurrentVolume / 100;
+            }
+            OnPropertyChanged(nameof(IsMute));
         }
     }
 
@@ -585,6 +610,16 @@ public partial class MusicPlayer : INotifyPropertyChanged
             default:
                 break;
         }
+    }
+
+    /// <summary>
+    /// 静音按钮点击事件
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public void MuteButton_Click(object sender, RoutedEventArgs e)
+    {
+        IsMute = !IsMute;
     }
 
     /// <summary>
@@ -892,6 +927,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
         await _localSettingsService.SaveSettingAsync("PlayQueueIndex", PlayQueueIndex);*/
         await _localSettingsService.SaveSettingAsync("ShuffleMode", ShuffleMode);
         await _localSettingsService.SaveSettingAsync("RepeatMode", RepeatMode);
+        await _localSettingsService.SaveSettingAsync("IsMute", IsMute);
         await _localSettingsService.SaveSettingAsync("CurrentVolume", CurrentVolume);
     }
 
@@ -935,6 +971,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
         PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>("PlayQueueIndex");*/
         ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
         RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
+        IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
         if (notFirstUsed)
         {
             CurrentVolume = await _localSettingsService.ReadSettingAsync<double>("CurrentVolume");

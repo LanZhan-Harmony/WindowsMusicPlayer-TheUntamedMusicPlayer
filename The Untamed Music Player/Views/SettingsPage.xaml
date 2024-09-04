@@ -4,19 +4,18 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:controls="using:Microsoft.UI.Xaml.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:helpers="using:The_Untamed_Music_Player.Helpers"
-      xmlns:local="using:The_Untamed_Music_Player.ViewModels"
+      xmlns:helper="using:The_Untamed_Music_Player.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
       xmlns:muxc="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:muxs="using:Microsoft.UI.Xaml.Controls" xmlns:storage="using:Windows.Storage"
-      xmlns:toolkit="using:CommunityToolkit.WinUI.Controls" xmlns:ui="using:CommunityToolkit.WinUI"
-      xmlns:xaml="using:Microsoft.UI.Xaml"
+      xmlns:muxs="using:Microsoft.UI.Xaml.Controls"
+      xmlns:storage="using:Windows.Storage"
+      xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+      xmlns:ui="using:CommunityToolkit.WinUI" xmlns:xaml="using:Microsoft.UI.Xaml"
       mc:Ignorable="d">
 
-
     <Page.Resources>
-        <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+        <helper:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -47,7 +46,8 @@
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="TitleGrid" Grid.Row="0">
             <TextBlock x:Uid="Shell_Settings"
-                       FontSize="40" FontWeight="SemiLight"/>
+                       FontSize="40"
+                       FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
         </Grid>
         <ScrollViewer Grid.Row="1" Padding="0,0,0,16">
             <StackPanel x:Name="ContentArea"

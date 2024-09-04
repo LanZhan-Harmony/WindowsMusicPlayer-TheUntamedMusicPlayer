@@ -5,11 +5,24 @@ using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 using The_Untamed_Music_Player.Helpers;
+using System.Diagnostics;
 
 namespace The_Untamed_Music_Player.ViewModels;
 public partial class RootPlayBarViewModel : INotifyPropertyChanged
 {
     public static RootPlayBarView? RootPlayBarView;
+
+    private bool _isDetail = false;
+    public bool IsDetail
+    {
+        get => _isDetail;
+        set
+        {
+            _isDetail = value;
+            OnPropertyChanged(nameof(IsDetail));
+        }
+    }
+
     private Visibility _buttonVisibility = Visibility.Collapsed;
     public Visibility ButtonVisibility
     {
@@ -121,6 +134,11 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         return detailedmusicinfo.ArtistAndAlbumStr == "" ? Visibility.Collapsed : Visibility.Visible;
     }
 
+    public Visibility GetNotDetailedVisibility(bool isdetail)
+    {
+        return isdetail ? Visibility.Collapsed : Visibility.Visible;
+    }
+
     public string GetShuffleModeToolTip(bool shufflemode)
     {
         return shufflemode ? "PlayBar_ShuffleOn".GetLocalized() : "PlayBar_ShuffleOff".GetLocalized();
@@ -154,24 +172,19 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         };
     }
 
-    public string GetVolumeIcon(double volume)
+    public string GetVolumeIcon(double volume, bool ismute)
     {
-        if (volume >= 67)
-        {
-            return "\uE995";
-        }
-        else if (volume >= 34)
-        {
-            return "\uE994";
-        }
-        else if (volume >= 1)
-        {
-            return "\uE993";
-        }
-        else
+        if (ismute)
         {
             return "\uE74F";
         }
+        return volume switch
+        {
+            >= 67 => "\uE995",
+            >= 34 => "\uE994",
+            >= 1 => "\uE993",
+            _ => "\uE74F",
+        };
     }
 
     public string GetMoreShuffleModeText(bool shufflemode)
@@ -192,7 +205,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
 
     public void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
     {
-        if (!Data.IsDetail)
+        if (!IsDetail)
         {
             if (Data.MainWindow != null)
             {
@@ -233,11 +246,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
 
                 fadeOutStoryboard.Begin();
 
-                if (RootPlayBarView != null)
-                {
-                    RootPlayBarView.GetCoverBorder().Visibility = Visibility.Collapsed;
-                }
-                Data.IsDetail = true;
+                IsDetail = true;
             }
         }
         else
@@ -281,11 +290,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
 
                 fadeOutStoryboard.Begin();
 
-                if (RootPlayBarView != null)
-                {
-                    RootPlayBarView.GetCoverBorder().Visibility = Visibility.Visible;
-                }
-                Data.IsDetail = false;
+                IsDetail = false;
                 GC.Collect();
             }
         }

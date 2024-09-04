@@ -5,7 +5,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
       xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-      xmlns:local="using:The_Untamed_Music_Player.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
       xmlns:viewmodel="using:The_Untamed_Music_Player.ViewModels"
@@ -243,7 +242,7 @@
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
-                  ItemsSource="{x:Bind GroupedSongList.View, Mode=OneWay}"
+                  ItemsSource="{x:Bind ViewModel.GetSongListViewSource(GroupedSongList.View, ViewModel.NotGroupedSongList), Mode=OneWay}"
                   SelectionMode="None">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>

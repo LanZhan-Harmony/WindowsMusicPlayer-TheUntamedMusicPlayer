@@ -94,7 +94,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter x:Name="Content"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                          HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

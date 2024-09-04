@@ -18,6 +18,13 @@ public class BriefMusicInfo
         set => _path = value;
     }
 
+    private string _folder = "";
+    public string Folder
+    {
+        get => _folder;
+        set => _folder = value;
+    }
+
     private string _itemType = "";
     /// <summary>
     /// 项目类型
@@ -336,6 +343,11 @@ public class BriefMusicInfo
             Genre = ["MusicInfo_UnknownGenre".GetLocalized()];
             Duration = TimeSpan.Zero;
         }
+    }
+
+    public BriefMusicInfo(string path, string folder) : this(path)
+    {
+        Folder = folder;
     }
 }
 
