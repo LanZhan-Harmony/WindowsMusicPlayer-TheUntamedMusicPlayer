@@ -305,7 +305,7 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
             version = Assembly.GetExecutingAssembly().GetName().Version!;
         }
 
-        return $"{"AppDisplayName".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+        return $"{"Settings_Version".GetLocalized()} {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
     }
 
     private static async Task SaveFoldersAsync()

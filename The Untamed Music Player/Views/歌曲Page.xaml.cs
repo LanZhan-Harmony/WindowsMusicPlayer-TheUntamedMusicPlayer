@@ -1,6 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
@@ -15,7 +17,6 @@ public sealed partial class 歌曲Page : Page
     {
         ViewModel = App.GetService<歌曲ViewModel>();
         InitializeComponent();
-        //SongListView.ContainerContentChanging += SongListView_Loaded;
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)

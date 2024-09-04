@@ -73,7 +73,7 @@ public class MusicLibrary : INotifyPropertyChanged
         {
             foreach (var folder in Folders)
             {
-                await LoadMusic(folder);
+                await LoadMusic(folder, folder.DisplayName);
             }
         }
         _musicPaths.Clear();
@@ -89,7 +89,7 @@ public class MusicLibrary : INotifyPropertyChanged
         {
             foreach (var folder in Folders)
             {
-                await LoadMusic(folder);
+                await LoadMusic(folder, folder.DisplayName);
             }
         }
         _musicPaths.Clear();
@@ -111,7 +111,7 @@ public class MusicLibrary : INotifyPropertyChanged
         }
     }
 
-    private async Task LoadMusic(StorageFolder folder)
+    private async Task LoadMusic(StorageFolder folder, string foldername)
     {
         try
         {
@@ -122,7 +122,7 @@ public class MusicLibrary : INotifyPropertyChanged
             {
                 if (Musics != null && !_musicPaths.Contains(file.Path))
                 {
-                    var briefMusicInfo = new BriefMusicInfo(file.Path);
+                    var briefMusicInfo = new BriefMusicInfo(file.Path, foldername);
                     Musics.Add(briefMusicInfo);
                     _musicPaths.Add(file.Path);
                     UpdateAlbumInfo(briefMusicInfo);
@@ -133,7 +133,8 @@ public class MusicLibrary : INotifyPropertyChanged
             var subFolders = await folder.GetFoldersAsync();
             foreach (var subFolder in subFolders)
             {
-                await LoadMusic(subFolder);
+                var subfoldername = foldername + "/" + subFolder.DisplayName;
+                await LoadMusic(subFolder, subfoldername);
             }
         }
         catch (Exception e)

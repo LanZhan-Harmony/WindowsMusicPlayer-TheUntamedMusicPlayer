@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Contracts.Services;
+using Microsoft.UI.Xaml.Data;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -33,8 +34,20 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         set
         {
             _sortMode = value;
+            SetGroupMode();
             OnPropertyChanged(nameof(SortMode));
             SaveSortModeAsync();
+        }
+    }
+
+    private bool _groupMode;
+    public bool GroupMode
+    {
+        get => _groupMode;
+        set
+        {
+            _groupMode = value;
+            OnPropertyChanged(nameof(GroupMode));
         }
     }
 
@@ -53,10 +66,16 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         set => _groupedSongList = value;
     }
 
+    private ObservableCollection<BriefMusicInfo> _notGroupedSongList = [];
+    public ObservableCollection<BriefMusicInfo> NotGroupedSongList
+    {
+        get => _notGroupedSongList;
+        set => _notGroupedSongList = value;
+    }
+
     public 歌曲ViewModel(ILocalSettingsService localSettingsService)
     {
         _localSettingsService = localSettingsService;
-        Data.歌曲ViewModel = this;
         LoadSortModeAndSongList();
     }
 
@@ -64,6 +83,8 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await LoadSortModeAsync();
         await SortSongs();
+        OnPropertyChanged(nameof(GroupedSongList));
+        OnPropertyChanged(nameof(NotGroupedSongList));
     }
 
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -75,6 +96,8 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             if (SortMode != currentsortmode)
             {
                 await SortSongs();
+                OnPropertyChanged(nameof(GroupedSongList));
+                OnPropertyChanged(nameof(NotGroupedSongList));
             }
         }
     }
@@ -154,28 +177,49 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             7 => SortSongsByYearDescending(),
             8 => SortSongsByModifiedTimeAscending(),
             9 => SortSongsByModifiedTimeDescending(),
-            10 => SortSongsByFolder(),
+            10 => SortSongsByFolderAscending(),
+            11 => SortSongsByFolderDescending(),
             _ => SortSongsByTitleAscending()
         };
 
         await sortTask;
-        OnPropertyChanged(nameof(GroupedSongList));
+    }
+
+    private void SetGroupMode()
+    {
+        GroupMode = SortMode switch
+        {
+            0 or 1 or 2 or 3 or 4 or 5 or 6 or 7 or 10 or 11 => true,
+            _ => false
+        };
     }
 
     public ObservableCollection<BriefMusicInfo> ConvertGroupedToFlatList()
     {
-        var flatList = new ObservableCollection<BriefMusicInfo>();
-        foreach (var group in GroupedSongList)
+        if (GroupMode)
         {
-            foreach (var item in group)
+            var flatList = new ObservableCollection<BriefMusicInfo>();
+            foreach (var group in GroupedSongList)
             {
-                if (item is BriefMusicInfo musicInfo)
+                foreach (var item in group)
                 {
-                    flatList.Add(musicInfo);
+                    if (item is BriefMusicInfo musicInfo)
+                    {
+                        flatList.Add(musicInfo);
+                    }
                 }
             }
+            return flatList;
         }
-        return flatList;
+        else
+        {
+            return NotGroupedSongList;
+        }
+    }
+
+    public object GetSongListViewSource(ICollectionView grouped, ObservableCollection<BriefMusicInfo> notgrouped)
+    {
+        return GroupMode ? grouped : NotGroupedSongList;
     }
 
     /// <summary>
@@ -305,10 +349,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var sortedSongs = SongList
-                .OrderBy(m => m.ModifiedDate);
-            var groupedSongs = new GroupInfoList(sortedSongs);
-            GroupedSongList = [groupedSongs];
+            NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(SongList.OrderBy(m => m.ModifiedDate));
         });
     }
 
@@ -319,10 +360,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var sortedSongs = SongList
-                .OrderByDescending(m => m.ModifiedDate);
-            var groupedSongs = new GroupInfoList(sortedSongs);
-            GroupedSongList = [groupedSongs];
+            NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(SongList.OrderByDescending(m => m.ModifiedDate));
         });
     }
 
@@ -330,12 +368,27 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     /// 根据文件夹排序
     /// </summary>
     /// <returns></returns>
-    public async Task SortSongsByFolder()
+    public async Task SortSongsByFolderAscending()
     {
         await Task.Run(() =>
         {
-            var groupedSongs = new GroupInfoList(SongList);
-            GroupedSongList = [groupedSongs];
+            var groupedSongs = SongList
+                .OrderBy(m => m.Folder, new TitleComparer())
+                .GroupBy(m => m.Folder)
+                .Select(g => new GroupInfoList(g) { Key = g.Key });
+            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+        });
+    }
+
+    public async Task SortSongsByFolderDescending()
+    {
+        await Task.Run(() =>
+        {
+            var groupedSongs = SongList
+                .OrderByDescending(m => m.Folder, new TitleComparer())
+                .GroupBy(m => m.Folder)
+                .Select(g => new GroupInfoList(g) { Key = g.Key });
+            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
         });
     }
 
@@ -348,5 +401,4 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await _localSettingsService.SaveSettingAsync("SortMode", SortMode);
     }
-
 }

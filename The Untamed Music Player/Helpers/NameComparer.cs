@@ -265,4 +265,3 @@ internal class AlbumComparer : IComparer<BriefMusicInfo>
         return c >= 0x4E00 && c <= 0x9FFF;
     }
 }
-

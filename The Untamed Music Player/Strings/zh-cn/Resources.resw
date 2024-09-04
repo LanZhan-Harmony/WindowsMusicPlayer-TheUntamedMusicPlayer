@@ -192,10 +192,10 @@
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
     <value>投放到设备</value>
   </data>
-  <data name="PlayBar_SkipBack10s.Text" xml:space="preserve">
+  <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
     <value>快退10秒</value>
   </data>
-  <data name="PlayBar_SkipForw30s.Text" xml:space="preserve">
+  <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
     <value>快进30秒</value>
   </data>
   <data name="Shell_主页1.Text" xml:space="preserve">
@@ -355,7 +355,7 @@
     <value>无, 云母, 另类云母, 桌面亚克力, 基础亚克力, 薄亚克力, 模糊, 透明, 跑马灯</value>
   </data>
   <data name="歌曲_SortBy" xml:space="preserve">
-    <value>A-Z, Z-A, 歌手 (升序), 歌手 (降序), 专辑 (升序), 专辑 (降序), 发行年份 (升序), 发行年份 (降序), 已添加日期 (升序), 已添加日期 (降序), 文件夹</value>
+    <value>A-Z, Z-A, 歌手 (升序), 歌手 (降序), 专辑 (升序), 专辑 (降序), 发行年份 (升序), 发行年份 (降序), 已添加日期 (升序), 已添加日期 (降序), 文件夹 (升序), 文件夹 (降序)</value>
   </data>
   <data name="专辑_SortBy" xml:space="preserve">
     <value>A-Z, Z-A, 发行年份 (升序), 发行年份 (降序), 歌手 (升序), 歌手 (降序), 已添加日期 (升序), 已添加日期 (降序)</value>
@@ -467,5 +467,23 @@
   </data>
   <data name="歌曲_Pinyin" xml:space="preserve">
     <value>拼音</value>
+  </data>
+  <data name="Data_Language" xml:space="preserve">
+    <value>简体中文</value>
+  </data>
+  <data name="Settings_Version" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="播放队列_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>清除 (Ctrl+Shift+X)</value>
+  </data>
+  <data name="播放队列_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>浏览要添加到播放队列的文件</value>
+  </data>
+  <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
+    <value>后退10秒 (Ctrl+向左键)</value>
+  </data>
+  <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
+    <value>快进30秒 (Ctrl+向右键)</value>
   </data>
 </root>

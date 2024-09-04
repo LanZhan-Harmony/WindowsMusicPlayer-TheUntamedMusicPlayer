@@ -3,14 +3,15 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:behaviors="using:The_Untamed_Music_Player.Behaviors"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:helpers="using:The_Untamed_Music_Player.Helpers" xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:helper="using:The_Untamed_Music_Player.Helpers"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       Loaded="OnLoaded">
 
     <Page.Resources>
-        <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+        <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent"/>
     </Page.Resources>
-    <Grid>
+    <Grid KeyTipPlacementMode="Right">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -29,34 +30,59 @@
                            Text="Untamed Music Player" TextWrapping="NoWrap"/>
             </Grid>
             <NavigationView x:Name="NavigationViewControl"
+                            Background="{StaticResource NavigationViewContentBackground}"
                             Canvas.ZIndex="1" DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
                             ExpandedModeThresholdWidth="1280" IsBackButtonVisible="Visible"
                             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
                             IsSettingsVisible="True"
-                            Background="{StaticResource NavigationViewContentBackground}"
                             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
                 <NavigationView.AutoSuggestBox>
                     <AutoSuggestBox x:Uid="Shell_Search"
-                                    AutomationProperties.Name="Search" QueryIcon="Find"/>
+                                    AccessKey="NE" AutomationProperties.Name="Search"
+                                    QueryIcon="Find" ToolTipService.ToolTip="Ctrl+E">
+                        <AutoSuggestBox.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="E" Modifiers="Control"/>
+                        </AutoSuggestBox.KeyboardAccelerators>
+                    </AutoSuggestBox>
                 </NavigationView.AutoSuggestBox>
                 <NavigationView.MenuItems>
-                    <NavigationViewItem x:Uid="Shell_主页" helpers:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.主页ViewModel">
+                    <NavigationViewItem x:Uid="Shell_主页"
+                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.主页ViewModel"
+                                        AccessKey="NO">
+                        <NavigationViewItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="F" Modifiers="Control,Shift"/>
+                        </NavigationViewItem.KeyboardAccelerators>
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem x:Uid="Shell_音乐库" helpers:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.音乐库ViewModel">
+                    <NavigationViewItem x:Uid="Shell_音乐库"
+                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.音乐库ViewModel"
+                                        AccessKey="NS">
+                        <NavigationViewItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="R" Modifiers="Control"/>
+                        </NavigationViewItem.KeyboardAccelerators>
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D6;"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItemSeparator/>
-                    <NavigationViewItem x:Uid="Shell_播放队列" helpers:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.播放队列ViewModel">
+                    <NavigationViewItem x:Uid="Shell_播放队列"
+                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.播放队列ViewModel"
+                                        AccessKey="NQ">
+                        <NavigationViewItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="Q" Modifiers="Control"/>
+                        </NavigationViewItem.KeyboardAccelerators>
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90B;"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem x:Uid="Shell_播放列表" helpers:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.播放列表ViewModel">
+                    <NavigationViewItem x:Uid="Shell_播放列表"
+                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.播放列表ViewModel"
+                                        AccessKey="NP">
+                        <NavigationViewItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="Y" Modifiers="Control"/>
+                        </NavigationViewItem.KeyboardAccelerators>
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE93C;"/>
                         </NavigationViewItem.Icon>

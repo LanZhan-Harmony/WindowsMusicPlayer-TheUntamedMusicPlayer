@@ -3,6 +3,7 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helper="using:The_Untamed_Music_Player.Helpers"
       xmlns:local="using:The_Untamed_Music_Player.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
@@ -41,7 +42,8 @@
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="TitleGrid" Grid.Row="0">
             <TextBlock x:Uid="Shell_音乐库1"
-                       FontSize="40" FontWeight="SemiLight"/>
+                       FontSize="40"
+                       FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
         </Grid>
         <Grid Grid.Row="1"
               HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
