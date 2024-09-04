@@ -45,6 +45,9 @@ public partial class LyricSlice : INotifyPropertyChanged
     [GeneratedRegex(@"\[([0-9.:]*)\]", RegexOptions.Compiled)]
     private static partial Regex RegexTime();
 
+    [GeneratedRegex(@"\[offset:\s*([+-]?\d+)\]", RegexOptions.Compiled)]
+    private static partial Regex RegexOffset();
+
     public static ObservableCollection<LyricSlice> GetLyricSlices(string lyric)
     {
         var lyricSlices = new List<LyricSlice>();
@@ -54,6 +57,7 @@ public partial class LyricSlice : INotifyPropertyChanged
             return [];
         }
         var lines = lyric.Split('\n');
+        double offset = 0; // 初始化时间补偿值
         double? lastTime = null;//上一行有歌词的行的时间
         double emptyStartTime = 0;//空白行开始时间
         var inEmptyBlock = false;
@@ -62,9 +66,17 @@ public partial class LyricSlice : INotifyPropertyChanged
         {
             if (line != null)
             {
-                if (line.StartsWith("[ti:") || line.StartsWith("[ar:") || line.StartsWith("[al:") || line.StartsWith("[by:") || line.StartsWith("[offset:"))//歌曲名、艺人名、专辑名、歌词制作人、歌词时间补偿值
+                if (line.StartsWith("[ti:") || line.StartsWith("[ar:") || line.StartsWith("[al:") || line.StartsWith("[by:"))//歌曲名、艺人名、专辑名、歌词制作人
                 {
                     continue;
+                }
+                else if (line.StartsWith("[offset:"))//歌词时间补偿值
+                {
+                    var offsetMatch = RegexOffset().Match(line);
+                    if (offsetMatch.Success)
+                    {
+                        offset = double.Parse(offsetMatch.Groups[1].Value);
+                    }
                 }
 
                 try
@@ -78,7 +90,7 @@ public partial class LyricSlice : INotifyPropertyChanged
                     {
                         if (!inEmptyBlock)
                         {
-                            emptyStartTime = TIME.Count > 0 ? TimeSpan.Parse("00:" + TIME[0].Groups[1].Value).TotalMilliseconds : lastTime ?? 0;//将时间戳转换为毫秒(只保留第一组, 防止一行歌词里面有多个时间)
+                            emptyStartTime = TIME.Count > 0 ? TimeSpan.Parse("00:" + TIME[0].Groups[1].Value).TotalMilliseconds + offset : lastTime ?? 0;//将时间戳转换为毫秒(只保留第一组, 防止一行歌词里面有多个时间)
                             if (emptyStartTime == lastTime)
                             {
                                 emptyStartTime += 1; // 如果空白行和上一行有歌词的行时间相同，空白行的时间加1毫秒
@@ -90,7 +102,7 @@ public partial class LyricSlice : INotifyPropertyChanged
                     {
                         if (inEmptyBlock)
                         {
-                            var emptyEndTime = TIME.Count > 0 ? TimeSpan.Parse("00:" + TIME[0].Groups[1].Value).TotalMilliseconds : lastTime ?? 0;
+                            var emptyEndTime = TIME.Count > 0 ? TimeSpan.Parse("00:" + TIME[0].Groups[1].Value).TotalMilliseconds + offset : lastTime ?? 0;
                             if (emptyEndTime - emptyStartTime > 5000)
                             {
                                 lyricSlices.Add(new LyricSlice(emptyStartTime, "•••"));
@@ -100,7 +112,7 @@ public partial class LyricSlice : INotifyPropertyChanged
 
                         foreach (Match item in TIME)
                         {
-                            var time = TimeSpan.Parse("00:" + item.Groups[1].Value).TotalMilliseconds;
+                            var time = TimeSpan.Parse("00:" + item.Groups[1].Value).TotalMilliseconds + offset;
                             lyricSlices.Add(new LyricSlice(time, WORD));
                             lastTime = time;
                         }
@@ -121,6 +133,6 @@ public partial class LyricSlice : INotifyPropertyChanged
             }
         }
 
-        return new ObservableCollection<LyricSlice>(lyricSlices.OrderBy(t => t.Time));//将 lyricSlices 列表按时间戳排序。
+        return new ObservableCollection<LyricSlice>(lyricSlices.OrderBy(t => t.Time));//将 lyricSlices 列表按时间戳排序
     }
 }
