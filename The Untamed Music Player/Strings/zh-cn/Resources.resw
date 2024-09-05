@@ -352,7 +352,7 @@
     <value>重复: 关</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>无, 云母, 另类云母, 桌面亚克力, 基础亚克力, 薄亚克力, 模糊, 透明, 跑马灯</value>
+    <value>无, 云母 (仅Win11), 另类云母 (仅Win11), 桌面亚克力, 基础亚克力, 薄亚克力, 模糊 (实验性), 透明 (实验性), 跑马灯 (实验性)</value>
   </data>
   <data name="歌曲_SortBy" xml:space="preserve">
     <value>A-Z, Z-A, 歌手 (升序), 歌手 (降序), 专辑 (升序), 专辑 (降序), 发行年份 (升序), 发行年份 (降序), 已添加日期 (升序), 已添加日期 (降序), 文件夹 (升序), 文件夹 (降序)</value>
@@ -485,5 +485,11 @@
   </data>
   <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
     <value>快进30秒 (Ctrl+向右键)</value>
+  </data>
+  <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
+    <value>全屏</value>
+  </data>
+  <data name="MusicInfo_AllGenres" xml:space="preserve">
+    <value>所有流派</value>
   </data>
 </root>

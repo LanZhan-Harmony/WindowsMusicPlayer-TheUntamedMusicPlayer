@@ -23,7 +23,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="0.4*" MinWidth="0"/>
-            <ColumnDefinition Width="1.4*" MinWidth="130"/>
+            <ColumnDefinition Width="0.6*" MinWidth="130"/>
             <ColumnDefinition Width="0.4*" MinWidth="0"/>
             <ColumnDefinition Width="2*" MinWidth="80"/>
         </Grid.ColumnDefinitions>
@@ -35,12 +35,14 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="ShuffleButton.Visibility" Value="Collapsed"/>
-                        <Setter Target="RepeatButton.Visibility" Value="Collapsed"/>
-                        <Setter Target="SkipBackButton.Visibility" Value="Collapsed"/>
-                        <Setter Target="SkipForwardButton.Visibility" Value="Collapsed"/>
-                        <Setter Target="FullScreenButton.Visibility" Value="Collapsed"/>
                         <Setter Target="ShuffleMenu.Visibility" Value="Visible"/>
+                        <Setter Target="RepeatButton.Visibility" Value="Collapsed"/>
                         <Setter Target="RepeatMenu.Visibility" Value="Visible"/>
+                        <Setter Target="SkipBackButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="SkipBackMenu.Visibility" Value="Visible"/>
+                        <Setter Target="SkipForwardButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="SkipForwardMenu.Visibility" Value="Visible"/>
+                        <Setter Target="FullScreenButton.Visibility" Value="Collapsed"/>
                         <Setter Target="FullScreenMenu.Visibility" Value="Visible"/>
                         <Setter Target="PlayStackPanel.(Grid.Column)" Value="2"/>
                         <Setter Target="PlayStackPanel.(Grid.ColumnSpan)" Value="1"/>
@@ -53,10 +55,31 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="ShuffleButton.Visibility" Value="Visible"/>
-                        <Setter Target="RepeatButton.Visibility" Value="Visible"/>
-                        <Setter Target="FullScreenButton.Visibility" Value="Visible"/>
                         <Setter Target="ShuffleMenu.Visibility" Value="Collapsed"/>
+                        <Setter Target="RepeatButton.Visibility" Value="Visible"/>
                         <Setter Target="RepeatMenu.Visibility" Value="Collapsed"/>
+                        <Setter Target="SkipBackButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="SkipBackMenu.Visibility" Value="Visible"/>
+                        <Setter Target="SkipForwardButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="SkipForwardMenu.Visibility" Value="Visible"/>
+                        <Setter Target="FullScreenButton.Visibility" Value="Visible"/>
+                        <Setter Target="FullScreenMenu.Visibility" Value="Collapsed"/>
+                        <Setter Target="PlayStackPanel.(Grid.Column)" Value="1"/>
+                        <Setter Target="PlayStackPanel.(Grid.ColumnSpan)" Value="3"/>
+                        <Setter Target="PlayStackPanel.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="PlayStackPanel.(Canvas.ZIndex)" Value="3"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="861"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ShuffleButton.Visibility" Value="Visible"/>
+                        <Setter Target="ShuffleMenu.Visibility" Value="Collapsed"/>
+                        <Setter Target="RepeatButton.Visibility" Value="Visible"/>
+                        <Setter Target="RepeatMenu.Visibility" Value="Collapsed"/>
+                        <Setter Target="FullScreenButton.Visibility" Value="Visible"/>
                         <Setter Target="FullScreenMenu.Visibility" Value="Collapsed"/>
                         <Setter Target="PlayStackPanel.(Grid.Column)" Value="1"/>
                         <Setter Target="PlayStackPanel.(Grid.ColumnSpan)" Value="3"/>
@@ -167,12 +190,15 @@
                     Grid.Row="1"
                     HorizontalAlignment="Center"
                     Orientation="Horizontal" Spacing="10">
+            <StackPanel.ChildrenTransitions>
+                <RepositionThemeTransition IsStaggeringEnabled="False"/>
+            </StackPanel.ChildrenTransitions>
             <!--  随机播放  -->
             <Button x:Name="ShuffleButton"
                     AccessKey="H"
                     Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}"
+                    Style="{StaticResource MenuButtonStyle}"
                     ToolTipService.ToolTip="{x:Bind ViewModel.GetShuffleModeToolTip(model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="H" Modifiers="Control"/>
@@ -191,7 +217,7 @@
                     AccessKey="B"
                     Click="{x:Bind model:Data.MusicPlayer.PlayPreviousSong}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}">
+                    Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="B" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
@@ -201,8 +227,9 @@
             <!--  快退10s  -->
             <Button x:Name="SkipBackButton" x:Uid="PlayBar_SkipBack10s"
                     AccessKey="I"
+                    Click="{x:Bind model:Data.MusicPlayer.SkipBack10sButton_Click}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}"
+                    Style="{StaticResource MenuButtonStyle}"
                     Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="Left" Modifiers="Control"/>
@@ -215,7 +242,7 @@
                     AccessKey="P"
                     Click="{x:Bind model:Data.MusicPlayer.PlayPauseUpdate}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}"
+                    Style="{StaticResource MenuButtonStyle}"
                     ToolTipService.ToolTip="{x:Bind ViewModel.GetPlayPauseTooltip(model:Data.MusicPlayer.PlayState), Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="Space"/>
@@ -229,8 +256,9 @@
             <!--  快进30s  -->
             <Button x:Name="SkipForwardButton" x:Uid="PlayBar_SkipForw30s"
                     AccessKey="O"
+                    Click="{x:Bind model:Data.MusicPlayer.SkipForw30sButton_Click}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}"
+                    Style="{StaticResource MenuButtonStyle}"
                     Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="Right" Modifiers="Control"/>
@@ -243,7 +271,7 @@
                     AccessKey="F"
                     Click="{x:Bind model:Data.MusicPlayer.PlayNextSong}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}">
+                    Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="F" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
@@ -254,7 +282,7 @@
             <Button x:Name="RepeatButton"
                     AccessKey="T"
                     Click="{x:Bind model:Data.MusicPlayer.RepeatModeUpdate}"
-                    Style="{StaticResource PlayButtonStyle}"
+                    Style="{StaticResource MenuButtonStyle}"
                     ToolTipService.ToolTip="{x:Bind ViewModel.GetRepeatModeToolTip(model:Data.MusicPlayer.RepeatMode), Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="T" Modifiers="Control"/>
@@ -271,7 +299,7 @@
             <!--  音量  -->
             <Button x:Uid="PlayBar_Volume"
                     AccessKey="V"
-                    Style="{StaticResource PlayButtonStyle}">
+                    Style="{StaticResource MenuButtonStyle}">
                 <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetVolumeIcon(model:Data.MusicPlayer.CurrentVolume, model:Data.MusicPlayer.IsMute), Mode=OneWay}"/>
                 <Button.Flyout>
                     <Flyout>
@@ -280,7 +308,7 @@
                                     Spacing="12">
                             <Button AccessKey="M"
                                     Click="{x:Bind model:Data.MusicPlayer.MuteButton_Click}"
-                                    Style="{StaticResource PlayButtonStyle}">
+                                    Style="{StaticResource MenuButtonStyle}">
                                 <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetVolumeIcon(model:Data.MusicPlayer.CurrentVolume, model:Data.MusicPlayer.IsMute), Mode=OneWay}"/>
                             </Button>
                             <Slider x:Name="VolumeSlider" x:Uid="PlayBar_Volume"
@@ -303,7 +331,7 @@
             <Button x:Name="FullScreenButton" x:Uid="PlayBar_FullScreen"
                     AccessKey="U"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}">
+                    Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="F11"/>
                 </Button.KeyboardAccelerators>
@@ -314,7 +342,7 @@
             <Button x:Uid="PlayBar_Mini"
                     AccessKey="M"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource PlayButtonStyle}">
+                    Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="M" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
@@ -324,7 +352,7 @@
             <!--  更多菜单  -->
             <Button x:Uid="PlayBar_More"
                     AccessKey="R"
-                    Style="{StaticResource PlayButtonStyle}">
+                    Style="{StaticResource MenuButtonStyle}">
                 <FontIcon FontSize="16" Glyph="&#xE712;"/>
                 <Button.Flyout>
                     <MenuFlyout>
@@ -355,7 +383,30 @@
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xEC4A;"/>
                             </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem x:Uid="PlayBar_More_025" Text="0.25 ×">
+                            <MenuFlyoutItem Margin="3,1,3,2">
+                                <MenuFlyoutItem.Template>
+                                    <ControlTemplate>
+                                        <ListView x:Name="SpeedListView" SelectedIndex="2">
+                                            <ListViewItem Margin="0,2,0,2">
+                                                <TextBlock Text="0.25 ×"/>
+                                            </ListViewItem>
+                                            <ListViewItem Margin="0,2,0,2">
+                                                <TextBlock Text="0.5 ×"/>
+                                            </ListViewItem>
+                                            <ListViewItem Margin="0,2,0,2">
+                                                <TextBlock Text="1 ×"/>
+                                            </ListViewItem>
+                                            <ListViewItem Margin="0,2,0,2">
+                                                <TextBlock Text="1.5 ×"/>
+                                            </ListViewItem>
+                                            <ListViewItem Margin="0,2,0,2">
+                                                <TextBlock Text="2 ×"/>
+                                            </ListViewItem>
+                                        </ListView>
+                                    </ControlTemplate>
+                                </MenuFlyoutItem.Template>
+                            </MenuFlyoutItem>
+                            <!--<MenuFlyoutItem x:Uid="PlayBar_More_025" Text="0.25 ×">
                                 <MenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="G" Modifiers="Control, Shift"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>
@@ -379,7 +430,7 @@
                                 <MenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="L" Modifiers="Control, Shift"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>
+                            </MenuFlyoutItem>-->
                         </MenuFlyoutSubItem>
 
                         <!--  投屏  -->
@@ -393,7 +444,10 @@
                         </MenuFlyoutItem>
 
                         <!--  快退10s  -->
-                        <MenuFlyoutItem x:Uid="PlayBar_More_SkipBack10s" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
+                        <MenuFlyoutItem x:Name="SkipBackMenu" x:Uid="PlayBar_More_SkipBack10s"
+                                        Click="{x:Bind model:Data.MusicPlayer.SkipBack10sButton_Click}"
+                                        IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xED3C;"/>
                             </MenuFlyoutItem.Icon>
@@ -403,7 +457,10 @@
                         </MenuFlyoutItem>
 
                         <!--  快进30s  -->
-                        <MenuFlyoutItem x:Uid="PlayBar_More_SkipForw30s" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
+                        <MenuFlyoutItem x:Name="SkipForwardMenu" x:Uid="PlayBar_More_SkipForw30s"
+                                        Click="{x:Bind model:Data.MusicPlayer.SkipForw30sButton_Click}"
+                                        IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xED3D;"/>
                             </MenuFlyoutItem.Icon>
@@ -438,7 +495,7 @@
                         </MenuFlyoutItem>
 
                         <!--  全屏  -->
-                        <MenuFlyoutItem x:Name="FullScreenMenu" x:Uid="PlayBar_SkipForw30s"
+                        <MenuFlyoutItem x:Name="FullScreenMenu" x:Uid="PlayBar_Menu_FullScreeen"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE740;"/>

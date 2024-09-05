@@ -38,7 +38,7 @@ public class MusicLibrary : INotifyPropertyChanged
         }
     }
 
-    public bool HasMusics => Musics.Any();
+    public bool HasMusics => Musics.Count != 0;
 
     private Dictionary<string, AlbumInfo> _albums = [];
     public Dictionary<string, AlbumInfo> Albums
@@ -62,6 +62,15 @@ public class MusicLibrary : INotifyPropertyChanged
         }
     }
 
+    private readonly HashSet<string> _musicGenres = [];
+
+    private List<string> _genres = [];
+    public List<string> Genres
+    {
+        get => _genres;
+        set => _genres = value;
+    }
+
     public MusicLibrary()
     {
         LoadFoldersAsync();
@@ -77,6 +86,9 @@ public class MusicLibrary : INotifyPropertyChanged
             }
         }
         _musicPaths.Clear();
+        _musicGenres.Clear();
+        Genres.Add("MusicInfo_AllGenres".GetLocalized());
+        Genres.Sort(new GenreComparer());
         OnPropertyChanged(nameof(HasMusics));
     }
 
@@ -85,6 +97,7 @@ public class MusicLibrary : INotifyPropertyChanged
         Musics?.Clear();
         Artists?.Clear();
         Albums?.Clear();
+        Genres?.Clear();
         if (Folders != null && Folders.Any())
         {
             foreach (var folder in Folders)
@@ -93,6 +106,9 @@ public class MusicLibrary : INotifyPropertyChanged
             }
         }
         _musicPaths.Clear();
+        _musicGenres.Clear();
+        Genres?.Add("MusicInfo_AllGenres".GetLocalized());
+        Genres?.Sort(new GenreComparer());
         OnPropertyChanged(nameof(HasMusics));
     }
 
@@ -120,11 +136,16 @@ public class MusicLibrary : INotifyPropertyChanged
 
             foreach (var file in supportedFiles)
             {
-                if (Musics != null && !_musicPaths.Contains(file.Path))
+                if (_musicPaths.Add(file.Path))
                 {
                     var briefMusicInfo = new BriefMusicInfo(file.Path, foldername);
                     Musics.Add(briefMusicInfo);
-                    _musicPaths.Add(file.Path);
+
+                    if (_musicGenres.Add(briefMusicInfo.GenreStr))
+                    {
+                        Genres.Add(briefMusicInfo.GenreStr);
+                    }
+
                     UpdateAlbumInfo(briefMusicInfo);
                     UpdateArtistInfo(briefMusicInfo);
                 }

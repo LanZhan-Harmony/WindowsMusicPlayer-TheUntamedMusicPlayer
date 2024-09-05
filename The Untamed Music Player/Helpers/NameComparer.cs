@@ -24,13 +24,11 @@ internal class TitleComparer : IComparer<string>
         {
             return 0;
         }
-
-        if (string.IsNullOrEmpty(x))
+        else if (string.IsNullOrEmpty(x))
         {
             return -1;
         }
-
-        if (string.IsNullOrEmpty(y))
+        else if (string.IsNullOrEmpty(y))
         {
             return 1;
         }
@@ -127,13 +125,11 @@ internal class ArtistComparer : IComparer<BriefMusicInfo>
         {
             return 0;
         }
-
-        if (string.IsNullOrEmpty(xProperty))
+        else if (string.IsNullOrEmpty(xProperty))
         {
             return -1;
         }
-
-        if (string.IsNullOrEmpty(yProperty))
+        else if (string.IsNullOrEmpty(yProperty))
         {
             return 1;
         }
@@ -203,13 +199,11 @@ internal class AlbumComparer : IComparer<BriefMusicInfo>
         {
             return 0;
         }
-
-        if (string.IsNullOrEmpty(xProperty))
+        else if (string.IsNullOrEmpty(xProperty))
         {
             return -1;
         }
-
-        if (string.IsNullOrEmpty(yProperty))
+        else if (string.IsNullOrEmpty(yProperty))
         {
             return 1;
         }
@@ -257,6 +251,104 @@ internal class AlbumComparer : IComparer<BriefMusicInfo>
         else
         {
             return 1;
+        }
+    }
+
+    private static bool IsChinese(char c)
+    {
+        return c >= 0x4E00 && c <= 0x9FFF;
+    }
+}
+
+internal class FolderComparer : IComparer<BriefMusicInfo>
+{
+    public int Compare(BriefMusicInfo? x, BriefMusicInfo? y)
+    {
+        return CompareByProperty(x?.Folder, y?.Folder, x?.Title, y?.Title);
+    }
+
+    private static int CompareByProperty(string? xProperty, string? yProperty, string? xTitle, string? yTitle)
+    {
+        if (string.IsNullOrEmpty(xProperty) && string.IsNullOrEmpty(yProperty))
+        {
+            return 0;
+        }
+        else if (string.IsNullOrEmpty(xProperty))
+        {
+            return -1;
+        }
+        else if (string.IsNullOrEmpty(yProperty))
+        {
+            return 1;
+        }
+
+        var groupComparison = new TitleComparer().Compare(xProperty, yProperty);
+        if (groupComparison != 0)
+        {
+            return groupComparison;
+        }
+        return new TitleComparer().Compare(xTitle, yTitle);
+    }
+}
+
+internal class GenreComparer : IComparer<string>
+{
+    public int Compare(string? x, string? y)
+    {
+        if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+        {
+            return 0;
+        }
+        if (string.IsNullOrEmpty(x))
+        {
+            return -1;
+        }
+        if (string.IsNullOrEmpty(y))
+        {
+            return 1;
+        }
+
+        var xFirstChar = x[0];
+
+        var xPriority = GetGroupPriority(x);
+        var yPriority = GetGroupPriority(y);
+
+        if (xPriority != yPriority)
+        {
+            return xPriority.CompareTo(yPriority);
+        }
+
+        var groupComparison = IsChinese(xFirstChar)
+            ? string.Compare(TitleComparer.GetPinyin(x), TitleComparer.GetPinyin(y), StringComparison.OrdinalIgnoreCase)
+            : string.Compare(x, y, StringComparison.OrdinalIgnoreCase);
+        return groupComparison;
+    }
+
+    private static int GetGroupPriority(string property)
+    {
+        if (property == "MusicInfo_AllGenres".GetLocalized())
+        {
+            return 0;
+        }
+        else if (property == "MusicInfo_UnknownGenre".GetLocalized())
+        {
+            return 1;
+        }
+        else if (IsChinese(property[0]))
+        {
+            return 5;
+        }
+        else if (char.IsLetter(property[0]))
+        {
+            return 4;
+        }
+        else if (char.IsDigit(property[0]))
+        {
+            return 3;
+        }
+        else
+        {
+            return 2;
         }
     }
 

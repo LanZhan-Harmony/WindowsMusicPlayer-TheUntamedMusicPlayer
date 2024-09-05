@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using Microsoft.UI.Xaml.Data;
+using System.Diagnostics;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -44,11 +45,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     public bool GroupMode
     {
         get => _groupMode;
-        set
-        {
-            _groupMode = value;
-            OnPropertyChanged(nameof(GroupMode));
-        }
+        set => _groupMode = value;
     }
 
     private List<BriefMusicInfo> _songList = Data.MusicLibrary.Musics;
@@ -73,18 +70,39 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         set => _notGroupedSongList = value;
     }
 
+    private int _genreMode;
+    public int GenreMode
+    {
+        get => _genreMode;
+        set
+        {
+            _genreMode = value;
+            OnPropertyChanged(nameof(GenreMode));
+            SaveGenreModeAsync();
+        }
+    }
+
+    private ObservableCollection<string> _genres = new(Data.MusicLibrary.Genres);
+    public ObservableCollection<string> Genres
+    {
+        get => _genres;
+        set => _genres = value;
+    }
+
     public 歌曲ViewModel(ILocalSettingsService localSettingsService)
     {
         _localSettingsService = localSettingsService;
-        LoadSortModeAndSongList();
+        LoadModeAndSongList();
     }
 
-    public async void LoadSortModeAndSongList()
+    public async void LoadModeAndSongList()
     {
         await LoadSortModeAsync();
-        await SortSongs();
+        await LoadGenreModeAsync();
+        await FilterSongs();
         OnPropertyChanged(nameof(GroupedSongList));
         OnPropertyChanged(nameof(NotGroupedSongList));
+        OnPropertyChanged(nameof(Genres));
     }
 
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -113,6 +131,34 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         {
             listView.SelectedIndex = SortMode;
         }
+    }
+
+    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var currentGenreMode = GenreMode;
+        if (sender is ListView listView && listView.SelectedItem is string selectedItem)
+        {
+            GenreMode = Genres.IndexOf(selectedItem);
+            if (GenreMode != currentGenreMode)
+            {
+                await FilterSongs();
+                OnPropertyChanged(nameof(GroupedSongList));
+                OnPropertyChanged(nameof(NotGroupedSongList));
+            }
+        }
+    }
+
+    public void GenreListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            listView.SelectedIndex = GenreMode;
+        }
+    }
+
+    public string GetGenreStr(int GenreMode)
+    {
+        return Genres[GenreMode];
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -217,6 +263,48 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         }
     }
 
+    public async Task FilterSongs()
+    {
+        GroupedSongList = new ObservableCollection<GroupInfoList>(SongList
+            .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
+            .Select(g => new GroupInfoList(g) { Key = g.Key }));
+        NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(SongList);
+
+        if (GenreMode == 0)
+        {
+            await SortSongs();
+            return;
+        }
+
+        var genreToFilter = Genres[GenreMode];
+
+        var filterGroupedTask = Task.Run(() =>
+        {
+            // 过滤GroupedSongList
+            foreach (var group in GroupedSongList)
+            {
+                var filteredItems = group.Where(item => item is BriefMusicInfo musicInfo && musicInfo.GenreStr == genreToFilter).ToList();
+                group.Clear();
+                foreach (var item in filteredItems)
+                {
+                    group.Add(item);
+                }
+            }
+        });
+        var filterNotGroupedTask = Task.Run(() =>
+        {
+            // 过滤NotGroupedSongList
+            var filteredSongs = NotGroupedSongList.Where(musicInfo => musicInfo.GenreStr == genreToFilter).ToList();
+            NotGroupedSongList.Clear();
+            foreach (var song in filteredSongs)
+            {
+                NotGroupedSongList.Add(song);
+            }
+        });
+        await Task.WhenAll(filterGroupedTask, filterNotGroupedTask).ContinueWith(async _ => await SortSongs());
+    }
+
+
     public object GetSongListViewSource(ICollectionView grouped, ObservableCollection<BriefMusicInfo> notgrouped)
     {
         return GroupMode ? grouped : NotGroupedSongList;
@@ -229,11 +317,14 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
-                .OrderBy(m => m.Title, new TitleComparer())
-                .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
-                .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+            var sortedGroups = GroupedSongList
+               .SelectMany(group => group)
+               .OfType<BriefMusicInfo>()
+               .OrderBy(m => m.Title, new TitleComparer())
+               .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
+               .Select(g => new GroupInfoList(g) { Key = g.Key });
+
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -244,11 +335,14 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
+            var sortedGroups = GroupedSongList
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
                 .OrderByDescending(m => m.Title, new TitleComparer())
                 .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -259,11 +353,14 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
+            var sortedGroups = GroupedSongList
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
                 .OrderBy(m => m, new ArtistComparer())
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -274,11 +371,14 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
+            var sortedGroups = GroupedSongList
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
                 .OrderByDescending(m => m, new ArtistComparer())
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -289,11 +389,14 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
+            var sortedGroups = GroupedSongList
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
                 .OrderBy(m => m, new AlbumComparer())
                 .GroupBy(m => m.Album)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -304,11 +407,14 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
+            var sortedGroups = GroupedSongList
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
                 .OrderByDescending(m => m, new AlbumComparer())
                 .GroupBy(m => m.Album)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -319,11 +425,13 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
+            var sortedGroups = GroupedSongList
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
                 .OrderBy(m => m.Year)
                 .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -334,11 +442,14 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
+            var sortedGroups = GroupedSongList
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
                 .OrderByDescending(m => m.Year)
                 .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -349,7 +460,10 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(SongList.OrderBy(m => m.ModifiedDate));
+            var sortedGroups = NotGroupedSongList
+                .OrderBy(m => m.ModifiedDate);
+
+            NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(sortedGroups);
         });
     }
 
@@ -360,7 +474,10 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(SongList.OrderByDescending(m => m.ModifiedDate));
+            var sortedGroups = NotGroupedSongList
+                .OrderByDescending(m => m.ModifiedDate);
+
+            NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(sortedGroups);
         });
     }
 
@@ -372,11 +489,14 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
-                .OrderBy(m => m.Folder, new TitleComparer())
+            var sortedGroups = GroupedSongList
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
+                .OrderBy(m => m, new FolderComparer())
                 .GroupBy(m => m.Folder)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -384,11 +504,14 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var groupedSongs = SongList
-                .OrderByDescending(m => m.Folder, new TitleComparer())
+            var sortedGroups = GroupedSongList
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
+                .OrderByDescending(m => m, new FolderComparer())
                 .GroupBy(m => m.Folder)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(groupedSongs);
+
+            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -396,9 +519,16 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         SortMode = await _localSettingsService.ReadSettingAsync<byte>("SortMode");
     }
-
+    public async Task LoadGenreModeAsync()
+    {
+        GenreMode = await _localSettingsService.ReadSettingAsync<int>("GenreMode");
+    }
     public async void SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("SortMode", SortMode);
+    }
+    public async void SaveGenreModeAsync()
+    {
+        await _localSettingsService.SaveSettingAsync("GenreMode", GenreMode);
     }
 }
