@@ -262,7 +262,7 @@
     <value>Volume</value>
   </data>
   <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
-    <value>FullScreen (F11)</value>
+    <value>Full screen (F11)</value>
   </data>
   <data name="PlayBar_Mini.ToolTipService.ToolTip" xml:space="preserve">
     <value>Mini player (Ctrl+M)</value>
@@ -352,7 +352,7 @@
     <value>Repeat: Off</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>None, Mica, Mica Alt, Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
+    <value>None, Mica (Only Win11), Mica Alt (Only Win11), Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur (Experimental), Transparent (Experimental), Animated (Experimental)</value>
   </data>
   <data name="歌曲_SortBy" xml:space="preserve">
     <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Album (Asc), Album (Desc), Release year (Asc), Release year (Desc), Date added (Asc), Date added (Desc), Folder (Asc), Folder (Desc)</value>
@@ -485,5 +485,11 @@
   </data>
   <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
     <value>Skip back 10 seconds (Ctrl+Left)</value>
+  </data>
+  <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
+    <value>Full screen</value>
+  </data>
+  <data name="MusicInfo_AllGenres" xml:space="preserve">
+    <value>All genres</value>
   </data>
 </root>

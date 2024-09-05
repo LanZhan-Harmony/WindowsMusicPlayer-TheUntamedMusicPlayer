@@ -16,6 +16,11 @@
                 <TextBlock Text="{x:Bind}"/>
             </ListViewItem>
         </DataTemplate>
+        <DataTemplate x:Key="GenreListViewItemTemplate" x:DataType="x:String">
+            <ListViewItem Margin="0,2,0,2">
+                <TextBlock Text="{x:Bind}"/>
+            </ListViewItem>
+        </DataTemplate>
         <CollectionViewSource x:Name="GroupedSongList"
                               IsSourceGrouped="True"
                               Source="{x:Bind ViewModel.GroupedSongList, Mode=OneWay}"/>
@@ -215,7 +220,7 @@
                 <Button Background="Transparent" BorderBrush="Transparent">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <TextBlock x:Uid="歌曲_GenreChosen"/>
-                        <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="所有流派"/>
+                        <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetGenreStr(ViewModel.GenreMode), Mode=OneWay}"/>
                         <FontIcon Margin="8,0,0,0"
                                   FontSize="12" Glyph="&#xE70D;"/>
                     </StackPanel>
@@ -223,14 +228,10 @@
                         <Flyout Placement="Bottom">
                             <ListView x:Name="GenreListView"
                                       Margin="-12,-13,-12,-15"
-                                      SelectedIndex="0">
-                                <ListViewItem Margin="0,2,0,2">
-                                    <TextBlock Text="所有流派"/>
-                                </ListViewItem>
-                                <ListViewItem Margin="0,2,0,2">
-                                    <TextBlock Text="未知流派"/>
-                                </ListViewItem>
-                            </ListView>
+                                      ItemTemplate="{StaticResource GenreListViewItemTemplate}"
+                                      ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}"
+                                      Loaded="{x:Bind ViewModel.GenreListView_Loaded}"
+                                      SelectionChanged="{x:Bind ViewModel.GenreListView_SelectionChanged}"/>
                         </Flyout>
                     </Button.Flyout>
                 </Button>

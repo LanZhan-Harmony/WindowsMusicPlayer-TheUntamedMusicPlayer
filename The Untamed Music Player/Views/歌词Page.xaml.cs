@@ -14,7 +14,7 @@ namespace The_Untamed_Music_Player.Views;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class 歌词Page : Page
+public sealed partial class 歌词Page : Page, IDisposable
 {
     public 歌词ViewModel ViewModel
     {
@@ -25,7 +25,6 @@ public sealed partial class 歌词Page : Page
     {
         ViewModel = App.GetService<歌词ViewModel>();
         InitializeComponent();
-        MusicPlayer.歌词UI = this;
 
         // 设置 ContentGridBackground 的绑定
         /*var contentGridBinding = new Binding
@@ -88,5 +87,9 @@ public sealed partial class 歌词Page : Page
 
             LyricViewer.ChangeView(null, targetPosition.Y - LyricViewer.Height / 2 + 40, null, disableAnimation: false);
         }
+    }
+
+    public void Dispose()
+    {
     }
 }
