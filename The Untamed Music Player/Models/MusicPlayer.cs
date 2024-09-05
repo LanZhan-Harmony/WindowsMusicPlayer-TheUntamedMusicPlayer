@@ -477,7 +477,10 @@ public partial class MusicPlayer : INotifyPropertyChanged
                     {
                         Current = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
                         Total = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
-                        CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
+                        if (Total.TotalMilliseconds > 0)
+                        {
+                            CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
+                        }
                     });
                 }
                 catch { }
@@ -808,6 +811,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
     public void SliderUpdate(object sender, PointerRoutedEventArgs e)
     {
         Current = TimeSpan.FromMilliseconds((double)((Slider)sender).Value * Total.TotalMilliseconds / 100);
+        CurrentLyricIndex = GetCurrentLyricIndex(Current.TotalMilliseconds);
     }
 
     /// <summary>
@@ -820,7 +824,10 @@ public partial class MusicPlayer : INotifyPropertyChanged
         Player.PlaybackSession.Position = TimeSpan.FromMilliseconds((double)((Slider)sender).Value * Total.TotalMilliseconds / 100);
         Current = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
         Total = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
-        CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
+        if (Total.TotalMilliseconds > 0)
+        {
+            CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
+        }
         CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
         lockable = false;
     }
@@ -835,7 +842,52 @@ public partial class MusicPlayer : INotifyPropertyChanged
         Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(time);
         Current = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
         Total = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
-        CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
+        if (Total.TotalMilliseconds > 0)
+        {
+            CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
+        }
+        CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+        lockable = false;
+    }
+
+    public void SkipBack10sButton_Click(object sender, RoutedEventArgs e)
+    {
+        lockable = true;
+        if (Player.PlaybackSession.Position.TotalMilliseconds - 10000 < 0)
+        {
+            Player.PlaybackSession.Position = TimeSpan.Zero;
+        }
+        else
+        {
+            Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(Player.PlaybackSession.Position.TotalMilliseconds - 10000);
+        }
+        Current = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
+        Total = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
+        if (Total.TotalMilliseconds > 0)
+        {
+            CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
+        }
+        CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+        lockable = false;
+    }
+
+    public void SkipForw30sButton_Click(object sender, RoutedEventArgs e)
+    {
+        lockable = true;
+        if (Player.PlaybackSession.Position.TotalMilliseconds + 30000 > Total.TotalMilliseconds)
+        {
+            Player.PlaybackSession.Position = Total;
+        }
+        else
+        {
+            Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(Player.PlaybackSession.Position.TotalMilliseconds + 30000);
+        }
+        Current = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
+        Total = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
+        if (Total.TotalMilliseconds > 0)
+        {
+            CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
+        }
         CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
         lockable = false;
     }

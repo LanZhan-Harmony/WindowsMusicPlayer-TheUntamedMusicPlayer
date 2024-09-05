@@ -270,6 +270,7 @@ public sealed partial class MainWindow : WindowEx
         Activated -= Window_Activated;
         m_configurationSource = null;
 
+        Data.MusicPlayer.Player.Dispose();
         Data.MusicPlayer.SaveCurrentStateAsync();
     }
 
