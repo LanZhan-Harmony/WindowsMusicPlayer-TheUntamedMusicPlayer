@@ -1,9 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 
 using The_Untamed_Music_Player.Activation;
 using The_Untamed_Music_Player.Contracts.Services;
-using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.Services;
 

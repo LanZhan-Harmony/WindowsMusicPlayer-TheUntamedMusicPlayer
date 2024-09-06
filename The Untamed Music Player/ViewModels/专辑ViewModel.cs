@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
 

@@ -1,7 +1,7 @@
 ﻿using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.ViewModels;
 using The_Untamed_Music_Player.Views;
-using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Models;
 
