@@ -383,54 +383,59 @@
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xEC4A;"/>
                             </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem Margin="3,1,3,2">
+                            <MenuFlyoutItem Margin="3,0,3,1">
                                 <MenuFlyoutItem.Template>
                                     <ControlTemplate>
                                         <ListView x:Name="SpeedListView" SelectedIndex="2">
-                                            <ListViewItem Margin="0,2,0,2">
-                                                <TextBlock Text="0.25 ×"/>
+                                            <ListViewItem Margin="0,2,0,1">
+                                                <Grid Width="125">
+                                                    <TextBlock HorizontalAlignment="Left" Text="0.25 ×"/>
+                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                               Text="Ctrl+Shift+G"/>
+                                                </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,2,0,2">
-                                                <TextBlock Text="0.5 ×"/>
+                                            <ListViewItem Margin="0,1,0,1">
+                                                <Grid Width="125">
+                                                    <TextBlock HorizontalAlignment="Left" Text="0.5 ×"/>
+                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                               Text="Ctrl+Shift+H"/>
+                                                </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,2,0,2">
-                                                <TextBlock Text="1 ×"/>
+                                            <ListViewItem Margin="0,1,0,1">
+                                                <Grid Width="125">
+                                                    <TextBlock HorizontalAlignment="Left" Text="1 ×"/>
+                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                               Text="Ctrl+Shift+J"/>
+                                                </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,2,0,2">
-                                                <TextBlock Text="1.5 ×"/>
+                                            <ListViewItem Margin="0,1,0,1">
+                                                <Grid Width="125">
+                                                    <TextBlock HorizontalAlignment="Left" Text="1.5 ×"/>
+                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                               Text="Ctrl+Shift+K"/>
+                                                </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,2,0,2">
-                                                <TextBlock Text="2 ×"/>
+                                            <ListViewItem Margin="0,1,0,2">
+                                                <Grid Width="125">
+                                                    <TextBlock HorizontalAlignment="Left" Text="2 ×"/>
+                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                               Text="Ctrl+Shift+L"/>
+                                                </Grid>
                                             </ListViewItem>
                                         </ListView>
                                     </ControlTemplate>
                                 </MenuFlyoutItem.Template>
                             </MenuFlyoutItem>
-                            <!--<MenuFlyoutItem x:Uid="PlayBar_More_025" Text="0.25 ×">
-                                <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="G" Modifiers="Control, Shift"/>
-                                </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Uid="PlayBar_More_05" Text="0.5 ×">
-                                <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="H" Modifiers="Control, Shift"/>
-                                </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Uid="PlayBar_More_1" Text="1 ×">
-                                <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="J" Modifiers="Control, Shift"/>
-                                </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Uid="PlayBar_More_15" Text="1.5 ×">
-                                <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="K" Modifiers="Control, Shift"/>
-                                </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Uid="PlayBar_More_2" Text="2 ×">
-                                <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="L" Modifiers="Control, Shift"/>
-                                </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>-->
                         </MenuFlyoutSubItem>
 
                         <!--  投屏  -->

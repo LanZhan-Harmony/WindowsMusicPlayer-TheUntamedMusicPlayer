@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using The_Untamed_Music_Player.Activation;
@@ -39,12 +40,10 @@ public partial class App : Application
         get; private set;
     }
 
-
     public static UIElement? AppTitlebar
     {
         get; set;
     }
-
 
     public App()
     {
@@ -53,7 +52,7 @@ public partial class App : Application
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
         UseContentRoot(AppContext.BaseDirectory).
-        ConfigureServices((context, services) =>//注册服务信息
+        ConfigureServices((context, services) => //注册服务信息
         {
             // Default Activation Handler
             services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
@@ -105,7 +104,12 @@ public partial class App : Application
             services.AddTransient<艺术家详情ViewModel>();
 
             // Configuration
-            services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
+            services.AddOptions<LocalSettingsOptions>()
+                    .Configure<IConfiguration>((settings, configuration) =>
+                    {
+                        var section = configuration.GetSection(nameof(LocalSettingsOptions));
+                        // 手动绑定其他属性
+                    });
         }).
         Build();//生成容器
     }
