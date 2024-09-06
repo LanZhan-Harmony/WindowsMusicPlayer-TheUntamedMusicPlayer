@@ -1,13 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using The_Untamed_Music_Player.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using The_Untamed_Music_Player.Models;
-using The_Untamed_Music_Player.Contracts.Services;
 using Microsoft.UI.Xaml.Data;
-using System.Diagnostics;
+using Microsoft.UI.Xaml.Input;
+using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -301,7 +300,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
                 NotGroupedSongList.Add(song);
             }
         });
-        await Task.WhenAll(filterGroupedTask, filterNotGroupedTask).ContinueWith(async _ => await SortSongs());
+        await Task.WhenAll(filterGroupedTask, filterNotGroupedTask).ContinueWith(t => SortSongs());
     }
 
 
