@@ -9,7 +9,7 @@
 ![屏幕截图 2024-08-27 151657](https://github.com/user-attachments/assets/2a730456-4563-497a-8c42-359309d15d84)
 
 ## 安装教程
-注意:本应用仅限Microsoft® Windows11(版本号22H2及以上)安装.
+注意:本应用仅限Microsoft® Windows10(版本号1809及以上)安装.
 
 ### 安装证书:
 1.双击打开 The Untamed Music Player_版本号_x64.cer 证书文件.如果没有.cer证书文件则右键 The Untamed Music Player_版本号_x64.msix 文件,点击属性-数字签名-选中签名者-详细信息-查看证书.
