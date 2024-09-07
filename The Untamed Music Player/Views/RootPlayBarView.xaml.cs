@@ -24,8 +24,14 @@ public sealed partial class RootPlayBarView : Page
     {
         return ProgressSlider;
     }
-    public Border GetCoverBorder()
+
+    private void SpeedListView_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        return CoverBorder;
+        Data.MusicPlayer.SpeedListView_Loaded(sender, e);
+    }
+
+    private void SpeedListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        Data.MusicPlayer.SpeedListView_SelectionChanged(sender, e);
     }
 }
