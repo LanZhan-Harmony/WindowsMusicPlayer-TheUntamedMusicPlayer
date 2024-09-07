@@ -1,16 +1,11 @@
 ﻿<Page x:Class="The_Untamed_Music_Player.Views.RootPlayBarView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:converters="using:CommunityToolkit.WinUI.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
       NavigationCacheMode="Enabled"
       mc:Ignorable="d">
-
-    <Page.Resources>
-        <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
-    </Page.Resources>
 
     <Grid Width="Auto" Height="Auto"
           HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -358,7 +353,10 @@
                     <MenuFlyout>
 
                         <!--  歌曲属性  -->
-                        <MenuFlyoutItem x:Uid="PlayBar_Property" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
+                        <MenuFlyoutItem x:Uid="PlayBar_Property"
+                                        AccessKey="P"
+                                        IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                        KeyTipPlacementMode="Left">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE946;"/>
                             </MenuFlyoutItem.Icon>
@@ -369,7 +367,10 @@
                         <MenuFlyoutSeparator/>
 
                         <!--  均衡器  -->
-                        <MenuFlyoutItem x:Uid="PlayBar_Equalizer" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
+                        <MenuFlyoutItem x:Uid="PlayBar_Equalizer"
+                                        AccessKey="E"
+                                        IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                        KeyTipPlacementMode="Left">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE9E9;"/>
                             </MenuFlyoutItem.Icon>
@@ -379,15 +380,23 @@
                         </MenuFlyoutItem>
 
                         <!--  播放速度  -->
-                        <MenuFlyoutSubItem x:Uid="PlayBar_Speed" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
+                        <MenuFlyoutSubItem x:Uid="PlayBar_Speed"
+                                           AccessKey="S"
+                                           IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                           KeyTipPlacementMode="Left">
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xEC4A;"/>
                             </MenuFlyoutSubItem.Icon>
                             <MenuFlyoutItem Margin="3,0,3,1">
                                 <MenuFlyoutItem.Template>
                                     <ControlTemplate>
-                                        <ListView x:Name="SpeedListView" SelectedIndex="2">
-                                            <ListViewItem Margin="0,2,0,1">
+                                        <ListView x:Name="SpeedListView"
+                                                  KeyTipPlacementMode="Left" Loaded="SpeedListView_Loaded"
+                                                  SelectionChanged="SpeedListView_SelectionChanged">
+                                            <ListViewItem Margin="0,2,0,1" AccessKey="G">
+                                                <ListViewItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="G" Modifiers="Control,Shift"/>
+                                                </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="0.25 ×"/>
                                                     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -396,7 +405,10 @@
                                                                Text="Ctrl+Shift+G"/>
                                                 </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,1,0,1">
+                                            <ListViewItem Margin="0,1,0,1" AccessKey="H">
+                                                <ListViewItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="H" Modifiers="Control,Shift"/>
+                                                </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="0.5 ×"/>
                                                     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -405,7 +417,10 @@
                                                                Text="Ctrl+Shift+H"/>
                                                 </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,1,0,1">
+                                            <ListViewItem Margin="0,1,0,1" AccessKey="J">
+                                                <ListViewItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="J" Modifiers="Control,Shift"/>
+                                                </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="1 ×"/>
                                                     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -414,7 +429,10 @@
                                                                Text="Ctrl+Shift+J"/>
                                                 </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,1,0,1">
+                                            <ListViewItem Margin="0,1,0,1" AccessKey="K">
+                                                <ListViewItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="K" Modifiers="Control,Shift"/>
+                                                </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="1.5 ×"/>
                                                     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -423,7 +441,10 @@
                                                                Text="Ctrl+Shift+K"/>
                                                 </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,1,0,2">
+                                            <ListViewItem Margin="0,1,0,2" AccessKey="L">
+                                                <ListViewItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="L" Modifiers="Control,Shift"/>
+                                                </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="2 ×"/>
                                                     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -439,7 +460,10 @@
                         </MenuFlyoutSubItem>
 
                         <!--  投屏  -->
-                        <MenuFlyoutItem x:Uid="PlayBar_CastDevice" IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
+                        <MenuFlyoutItem x:Uid="PlayBar_CastDevice"
+                                        AccessKey="C"
+                                        IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                        KeyTipPlacementMode="Left">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xEC15;"/>
                             </MenuFlyoutItem.Icon>
@@ -450,8 +474,10 @@
 
                         <!--  快退10s  -->
                         <MenuFlyoutItem x:Name="SkipBackMenu" x:Uid="PlayBar_More_SkipBack10s"
+                                        AccessKey="I"
                                         Click="{x:Bind model:Data.MusicPlayer.SkipBack10sButton_Click}"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                        KeyTipPlacementMode="Left"
                                         Visibility="{x:Bind ViewModel.GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xED3C;"/>
@@ -463,8 +489,10 @@
 
                         <!--  快进30s  -->
                         <MenuFlyoutItem x:Name="SkipForwardMenu" x:Uid="PlayBar_More_SkipForw30s"
+                                        AccessKey="O"
                                         Click="{x:Bind model:Data.MusicPlayer.SkipForw30sButton_Click}"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                        KeyTipPlacementMode="Left"
                                         Visibility="{x:Bind ViewModel.GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xED3D;"/>
@@ -476,8 +504,10 @@
 
                         <!--  随机播放  -->
                         <MenuFlyoutItem x:Name="ShuffleMenu"
+                                        AccessKey="H"
                                         Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                        KeyTipPlacementMode="Left"
                                         Text="{x:Bind ViewModel.GetMoreShuffleModeText(model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
@@ -489,7 +519,9 @@
 
                         <!--  循环播放  -->
                         <MenuFlyoutItem x:Name="RepeatMenu"
+                                        AccessKey="T"
                                         Click="{x:Bind model:Data.MusicPlayer.RepeatModeUpdate}"
+                                        KeyTipPlacementMode="Left"
                                         Text="{x:Bind ViewModel.GetMoreRepeatModeText(model:Data.MusicPlayer.RepeatMode), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="{x:Bind ViewModel.GetRepeatModeIcon(model:Data.MusicPlayer.RepeatMode), Mode=OneWay}"/>
@@ -501,7 +533,9 @@
 
                         <!--  全屏  -->
                         <MenuFlyoutItem x:Name="FullScreenMenu" x:Uid="PlayBar_Menu_FullScreeen"
-                                        IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}">
+                                        AccessKey="U"
+                                        IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
+                                        KeyTipPlacementMode="Left">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE740;"/>
                             </MenuFlyoutItem.Icon>

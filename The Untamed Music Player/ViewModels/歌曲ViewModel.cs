@@ -107,9 +107,9 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var currentsortmode = SortMode;
-        if (sender is ListView listView && listView.SelectedItem is string selectedItem)
+        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
         {
-            SortMode = (byte)SortBy.IndexOf(selectedItem);
+            SortMode = (byte)selectedIndex;
             if (SortMode != currentsortmode)
             {
                 await SortSongs();
@@ -135,9 +135,9 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var currentGenreMode = GenreMode;
-        if (sender is ListView listView && listView.SelectedItem is string selectedItem)
+        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
         {
-            GenreMode = Genres.IndexOf(selectedItem);
+            GenreMode = selectedIndex;
             if (GenreMode != currentGenreMode)
             {
                 await FilterSongs();
@@ -239,29 +239,6 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         };
     }
 
-    public ObservableCollection<BriefMusicInfo> ConvertGroupedToFlatList()
-    {
-        if (GroupMode)
-        {
-            var flatList = new ObservableCollection<BriefMusicInfo>();
-            foreach (var group in GroupedSongList)
-            {
-                foreach (var item in group)
-                {
-                    if (item is BriefMusicInfo musicInfo)
-                    {
-                        flatList.Add(musicInfo);
-                    }
-                }
-            }
-            return flatList;
-        }
-        else
-        {
-            return NotGroupedSongList;
-        }
-    }
-
     public async Task FilterSongs()
     {
         GroupedSongList = new ObservableCollection<GroupInfoList>(SongList
@@ -303,6 +280,28 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         await Task.WhenAll(filterGroupedTask, filterNotGroupedTask).ContinueWith(t => SortSongs());
     }
 
+    public ObservableCollection<BriefMusicInfo> ConvertGroupedToFlatList()
+    {
+        if (GroupMode)
+        {
+            var flatList = new ObservableCollection<BriefMusicInfo>();
+            foreach (var group in GroupedSongList)
+            {
+                foreach (var item in group)
+                {
+                    if (item is BriefMusicInfo musicInfo)
+                    {
+                        flatList.Add(musicInfo);
+                    }
+                }
+            }
+            return flatList;
+        }
+        else
+        {
+            return NotGroupedSongList;
+        }
+    }
 
     public object GetSongListViewSource(ICollectionView grouped, ObservableCollection<BriefMusicInfo> notgrouped)
     {

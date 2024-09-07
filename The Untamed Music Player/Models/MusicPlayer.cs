@@ -329,13 +329,24 @@ public partial class MusicPlayer : INotifyPropertyChanged
             _isMute = value;
             if (value)
             {
-                Player.Volume = 0;
+                Player.IsMuted = true;
             }
             else
             {
-                Player.Volume = CurrentVolume / 100;
+                Player.IsMuted = false;
             }
             OnPropertyChanged(nameof(IsMute));
+        }
+    }
+
+    private double _playSpeed = 1;
+    public double PlaySpeed
+    {
+        get => _playSpeed;
+        set
+        {
+            _playSpeed = value;
+            Player.PlaybackSession.PlaybackRate = value;
         }
     }
 
@@ -428,6 +439,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
                 mediaFileTask.Wait();
                 var mediaFile = mediaFileTask.Result;
                 Player.Source = MediaSource.CreateFromStorageFile(mediaFile);
+                Player.PlaybackSession.PlaybackRate = PlaySpeed;
                 Total = Player.PlaybackSession.NaturalDuration;
                 DisplayUpdater.MusicProperties.Title = CurrentMusic.Title;
                 DisplayUpdater.MusicProperties.Artist = CurrentMusic.ArtistsStr == "未知艺术家" ? "" : CurrentMusic.ArtistsStr;
@@ -897,6 +909,38 @@ public partial class MusicPlayer : INotifyPropertyChanged
         lockable = false;
     }
 
+    public void SpeedListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ListView listview && listview.SelectedIndex is int selectedIndex)
+        {
+            PlaySpeed = selectedIndex switch
+            {
+                0 => 0.25,
+                1 => 0.5,
+                2 => 1,
+                3 => 1.5,
+                4 => 2,
+                _ => 1
+            };
+        }
+    }
+
+    public void SpeedListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listview)
+        {
+            listview.SelectedIndex = PlaySpeed switch
+            {
+                0.25 => 0,
+                0.5 => 1,
+                1 => 2,
+                1.5 => 3,
+                2 => 4,
+                _ => 2
+            };
+        }
+    }
+
     /// <summary>
     /// 获取歌词字体大小
     /// </summary>
@@ -986,6 +1030,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
         await _localSettingsService.SaveSettingAsync("RepeatMode", RepeatMode);
         await _localSettingsService.SaveSettingAsync("IsMute", IsMute);
         await _localSettingsService.SaveSettingAsync("CurrentVolume", CurrentVolume);
+        await _localSettingsService.SaveSettingAsync("PlaySpeed", PlaySpeed);
     }
 
     /// <summary>
@@ -1032,10 +1077,12 @@ public partial class MusicPlayer : INotifyPropertyChanged
         if (notFirstUsed)
         {
             CurrentVolume = await _localSettingsService.ReadSettingAsync<double>("CurrentVolume");
+            PlaySpeed = await _localSettingsService.ReadSettingAsync<double>("PlaySpeed");
         }
         else
         {
             CurrentVolume = 100;
+            PlaySpeed = 1;
         }
         /*if (Data.RootPlayBarViewModel != null)
         {
