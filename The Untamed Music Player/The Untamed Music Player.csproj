@@ -23,6 +23,7 @@
 		<PublishAot>False</PublishAot>
 		<PublishTrimmed>False</PublishTrimmed>
 		<PublishSelfContained>true</PublishSelfContained>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
 		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
@@ -54,7 +55,6 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240821" />
-		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.1.240821" />
 		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.1.240821" />
 		<PackageReference Include="hyjiacan.pinyin4net" Version="4.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
