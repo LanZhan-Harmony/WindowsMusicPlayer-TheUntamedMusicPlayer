@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.WinUI;
+﻿using System.Diagnostics;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -103,8 +104,9 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
             return;
         }
 
-        var currentTheme = Data.SettingsViewModel?.ElementTheme;
-        AlternateBackground = currentTheme == ElementTheme.Dark ? DarkThemeBackground : LightThemeBackground;
+        var isDarkTheme = Data.SettingsViewModel?.ElementTheme == ElementTheme.Dark || (Data.SettingsViewModel?.ElementTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
+        Debug.WriteLine(isDarkTheme);
+        AlternateBackground = isDarkTheme ? DarkThemeBackground : LightThemeBackground;
 
 
         for (var i = 0; i < AssociatedObject.Items.Count; i++)

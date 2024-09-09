@@ -20,6 +20,17 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    private bool _isProgressRingActive = true;
+    public bool IsProgressRingActive
+    {
+        get => _isProgressRingActive;
+        set
+        {
+            _isProgressRingActive = value;
+            OnPropertyChanged(nameof(IsProgressRingActive));
+        }
+    }
+
     private List<string> _sortBy = [.. "歌曲_SortBy".GetLocalized().Split(", ")];
     public List<string> SortBy
     {
@@ -102,6 +113,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(GroupedSongList));
         OnPropertyChanged(nameof(NotGroupedSongList));
         OnPropertyChanged(nameof(Genres));
+        IsProgressRingActive = false;
     }
 
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -112,9 +124,11 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             SortMode = (byte)selectedIndex;
             if (SortMode != currentsortmode)
             {
+                IsProgressRingActive = true;
                 await SortSongs();
                 OnPropertyChanged(nameof(GroupedSongList));
                 OnPropertyChanged(nameof(NotGroupedSongList));
+                IsProgressRingActive = false;
             }
         }
     }
@@ -140,9 +154,11 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             GenreMode = selectedIndex;
             if (GenreMode != currentGenreMode)
             {
+                IsProgressRingActive = true;
                 await FilterSongs();
                 OnPropertyChanged(nameof(GroupedSongList));
                 OnPropertyChanged(nameof(NotGroupedSongList));
+                IsProgressRingActive = false;
             }
         }
     }
@@ -176,6 +192,11 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         {
             Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
         }
+    }
+
+    public double GetSongListViewOpacity(bool isActive)
+    {
+        return isActive ? 0 : 1;
     }
 
     public void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -277,7 +298,8 @@ public class 歌曲ViewModel : INotifyPropertyChanged
                 NotGroupedSongList.Add(song);
             }
         });
-        await Task.WhenAll(filterGroupedTask, filterNotGroupedTask).ContinueWith(t => SortSongs());
+        await Task.WhenAll(filterGroupedTask, filterNotGroupedTask);
+        await SortSongs();
     }
 
     public ObservableCollection<BriefMusicInfo> ConvertGroupedToFlatList()

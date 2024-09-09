@@ -237,6 +237,28 @@
                 </Button>
             </StackPanel>
         </Grid>
+        <ProgressRing Grid.Row="2"
+                      Width="50" Height="50"
+                      Margin="0,24,0,0"
+                      Canvas.ZIndex="1"
+                      IsActive="{x:Bind ViewModel.IsProgressRingActive, Mode=OneWay}"/>
+        <Border Grid.Row="2"
+                Height="48"
+                VerticalAlignment="Bottom"
+                Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0" Canvas.ZIndex="2"
+                Visibility="{x:Bind model:Data.SettingsViewModel.IsProgressRingActive, Mode=OneWay}">
+            <StackPanel HorizontalAlignment="Center"
+                        Orientation="Horizontal" Spacing="16">
+                <ProgressRing Width="20" Height="20"
+                              VerticalAlignment="Center"
+                              IsActive="True"/>
+                <TextBlock x:Uid="歌曲_IndexingLibraries"
+                           VerticalAlignment="Center"
+                           FontWeight="SemiBold"/>
+            </StackPanel>
+        </Border>
         <ListView x:Name="SongListView"
                   Grid.Row="2"
                   Margin="0,24,0,0"
@@ -244,6 +266,7 @@
                   ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind ViewModel.GetSongListViewSource(GroupedSongList.View, ViewModel.NotGroupedSongList), Mode=OneWay}"
+                  Opacity="{x:Bind ViewModel.GetSongListViewOpacity(ViewModel.IsProgressRingActive), Mode=OneWay}"
                   SelectionMode="None">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -256,7 +279,7 @@
                         <DataTemplate x:DataType="helper:GroupInfoList">
                             <Border AutomationProperties.AccessibilityView="Raw">
                                 <TextBlock AutomationProperties.AccessibilityView="Raw"
-                                           Foreground="{StaticResource AccentTextFillColorTertiaryBrush}"
+                                           Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                                            Text="{x:Bind Key}"/>
                             </Border>
                         </DataTemplate>
@@ -264,7 +287,8 @@
                 </GroupStyle>
             </ListView.GroupStyle>
             <interactivity:Interaction.Behaviors>
-                <helper:AlternatingListViewBehavior AlternateBackground="#FDFEFE" DarkThemeBackground="#303539"/>
+                <helper:AlternatingListViewBehavior AlternateBackground="#FDFEFE" DarkThemeBackground="#303539"
+                                                    LightThemeBackground="#FDFEFE"/>
             </interactivity:Interaction.Behaviors>
         </ListView>
     </Grid>

@@ -481,7 +481,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
     {
         lock (mediaLock)
         {
-            if (Player == null || lockable || Player.PlaybackSession == null || Player.PlaybackSession.PlaybackState == MediaPlaybackState.None || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+            if (Player.PlaybackSession == null)
             {
                 // 处理错误或返回
                 return;
