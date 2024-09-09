@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -286,20 +288,18 @@ public class BriefMusicInfo
     /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
     public SolidColorBrush GetTextForeground(DetailedMusicInfo currentMusic, ElementTheme elementTheme)
     {
-        if (Path == currentMusic.Path)
+        var isDarkTheme = elementTheme == ElementTheme.Dark || (elementTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
+        var isCurrentMusic = Path == currentMusic.Path;
+
+        if (isCurrentMusic)
         {
-            return (SolidColorBrush)App.Current.Resources["AccentTextFillColorTertiaryBrush"];
+            var color = isDarkTheme ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3) : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
+            return new SolidColorBrush(color);
         }
 
-        if (elementTheme == ElementTheme.Dark)
-        {
-            return new SolidColorBrush(Microsoft.UI.Colors.White);
-        }
-        else
-        {
-            return new SolidColorBrush(Microsoft.UI.Colors.Black);
-        }
+        return new SolidColorBrush(isDarkTheme ? Colors.White : Colors.Black);
     }
+
 
     public BriefMusicInfo()
     {
