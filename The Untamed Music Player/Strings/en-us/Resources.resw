@@ -492,4 +492,7 @@
   <data name="MusicInfo_AllGenres" xml:space="preserve">
     <value>All genres</value>
   </data>
+  <data name="歌曲_IndexingLibraries.Text" xml:space="preserve">
+    <value>Indexing libraries...</value>
+  </data>
 </root>
