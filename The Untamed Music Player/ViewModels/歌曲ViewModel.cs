@@ -12,8 +12,8 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public class 歌曲ViewModel : INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
     private readonly ILocalSettingsService _localSettingsService;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public void OnPropertyChanged(string propertyName)
     {
@@ -92,7 +92,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         }
     }
 
-    private ObservableCollection<string> _genres = new(Data.MusicLibrary.Genres);
+    private ObservableCollection<string> _genres = Data.MusicLibrary.Genres;
     public ObservableCollection<string> Genres
     {
         get => _genres;

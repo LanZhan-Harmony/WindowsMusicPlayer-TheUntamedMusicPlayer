@@ -184,7 +184,7 @@
         <StackPanel x:Name="PlayStackPanel"
                     Grid.Row="1"
                     HorizontalAlignment="Center"
-                    Orientation="Horizontal" Spacing="10">
+                    Orientation="Horizontal" Spacing="7">
             <StackPanel.ChildrenTransitions>
                 <RepositionThemeTransition IsStaggeringEnabled="False"/>
             </StackPanel.ChildrenTransitions>
@@ -234,17 +234,18 @@
 
             <!--  播放/暂停  -->
             <Button x:Name="PlayButton"
+                    Width="50" Height="50"
                     AccessKey="P"
                     Click="{x:Bind model:Data.MusicPlayer.PlayPauseUpdate}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    Style="{StaticResource MenuButtonStyle}"
+                    Style="{StaticResource PlayButtonStyle}"
                     ToolTipService.ToolTip="{x:Bind ViewModel.GetPlayPauseTooltip(model:Data.MusicPlayer.PlayState), Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="Space"/>
                     <KeyboardAccelerator Key="P" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
                 <FontIcon x:Name="PlayIcon"
-                          FontSize="24"
+                          FontSize="23"
                           Glyph="{x:Bind ViewModel.GetPlayPauseIcon(model:Data.MusicPlayer.PlayState), Mode=OneWay}"/>
             </Button>
 

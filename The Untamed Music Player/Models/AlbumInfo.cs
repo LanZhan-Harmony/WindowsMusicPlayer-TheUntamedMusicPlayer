@@ -2,24 +2,14 @@
 using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace The_Untamed_Music_Player.Models;
-public class AlbumInfo : INotifyPropertyChanged
+public class AlbumInfo
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
     //专辑名
-    private string? _name;
-    public string? Name
+    private string _name = "";
+    public string Name
     {
         get => _name;
-        set
-        {
-            _name = value;
-            OnPropertyChanged(nameof(Name));
-        }
+        set => _name = value;
     }
 
     //专辑封面路径
@@ -27,22 +17,21 @@ public class AlbumInfo : INotifyPropertyChanged
     public BitmapImage? Cover
     {
         get => _cover;
-        set
-        {
-            _cover = value;
-            OnPropertyChanged(nameof(Cover));
-        }
+        set => _cover = value;
     }
 
-    private string? _artist;
-    public string? Artist
+    private string[] _artists = [];
+    public string[] Artists
     {
-        get => _artist;
-        set
-        {
-            _artist = value;
-            OnPropertyChanged(nameof(Artist));
-        }
+        get => _artists;
+        set => _artists = value;
+    }
+
+    private string _artistsStr = "";
+    public string ArtistsStr
+    {
+        get => _artistsStr;
+        set => _artistsStr = value;
     }
 
     //专辑包含的歌曲数量
@@ -50,34 +39,22 @@ public class AlbumInfo : INotifyPropertyChanged
     public int TotalNum
     {
         get => _totalNum;
-        set
-        {
-            _totalNum = value;
-            OnPropertyChanged(nameof(TotalNum));
-        }
+        set => _totalNum = value;
     }
 
     private TimeSpan _totalDuration;
     public TimeSpan TotalDuration
     {
         get => _totalDuration;
-        set
-        {
-            _totalDuration = value;
-            OnPropertyChanged(nameof(TotalDuration));
-        }
+        set => _totalDuration = value;
     }
 
+    private ushort _year;
     //专辑发布年份
-    private string _year = "";
-    public string Year
+    public ushort Year
     {
         get => _year;
-        set
-        {
-            _year = value;
-            OnPropertyChanged(nameof(Year));
-        }
+        set => _year = value;
     }
 
     private long _modifiedDate;
@@ -90,16 +67,25 @@ public class AlbumInfo : INotifyPropertyChanged
         set => _modifiedDate = value;
     }
 
+    private string _genreStr = "";
+    public string GenreStr
+    {
+        get => _genreStr;
+        set => _genreStr = value;
+    }
+
     public AlbumInfo()
     {
     }
     public AlbumInfo(BriefMusicInfo briefmusicInfo)
     {
         Name = briefmusicInfo.Album;
-        Year = briefmusicInfo.YearStr;
+        Year = briefmusicInfo.Year;
         ModifiedDate = briefmusicInfo.ModifiedDate;
         Cover = briefmusicInfo.Cover;
-        Artist = briefmusicInfo.ArtistsStr;
+        Artists = briefmusicInfo.Artists;
+        ArtistsStr = briefmusicInfo.ArtistsStr;
+        GenreStr = briefmusicInfo.GenreStr;
         TotalDuration = briefmusicInfo.Duration;
         TotalNum = 1;
     }
@@ -112,17 +98,18 @@ public class AlbumInfo : INotifyPropertyChanged
 
     public string? GetCountAndDuration()
     {
+        var yearStr = Year == 0 ? "" : Year.ToString();
         if (TotalDuration.Hours > 0)
         {
-            return string.IsNullOrEmpty(Year)
+            return string.IsNullOrEmpty(yearStr)
                 ? $"{TotalNum} 首歌曲·{TotalDuration:hh\\:mm\\:ss} 歌曲长度"
-                : $"{Year}·{TotalNum} 首歌曲·{TotalDuration:hh\\:mm\\:ss} 歌曲长度";
+                : $"{yearStr}·{TotalNum} 首歌曲·{TotalDuration:hh\\:mm\\:ss} 歌曲长度";
         }
         else
         {
-            return string.IsNullOrEmpty(Year)
+            return string.IsNullOrEmpty(yearStr)
                 ? $"{TotalNum} 首歌曲·{TotalDuration:mm\\:ss} 歌曲长度"
-                : $"{Year}·{TotalNum} 首歌曲·{TotalDuration:mm\\:ss} 歌曲长度";
+                : $"{yearStr}·{TotalNum} 首歌曲·{TotalDuration:mm\\:ss} 歌曲长度";
         }
     }
 }
