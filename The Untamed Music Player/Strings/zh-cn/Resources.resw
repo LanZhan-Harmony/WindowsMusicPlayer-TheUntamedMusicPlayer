@@ -495,4 +495,7 @@
   <data name="歌曲_IndexingLibraries.Text" xml:space="preserve">
     <value>正在编制库索引...</value>
   </data>
+  <data name="艺术家_SortBy" xml:space="preserve">
+    <value>A-Z, Z-A</value>
+  </data>
 </root>

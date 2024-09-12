@@ -2,46 +2,23 @@
 using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace The_Untamed_Music_Player.Models;
-public class ArtistInfo : INotifyPropertyChanged
+public class ArtistInfo
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
     //艺术家名
-    private string? _name;
-    public string? Name
+    private string _name = "";
+    public string Name
     {
         get => _name;
-        set
-        {
-            _name = value;
-            OnPropertyChanged(nameof(Name));
-        }
+        set => _name = value;
     }
 
-    private Dictionary<string, AlbumInfo>? _albums = [];
-    public Dictionary<string, AlbumInfo>? Albums
-    {
-        get => _albums;
-        set
-        {
-            _albums = value;
-            OnPropertyChanged(nameof(Albums));
-        }
-    }
+    private readonly HashSet<string> _albums = [];
 
     public string? _genre;
     public string? Genre
     {
         get => _genre;
-        set
-        {
-            _genre = value;
-            OnPropertyChanged(nameof(Genre));
-        }
+        set => _genre = value;
     }
 
     //封面路径（当作头像，默认为检索到的第一张）
@@ -49,22 +26,14 @@ public class ArtistInfo : INotifyPropertyChanged
     public BitmapImage? Cover
     {
         get => _cover;
-        set
-        {
-            _cover = value;
-            OnPropertyChanged(nameof(Cover));
-        }
+        set => _cover = value;
     }
 
     private TimeSpan _totalDuration;
     public TimeSpan TotalDuration
     {
         get => _totalDuration;
-        set
-        {
-            _totalDuration = value;
-            OnPropertyChanged(nameof(TotalDuration));
-        }
+        set => _totalDuration = value;
     }
 
     //歌曲数量
@@ -72,22 +41,14 @@ public class ArtistInfo : INotifyPropertyChanged
     public int TotalMusicNum
     {
         get => _totalMusicNum;
-        set
-        {
-            _totalMusicNum = value;
-            OnPropertyChanged(nameof(TotalMusicNum));
-        }
+        set => _totalMusicNum = value;
     }
 
     private int _totalAlbumNum;
     public int TotalAlbumNum
     {
         get => _totalAlbumNum;
-        set
-        {
-            _totalAlbumNum = value;
-            OnPropertyChanged(nameof(TotalAlbumNum));
-        }
+        set => _totalAlbumNum = value;
     }
 
     public ArtistInfo(BriefMusicInfo briefMusicInfo, string name)
@@ -98,10 +59,7 @@ public class ArtistInfo : INotifyPropertyChanged
         Genre = briefMusicInfo.GenreStr;
         TotalMusicNum = 1;
         TotalAlbumNum = 1;
-        if (briefMusicInfo.Album != null && Albums != null)
-        {
-            Albums[briefMusicInfo.Album] = new AlbumInfo(briefMusicInfo);
-        }
+        _albums.Add(briefMusicInfo.Album);
     }
 
     public void Update(BriefMusicInfo briefMusicInfo)
@@ -109,18 +67,16 @@ public class ArtistInfo : INotifyPropertyChanged
         TotalDuration += briefMusicInfo.Duration;
         TotalMusicNum++;
         var album = briefMusicInfo.Album;
-        if (album != null && Albums != null)
+
+        if (_albums.Add(album))
         {
-            if (!Albums.TryGetValue(album, out var value))
-            {
-                Albums[album] = new AlbumInfo(briefMusicInfo);
-                TotalAlbumNum++;
-            }
-            else
-            {
-                value.Update(briefMusicInfo);
-            }
+            TotalAlbumNum++;
         }
+    }
+
+    public void ClearAlbums()
+    {
+        _albums.Clear();
     }
 
     public string? GetCount()

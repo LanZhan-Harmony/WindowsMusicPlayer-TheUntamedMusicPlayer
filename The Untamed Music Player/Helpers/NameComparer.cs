@@ -111,14 +111,11 @@ internal class TitleComparer : IComparer<string>
     }
 }
 
-internal class ArtistComparer : IComparer<BriefMusicInfo>
+internal abstract class BaseArtistComparer<T> : IComparer<T>
 {
-    public int Compare(BriefMusicInfo? x, BriefMusicInfo? y)
-    {
-        return CompareByProperty(x?.ArtistsStr, y?.ArtistsStr, x?.Title, y?.Title);
-    }
+    public abstract int Compare(T? x, T? y);
 
-    private static int CompareByProperty(string? xProperty, string? yProperty, string? xTitle, string? yTitle)
+    protected static int CompareByProperty(string? xProperty, string? yProperty, string? xTitle, string? yTitle)
     {
         if (string.IsNullOrEmpty(xProperty) && string.IsNullOrEmpty(yProperty))
         {
@@ -134,7 +131,6 @@ internal class ArtistComparer : IComparer<BriefMusicInfo>
         }
 
         var xFirstChar = xProperty[0];
-
         var xPriority = GetGroupPriority(xProperty);
         var yPriority = GetGroupPriority(yProperty);
 
@@ -155,7 +151,7 @@ internal class ArtistComparer : IComparer<BriefMusicInfo>
         return new TitleComparer().Compare(xTitle, yTitle);
     }
 
-    private static int GetGroupPriority(string property)
+    protected static int GetGroupPriority(string property)
     {
         if (property == "MusicInfo_UnknownArtist".GetLocalized())
         {
@@ -179,11 +175,28 @@ internal class ArtistComparer : IComparer<BriefMusicInfo>
         }
     }
 
-    private static bool IsChinese(char c)
+    protected static bool IsChinese(char c)
     {
         return c >= 0x4E00 && c <= 0x9FFF;
     }
 }
+
+internal class ArtistComparer : BaseArtistComparer<BriefMusicInfo>
+{
+    public override int Compare(BriefMusicInfo? x, BriefMusicInfo? y)
+    {
+        return CompareByProperty(x?.ArtistsStr, y?.ArtistsStr, x?.Title, y?.Title);
+    }
+}
+
+internal class AlbumArtistComparer : BaseArtistComparer<AlbumInfo>
+{
+    public override int Compare(AlbumInfo? x, AlbumInfo? y)
+    {
+        return CompareByProperty(x?.ArtistsStr, y?.ArtistsStr, x?.Name, y?.Name);
+    }
+}
+
 
 internal class AlbumComparer : IComparer<BriefMusicInfo>
 {

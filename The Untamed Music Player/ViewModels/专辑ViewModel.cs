@@ -1,46 +1,227 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Data;
+using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using Microsoft.UI.Xaml.Input;
+using System.Diagnostics;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class 专辑ViewModel
+public class 专辑ViewModel : INotifyPropertyChanged
 {
+    private readonly ILocalSettingsService _localSettingsService;
+    public event PropertyChangedEventHandler? PropertyChanged;
+    public void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private bool _isProgressRingActive = true;
+    public bool IsProgressRingActive
+    {
+        get => _isProgressRingActive;
+        set
+        {
+            _isProgressRingActive = value;
+            OnPropertyChanged(nameof(IsProgressRingActive));
+        }
+    }
+
     private List<string> _sortBy = [.. "专辑_SortBy".GetLocalized().Split(", ")];
     public List<string> SortBy
     {
         get => _sortBy;
         set => _sortBy = value;
     }
+
     private byte _sortMode;
     public byte SortMode
     {
         get => _sortMode;
-        set => _sortMode = value;
+        set
+        {
+            _sortMode = value;
+            SetGroupMode();
+            OnPropertyChanged(nameof(SortMode));
+            SaveSortModeAsync();
+        }
     }
 
-    private ObservableCollection<AlbumInfo> _albumList = [];
-    public ObservableCollection<AlbumInfo> AlbumList
+    private bool _groupMode;
+    public bool GroupMode
+    {
+        get => _groupMode;
+        set => _groupMode = value;
+    }
+
+    private List<AlbumInfo> _albumList = [.. Data.MusicLibrary.Albums.Values];
+    public List<AlbumInfo> AlbumList
     {
         get => _albumList;
         set => _albumList = value;
     }
 
-    public 专辑ViewModel()
+    private ObservableCollection<GroupInfoList> _groupedAlbumList = [];
+    public ObservableCollection<GroupInfoList> GroupedAlbumList
     {
-        LoadAlbumList(Data.MusicLibrary.Albums);
+        get => _groupedAlbumList;
+        set => _groupedAlbumList = value;
     }
 
-    public async void LoadAlbumList(Dictionary<string, AlbumInfo> albumList)
+    private ObservableCollection<AlbumInfo> _notGroupedAlbumList = [];
+
+    public ObservableCollection<AlbumInfo> NotGroupedAlbumList
     {
-        await Task.Run(() =>
+        get => _notGroupedAlbumList;
+        set => _notGroupedAlbumList = value;
+    }
+
+    private int _genreMode;
+    public int GenreMode
+    {
+        get => _genreMode;
+        set
         {
-            AlbumList = new ObservableCollection<AlbumInfo>(albumList.Values);
-        });
-        SortAlbums();
+            _genreMode = value;
+            OnPropertyChanged(nameof(GenreMode));
+            SaveGenreModeAsync();
+        }
     }
 
-    public async void SortAlbums()
+    private ObservableCollection<string> _genres = Data.MusicLibrary.Genres;
+    public ObservableCollection<string> Genres
+    {
+        get => _genres;
+        set => _genres = value;
+    }
+
+    public 专辑ViewModel(ILocalSettingsService localSettingsService)
+    {
+        _localSettingsService = localSettingsService;
+        LoadModeAndAlbumList();
+    }
+
+    public async void LoadModeAndAlbumList()
+    {
+        await LoadSortModeAsync();
+        await LoadGenreModeAsync();
+        await FilterAlbums();
+        OnPropertyChanged(nameof(GroupedAlbumList));
+        OnPropertyChanged(nameof(NotGroupedAlbumList));
+        OnPropertyChanged(nameof(Genres));
+        IsProgressRingActive = false;
+    }
+
+    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var currentsortmode = SortMode;
+        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
+        {
+            SortMode = (byte)selectedIndex;
+            if (SortMode != currentsortmode)
+            {
+                IsProgressRingActive = true;
+                await SortAlbums();
+                OnPropertyChanged(nameof(GroupedAlbumList));
+                OnPropertyChanged(nameof(NotGroupedAlbumList));
+                IsProgressRingActive = false;
+            }
+        }
+    }
+
+    public string GetSortByStr(byte SortMode)
+    {
+        return SortBy[SortMode];
+    }
+
+    public void SortByListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            listView.SelectedIndex = SortMode;
+        }
+    }
+
+    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var currentGenreMode = GenreMode;
+        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
+        {
+            GenreMode = selectedIndex;
+            if (GenreMode != currentGenreMode)
+            {
+                IsProgressRingActive = true;
+                await FilterAlbums();
+                OnPropertyChanged(nameof(GroupedAlbumList));
+                OnPropertyChanged(nameof(NotGroupedAlbumList));
+                IsProgressRingActive = false;
+            }
+        }
+    }
+
+    public void GenreListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            listView.SelectedIndex = GenreMode;
+        }
+    }
+
+    public string GetGenreStr(int GenreMode)
+    {
+        return Genres[GenreMode];
+    }
+
+    public double GetAlbumGridViewOpacity(bool isActive)
+    {
+        return isActive ? 0 : 1;
+    }
+
+    public void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        var grid = sender as Grid;
+        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
+        var playButton = grid?.FindName("PlayButton") as Button;
+        var menuButton = grid?.FindName("MenuButton") as Button;
+        if (checkBox != null)
+        {
+            checkBox.Visibility = Visibility.Visible;
+        }
+        if (playButton != null)
+        {
+            playButton.Visibility = Visibility.Visible;
+        }
+        if (menuButton != null)
+        {
+            menuButton.Visibility = Visibility.Visible;
+        }
+    }
+
+    public void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        var grid = sender as Grid;
+        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
+        var playButton = grid?.FindName("PlayButton") as Button;
+        var menuButton = grid?.FindName("MenuButton") as Button;
+        if (checkBox != null)
+        {
+            checkBox.Visibility = Visibility.Collapsed;
+        }
+        if (playButton != null)
+        {
+            playButton.Visibility = Visibility.Collapsed;
+        }
+        if (menuButton != null)
+        {
+            menuButton.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    public async Task SortAlbums()
     {
         var sortTask = SortMode switch
         {
@@ -58,11 +239,74 @@ public class 专辑ViewModel
         await sortTask;
     }
 
+    private void SetGroupMode()
+    {
+        GroupMode = SortMode switch
+        {
+            0 or 1 or 2 or 3 or 4 or 5 => true,
+            _ => false
+        };
+    }
+
+    public async Task FilterAlbums()
+    {
+        GroupedAlbumList = new ObservableCollection<GroupInfoList>(AlbumList
+            .GroupBy(m => TitleComparer.GetGroupKey(m.Name[0]))
+            .Select(g => new GroupInfoList(g) { Key = g.Key }));
+        NotGroupedAlbumList = new ObservableCollection<AlbumInfo>(AlbumList);
+
+        if (GenreMode == 0)
+        {
+            await SortAlbums();
+            return;
+        }
+
+        var genreToFilter = Genres[GenreMode];
+
+        var filterGroupedTask = Task.Run(() =>
+        {
+            // 过滤GroupedSongList
+            foreach (var group in GroupedAlbumList)
+            {
+                var filteredItems = group.Where(item => item is AlbumInfo albumInfo && albumInfo.GenreStr == genreToFilter).ToList();
+                group.Clear();
+                foreach (var item in filteredItems)
+                {
+                    group.Add(item);
+                }
+            }
+        });
+        var filterNotGroupedTask = Task.Run(() =>
+        {
+            // 过滤NotGroupedSongList
+            var filteredSongs = NotGroupedAlbumList.Where(albumInfo => albumInfo.GenreStr == genreToFilter).ToList();
+            NotGroupedAlbumList.Clear();
+            foreach (var song in filteredSongs)
+            {
+                NotGroupedAlbumList.Add(song);
+            }
+        });
+        await Task.WhenAll(filterGroupedTask, filterNotGroupedTask);
+        await SortAlbums();
+    }
+
+    public object GetAlbumGridViewSource(ICollectionView grouped, ObservableCollection<AlbumInfo> notgrouped)
+    {
+        return GroupMode ? grouped : NotGroupedAlbumList;
+    }
+
     public async Task SortAlbumsByTitleAscending()
     {
         await Task.Run(() =>
         {
-            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.Name));
+            var sortedGroups = GroupedAlbumList
+               .SelectMany(group => group)
+               .OfType<AlbumInfo>()
+               .OrderBy(m => m.Name, new TitleComparer())
+               .GroupBy(m => TitleComparer.GetGroupKey(m.Name[0]))
+               .Select(g => new GroupInfoList(g) { Key = g.Key });
+
+            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -70,7 +314,14 @@ public class 专辑ViewModel
     {
         await Task.Run(() =>
         {
-            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.Name));
+            var sortedGroups = GroupedAlbumList
+               .SelectMany(group => group)
+               .OfType<AlbumInfo>()
+               .OrderByDescending(m => m.Name, new TitleComparer())
+               .GroupBy(m => TitleComparer.GetGroupKey(m.Name[0]))
+               .Select(g => new GroupInfoList(g) { Key = g.Key });
+
+            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -78,7 +329,13 @@ public class 专辑ViewModel
     {
         await Task.Run(() =>
         {
-            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.Year));
+            var sortedGroups = GroupedAlbumList
+                .SelectMany(group => group)
+                .OfType<AlbumInfo>()
+                .OrderBy(m => m.Year)
+                .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
+                .Select(g => new GroupInfoList(g) { Key = g.Key });
+            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -86,7 +343,14 @@ public class 专辑ViewModel
     {
         await Task.Run(() =>
         {
-            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.Year));
+            var sortedGroups = GroupedAlbumList
+                .SelectMany(group => group)
+                .OfType<AlbumInfo>()
+                .OrderByDescending(m => m.Year)
+                .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
+                .Select(g => new GroupInfoList(g) { Key = g.Key });
+
+            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -94,7 +358,14 @@ public class 专辑ViewModel
     {
         await Task.Run(() =>
         {
-            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.Artist));
+            var sortedGroups = GroupedAlbumList
+                .SelectMany(group => group)
+                .OfType<AlbumInfo>()
+                .OrderBy(m => m, new AlbumArtistComparer())
+                .GroupBy(m => m.ArtistsStr)
+                .Select(g => new GroupInfoList(g) { Key = g.Key });
+
+            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -102,7 +373,14 @@ public class 专辑ViewModel
     {
         await Task.Run(() =>
         {
-            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.Artist));
+            var sortedGroups = GroupedAlbumList
+                .SelectMany(group => group)
+                .OfType<AlbumInfo>()
+                .OrderByDescending(m => m, new AlbumArtistComparer())
+                .GroupBy(m => m.ArtistsStr)
+                .Select(g => new GroupInfoList(g) { Key = g.Key });
+
+            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
         });
     }
 
@@ -110,7 +388,10 @@ public class 专辑ViewModel
     {
         await Task.Run(() =>
         {
-            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderBy(x => x.ModifiedDate));
+            var sortedGroups = NotGroupedAlbumList
+                .OrderBy(m => m.ModifiedDate);
+
+            NotGroupedAlbumList = new ObservableCollection<AlbumInfo>(sortedGroups);
         });
     }
 
@@ -118,7 +399,27 @@ public class 专辑ViewModel
     {
         await Task.Run(() =>
         {
-            AlbumList = new ObservableCollection<AlbumInfo>(AlbumList.OrderByDescending(x => x.ModifiedDate));
+            var sortedGroups = NotGroupedAlbumList
+                .OrderByDescending(m => m.ModifiedDate);
+
+            NotGroupedAlbumList = new ObservableCollection<AlbumInfo>(sortedGroups);
         });
+    }
+
+    public async Task LoadSortModeAsync()
+    {
+        SortMode = await _localSettingsService.ReadSettingAsync<byte>("AlbumSortMode");
+    }
+    public async Task LoadGenreModeAsync()
+    {
+        GenreMode = await _localSettingsService.ReadSettingAsync<int>("AlbumGenreMode");
+    }
+    public async void SaveSortModeAsync()
+    {
+        await _localSettingsService.SaveSettingAsync("AlbumSortMode", SortMode);
+    }
+    public async void SaveGenreModeAsync()
+    {
+        await _localSettingsService.SaveSettingAsync("AlbumGenreMode", GenreMode);
     }
 }
