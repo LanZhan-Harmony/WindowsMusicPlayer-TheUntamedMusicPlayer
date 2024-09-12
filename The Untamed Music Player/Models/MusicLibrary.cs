@@ -64,8 +64,8 @@ public class MusicLibrary : INotifyPropertyChanged
 
     private readonly HashSet<string> _musicGenres = [];
 
-    private List<string> _genres = [];
-    public List<string> Genres
+    private ObservableCollection<string> _genres = [];
+    public ObservableCollection<string> Genres
     {
         get => _genres;
         set => _genres = value;
@@ -85,19 +85,20 @@ public class MusicLibrary : INotifyPropertyChanged
                 await LoadMusic(folder, folder.DisplayName);
             }
         }
+        ClearAllArtistMusicAlbums();
         _musicPaths.Clear();
         _musicGenres.Clear();
         Genres.Add("MusicInfo_AllGenres".GetLocalized());
-        Genres.Sort(new GenreComparer());
+        Genres = new ObservableCollection<string>(Genres.OrderBy(x => x, new GenreComparer()));
         OnPropertyChanged(nameof(HasMusics));
     }
 
     public async Task LoadLibraryAgain()
     {
-        Musics?.Clear();
-        Artists?.Clear();
-        Albums?.Clear();
-        Genres?.Clear();
+        Musics.Clear();
+        Artists.Clear();
+        Albums.Clear();
+        Genres.Clear();
         if (Folders != null && Folders.Any())
         {
             foreach (var folder in Folders)
@@ -105,10 +106,11 @@ public class MusicLibrary : INotifyPropertyChanged
                 await LoadMusic(folder, folder.DisplayName);
             }
         }
+        ClearAllArtistMusicAlbums();
         _musicPaths.Clear();
         _musicGenres.Clear();
-        Genres?.Add("MusicInfo_AllGenres".GetLocalized());
-        Genres?.Sort(new GenreComparer());
+        Genres.Add("MusicInfo_AllGenres".GetLocalized());
+        Genres = new ObservableCollection<string>(Genres.OrderBy(x => x, new GenreComparer()));
         OnPropertyChanged(nameof(HasMusics));
     }
 
@@ -167,36 +169,39 @@ public class MusicLibrary : INotifyPropertyChanged
     private void UpdateAlbumInfo(BriefMusicInfo briefMusicInfo)
     {
         var album = briefMusicInfo.Album;
-        if (!string.IsNullOrEmpty(album) && Albums != null)
+
+        if (!Albums.TryGetValue(album, out var albumInfo))
         {
-            if (!Albums.TryGetValue(album, out var albumInfo))
-            {
-                albumInfo = new AlbumInfo(briefMusicInfo);
-                Albums[album] = albumInfo;
-            }
-            else
-            {
-                albumInfo.Update(briefMusicInfo);
-            }
+            albumInfo = new AlbumInfo(briefMusicInfo);
+            Albums[album] = albumInfo;
+        }
+        else
+        {
+            albumInfo.Update(briefMusicInfo);
         }
     }
 
     private void UpdateArtistInfo(BriefMusicInfo briefMusicInfo)
     {
-        if (briefMusicInfo.Artists != null && Artists != null)
+        foreach (var artist in briefMusicInfo.Artists)
         {
-            foreach (var artist in briefMusicInfo.Artists)
+            if (!Artists.TryGetValue(artist, out var artistInfo))
             {
-                if (!Artists.TryGetValue(artist, out var artistInfo))
-                {
-                    artistInfo = new ArtistInfo(briefMusicInfo, artist);
-                    Artists[artist] = artistInfo;
-                }
-                else
-                {
-                    artistInfo.Update(briefMusicInfo);
-                }
+                artistInfo = new ArtistInfo(briefMusicInfo, artist);
+                Artists[artist] = artistInfo;
             }
+            else
+            {
+                artistInfo.Update(briefMusicInfo);
+            }
+        }
+    }
+
+    public void ClearAllArtistMusicAlbums()
+    {
+        foreach (var artistInfo in Artists.Values)
+        {
+            artistInfo.ClearAlbums();
         }
     }
 
@@ -204,16 +209,15 @@ public class MusicLibrary : INotifyPropertyChanged
     {
         var list = new ObservableCollection<BriefMusicInfo>();
         var albumName = albumInfo.Name;
-        if (Musics != null)
+
+        foreach (var music in Musics)
         {
-            foreach (var music in Musics)
+            if (music.Album == albumName)
             {
-                if (music.Album == albumName && music.Path != null)
-                {
-                    list.Add(new BriefMusicInfo(music.Path));
-                }
+                list.Add(music);
             }
         }
+
         return list;
     }
 
@@ -221,17 +225,15 @@ public class MusicLibrary : INotifyPropertyChanged
     {
         var list = new ObservableCollection<AlbumInfo>();
         var artistName = artistInfo.Name;
-        var albumDict = artistInfo.Albums;
-        if (Musics != null)
+
+        foreach (var album in Albums.Values)
         {
-            foreach (var music in Musics)
+            if (album.Artists.Contains(artistName))
             {
-                if (music.Artists != null && music.Artists.Contains(artistName) && music.Album != null && albumDict != null && albumDict.TryGetValue(music.Album, out var albumInfo))
-                {
-                    list.Add(albumInfo);
-                }
+                list.Add(album);
             }
         }
+
         return list;
     }
 }

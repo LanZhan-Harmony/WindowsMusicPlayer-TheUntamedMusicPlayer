@@ -200,17 +200,7 @@ public class BriefMusicInfo
     public string YearStr
     {
         get => _yearStr;
-        set
-        {
-            if (value == "0")
-            {
-                _yearStr = "";
-            }
-            else
-            {
-                _yearStr = value;
-            }
-        }
+        set => _yearStr = value == "0" ? "" : value;
     }
 
     private BitmapImage? _cover;
