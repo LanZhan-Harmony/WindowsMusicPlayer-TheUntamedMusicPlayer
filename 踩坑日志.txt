@@ -1,0 +1,8 @@
+1. 需要先部署项目，然后才能进行调试。请在配置服务器中启用部署。=>重启Visual Studio。
+2. 使用navigateto(page)时。page的构造函数不能有参。
+3. onlaunched方法可能比App的构造函数先执行完。
+4. Template Studio中不导航到MainWindow的原因是MainWindow的content=null。
+5. 依赖冲突。=>回退NUGET版本。
+6. 发生了未经处理的win32异常。=>如果跳转到App.xaml.cs，则打一个断点再启动一次。
+7. listview奇偶项异常。=>Win11的Bug，需要用特殊类解决。
+8. template里内容不能直接绑定到ViewModel。
