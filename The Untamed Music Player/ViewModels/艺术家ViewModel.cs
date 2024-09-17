@@ -171,8 +171,8 @@ public class 艺术家ViewModel : INotifyPropertyChanged
         await Task.Run(() =>
         {
             var sortedGroups = ArtistList
-               .OrderBy(m => m.Name, new TitleComparer())
-               .GroupBy(m => TitleComparer.GetGroupKey(m.Name[0]))
+               .OrderBy(m => m.Name, new ArtistTitleComparer())
+               .GroupBy(m => m.Name == "MusicInfo_UnknownArtist".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
             GroupedArtistList = new ObservableCollection<GroupInfoList>(sortedGroups);
@@ -184,8 +184,8 @@ public class 艺术家ViewModel : INotifyPropertyChanged
         await Task.Run(() =>
         {
             var sortedGroups = ArtistList
-               .OrderByDescending(m => m.Name, new TitleComparer())
-               .GroupBy(m => TitleComparer.GetGroupKey(m.Name[0]))
+               .OrderByDescending(m => m.Name, new ArtistTitleComparer())
+               .GroupBy(m => m.Name == "MusicInfo_UnknownArtist".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
             GroupedArtistList = new ObservableCollection<GroupInfoList>(sortedGroups);
