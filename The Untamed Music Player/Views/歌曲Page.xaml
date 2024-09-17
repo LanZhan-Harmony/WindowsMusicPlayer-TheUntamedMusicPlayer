@@ -24,6 +24,21 @@
         <CollectionViewSource x:Name="GroupedSongList"
                               IsSourceGrouped="True"
                               Source="{x:Bind ViewModel.GroupedSongList, Mode=OneWay}"/>
+        <DataTemplate x:Key="ZoomedInGroupHeaderTemplate" x:DataType="helper:GroupInfoList">
+            <TextBlock AutomationProperties.AccessibilityView="Raw"
+                       Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                       Text="{x:Bind Key}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="ICollectionViewGroup">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="10"/>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           Text="{x:Bind ((helper:GroupInfoList)Group).Key}"
+                           TextTrimming="WordEllipsis"/>
+                <StackPanel Width="10"/>
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefMusicInfo">
             <Grid Height="46"
                   Background="Transparent" PointerEntered="Grid_PointerEntered"
@@ -259,37 +274,37 @@
                            FontWeight="SemiBold"/>
             </StackPanel>
         </Border>
-        <ListView x:Name="SongListView"
-                  Grid.Row="1"
-                  Margin="0,24,0,0"
-                  CanDragItems="True" IsItemClickEnabled="True"
-                  ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
-                  ItemTemplate="{StaticResource SongListViewTemplate}"
-                  ItemsSource="{x:Bind ViewModel.GetSongListViewSource(GroupedSongList.View, ViewModel.NotGroupedSongList), Mode=OneWay}"
-                  Opacity="{x:Bind ViewModel.GetSongListViewOpacity(ViewModel.IsProgressRingActive), Mode=OneWay}"
-                  SelectionMode="None">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel AreStickyGroupHeadersEnabled="True"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate x:DataType="helper:GroupInfoList">
-                            <Border AutomationProperties.AccessibilityView="Raw">
-                                <TextBlock AutomationProperties.AccessibilityView="Raw"
-                                           Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                                           Text="{x:Bind Key}"/>
-                            </Border>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                </GroupStyle>
-            </ListView.GroupStyle>
-            <interactivity:Interaction.Behaviors>
-                <helper:AlternatingListViewBehavior AlternateBackground="#FDFEFE" DarkThemeBackground="#303539"
-                                                    LightThemeBackground="#FDFEFE"/>
-            </interactivity:Interaction.Behaviors>
-        </ListView>
+        <SemanticZoom Grid.Row="1" Margin="0,24,0,0">
+            <SemanticZoom.ZoomedInView>
+                <ListView x:Name="SongListView"
+                          CanDragItems="True" IsItemClickEnabled="True"
+                          ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
+                          ItemTemplate="{StaticResource SongListViewTemplate}"
+                          ItemsSource="{x:Bind ViewModel.GetSongListViewSource(GroupedSongList.View, ViewModel.NotGroupedSongList), Mode=OneWay}"
+                          Opacity="{x:Bind ViewModel.GetSongListViewOpacity(ViewModel.IsProgressRingActive), Mode=OneWay}"
+                          SelectionMode="None">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel AreStickyGroupHeadersEnabled="True"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.GroupStyle>
+                        <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
+                    </ListView.GroupStyle>
+                    <interactivity:Interaction.Behaviors>
+                        <helper:AlternatingListViewBehavior AlternateBackground="#FDFEFE" DarkThemeBackground="#303539"
+                                                            LightThemeBackground="#FDFEFE"/>
+                    </interactivity:Interaction.Behaviors>
+                </ListView>
+            </SemanticZoom.ZoomedInView>
+            <SemanticZoom.ZoomedOutView>
+                <GridView HorizontalAlignment="Center" VerticalAlignment="Center"
+                          IsItemClickEnabled="True"
+                          ItemTemplate="{StaticResource ZoomedOutTemplate}"
+                          ItemsSource="{x:Bind GroupedSongList.View.CollectionGroups, Mode=OneWay}"
+                          SelectionMode="None"/>
+            </SemanticZoom.ZoomedOutView>
+        </SemanticZoom>
+
     </Grid>
 </Page>
