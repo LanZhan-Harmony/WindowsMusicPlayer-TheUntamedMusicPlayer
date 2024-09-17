@@ -376,7 +376,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
                 .OfType<BriefMusicInfo>()
-                .OrderBy(m => m, new ArtistComparer())
+                .OrderBy(m => m, new MusicArtistComparer())
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
@@ -394,7 +394,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
                 .OfType<BriefMusicInfo>()
-                .OrderByDescending(m => m, new ArtistComparer())
+                .OrderByDescending(m => m, new MusicArtistComparer())
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
@@ -412,7 +412,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
                 .OfType<BriefMusicInfo>()
-                .OrderBy(m => m, new AlbumComparer())
+                .OrderBy(m => m, new MusicAlbumComparer())
                 .GroupBy(m => m.Album)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
@@ -430,7 +430,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
                 .OfType<BriefMusicInfo>()
-                .OrderByDescending(m => m, new AlbumComparer())
+                .OrderByDescending(m => m, new MusicAlbumComparer())
                 .GroupBy(m => m.Album)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
@@ -512,7 +512,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
                 .OfType<BriefMusicInfo>()
-                .OrderBy(m => m, new FolderComparer())
+                .OrderBy(m => m, new MusicFolderComparer())
                 .GroupBy(m => m.Folder)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
@@ -527,7 +527,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
                 .OfType<BriefMusicInfo>()
-                .OrderByDescending(m => m, new FolderComparer())
+                .OrderByDescending(m => m, new MusicFolderComparer())
                 .GroupBy(m => m.Folder)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
