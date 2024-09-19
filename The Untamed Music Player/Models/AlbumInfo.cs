@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Microsoft.UI.Xaml.Media.Imaging;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace The_Untamed_Music_Player.Models;
 public class AlbumInfo

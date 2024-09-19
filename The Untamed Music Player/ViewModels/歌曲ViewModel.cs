@@ -101,6 +101,7 @@ public class 歌曲ViewModel : INotifyPropertyChanged
 
     public 歌曲ViewModel(ILocalSettingsService localSettingsService)
     {
+        Data.歌曲ViewModel = this;
         _localSettingsService = localSettingsService;
         LoadModeAndSongList();
     }
@@ -227,6 +228,24 @@ public class 歌曲ViewModel : INotifyPropertyChanged
         {
             playButton.Visibility = Visibility.Collapsed;
         }
+    }
+
+    public double GetZoomedOutViewGridWidth(byte sortmode)
+    {
+        return sortmode switch
+        {
+            0 or 1 => 69,
+            _ => 424
+        };
+    }
+
+    public int GetZoomedOutViewGridMaxColumn(byte sortmode)
+    {
+        return sortmode switch
+        {
+            0 or 1 => 8,
+            _ => 3
+        };
     }
 
     public async Task SortSongs()

@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
-using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
@@ -22,6 +21,17 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         {
             _isDetail = value;
             OnPropertyChanged(nameof(IsDetail));
+        }
+    }
+
+    private bool _isFullScreen = false;
+    public bool IsFullScreen
+    {
+        get => _isFullScreen;
+        set
+        {
+            _isFullScreen = value;
+            OnPropertyChanged(nameof(IsFullScreen));
         }
     }
 
@@ -205,6 +215,11 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         };
     }
 
+    public string GetFullScreenIcon(bool isfullscreen)
+    {
+        return isfullscreen ? "\uE73F" : "\uE740";
+    }
+
     public void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
     {
         if (!IsDetail)
@@ -300,6 +315,24 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
 
                 IsDetail = false;
             }
+        }
+    }
+
+    public void FullScreenButton_Click(object sender, RoutedEventArgs e)
+    {
+        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(Data.MainWindow);
+        var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+        var appWindow = AppWindow.GetFromWindowId(windowId);
+
+        if (appWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen)
+        {
+            appWindow.SetPresenter(AppWindowPresenterKind.Default);
+            IsFullScreen = false;
+        }
+        else
+        {
+            appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+            IsFullScreen = true;
         }
     }
 }
