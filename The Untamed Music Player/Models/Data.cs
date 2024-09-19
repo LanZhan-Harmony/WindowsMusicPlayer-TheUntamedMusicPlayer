@@ -18,4 +18,5 @@ public static class Data
     public static ShellPage? ShellPage;
     public static SettingsViewModel? SettingsViewModel;
     public static RootPlayBarViewModel? RootPlayBarViewModel;
+    public static 歌曲ViewModel? 歌曲ViewModel;
 }

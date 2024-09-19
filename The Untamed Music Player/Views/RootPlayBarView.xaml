@@ -326,12 +326,13 @@
             <!--  全屏  -->
             <Button x:Name="FullScreenButton" x:Uid="PlayBar_FullScreen"
                     AccessKey="U"
+                    Click="{x:Bind ViewModel.FullScreenButton_Click}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="F11"/>
                 </Button.KeyboardAccelerators>
-                <FontIcon FontSize="16" Glyph="&#xE740;"/>
+                <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetFullScreenIcon(ViewModel.IsFullScreen), Mode=OneWay}"/>
             </Button>
 
             <!--  最小化置顶  -->
