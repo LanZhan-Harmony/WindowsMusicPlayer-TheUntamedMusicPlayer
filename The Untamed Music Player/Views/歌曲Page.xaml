@@ -30,14 +30,15 @@
                        Text="{x:Bind Key}"/>
         </DataTemplate>
         <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="ICollectionViewGroup">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Width="10"/>
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+            <Grid>
+                <TextBlock Grid.Column="1"
+                           Width="406"
+                           Margin="10,0,10,0" HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            Style="{StaticResource SubtitleTextBlockStyle}"
                            Text="{x:Bind ((helper:GroupInfoList)Group).Key}"
-                           TextTrimming="WordEllipsis"/>
-                <StackPanel Width="10"/>
-            </StackPanel>
+                           TextAlignment="Center" TextTrimming="WordEllipsis"/>
+            </Grid>
         </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefMusicInfo">
             <Grid Height="46"
