@@ -189,7 +189,7 @@
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
-                            <FontIcon Canvas.ZIndex="0" FontSize="25"
+                            <FontIcon Canvas.ZIndex="0" FontSize="50"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xE93C;"/>
                         </Grid>
