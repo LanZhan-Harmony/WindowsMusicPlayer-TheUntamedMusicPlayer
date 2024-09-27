@@ -6,6 +6,7 @@
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
       xmlns:local="using:The_Untamed_Music_Player.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:model="using:The_Untamed_Music_Player.Models"
       mc:Ignorable="d">
 
     <Grid>
@@ -72,5 +73,22 @@
         <Frame x:Name="SelectFrame"
                Grid.Row="1"
                IsNavigationStackEnabled="False"/>
+        <Border Grid.Row="1"
+                Height="48"
+                VerticalAlignment="Bottom"
+                Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0" Canvas.ZIndex="2"
+                Visibility="{x:Bind model:Data.MusicLibrary.IsProgressRingActive, Mode=OneWay}">
+            <StackPanel HorizontalAlignment="Center"
+                        Orientation="Horizontal" Spacing="16">
+                <ProgressRing Width="20" Height="20"
+                              VerticalAlignment="Center"
+                              IsActive="True"/>
+                <TextBlock x:Uid="歌曲_IndexingLibraries"
+                           VerticalAlignment="Center"
+                           FontWeight="SemiBold"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>
