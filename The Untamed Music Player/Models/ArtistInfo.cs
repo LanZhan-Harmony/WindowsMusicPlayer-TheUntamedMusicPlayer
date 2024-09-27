@@ -53,7 +53,7 @@ public class ArtistInfo
     public ArtistInfo(BriefMusicInfo briefMusicInfo, string name)
     {
         Name = name;
-        Cover = briefMusicInfo.Cover;
+        //Cover = briefMusicInfo.Cover;
         TotalDuration = briefMusicInfo.Duration;
         Genre = briefMusicInfo.GenreStr;
         TotalMusicNum = 1;
