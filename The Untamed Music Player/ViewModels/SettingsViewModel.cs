@@ -39,28 +39,6 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         get;
     }
 
-    private bool _isProgressRingActive;
-    public bool IsProgressRingActive
-    {
-        get => _isProgressRingActive;
-        set
-        {
-            SetProperty(ref _isProgressRingActive, value);
-            OnPropertyChanged(nameof(IsProgressRingActive));
-        }
-    }
-
-    private bool _isRefreshButtonEnabled = true;
-    public bool IsRefreshButtonEnabled
-    {
-        get => _isRefreshButtonEnabled;
-        set
-        {
-            SetProperty(ref _isRefreshButtonEnabled, value);
-            OnPropertyChanged(nameof(IsRefreshButtonEnabled));
-        }
-    }
-
     public Visibility EmptyFolderMessageVisibility => Data.MusicLibrary.Folders?.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
 
     private List<string> _fonts = [];
@@ -181,11 +159,7 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
 
     public async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
-        IsProgressRingActive = true;
-        IsRefreshButtonEnabled = false;
         await Data.MusicLibrary.LoadLibraryAgain();
-        IsProgressRingActive = false;
-        IsRefreshButtonEnabled = true;
     }
 
     public void LoadFonts()

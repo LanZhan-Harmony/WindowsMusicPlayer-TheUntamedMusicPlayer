@@ -114,10 +114,10 @@
                         </toolkit:SettingsExpander.HeaderIcon>
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <ProgressRing Width="24" Height="24"
-                                          IsActive="{x:Bind ViewModel.IsProgressRingActive, Mode=OneWay}"/>
+                                          IsActive="{x:Bind model:Data.MusicLibrary.IsProgressRingActive, Mode=OneWay}"/>
                             <Button x:Name="refresh" x:Uid="Settings_Refresh"
                                     Click="{x:Bind ViewModel.RefreshButton_Click}"
-                                    IsEnabled="{x:Bind ViewModel.IsRefreshButtonEnabled, Mode=OneWay}"/>
+                                    IsEnabled="{x:Bind model:Data.MusicLibrary.IsRefreshButtonEnabled, Mode=OneWay}"/>
                         </StackPanel>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">

@@ -258,23 +258,6 @@
                       Margin="0,24,0,0"
                       Canvas.ZIndex="1"
                       IsActive="{x:Bind ViewModel.IsProgressRingActive, Mode=OneWay}"/>
-        <Border Grid.Row="1"
-                Height="48"
-                VerticalAlignment="Bottom"
-                Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
-                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                BorderThickness="0,1,0,0" Canvas.ZIndex="2"
-                Visibility="{x:Bind model:Data.SettingsViewModel.IsProgressRingActive, Mode=OneWay}">
-            <StackPanel HorizontalAlignment="Center"
-                        Orientation="Horizontal" Spacing="16">
-                <ProgressRing Width="20" Height="20"
-                              VerticalAlignment="Center"
-                              IsActive="True"/>
-                <TextBlock x:Uid="歌曲_IndexingLibraries"
-                           VerticalAlignment="Center"
-                           FontWeight="SemiBold"/>
-            </StackPanel>
-        </Border>
         <SemanticZoom Grid.Row="1" Margin="0,24,0,0">
             <SemanticZoom.ZoomedInView>
                 <ListView x:Name="SongListView"
@@ -306,6 +289,5 @@
                           SelectionMode="None"/>
             </SemanticZoom.ZoomedOutView>
         </SemanticZoom>
-
     </Grid>
 </Page>

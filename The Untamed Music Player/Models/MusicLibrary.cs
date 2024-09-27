@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage;
@@ -8,6 +9,8 @@ using Windows.Storage;
 namespace The_Untamed_Music_Player.Models;
 public class MusicLibrary : INotifyPropertyChanged
 {
+    private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged(string propertyName)
     {
@@ -23,6 +26,13 @@ public class MusicLibrary : INotifyPropertyChanged
             _folders = value;
             OnPropertyChanged(nameof(SettingsViewModel.EmptyFolderMessageVisibility));
         }
+    }
+
+    private List<FileSystemWatcher> _folderWatchers = new();
+    public List<FileSystemWatcher> FolderWatchers
+    {
+        get => _folderWatchers;
+        set => _folderWatchers = value;
     }
 
     private readonly HashSet<string> _musicPaths = [];
@@ -71,6 +81,28 @@ public class MusicLibrary : INotifyPropertyChanged
         set => _genres = value;
     }
 
+    private bool _isProgressRingActive;
+    public bool IsProgressRingActive
+    {
+        get => _isProgressRingActive;
+        set
+        {
+            _isProgressRingActive = value;
+            OnPropertyChanged(nameof(IsProgressRingActive));
+        }
+    }
+
+    private bool _isRefreshButtonEnabled = true;
+    public bool IsRefreshButtonEnabled
+    {
+        get => _isRefreshButtonEnabled;
+        set
+        {
+            _isRefreshButtonEnabled = value;
+            OnPropertyChanged(nameof(IsRefreshButtonEnabled));
+        }
+    }
+
     public MusicLibrary()
     {
         LoadFoldersAsync();
@@ -95,6 +127,8 @@ public class MusicLibrary : INotifyPropertyChanged
 
     public async Task LoadLibraryAgain()
     {
+        IsProgressRingActive = true;
+        IsRefreshButtonEnabled = false;
         Musics.Clear();
         Artists.Clear();
         Albums.Clear();
@@ -112,17 +146,20 @@ public class MusicLibrary : INotifyPropertyChanged
         Genres.Add("MusicInfo_AllGenres".GetLocalized());
         Genres = new ObservableCollection<string>(Genres.OrderBy(x => x, new GenreComparer()));
         OnPropertyChanged(nameof(HasMusics));
+        IsProgressRingActive = false;
+        IsRefreshButtonEnabled = true;
     }
 
     public async void LoadFoldersAsync()
     {
-        var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>("MusicFolders");//	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。ReadAsync<List<string>>("MusicFolders")：调用 SettingsStorageExtensions 类中的扩展方法 ReadAsync，从名为 "MusicFolders" 的文件中读取数据，并将其反序列化为 List<string> 类型。
+        var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>("MusicFolders");//ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。ReadAsync<List<string>>("MusicFolders")：调用 SettingsStorageExtensions 类中的扩展方法 ReadAsync，从名为 "MusicFolders" 的文件中读取数据，并将其反序列化为 List<string> 类型。
         if (folderPaths != null)
         {
             foreach (var path in folderPaths)
             {
                 var folder = await StorageFolder.GetFolderFromPathAsync(path);
                 Folders?.Add(folder);
+                AddFolderWatcher(path);
             }
             OnPropertyChanged(nameof(SettingsViewModel.EmptyFolderMessageVisibility));
             await Data.MusicLibrary.LoadLibrary();
@@ -203,6 +240,61 @@ public class MusicLibrary : INotifyPropertyChanged
         {
             artistInfo.ClearAlbums();
         }
+    }
+
+    private void AddFolderWatcher(string path)
+    {
+        var watcher = new FileSystemWatcher(path)
+        {
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite,
+            IncludeSubdirectories = true // 启用对子文件夹的监视
+        };
+
+        watcher.Changed += OnChanged;
+        watcher.Created += OnChanged;
+        watcher.Deleted += OnChanged;
+        watcher.Renamed += OnRenamed;
+        watcher.Error += OnError;
+
+        watcher.EnableRaisingEvents = true;
+        FolderWatchers.Add(watcher);
+    }
+
+    private void OnChanged(object sender, FileSystemEventArgs e)
+    {
+        var fileExtension = Path.GetExtension(e.FullPath).ToLower();
+        if (Data.SupportedAudioTypes.Contains(fileExtension))
+        {
+            try
+            {
+                _dispatcherQueue.TryEnqueue(async () =>
+                {
+                    await LoadLibraryAgain();
+                });
+            }
+            catch { }
+        }
+    }
+
+    private void OnRenamed(object sender, RenamedEventArgs e)
+    {
+        var fileExtension = Path.GetExtension(e.FullPath).ToLower();
+        if (Data.SupportedAudioTypes.Contains(fileExtension))
+        {
+            try
+            {
+                _dispatcherQueue.TryEnqueue(async () =>
+               {
+                   await LoadLibraryAgain();
+               });
+            }
+            catch { }
+        }
+    }
+
+    private void OnError(object sender, ErrorEventArgs e)
+    {
+        Debug.WriteLine(e.GetException());
     }
 
     public ObservableCollection<BriefMusicInfo> GetMusicByAlbum(AlbumInfo albumInfo)
