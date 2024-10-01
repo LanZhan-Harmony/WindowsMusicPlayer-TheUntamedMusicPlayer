@@ -20,7 +20,6 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
 {
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILocalSettingsService _localSettingsService;
-    private static readonly ResourceLoader _resourceLoader = new();
     public new event PropertyChangedEventHandler? PropertyChanged;
 
     protected new void OnPropertyChanged(string propertyName)
@@ -67,7 +66,7 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         set => _materials = value;
     }
 
-    private byte _selectedMaterial = Data.MainWindow.SelectedMaterial;
+    private byte _selectedMaterial = Data.MainWindow?.SelectedMaterial ?? 0;
     public byte SelectedMaterial
     {
         get => _selectedMaterial;
