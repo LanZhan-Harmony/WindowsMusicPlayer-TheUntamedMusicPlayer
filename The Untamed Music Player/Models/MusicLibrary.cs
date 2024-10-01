@@ -28,7 +28,7 @@ public class MusicLibrary : INotifyPropertyChanged
         }
     }
 
-    private List<FileSystemWatcher> _folderWatchers = new();
+    private List<FileSystemWatcher> _folderWatchers = [];
     public List<FileSystemWatcher> FolderWatchers
     {
         get => _folderWatchers;

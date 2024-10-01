@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 
 namespace The_Untamed_Music_Player.Helpers;
 
 public static class Json
 {
-    public static async Task<T> ToObjectAsync<T>(string value)
+    public static async Task<T?> ToObjectAsync<T>(string value)
     {
-        return await Task.Run<T>(() =>
+        return await Task.Run<T?>(() =>
         {
-            return JsonConvert.DeserializeObject<T>(value);
+            return JsonSerializer.Deserialize<T>(value);
         });
     }
 
@@ -16,7 +16,7 @@ public static class Json
     {
         return await Task.Run<string>(() =>
         {
-            return JsonConvert.SerializeObject(value);
+            return JsonSerializer.Serialize(value);
         });
     }
 }

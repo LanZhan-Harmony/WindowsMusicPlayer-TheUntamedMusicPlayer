@@ -1,7 +1,5 @@
 ﻿using System.Text;
-
-using Newtonsoft.Json;
-
+using System.Text.Json;
 using The_Untamed_Music_Player.Contracts.Services;
 
 namespace The_Untamed_Music_Player.Services;
@@ -14,10 +12,10 @@ public class FileService : IFileService
         if (File.Exists(path))
         {
             var json = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<T>(json);
+            return JsonSerializer.Deserialize<T>(json)!;
         }
 
-        return default;
+        return default!;
     }
 
     public void Save<T>(string folderPath, string fileName, T content)
@@ -27,7 +25,7 @@ public class FileService : IFileService
             Directory.CreateDirectory(folderPath);
         }
 
-        var fileContent = JsonConvert.SerializeObject(content);
+        var fileContent = JsonSerializer.Serialize(content);
         File.WriteAllText(Path.Combine(folderPath, fileName), fileContent, Encoding.UTF8);
     }
 

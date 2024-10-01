@@ -59,10 +59,7 @@ public static class SettingsStorageExtensions
 
     public static async Task<StorageFile> SaveFileAsync(this StorageFolder folder, byte[] content, string fileName, CreationCollisionOption options = CreationCollisionOption.ReplaceExisting)
     {
-        if (content == null)
-        {
-            throw new ArgumentNullException(nameof(content));
-        }
+        ArgumentNullException.ThrowIfNull(content);
 
         if (string.IsNullOrEmpty(fileName))
         {

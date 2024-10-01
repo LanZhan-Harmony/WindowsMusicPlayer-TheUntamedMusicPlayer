@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using System.ComponentModel;
+using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -19,7 +20,7 @@ public sealed partial class 音乐库Page : Page
         UpdateContentFrame();
     }
 
-    private void MusicLibrary_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Data.MusicLibrary.HasMusics))
         {
