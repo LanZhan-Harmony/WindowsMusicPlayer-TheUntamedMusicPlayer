@@ -11,7 +11,7 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public class 艺术家ViewModel : INotifyPropertyChanged
 {
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
     public event PropertyChangedEventHandler? PropertyChanged;
     public void OnPropertyChanged(string propertyName)
     {
@@ -65,9 +65,8 @@ public class 艺术家ViewModel : INotifyPropertyChanged
         set => _groupedArtistList = value;
     }
 
-    public 艺术家ViewModel(ILocalSettingsService localSettingsService)
+    public 艺术家ViewModel()
     {
-        _localSettingsService = localSettingsService;
         LoadModeAndArtistList();
     }
 

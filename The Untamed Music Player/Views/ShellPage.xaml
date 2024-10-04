@@ -18,7 +18,7 @@
 
         <Grid>
             <Grid x:Name="AppTitleBar"
-                  Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
+                  Height="{x:Bind NavigationViewControl.CompactPaneLength, Mode=OneWay}"
                   VerticalAlignment="Top"
                   Canvas.ZIndex="1" IsHitTestVisible="True">
                 <Image Width="16" Height="16"

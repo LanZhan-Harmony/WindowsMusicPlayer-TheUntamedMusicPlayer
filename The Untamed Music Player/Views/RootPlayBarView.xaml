@@ -128,6 +128,7 @@
                 Height="80" MinWidth="162"
                 Margin="4,0,0,4" HorizontalAlignment="Left"
                 AccessKey="Z"
+                IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                 Click="{x:Bind ViewModel.CoverBtnClickToDetail}"
                 Style="{StaticResource CoverButtonStyle}">
             <Button.KeyboardAccelerators>

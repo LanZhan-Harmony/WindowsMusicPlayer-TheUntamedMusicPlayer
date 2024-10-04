@@ -72,6 +72,7 @@ public partial class App : Application
             services.AddSingleton<IFileService, FileService>();
 
             // Views and ViewModels
+            services.AddTransient<MainViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<SettingsPage>();
             services.AddTransient<播放列表ViewModel>();
@@ -117,7 +118,7 @@ public partial class App : Application
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
-        MainWindow = new MainWindow(GetService<ILocalSettingsService>());
+        MainWindow = new MainWindow();
         await GetService<IActivationService>().ActivateAsync(args);
     }
 }

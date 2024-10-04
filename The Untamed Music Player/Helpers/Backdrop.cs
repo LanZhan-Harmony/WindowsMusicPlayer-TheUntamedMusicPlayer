@@ -25,6 +25,6 @@ public class ColorAnimatedBackdrop : CompositionBrushBackdrop
 
 public class BlurredBackdrop : CompositionBrushBackdrop
 {
-    protected override CompositionBrush CreateBrush(Windows.UI.Composition.Compositor compositor)
+    protected override CompositionBrush CreateBrush(Compositor compositor)
         => compositor.CreateHostBackdropBrush();
 }

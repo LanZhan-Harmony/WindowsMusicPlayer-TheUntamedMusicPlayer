@@ -12,7 +12,7 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public class 专辑ViewModel : INotifyPropertyChanged
 {
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
     public event PropertyChangedEventHandler? PropertyChanged;
     public void OnPropertyChanged(string propertyName)
     {
@@ -98,9 +98,8 @@ public class 专辑ViewModel : INotifyPropertyChanged
         set => _genres = value;
     }
 
-    public 专辑ViewModel(ILocalSettingsService localSettingsService)
+    public 专辑ViewModel()
     {
-        _localSettingsService = localSettingsService;
         LoadModeAndAlbumList();
     }
 
