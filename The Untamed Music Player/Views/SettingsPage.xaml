@@ -178,15 +178,26 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
 
-                    <toolkit:SettingsCard x:Uid="Settings_WindowMaterial">
-                        <toolkit:SettingsCard.HeaderIcon>
+                    <toolkit:SettingsExpander x:Uid="Settings_WindowMaterial">
+                        <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xF5ED;"/>
-                        </toolkit:SettingsCard.HeaderIcon>
+                        </toolkit:SettingsExpander.HeaderIcon>
                         <ComboBox x:Name="MaterialComboBox" x:Uid="Settings_ChooseAMaterial"
                                   ItemsSource="{x:Bind ViewModel.Materials}"
                                   Loaded="{x:Bind ViewModel.MaterialComboBox_Loaded}"
                                   SelectionChanged="{x:Bind ViewModel.MaterialComboBox_SelectionChanged}"/>
-                    </toolkit:SettingsCard>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Header="窗口失去焦点后背景停止更新">
+                                <ToggleSwitch/>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard Header="窗口背景颜色">
+                                <ColorPicker ColorSpectrumShape="Ring" IsAlphaEnabled="True"
+                                             IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
+                                             IsColorChannelTextInputVisible="True" IsColorSliderVisible="True"
+                                             IsHexInputVisible="True" IsMoreButtonVisible="True"/>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
                 </StackPanel>
 
                 <StackPanel Spacing="2">
