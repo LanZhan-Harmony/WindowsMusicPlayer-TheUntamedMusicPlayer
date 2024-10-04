@@ -1,10 +1,13 @@
-﻿using Microsoft.UI;
+﻿using System.Diagnostics;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.ViewModels;
 using The_Untamed_Music_Player.Views;
 using Windows.UI.ViewManagement;
 using WinRT;
@@ -14,9 +17,13 @@ public sealed partial class MainWindow : WindowEx
 {
     private readonly Microsoft.UI.Dispatching.DispatcherQueue dispatcherQueue;
     private readonly UISettings settings;
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+    public MainViewModel ViewModel
+    {
+        get;
+    }
     private WindowsSystemDispatcherQueueHelper? m_wsdqHelper;
-    private DesktopAcrylicController? m_acrylicController;
+    public DesktopAcrylicController? m_acrylicController;
     private SystemBackdropConfiguration? m_configurationSource;
 
     private byte _selectedMaterial;
@@ -29,11 +36,9 @@ public sealed partial class MainWindow : WindowEx
         set => _selectedMaterial = value;
     }
 
-
-    public MainWindow(ILocalSettingsService localSettingsService)
+    public MainWindow()
     {
         InitializeComponent();
-        _localSettingsService = localSettingsService;
         InitializeAsync();
 
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/WindowIcon.ico"));
@@ -49,6 +54,7 @@ public sealed partial class MainWindow : WindowEx
         ShellFrame.Navigate(typeof(ShellPage));
         RootPlayBarFrame.Navigate(typeof(RootPlayBarView));
 
+        //ViewModel = App.GetService<MainViewModel>();
         Activated += Window_Activated;
         Closed += Window_Closed;
     }
@@ -181,7 +187,7 @@ public sealed partial class MainWindow : WindowEx
 
                 // 启用系统背景
                 // 注意：确保有“using WinRT;”以支持Window.As<...>()调用。
-                m_acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
+                m_acrylicController.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
                 m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
                 return true; // 成功
             }
@@ -202,6 +208,8 @@ public sealed partial class MainWindow : WindowEx
     {
         try
         {
+            m_acrylicController?.Dispose();
+            m_acrylicController = null;
             var blurBackdrop = new BlurredBackdrop();
             SystemBackdrop = blurBackdrop;
             return true;
@@ -222,6 +230,8 @@ public sealed partial class MainWindow : WindowEx
     {
         try
         {
+            m_acrylicController?.Dispose();
+            m_acrylicController = null;
             var color = tintColor ?? Colors.Transparent;
             var transparentBackdrop = new TransparentTintBackdrop(color);
             SystemBackdrop = transparentBackdrop;
@@ -241,6 +251,8 @@ public sealed partial class MainWindow : WindowEx
     {
         try
         {
+            m_acrylicController?.Dispose();
+            m_acrylicController = null;
             var animatedBackdrop = new ColorAnimatedBackdrop();
             SystemBackdrop = animatedBackdrop;
             return true;
@@ -262,26 +274,14 @@ public sealed partial class MainWindow : WindowEx
     private void Window_Closed(object sender, WindowEventArgs args)
     {
         // 确保任何Mica/Acrylic控制器都被释放，以便它不会尝试使用此关闭的窗口。
-        if (m_acrylicController != null)
-        {
-            m_acrylicController.Dispose();
-            m_acrylicController = null;
-        }
+        m_acrylicController?.Dispose();
+        m_acrylicController = null;
+
         Activated -= Window_Activated;
         m_configurationSource = null;
 
         Data.MusicPlayer.Player.Dispose();
         Data.MusicPlayer.SaveCurrentStateAsync();
-    }
-
-    public void ReleaseCurrentBackdropResources()
-    {
-        // 释放m_acrylicController的资源，并将其设置为null
-        if (m_acrylicController != null)
-        {
-            m_acrylicController.Dispose();
-            m_acrylicController = null;
-        }
     }
 
     private void Window_ThemeChanged(FrameworkElement sender, object args)
