@@ -352,7 +352,7 @@
     <value>Repeat: Off</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>None, Mica (Only Win11), Mica Alt (Only Win11), Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur (Experimental), Transparent (Experimental), Animated (Experimental)</value>
+    <value>None, Mica (Only Win11), Mica Alt (Only Win11), Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
   </data>
   <data name="歌曲_SortBy" xml:space="preserve">
     <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Album (Asc), Album (Desc), Release year (Asc), Release year (Desc), Date added (Asc), Date added (Desc), Folder (Asc), Folder (Desc)</value>
@@ -445,7 +445,7 @@
     <value>Play</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
-    <value>Window material (Please restart this app after making the change)</value>
+    <value>Window material</value>
   </data>
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>Choose a material</value>
@@ -497,5 +497,11 @@
   </data>
   <data name="艺术家_SortBy" xml:space="preserve">
     <value>A - Z, Z - A</value>
+  </data>
+  <data name="Settings_FallBack.Header" xml:space="preserve">
+    <value>Background stops updating after window loses focus</value>
+  </data>
+  <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
+    <value>Window background color</value>
   </data>
 </root>

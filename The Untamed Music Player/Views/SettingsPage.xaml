@@ -141,7 +141,6 @@
                     <TextBlock x:Uid="Settings_Personalization"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
-
                     <toolkit:SettingsExpander x:Name="AppThemeExpander1" x:Uid="Settings_Theme">
                         <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE790;"/>
@@ -187,10 +186,10 @@
                                   Loaded="{x:Bind ViewModel.MaterialComboBox_Loaded}"
                                   SelectionChanged="{x:Bind ViewModel.MaterialComboBox_SelectionChanged}"/>
                         <toolkit:SettingsExpander.Items>
-                            <toolkit:SettingsCard Header="窗口失去焦点后背景停止更新">
+                            <toolkit:SettingsCard x:Uid="Settings_FallBack">
                                 <ToggleSwitch/>
                             </toolkit:SettingsCard>
-                            <toolkit:SettingsCard Header="窗口背景颜色">
+                            <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundColor">
                                 <ColorPicker ColorSpectrumShape="Ring" IsAlphaEnabled="True"
                                              IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
                                              IsColorChannelTextInputVisible="True" IsColorSliderVisible="True"
