@@ -352,7 +352,7 @@
     <value>重复: 关</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>无, 云母 (仅Win11), 另类云母 (仅Win11), 桌面亚克力, 基础亚克力, 薄亚克力, 模糊 (实验性), 透明 (实验性), 跑马灯 (实验性)</value>
+    <value>无, 云母 (仅Win11), 另类云母 (仅Win11), 桌面亚克力, 基础亚克力, 薄亚克力, 模糊, 透明, 跑马灯</value>
   </data>
   <data name="歌曲_SortBy" xml:space="preserve">
     <value>A-Z, Z-A, 歌手 (升序), 歌手 (降序), 专辑 (升序), 专辑 (降序), 发行年份 (升序), 发行年份 (降序), 已添加日期 (升序), 已添加日期 (降序), 文件夹 (升序), 文件夹 (降序)</value>
@@ -445,7 +445,7 @@
     <value>播放</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
-    <value>窗口材质 (更改后请重启本应用)</value>
+    <value>窗口材质</value>
   </data>
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>选择一个材质</value>
@@ -497,5 +497,11 @@
   </data>
   <data name="艺术家_SortBy" xml:space="preserve">
     <value>A-Z, Z-A</value>
+  </data>
+  <data name="Settings_FallBack.Header" xml:space="preserve">
+    <value>窗口失去焦点后背景停止更新</value>
+  </data>
+  <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
+    <value>窗口背景颜色</value>
   </data>
 </root>
