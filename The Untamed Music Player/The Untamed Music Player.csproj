@@ -28,7 +28,7 @@
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<AppxBundle>Auto</AppxBundle>
-		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
+		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 		<!--<IsAotCompatible>True</IsAotCompatible>
 		<PublishAot>True</PublishAot>
 		<PublishTrimmed>True</PublishTrimmed>
@@ -36,6 +36,51 @@
 		<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>-->
 	</PropertyGroup>
 	<ItemGroup>
+		<Content Remove="Assets\LargeTile.scale-100.png" />
+		<Content Remove="Assets\LargeTile.scale-125.png" />
+		<Content Remove="Assets\LargeTile.scale-150.png" />
+		<Content Remove="Assets\LargeTile.scale-200.png" />
+		<Content Remove="Assets\LargeTile.scale-400.png" />
+		<Content Remove="Assets\SmallTile.scale-100.png" />
+		<Content Remove="Assets\SmallTile.scale-125.png" />
+		<Content Remove="Assets\SmallTile.scale-150.png" />
+		<Content Remove="Assets\SmallTile.scale-200.png" />
+		<Content Remove="Assets\SmallTile.scale-400.png" />
+		<Content Remove="Assets\SplashScreen.scale-100.png" />
+		<Content Remove="Assets\SplashScreen.scale-125.png" />
+		<Content Remove="Assets\SplashScreen.scale-150.png" />
+		<Content Remove="Assets\SplashScreen.scale-400.png" />
+		<Content Remove="Assets\Square150x150Logo.scale-100.png" />
+		<Content Remove="Assets\Square150x150Logo.scale-125.png" />
+		<Content Remove="Assets\Square150x150Logo.scale-150.png" />
+		<Content Remove="Assets\Square150x150Logo.scale-400.png" />
+		<Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+		<Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+		<Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+		<Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+		<Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+		<Content Remove="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
+		<Content Remove="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
+		<Content Remove="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
+		<Content Remove="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
+		<Content Remove="Assets\Square44x44Logo.scale-100.png" />
+		<Content Remove="Assets\Square44x44Logo.scale-125.png" />
+		<Content Remove="Assets\Square44x44Logo.scale-150.png" />
+		<Content Remove="Assets\Square44x44Logo.scale-400.png" />
+		<Content Remove="Assets\Square44x44Logo.targetsize-16.png" />
+		<Content Remove="Assets\Square44x44Logo.targetsize-24.png" />
+		<Content Remove="Assets\Square44x44Logo.targetsize-256.png" />
+		<Content Remove="Assets\Square44x44Logo.targetsize-32.png" />
+		<Content Remove="Assets\Square44x44Logo.targetsize-48.png" />
+		<Content Remove="Assets\StoreLogo.scale-100.png" />
+		<Content Remove="Assets\StoreLogo.scale-125.png" />
+		<Content Remove="Assets\StoreLogo.scale-150.png" />
+		<Content Remove="Assets\StoreLogo.scale-200.png" />
+		<Content Remove="Assets\StoreLogo.scale-400.png" />
+		<Content Remove="Assets\Wide310x150Logo.scale-100.png" />
+		<Content Remove="Assets\Wide310x150Logo.scale-125.png" />
+		<Content Remove="Assets\Wide310x150Logo.scale-150.png" />
+		<Content Remove="Assets\Wide310x150Logo.scale-400.png" />
 		<Content Remove="Assets\WindowIcon.png" />
 	</ItemGroup>
 	<ItemGroup>
@@ -61,11 +106,11 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240916" />
 		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.1.240916" />
 		<PackageReference Include="hyjiacan.pinyin4net" Version="4.1.1" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
-		<PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+		<PackageReference Include="System.Drawing.Common" Version="8.0.10" />
 		<PackageReference Include="TagLibSharp" Version="2.3.0" />
 		<PackageReference Include="WinUIEx" Version="2.4.2" />
 	</ItemGroup>
