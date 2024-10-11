@@ -162,7 +162,7 @@ public class MusicLibrary : INotifyPropertyChanged
                 AddFolderWatcher(path);
             }
             OnPropertyChanged(nameof(SettingsViewModel.EmptyFolderMessageVisibility));
-            await Data.MusicLibrary.LoadLibrary();
+            await LoadLibrary();
         }
     }
 

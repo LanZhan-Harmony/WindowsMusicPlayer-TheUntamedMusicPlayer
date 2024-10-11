@@ -3,40 +3,40 @@
 namespace The_Untamed_Music_Player.Models;
 public class ArtistInfo
 {
-    //艺术家名
-    private string _name = "";
-    public string Name
-    {
-        get => _name;
-        set => _name = value;
-    }
+    private readonly string _name = "";
+    /// <summary>
+    /// 艺术家名
+    /// </summary>
+    public string Name => _name;
 
     private readonly HashSet<string> _albums = [];
 
-    public string? _genre;
-    public string? Genre
-    {
-        get => _genre;
-        set => _genre = value;
-    }
+    public readonly string? _genre;
+    /// <summary>
+    /// 艺术家流派
+    /// </summary>
+    public string? Genre => _genre;
 
-    //封面路径（当作头像，默认为检索到的第一张）
-    private BitmapImage? _cover;
-    public BitmapImage? Cover
-    {
-        get => _cover;
-        set => _cover = value;
-    }
+    private readonly BitmapImage? _cover;
+    /// <summary>
+    /// 艺术家封面
+    /// </summary>
+    public BitmapImage? Cover => _cover;
 
     private TimeSpan _totalDuration;
+    /// <summary>
+    /// 艺术家歌曲总时长
+    /// </summary>
     public TimeSpan TotalDuration
     {
         get => _totalDuration;
         set => _totalDuration = value;
     }
 
-    //歌曲数量
     private int _totalMusicNum;
+    /// <summary>
+    /// 艺术家歌曲总数
+    /// </summary>
     public int TotalMusicNum
     {
         get => _totalMusicNum;
@@ -44,6 +44,9 @@ public class ArtistInfo
     }
 
     private int _totalAlbumNum;
+    /// <summary>
+    /// 艺术家专辑总数
+    /// </summary>
     public int TotalAlbumNum
     {
         get => _totalAlbumNum;
@@ -52,15 +55,18 @@ public class ArtistInfo
 
     public ArtistInfo(BriefMusicInfo briefMusicInfo, string name)
     {
-        Name = name;
-        //Cover = briefMusicInfo.Cover;
+        _name = name;
         TotalDuration = briefMusicInfo.Duration;
-        Genre = briefMusicInfo.GenreStr;
+        _genre = briefMusicInfo.GenreStr;
         TotalMusicNum = 1;
         TotalAlbumNum = 1;
         _albums.Add(briefMusicInfo.Album);
     }
 
+    /// <summary>
+    /// 扫描歌曲时更新艺术家信息
+    /// </summary>
+    /// <param name="briefMusicInfo"></param>
     public void Update(BriefMusicInfo briefMusicInfo)
     {
         TotalDuration += briefMusicInfo.Duration;
@@ -73,17 +79,28 @@ public class ArtistInfo
         }
     }
 
+    /// <summary>
+    /// 清空专辑哈希列表
+    /// </summary>
     public void ClearAlbums()
     {
         _albums.Clear();
     }
 
-    public string? GetCount()
+    /// <summary>
+    /// 获取相册数量和歌曲数量
+    /// </summary>
+    /// <returns></returns>
+    public string GetCount()
     {
         return $"{TotalAlbumNum} 个相册·{TotalMusicNum} 首歌曲·";
     }
 
-    public string? GetDuration()
+    /// <summary>
+    /// 获取总时长
+    /// </summary>
+    /// <returns></returns>
+    public string GetDuration()
     {
         if (TotalDuration.Hours > 0)
         {
