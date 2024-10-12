@@ -14,7 +14,7 @@
 注意：本应用仅限Microsoft® Windows10(版本号1809及以上)安装。
 
 ### 安装证书：
-1.双击打开 The Untamed Music Player_版本号_x64.cer 证书文件，如果没有.cer证书文件则右键 The Untamed Music Player_版本号_x64.msix 文件，点击属性-数字签名-选中签名者-详细信息-查看证书。
+1.双击打开 The Untamed Music Player_<版本号>_<处理器架构>.cer 证书文件，如果没有.cer证书文件则右键 The Untamed Music Player_<版本号>_<处理器架构>.msix 文件，点击属性-数字签名-选中签名者-详细信息-查看证书。
 ![image](https://github.com/user-attachments/assets/81b5685a-3d26-4965-9bc2-9165571ce370)
 ![image](https://github.com/user-attachments/assets/cc40be42-d5fc-48b9-af44-bfbb6c85fe2a)
 
@@ -25,5 +25,5 @@
 ![image](https://github.com/user-attachments/assets/7496b301-707c-4f0e-a4b2-59c26f3bf348)
 
 ### 安装软件：
-双击 The Untamed Music Player_版本号_x64.msix 安装包，点击安装即可。
+双击 The Untamed Music Player_<版本号>_<处理器架构>.msix 安装包，点击安装即可。
 ![image](https://github.com/user-attachments/assets/8ef5b0c4-d854-46e0-b8f7-c6c01ab34add)
