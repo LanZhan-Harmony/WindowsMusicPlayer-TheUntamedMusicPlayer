@@ -5,17 +5,17 @@ using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class 有音乐Page : Page
+public sealed partial class HaveMusicPage : Page
 {
     private readonly SettingsViewModel SettingsViewModel;
     private int previousSelectedIndex = 0;
-    public 有音乐ViewModel ViewModel
+    public HaveMusicViewModel ViewModel
     {
         get;
     }
-    public 有音乐Page()
+    public HaveMusicPage()
     {
-        ViewModel = App.GetService<有音乐ViewModel>();
+        ViewModel = App.GetService<HaveMusicViewModel>();
         InitializeComponent();
         SettingsViewModel = App.GetService<SettingsViewModel>();
     }

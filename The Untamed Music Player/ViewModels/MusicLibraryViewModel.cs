@@ -2,9 +2,9 @@
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class 音乐库ViewModel : ObservableRecipient
+public partial class MusicLibraryViewModel : ObservableRecipient
 {
-    public 音乐库ViewModel()
+    public MusicLibraryViewModel()
     {
     }
 }
