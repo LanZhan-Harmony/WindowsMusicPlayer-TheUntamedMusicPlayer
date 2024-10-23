@@ -235,7 +235,7 @@
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
 
                     <toolkit:SettingsCard x:Name="About" x:Uid="Settings_AboutDescription"
-                                          Header="Untamed Music Player">
+                                          Header="{x:Bind model:Data.AppDisplayName}">
                         <toolkit:SettingsCard.HeaderIcon>
                             <BitmapIcon AutomationProperties.AccessibilityView="Raw" ShowAsMonochrome="False"
                                         UriSource="ms-appx:///Assets/WindowIcon.ico"/>

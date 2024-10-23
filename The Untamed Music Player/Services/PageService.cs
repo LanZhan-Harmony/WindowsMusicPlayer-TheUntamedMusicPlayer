@@ -14,10 +14,10 @@ public class PageService : IPageService
 
     public PageService()
     {
-        Configure<主页ViewModel, 主页Page>();
-        Configure<音乐库ViewModel, 音乐库Page>();
-        Configure<播放队列ViewModel, 播放队列Page>();
-        Configure<播放列表ViewModel, 播放列表Page>();
+        Configure<HomeViewModel, HomePage>();
+        Configure<MusicLibraryViewModel, MusicLibraryPage>();
+        Configure<PlayQueueViewModel, PlayQueuePage>();
+        Configure<PlayListsViewModel, PlayListsPage>();
         Configure<SettingsViewModel, SettingsPage>();
     }
 

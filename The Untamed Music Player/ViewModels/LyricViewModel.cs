@@ -4,9 +4,9 @@ using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class 歌词ViewModel : ObservableRecipient
+public partial class LyricViewModel : ObservableRecipient
 {
-    public 歌词ViewModel()
+    public LyricViewModel()
     {
     }
 

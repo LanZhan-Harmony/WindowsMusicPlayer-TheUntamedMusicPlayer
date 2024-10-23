@@ -4,16 +4,16 @@ using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class 主页Page : Page
+public sealed partial class HomePage : Page
 {
-    public 主页ViewModel ViewModel
+    public HomeViewModel ViewModel
     {
         get;
     }
 
-    public 主页Page()
+    public HomePage()
     {
-        ViewModel = App.GetService<主页ViewModel>();
+        ViewModel = App.GetService<HomeViewModel>();
         InitializeComponent();
     }
 }

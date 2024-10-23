@@ -1,10 +1,11 @@
-﻿<Page x:Class="The_Untamed_Music_Player.Views.播放列表Page"
+﻿<Page x:Class="The_Untamed_Music_Player.Views.HomePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Microsoft.UI.Xaml.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      NavigationCacheMode="Enabled"
+      Background="Transparent"
       mc:Ignorable="d">
 
     <Grid x:Name="ContentArea">
@@ -33,10 +34,22 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="TitleGrid" Grid.Row="0">
-            <TextBlock x:Uid="Shell_播放列表1"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Uid="Shell_Home1"
+                       Grid.Column="0"
                        FontSize="40"
                        FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
+            <AutoSuggestBox x:Uid="Home_SearchOnlineSongs"
+                            Grid.Column="1"
+                            Height="32"
+                            Margin="0,7,0,0" VerticalAlignment="Center"
+                            QueryIcon="Find"
+                            QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted}"
+                            SuggestionChosen="{x:Bind ViewModel.SuggestBox_SuggestionChosen}"
+                            TextChanged="{x:Bind ViewModel.SuggestBox_TextChanged}"/>
         </Grid>
-        <ScrollViewer Grid.Row="1" Padding="0,0,0,16"/>
     </Grid>
 </Page>

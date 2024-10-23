@@ -5,7 +5,7 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "The Untamed Music Player", "The Untamed Music Player\The Untamed Music Player.csproj", "{FAF574F3-DB0A-4B33-BF19-45CF6396C9F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeteaseCloudMusicApi", "NeteaseCloudMusicApi\NeteaseCloudMusicApi.csproj", "{4033E97A-FE0F-4EBC-AB62-DA1604842F94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMusicApi", "NeteaseCloudMusicApi\OnlineMusicApi.csproj", "{4033E97A-FE0F-4EBC-AB62-DA1604842F94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
