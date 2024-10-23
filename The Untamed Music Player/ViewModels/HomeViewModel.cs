@@ -3,9 +3,9 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class 主页ViewModel : ObservableRecipient
+public partial class HomeViewModel : ObservableRecipient
 {
-    public 主页ViewModel()
+    public HomeViewModel()
     {
     }
 

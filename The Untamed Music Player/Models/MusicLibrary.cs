@@ -35,8 +35,6 @@ public class MusicLibrary : INotifyPropertyChanged
         set => _folderWatchers = value;
     }
 
-    private readonly HashSet<string> _musicPaths = [];
-
     private List<BriefMusicInfo> _musics = [];
     public List<BriefMusicInfo> Musics
     {
@@ -118,7 +116,6 @@ public class MusicLibrary : INotifyPropertyChanged
             }
         }
         ClearAllArtistMusicAlbums();
-        _musicPaths.Clear();
         _musicGenres.Clear();
         Genres.Add("MusicInfo_AllGenres".GetLocalized());
         Genres = new ObservableCollection<string>(Genres.OrderBy(x => x, new GenreComparer()));
@@ -141,7 +138,6 @@ public class MusicLibrary : INotifyPropertyChanged
             }
         }
         ClearAllArtistMusicAlbums();
-        _musicPaths.Clear();
         _musicGenres.Clear();
         Genres.Add("MusicInfo_AllGenres".GetLocalized());
         Genres = new ObservableCollection<string>(Genres.OrderBy(x => x, new GenreComparer()));
@@ -175,19 +171,16 @@ public class MusicLibrary : INotifyPropertyChanged
 
             foreach (var file in supportedFiles)
             {
-                if (_musicPaths.Add(file.Path))
+                var briefMusicInfo = new BriefMusicInfo(file.Path, foldername);
+                Musics.Add(briefMusicInfo);
+
+                if (_musicGenres.Add(briefMusicInfo.GenreStr))
                 {
-                    var briefMusicInfo = new BriefMusicInfo(file.Path, foldername);
-                    Musics.Add(briefMusicInfo);
-
-                    if (_musicGenres.Add(briefMusicInfo.GenreStr))
-                    {
-                        Genres.Add(briefMusicInfo.GenreStr);
-                    }
-
-                    UpdateAlbumInfo(briefMusicInfo);
-                    UpdateArtistInfo(briefMusicInfo);
+                    Genres.Add(briefMusicInfo.GenreStr);
                 }
+
+                UpdateAlbumInfo(briefMusicInfo);
+                UpdateArtistInfo(briefMusicInfo);
             }
 
             var subFolders = await folder.GetFoldersAsync();

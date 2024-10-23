@@ -226,7 +226,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         {
             if (Data.MainWindow != null)
             {
-                MusicPlayer.歌词UI = new 歌词Page();
+                MusicPlayer.LyricUI = new LyricPage();
                 var frame = Data.MainWindow.GetShellFrame();
 
                 // 创建渐变动画
@@ -258,7 +258,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
                 fadeOutAnimation.Completed += (s, a) =>
                 {
                     fadeInStoryboard.Begin();
-                    frame.Content = MusicPlayer.歌词UI;
+                    frame.Content = MusicPlayer.LyricUI;
                 };
 
                 fadeOutStoryboard.Begin();
@@ -308,7 +308,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
                 fadeOutStoryboard.Begin();
 
                 // 强制调用 Dispose 方法
-                if (MusicPlayer.歌词UI is IDisposable disposable)
+                if (MusicPlayer.LyricUI is IDisposable disposable)
                 {
                     disposable.Dispose();
                 }

@@ -27,14 +27,14 @@
         <DataTemplate x:Key="ZoomedInGroupHeaderTemplate" x:DataType="helper:GroupInfoList">
             <TextBlock AutomationProperties.AccessibilityView="Raw"
                        Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                       Text="{x:Bind Key}"/>
+                       Text="{x:Bind Key}"
+                       TextTrimming="WordEllipsis"/>
         </DataTemplate>
         <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="ICollectionViewGroup">
-            <Grid>
+            <Grid Width="{x:Bind model:Data.LocalAlbumsViewModel.GetZoomedOutViewGridWidth(model:Data.LocalAlbumsViewModel.SortMode)}">
                 <TextBlock Grid.Column="1"
-                           Width="406"
-                           Margin="10,0,10,0" HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
+                           Margin="{x:Bind model:Data.LocalAlbumsViewModel.GetZoomedOutViewTextBlockMargin(model:Data.LocalAlbumsViewModel.SortMode)}"
+                           HorizontalAlignment="Stretch" VerticalAlignment="Center"
                            Style="{StaticResource SubtitleTextBlockStyle}"
                            Text="{x:Bind ((helper:GroupInfoList)Group).Key}"
                            TextAlignment="Center" TextTrimming="WordEllipsis"/>
@@ -248,7 +248,7 @@
             <Button Grid.Column="0" Style="{StaticResource AccentButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <FontIcon FontSize="12" Glyph="&#xE8B1;"/>
-                    <TextBlock x:Uid="有音乐_Shuffle"/>
+                    <TextBlock x:Uid="HaveMusic_Shuffle"/>
                 </StackPanel>
             </Button>
             <StackPanel Grid.Column="2"
@@ -314,7 +314,13 @@
                           IsItemClickEnabled="True"
                           ItemTemplate="{StaticResource ZoomedOutTemplate}"
                           ItemsSource="{x:Bind GroupedAlbumList.View.CollectionGroups, Mode=OneWay}"
-                          SelectionMode="None"/>
+                          SelectionMode="None">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid MaximumRowsOrColumns="8" Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
             </SemanticZoom.ZoomedOutView>
         </SemanticZoom>
     </Grid>

@@ -46,8 +46,8 @@
                     </AutoSuggestBox>
                 </NavigationView.AutoSuggestBox>
                 <NavigationView.MenuItems>
-                    <NavigationViewItem x:Uid="Shell_主页"
-                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.主页ViewModel"
+                    <NavigationViewItem x:Uid="Shell_Home"
+                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.HomeViewModel"
                                         AccessKey="NO">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="F" Modifiers="Control,Shift"/>
@@ -56,8 +56,8 @@
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem x:Uid="Shell_音乐库"
-                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.音乐库ViewModel"
+                    <NavigationViewItem x:Uid="Shell_MusicLibrary"
+                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.MusicLibraryViewModel"
                                         AccessKey="NS">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="R" Modifiers="Control"/>
@@ -67,8 +67,8 @@
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItemSeparator/>
-                    <NavigationViewItem x:Uid="Shell_播放队列"
-                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.播放队列ViewModel"
+                    <NavigationViewItem x:Uid="Shell_PlayQueue"
+                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.PlayQueueViewModel"
                                         AccessKey="NQ">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Q" Modifiers="Control"/>
@@ -77,8 +77,8 @@
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90B;"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem x:Uid="Shell_播放列表"
-                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.播放列表ViewModel"
+                    <NavigationViewItem x:Uid="Shell_PlayLists"
+                                        helper:NavigationHelper.NavigateTo="The_Untamed_Music_Player.ViewModels.PlayListsViewModel"
                                         AccessKey="NP">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Y" Modifiers="Control"/>
