@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -284,7 +282,7 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
 
     private static async Task SaveFoldersAsync()
     {
-        var folderPaths = Data.MusicLibrary.Folders?.Select(f => f.Path).ToList();//Folders.Select(f => f.Path)：使用 LINQ 查询从 Folders 集合中提取每个 StorageFolder 的路径（Path 属性）。.ToList()：将提取的路径集合转换为 List<string>。
+        var folderPaths = Data.MusicLibrary.Folders?.Select(f => f.Path).ToList();
         await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths);//	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
     }
 

@@ -101,8 +101,8 @@ public class 歌曲ViewModel : INotifyPropertyChanged
 
     public 歌曲ViewModel()
     {
-        Data.歌曲ViewModel = this;
         LoadModeAndSongList();
+        Data.LocalSongsViewModel = this;
     }
 
     public async void LoadModeAndSongList()
@@ -233,17 +233,17 @@ public class 歌曲ViewModel : INotifyPropertyChanged
     {
         return sortmode switch
         {
-            0 or 1 => 69,
-            _ => 424
+            0 or 1 => 71,
+            _ => 426
         };
     }
 
-    public int GetZoomedOutViewGridMaxColumn(byte sortmode)
+    public Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
     {
         return sortmode switch
         {
-            0 or 1 => 8,
-            _ => 3
+            0 or 1 => new Thickness(0, 0, 0, 0),
+            _ => new Thickness(15, 0, 15, 0)
         };
     }
 

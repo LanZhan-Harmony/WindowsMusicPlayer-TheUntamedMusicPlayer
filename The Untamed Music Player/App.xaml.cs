@@ -7,7 +7,6 @@ using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
-using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player;
 
@@ -72,37 +71,22 @@ public partial class App : Application
             services.AddSingleton<IFileService, FileService>();
 
             // Views and ViewModels
-            services.AddTransient<MainViewModel>();
-            services.AddTransient<SettingsViewModel>();
-            services.AddTransient<SettingsPage>();
-            services.AddTransient<播放列表ViewModel>();
-            services.AddTransient<播放列表Page>();
-            services.AddTransient<播放队列ViewModel>();
-            services.AddTransient<播放队列Page>();
-            services.AddTransient<音乐库ViewModel>();
-            services.AddTransient<音乐库Page>();
-            services.AddTransient<主页Page>();
-            services.AddTransient<主页ViewModel>();
-            services.AddTransient<ShellPage>();
+            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<SettingsViewModel>();
+            services.AddTransient<PlayListsViewModel>();
+            services.AddTransient<PlayQueueViewModel>();
+            services.AddTransient<MusicLibraryViewModel>();
+            services.AddTransient<HomeViewModel>();
             services.AddTransient<ShellViewModel>();
-            services.AddTransient<RootPlayBarView>();
             services.AddTransient<RootPlayBarViewModel>();
-            services.AddTransient<歌词Page>();
-            services.AddTransient<歌词ViewModel>();
-            services.AddTransient<无音乐Page>();
-            services.AddTransient<无音乐ViewModel>();
-            services.AddTransient<有音乐Page>();
-            services.AddTransient<有音乐ViewModel>();
-            services.AddTransient<歌曲Page>();
+            services.AddTransient<LyricViewModel>();
+            services.AddTransient<NoMusicViewModel>();
+            services.AddTransient<HaveMusicViewModel>();
             services.AddTransient<歌曲ViewModel>();
-            services.AddTransient<专辑Page>();
             services.AddTransient<专辑ViewModel>();
-            services.AddTransient<专辑详情Page>();
-            services.AddTransient<专辑详情ViewModel>();
-            services.AddTransient<艺术家Page>();
+            services.AddTransient<AlbumDetailViewModel>();
             services.AddTransient<艺术家ViewModel>();
-            services.AddTransient<艺术家详情Page>();
-            services.AddTransient<艺术家详情ViewModel>();
+            services.AddTransient<ArtistDetailViewModel>();
 
             // Configuration
             services.AddOptions<LocalSettingsOptions>()

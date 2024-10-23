@@ -6,9 +6,9 @@ using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class 播放队列ViewModel : ObservableRecipient
+public partial class PlayQueueViewModel : ObservableRecipient
 {
-    public 播放队列ViewModel()
+    public PlayQueueViewModel()
     {
     }
 

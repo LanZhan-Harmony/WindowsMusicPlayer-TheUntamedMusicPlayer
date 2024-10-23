@@ -8,15 +8,15 @@ namespace The_Untamed_Music_Player.Views;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class 艺术家详情Page : Page
+public sealed partial class ArtistDetailPage : Page
 {
-    public 艺术家详情ViewModel ViewModel
+    public ArtistDetailViewModel ViewModel
     {
         get;
     }
-    public 艺术家详情Page()
+    public ArtistDetailPage()
     {
-        ViewModel = App.GetService<艺术家详情ViewModel>();
+        ViewModel = App.GetService<ArtistDetailViewModel>();
         InitializeComponent();
     }
 }

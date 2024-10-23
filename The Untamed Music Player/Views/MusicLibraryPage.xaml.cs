@@ -5,16 +5,16 @@ using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class 音乐库Page : Page
+public sealed partial class MusicLibraryPage : Page
 {
-    public 音乐库ViewModel ViewModel
+    public MusicLibraryViewModel ViewModel
     {
         get;
     }
 
-    public 音乐库Page()
+    public MusicLibraryPage()
     {
-        ViewModel = App.GetService<音乐库ViewModel>();
+        ViewModel = App.GetService<MusicLibraryViewModel>();
         InitializeComponent();
         Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
         UpdateContentFrame();
@@ -32,11 +32,11 @@ public sealed partial class 音乐库Page : Page
     {
         if (Data.MusicLibrary.HasMusics)
         {
-            ContentFrame.Navigate(typeof(有音乐Page));
+            ContentFrame.Navigate(typeof(HaveMusicPage));
         }
         else
         {
-            ContentFrame.Navigate(typeof(无音乐Page));
+            ContentFrame.Navigate(typeof(NoMusicPage));
         }
     }
 }

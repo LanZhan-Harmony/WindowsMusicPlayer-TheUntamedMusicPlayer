@@ -14,16 +14,16 @@ namespace The_Untamed_Music_Player.Views;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class 歌词Page : Page, IDisposable
+public sealed partial class LyricPage : Page, IDisposable
 {
-    public 歌词ViewModel ViewModel
+    public LyricViewModel ViewModel
     {
         get;
     }
 
-    public 歌词Page()
+    public LyricPage()
     {
-        ViewModel = App.GetService<歌词ViewModel>();
+        ViewModel = App.GetService<LyricViewModel>();
         InitializeComponent();
 
         // 设置 ContentGridBackground 的绑定

@@ -14,7 +14,7 @@ using Windows.System.Threading;
 
 namespace The_Untamed_Music_Player.Models;
 
-public partial class MusicPlayer : INotifyPropertyChanged
+public class MusicPlayer : INotifyPropertyChanged
 {
     private readonly ILocalSettingsService _localSettingsService;
 
@@ -252,7 +252,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// <summary>
     /// 歌词页UI
     /// </summary>
-    public static 歌词Page? 歌词UI
+    public static LyricPage? LyricUI
     {
         get; set;
     }
@@ -355,9 +355,9 @@ public partial class MusicPlayer : INotifyPropertyChanged
     /// </summary>
     private readonly Lock mediaLock = new();
 
-    public MusicPlayer(ILocalSettingsService localSettingsService)
+    public MusicPlayer()
     {
-        _localSettingsService = localSettingsService;
+        _localSettingsService = App.GetService<ILocalSettingsService>();
         Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
         Player.MediaEnded += OnPlaybackStopped;
         Player.Volume = CurrentVolume / 100;
@@ -503,7 +503,7 @@ public partial class MusicPlayer : INotifyPropertyChanged
                 catch { }
                 try
                 {
-                    歌词UI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    LyricUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
                         CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
                     });

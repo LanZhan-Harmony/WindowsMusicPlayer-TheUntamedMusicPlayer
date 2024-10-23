@@ -16,7 +16,7 @@ namespace NeteaseCloudMusicApi;
 /// <summary>
 /// 网易云音乐API
 /// </summary>
-public sealed partial class CloudMusicApi : IDisposable
+public sealed partial class NeteaseCloudMusicApi : IDisposable
 {
     private readonly HttpClient _client;
     private readonly HttpClientHandler _clientHandler;
@@ -47,7 +47,7 @@ public sealed partial class CloudMusicApi : IDisposable
     /// <summary>
     /// 构造器
     /// </summary>
-    public CloudMusicApi()
+    public NeteaseCloudMusicApi()
     {
         _clientHandler = new HttpClientHandler
         {
@@ -58,13 +58,13 @@ public sealed partial class CloudMusicApi : IDisposable
     }
 
     /// <summary>
-    /// API请求（如果.NET版本支持，请使用值元组异步版本 <see cref="RequestAsync(CloudMusicApiProvider, Dictionary{string, string})"/>）
+    /// API请求（如果.NET版本支持，请使用值元组异步版本 <see cref="RequestAsync(NeteaseCloudMusicApiProvider, Dictionary{string, string})"/>）
     /// </summary>
     /// <param name="provider">API提供者</param>
     /// <param name="queries">参数</param>
     /// <param name="result">请求结果</param>
     /// <returns></returns>
-    public bool Request(CloudMusicApiProvider provider, Dictionary<string, string> queries, out JObject result)
+    public bool Request(NeteaseCloudMusicApiProvider provider, Dictionary<string, string> queries, out JObject result)
     {
         bool isOk;
 
@@ -78,7 +78,7 @@ public sealed partial class CloudMusicApi : IDisposable
     /// <param name="provider">API提供者</param>
     /// <param name="queries">参数</param>
     /// <returns></returns>
-    public Task<(bool, JObject)> RequestAsync(CloudMusicApiProvider provider, Dictionary<string, string> queries)
+    public Task<(bool, JObject)> RequestAsync(NeteaseCloudMusicApiProvider provider, Dictionary<string, string> queries)
     {
         ArgumentNullException.ThrowIfNull(provider);
 
@@ -129,7 +129,7 @@ public sealed partial class CloudMusicApi : IDisposable
 
     private async Task<(bool, JObject)> HandleCheckMusicAsync(Dictionary<string, string> queries)
     {
-        CloudMusicApiProvider provider;
+        NeteaseCloudMusicApiProvider provider;
         bool isOk;
         JObject json;
         JObject result;
@@ -152,7 +152,7 @@ public sealed partial class CloudMusicApi : IDisposable
 
     private async Task<(bool, JObject)> HandleLoginAsync(Dictionary<string, string> queries)
     {
-        CloudMusicApiProvider provider;
+        NeteaseCloudMusicApiProvider provider;
         bool isOk;
         JObject json;
 

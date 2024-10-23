@@ -35,14 +35,14 @@ public sealed partial class ShellPage : Page
             Data.MainWindow.SetTitleBar(AppTitleBar);
             Data.MainWindow.Activated += MainWindow_Activated;
         }
-        AppTitleBarText.Text = "Untamed Music Player";
+        AppTitleBarText.Text = "AppDisplayName".GetLocalized();
 
         Data.ShellPage = this;
     }
 
 
 
-    private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void OnLoaded(object sender, RoutedEventArgs e)
     {
 
         TitleBarHelper.UpdateTitleBar(RequestedTheme);
@@ -52,7 +52,7 @@ public sealed partial class ShellPage : Page
 
     }
 
-    private void MainWindow_Activated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
+    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
     {
         App.AppTitlebar = AppTitleBarText as UIElement;
     }

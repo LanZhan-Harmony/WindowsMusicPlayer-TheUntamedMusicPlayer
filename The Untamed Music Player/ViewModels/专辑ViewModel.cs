@@ -101,6 +101,7 @@ public class 专辑ViewModel : INotifyPropertyChanged
     public 专辑ViewModel()
     {
         LoadModeAndAlbumList();
+        Data.LocalAlbumsViewModel = this;
     }
 
     public async void LoadModeAndAlbumList()
@@ -217,6 +218,24 @@ public class 专辑ViewModel : INotifyPropertyChanged
         {
             menuButton.Visibility = Visibility.Collapsed;
         }
+    }
+
+    public double GetZoomedOutViewGridWidth(byte sortmode)
+    {
+        return sortmode switch
+        {
+            0 or 1 => 71,
+            _ => 426
+        };
+    }
+
+    public Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
+    {
+        return sortmode switch
+        {
+            0 or 1 => new Thickness(0, 0, 0, 0),
+            _ => new Thickness(15, 0, 15, 0)
+        };
     }
 
     public async Task SortAlbums()
