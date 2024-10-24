@@ -26,9 +26,9 @@ public sealed partial class HaveMusicPage : Page
         var currentSelectedIndex = sender.Items.IndexOf(selectedItem);
         var pageType = currentSelectedIndex switch
         {
-            0 => typeof(歌曲Page),
-            1 => typeof(专辑Page),
-            _ => typeof(艺术家Page),
+            0 => typeof(LocalSongsPage),
+            1 => typeof(LocalAlbumsPage),
+            _ => typeof(LocalArtistsPage),
         };
         var slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
 

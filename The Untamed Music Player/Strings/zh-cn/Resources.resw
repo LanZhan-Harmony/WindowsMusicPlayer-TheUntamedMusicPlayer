@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-	<!-- 
+  <!-- 
     Microsoft ResX Schema 
     
     Version 2.0
@@ -59,449 +59,455 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="metadata">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" />
-							</xsd:sequence>
-							<xsd:attribute name="name" use="required" type="xsd:string" />
-							<xsd:attribute name="type" type="xsd:string" />
-							<xsd:attribute name="mimetype" type="xsd:string" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="assembly">
-						<xsd:complexType>
-							<xsd:attribute name="alias" type="xsd:string" />
-							<xsd:attribute name="name" type="xsd:string" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>2.0</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<data name="AppDisplayName" xml:space="preserve">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
     <value>无羁 音乐播放器</value>
   </data>
-	<data name="AppDescription" xml:space="preserve">
+  <data name="AppDescription" xml:space="preserve">
     <value>无羁 音乐播放器</value>
   </data>
-	<data name="Shell_MusicLibrary.Content" xml:space="preserve">
+  <data name="Shell_MusicLibrary.Content" xml:space="preserve">
     <value>音乐库</value>
   </data>
-	<data name="Shell_PlayQueue.Content" xml:space="preserve">
+  <data name="Shell_PlayQueue.Content" xml:space="preserve">
     <value>播放队列</value>
   </data>
-	<data name="Shell_PlayLists.Content" xml:space="preserve">
+  <data name="Shell_PlayLists.Content" xml:space="preserve">
     <value>播放列表</value>
   </data>
-	<data name="Settings_Personalization.Text" xml:space="preserve">
+  <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>个性化</value>
   </data>
-	<data name="Settings_Theme.Header" xml:space="preserve">
+  <data name="Settings_Theme.Header" xml:space="preserve">
     <value>应用主题</value>
   </data>
-	<data name="Settings_Theme_Light.Content" xml:space="preserve">
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>浅色</value>
   </data>
-	<data name="Settings_Theme_Dark.Content" xml:space="preserve">
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
     <value>深色</value>
   </data>
-	<data name="Settings_Theme_Default.Content" xml:space="preserve">
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
     <value>使用系统设置</value>
   </data>
-	<data name="Settings_About.Text" xml:space="preserve">
+  <data name="Settings_About.Text" xml:space="preserve">
     <value>关于</value>
   </data>
-	<data name="Settings_AboutDescription.Description" xml:space="preserve">
+  <data name="Settings_AboutDescription.Description" xml:space="preserve">
     <value>© 2024 Untamed Corporation。保留所有权利。</value>
   </data>
-	<data name="Settings_Library.Text" xml:space="preserve">
+  <data name="Settings_Library.Text" xml:space="preserve">
     <value>库</value>
   </data>
-	<data name="Settings_AddFolder.Text" xml:space="preserve">
+  <data name="Settings_AddFolder.Text" xml:space="preserve">
     <value>添加文件夹</value>
   </data>
-	<data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
+  <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>音乐库位置</value>
   </data>
-	<data name="Settings_NoFolder.Text" xml:space="preserve">
+  <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>此库中不包含任何文件夹</value>
   </data>
-	<data name="Settings_Refresh.Content" xml:space="preserve">
+  <data name="Settings_Refresh.Content" xml:space="preserve">
     <value>刷新</value>
   </data>
-	<data name="Settings_RefreshLibrary.Header" xml:space="preserve">
+  <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
     <value>刷新库</value>
   </data>
-	<data name="Settings_ReIndex.Text" xml:space="preserve">
+  <data name="Settings_ReIndex.Text" xml:space="preserve">
     <value>如果看不到库位置中的所有媒体，可以立即重新索引库。</value>
   </data>
-	<data name="Shell_Search.PlaceholderText" xml:space="preserve">
+  <data name="Shell_Search.PlaceholderText" xml:space="preserve">
     <value>搜索</value>
   </data>
-	<data name="PlayBar_Property.Text" xml:space="preserve">
+  <data name="PlayBar_Property.Text" xml:space="preserve">
     <value>属性</value>
   </data>
-	<data name="PlayBar_Equalizer.Text" xml:space="preserve">
+  <data name="PlayBar_Equalizer.Text" xml:space="preserve">
     <value>均衡器</value>
   </data>
-	<data name="PlayBar_Speed.Text" xml:space="preserve">
+  <data name="PlayBar_Speed.Text" xml:space="preserve">
     <value>速度</value>
   </data>
-	<data name="PlayBar_CastDevice.Text" xml:space="preserve">
+  <data name="PlayBar_CastDevice.Text" xml:space="preserve">
     <value>投放到设备</value>
   </data>
-	<data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
+  <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
     <value>快退10秒</value>
   </data>
-	<data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
+  <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
     <value>快进30秒</value>
   </data>
-	<data name="Shell_PlayLists1.Text" xml:space="preserve">
+  <data name="Shell_PlayLists1.Text" xml:space="preserve">
     <value>播放列表</value>
   </data>
-	<data name="Shell_PlayQueue1.Text" xml:space="preserve">
+  <data name="Shell_PlayQueue1.Text" xml:space="preserve">
     <value>播放队列</value>
   </data>
-	<data name="Shell_MusicLibrary1.Text" xml:space="preserve">
+  <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
     <value>音乐</value>
   </data>
-	<data name="Shell_Settings.Text" xml:space="preserve">
+  <data name="Shell_Settings.Text" xml:space="preserve">
     <value>设置</value>
   </data>
-	<data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
+  <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
     <value>找不到任何音乐</value>
   </data>
-	<data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
+  <data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
     <value>你的音乐库不包含任何音乐内容</value>
   </data>
-	<data name="HaveMusic_Songs.Text" xml:space="preserve">
+  <data name="HaveMusic_Songs.Text" xml:space="preserve">
     <value>歌曲</value>
   </data>
-	<data name="HaveMusic_Albums.Text" xml:space="preserve">
+  <data name="HaveMusic_Albums.Text" xml:space="preserve">
     <value>专辑</value>
   </data>
-	<data name="HaveMusic_Artists.Text" xml:space="preserve">
+  <data name="HaveMusic_Artists.Text" xml:space="preserve">
     <value>艺术家</value>
   </data>
-	<data name="Settings_Dialog1Title" xml:space="preserve">
+  <data name="Settings_Dialog1Title" xml:space="preserve">
     <value>删除此文件夹吗？</value>
   </data>
-	<data name="Settings_Dialog1Content1" xml:space="preserve">
+  <data name="Settings_Dialog1Content1" xml:space="preserve">
     <value>如果将“</value>
   </data>
-	<data name="Settings_Dialog1Content2" xml:space="preserve">
+  <data name="Settings_Dialog1Content2" xml:space="preserve">
     <value>”文件夹从音乐中移除，则该文件夹不会再出现在音乐中，但不会被删除。</value>
   </data>
-	<data name="Settings_Dialog1Primary" xml:space="preserve">
+  <data name="Settings_Dialog1Primary" xml:space="preserve">
     <value>删除文件夹</value>
   </data>
-	<data name="Settings_Dialog1Close" xml:space="preserve">
+  <data name="Settings_Dialog1Close" xml:space="preserve">
     <value>取消</value>
   </data>
-	<data name="Settings_SearchSetting.Content" xml:space="preserve">
+  <data name="Settings_SearchSetting.Content" xml:space="preserve">
     <value>管理系统索引设置</value>
   </data>
-	<data name="Settings_Dialog2Title" xml:space="preserve">
+  <data name="Settings_Dialog2Title" xml:space="preserve">
     <value>你指的是要切换应用吗？</value>
   </data>
-	<data name="Settings_Dialog2Content" xml:space="preserve">
+  <data name="Settings_Dialog2Content" xml:space="preserve">
     <value>“媒体播放器”正在尝试打开“设置”。</value>
   </data>
-	<data name="Settings_Dialog2Primary" xml:space="preserve">
+  <data name="Settings_Dialog2Primary" xml:space="preserve">
     <value>是</value>
   </data>
-	<data name="Settings_Dialog2Close" xml:space="preserve">
+  <data name="Settings_Dialog2Close" xml:space="preserve">
     <value>否</value>
   </data>
-	<data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
     <value>音量</value>
   </data>
-	<data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
     <value>全屏 (F11)</value>
   </data>
-	<data name="PlayBar_Mini.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_Mini.ToolTipService.ToolTip" xml:space="preserve">
     <value>最小播放器 (Ctrl+M)</value>
   </data>
-	<data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
     <value>更多选项</value>
   </data>
-	<data name="PlayBar_More_1.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_More_1.ToolTipService.ToolTip" xml:space="preserve">
     <value>Ctrl+Shift+J</value>
   </data>
-	<data name="PlayBar_More_025.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_More_025.ToolTipService.ToolTip" xml:space="preserve">
     <value>Ctrl+Shift+G</value>
   </data>
-	<data name="PlayBar_More_05.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_More_05.ToolTipService.ToolTip" xml:space="preserve">
     <value>Ctrl+Shift+H</value>
   </data>
-	<data name="PlayBar_More_15.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_More_15.ToolTipService.ToolTip" xml:space="preserve">
     <value>Ctrl+Shift+K</value>
   </data>
-	<data name="PlayBar_More_2.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_More_2.ToolTipService.ToolTip" xml:space="preserve">
     <value>Ctrl+Shift+L</value>
   </data>
-	<data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
     <value>上一个 (Ctrl+B)</value>
   </data>
-	<data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
     <value>下一个 (Ctrl+F)</value>
   </data>
-	<data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
     <value>正在播放 (Ctrl+N)</value>
   </data>
-	<data name="PlayBar_ShuffleOff" xml:space="preserve">
+  <data name="PlayBar_ShuffleOff" xml:space="preserve">
     <value>随机播放: 关 (Ctrl+H)</value>
   </data>
-	<data name="PlayBar_ShuffleOn" xml:space="preserve">
+  <data name="PlayBar_ShuffleOn" xml:space="preserve">
     <value>随机播放: 开 (Ctrl+H)</value>
   </data>
-	<data name="PlayBar_RepeatOff" xml:space="preserve">
+  <data name="PlayBar_RepeatOff" xml:space="preserve">
     <value>重复: 关 (Ctrl+T)</value>
   </data>
-	<data name="PlayBar_RepeatAll" xml:space="preserve">
+  <data name="PlayBar_RepeatAll" xml:space="preserve">
     <value>重复: 全部 (Ctrl+T)</value>
   </data>
-	<data name="PlayBar_RepeatOne" xml:space="preserve">
+  <data name="PlayBar_RepeatOne" xml:space="preserve">
     <value>重复: 单曲 (Ctrl+T)</value>
   </data>
-	<data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
     <value>音乐库 (Ctrl+R)</value>
   </data>
-	<data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
     <value>播放队列 (Ctrl+Q)</value>
   </data>
-	<data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
     <value>播放列表 (Ctrl+Y)</value>
   </data>
-	<data name="PlayBar_Play" xml:space="preserve">
+  <data name="PlayBar_Play" xml:space="preserve">
     <value>播放 (Ctrl+P)</value>
   </data>
-	<data name="PlayBar_Pause" xml:space="preserve">
+  <data name="PlayBar_Pause" xml:space="preserve">
     <value>暂停 (Ctrl+P)</value>
   </data>
-	<data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
     <value>定位</value>
   </data>
-	<data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
     <value>删除文件夹</value>
   </data>
-	<data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
     <value>将文件夹添加到音乐库</value>
   </data>
-	<data name="PlayBar_More_ShuffleOn" xml:space="preserve">
+  <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
     <value>随机播放: 开</value>
   </data>
-	<data name="PlayBar_More_ShuffleOff" xml:space="preserve">
+  <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
     <value>随机播放: 关</value>
   </data>
-	<data name="PlayBar_More_RepeatAll" xml:space="preserve">
+  <data name="PlayBar_More_RepeatAll" xml:space="preserve">
     <value>重复: 全部</value>
   </data>
-	<data name="PlayBar_More_RepeatOne" xml:space="preserve">
+  <data name="PlayBar_More_RepeatOne" xml:space="preserve">
     <value>重复: 单曲</value>
   </data>
-	<data name="PlayBar_More_RepeatOff" xml:space="preserve">
+  <data name="PlayBar_More_RepeatOff" xml:space="preserve">
     <value>重复: 关</value>
   </data>
-	<data name="Settings_Materials" xml:space="preserve">
+  <data name="Settings_Materials" xml:space="preserve">
     <value>无, 云母 (仅Win11), 另类云母 (仅Win11), 桌面亚克力, 基础亚克力, 薄亚克力, 模糊, 透明, 跑马灯</value>
   </data>
-	<data name="歌曲_SortBy" xml:space="preserve">
+  <data name="LocalSongs_SortBy" xml:space="preserve">
     <value>A-Z, Z-A, 歌手 (升序), 歌手 (降序), 专辑 (升序), 专辑 (降序), 发行年份 (升序), 发行年份 (降序), 已添加日期 (升序), 已添加日期 (降序), 文件夹 (升序), 文件夹 (降序)</value>
   </data>
-	<data name="专辑_SortBy" xml:space="preserve">
+  <data name="LocalAlbums_SortBy" xml:space="preserve">
     <value>A-Z, Z-A, 发行年份 (升序), 发行年份 (降序), 歌手 (升序), 歌手 (降序), 已添加日期 (升序), 已添加日期 (降序)</value>
   </data>
-	<data name="MusicInfo_UnknownArtist" xml:space="preserve">
+  <data name="MusicInfo_UnknownArtist" xml:space="preserve">
     <value>未知艺术家</value>
   </data>
-	<data name="MusicInfo_UnknownGenre" xml:space="preserve">
+  <data name="MusicInfo_UnknownGenre" xml:space="preserve">
     <value>未知流派</value>
   </data>
-	<data name="MusicInfo_UnknownAlbum" xml:space="preserve">
+  <data name="MusicInfo_UnknownAlbum" xml:space="preserve">
     <value>未知专辑</value>
   </data>
-	<data name="歌曲_SortByChosen.Text" xml:space="preserve">
+  <data name="LocalSongs_SortByChosen.Text" xml:space="preserve">
     <value>排序方式：</value>
   </data>
-	<data name="HaveMusic_Shuffle.Text" xml:space="preserve">
+  <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
     <value>随机播放</value>
   </data>
-	<data name="歌曲_GenreChosen.Text" xml:space="preserve">
+  <data name="LocalSongs_GenreChosen.Text" xml:space="preserve">
     <value>流派：</value>
   </data>
-	<data name="PlayQueue_Clear.Text" xml:space="preserve">
+  <data name="PlayQueue_Clear.Text" xml:space="preserve">
     <value>清除</value>
   </data>
-	<data name="歌曲_AddTo_PlayQueue.Text" xml:space="preserve">
+  <data name="LocalSongs_AddTo_PlayQueue.Text" xml:space="preserve">
     <value>播放队列</value>
   </data>
-	<data name="歌曲_AddTo_NewPlaylist.Text" xml:space="preserve">
+  <data name="LocalSongs_AddTo_NewPlaylist.Text" xml:space="preserve">
     <value>新建播放列表</value>
   </data>
-	<data name="PlayQueue_AddFiles.Text" xml:space="preserve">
+  <data name="PlayQueue_AddFiles.Text" xml:space="preserve">
     <value>添加文件</value>
   </data>
-	<data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
+  <data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
     <value>添加文件到播放队列</value>
   </data>
-	<data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
+  <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
     <value>浏览要添加到播放队列的文件</value>
   </data>
-	<data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
+  <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
     <value>添加文件夹到播放队列</value>
   </data>
-	<data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
+  <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
     <value>选择一个文件夹，并将该文件夹中的所有媒体添加到播放队列</value>
   </data>
-	<data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
+  <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
     <value>从URL将媒体添加到播放队列</value>
   </data>
-	<data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
+  <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
     <value>输入URL，并将该地址中的媒体添加到播放队列</value>
   </data>
-	<data name="歌曲_Play.Text" xml:space="preserve">
+  <data name="LocalSongs_Play.Text" xml:space="preserve">
     <value>播放</value>
   </data>
-	<data name="歌曲_PlayNext.Text" xml:space="preserve">
+  <data name="LocalSongs_PlayNext.Text" xml:space="preserve">
     <value>加入播放队列</value>
   </data>
-	<data name="歌曲_AddTo.Text" xml:space="preserve">
+  <data name="LocalSongs_AddTo.Text" xml:space="preserve">
     <value>添加到</value>
   </data>
-	<data name="歌曲_EditInfo.Text" xml:space="preserve">
+  <data name="LocalSongs_EditInfo.Text" xml:space="preserve">
     <value>编辑信息</value>
   </data>
-	<data name="歌曲_Properties.Text" xml:space="preserve">
+  <data name="LocalSongs_Properties.Text" xml:space="preserve">
     <value>属性</value>
   </data>
-	<data name="歌曲_ShowAlbum.Text" xml:space="preserve">
+  <data name="LocalSongs_ShowAlbum.Text" xml:space="preserve">
     <value>显示专辑</value>
   </data>
-	<data name="歌曲_ShowArtist.Text" xml:space="preserve">
+  <data name="LocalSongs_ShowArtist.Text" xml:space="preserve">
     <value>显示艺术家</value>
   </data>
-	<data name="歌曲_Select.Text" xml:space="preserve">
+  <data name="LocalSongs_Select.Text" xml:space="preserve">
     <value>选择</value>
   </data>
-	<data name="PlayQueue_Remove.Text" xml:space="preserve">
+  <data name="PlayQueue_Remove.Text" xml:space="preserve">
     <value>删除</value>
   </data>
-	<data name="PlayQueue_MoveUp.Text" xml:space="preserve">
+  <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
     <value>上移</value>
   </data>
-	<data name="PlayQueue_MoveDown.Text" xml:space="preserve">
+  <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
     <value>下移</value>
   </data>
-	<data name="歌曲_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="LocalSongs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>播放</value>
   </data>
-	<data name="Settings_WindowMaterial.Header" xml:space="preserve">
+  <data name="Settings_WindowMaterial.Header" xml:space="preserve">
     <value>窗口材质</value>
   </data>
-	<data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
+  <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>选择一个材质</value>
   </data>
-	<data name="Settings_LyricSettings.Text" xml:space="preserve">
+  <data name="Settings_LyricSettings.Text" xml:space="preserve">
     <value>歌词设置</value>
   </data>
-	<data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
     <value>歌词字体</value>
   </data>
-	<data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
+  <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>选择一种字体</value>
   </data>
-	<data name="Settings_LyricBackgroundFollowsCover.Header" xml:space="preserve">
+  <data name="Settings_LyricBackgroundFollowsCover.Header" xml:space="preserve">
     <value>歌词背景跟随封面</value>
   </data>
-	<data name="歌曲_Pinyin" xml:space="preserve">
+  <data name="LocalSongs_Pinyin" xml:space="preserve">
     <value>拼音</value>
   </data>
-	<data name="Data_Language" xml:space="preserve">
+  <data name="Data_Language" xml:space="preserve">
     <value>简体中文</value>
   </data>
-	<data name="Settings_Version" xml:space="preserve">
+  <data name="Settings_Version" xml:space="preserve">
     <value>版本</value>
   </data>
-	<data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>清除 (Ctrl+Shift+X)</value>
   </data>
-	<data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>浏览要添加到播放队列的文件</value>
   </data>
-	<data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
     <value>后退10秒 (Ctrl+向左键)</value>
   </data>
-	<data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
     <value>快进30秒 (Ctrl+向右键)</value>
   </data>
-	<data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
+  <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
     <value>全屏</value>
   </data>
-	<data name="MusicInfo_AllGenres" xml:space="preserve">
+  <data name="MusicInfo_AllGenres" xml:space="preserve">
     <value>所有流派</value>
   </data>
-	<data name="歌曲_IndexingLibraries.Text" xml:space="preserve">
+  <data name="LocalSongs_IndexingLibraries.Text" xml:space="preserve">
     <value>正在编制库索引...</value>
   </data>
-	<data name="艺术家_SortBy" xml:space="preserve">
+  <data name="LocalArtists_SortBy" xml:space="preserve">
     <value>A-Z, Z-A</value>
   </data>
-	<data name="Settings_FallBack.Header" xml:space="preserve">
+  <data name="Settings_FallBack.Header" xml:space="preserve">
     <value>窗口失去焦点后背景停止更新</value>
   </data>
-	<data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
+  <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
     <value>窗口背景颜色</value>
   </data>
-	<data name="Shell_Home.Content" xml:space="preserve">
+  <data name="Shell_Home.Content" xml:space="preserve">
     <value>主页</value>
   </data>
-	<data name="Shell_Home1.Text" xml:space="preserve">
+  <data name="Shell_Home1.Text" xml:space="preserve">
     <value>主页</value>
   </data>
-	<data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
     <value>主页 (Ctrl+Shift+F)</value>
   </data>
-	<data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
+  <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
     <value>搜索在线歌曲</value>
+  </data>
+  <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
+    <value>亮度不透明度</value>
+  </data>
+  <data name="Settings_Reset.Content" xml:space="preserve">
+    <value>重置</value>
   </data>
 </root>

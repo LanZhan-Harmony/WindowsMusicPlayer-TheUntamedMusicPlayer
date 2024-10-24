@@ -1019,7 +1019,6 @@ public class MusicPlayer : INotifyPropertyChanged
     /// </summary>
     public async void SaveCurrentStateAsync()
     {
-        await _localSettingsService.SaveSettingAsync("NotFirstUsed", true);
         await _localSettingsService.SaveSettingAsync("CurrentMusic", CurrentMusic.Path);
         /*var playqueuepaths = PlayQueue.Select(music => music.Path).ToList();
         await _localSettingsService.SaveSettingAsync("PlayQueuePaths", playqueuepaths);
@@ -1038,7 +1037,6 @@ public class MusicPlayer : INotifyPropertyChanged
     /// </summary>
     public async void LoadCurrentStateAsync()
     {
-        var notFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
         var currentMusicPath = await _localSettingsService.ReadSettingAsync<string>("CurrentMusic");
         if (!string.IsNullOrEmpty(currentMusicPath))
         {
@@ -1074,7 +1072,7 @@ public class MusicPlayer : INotifyPropertyChanged
         ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
         RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
         IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
-        if (notFirstUsed)
+        if (Data.NotFirstUsed)
         {
             CurrentVolume = await _localSettingsService.ReadSettingAsync<double>("CurrentVolume");
             PlaySpeed = await _localSettingsService.ReadSettingAsync<double>("PlaySpeed");

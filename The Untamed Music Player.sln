@@ -5,7 +5,7 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "The Untamed Music Player", "The Untamed Music Player\The Untamed Music Player.csproj", "{FAF574F3-DB0A-4B33-BF19-45CF6396C9F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMusicApi", "NeteaseCloudMusicApi\OnlineMusicApi.csproj", "{4033E97A-FE0F-4EBC-AB62-DA1604842F94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMusicApi", "OnlineMusicApi\OnlineMusicApi.csproj", "{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,22 +43,22 @@ Global
 		{FAF574F3-DB0A-4B33-BF19-45CF6396C9F7}.Release|x86.ActiveCfg = Release|x86
 		{FAF574F3-DB0A-4B33-BF19-45CF6396C9F7}.Release|x86.Build.0 = Release|x86
 		{FAF574F3-DB0A-4B33-BF19-45CF6396C9F7}.Release|x86.Deploy.0 = Release|x86
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Debug|arm64.Build.0 = Debug|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Debug|x64.Build.0 = Debug|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Debug|x86.Build.0 = Debug|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Release|arm64.ActiveCfg = Release|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Release|arm64.Build.0 = Release|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Release|x64.ActiveCfg = Release|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Release|x64.Build.0 = Release|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Release|x86.ActiveCfg = Release|Any CPU
-		{4033E97A-FE0F-4EBC-AB62-DA1604842F94}.Release|x86.Build.0 = Release|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Debug|arm64.Build.0 = Debug|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Debug|x64.Build.0 = Debug|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Debug|x86.Build.0 = Debug|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Release|arm64.ActiveCfg = Release|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Release|arm64.Build.0 = Release|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Release|x64.ActiveCfg = Release|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Release|x64.Build.0 = Release|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA37573B-D0FC-4FF6-8D06-5F59F348B90B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,15 +5,15 @@ using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class 歌曲Page : Page
+public sealed partial class LocalSongsPage : Page
 {
-    public 歌曲ViewModel ViewModel
+    public LocalSongsViewModel ViewModel
     {
         get;
     }
-    public 歌曲Page()
+    public LocalSongsPage()
     {
-        ViewModel = App.GetService<歌曲ViewModel>();
+        ViewModel = App.GetService<LocalSongsViewModel>();
         InitializeComponent();
     }
 

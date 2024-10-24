@@ -9,7 +9,7 @@ using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class 艺术家ViewModel : INotifyPropertyChanged
+public class LocalArtistsViewModel : INotifyPropertyChanged
 {
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -29,7 +29,7 @@ public class 艺术家ViewModel : INotifyPropertyChanged
         }
     }
 
-    private List<string> _sortBy = [.. "艺术家_SortBy".GetLocalized().Split(", ")];
+    private List<string> _sortBy = [.. "LocalArtists_SortBy".GetLocalized().Split(", ")];
     public List<string> SortBy
     {
         get => _sortBy;
@@ -65,7 +65,7 @@ public class 艺术家ViewModel : INotifyPropertyChanged
         set => _groupedArtistList = value;
     }
 
-    public 艺术家ViewModel()
+    public LocalArtistsViewModel()
     {
         LoadModeAndArtistList();
     }

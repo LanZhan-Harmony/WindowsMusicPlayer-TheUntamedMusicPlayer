@@ -10,7 +10,7 @@ using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class 专辑ViewModel : INotifyPropertyChanged
+public class LocalAlbumsViewModel : INotifyPropertyChanged
 {
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -30,7 +30,7 @@ public class 专辑ViewModel : INotifyPropertyChanged
         }
     }
 
-    private List<string> _sortBy = [.. "专辑_SortBy".GetLocalized().Split(", ")];
+    private List<string> _sortBy = [.. "LocalAlbums_SortBy".GetLocalized().Split(", ")];
     public List<string> SortBy
     {
         get => _sortBy;
@@ -98,7 +98,7 @@ public class 专辑ViewModel : INotifyPropertyChanged
         set => _genres = value;
     }
 
-    public 专辑ViewModel()
+    public LocalAlbumsViewModel()
     {
         LoadModeAndAlbumList();
         Data.LocalAlbumsViewModel = this;
