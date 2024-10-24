@@ -82,10 +82,10 @@ public partial class App : Application
             services.AddTransient<LyricViewModel>();
             services.AddTransient<NoMusicViewModel>();
             services.AddTransient<HaveMusicViewModel>();
-            services.AddTransient<歌曲ViewModel>();
-            services.AddTransient<专辑ViewModel>();
+            services.AddTransient<LocalSongsViewModel>();
+            services.AddTransient<LocalAlbumsViewModel>();
             services.AddTransient<AlbumDetailViewModel>();
-            services.AddTransient<艺术家ViewModel>();
+            services.AddTransient<LocalArtistsViewModel>();
             services.AddTransient<ArtistDetailViewModel>();
 
             // Configuration

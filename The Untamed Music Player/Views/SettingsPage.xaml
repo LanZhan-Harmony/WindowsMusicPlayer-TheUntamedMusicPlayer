@@ -181,13 +181,22 @@
                         <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xF5ED;"/>
                         </toolkit:SettingsExpander.HeaderIcon>
-                        <ComboBox x:Name="MaterialComboBox" x:Uid="Settings_ChooseAMaterial"
-                                  ItemsSource="{x:Bind ViewModel.Materials}"
-                                  Loaded="{x:Bind ViewModel.MaterialComboBox_Loaded}"
-                                  SelectionChanged="{x:Bind ViewModel.MaterialComboBox_SelectionChanged}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Button x:Uid="Settings_Reset"/>
+                            <ComboBox x:Name="MaterialComboBox" x:Uid="Settings_ChooseAMaterial"
+                                      ItemsSource="{x:Bind ViewModel.Materials}"
+                                      Loaded="{x:Bind ViewModel.MaterialComboBox_Loaded}"
+                                      SelectionChanged="{x:Bind ViewModel.MaterialComboBox_SelectionChanged}"/>
+                        </StackPanel>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard x:Uid="Settings_FallBack">
-                                <ToggleSwitch/>
+                                <ToggleSwitch IsOn="{x:Bind model:Data.IsFallBack, Mode=TwoWay}"/>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard x:Uid="Settings_LuminosityOpacity">
+                                <Slider Width="312"
+                                        Maximum="100" Minimum="0"
+                                        ValueChanged="{x:Bind model:Data.MainViewModel.ChangeLuminosityOpacity}"
+                                        Value="{x:Bind model:Data.LuminosityOpacity, Mode=TwoWay}"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundColor">
                                 <ColorPicker ColorSpectrumShape="Ring" IsAlphaEnabled="True"

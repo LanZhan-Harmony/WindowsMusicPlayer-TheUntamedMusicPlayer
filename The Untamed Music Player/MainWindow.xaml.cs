@@ -1,4 +1,5 @@
-﻿using Microsoft.UI;
+﻿using System.Diagnostics;
+using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
@@ -352,8 +353,10 @@ public sealed partial class MainWindow : WindowEx
     /// <returns></returns>
     public async Task LoadSelectedMaterialAsync()
     {
-        SelectedMaterial = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed")
+        Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
+        SelectedMaterial = Data.NotFirstUsed
             ? await _localSettingsService.ReadSettingAsync<byte>("SelectedMaterial")
             : (byte)3;
+        Data.NotFirstUsed = true;
     }
 }
