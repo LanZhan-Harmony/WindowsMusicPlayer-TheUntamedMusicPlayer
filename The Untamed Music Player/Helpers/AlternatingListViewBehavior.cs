@@ -1,11 +1,9 @@
-﻿using System.Diagnostics;
-using CommunityToolkit.WinUI;
+﻿using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Xaml.Interactivity;
-using The_Untamed_Music_Player.Models;
 using Windows.Foundation.Collections;
 
 namespace The_Untamed_Music_Player.Helpers;
@@ -30,30 +28,6 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
         typeof(AlternatingListViewBehavior),
         new PropertyMetadata(default(Brush?)));
 
-    public static readonly DependencyProperty LightThemeBackgroundProperty = DependencyProperty.Register(
-       nameof(LightThemeBackground),
-       typeof(Brush),
-       typeof(AlternatingListViewBehavior),
-       new PropertyMetadata(new SolidColorBrush(Microsoft.UI.Colors.White)));
-
-    public static readonly DependencyProperty DarkThemeBackgroundProperty = DependencyProperty.Register(
-        nameof(DarkThemeBackground),
-        typeof(Brush),
-        typeof(AlternatingListViewBehavior),
-        new PropertyMetadata(new SolidColorBrush(Microsoft.UI.Colors.Black)));
-
-
-    public Brush LightThemeBackground
-    {
-        get => (Brush)GetValue(LightThemeBackgroundProperty);
-        set => SetValue(LightThemeBackgroundProperty, value);
-    }
-
-    public Brush DarkThemeBackground
-    {
-        get => (Brush)GetValue(DarkThemeBackgroundProperty);
-        set => SetValue(DarkThemeBackgroundProperty, value);
-    }
 
     public Brush? AlternateBorderBrush
     {
@@ -103,11 +77,6 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
         {
             return;
         }
-
-        var isDarkTheme = Data.SettingsViewModel?.ElementTheme == ElementTheme.Dark || (Data.SettingsViewModel?.ElementTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
-        Debug.WriteLine(isDarkTheme);
-        AlternateBackground = isDarkTheme ? DarkThemeBackground : LightThemeBackground;
-
 
         for (var i = 0; i < AssociatedObject.Items.Count; i++)
         {

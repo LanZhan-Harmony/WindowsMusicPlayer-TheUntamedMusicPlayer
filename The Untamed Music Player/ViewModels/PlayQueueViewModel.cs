@@ -2,7 +2,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Models;
+using Windows.UI;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -10,6 +12,18 @@ public partial class PlayQueueViewModel : ObservableRecipient
 {
     public PlayQueueViewModel()
     {
+    }
+
+    public Brush GetAlternateBackgroundBrush(bool isDarkTheme)
+    {
+        if (isDarkTheme)
+        {
+            return new SolidColorBrush(Color.FromArgb(240, 48, 53, 57));
+        }
+        else
+        {
+            return new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
+        }
     }
 
     public void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)

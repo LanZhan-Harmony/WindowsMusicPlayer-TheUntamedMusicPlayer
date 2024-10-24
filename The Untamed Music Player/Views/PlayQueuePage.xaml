@@ -108,19 +108,19 @@
                 <FontIcon x:Name="MusicFontIcon"
                           Grid.Column="1"
                           Canvas.ZIndex="0" FontSize="16"
-                          Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.SettingsViewModel.ElementTheme), Mode=OneWay}"
+                          Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                           Glyph="&#xE8D6;"/>
                 <TextBlock Grid.Column="2"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.SettingsViewModel.ElementTheme), Mode=OneWay}"
+                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind Title}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
                         Background="Transparent" BorderBrush="Transparent">
                     <TextBlock FontSize="12"
-                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.SettingsViewModel.ElementTheme), Mode=OneWay}"
+                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind ArtistsStr}"
                                TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
@@ -128,7 +128,7 @@
                 <Button Grid.Column="4"
                         Background="Transparent" BorderBrush="Transparent">
                     <TextBlock FontSize="12"
-                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.SettingsViewModel.ElementTheme), Mode=OneWay}"
+                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind Album}"
                                TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{x:Bind Album}"/>
@@ -136,14 +136,14 @@
                 <TextBlock Grid.Column="5"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.SettingsViewModel.ElementTheme), Mode=OneWay}"
+                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
                 <TextBlock Grid.Column="6"
                            HorizontalAlignment="Left" VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.SettingsViewModel.ElementTheme), Mode=OneWay}"
+                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind GenreStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind GenreStr}"/>
@@ -151,7 +151,7 @@
                            Margin="0,0,10,0" HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.SettingsViewModel.ElementTheme), Mode=OneWay}"
+                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind DurationStr}"
                            TextTrimming="CharacterEllipsis"/>
             </Grid>
@@ -327,7 +327,7 @@
                   ItemsSource="{x:Bind model:Data.MusicPlayer.GetPlayQueue(model:Data.MusicPlayer.PlayQueueName, model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"
                   SelectionMode="None">
             <interactivity:Interaction.Behaviors>
-                <helper:AlternatingListViewBehavior AlternateBackground="#FDFEFE" DarkThemeBackground="#303539"/>
+                <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind ViewModel.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
             </interactivity:Interaction.Behaviors>
         </ListView>
     </Grid>
