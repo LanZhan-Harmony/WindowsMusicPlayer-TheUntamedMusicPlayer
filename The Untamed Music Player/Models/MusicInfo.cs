@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using Microsoft.UI;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Helpers;
@@ -226,9 +225,8 @@ public class BriefMusicInfo
     /// <param name="currentMusic"></param>
     /// <param name="elementTheme"></param>
     /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    public SolidColorBrush GetTextForeground(DetailedMusicInfo currentMusic, ElementTheme elementTheme)
+    public SolidColorBrush GetTextForeground(DetailedMusicInfo currentMusic, bool isDarkTheme)
     {
-        var isDarkTheme = elementTheme == ElementTheme.Dark || (elementTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
         var isCurrentMusic = Path == currentMusic.Path;
 
         if (isCurrentMusic)

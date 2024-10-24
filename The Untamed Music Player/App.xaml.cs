@@ -87,6 +87,7 @@ public partial class App : Application
             services.AddTransient<AlbumDetailViewModel>();
             services.AddTransient<LocalArtistsViewModel>();
             services.AddTransient<ArtistDetailViewModel>();
+            services.AddTransient<DesktopLyricViewModel>();
 
             // Configuration
             services.AddOptions<LocalSettingsOptions>()
