@@ -17,44 +17,6 @@ public class MainViewModel
     private readonly ICompositionSupportsSystemBackdrop? _backdropTarget;
     private ISystemBackdropControllerWithTargets? _currentBackdropController;
 
-    private byte _selectedMaterial;
-    /// <summary>
-    /// 选定的窗口材质
-    /// </summary>
-    public byte SelectedMaterial
-    {
-        get => _selectedMaterial;
-        set => _selectedMaterial = value;
-    }
-
-    private bool _isFallBack;
-    public bool IsFallBack
-    {
-        get => _isFallBack;
-        set => _isFallBack = value;
-    }
-
-    private byte _luminosityOpacity = 60;
-    public byte LuminosityOpacity
-    {
-        get => _luminosityOpacity;
-        set => _luminosityOpacity = value;
-    }
-
-    private int _tintOpacity = 60;
-    public int TintOpacity
-    {
-        get => _tintOpacity;
-        set => _tintOpacity = value;
-    }
-
-    private Color _tintColor;
-    public Color TintColor
-    {
-        get => _tintColor;
-        set => _tintColor = value;
-    }
-
     public static readonly SystemBackdropConfiguration configuration = new()
     {
         IsInputActive = true,
@@ -66,6 +28,7 @@ public class MainViewModel
         _backdropTarget = _mainMindow.As<ICompositionSupportsSystemBackdrop>();
         _mainMindow.Activated += MainWindow_Activated;
         _mainMindow.Closed += MainWindow_Closed;
+        Data.MainViewModel = this;
     }
 
     public void ChangeMaterial(byte material)
@@ -98,6 +61,9 @@ public class MainViewModel
                 _ => false
             };
         }
+
+        GetLuminosityOpacity();
+        GetTintColor();
     }
 
     /// <summary>
@@ -160,11 +126,11 @@ public class MainViewModel
     {
         if (_currentBackdropController is MicaController micaController)
         {
-            micaController.LuminosityOpacity = LuminosityOpacity / 100.0F;
+            micaController.LuminosityOpacity = Data.LuminosityOpacity / 100.0F;
         }
         else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
         {
-            desktopAcrylicController.LuminosityOpacity = LuminosityOpacity / 100.0F;
+            desktopAcrylicController.LuminosityOpacity = Data.LuminosityOpacity / 100.0F;
         }
     }
 
@@ -172,35 +138,11 @@ public class MainViewModel
     {
         if (_currentBackdropController is MicaController micaController)
         {
-            LuminosityOpacity = (byte)(micaController.LuminosityOpacity * 100);
+            Data.LuminosityOpacity = (byte)(micaController.LuminosityOpacity * 100);
         }
         else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
         {
-            LuminosityOpacity = (byte)(desktopAcrylicController.LuminosityOpacity * 100);
-        }
-    }
-
-    public void ChangeTintOpacity()
-    {
-        if (_currentBackdropController is MicaController micaController)
-        {
-            micaController.TintOpacity = TintOpacity / 100.0F;
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            desktopAcrylicController.TintOpacity = TintOpacity / 100.0F;
-        }
-    }
-
-    public void GetTintOpacity()
-    {
-        if (_currentBackdropController is MicaController micaController)
-        {
-            TintOpacity = (int)(micaController.TintOpacity * 100);
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            TintOpacity = (int)(desktopAcrylicController.TintOpacity * 100);
+            Data.LuminosityOpacity = (byte)(desktopAcrylicController.LuminosityOpacity * 100);
         }
     }
 
@@ -208,11 +150,11 @@ public class MainViewModel
     {
         if (_currentBackdropController is MicaController micaController)
         {
-            micaController.TintColor = TintColor;
+            micaController.TintColor = Data.TintColor;
         }
         else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
         {
-            desktopAcrylicController.TintColor = TintColor;
+            desktopAcrylicController.TintColor = Data.TintColor;
         }
     }
 
@@ -220,17 +162,17 @@ public class MainViewModel
     {
         if (_currentBackdropController is MicaController micaController)
         {
-            TintColor = micaController.TintColor;
+            Data.TintColor = micaController.TintColor;
         }
         else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
         {
-            TintColor = desktopAcrylicController.TintColor;
+            Data.TintColor = desktopAcrylicController.TintColor;
         }
     }
 
     private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
     {
-        if (IsFallBack)
+        if (Data.IsFallBack)
         {
             _currentBackdropController?.SetSystemBackdropConfiguration(new()
             {
@@ -251,8 +193,10 @@ public class MainViewModel
     /// <returns></returns>
     public async Task LoadSelectedMaterialAsync()
     {
-        SelectedMaterial = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed")
+        Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
+        Data.SelectedMaterial = Data.NotFirstUsed
             ? await _localSettingsService.ReadSettingAsync<byte>("SelectedMaterial")
             : (byte)3;
+        Data.NotFirstUsed = true;
     }
 }

@@ -29,6 +29,7 @@
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<AppxBundle>Auto</AppxBundle>
 		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+		<LangVersion>preview</LangVersion>
 		<!--<IsAotCompatible>True</IsAotCompatible>
 		<PublishAot>True</PublishAot>
 		<PublishTrimmed>True</PublishTrimmed>
