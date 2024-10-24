@@ -3,8 +3,10 @@ using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
@@ -12,6 +14,7 @@ using The_Untamed_Music_Player.Models;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -65,16 +68,54 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         set => _materials = value;
     }
 
-    private byte _selectedMaterial = Data.MainWindow?.SelectedMaterial ?? 0;
+    private byte _selectedMaterial = Data.MainViewModel?.SelectedMaterial ?? 3;
     public byte SelectedMaterial
     {
         get => _selectedMaterial;
         set
         {
             _selectedMaterial = value;
-            OnPropertyChanged(nameof(SelectedMaterial));
-            ChangeMaterial(SelectedMaterial);
             SaveSelectedMaterialAsync(value);
+        }
+    }
+
+    private bool _isFallBack = Data.MainViewModel?.IsFallBack ?? true;
+    public bool IsFallBack
+    {
+        get => _isFallBack;
+        set
+        {
+            _isFallBack = value;
+            Data.MainViewModel.IsFallBack = value;
+            SaveIsFallBackAsync(value);
+        }
+    }
+
+    private byte _luminosityOpacity = Data.MainViewModel?.LuminosityOpacity ?? 60;
+    public byte LuminosityOpacity
+    {
+        get => _luminosityOpacity;
+        set
+        {
+            _luminosityOpacity = value;
+            Data.MainViewModel.LuminosityOpacity = value;
+            SaveLuminosityOpacityAsync(value);
+        }
+    }
+
+    private Color _tintColor = Data.MainViewModel?.TintColor ?? Colors.White;
+    public Color TintColor
+    {
+        get => _tintColor;
+        set
+        {
+            if (_tintColor != value)
+            {
+                _tintColor = value;
+                OnPropertyChanged(nameof(TintColor));
+                Data.MainViewModel.TintColor = value;
+                SaveTintColorAsync(value);
+            }
         }
     }
 
@@ -85,15 +126,14 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         set
         {
             _isLyricBackgroundVisible = value;
-            OnPropertyChanged(nameof(IsLyricBackgroundVisible));
             SaveLyricBackgroundVisibilityAsync(value);
         }
     }
 
-    public SettingsViewModel(IThemeSelectorService themeSelectorService, ILocalSettingsService localSettingsService)
+    public SettingsViewModel()
     {
-        _themeSelectorService = themeSelectorService;
-        _localSettingsService = localSettingsService;
+        _themeSelectorService = App.GetService<IThemeSelectorService>();
+        _localSettingsService = App.GetService<ILocalSettingsService>();
         _elementTheme = _themeSelectorService.Theme;
         _versionDescription = GetVersionDescription();
 
@@ -160,10 +200,39 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         await Data.MusicLibrary.LoadLibraryAgain();
     }
 
-    public void LoadFonts()
+
+    public void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var fontFamilies = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
-        Fonts = [.. fontFamilies.OrderBy(f => f)];
+        if (SelectedMaterial != Data.MainViewModel.SelectedMaterial)
+        {
+            Data.MainViewModel.SelectedMaterial = SelectedMaterial;
+            Data.MainViewModel.ChangeMaterial(SelectedMaterial);
+            LuminosityOpacity = Data.MainViewModel.LuminosityOpacity;
+            OnPropertyChanged(nameof(LuminosityOpacity));
+            TintColor = Data.MainViewModel.TintColor;
+        }
+    }
+
+    public void ResetButton_Click(object sender, RoutedEventArgs e)
+    {
+        IsFallBack = true;
+        OnPropertyChanged(nameof(IsFallBack));
+        SelectedMaterial = 3;
+        Data.MainViewModel.ChangeMaterial(SelectedMaterial);
+        OnPropertyChanged(nameof(SelectedMaterial));
+        LuminosityOpacity = Data.MainViewModel.LuminosityOpacity;
+        OnPropertyChanged(nameof(LuminosityOpacity));
+        TintColor = Data.MainViewModel.TintColor;
+    }
+
+    public void LuminosityOpacitySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+    {
+        Data.MainViewModel.ChangeLuminosityOpacity(LuminosityOpacity);
+    }
+
+    public void TintColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+    {
+        Data.MainViewModel.ChangeTintColor(TintColor);
     }
 
     public void FontComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -174,92 +243,31 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         }
     }
 
-    public void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public void MaterialComboBox_Loaded(object sender, RoutedEventArgs e)
     {
-        if (e.AddedItems.Count > 0 && e.AddedItems[0] is string selectedMaterial)
+        if (sender is ComboBox comboBox)
         {
-            SelectedMaterial = (byte)Materials.IndexOf(selectedMaterial);
-            if (Data.MainWindow != null)
-            {
-                Data.MainWindow.SelectedMaterial = SelectedMaterial;
-            }
+            comboBox.SelectedIndex = SelectedMaterial;
         }
     }
 
-    public void ChangeMaterial(byte material)
+    public void LoadFonts()
     {
-        if (Data.MainWindow?.SelectedMaterial == SelectedMaterial)
+        var fontFamilies = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+        Fonts = [.. fontFamilies.OrderBy(f => f)];
+    }
+
+    public void FontComboBox_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ComboBox comboBox)
         {
-            return;
-        }
-        try
-        {
-            switch (material)
+            var selectedFontName = SelectedFont.Source;
+            var index = Fonts.IndexOf(selectedFontName);
+            if (index >= 0)
             {
-                case 0:
-                    Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () => Data.MainWindow?.TrySetNoneBackdrop());
-                    break;
-                case 1:
-                    Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
-                    {
-                        Data.MainWindow?.TrySetNoneBackdrop();
-                        Data.MainWindow?.TrySetMicaBackdrop(false);
-                    });
-                    break;
-                case 2:
-                    Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
-                    {
-                        Data.MainWindow?.TrySetNoneBackdrop();
-                        Data.MainWindow?.TrySetMicaBackdrop(true);
-                    });
-                    break;
-                case 3:
-                    Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
-                    {
-                        Data.MainWindow?.TrySetNoneBackdrop();
-                        Data.MainWindow?.TrySetDesktopAcrylicBackdrop();
-                    });
-                    break;
-                case 4:
-                    Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
-                    {
-                        Data.MainWindow?.TrySetNoneBackdrop();
-                        Data.MainWindow?.TrySetAcrylicBackdrop(false);
-                    });
-                    break;
-                case 5:
-                    Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
-                    {
-                        Data.MainWindow?.TrySetNoneBackdrop();
-                        Data.MainWindow?.TrySetAcrylicBackdrop(true);
-                    });
-                    break;
-                case 6:
-                    Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
-                    {
-                        Data.MainWindow?.TrySetNoneBackdrop();
-                        Data.MainWindow?.TrySetBlurBackdrop();
-                    });
-                    break;
-                case 7:
-                    Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
-                    {
-                        Data.MainWindow?.TrySetNoneBackdrop();
-                        Data.MainWindow?.TrySetTransparentBackdrop();
-                    });
-                    break;
-                case 8:
-                    Data.MainWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.High, () =>
-                    {
-                        Data.MainWindow?.TrySetNoneBackdrop();
-                        Data.MainWindow?.TrySetAnimatedBackdrop();
-                    });
-                    break;
-                default:
-                    break;
+                comboBox.SelectedIndex = index;
             }
         }
-        catch { }
     }
 
     private static string GetVersionDescription()
@@ -301,35 +309,6 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         IsLyricBackgroundVisible = isLyricBackgroundVisible;
     }
 
-    public void FontComboBox_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is ComboBox comboBox)
-        {
-            var selectedFontName = SelectedFont.Source;
-            var index = Fonts.IndexOf(selectedFontName);
-            if (index >= 0)
-            {
-                comboBox.SelectedIndex = index;
-            }
-        }
-    }
-
-    public void MaterialComboBox_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is ComboBox comboBox)
-        {
-            comboBox.SelectedIndex = SelectedMaterial;
-        }
-    }
-
-    public void LyricBackgroundCheckBox_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is ToggleSwitch toggleSwitch)
-        {
-            toggleSwitch.IsOn = IsLyricBackgroundVisible;
-        }
-    }
-
     private async void SaveSelectedFontAsync(string fontName)
     {
         await _localSettingsService.SaveSettingAsync("SelectedFont", fontName);
@@ -338,6 +317,21 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
     private async void SaveSelectedMaterialAsync(byte material)
     {
         await _localSettingsService.SaveSettingAsync("SelectedMaterial", material);
+    }
+
+    private async void SaveIsFallBackAsync(bool isFallBack)
+    {
+        await _localSettingsService.SaveSettingAsync("IsFallBack", isFallBack);
+    }
+
+    private async void SaveLuminosityOpacityAsync(byte luminosityOpacity)
+    {
+        await _localSettingsService.SaveSettingAsync("LuminosityOpacity", luminosityOpacity);
+    }
+
+    private async void SaveTintColorAsync(Color tintColor)
+    {
+        await _localSettingsService.SaveSettingAsync("TintColor", tintColor);
     }
 
     private async void SaveLyricBackgroundVisibilityAsync(bool isLyricBackgroundVisible)

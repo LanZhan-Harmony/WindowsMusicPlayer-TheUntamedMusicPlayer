@@ -13,6 +13,8 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
 {
     public static RootPlayBarView? RootPlayBarView;
 
+    public static DesktopLyricWindow? DesktopLyricWindow;
+
     private bool _isDetail = false;
     public bool IsDetail
     {
@@ -33,6 +35,13 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
             _isFullScreen = value;
             OnPropertyChanged(nameof(IsFullScreen));
         }
+    }
+
+    private bool _isDesktopLyricWindowStarted = false;
+    public bool IsDesktopLyricWindowStarted
+    {
+        get => _isDesktopLyricWindowStarted;
+        set => _isDesktopLyricWindowStarted = value;
     }
 
     private Visibility _buttonVisibility = Visibility.Collapsed;
@@ -333,6 +342,22 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         {
             appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
             IsFullScreen = true;
+        }
+    }
+
+    public void MiniButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!IsDesktopLyricWindowStarted)
+        {
+            DesktopLyricWindow = new DesktopLyricWindow();
+            DesktopLyricWindow.Activate();
+            IsDesktopLyricWindowStarted = true;
+        }
+        else
+        {
+            DesktopLyricWindow?.Close();
+            DesktopLyricWindow?.Dispose();
+            IsDesktopLyricWindowStarted = false;
         }
     }
 }

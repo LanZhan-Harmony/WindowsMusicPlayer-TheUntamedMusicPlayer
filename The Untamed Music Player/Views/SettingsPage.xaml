@@ -182,27 +182,29 @@
                             <FontIcon Glyph="&#xF5ED;"/>
                         </toolkit:SettingsExpander.HeaderIcon>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Button x:Uid="Settings_Reset"/>
+                            <Button x:Uid="Settings_Reset" Click="{x:Bind ViewModel.ResetButton_Click}"/>
                             <ComboBox x:Name="MaterialComboBox" x:Uid="Settings_ChooseAMaterial"
                                       ItemsSource="{x:Bind ViewModel.Materials}"
-                                      Loaded="{x:Bind ViewModel.MaterialComboBox_Loaded}"
+                                      SelectedIndex="{x:Bind ViewModel.SelectedMaterial, Mode=TwoWay}"
                                       SelectionChanged="{x:Bind ViewModel.MaterialComboBox_SelectionChanged}"/>
                         </StackPanel>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard x:Uid="Settings_FallBack">
-                                <ToggleSwitch IsOn="{x:Bind model:Data.IsFallBack, Mode=TwoWay}"/>
+                                <ToggleSwitch IsOn="{x:Bind ViewModel.IsFallBack, Mode=TwoWay}"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_LuminosityOpacity">
                                 <Slider Width="312"
                                         Maximum="100" Minimum="0"
-                                        ValueChanged="{x:Bind model:Data.MainViewModel.ChangeLuminosityOpacity}"
-                                        Value="{x:Bind model:Data.LuminosityOpacity, Mode=TwoWay}"/>
+                                        ValueChanged="{x:Bind ViewModel.LuminosityOpacitySlider_ValueChanged}"
+                                        Value="{x:Bind ViewModel.LuminosityOpacity, Mode=TwoWay}"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundColor">
-                                <ColorPicker ColorSpectrumShape="Ring" IsAlphaEnabled="True"
+                                <ColorPicker ColorChanged="{x:Bind ViewModel.TintColorPicker_ColorChanged}"
+                                             ColorSpectrumShape="Ring" IsAlphaEnabled="True"
                                              IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
                                              IsColorChannelTextInputVisible="True" IsColorSliderVisible="True"
-                                             IsHexInputVisible="True" IsMoreButtonVisible="True"/>
+                                             IsHexInputVisible="True" IsMoreButtonVisible="True"
+                                             Color="{x:Bind ViewModel.TintColor, Mode=TwoWay}"/>
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
@@ -230,9 +232,7 @@
                         <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE7C4;"/>
                         </toolkit:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="LyricBackgroundSwitch"
-                                      IsOn="{x:Bind ViewModel.IsLyricBackgroundVisible, Mode=TwoWay}"
-                                      Loaded="{x:Bind ViewModel.LyricBackgroundCheckBox_Loaded}"/>
+                        <ToggleSwitch x:Name="LyricBackgroundSwitch" IsOn="{x:Bind ViewModel.IsLyricBackgroundVisible, Mode=TwoWay}"/>
                     </toolkit:SettingsCard>
                 </StackPanel>
 

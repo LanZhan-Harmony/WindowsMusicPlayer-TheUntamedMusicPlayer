@@ -77,5 +77,4 @@ public sealed partial class SettingsPage : Page
             await Launcher.LaunchUriAsync(new Uri("ms-settings:search"));
         }
     }
-
 }
