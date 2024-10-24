@@ -257,6 +257,11 @@ public class MusicPlayer : INotifyPropertyChanged
         get; set;
     }
 
+    public static DesktopLyricWindow? DesktopLyricWindow
+    {
+        get; set;
+    }
+
     private TimeSpan _current;
     /// <summary>
     /// 当前播放时间
@@ -503,10 +508,20 @@ public class MusicPlayer : INotifyPropertyChanged
                 catch { }
                 try
                 {
-                    LyricUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    if (LyricUI != null)
                     {
-                        CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
-                    });
+                        LyricUI.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                        {
+                            CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+                        });
+                    }
+                    else if (DesktopLyricWindow != null)
+                    {
+                        DesktopLyricWindow.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                        {
+                            CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+                        });
+                    }
                 }
                 catch { }
             }
@@ -945,16 +960,16 @@ public class MusicPlayer : INotifyPropertyChanged
     /// 获取歌词字体大小
     /// </summary>
     /// <param name="itemTime"></param>
-    /// <param name="CurrentLyricIdx"></param>
+    /// <param name="currentLyricIndex"></param>
     /// <returns></returns>
-    public double GetLyricFont(double itemTime, int CurrentLyricIdx)
+    public double GetLyricFont(double itemTime, int currentLyricIndex)
     {
         double defaultFontSize = Data.MainWindow?.Width <= 1000 ? 16 : 20;
         double highlightedFontSize = Data.MainWindow?.Width <= 1000 ? 24 : 50;
 
         try
         {
-            return itemTime == CurrentLyric[CurrentLyricIdx].Time ? highlightedFontSize : defaultFontSize;
+            return itemTime == CurrentLyric[currentLyricIndex].Time ? highlightedFontSize : defaultFontSize;
         }
         catch
         {
@@ -966,16 +981,16 @@ public class MusicPlayer : INotifyPropertyChanged
     /// 获取歌词边距
     /// </summary>
     /// <param name="itemTime"></param>
-    /// <param name="CurrentLyricIdx"></param>
+    /// <param name="currentLyricIndex"></param>
     /// <returns></returns>
-    public Thickness GetLyricMargin(double itemTime, int CurrentLyricIdx)
+    public Thickness GetLyricMargin(double itemTime, int currentLyricIndex)
     {
         var defaultMargin = new Thickness(0, 20, 0, 20);
         var highlightedMargin = new Thickness(0, 40, 0, 40);
 
         try
         {
-            return itemTime == CurrentLyric[CurrentLyricIdx].Time ? highlightedMargin : defaultMargin;
+            return itemTime == CurrentLyric[currentLyricIndex].Time ? highlightedMargin : defaultMargin;
         }
         catch
         {
@@ -987,20 +1002,32 @@ public class MusicPlayer : INotifyPropertyChanged
     /// 获取歌词透明度 
     /// </summary>
     /// <param name="itemTime"></param>
-    /// <param name="CurrentLyricIdx"></param>
+    /// <param name="currentLyricIndex"></param>
     /// <returns></returns>
-    public double GetLyricOpacity(double itemTime, int CurrentLyricIdx)
+    public double GetLyricOpacity(double itemTime, int currentLyricIndex)
     {
         const double defaultOpacity = 0.5;
         const double highlightedOpacity = 1.0;
 
         try
         {
-            return itemTime == CurrentLyric[CurrentLyricIdx].Time ? highlightedOpacity : defaultOpacity;
+            return itemTime == CurrentLyric[currentLyricIndex].Time ? highlightedOpacity : defaultOpacity;
         }
         catch
         {
             return defaultOpacity;
+        }
+    }
+
+    public string GetCurrentLyricContent(int currentLyricIndex)
+    {
+        try
+        {
+            return CurrentLyric[currentLyricIndex].Content;
+        }
+        catch
+        {
+            return "";
         }
     }
 
