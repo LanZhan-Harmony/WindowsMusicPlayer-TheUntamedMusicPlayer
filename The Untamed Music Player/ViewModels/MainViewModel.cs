@@ -313,6 +313,8 @@ public class MainViewModel : INotifyPropertyChanged
         _currentBackdropController?.Dispose();
         _configurationSource = null;
         _mainMindow.Activated -= MainWindow_Activated;
+        MusicPlayer.DesktopLyricWindow?.Close();
+        MusicPlayer.DesktopLyricWindow?.Dispose();
         Data.MusicPlayer.Player.Dispose();
         Data.MusicPlayer.SaveCurrentStateAsync();
     }

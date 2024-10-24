@@ -13,8 +13,6 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
 {
     public static RootPlayBarView? RootPlayBarView;
 
-    public static DesktopLyricWindow? DesktopLyricWindow;
-
     private bool _isDetail = false;
     public bool IsDetail
     {
@@ -349,14 +347,14 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
     {
         if (!IsDesktopLyricWindowStarted)
         {
-            DesktopLyricWindow = new DesktopLyricWindow();
-            DesktopLyricWindow.Activate();
+            MusicPlayer.DesktopLyricWindow = new DesktopLyricWindow();
+            MusicPlayer.DesktopLyricWindow.Activate();
             IsDesktopLyricWindowStarted = true;
         }
         else
         {
-            DesktopLyricWindow?.Close();
-            DesktopLyricWindow?.Dispose();
+            MusicPlayer.DesktopLyricWindow?.Close();
+            MusicPlayer.DesktopLyricWindow?.Dispose();
             IsDesktopLyricWindowStarted = false;
         }
     }
