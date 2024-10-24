@@ -1,4 +1,5 @@
-﻿using Microsoft.UI;
+﻿using System.ComponentModel;
+using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
@@ -10,29 +11,62 @@ using WinRT;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class MainViewModel
+public class MainViewModel : INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler? PropertyChanged;
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
     private readonly MainWindow _mainMindow;
     private readonly ICompositionSupportsSystemBackdrop? _backdropTarget;
     private ISystemBackdropControllerWithTargets? _currentBackdropController;
-
-    public static readonly SystemBackdropConfiguration configuration = new()
+    private SystemBackdropConfiguration _configurationSource = new()
     {
         IsInputActive = true,
     };
+    public void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    public bool FirstStart { get; set; } = true;
+    public byte SelectedMaterial { get; set; } = 3;
+    public bool IsFallBack { get; set; } = true;
+    public byte LuminosityOpacity { get; set; } = 60;
+    public Color TintColor { get; set; } = Colors.White;
+
+    private bool _previousIsDarkTheme = false;
+    private bool _isDarkTheme;
+    public bool IsDarkTheme
+    {
+        get => _isDarkTheme;
+        set
+        {
+            _isDarkTheme = value;
+            OnPropertyChanged(nameof(IsDarkTheme));
+        }
+    }
 
     public MainViewModel()
     {
         _mainMindow = Data.MainWindow ?? new();
         _backdropTarget = _mainMindow.As<ICompositionSupportsSystemBackdrop>();
+        IsDarkTheme = ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark || (((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
+        InitializeAsync();
         _mainMindow.Activated += MainWindow_Activated;
         _mainMindow.Closed += MainWindow_Closed;
+        ((FrameworkElement)_mainMindow.Content).ActualThemeChanged += Window_ThemeChanged;
         Data.MainViewModel = this;
+    }
+
+    public async void InitializeAsync()
+    {
+        await LoadSettingsAsync();
+        ChangeMaterial(SelectedMaterial);
+        SaveIsDarkThemeAsync();
     }
 
     public void ChangeMaterial(byte material)
     {
+        _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
 
@@ -48,8 +82,9 @@ public class MainViewModel
 
         if (_currentBackdropController != null)
         {
+            SetConfigurationSourceTheme();
             _currentBackdropController?.AddSystemBackdropTarget(_backdropTarget);
-            _currentBackdropController?.SetSystemBackdropConfiguration(configuration);
+            _currentBackdropController?.SetSystemBackdropConfiguration(_configurationSource);
         }
         else
         {
@@ -62,8 +97,22 @@ public class MainViewModel
             };
         }
 
-        GetLuminosityOpacity();
-        GetTintColor();
+        if (FirstStart && IsDarkTheme == _previousIsDarkTheme)
+        {
+            ChangeLuminosityOpacity(LuminosityOpacity);
+            ChangeTintColor(TintColor);
+            FirstStart = false;
+        }
+        else
+        {
+            LuminosityOpacity = GetLuminosityOpacity();
+            TintColor = GetTintColor();
+            if (Data.SettingsViewModel != null)
+            {
+                Data.SettingsViewModel.LuminosityOpacity = LuminosityOpacity;
+                Data.SettingsViewModel.TintColor = TintColor;
+            }
+        }
     }
 
     /// <summary>
@@ -122,57 +171,133 @@ public class MainViewModel
         }
     }
 
-    public void ChangeLuminosityOpacity()
+    public void ChangeLuminosityOpacity(byte luminosityOpacity)
     {
         if (_currentBackdropController is MicaController micaController)
         {
-            micaController.LuminosityOpacity = Data.LuminosityOpacity / 100.0F;
+            micaController.LuminosityOpacity = luminosityOpacity / 100.0F;
         }
         else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
         {
-            desktopAcrylicController.LuminosityOpacity = Data.LuminosityOpacity / 100.0F;
+            desktopAcrylicController.LuminosityOpacity = luminosityOpacity / 100.0F;
         }
     }
 
-    public void GetLuminosityOpacity()
+    public byte GetLuminosityOpacity()
     {
         if (_currentBackdropController is MicaController micaController)
         {
-            Data.LuminosityOpacity = (byte)(micaController.LuminosityOpacity * 100);
+            return (byte)(micaController.LuminosityOpacity * 100);
         }
         else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
         {
-            Data.LuminosityOpacity = (byte)(desktopAcrylicController.LuminosityOpacity * 100);
+            return (byte)(desktopAcrylicController.LuminosityOpacity * 100);
+        }
+        return LuminosityOpacity;
+    }
+
+    public void ChangeTintColor(Color tintColor)
+    {
+        if (_currentBackdropController is MicaController micaController)
+        {
+            micaController.TintColor = tintColor;
+        }
+        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
+        {
+            desktopAcrylicController.TintColor = tintColor;
         }
     }
 
-    public void ChangeTintColor()
+    public Color GetTintColor()
     {
         if (_currentBackdropController is MicaController micaController)
         {
-            micaController.TintColor = Data.TintColor;
+            return micaController.TintColor;
         }
         else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
         {
-            desktopAcrylicController.TintColor = Data.TintColor;
+            return desktopAcrylicController.TintColor;
+        }
+        return TintColor;
+    }
+
+    private void Window_ThemeChanged(FrameworkElement sender, object args)
+    {
+        SetConfigurationSourceTheme();
+        IsDarkTheme = ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark || (((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
+        ChangeTheme();
+        SaveIsDarkThemeAsync();
+    }
+
+    private void ChangeTheme()
+    {
+        Color darkColor, lightColor;
+
+        if (_currentBackdropController is MicaController micaController)
+        {
+            switch (SelectedMaterial)
+            {
+                case 1:
+                    darkColor = Color.FromArgb(255, 32, 32, 32);
+                    lightColor = Color.FromArgb(255, 243, 243, 243);
+                    break;
+                case 2:
+                    darkColor = Color.FromArgb(255, 10, 10, 10);
+                    lightColor = Color.FromArgb(255, 218, 218, 218);
+                    break;
+                default:
+                    return;
+            }
+            var color = IsDarkTheme ? darkColor : lightColor;
+            micaController.TintColor = color;
+            TintColor = color;
+            if (Data.SettingsViewModel != null)
+            {
+                Data.SettingsViewModel.TintColor = color;
+            }
+        }
+        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
+        {
+            switch (SelectedMaterial)
+            {
+                case 3:
+                    darkColor = Color.FromArgb(255, 44, 44, 44);
+                    lightColor = Color.FromArgb(255, 252, 252, 252);
+                    break;
+                case 4:
+                    darkColor = Color.FromArgb(255, 32, 32, 32);
+                    lightColor = Color.FromArgb(255, 243, 243, 243);
+                    break;
+                case 5:
+                    darkColor = Color.FromArgb(255, 84, 84, 84);
+                    lightColor = Color.FromArgb(255, 211, 211, 211);
+                    break;
+                default:
+                    return;
+            }
+            var color = IsDarkTheme ? darkColor : lightColor;
+            desktopAcrylicController.TintColor = color;
+            TintColor = color;
+            if (Data.SettingsViewModel != null)
+            {
+                Data.SettingsViewModel.TintColor = color;
+            }
         }
     }
 
-    public void GetTintColor()
+    private void SetConfigurationSourceTheme()
     {
-        if (_currentBackdropController is MicaController micaController)
+        switch (((FrameworkElement)_mainMindow.Content).ActualTheme)
         {
-            Data.TintColor = micaController.TintColor;
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            Data.TintColor = desktopAcrylicController.TintColor;
+            case ElementTheme.Dark: _configurationSource.Theme = SystemBackdropTheme.Dark; break;
+            case ElementTheme.Light: _configurationSource.Theme = SystemBackdropTheme.Light; break;
+            case ElementTheme.Default: _configurationSource.Theme = SystemBackdropTheme.Default; break;
         }
     }
 
     private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
     {
-        if (Data.IsFallBack)
+        if (IsFallBack)
         {
             _currentBackdropController?.SetSystemBackdropConfiguration(new()
             {
@@ -183,20 +308,35 @@ public class MainViewModel
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
+        _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
+        _configurationSource = null;
+        _mainMindow.Activated -= MainWindow_Activated;
+        Data.MusicPlayer.Player.Dispose();
+        Data.MusicPlayer.SaveCurrentStateAsync();
     }
 
     /// <summary>
     /// 从设置存储读取选定的材质
     /// </summary>
     /// <returns></returns>
-    public async Task LoadSelectedMaterialAsync()
+    private async Task LoadSettingsAsync()
     {
         Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
-        Data.SelectedMaterial = Data.NotFirstUsed
-            ? await _localSettingsService.ReadSettingAsync<byte>("SelectedMaterial")
-            : (byte)3;
-        Data.NotFirstUsed = true;
+        if (Data.NotFirstUsed)
+        {
+            _previousIsDarkTheme = await _localSettingsService.ReadSettingAsync<bool>("IsDarkTheme");
+            SelectedMaterial = await _localSettingsService.ReadSettingAsync<byte>("SelectedMaterial");
+            IsFallBack = await _localSettingsService.ReadSettingAsync<bool>("IsFallBack");
+            LuminosityOpacity = await _localSettingsService.ReadSettingAsync<byte>("LuminosityOpacity");
+            TintColor = await _localSettingsService.ReadSettingAsync<Color>("TintColor");
+            await _localSettingsService.SaveSettingAsync("NotFirstUsed", true);
+        }
+    }
+
+    private async void SaveIsDarkThemeAsync()
+    {
+        await _localSettingsService.SaveSettingAsync("IsDarkTheme", IsDarkTheme);
     }
 }
