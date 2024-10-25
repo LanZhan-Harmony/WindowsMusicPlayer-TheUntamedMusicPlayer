@@ -1,10 +1,10 @@
-using Microsoft.UI.Windowing;
 using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using The_Untamed_Music_Player.ViewModels;
-using WinRT.Interop;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.ViewModels;
 using Windows.Graphics;
+using WinRT.Interop;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -17,7 +17,6 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
 
     public DesktopLyricWindow()
     {
-        ViewModel = App.GetService<DesktopLyricViewModel>();
         InitializeComponent();
         ExtendsContentIntoTitleBar = true;
         // »ñÈ¡´°¿Ú¾ä±ú
@@ -49,6 +48,7 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         }
 
         Closed += Window_Closed;
+        //ViewModel = App.GetService<DesktopLyricViewModel>();
     }
 
     private void Window_Closed(object sender, WindowEventArgs args)
