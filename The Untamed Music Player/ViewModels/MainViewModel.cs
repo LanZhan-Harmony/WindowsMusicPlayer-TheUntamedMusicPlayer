@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -30,8 +31,8 @@ public class MainViewModel : INotifyPropertyChanged
     public bool FirstStart { get; set; } = true;
     public byte SelectedMaterial { get; set; } = 3;
     public bool IsFallBack { get; set; } = true;
-    public byte LuminosityOpacity { get; set; } = 60;
-    public Color TintColor { get; set; } = Colors.White;
+    public byte LuminosityOpacity { get; set; } = 85;
+    public Color TintColor { get; set; } = default;
 
     private bool _previousIsDarkTheme = false;
     private bool _isDarkTheme;
@@ -64,7 +65,7 @@ public class MainViewModel : INotifyPropertyChanged
         SaveIsDarkThemeAsync();
     }
 
-    public void ChangeMaterial(byte material)
+    public async void ChangeMaterial(byte material)
     {
         _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
@@ -85,6 +86,7 @@ public class MainViewModel : INotifyPropertyChanged
             SetConfigurationSourceTheme();
             _currentBackdropController?.AddSystemBackdropTarget(_backdropTarget);
             _currentBackdropController?.SetSystemBackdropConfiguration(_configurationSource);
+            await Task.Delay(100);
         }
         else
         {
@@ -333,6 +335,12 @@ public class MainViewModel : INotifyPropertyChanged
             IsFallBack = await _localSettingsService.ReadSettingAsync<bool>("IsFallBack");
             LuminosityOpacity = await _localSettingsService.ReadSettingAsync<byte>("LuminosityOpacity");
             TintColor = await _localSettingsService.ReadSettingAsync<Color>("TintColor");
+        }
+        else
+        {
+            var darkColor = Color.FromArgb(255, 44, 44, 44);
+            var lightColor = Color.FromArgb(255, 252, 252, 252);
+            TintColor = IsDarkTheme ? darkColor : lightColor;
             await _localSettingsService.SaveSettingAsync("NotFirstUsed", true);
         }
     }
