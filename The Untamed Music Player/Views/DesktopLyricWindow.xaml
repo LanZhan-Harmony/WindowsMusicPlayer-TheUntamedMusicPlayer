@@ -22,7 +22,4 @@
                        TextTrimming="WordEllipsis"/>
         </Border>
     </Grid>
-    <Window.SystemBackdrop>
-        <winuiex:TransparentTintBackdrop/>
-    </Window.SystemBackdrop>
 </Window>
