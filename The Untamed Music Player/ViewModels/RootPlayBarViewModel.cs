@@ -39,7 +39,11 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
     public bool IsDesktopLyricWindowStarted
     {
         get => _isDesktopLyricWindowStarted;
-        set => _isDesktopLyricWindowStarted = value;
+        set
+        {
+            _isDesktopLyricWindowStarted = value;
+            OnPropertyChanged(nameof(IsDesktopLyricWindowStarted));
+        }
     }
 
     private Visibility _buttonVisibility = Visibility.Collapsed;
@@ -163,7 +167,6 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         return shufflemode ? "PlayBar_ShuffleOn".GetLocalized() : "PlayBar_ShuffleOff".GetLocalized();
     }
 
-
     public Visibility GetShuffleModeIcon(bool shufflemode)
     {
         return shufflemode ? Visibility.Collapsed : Visibility.Visible;
@@ -222,9 +225,9 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         };
     }
 
-    public string GetFullScreenIcon(bool isfullscreen)
+    public string GetFullScreenIcon(bool isFullscreen)
     {
-        return isfullscreen ? "\uE73F" : "\uE740";
+        return isFullscreen ? "\uE73F" : "\uE740";
     }
 
     public void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
@@ -233,7 +236,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         {
             if (Data.MainWindow != null)
             {
-                MusicPlayer.LyricUI = new LyricPage();
+                Data.LyricPage = new LyricPage();
                 var frame = Data.MainWindow.GetShellFrame();
 
                 // 创建渐变动画
@@ -265,7 +268,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
                 fadeOutAnimation.Completed += (s, a) =>
                 {
                     fadeInStoryboard.Begin();
-                    frame.Content = MusicPlayer.LyricUI;
+                    frame.Content = Data.LyricPage;
                 };
 
                 fadeOutStoryboard.Begin();
@@ -315,10 +318,7 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
                 fadeOutStoryboard.Begin();
 
                 // 强制调用 Dispose 方法
-                if (MusicPlayer.LyricUI is IDisposable disposable)
-                {
-                    disposable.Dispose();
-                }
+                Data.LyricPage?.Dispose();
 
                 IsDetail = false;
             }
@@ -343,18 +343,18 @@ public partial class RootPlayBarViewModel : INotifyPropertyChanged
         }
     }
 
-    public void MiniButton_Click(object sender, RoutedEventArgs e)
+    public void DesktopLyricButton_Click(object sender, RoutedEventArgs e)
     {
         if (!IsDesktopLyricWindowStarted)
         {
-            MusicPlayer.DesktopLyricWindow = new DesktopLyricWindow();
-            MusicPlayer.DesktopLyricWindow.Activate();
+            Data.DesktopLyricWindow = new DesktopLyricWindow();
+            Data.DesktopLyricWindow.Activate();
             IsDesktopLyricWindowStarted = true;
         }
         else
         {
-            MusicPlayer.DesktopLyricWindow?.Close();
-            MusicPlayer.DesktopLyricWindow?.Dispose();
+            Data.DesktopLyricWindow?.Close();
+            Data.DesktopLyricWindow?.Dispose();
             IsDesktopLyricWindowStarted = false;
         }
     }

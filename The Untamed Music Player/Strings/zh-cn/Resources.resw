@@ -258,8 +258,8 @@
   <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
     <value>全屏 (F11)</value>
   </data>
-  <data name="PlayBar_Mini.ToolTipService.ToolTip" xml:space="preserve">
-    <value>最小播放器 (Ctrl+M)</value>
+  <data name="PlayBar_DesktopLyric.ToolTipService.ToolTip" xml:space="preserve">
+    <value>桌面歌词 (Ctrl+M)</value>
   </data>
   <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
     <value>更多选项</value>

@@ -16,7 +16,7 @@ public sealed partial class RootPlayBarView : Page
         RootPlayBarViewModel.RootPlayBarView = this;
         InitializeComponent();
         ViewModel = App.GetService<RootPlayBarViewModel>();
-        MusicPlayer.PlayBarUI = this;
+        Data.RootPlayBarView = this;
         DataContext = ViewModel;
     }
 
