@@ -336,16 +336,16 @@
                 <FontIcon FontSize="16" Glyph="{x:Bind ViewModel.GetFullScreenIcon(ViewModel.IsFullScreen), Mode=OneWay}"/>
             </Button>
 
-            <!--  最小化置顶  -->
-            <Button x:Uid="PlayBar_Mini"
+            <!--  桌面歌词  -->
+            <Button x:Uid="PlayBar_DesktopLyric"
                     AccessKey="M"
-                    Click="{x:Bind ViewModel.MiniButton_Click}"
+                    Click="{x:Bind ViewModel.DesktopLyricButton_Click}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="M" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
-                <FontIcon FontSize="16" Glyph="&#xEE49;"/>
+                <FontIcon FontSize="16" Glyph="&#xE70A;"/>
             </Button>
 
             <!--  更多菜单  -->
