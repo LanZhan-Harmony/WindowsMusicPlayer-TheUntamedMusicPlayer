@@ -53,6 +53,9 @@ public class MusicPlayer : INotifyPropertyChanged
         get; set;
     }
 
+    /// <summary>
+    /// 排序方式
+    /// </summary>
     private byte _sortMode;
     public byte SortMode
     {
@@ -232,6 +235,20 @@ public class MusicPlayer : INotifyPropertyChanged
     }
 
     /// <summary>
+    /// 当前歌词内容
+    /// </summary>
+    private string _currentLyricContent = "";
+    public string CurrentLyricContent
+    {
+        get => _currentLyricContent;
+        set
+        {
+            _currentLyricContent = value;
+            OnPropertyChanged(nameof(CurrentLyricContent));
+        }
+    }
+
+    /// <summary>
     /// 线程计时器
     /// </summary>
     private ThreadPoolTimer? positionUpdateTimer;
@@ -241,26 +258,6 @@ public class MusicPlayer : INotifyPropertyChanged
     /// </summary>
     private bool lockable = false;
 
-    /// <summary>
-    /// 播放栏UI
-    /// </summary>
-    public static RootPlayBarView? PlayBarUI
-    {
-        get; set;
-    }
-
-    /// <summary>
-    /// 歌词页UI
-    /// </summary>
-    public static LyricPage? LyricUI
-    {
-        get; set;
-    }
-
-    public static DesktopLyricWindow? DesktopLyricWindow
-    {
-        get; set;
-    }
 
     private TimeSpan _current;
     /// <summary>
@@ -495,7 +492,7 @@ public class MusicPlayer : INotifyPropertyChanged
             {
                 try
                 {
-                    PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
                         Current = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
                         Total = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
@@ -508,18 +505,20 @@ public class MusicPlayer : INotifyPropertyChanged
                 catch { }
                 try
                 {
-                    if (LyricUI != null)
+                    if (Data.LyricPage != null)
                     {
-                        LyricUI.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                        Data.LyricPage.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                         {
                             CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+                            CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
                         });
                     }
-                    else if (DesktopLyricWindow != null)
+                    else
                     {
-                        DesktopLyricWindow.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                        Data.DesktopLyricWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                         {
                             CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+                            CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
                         });
                     }
                 }
@@ -571,20 +570,20 @@ public class MusicPlayer : INotifyPropertyChanged
                     break;
                 case MediaPlaybackState.Opening:
                 case MediaPlaybackState.Buffering:
-                    PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
                         PlayState = 2;
                     });
                     break;
                 case MediaPlaybackState.Playing:
-                    PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
                         PlayState = 1;
                         SystemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                     });
                     break;
                 case MediaPlaybackState.Paused:
-                    PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
                         PlayState = 0;
                         SystemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
@@ -604,7 +603,7 @@ public class MusicPlayer : INotifyPropertyChanged
     /// <param name="args"></param>
     private void OnPlaybackStopped(MediaPlayer sender, object args)
     {
-        PlayBarUI?.DispatcherQueue.TryEnqueue(() =>
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
         {
             if (Player?.PlaybackSession.PlaybackState == MediaPlaybackState.Paused && !lockable)
             {
@@ -631,13 +630,13 @@ public class MusicPlayer : INotifyPropertyChanged
                 PlayPauseUpdate();
                 break;
             case SystemMediaTransportControlsButton.Previous:// 注意: 必须在UI线程中调用
-                PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                 {
                     PlayPreviousSong();
                 });
                 break;
             case SystemMediaTransportControlsButton.Next:
-                PlayBarUI?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                 {
                     PlayNextSong();
                 });
@@ -1018,19 +1017,6 @@ public class MusicPlayer : INotifyPropertyChanged
             return defaultOpacity;
         }
     }
-
-    public string GetCurrentLyricContent(int currentLyricIndex)
-    {
-        try
-        {
-            return CurrentLyric[currentLyricIndex].Content;
-        }
-        catch
-        {
-            return "";
-        }
-    }
-
 
     /// <summary>
     /// 获取播放队列

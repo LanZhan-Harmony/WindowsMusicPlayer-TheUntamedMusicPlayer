@@ -18,11 +18,11 @@ public class MainViewModel : INotifyPropertyChanged
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
     private readonly MainWindow _mainMindow;
     private readonly ICompositionSupportsSystemBackdrop? _backdropTarget;
-    private ISystemBackdropControllerWithTargets? _currentBackdropController;
-    private SystemBackdropConfiguration _configurationSource = new()
+    private readonly SystemBackdropConfiguration _configurationSource = new()
     {
         IsInputActive = true,
     };
+    private ISystemBackdropControllerWithTargets? _currentBackdropController;
     public void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -313,10 +313,9 @@ public class MainViewModel : INotifyPropertyChanged
         _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
-        _configurationSource = null;
         _mainMindow.Activated -= MainWindow_Activated;
-        MusicPlayer.DesktopLyricWindow?.Close();
-        MusicPlayer.DesktopLyricWindow?.Dispose();
+        Data.DesktopLyricWindow?.Close();
+        Data.DesktopLyricWindow?.Dispose();
         Data.MusicPlayer.Player.Dispose();
         Data.MusicPlayer.SaveCurrentStateAsync();
     }
