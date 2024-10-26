@@ -86,19 +86,26 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         set
         {
             _isFallBack = value;
-            Data.MainViewModel.IsFallBack = value;
+            if (Data.MainViewModel != null)
+            {
+                Data.MainViewModel.IsFallBack = value;
+            }
             SaveIsFallBackAsync(value);
         }
     }
 
-    private byte _luminosityOpacity = Data.MainViewModel?.LuminosityOpacity ?? 60;
+    private byte _luminosityOpacity = Data.MainViewModel?.LuminosityOpacity ?? 100;
     public byte LuminosityOpacity
     {
         get => _luminosityOpacity;
         set
         {
             _luminosityOpacity = value;
-            Data.MainViewModel.LuminosityOpacity = value;
+            OnPropertyChanged(nameof(LuminosityOpacity));
+            if (Data.MainViewModel != null)
+            {
+                Data.MainViewModel.LuminosityOpacity = value;
+            }
             SaveLuminosityOpacityAsync(value);
         }
     }
@@ -113,7 +120,10 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
             {
                 _tintColor = value;
                 OnPropertyChanged(nameof(TintColor));
-                Data.MainViewModel.TintColor = value;
+                if (Data.MainViewModel != null)
+                {
+                    Data.MainViewModel.TintColor = value;
+                }
                 SaveTintColorAsync(value);
             }
         }
@@ -203,12 +213,11 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
 
     public void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (SelectedMaterial != Data.MainViewModel.SelectedMaterial)
+        if (Data.MainViewModel != null && SelectedMaterial != Data.MainViewModel.SelectedMaterial)
         {
             Data.MainViewModel.SelectedMaterial = SelectedMaterial;
             Data.MainViewModel.ChangeMaterial(SelectedMaterial);
             LuminosityOpacity = Data.MainViewModel.LuminosityOpacity;
-            OnPropertyChanged(nameof(LuminosityOpacity));
             TintColor = Data.MainViewModel.TintColor;
         }
     }
@@ -218,21 +227,23 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         IsFallBack = true;
         OnPropertyChanged(nameof(IsFallBack));
         SelectedMaterial = 3;
-        Data.MainViewModel.ChangeMaterial(SelectedMaterial);
+        if (Data.MainViewModel != null)
+        {
+            Data.MainViewModel.ChangeMaterial(SelectedMaterial);
+            LuminosityOpacity = Data.MainViewModel.LuminosityOpacity;
+            TintColor = Data.MainViewModel.TintColor;
+        }
         OnPropertyChanged(nameof(SelectedMaterial));
-        LuminosityOpacity = Data.MainViewModel.LuminosityOpacity;
-        OnPropertyChanged(nameof(LuminosityOpacity));
-        TintColor = Data.MainViewModel.TintColor;
     }
 
     public void LuminosityOpacitySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
     {
-        Data.MainViewModel.ChangeLuminosityOpacity(LuminosityOpacity);
+        Data.MainViewModel?.ChangeLuminosityOpacity(LuminosityOpacity);
     }
 
     public void TintColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
     {
-        Data.MainViewModel.ChangeTintColor(TintColor);
+        Data.MainViewModel?.ChangeTintColor(TintColor);
     }
 
     public void FontComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

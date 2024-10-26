@@ -10,16 +10,45 @@
         Title="DesktopLyric"
         mc:Ignorable="d">
 
-    <Grid>
-        <Grid.Background>
-            <AcrylicBrush TintColor="Black" TintOpacity="0.85"/>
-        </Grid.Background>
-        <Border CornerRadius="100">
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                       FontFamily="{x:Bind model:Data.SettingsViewModel.SelectedFont, Mode=OneWay}"
-                       FontSize="32" Foreground="White"
-                       Text="{x:Bind model:Data.MusicPlayer.GetCurrentLyricContent(model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
-                       TextTrimming="WordEllipsis"/>
-        </Border>
+    <Grid x:Name="Root">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="Draggable" Grid.Column="0"/>
+            <Button Grid.Column="1"
+                    Background="Transparent" BorderBrush="Transparent"
+                    Click="{x:Bind ViewModel.CloseButton_Click}"
+                    CornerRadius="0,0,0,4">
+                <FontIcon FontSize="14" Foreground="Gray"
+                          Glyph="&#xE711;"/>
+            </Button>
+        </Grid>
+
+        <Grid x:Name="MainGrid"
+              Grid.Row="0" Grid.RowSpan="2">
+            <Border x:Name="AnimatedBorder"
+                    Width="{x:Bind ViewModel.GetBorderWidth(LyricContent.Width), Mode=OneWay}"
+                    Height="{x:Bind ViewModel.GetBorderHeight(LyricContent.Height), Mode=OneWay}"
+                    Background="Black" CornerRadius="30">
+                <TextBlock x:Name="LyricContent"
+                           Width="{x:Bind ViewModel.GetTextBlockWidth(model:Data.MusicPlayer.CurrentLyricContent), Mode=OneWay}"
+                           Height="{x:Bind ViewModel.GetTextBlockHeight(model:Data.MusicPlayer.CurrentLyricContent), Mode=OneWay}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontFamily="{x:Bind model:Data.SettingsViewModel.SelectedFont, Mode=OneWay}"
+                           FontSize="32" Foreground="White"
+                           SizeChanged="LyricContentTextBlock_SizeChanged"
+                           Text="{x:Bind model:Data.MusicPlayer.CurrentLyricContent, Mode=OneWay}"/>
+            </Border>
+        </Grid>
     </Grid>
+    <Window.SystemBackdrop>
+        <winuiex:TransparentTintBackdrop/>
+    </Window.SystemBackdrop>
 </Window>
