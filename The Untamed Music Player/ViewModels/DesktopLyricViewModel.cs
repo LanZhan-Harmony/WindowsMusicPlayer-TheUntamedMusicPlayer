@@ -28,6 +28,10 @@ public class DesktopLyricViewModel
 
     public double GetTextBlockWidth(string currentLyricContent)
     {
+        if (currentLyricContent == "")
+        {
+            return 100;
+        }
         var textBlock = new TextBlock
         {
             Text = currentLyricContent,
