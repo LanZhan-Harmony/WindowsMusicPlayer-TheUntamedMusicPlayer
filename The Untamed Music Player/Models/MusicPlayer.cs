@@ -483,49 +483,40 @@ public class MusicPlayer : INotifyPropertyChanged
     {
         lock (mediaLock)
         {
-            if (Player.PlaybackSession == null)
+            if (Player?.PlaybackSession == null || lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
             {
-                // 处理错误或返回
                 return;
             }
-            if (Player != null && !lockable && Player.PlaybackSession.PlaybackState != MediaPlaybackState.None && Player.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+            try
             {
-                try
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                 {
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    Current = Player.PlaybackSession.Position;
+                    Total = Player.PlaybackSession.NaturalDuration;
+                    if (Total.TotalMilliseconds > 0)
                     {
-                        Current = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
-                        Total = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
-                        if (Total.TotalMilliseconds > 0)
-                        {
-                            CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
-                        }
+                        CurrentPosition = 100 * (Current.TotalMilliseconds / Total.TotalMilliseconds);
+                    }
+                });
+
+                if (CurrentLyric.Count > 0)
+                {
+                    var dispatcherQueue = Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
+                    dispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    {
+                        CurrentLyricIndex = GetCurrentLyricIndex(Player.PlaybackSession.Position.TotalMilliseconds);
+                        CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
                     });
                 }
-                catch { }
-                try
+                else
                 {
-                    if (Data.LyricPage != null)
-                    {
-                        Data.LyricPage.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
-                        {
-                            CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
-                            CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
-                        });
-                    }
-                    else
-                    {
-                        Data.DesktopLyricWindow?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
-                        {
-                            CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
-                            CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
-                        });
-                    }
+                    CurrentLyricContent = "";
                 }
-                catch { }
             }
+            catch { }
         }
     }
+
 
     /// <summary>
     /// 获取当前歌词切片索引
@@ -680,6 +671,7 @@ public class MusicPlayer : INotifyPropertyChanged
         Player?.Pause();
         Current = TimeSpan.Zero;
         CurrentPosition = 0;
+        CurrentLyricContent = "";
         positionUpdateTimer?.Cancel();
         positionUpdateTimer = null;
     }
