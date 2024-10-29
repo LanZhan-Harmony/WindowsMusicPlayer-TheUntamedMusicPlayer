@@ -341,6 +341,10 @@ public class MainViewModel : INotifyPropertyChanged
             var lightColor = Color.FromArgb(255, 252, 252, 252);
             TintColor = IsDarkTheme ? darkColor : lightColor;
             await _localSettingsService.SaveSettingAsync("NotFirstUsed", true);
+            await _localSettingsService.SaveSettingAsync("SelectedMaterial", SelectedMaterial);
+            await _localSettingsService.SaveSettingAsync("IsFallBack", IsFallBack);
+            await _localSettingsService.SaveSettingAsync("LuminosityOpacity", LuminosityOpacity);
+            await _localSettingsService.SaveSettingAsync("TintColor", TintColor);
         }
     }
 

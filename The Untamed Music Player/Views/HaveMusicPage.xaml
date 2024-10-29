@@ -21,7 +21,7 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="TitleGrid.Margin" Value="16,35"/>
+                        <Setter Target="TitleGrid.Margin" Value="16,36,16,0"/>
                         <Setter Target="AddTextBlock.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -30,7 +30,7 @@
                         <AdaptiveTrigger MinWindowWidth="641"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="TitleGrid.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
+                        <Setter Target="TitleGrid.Margin" Value="56,36,56,0"/>
                         <Setter Target="AddTextBlock.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>

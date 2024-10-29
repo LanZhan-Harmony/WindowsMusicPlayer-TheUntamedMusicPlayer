@@ -184,7 +184,7 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="MenuGrid.Margin" Value="16,-11,16,0"/>
+                        <Setter Target="MenuGrid.Margin" Value="16,24,16,0"/>
                         <Setter Target="SongListView.Padding" Value="12,0,12,0"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -258,7 +258,7 @@
                       Margin="0,24,0,0"
                       Canvas.ZIndex="1"
                       IsActive="{x:Bind ViewModel.IsProgressRingActive, Mode=OneWay}"/>
-        <SemanticZoom Grid.Row="1" Margin="0,24,0,0">
+        <SemanticZoom Grid.Row="1" Margin="0,26,0,0">
             <SemanticZoom.ZoomedInView>
                 <ListView x:Name="SongListView"
                           CanDragItems="True" IsItemClickEnabled="True"
