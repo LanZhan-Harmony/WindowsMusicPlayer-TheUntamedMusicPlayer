@@ -171,9 +171,9 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="TitleGrid.Margin" Value="16,35"/>
+                        <Setter Target="TitleGrid.Margin" Value="16,36,16,0"/>
                         <Setter Target="AddTextBlock.Visibility" Value="Collapsed"/>
-                        <Setter Target="MenuPanel.Margin" Value="16,-11,16,0"/>
+                        <Setter Target="MenuPanel.Margin" Value="16,22,16,0"/>
                         <Setter Target="ClearButton.Width" Value="68"/>
                         <Setter Target="AddToButton.Width" Value="68"/>
                         <Setter Target="ClearTextBlock.Visibility" Value="Collapsed"/>
@@ -186,9 +186,9 @@
                         <AdaptiveTrigger MinWindowWidth="641"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="TitleGrid.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
+                        <Setter Target="TitleGrid.Margin" Value="56,36,56,0"/>
                         <Setter Target="AddTextBlock.Visibility" Value="Visible"/>
-                        <Setter Target="MenuPanel.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
+                        <Setter Target="MenuPanel.Margin" Value="56,22,56,0"/>
                         <Setter Target="ClearTextBlock.Visibility" Value="Visible"/>
                         <Setter Target="AddToTextBlock.Visibility" Value="Visible"/>
                         <Setter Target="PlayqueueListView.Padding" Value="52,0,52,0"/>
@@ -320,7 +320,7 @@
         </StackPanel>
         <ListView x:Name="PlayqueueListView"
                   Grid.Row="2"
-                  Margin="0,24,0,0"
+                  Margin="0,22,0,0"
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.PlayQueueListView_ItemClick}"
                   ItemTemplate="{StaticResource PlayQueueListViewTemplate}"

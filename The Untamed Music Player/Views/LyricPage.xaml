@@ -68,7 +68,7 @@
               Grid.Row="0"
               Height="33"
               VerticalAlignment="Center"
-              Canvas.ZIndex="1" CornerRadius="8,8,0,0"
+              Canvas.ZIndex="1" 
               IsHitTestVisible="True">
             <StackPanel Orientation="Horizontal">
                 <Button Width="48" Height="39"

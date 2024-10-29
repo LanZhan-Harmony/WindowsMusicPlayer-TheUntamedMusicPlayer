@@ -10,6 +10,8 @@
 
     <Page.Resources>
         <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent"/>
+        <x:Double x:Key="NavigationViewContentMargin">0</x:Double>
+        <x:Double x:Key="NavigationViewContentGridCornerRadius">0</x:Double>
     </Page.Resources>
     <Grid KeyTipPlacementMode="Right">
         <Grid.RowDefinitions>
@@ -30,7 +32,6 @@
                            Text="Untamed Music Player" TextWrapping="NoWrap"/>
             </Grid>
             <NavigationView x:Name="NavigationViewControl"
-                            Background="{StaticResource NavigationViewContentBackground}"
                             Canvas.ZIndex="1" DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
                             ExpandedModeThresholdWidth="1280" IsBackButtonVisible="Visible"
                             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
