@@ -24,7 +24,7 @@
                         <Setter Target="Image.Height" Value="90"/>
                         <Setter Target="Image.Width" Value="90"/>
                         <Setter Target="StackPanel.Spacing" Value="8"/>
-                        <Setter Target="TitleGrid.Margin" Value="16,35"/>
+                        <Setter Target="TitleGrid.Margin" Value="16,37,16,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
@@ -35,7 +35,7 @@
                         <Setter Target="Image.Height" Value="150"/>
                         <Setter Target="Image.Width" Value="150"/>
                         <Setter Target="StackPanel.Spacing" Value="18"/>
-                        <Setter Target="TitleGrid.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
+                        <Setter Target="TitleGrid.Margin" Value="56,37,56,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
