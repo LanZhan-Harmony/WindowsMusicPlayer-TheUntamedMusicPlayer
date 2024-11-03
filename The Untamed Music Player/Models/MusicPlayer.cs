@@ -372,11 +372,6 @@ public class MusicPlayer : INotifyPropertyChanged
         LoadCurrentStateAsync();
     }
 
-    ~MusicPlayer()
-    {
-        Player.Dispose();
-    }
-
     /// <summary>
     /// 按路径播放歌曲
     /// </summary>
@@ -416,7 +411,6 @@ public class MusicPlayer : INotifyPropertyChanged
             Stop();
             var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
             CurrentMusic = new DetailedMusicInfo(songToPlay.Path);
-            SetSource(songToPlay.Path);
             PlayQueueIndex = isLast ? 0 : index;
             SystemControls.IsPlayEnabled = true;
             SystemControls.IsPauseEnabled = true;
@@ -437,6 +431,7 @@ public class MusicPlayer : INotifyPropertyChanged
         {
             try
             {
+                Player.Source = null;
                 var mediaFileTask = StorageFile.GetFileFromPathAsync(path).AsTask();
                 mediaFileTask.Wait();
                 var mediaFile = mediaFileTask.Result;
@@ -499,9 +494,9 @@ public class MusicPlayer : INotifyPropertyChanged
                     }
                 });
 
+                var dispatcherQueue = Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
                 if (CurrentLyric.Count > 0)
                 {
-                    var dispatcherQueue = Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
                     dispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                     {
                         CurrentLyricIndex = GetCurrentLyricIndex(Player.PlaybackSession.Position.TotalMilliseconds);
@@ -510,7 +505,11 @@ public class MusicPlayer : INotifyPropertyChanged
                 }
                 else
                 {
-                    CurrentLyricContent = "";
+                    dispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    {
+                        CurrentLyricIndex = 0;
+                        CurrentLyricContent = "";
+                    });
                 }
             }
             catch { }
