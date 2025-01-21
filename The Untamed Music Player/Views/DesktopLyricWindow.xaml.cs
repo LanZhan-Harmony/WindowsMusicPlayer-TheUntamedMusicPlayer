@@ -1,12 +1,6 @@
-using System.Diagnostics;
-using System.Numerics;
 using Microsoft.UI;
-using Microsoft.UI.Composition;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Graphics;
@@ -21,8 +15,8 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         get;
     }
 
-    private Compositor _compositor;
-    private Visual _borderVisual;
+    /*private Compositor _compositor;
+    private Visual _borderVisual;*/
 
     public DesktopLyricWindow()
     {
@@ -42,18 +36,26 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         var displayArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Primary);
         var workArea = displayArea.WorkArea;
 
+        // 屏幕长宽
+        var screenWidth = workArea.Width;
+        var screenHeight = workArea.Height;
+
+        // 窗口长宽
+        var windowWidth = screenWidth * 1000 / 1920;
+        var windowHeight = screenHeight * 100 / 1080;
+
         // 计算窗口位置，使其位于屏幕下方
-        var x = (workArea.Width - 800) / 2; // 居中
-        var y = workArea.Height - 140; // 底部
+        var x = (screenWidth - windowWidth) / 2; // 居中
+        var y = screenHeight - screenHeight * 140 / 1080; // 底部
 
         // 设置窗口位置
         appWindow.Move(new PointInt32(x, y));
 
         //设置窗口为 CompactOverlay 模式
-        //appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
+        appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
 
         // 设置窗口大小
-        appWindow.Resize(new SizeInt32(800, 120));
+        appWindow.Resize(new SizeInt32(windowWidth, windowHeight));
 
         var presenter = appWindow.Presenter as OverlappedPresenter;
         if (presenter != null)
@@ -84,9 +86,9 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
     {
     }
 
-    private void LyricContentTextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
+    /*private void LyricContentTextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        /*var widthAnimation = _compositor.CreateScalarKeyFrameAnimation();
+        *//*var widthAnimation = _compositor.CreateScalarKeyFrameAnimation();
         widthAnimation.InsertKeyFrame(1.0f, (float)LyricContent.ActualWidth);
         widthAnimation.Duration = TimeSpan.FromMilliseconds(300);
 
@@ -95,6 +97,6 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         heightAnimation.Duration = TimeSpan.FromMilliseconds(300);
 
         _borderVisual.StartAnimation("Size.X", widthAnimation);
-        _borderVisual.StartAnimation("Size.Y", heightAnimation);*/
-    }
+        _borderVisual.StartAnimation("Size.Y", heightAnimation);*//*
+    }*/
 }

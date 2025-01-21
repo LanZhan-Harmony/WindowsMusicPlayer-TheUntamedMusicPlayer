@@ -77,7 +77,7 @@ public class BriefMusicInfo
                         tempArtists = [.. tempArtists, .. new[] { i }];
                     }
                 }
-                _artists = tempArtists.Distinct().ToArray();
+                _artists = [.. tempArtists.Distinct()];
             }
             else
             {
@@ -336,7 +336,7 @@ public class DetailedMusicInfo : BriefMusicInfo
                         tempArtists = [.. tempArtists, .. new[] { i }];
                     }
                 }
-                _albumArtists = tempArtists.Distinct().ToArray();
+                _albumArtists = [.. tempArtists.Distinct()];
             }
             else
             {
@@ -419,6 +419,7 @@ public class DetailedMusicInfo : BriefMusicInfo
     public DetailedMusicInfo()
     {
     }
+
     public DetailedMusicInfo(string path) : base(path)
     {
         try

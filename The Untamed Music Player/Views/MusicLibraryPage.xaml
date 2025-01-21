@@ -7,6 +7,11 @@
 
     <Grid x:Name="ContentArea">
         <Frame x:Name="ContentFrame"/>
+        <ProgressRing Grid.Row="1"
+                      Width="50" Height="50"
+                      Margin="0,24,0,0"
+                      Canvas.ZIndex="1"
+                      IsActive="{x:Bind ViewModel.IsProgressRingActive, Mode=OneWay}"/>
     </Grid>
 
 </Page>

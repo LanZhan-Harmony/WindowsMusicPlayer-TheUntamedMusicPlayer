@@ -37,6 +37,7 @@ public static class Data
 
     public static MusicPlayer MusicPlayer { get; set; } = new();
     public static MusicLibrary MusicLibrary { get; set; } = new();
+    public static bool hasMusicLibraryLoaded { get; set; } = false;
 
 
     public static MainWindow? MainWindow
@@ -48,6 +49,10 @@ public static class Data
         get; set;
     }
     public static ShellPage? ShellPage
+    {
+        get; set;
+    }
+    public static MusicLibraryPage? MusicLibraryPage
     {
         get; set;
     }

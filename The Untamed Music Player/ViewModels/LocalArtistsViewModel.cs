@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
@@ -111,46 +110,6 @@ public class LocalArtistsViewModel : INotifyPropertyChanged
         return isActive ? 0 : 1;
     }
 
-    public void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid?.FindName("PlayButton") as Button;
-        var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox != null)
-        {
-            checkBox.Visibility = Visibility.Visible;
-        }
-        if (playButton != null)
-        {
-            playButton.Visibility = Visibility.Visible;
-        }
-        if (menuButton != null)
-        {
-            menuButton.Visibility = Visibility.Visible;
-        }
-    }
-
-    public void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid?.FindName("PlayButton") as Button;
-        var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox != null)
-        {
-            checkBox.Visibility = Visibility.Collapsed;
-        }
-        if (playButton != null)
-        {
-            playButton.Visibility = Visibility.Collapsed;
-        }
-        if (menuButton != null)
-        {
-            menuButton.Visibility = Visibility.Collapsed;
-        }
-    }
-
     public async Task SortArtists()
     {
         var sortTask = SortMode switch
@@ -172,7 +131,7 @@ public class LocalArtistsViewModel : INotifyPropertyChanged
                .GroupBy(m => m.Name == "MusicInfo_UnknownArtist".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedArtistList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedArtistList = [.. sortedGroups];
         });
     }
 
@@ -185,7 +144,7 @@ public class LocalArtistsViewModel : INotifyPropertyChanged
                .GroupBy(m => m.Name == "MusicInfo_UnknownArtist".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedArtistList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedArtistList = [.. sortedGroups];
         });
     }
 
