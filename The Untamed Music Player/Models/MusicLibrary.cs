@@ -1,7 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage;
@@ -9,7 +8,8 @@ using Windows.Storage;
 namespace The_Untamed_Music_Player.Models;
 public class MusicLibrary : INotifyPropertyChanged
 {
-    private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    //private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    private readonly SemaphoreSlim _librarySemaphore = new(1, 1);
 
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged(string propertyName)
@@ -17,15 +17,13 @@ public class MusicLibrary : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    private readonly ConcurrentDictionary<string, byte> _musicFolders = [];
+
     private ObservableCollection<StorageFolder> _folders = [];
     public ObservableCollection<StorageFolder> Folders
     {
         get => _folders;
-        set
-        {
-            _folders = value;
-            OnPropertyChanged(nameof(SettingsViewModel.EmptyFolderMessageVisibility));
-        }
+        set => _folders = value;
     }
 
     private List<FileSystemWatcher> _folderWatchers = [];
@@ -35,21 +33,17 @@ public class MusicLibrary : INotifyPropertyChanged
         set => _folderWatchers = value;
     }
 
-    private List<BriefMusicInfo> _musics = [];
-    public List<BriefMusicInfo> Musics
+    private ConcurrentBag<BriefMusicInfo> _musics = [];
+    public ConcurrentBag<BriefMusicInfo> Musics
     {
         get => _musics;
-        set
-        {
-            _musics = value;
-            OnPropertyChanged(nameof(HasMusics));
-        }
+        set => _musics = value;
     }
 
-    public bool HasMusics => Musics.Count != 0;
+    public bool HasMusics => !Musics.IsEmpty;
 
-    private Dictionary<string, AlbumInfo> _albums = [];
-    public Dictionary<string, AlbumInfo> Albums
+    private ConcurrentDictionary<string, AlbumInfo> _albums = [];
+    public ConcurrentDictionary<string, AlbumInfo> Albums
     {
         get => _albums;
         set
@@ -59,8 +53,8 @@ public class MusicLibrary : INotifyPropertyChanged
         }
     }
 
-    private Dictionary<string, ArtistInfo> _artists = [];
-    public Dictionary<string, ArtistInfo> Artists
+    private ConcurrentDictionary<string, ArtistInfo> _artists = [];
+    public ConcurrentDictionary<string, ArtistInfo> Artists
     {
         get => _artists;
         set
@@ -70,7 +64,7 @@ public class MusicLibrary : INotifyPropertyChanged
         }
     }
 
-    private readonly HashSet<string> _musicGenres = [];
+    private readonly ConcurrentDictionary<string, byte> _musicGenres = [];
 
     private ObservableCollection<string> _genres = [];
     public ObservableCollection<string> Genres
@@ -106,46 +100,6 @@ public class MusicLibrary : INotifyPropertyChanged
         LoadFoldersAsync();
     }
 
-    public async Task LoadLibrary()
-    {
-        if (Folders != null && Folders.Any())
-        {
-            foreach (var folder in Folders)
-            {
-                await LoadMusic(folder, folder.DisplayName);
-            }
-        }
-        ClearAllArtistMusicAlbums();
-        _musicGenres.Clear();
-        Genres.Add("MusicInfo_AllGenres".GetLocalized());
-        Genres = new ObservableCollection<string>(Genres.OrderBy(x => x, new GenreComparer()));
-        OnPropertyChanged(nameof(HasMusics));
-    }
-
-    public async Task LoadLibraryAgain()
-    {
-        IsProgressRingActive = true;
-        IsRefreshButtonEnabled = false;
-        Musics.Clear();
-        Artists.Clear();
-        Albums.Clear();
-        Genres.Clear();
-        if (Folders != null && Folders.Any())
-        {
-            foreach (var folder in Folders)
-            {
-                await LoadMusic(folder, folder.DisplayName);
-            }
-        }
-        ClearAllArtistMusicAlbums();
-        _musicGenres.Clear();
-        Genres.Add("MusicInfo_AllGenres".GetLocalized());
-        Genres = new ObservableCollection<string>(Genres.OrderBy(x => x, new GenreComparer()));
-        OnPropertyChanged(nameof(HasMusics));
-        IsProgressRingActive = false;
-        IsRefreshButtonEnabled = true;
-    }
-
     public async void LoadFoldersAsync()
     {
         var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>("MusicFolders");//ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。ReadAsync<List<string>>("MusicFolders")：调用 SettingsStorageExtensions 类中的扩展方法 ReadAsync，从名为 "MusicFolders" 的文件中读取数据，并将其反序列化为 List<string> 类型。
@@ -155,10 +109,76 @@ public class MusicLibrary : INotifyPropertyChanged
             {
                 var folder = await StorageFolder.GetFolderFromPathAsync(path);
                 Folders?.Add(folder);
-                AddFolderWatcher(path);
             }
             OnPropertyChanged(nameof(SettingsViewModel.EmptyFolderMessageVisibility));
-            await LoadLibrary();
+        }
+    }
+
+    public async Task LoadLibrary()
+    {
+        await _librarySemaphore.WaitAsync();
+        try
+        {
+            var loadMusicTasks = new List<Task>();
+            if (Folders != null && Folders.Any())
+            {
+                foreach (var folder in Folders)
+                {
+                    _musicFolders.TryAdd(folder.Path, 0);
+                    loadMusicTasks.Add(LoadMusic(folder, folder.DisplayName));
+                }
+            }
+            await Task.WhenAll(loadMusicTasks);
+            OnPropertyChanged(nameof(HasMusics));
+            Genres = [.. _musicGenres.Keys, "MusicInfo_AllGenres".GetLocalized()];
+            Genres = [.. Genres.OrderBy(x => x, new GenreComparer())];
+            ClearAllArtistMusicAlbums();
+            _musicGenres.Clear();
+            await Task.Run(() => AddFolderWatcher());
+            _musicFolders.Clear();
+        }
+        catch { }
+        finally
+        {
+            _librarySemaphore.Release();
+        }
+    }
+
+    public async Task LoadLibraryAgain()
+    {
+        await _librarySemaphore.WaitAsync();
+        try
+        {
+            IsProgressRingActive = true;
+            IsRefreshButtonEnabled = false;
+            Musics.Clear();
+            Artists.Clear();
+            Albums.Clear();
+            Genres.Clear();
+            var loadMusicTasks = new List<Task>();
+            if (Folders != null && Folders.Any())
+            {
+                foreach (var folder in Folders)
+                {
+                    _musicFolders.TryAdd(folder.Path, 0);
+                    loadMusicTasks.Add(LoadMusic(folder, folder.DisplayName));
+                }
+            }
+            await Task.WhenAll(loadMusicTasks);
+            OnPropertyChanged(nameof(HasMusics));
+            Genres = [.. _musicGenres.Keys, "MusicInfo_AllGenres".GetLocalized()];
+            Genres = [.. Genres.OrderBy(x => x, new GenreComparer())];
+            IsProgressRingActive = false;
+            IsRefreshButtonEnabled = true;
+            ClearAllArtistMusicAlbums();
+            _musicGenres.Clear();
+            await Task.Run(() => AddFolderWatcher());
+            _musicFolders.Clear();
+        }
+        catch { }
+        finally
+        {
+            _librarySemaphore.Release();
         }
     }
 
@@ -174,26 +194,26 @@ public class MusicLibrary : INotifyPropertyChanged
                 var briefMusicInfo = new BriefMusicInfo(file.Path, foldername);
                 Musics.Add(briefMusicInfo);
 
-                if (_musicGenres.Add(briefMusicInfo.GenreStr))
-                {
-                    Genres.Add(briefMusicInfo.GenreStr);
-                }
-
+                _musicGenres.TryAdd(briefMusicInfo.GenreStr, 0);
                 UpdateAlbumInfo(briefMusicInfo);
                 UpdateArtistInfo(briefMusicInfo);
             }
 
             var subFolders = await folder.GetFoldersAsync();
+            var loadMusicTasks = new List<Task>();
+
             foreach (var subFolder in subFolders)
             {
-                var subfoldername = foldername + "/" + subFolder.DisplayName;
-                await LoadMusic(subFolder, subfoldername);
+                if (_musicFolders.TryAdd(subFolder.Path, 0))
+                {
+                    var subfoldername = foldername + "/" + subFolder.DisplayName;
+                    // 启动 LoadMusic 任务但不等待
+                    loadMusicTasks.Add(LoadMusic(subFolder, subfoldername));
+                }
             }
+            await Task.WhenAll(loadMusicTasks);
         }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);
-        }
+        catch { }
     }
 
     private void UpdateAlbumInfo(BriefMusicInfo briefMusicInfo)
@@ -235,59 +255,54 @@ public class MusicLibrary : INotifyPropertyChanged
         }
     }
 
-    private void AddFolderWatcher(string path)
+    private void AddFolderWatcher()
     {
-        var watcher = new FileSystemWatcher(path)
+        try
         {
-            NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite,
-            IncludeSubdirectories = true // 启用对子文件夹的监视
-        };
-
-        watcher.Changed += OnChanged;
-        watcher.Created += OnChanged;
-        watcher.Deleted += OnChanged;
-        watcher.Renamed += OnRenamed;
-        watcher.Error += OnError;
-
-        watcher.EnableRaisingEvents = true;
-        FolderWatchers.Add(watcher);
-    }
-
-    private void OnChanged(object sender, FileSystemEventArgs e)
-    {
-        var fileExtension = Path.GetExtension(e.FullPath).ToLower();
-        if (Data.SupportedAudioTypes.Contains(fileExtension))
-        {
-            try
+            foreach (var folder in _musicFolders.Keys)
             {
-                _dispatcherQueue.TryEnqueue(async () =>
+                var watcher = new FileSystemWatcher(folder)
                 {
-                    await LoadLibraryAgain();
-                });
+                    NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite,
+                    IncludeSubdirectories = false
+                };
+
+                watcher.Changed += OnChanged;
+                watcher.Created += OnChanged;
+                watcher.Deleted += OnChanged;
+                watcher.Renamed += OnRenamed;
+
+                watcher.EnableRaisingEvents = true;
+                FolderWatchers.Add(watcher);
             }
-            catch { }
         }
+        catch { }
     }
 
-    private void OnRenamed(object sender, RenamedEventArgs e)
+    private async void OnChanged(object sender, FileSystemEventArgs e)
     {
         var fileExtension = Path.GetExtension(e.FullPath).ToLower();
         if (Data.SupportedAudioTypes.Contains(fileExtension))
         {
             try
             {
-                _dispatcherQueue.TryEnqueue(async () =>
-               {
-                   await LoadLibraryAgain();
-               });
+                await LoadLibraryAgain();
             }
             catch { }
         }
     }
 
-    private void OnError(object sender, ErrorEventArgs e)
+    private async void OnRenamed(object sender, RenamedEventArgs e)
     {
-        Debug.WriteLine(e.GetException());
+        var fileExtension = Path.GetExtension(e.FullPath).ToLower();
+        if (Data.SupportedAudioTypes.Contains(fileExtension))
+        {
+            try
+            {
+                await LoadLibraryAgain();
+            }
+            catch { }
+        }
     }
 
     public ObservableCollection<BriefMusicInfo> GetMusicByAlbum(AlbumInfo albumInfo)
