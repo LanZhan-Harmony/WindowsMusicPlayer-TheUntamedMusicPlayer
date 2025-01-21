@@ -1,15 +1,6 @@
-﻿using System.Diagnostics;
-using System.Numerics;
-using Microsoft.Extensions.Configuration;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Composition.SystemBackdrops;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Media;
-using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
-using The_Untamed_Music_Player.Views;
 using Windows.Foundation;
 
 namespace The_Untamed_Music_Player.ViewModels;

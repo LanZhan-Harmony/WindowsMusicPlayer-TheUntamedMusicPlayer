@@ -10,9 +10,9 @@
         Title="DesktopLyric"
         mc:Ignorable="d">
 
-    <Grid x:Name="Root">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+    <Grid x:Name="Draggable">
+        <!--<Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -29,10 +29,9 @@
                 <FontIcon FontSize="14" Foreground="Gray"
                           Glyph="&#xE711;"/>
             </Button>
-        </Grid>
+        </Grid>-->
 
-        <Grid x:Name="MainGrid"
-              Grid.Row="0" Grid.RowSpan="2">
+        <Grid x:Name="MainGrid">
             <Border x:Name="AnimatedBorder"
                     Width="{x:Bind ViewModel.GetBorderWidth(LyricContent.Width), Mode=OneWay}"
                     Height="{x:Bind ViewModel.GetBorderHeight(LyricContent.Height), Mode=OneWay}"
