@@ -133,6 +133,6 @@ public partial class LyricSlice : INotifyPropertyChanged
             }
         }
 
-        return new ObservableCollection<LyricSlice>(lyricSlices.OrderBy(t => t.Time));//将 lyricSlices 列表按时间戳排序
+        return [.. lyricSlices.OrderBy(t => t.Time)];//将 lyricSlices 列表按时间戳排序
     }
 }

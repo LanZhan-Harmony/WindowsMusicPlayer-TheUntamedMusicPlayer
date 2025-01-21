@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Services;
-using The_Untamed_Music_Player.Views;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -458,7 +456,7 @@ public class MusicPlayer : INotifyPropertyChanged
         {
             SortMode = sortmode;
             PlayQueueName = name;
-            PlayQueue = new ObservableCollection<BriefMusicInfo>(list);
+            PlayQueue = [.. list];
             PlayQueueLength = list.Count;
             var hasMusics = PlayQueue.Any();
             if (Data.RootPlayBarViewModel != null)
@@ -478,12 +476,12 @@ public class MusicPlayer : INotifyPropertyChanged
     {
         lock (mediaLock)
         {
-            if (Player?.PlaybackSession == null || lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
-            {
-                return;
-            }
             try
             {
+                if (Player?.PlaybackSession == null || lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                {
+                    return;
+                }
                 Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                 {
                     Current = Player.PlaybackSession.Position;
@@ -691,10 +689,7 @@ public class MusicPlayer : INotifyPropertyChanged
 
             PlaySongByIndex(newIndex);
         }
-        catch
-        {
-            Debug.WriteLine("播放上一曲失败");
-        }
+        catch { }
     }
 
     /// <summary>
@@ -715,10 +710,7 @@ public class MusicPlayer : INotifyPropertyChanged
 
             PlaySongByIndex(newIndex, isLast);
         }
-        catch
-        {
-            Debug.WriteLine("播放下一曲失败");
-        }
+        catch { }
     }
 
 

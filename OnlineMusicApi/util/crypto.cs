@@ -30,7 +30,7 @@ internal static class crypto
         secretKey = secretKey.Select(n => (byte)base62[n % 62]).ToArray();
         return new Dictionary<string, string> {
             { "params", aesEncrypt(aesEncrypt(text.ToByteArrayUtf8(), CipherMode.CBC, presetKey, iv).ToBase64String().ToByteArrayUtf8(), CipherMode.CBC, secretKey, iv).ToBase64String() },
-            { "encSecKey", rsaEncrypt(secretKey.Reverse().ToArray()/*, publicKey*/).ToHexStringLower() }
+            { "encSecKey", rsaEncrypt(secretKey.AsEnumerable().Reverse().ToArray()/*, publicKey*/).ToHexStringLower() }
         };
     }
 

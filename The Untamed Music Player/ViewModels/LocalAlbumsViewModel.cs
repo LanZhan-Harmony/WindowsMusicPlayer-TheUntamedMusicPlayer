@@ -3,7 +3,6 @@ using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
@@ -180,46 +179,6 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
         return isActive ? 0 : 1;
     }
 
-    public void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid?.FindName("PlayButton") as Button;
-        var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox != null)
-        {
-            checkBox.Visibility = Visibility.Visible;
-        }
-        if (playButton != null)
-        {
-            playButton.Visibility = Visibility.Visible;
-        }
-        if (menuButton != null)
-        {
-            menuButton.Visibility = Visibility.Visible;
-        }
-    }
-
-    public void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid?.FindName("PlayButton") as Button;
-        var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox != null)
-        {
-            checkBox.Visibility = Visibility.Collapsed;
-        }
-        if (playButton != null)
-        {
-            playButton.Visibility = Visibility.Collapsed;
-        }
-        if (menuButton != null)
-        {
-            menuButton.Visibility = Visibility.Collapsed;
-        }
-    }
-
     public double GetZoomedOutViewGridWidth(byte sortmode)
     {
         return sortmode switch
@@ -267,10 +226,10 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
 
     public async Task FilterAlbums()
     {
-        GroupedAlbumList = new ObservableCollection<GroupInfoList>(AlbumList
+        GroupedAlbumList = [.. AlbumList
             .GroupBy(m => TitleComparer.GetGroupKey(m.Name[0]))
-            .Select(g => new GroupInfoList(g) { Key = g.Key }));
-        NotGroupedAlbumList = new ObservableCollection<AlbumInfo>(AlbumList);
+            .Select(g => new GroupInfoList(g) { Key = g.Key })];
+        NotGroupedAlbumList = [.. AlbumList];
 
         if (GenreMode == 0)
         {
@@ -323,7 +282,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
                .GroupBy(m => m.Name == "MusicInfo_UnknownAlbum".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedAlbumList = [.. sortedGroups];
         });
     }
 
@@ -338,7 +297,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
                .GroupBy(m => m.Name == "MusicInfo_UnknownAlbum".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedAlbumList = [.. sortedGroups];
         });
     }
 
@@ -352,7 +311,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
                 .OrderBy(m => m.Year)
                 .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedAlbumList = [.. sortedGroups];
         });
     }
 
@@ -367,7 +326,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedAlbumList = [.. sortedGroups];
         });
     }
 
@@ -382,7 +341,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedAlbumList = [.. sortedGroups];
         });
     }
 
@@ -397,7 +356,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedAlbumList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedAlbumList = [.. sortedGroups];
         });
     }
 
@@ -408,7 +367,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
             var sortedGroups = NotGroupedAlbumList
                 .OrderBy(m => m.ModifiedDate);
 
-            NotGroupedAlbumList = new ObservableCollection<AlbumInfo>(sortedGroups);
+            NotGroupedAlbumList = [.. sortedGroups];
         });
     }
 
@@ -419,7 +378,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
             var sortedGroups = NotGroupedAlbumList
                 .OrderByDescending(m => m.ModifiedDate);
 
-            NotGroupedAlbumList = new ObservableCollection<AlbumInfo>(sortedGroups);
+            NotGroupedAlbumList = [.. sortedGroups];
         });
     }
 

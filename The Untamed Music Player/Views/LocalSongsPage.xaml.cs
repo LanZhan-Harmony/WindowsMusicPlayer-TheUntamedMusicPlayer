@@ -19,12 +19,32 @@ public sealed partial class LocalSongsPage : Page
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        ViewModel.Grid_PointerEntered(sender, e);
+        var grid = sender as Grid;
+        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
+        var playButton = grid?.FindName("PlayButton") as Button;
+        if (checkBox != null)
+        {
+            checkBox.Visibility = Visibility.Visible;
+        }
+        if (playButton != null)
+        {
+            playButton.Visibility = Visibility.Visible;
+        }
     }
 
     private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
     {
-        ViewModel.Grid_PointerExited(sender, e);
+        var grid = sender as Grid;
+        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
+        var playButton = grid?.FindName("PlayButton") as Button;
+        if (checkBox != null)
+        {
+            checkBox.Visibility = Visibility.Collapsed;
+        }
+        if (playButton != null)
+        {
+            playButton.Visibility = Visibility.Collapsed;
+        }
     }
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)

@@ -1,9 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
@@ -60,9 +60,9 @@ public class LocalSongsViewModel : INotifyPropertyChanged
         set => _groupMode = value;
     }
 
-    private List<BriefMusicInfo> _songList = Data.MusicLibrary.Musics;
+    private ConcurrentBag<BriefMusicInfo> _songList = Data.MusicLibrary.Musics;
 
-    public List<BriefMusicInfo> SongList
+    public ConcurrentBag<BriefMusicInfo> SongList
     {
         get => _songList;
         set => _songList = value;
@@ -201,36 +201,6 @@ public class LocalSongsViewModel : INotifyPropertyChanged
         return isActive ? 0 : 1;
     }
 
-    public void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox != null)
-        {
-            checkBox.Visibility = Visibility.Visible;
-        }
-        if (playButton != null)
-        {
-            playButton.Visibility = Visibility.Visible;
-        }
-    }
-
-    public void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox != null)
-        {
-            checkBox.Visibility = Visibility.Collapsed;
-        }
-        if (playButton != null)
-        {
-            playButton.Visibility = Visibility.Collapsed;
-        }
-    }
-
     public double GetZoomedOutViewGridWidth(byte sortmode)
     {
         return sortmode switch
@@ -294,10 +264,10 @@ public class LocalSongsViewModel : INotifyPropertyChanged
 
     public async Task FilterSongs()
     {
-        GroupedSongList = new ObservableCollection<GroupInfoList>(SongList
+        GroupedSongList = [.. SongList
             .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
-            .Select(g => new GroupInfoList(g) { Key = g.Key }));
-        NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(SongList);
+            .Select(g => new GroupInfoList(g) { Key = g.Key })];
+        NotGroupedSongList = [.. SongList];
 
         if (GenreMode == 0)
         {
@@ -376,7 +346,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -394,7 +364,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                 .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -412,7 +382,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -430,7 +400,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -448,7 +418,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.Album)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -466,7 +436,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.Album)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -483,7 +453,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                 .OrderBy(m => m.Year)
                 .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -501,7 +471,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -515,7 +485,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
             var sortedGroups = NotGroupedSongList
                 .OrderBy(m => m.ModifiedDate);
 
-            NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(sortedGroups);
+            NotGroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -529,7 +499,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
             var sortedGroups = NotGroupedSongList
                 .OrderByDescending(m => m.ModifiedDate);
 
-            NotGroupedSongList = new ObservableCollection<BriefMusicInfo>(sortedGroups);
+            NotGroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -548,7 +518,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.Folder)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 
@@ -563,7 +533,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
                 .GroupBy(m => m.Folder)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
-            GroupedSongList = new ObservableCollection<GroupInfoList>(sortedGroups);
+            GroupedSongList = [.. sortedGroups];
         });
     }
 

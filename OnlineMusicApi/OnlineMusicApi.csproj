@@ -8,7 +8,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AssemblyOriginatorKeyFile>../OnlineMusicApi.snk</AssemblyOriginatorKeyFile>
-		<SignAssembly>true</SignAssembly>
+		<SignAssembly>False</SignAssembly>
 		<NoWarn>IDE1006;CS0436;CS3021</NoWarn>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<OutputPath>..\bin\$(Configuration)</OutputPath>
@@ -21,6 +21,7 @@
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<LangVersion>preview</LangVersion>
+		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

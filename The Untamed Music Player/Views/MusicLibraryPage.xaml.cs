@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -14,29 +13,13 @@ public sealed partial class MusicLibraryPage : Page
 
     public MusicLibraryPage()
     {
-        ViewModel = App.GetService<MusicLibraryViewModel>();
         InitializeComponent();
-        Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
-        UpdateContentFrame();
+        Data.MusicLibraryPage = this;
+        ViewModel = App.GetService<MusicLibraryViewModel>();
     }
 
-    private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    public Frame GetContentFrame()
     {
-        if (e.PropertyName == nameof(Data.MusicLibrary.HasMusics))
-        {
-            UpdateContentFrame();
-        }
-    }
-
-    private void UpdateContentFrame()
-    {
-        if (Data.MusicLibrary.HasMusics)
-        {
-            ContentFrame.Navigate(typeof(HaveMusicPage));
-        }
-        else
-        {
-            ContentFrame.Navigate(typeof(NoMusicPage));
-        }
+        return ContentFrame;
     }
 }
