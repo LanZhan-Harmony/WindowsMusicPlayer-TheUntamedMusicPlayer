@@ -1,50 +1,47 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Helpers;
+using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
 
 public class BriefMusicInfo
 {
-    private readonly string _path = "";
     /// <summary>
     /// 文件位置
     /// </summary>
-    public string Path => _path;
+    public string Path { get; set; } = "";
 
-    private readonly string _folder = "";
     /// <summary>
     /// 所处文件夹
     /// </summary>
-    public string Folder => _folder;
+    public string Folder { get; set; } = "";
 
-    private readonly string _itemType = "";
     /// <summary>
     /// 项目类型
     /// </summary>
-    public string ItemType => _itemType;
+    public string ItemType { get; set; } = "";
 
-    private readonly string _album = "";
     /// <summary>
     /// 专辑名, 为空时返回"未知专辑"
     /// </summary>
-    public string Album => _album;
+    public string Album { get; set; } = "";
 
-    private readonly string _title = "";
     /// <summary>
     /// 歌曲名
     /// </summary>
-    public string Title => _title;
+    public string Title { get; set; } = "";
 
-    private string[] _artists = [];
     /// <summary>
     /// 参与创作的艺术家数组
     /// </summary>
     public string[] Artists
     {
-        get => _artists;
+        get;
         set
         {
             if (value?.Length > 0)
@@ -77,20 +74,19 @@ public class BriefMusicInfo
                         tempArtists = [.. tempArtists, .. new[] { i }];
                     }
                 }
-                _artists = [.. tempArtists.Distinct()];
+                field = [.. tempArtists.Distinct()];
             }
             else
             {
-                _artists = [];
+                field = [];
             }
         }
-    }
+    } = [];
 
-    private readonly string _artistsStr = "";
     /// <summary>
     /// 参与创作的艺术家名, 为空时返回"未知艺术家"
     /// </summary>
-    public string ArtistsStr => _artistsStr;
+    public string ArtistsStr { get; set; } = "";
 
     /// <summary>
     /// 获取参与创作的艺术家名
@@ -98,12 +94,12 @@ public class BriefMusicInfo
     /// <returns></returns>
     public string GetArtistsStr()
     {
-        if (_artists == null || _artists.Length == 0)
+        if (Artists.Length is 0)
         {
             return "MusicInfo_UnknownArtist".GetLocalized();
         }
         var sb = new StringBuilder();
-        foreach (var artist in _artists)
+        foreach (var artist in Artists)
         {
             sb.Append(artist);
             sb.Append(", ");
@@ -115,21 +111,18 @@ public class BriefMusicInfo
         return sb.ToString();
     }
 
-    private readonly TimeSpan _duration;
     /// <summary>
     /// 时长
     /// </summary>
-    public TimeSpan Duration => _duration;
+    public TimeSpan Duration
+    {
+        get; set;
+    }
 
-    private string _durationStr = "";
     /// <summary>
     /// 时长字符串
     /// </summary>
-    public string DurationStr
-    {
-        get => _durationStr;
-        set => _durationStr = value;
-    }
+    public string DurationStr { get; set; } = "";
 
     /// <summary>
     /// 获取时长字符串
@@ -137,27 +130,21 @@ public class BriefMusicInfo
     /// <returns></returns>
     public string GetDurationStr()
     {
-        if (Duration.Hours > 0)
-        {
-            return $"{Duration:hh\\:mm\\:ss}";
-        }
-        else
-        {
-            return $"{Duration:mm\\:ss}";
-        }
+        return Duration.Hours > 0 ? $"{Duration:hh\\:mm\\:ss}" : $"{Duration:mm\\:ss}";
     }
 
-    private readonly ushort _year;
     /// <summary>
     /// 发行年份
     /// </summary>
-    public ushort Year => _year;
+    public ushort Year
+    {
+        get; set;
+    }
 
-    private readonly string _yearStr = "";
     /// <summary>
     /// 发行年份字符串, 为0时返回空字符串
     /// </summary>
-    public string YearStr => _yearStr;
+    public string YearStr { get; set; } = "";
 
     /// <summary>
     /// 获取发行年份字符串
@@ -165,30 +152,26 @@ public class BriefMusicInfo
     /// <returns></returns>
     public string GetYearStr()
     {
-        return Year == 0 ? "" : Year.ToString();
+        return Year is 0 ? "" : Year.ToString();
     }
 
-    private readonly BitmapImage? _cover;
     /// <summary>
     /// 封面(可能为空)
     /// </summary>
-    public BitmapImage? Cover => _cover;
+    public BitmapImage? Cover
+    {
+        get; set;
+    }
 
-    private readonly string[] _genre = [];
     /// <summary>
     /// 流派数组
     /// </summary>
-    public string[] Genre => _genre;
+    public string[] Genre { get; set; } = [];
 
-    private string _genreStr = "";
     /// <summary>
     /// 流派字符串, 为空时返回"未知流派"
     /// </summary>
-    public string GenreStr
-    {
-        get => _genreStr;
-        set => _genreStr = value;
-    }
+    public string GenreStr { get; set; } = "";
 
     /// <summary>
     /// 获取流派字符串
@@ -196,12 +179,12 @@ public class BriefMusicInfo
     /// <returns></returns>
     public string GetGenre()
     {
-        if (_genre == null || _genre.Length == 0)
+        if (Genre.Length == 0)
         {
             return "MusicInfo_UnknownGenre".GetLocalized();
         }
         var sb = new StringBuilder();
-        foreach (var genre in _genre)
+        foreach (var genre in Genre)
         {
             sb.Append(genre);
             sb.Append(", ");
@@ -213,17 +196,19 @@ public class BriefMusicInfo
         return sb.ToString();
     }
 
-    private readonly long _modifiedDate;
     /// <summary>
     /// 修改日期
     /// </summary>
-    public long ModifiedDate => _modifiedDate;
+    public long ModifiedDate
+    {
+        get; set;
+    }
 
     /// <summary>
     /// 获取文本前景色
     /// </summary>
     /// <param name="currentMusic"></param>
-    /// <param name="elementTheme"></param>
+    /// <param name="isDarkTheme"></param>
     /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
     public SolidColorBrush GetTextForeground(DetailedMusicInfo currentMusic, bool isDarkTheme)
     {
@@ -238,7 +223,6 @@ public class BriefMusicInfo
         return new SolidColorBrush(isDarkTheme ? Colors.White : Colors.Black);
     }
 
-
     public BriefMusicInfo()
     {
     }
@@ -248,62 +232,124 @@ public class BriefMusicInfo
         try
         {
             var musicFile = TagLib.File.Create(path);
-            _path = path;
-            _modifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
-            _itemType = System.IO.Path.GetExtension(path).ToLower();
-            _album = musicFile.Tag.Album ?? "MusicInfo_UnknownAlbum".GetLocalized();
-            _title = string.IsNullOrEmpty(musicFile.Tag.Title) ? System.IO.Path.GetFileNameWithoutExtension(path) : musicFile.Tag.Title;
+            Path = path;
+            ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
+            ItemType = System.IO.Path.GetExtension(path).ToLower();
+            Album = musicFile.Tag.Album ?? "MusicInfo_UnknownAlbum".GetLocalized();
+            Title = string.IsNullOrEmpty(musicFile.Tag.Title) ? System.IO.Path.GetFileNameWithoutExtension(path) : musicFile.Tag.Title;
             Artists = musicFile.Tag.AlbumArtists.Concat(musicFile.Tag.Performers).ToArray().Length != 0 ? [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers] : ["MusicInfo_UnknownArtist".GetLocalized()];
-            _artistsStr = GetArtistsStr();
-            _year = (ushort)musicFile.Tag.Year;
-            _yearStr = GetYearStr();
-            _genre = musicFile.Tag.Genres.Length != 0 ? [.. musicFile.Tag.Genres] : ["MusicInfo_UnknownGenre".GetLocalized()];
-            _genreStr = GetGenre();
+            ArtistsStr = GetArtistsStr();
+            Year = (ushort)musicFile.Tag.Year;
+            YearStr = GetYearStr();
+            Genre = musicFile.Tag.Genres.Length != 0 ? [.. musicFile.Tag.Genres] : ["MusicInfo_UnknownGenre".GetLocalized()];
+            GenreStr = GetGenre();
+            Duration = musicFile.Properties.Duration;
+            DurationStr = GetDurationStr();
+        }
+        catch
+        {
+            Path = path;
+            ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
+            ItemType = System.IO.Path.GetExtension(path).ToLower();
+            Album = "MusicInfo_UnknownAlbum".GetLocalized();
+            Title = System.IO.Path.GetFileNameWithoutExtension(path);
+            Artists = ["MusicInfo_UnknownArtist".GetLocalized()];
+            Genre = ["MusicInfo_UnknownGenre".GetLocalized()];
+            GenreStr = GetGenre();
+            Duration = TimeSpan.Zero;
+            DurationStr = GetDurationStr();
+        }
+    }
+
+    // 异步工厂方法
+    public static async Task<BriefMusicInfo> CreateAsync(string path, string folder)
+    {
+        var info = new BriefMusicInfo();
+        Task? coverTask = null;
+        try
+        {
+            var musicFile = TagLib.File.Create(path);
             if (musicFile.Tag.Pictures != null && musicFile.Tag.Pictures.Length != 0)
             {
                 var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
-                using var stream = new MemoryStream(coverBuffer);
-                stream.Seek(0, SeekOrigin.Begin);
-                _cover = new BitmapImage
+                coverTask = info.LoadCoverAsync(coverBuffer);
+            }
+            info.Path = path;
+            info.Folder = folder;
+            info.ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
+            info.ItemType = System.IO.Path.GetExtension(path).ToLower();
+            info.Album = musicFile.Tag.Album ?? "MusicInfo_UnknownAlbum".GetLocalized();
+            info.Title = string.IsNullOrEmpty(musicFile.Tag.Title) ? System.IO.Path.GetFileNameWithoutExtension(path) : musicFile.Tag.Title;
+            info.Artists = [.. musicFile.Tag.AlbumArtists.Concat(musicFile.Tag.Performers).Distinct()];
+            info.ArtistsStr = info.GetArtistsStr();
+            info.Year = (ushort)musicFile.Tag.Year;
+            info.YearStr = info.GetYearStr();
+            info.Genre = musicFile.Tag.Genres.Length != 0 ? [.. musicFile.Tag.Genres] : ["MusicInfo_UnknownGenre".GetLocalized()];
+            info.GenreStr = info.GetGenre();
+            info.Duration = musicFile.Properties.Duration;
+            info.DurationStr = info.GetDurationStr();
+
+            // 等待 LoadCoverAsync 任务完成
+            if (coverTask != null)
+            {
+                await coverTask;
+            }
+        }
+        catch
+        {
+            // 设置默认值
+            info.Path = path;
+            info.Folder = folder;
+            info.ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
+            info.ItemType = System.IO.Path.GetExtension(path).ToLower();
+            info.Album = "MusicInfo_UnknownAlbum".GetLocalized();
+            info.Title = System.IO.Path.GetFileNameWithoutExtension(path);
+            info.Artists = ["MusicInfo_UnknownArtist".GetLocalized()];
+            info.Genre = ["MusicInfo_UnknownGenre".GetLocalized()];
+            info.GenreStr = info.GetGenre();
+            info.Duration = TimeSpan.Zero;
+            info.DurationStr = info.GetDurationStr();
+        }
+        return info;
+    }
+
+    // 异步加载封面方法
+    private Task LoadCoverAsync(byte[] coverBuffer)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
+        {
+            try
+            {
+                using var stream = new InMemoryRandomAccessStream();
+                await stream.WriteAsync(coverBuffer.AsBuffer());
+                stream.Seek(0);
+                var bitmap = new BitmapImage
                 {
                     DecodePixelWidth = 160,
                     DecodePixelHeight = 160
                 };
-                _cover.SetSource(stream.AsRandomAccessStream());
+                await bitmap.SetSourceAsync(stream);
+                Cover = bitmap;
+                tcs.SetResult(true);
             }
-            _duration = musicFile.Properties.Duration;
-            _durationStr = GetDurationStr();
-        }
-        catch (Exception)
-        {
-            _path = path;
-            _modifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
-            _itemType = System.IO.Path.GetExtension(path).ToLower();
-            _album = "MusicInfo_UnknownAlbum".GetLocalized();
-            _title = System.IO.Path.GetFileNameWithoutExtension(path);
-            Artists = ["MusicInfo_UnknownArtist".GetLocalized()];
-            _genre = ["MusicInfo_UnknownGenre".GetLocalized()];
-            _genreStr = GetGenre();
-            _duration = TimeSpan.Zero;
-            _durationStr = GetDurationStr();
-        }
-    }
-
-    public BriefMusicInfo(string path, string folder) : this(path)
-    {
-        _folder = folder;
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        return tcs.Task;
     }
 }
 
 public class DetailedMusicInfo : BriefMusicInfo
 {
-    private string[] _albumArtists = [];
     /// <summary>
     /// 专辑艺术家数组
     /// </summary>
     public string[] AlbumArtists
     {
-        get => _albumArtists;
+        get;
         set
         {
             if (value?.Length > 0)
@@ -336,14 +382,14 @@ public class DetailedMusicInfo : BriefMusicInfo
                         tempArtists = [.. tempArtists, .. new[] { i }];
                     }
                 }
-                _albumArtists = [.. tempArtists.Distinct()];
+                field = [.. tempArtists.Distinct()];
             }
             else
             {
-                _albumArtists = [];
+                field = [];
             }
         }
-    }
+    } = [];
 
     /// <summary>
     /// 获取专辑艺术家字符串
@@ -351,12 +397,12 @@ public class DetailedMusicInfo : BriefMusicInfo
     /// <returns></returns>
     public string GetAlbumArtistsStr()
     {
-        if (_albumArtists == null || _albumArtists.Length == 0)
+        if (AlbumArtists == null || AlbumArtists.Length == 0)
         {
             return "";
         }
         var sb = new StringBuilder();
-        foreach (var artist in _albumArtists)
+        foreach (var artist in AlbumArtists)
         {
             sb.Append(artist);
             sb.Append(", ");
@@ -368,11 +414,10 @@ public class DetailedMusicInfo : BriefMusicInfo
         return sb.ToString();
     }
 
-    public readonly string _artistAndAlbumStr = "";
     /// <summary>
     /// 艺术家和专辑名字符串
     /// </summary>
-    public string ArtistAndAlbumStr => _artistAndAlbumStr;
+    public string ArtistAndAlbumStr { get; set; } = "";
 
     /// <summary>
     /// 获取艺术家和专辑名字符串
@@ -392,29 +437,42 @@ public class DetailedMusicInfo : BriefMusicInfo
         return $"{artistsStr} • {Album}";
     }
 
-    private readonly BitmapImage? _cover;
     /// <summary>
     /// 清晰封面(可能为空)
     /// </summary>
-    public new BitmapImage? Cover => _cover;
+    public new BitmapImage? Cover
+    {
+        get; set;
+    }
 
-    private readonly int _bitRate;
+    /// <summary>
+    /// 封面缓冲数据
+    /// </summary>
+    public byte[] CoverBuffer
+    {
+        get; set;
+    } = [];
+
     /// <summary>
     /// 比特率
     /// </summary>
-    public int BitRate => _bitRate;
+    public int BitRate
+    {
+        get; set;
+    }
 
-    private readonly int _track;
     /// <summary>
     /// 曲目
     /// </summary>
-    public int Track => _track;
+    public int Track
+    {
+        get; set;
+    }
 
-    private readonly string _lyric = "";
     /// <summary>
     /// 歌词
     /// </summary>
-    public string Lyric => _lyric;
+    public string Lyric { get; set; } = "";
 
     public DetailedMusicInfo()
     {
@@ -426,28 +484,29 @@ public class DetailedMusicInfo : BriefMusicInfo
         {
             var musicFile = TagLib.File.Create(path);
             AlbumArtists = [.. musicFile.Tag.AlbumArtists];
-            _artistAndAlbumStr = GetArtistAndAlbumStr();
+            ArtistAndAlbumStr = GetArtistAndAlbumStr();
             if (musicFile.Tag.Pictures != null && musicFile.Tag.Pictures.Length != 0)
             {
                 var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
+                CoverBuffer = coverBuffer;
                 using var stream = new MemoryStream(coverBuffer);
                 stream.Seek(0, SeekOrigin.Begin);
-                _cover = new BitmapImage
+                Cover = new BitmapImage
                 {
                     DecodePixelWidth = 400,
                     DecodePixelHeight = 400
                 };
-                _cover.SetSource(stream.AsRandomAccessStream());
+                Cover.SetSource(stream.AsRandomAccessStream());
             }
-            _track = (int)musicFile.Tag.Track;
-            _lyric = musicFile.Tag.Lyrics ?? "";
-            _bitRate = musicFile.Properties.AudioBitrate;
+            Track = (int)musicFile.Tag.Track;
+            Lyric = musicFile.Tag.Lyrics ?? "";
+            BitRate = musicFile.Properties.AudioBitrate;
         }
-        catch (Exception)
+        catch
         {
             AlbumArtists = [];
-            _track = 0;
-            _bitRate = 0;
+            Track = 0;
+            BitRate = 0;
         }
     }
 }

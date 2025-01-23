@@ -3,61 +3,62 @@
 namespace The_Untamed_Music_Player.Models;
 public class ArtistInfo
 {
-    private readonly string _name = "";
+    private readonly HashSet<string> _albums = [];
+
     /// <summary>
     /// 艺术家名
     /// </summary>
-    public string Name => _name;
+    public string Name
+    {
+        get; set;
+    } = "";
 
-    private readonly HashSet<string> _albums = [];
 
-    public readonly string? _genre;
     /// <summary>
     /// 艺术家流派
     /// </summary>
-    public string? Genre => _genre;
+    public string Genre
+    {
+        get; set;
+    } = "";
 
-    private readonly BitmapImage? _cover;
     /// <summary>
     /// 艺术家封面
     /// </summary>
-    public BitmapImage? Cover => _cover;
+    public BitmapImage? Cover
+    {
+        get; set;
+    }
 
-    private TimeSpan _totalDuration;
     /// <summary>
     /// 艺术家歌曲总时长
     /// </summary>
     public TimeSpan TotalDuration
     {
-        get => _totalDuration;
-        set => _totalDuration = value;
+        get; set;
     }
 
-    private int _totalMusicNum;
     /// <summary>
     /// 艺术家歌曲总数
     /// </summary>
     public int TotalMusicNum
     {
-        get => _totalMusicNum;
-        set => _totalMusicNum = value;
+        get; set;
     }
 
-    private int _totalAlbumNum;
     /// <summary>
     /// 艺术家专辑总数
     /// </summary>
     public int TotalAlbumNum
     {
-        get => _totalAlbumNum;
-        set => _totalAlbumNum = value;
+        get; set;
     }
 
     public ArtistInfo(BriefMusicInfo briefMusicInfo, string name)
     {
-        _name = name;
+        Name = name;
         TotalDuration = briefMusicInfo.Duration;
-        _genre = briefMusicInfo.GenreStr;
+        Genre = briefMusicInfo.GenreStr;
         TotalMusicNum = 1;
         TotalAlbumNum = 1;
         _albums.Add(briefMusicInfo.Album);

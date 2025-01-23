@@ -1,5 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -8,6 +11,7 @@ using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.System.Threading;
 
 namespace The_Untamed_Music_Player.Models;
@@ -360,6 +364,7 @@ public class MusicPlayer : INotifyPropertyChanged
         _localSettingsService = App.GetService<ILocalSettingsService>();
         Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
         Player.MediaEnded += OnPlaybackStopped;
+        Player.MediaFailed += OnPlaybackFailed;
         Player.Volume = CurrentVolume / 100;
         Player.CommandManager.IsEnabled = false;
         SystemControls = Player.SystemMediaTransportControls;
@@ -423,7 +428,7 @@ public class MusicPlayer : INotifyPropertyChanged
     /// 为播放器设置音乐源
     /// </summary>
     /// <param name="path"></param>
-    private void SetSource(string path)
+    private async void SetSource(string path)
     {
         lock (mediaLock)
         {
@@ -438,11 +443,31 @@ public class MusicPlayer : INotifyPropertyChanged
                 Total = Player.PlaybackSession.NaturalDuration;
                 DisplayUpdater.MusicProperties.Title = CurrentMusic.Title;
                 DisplayUpdater.MusicProperties.Artist = CurrentMusic.ArtistsStr == "未知艺术家" ? "" : CurrentMusic.ArtistsStr;
-                DisplayUpdater.Update();
                 positionUpdateTimer = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler, TimeSpan.FromMilliseconds(250), UpdateTimerDestoyed);
             }
             catch { }
         }
+
+        if (CurrentMusic.Cover != null && CurrentMusic.CoverBuffer.Length != 0)
+        {
+            try
+            {
+                var tempFolder = ApplicationData.Current.TemporaryFolder;
+                var coverFileName = "Cover.jpg";
+                var coverFile = await tempFolder.CreateFileAsync(coverFileName, CreationCollisionOption.ReplaceExisting);
+                await FileIO.WriteBytesAsync(coverFile, CurrentMusic.CoverBuffer);
+                DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(coverFile);
+            }
+            catch
+            {
+                DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/NoCover.png"));
+            }
+        }
+        else
+        {
+            DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/NoCover.png"));
+        }
+        DisplayUpdater.Update();
     }
 
     /// <summary>
@@ -603,6 +628,26 @@ public class MusicPlayer : INotifyPropertyChanged
                 {
                     PlayNextSong();
                 }
+            }
+        });
+    }
+
+    /// <summary>
+    /// 播放失败事件
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void OnPlaybackFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (RepeatMode == 2)
+            {
+                Stop();
+            }
+            else
+            {
+                PlayNextSong();
             }
         });
     }

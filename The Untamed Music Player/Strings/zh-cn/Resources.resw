@@ -343,7 +343,7 @@
     <value>重复: 关</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>无, 云母 (仅Win11), 另类云母 (仅Win11), 桌面亚克力, 基础亚克力, 薄亚克力, 模糊, 透明, 跑马灯</value>
+    <value>白雪观, 云萍城, 莲花坞, 云深不知处, 金鳞台, 彩衣镇, 义城, 冷泉, 乱葬岗</value>
   </data>
   <data name="LocalSongs_SortBy" xml:space="preserve">
     <value>A-Z, Z-A, 歌手 (升序), 歌手 (降序), 专辑 (升序), 专辑 (降序), 发行年份 (升序), 发行年份 (降序), 已添加日期 (升序), 已添加日期 (降序), 文件夹 (升序), 文件夹 (降序)</value>
@@ -505,7 +505,7 @@
     <value>搜索在线歌曲</value>
   </data>
   <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
-    <value>亮度不透明度</value>
+    <value>不透明度</value>
   </data>
   <data name="Settings_Reset.Content" xml:space="preserve">
     <value>重置</value>

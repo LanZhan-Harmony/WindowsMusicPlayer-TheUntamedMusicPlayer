@@ -60,7 +60,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
         set => _groupMode = value;
     }
 
-    private ConcurrentBag<BriefMusicInfo> _songList = Data.MusicLibrary.Musics;
+    private ConcurrentBag<BriefMusicInfo> _songList = Data.MusicLibrary.Songs;
 
     public ConcurrentBag<BriefMusicInfo> SongList
     {
@@ -105,6 +105,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
     {
         LoadModeAndSongList();
         Data.LocalSongsViewModel = this;
+        Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
     }
 
     public async void LoadModeAndSongList()
@@ -116,6 +117,14 @@ public class LocalSongsViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(NotGroupedSongList));
         OnPropertyChanged(nameof(Genres));
         IsProgressRingActive = false;
+    }
+
+    private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if ((e.PropertyName == "LibraryReloaded"))
+        {
+            LoadModeAndSongList();
+        }
     }
 
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
