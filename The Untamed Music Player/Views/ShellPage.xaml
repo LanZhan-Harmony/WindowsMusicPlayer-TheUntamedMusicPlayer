@@ -93,7 +93,25 @@
                     <Frame x:Name="NavigationFrame"/>
                 </Grid>
             </NavigationView>
+            <FlyoutPresenter Width="454" Height="100"
+                             Margin="20" HorizontalAlignment="Right"
+                             VerticalAlignment="Bottom"
+                             Background="{StaticResource ControlOnImageFillColorSecondaryBrush}"
+                             Canvas.ZIndex="1" Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="368"/>
+                        <ColumnDefinition Width="52"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="1"
+                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Background="Transparent" BorderBrush="Transparent">
+                        <FontIcon FontSize="16" Glyph="&#xE711;"/>
+                    </Button>
+                    <TextBlock Grid.Column="0"
+                               Text="无法打开，因为当前无法访问你的存储。请稍等片刻，然后再试。" TextWrapping="WrapWholeWords"/>
+                </Grid>
+            </FlyoutPresenter>
         </Grid>
-
     </Grid>
 </Page>

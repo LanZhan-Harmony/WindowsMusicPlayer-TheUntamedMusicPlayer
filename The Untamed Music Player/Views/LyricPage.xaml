@@ -68,8 +68,7 @@
               Grid.Row="0"
               Height="33"
               VerticalAlignment="Center"
-              Canvas.ZIndex="1" 
-              IsHitTestVisible="True">
+              Canvas.ZIndex="1" IsHitTestVisible="True">
             <StackPanel Orientation="Horizontal">
                 <Button Width="48" Height="39"
                         AccessKey="A"
@@ -82,7 +81,8 @@
                 <TextBlock x:Name="AppTitleBarText"
                            Margin="12,0,0,0" VerticalAlignment="Center"
                            Style="{StaticResource CaptionTextBlockStyle}"
-                           Text="{x:Bind model:Data.AppDisplayName}" TextWrapping="NoWrap"/>
+                           Text="{x:Bind model:Data.AppDisplayName}"
+                           TextWrapping="NoWrap"/>
             </StackPanel>
         </Grid>
         <Grid x:Name="ContentGrid"
