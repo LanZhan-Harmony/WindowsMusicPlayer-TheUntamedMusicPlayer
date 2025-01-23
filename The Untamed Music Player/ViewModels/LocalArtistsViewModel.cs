@@ -67,6 +67,7 @@ public class LocalArtistsViewModel : INotifyPropertyChanged
     public LocalArtistsViewModel()
     {
         LoadModeAndArtistList();
+        Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
     }
 
     public async void LoadModeAndArtistList()
@@ -75,6 +76,14 @@ public class LocalArtistsViewModel : INotifyPropertyChanged
         await SortArtists();
         OnPropertyChanged(nameof(GroupedArtistList));
         IsProgressRingActive = false;
+    }
+
+    private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if ((e.PropertyName == "LibraryReloaded"))
+        {
+            LoadModeAndArtistList();
+        }
     }
 
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -7,31 +7,28 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public partial class MusicLibraryViewModel : ObservableRecipient
 {
+    /// <summary>
+    /// 是否已经导航到了页面
+    /// </summary>
     private bool _hasNavigated = false;
 
-    private bool _isProgressRingActive = true;
-    public bool IsProgressRingActive
-    {
-        get => _isProgressRingActive;
-        set
-        {
-            _isProgressRingActive = value;
-            OnPropertyChanged(nameof(IsProgressRingActive));
-        }
-    }
+    /// <summary>
+    /// 是否显示加载进度环
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsProgressRingActive { get; set; } = true;
 
     public MusicLibraryViewModel()
     {
-        InitializeLibraryAsync();
+        _ = InitializeLibraryAsync();
     }
 
-    private async void InitializeLibraryAsync()
+    private async Task InitializeLibraryAsync()
     {
         Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
         if (!Data.hasMusicLibraryLoaded)
         {
-            await Data.MusicLibrary.LoadLibrary();
-            Data.hasMusicLibraryLoaded = true;
+            await Task.Run(Data.MusicLibrary.LoadLibraryAsync);
         }
         IsProgressRingActive = false;
         if (!_hasNavigated)
@@ -51,13 +48,6 @@ public partial class MusicLibraryViewModel : ObservableRecipient
     private void UpdateContentFrame()
     {
         _hasNavigated = true;
-        if (Data.MusicLibrary.HasMusics)
-        {
-            Data.MusicLibraryPage?.GetContentFrame().Navigate(typeof(HaveMusicPage));
-        }
-        else
-        {
-            Data.MusicLibraryPage?.GetContentFrame().Navigate(typeof(NoMusicPage));
-        }
+        Data.MusicLibraryPage?.GetContentFrame().Navigate(Data.MusicLibrary.HasMusics ? typeof(HaveMusicPage) : typeof(NoMusicPage));
     }
 }

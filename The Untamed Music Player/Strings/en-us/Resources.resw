@@ -352,7 +352,7 @@
     <value>Repeat: Off</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>None, Mica (Only Win11), Mica Alt (Only Win11), Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
+    <value>None, Mica, Mica Alt, Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
   </data>
   <data name="LocalSongs_SortBy" xml:space="preserve">
     <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Album (Asc), Album (Desc), Release year (Asc), Release year (Desc), Date added (Asc), Date added (Desc), Folder (Asc), Folder (Desc)</value>

@@ -57,11 +57,11 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         // 设置窗口大小
         appWindow.Resize(new SizeInt32(windowWidth, windowHeight));
 
-        var presenter = appWindow.Presenter as OverlappedPresenter;
-        if (presenter != null)
-        {
-            presenter.IsAlwaysOnTop = true;
-        }
+        /* var presenter = appWindow.Presenter as OverlappedPresenter;
+         if (presenter != null)
+         {
+             presenter.IsAlwaysOnTop = true;
+         }*/
 
         /*if (Content is FrameworkElement rootElement)
         {

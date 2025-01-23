@@ -5,33 +5,39 @@ using The_Untamed_Music_Player.Helpers;
 namespace The_Untamed_Music_Player.Models;
 public class AlbumInfo
 {
-    //专辑名
-    private readonly string _name = "";
-    public string Name => _name;
+    /// <summary>
+    /// 专辑名
+    /// </summary>
+    public string Name
+    {
+        get; set;
+    } = "";
 
-    //专辑封面路径
-    private readonly BitmapImage? _cover;
-    public BitmapImage? Cover => _cover;
+    /// <summary>
+    /// 专辑封面
+    /// </summary>
 
-    private string[] _artists = [];
+    public BitmapImage? Cover
+    {
+        get; set;
+    }
+
     /// <summary>
     /// 专辑艺术家
     /// </summary>
     public string[] Artists
     {
-        get => _artists;
-        set => _artists = value;
-    }
+        get; set;
+    } = [];
 
-    private string _artistsStr = "";
     /// <summary>
     /// 专辑艺术家字符串
     /// </summary>
     public string ArtistsStr
     {
-        get => _artistsStr;
-        set => _artistsStr = value;
-    }
+        get;
+        set;
+    } = "";
 
     /// <summary>
     /// 获取专辑艺术家字符串
@@ -39,12 +45,12 @@ public class AlbumInfo
     /// <returns></returns>
     public string GetArtistsStr()
     {
-        if (_artists == null || _artists.Length == 0)
+        if (Artists == null || Artists.Length == 0)
         {
             return "MusicInfo_UnknownArtist".GetLocalized();
         }
         var sb = new StringBuilder();
-        foreach (var artist in _artists)
+        foreach (var artist in Artists)
         {
             sb.Append(artist);
             sb.Append(", ");
@@ -56,56 +62,58 @@ public class AlbumInfo
         return sb.ToString();
     }
 
-    private int _totalNum;
     /// <summary>
     /// 专辑包含的歌曲数量
     /// </summary>
     public int TotalNum
     {
-        get => _totalNum;
-        set => _totalNum = value;
+        get; set;
     }
 
-    private TimeSpan _totalDuration;
     /// <summary>
     /// 专辑包含的歌曲总时长
     /// </summary>
     public TimeSpan TotalDuration
     {
-        get => _totalDuration;
-        set => _totalDuration = value;
+        get; set;
     }
 
-    private readonly ushort _year;
     /// <summary>
     /// 专辑发布年份
     /// </summary>
-    public ushort Year => _year;
+    public ushort Year
+    {
+        get; set;
+    }
 
-    private readonly long _modifiedDate;
     /// <summary>
     /// 修改日期
     /// </summary>
-    public long ModifiedDate => _modifiedDate;
+    public long ModifiedDate
+    {
+        get; set;
+    }
 
-    private readonly string _genreStr = "";
     /// <summary>
     /// 专辑流派字符串
     /// </summary>
-    public string GenreStr => _genreStr;
+    public string GenreStr
+    {
+        get; set;
+    } = "";
 
     public AlbumInfo()
     {
     }
     public AlbumInfo(BriefMusicInfo briefmusicInfo)
     {
-        _name = briefmusicInfo.Album;
-        _year = briefmusicInfo.Year;
-        _modifiedDate = briefmusicInfo.ModifiedDate;
-        _cover = briefmusicInfo.Cover;
+        Name = briefmusicInfo.Album;
+        Year = briefmusicInfo.Year;
+        ModifiedDate = briefmusicInfo.ModifiedDate;
+        Cover = briefmusicInfo.Cover;
         Artists = briefmusicInfo.Artists;
-        _artistsStr = briefmusicInfo.ArtistsStr;
-        _genreStr = briefmusicInfo.GenreStr;
+        ArtistsStr = briefmusicInfo.ArtistsStr;
+        GenreStr = briefmusicInfo.GenreStr;
         TotalDuration = briefmusicInfo.Duration;
         TotalNum = 1;
     }

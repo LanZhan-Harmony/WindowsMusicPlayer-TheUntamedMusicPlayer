@@ -76,6 +76,10 @@ public static class Data
     {
         get; set;
     }
+    public static HaveMusicViewModel? HaveMusicViewModel
+    {
+        get; set;
+    }
     public static LocalSongsViewModel? LocalSongsViewModel
     {
         get; set;

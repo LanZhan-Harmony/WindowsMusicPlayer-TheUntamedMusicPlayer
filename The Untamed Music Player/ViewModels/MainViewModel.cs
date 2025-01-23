@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -11,9 +12,8 @@ using WinRT;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class MainViewModel : INotifyPropertyChanged
+public partial class MainViewModel : ObservableRecipient
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
     private readonly MainWindow _mainMindow;
     private readonly ICompositionSupportsSystemBackdrop? _backdropTarget;
@@ -22,10 +22,7 @@ public class MainViewModel : INotifyPropertyChanged
         IsInputActive = true,
     };
     private ISystemBackdropControllerWithTargets? _currentBackdropController;
-    public void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    private bool _previousIsDarkTheme = false;
 
     public bool FirstStart { get; set; } = true;
     public byte SelectedMaterial { get; set; } = 3;
@@ -33,16 +30,10 @@ public class MainViewModel : INotifyPropertyChanged
     public byte LuminosityOpacity { get; set; } = 85;
     public Color TintColor { get; set; } = default;
 
-    private bool _previousIsDarkTheme = false;
-    private bool _isDarkTheme;
-    public bool IsDarkTheme
+    [ObservableProperty]
+    public partial bool IsDarkTheme
     {
-        get => _isDarkTheme;
-        set
-        {
-            _isDarkTheme = value;
-            OnPropertyChanged(nameof(IsDarkTheme));
-        }
+        get; set;
     }
 
     public MainViewModel()

@@ -101,6 +101,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
     {
         LoadModeAndAlbumList();
         Data.LocalAlbumsViewModel = this;
+        Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
     }
 
     public async void LoadModeAndAlbumList()
@@ -112,6 +113,14 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(NotGroupedAlbumList));
         OnPropertyChanged(nameof(Genres));
         IsProgressRingActive = false;
+    }
+
+    private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if ((e.PropertyName == "LibraryReloaded"))
+        {
+            LoadModeAndAlbumList();
+        }
     }
 
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

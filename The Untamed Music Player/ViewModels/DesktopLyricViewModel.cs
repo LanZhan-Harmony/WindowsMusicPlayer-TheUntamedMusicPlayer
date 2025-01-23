@@ -54,5 +54,4 @@ public class DesktopLyricViewModel
     {
         return textBlockHeight + 20;
     }
-
 }
