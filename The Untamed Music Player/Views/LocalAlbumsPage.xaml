@@ -46,7 +46,7 @@
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Play">
+                        <MenuFlyoutItem x:Uid="LocalSongs_Play" Width="216">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE768;"/>
                             </MenuFlyoutItem.Icon>
@@ -61,7 +61,7 @@
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xE710;"/>
                             </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue">
+                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue" Width="216">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE90B;"/>
                                 </MenuFlyoutItem.Icon>

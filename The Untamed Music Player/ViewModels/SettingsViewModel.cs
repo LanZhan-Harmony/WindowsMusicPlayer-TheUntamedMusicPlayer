@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -18,134 +17,134 @@ using Windows.UI;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyChanged
+public partial class SettingsViewModel : ObservableRecipient
 {
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILocalSettingsService _localSettingsService;
-    public new event PropertyChangedEventHandler? PropertyChanged;
-
-    protected new void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    [ObservableProperty]
-    public ElementTheme _elementTheme;
-
-    [ObservableProperty]
-    private string _versionDescription;
 
     public ICommand SwitchThemeCommand
     {
         get;
     }
 
+    /// <summary>
+    /// 是否显示文件夹为空信息
+    /// </summary>
     public Visibility EmptyFolderMessageVisibility => Data.MusicLibrary.Folders?.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
 
-    private List<string> _fonts = [];
-    public List<string> Fonts
-    {
-        get => _fonts;
-        set => _fonts = value;
-    }
-
-    private FontFamily _selectedFont = new("Microsoft YaHei");
-    public FontFamily SelectedFont
-    {
-        get => _selectedFont;
-        set
-        {
-            _selectedFont = value;
-            OnPropertyChanged(nameof(SelectedFont));
-            SaveSelectedFontAsync(value.Source); // 保存字体设置
-        }
-    }
-
-    private List<string> _materials = [.. "Settings_Materials".GetLocalized().Split(", ")];
-    public List<string> Materials
-    {
-        get => _materials;
-        set => _materials = value;
-    }
-
-    private byte _selectedMaterial = Data.MainViewModel?.SelectedMaterial ?? 3;
-    public byte SelectedMaterial
-    {
-        get => _selectedMaterial;
-        set
-        {
-            _selectedMaterial = value;
-            SaveSelectedMaterialAsync(value);
-        }
-    }
-
-    private bool _isFallBack = Data.MainViewModel?.IsFallBack ?? true;
+    /// <summary>
+    /// 是否启用窗口失去焦点回退
+    /// </summary>
     public bool IsFallBack
     {
-        get => _isFallBack;
+        get;
         set
         {
-            _isFallBack = value;
+            field = value;
             if (Data.MainViewModel != null)
             {
                 Data.MainViewModel.IsFallBack = value;
             }
             SaveIsFallBackAsync(value);
         }
-    }
+    } = Data.MainViewModel?.IsFallBack ?? true;
 
-    private byte _luminosityOpacity = Data.MainViewModel?.LuminosityOpacity ?? 100;
-    public byte LuminosityOpacity
-    {
-        get => _luminosityOpacity;
-        set
-        {
-            _luminosityOpacity = value;
-            OnPropertyChanged(nameof(LuminosityOpacity));
-            if (Data.MainViewModel != null)
-            {
-                Data.MainViewModel.LuminosityOpacity = value;
-            }
-            SaveLuminosityOpacityAsync(value);
-        }
-    }
-
-    private Color _tintColor = Data.MainViewModel?.TintColor ?? Colors.White;
-    public Color TintColor
-    {
-        get => _tintColor;
-        set
-        {
-            if (_tintColor != value)
-            {
-                _tintColor = value;
-                OnPropertyChanged(nameof(TintColor));
-                if (Data.MainViewModel != null)
-                {
-                    Data.MainViewModel.TintColor = value;
-                }
-                SaveTintColorAsync(value);
-            }
-        }
-    }
-
-    private bool _isLyricBackgroundVisible;
+    /// <summary>
+    /// 是否显示歌词背景
+    /// </summary>
     public bool IsLyricBackgroundVisible
     {
-        get => _isLyricBackgroundVisible;
+        get;
         set
         {
-            _isLyricBackgroundVisible = value;
+            field = value;
             SaveLyricBackgroundVisibilityAsync(value);
         }
+    }
+
+    /// <summary>
+    /// 字体列表
+    /// </summary>
+    public List<string> Fonts { get; set; } = [];
+
+    /// <summary>
+    /// 窗口材质列表
+    /// </summary>
+    public List<string> Materials { get; set; } = [.. "Settings_Materials".GetLocalized().Split(", ")];
+
+    /// <summary>
+    /// 深浅色主题
+    /// </summary>
+    [ObservableProperty]
+    public partial ElementTheme ElementTheme
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// 版本信息
+    /// </summary>
+    [ObservableProperty]
+    public partial string VersionDescription
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// 选中的字体
+    /// </summary>
+    [ObservableProperty]
+    public partial FontFamily SelectedFont { get; set; } = new("Microsoft YaHei");
+    partial void OnSelectedFontChanged(FontFamily value)
+    {
+        SaveSelectedFontAsync(value.Source);
+    }
+
+
+    /// <summary>
+    /// 选中的材质
+    /// </summary>
+    [ObservableProperty]
+    public partial byte SelectedMaterial { get; set; } = Data.MainViewModel?.SelectedMaterial ?? 3;
+    partial void OnSelectedMaterialChanged(byte value)
+    {
+        SaveSelectedMaterialAsync(value);
+    }
+
+    /// <summary>
+    /// 透明度
+    /// </summary>
+    [ObservableProperty]
+    public partial byte LuminosityOpacity { get; set; } = Data.MainViewModel?.LuminosityOpacity ?? 100;
+    partial void OnLuminosityOpacityChanged(byte value)
+    {
+        if (Data.MainViewModel != null)
+        {
+            Data.MainViewModel.LuminosityOpacity = value;
+        }
+        SaveLuminosityOpacityAsync(value);
+    }
+
+    /// <summary>
+    /// 背景颜色
+    /// </summary>
+    [ObservableProperty]
+    public partial Color TintColor { get; set; } = Data.MainViewModel?.TintColor ?? Colors.White;
+    partial void OnTintColorChanged(Color value)
+    {
+        if (Data.MainViewModel != null)
+        {
+            Data.MainViewModel.TintColor = value;
+        }
+        SaveTintColorAsync(value);
     }
 
     public SettingsViewModel()
     {
         _themeSelectorService = App.GetService<IThemeSelectorService>();
         _localSettingsService = App.GetService<ILocalSettingsService>();
-        _elementTheme = _themeSelectorService.Theme;
-        _versionDescription = GetVersionDescription();
+        ElementTheme = _themeSelectorService.Theme;
+        VersionDescription = GetVersionDescription();
 
         SwitchThemeCommand = new RelayCommand<ElementTheme>(
             async (param) =>
@@ -184,7 +183,7 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
                 Data.MusicLibrary.Folders.Add(folder);
                 OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
                 await SaveFoldersAsync();
-                await Data.MusicLibrary.LoadLibraryAgain(); // 重新加载音乐库
+                await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync); // 重新加载音乐库
             }
         }
     }
@@ -202,14 +201,13 @@ public partial class SettingsViewModel : ObservableRecipient, INotifyPropertyCha
         Data.MusicLibrary.Folders?.Remove(folder);
         OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
         await SaveFoldersAsync();
-        await Data.MusicLibrary.LoadLibraryAgain();
+        await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync);
     }
 
     public async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
-        await Data.MusicLibrary.LoadLibraryAgain();
+        await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync);
     }
-
 
     public void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
