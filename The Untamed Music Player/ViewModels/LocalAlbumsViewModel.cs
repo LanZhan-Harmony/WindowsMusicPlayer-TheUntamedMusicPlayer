@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -9,92 +10,38 @@ using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class LocalAlbumsViewModel : INotifyPropertyChanged
+public partial class LocalAlbumsViewModel : ObservableRecipient
 {
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
-    public event PropertyChangedEventHandler? PropertyChanged;
-    public void OnPropertyChanged(string propertyName)
+
+    private bool _groupMode = true;
+
+    private readonly List<AlbumInfo> _albumList = [.. Data.MusicLibrary.Albums.Values];
+
+    public List<string> SortBy { get; set; } = [.. "LocalAlbums_SortBy".GetLocalized().Split(", ")];
+
+    public ObservableCollection<GroupInfoList> GroupedAlbumList { get; set; } = [];
+
+    public ObservableCollection<AlbumInfo> NotGroupedAlbumList { get; set; } = [];
+
+    public ObservableCollection<string> Genres { get; set; } = Data.MusicLibrary.Genres;
+
+    [ObservableProperty]
+    public partial bool IsProgressRingActive { get; set; } = true;
+
+    [ObservableProperty]
+    public partial byte SortMode { get; set; } = 0;
+    partial void OnSortModeChanged(byte value)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        SetGroupMode();
+        SaveSortModeAsync();
     }
 
-    private bool _isProgressRingActive = true;
-    public bool IsProgressRingActive
+    [ObservableProperty]
+    public partial int GenreMode { get; set; } = 0;
+    partial void OnGenreModeChanged(int value)
     {
-        get => _isProgressRingActive;
-        set
-        {
-            _isProgressRingActive = value;
-            OnPropertyChanged(nameof(IsProgressRingActive));
-        }
-    }
-
-    private List<string> _sortBy = [.. "LocalAlbums_SortBy".GetLocalized().Split(", ")];
-    public List<string> SortBy
-    {
-        get => _sortBy;
-        set => _sortBy = value;
-    }
-
-    private byte _sortMode;
-    public byte SortMode
-    {
-        get => _sortMode;
-        set
-        {
-            _sortMode = value;
-            SetGroupMode();
-            OnPropertyChanged(nameof(SortMode));
-            SaveSortModeAsync();
-        }
-    }
-
-    private bool _groupMode;
-    public bool GroupMode
-    {
-        get => _groupMode;
-        set => _groupMode = value;
-    }
-
-    private List<AlbumInfo> _albumList = [.. Data.MusicLibrary.Albums.Values];
-    public List<AlbumInfo> AlbumList
-    {
-        get => _albumList;
-        set => _albumList = value;
-    }
-
-    private ObservableCollection<GroupInfoList> _groupedAlbumList = [];
-    public ObservableCollection<GroupInfoList> GroupedAlbumList
-    {
-        get => _groupedAlbumList;
-        set => _groupedAlbumList = value;
-    }
-
-    private ObservableCollection<AlbumInfo> _notGroupedAlbumList = [];
-
-    public ObservableCollection<AlbumInfo> NotGroupedAlbumList
-    {
-        get => _notGroupedAlbumList;
-        set => _notGroupedAlbumList = value;
-    }
-
-    private int _genreMode;
-    public int GenreMode
-    {
-        get => _genreMode;
-        set
-        {
-            _genreMode = value;
-            OnPropertyChanged(nameof(GenreMode));
-            SaveGenreModeAsync();
-        }
-    }
-
-    private ObservableCollection<string> _genres = Data.MusicLibrary.Genres;
-    public ObservableCollection<string> Genres
-    {
-        get => _genres;
-        set => _genres = value;
+        SaveGenreModeAsync();
     }
 
     public LocalAlbumsViewModel()
@@ -140,11 +87,6 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
         }
     }
 
-    public string GetSortByStr(byte SortMode)
-    {
-        return SortBy[SortMode];
-    }
-
     public void SortByListView_Loaded(object sender, RoutedEventArgs e)
     {
         if (sender is ListView listView)
@@ -178,34 +120,6 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
         }
     }
 
-    public string GetGenreStr(int GenreMode)
-    {
-        return Genres[GenreMode];
-    }
-
-    public double GetAlbumGridViewOpacity(bool isActive)
-    {
-        return isActive ? 0 : 1;
-    }
-
-    public double GetZoomedOutViewGridWidth(byte sortmode)
-    {
-        return sortmode switch
-        {
-            0 or 1 => 71,
-            _ => 426
-        };
-    }
-
-    public Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
-    {
-        return sortmode switch
-        {
-            0 or 1 => new Thickness(0, 0, 0, 0),
-            _ => new Thickness(15, 0, 15, 0)
-        };
-    }
-
     public async Task SortAlbums()
     {
         var sortTask = SortMode switch
@@ -226,7 +140,7 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
 
     private void SetGroupMode()
     {
-        GroupMode = SortMode switch
+        _groupMode = SortMode switch
         {
             0 or 1 or 2 or 3 or 4 or 5 => true,
             _ => false
@@ -235,10 +149,10 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
 
     public async Task FilterAlbums()
     {
-        GroupedAlbumList = [.. AlbumList
+        GroupedAlbumList = [.. _albumList
             .GroupBy(m => TitleComparer.GetGroupKey(m.Name[0]))
             .Select(g => new GroupInfoList(g) { Key = g.Key })];
-        NotGroupedAlbumList = [.. AlbumList];
+        NotGroupedAlbumList = [.. _albumList];
 
         if (GenreMode == 0)
         {
@@ -275,9 +189,9 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
         await SortAlbums();
     }
 
-    public object GetAlbumGridViewSource(ICollectionView grouped, ObservableCollection<AlbumInfo> notgrouped)
+    public ICollectionView GetAlbumGridViewSource(ICollectionView grouped, ObservableCollection<AlbumInfo> notgrouped)
     {
-        return GroupMode ? grouped : NotGroupedAlbumList;
+        return _groupMode ? grouped : new CollectionViewSource { Source = notgrouped }.View;
     }
 
     public async Task SortAlbumsByTitleAscending()
@@ -406,5 +320,38 @@ public class LocalAlbumsViewModel : INotifyPropertyChanged
     public async void SaveGenreModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("AlbumGenreMode", GenreMode);
+    }
+
+    public string GetSortByStr(byte SortMode)
+    {
+        return SortBy[SortMode];
+    }
+
+    public string GetGenreStr(int GenreMode)
+    {
+        return Genres[GenreMode];
+    }
+
+    public double GetAlbumGridViewOpacity(bool isActive)
+    {
+        return isActive ? 0 : 1;
+    }
+
+    public double GetZoomedOutViewGridWidth(byte sortmode)
+    {
+        return sortmode switch
+        {
+            0 or 1 => 71,
+            _ => 426
+        };
+    }
+
+    public Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
+    {
+        return sortmode switch
+        {
+            0 or 1 => new Thickness(0, 0, 0, 0),
+            _ => new Thickness(15, 0, 15, 0)
+        };
     }
 }
