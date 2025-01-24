@@ -33,13 +33,13 @@
 
         <Grid x:Name="MainGrid">
             <Border x:Name="AnimatedBorder"
-                    Width="{x:Bind ViewModel.GetBorderWidth(LyricContent.Width), Mode=OneWay}"
-                    Height="{x:Bind ViewModel.GetBorderHeight(LyricContent.Height), Mode=OneWay}"
+                    Width="{x:Bind GetBorderWidth(LyricContent.Width), Mode=OneWay}"
+                    Height="{x:Bind GetBorderHeight(LyricContent.Height), Mode=OneWay}"
                     HorizontalAlignment="Center"
                     Background="Black" CornerRadius="30">
                 <TextBlock x:Name="LyricContent"
-                           Width="{x:Bind ViewModel.GetTextBlockWidth(model:Data.MusicPlayer.CurrentLyricContent), Mode=OneWay}"
-                           Height="{x:Bind ViewModel.GetTextBlockHeight(model:Data.MusicPlayer.CurrentLyricContent), Mode=OneWay}"
+                           Width="{x:Bind GetTextBlockWidth(model:Data.MusicPlayer.CurrentLyricContent), Mode=OneWay}"
+                           Height="{x:Bind GetTextBlockHeight(model:Data.MusicPlayer.CurrentLyricContent), Mode=OneWay}"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
                            FontFamily="{x:Bind model:Data.SettingsViewModel.SelectedFont, Mode=OneWay}"
                            FontSize="32" Foreground="#FDFDFD"

@@ -1,43 +1,12 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 namespace The_Untamed_Music_Player.Models;
-public partial class LyricSlice : INotifyPropertyChanged
+public partial class LyricSlice(double time, string content)
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    public string Content { get; set; } = content;
 
-    private string _content = "";
-    public string Content
-    {
-        get => _content;
-        set
-        {
-            _content = value;
-            OnPropertyChanged(nameof(Content));
-        }
-    }
-
-    private double _time;
-    public double Time
-    {
-        get => _time;
-        set
-        {
-            _time = value;
-            OnPropertyChanged(nameof(Time));
-        }
-    }
-
-    public LyricSlice(double time, string content)
-    {
-        Time = time;
-        Content = content;
-    }
+    public double Time { get; set; } = time;
 
     [GeneratedRegex(@".*\](.*)")]
     private static partial Regex RegexWord();

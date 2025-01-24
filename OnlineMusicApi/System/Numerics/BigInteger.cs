@@ -333,7 +333,8 @@ internal readonly struct BigInteger
     {
         get
         {
-            AssertValid(); return _bits == null ? (_sign & 1) == 0 : (_bits[0] & 1) == 0;
+            AssertValid();
+            return _bits == null ? (_sign & 1) == 0 : (_bits[0] & 1) == 0;
         }
     }
 
@@ -341,7 +342,8 @@ internal readonly struct BigInteger
     {
         get
         {
-            AssertValid(); return (_sign >> (kcbitUint - 1)) - (-_sign >> (kcbitUint - 1));
+            AssertValid();
+            return (_sign >> (kcbitUint - 1)) - (-_sign >> (kcbitUint - 1));
         }
     }
 

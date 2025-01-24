@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-
 using Microsoft.UI.Xaml.Navigation;
-
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Views;
 

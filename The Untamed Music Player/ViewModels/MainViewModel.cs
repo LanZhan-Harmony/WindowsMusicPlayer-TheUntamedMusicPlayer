@@ -280,9 +280,15 @@ public partial class MainViewModel : ObservableRecipient
     {
         switch (((FrameworkElement)_mainMindow.Content).ActualTheme)
         {
-            case ElementTheme.Dark: _configurationSource.Theme = SystemBackdropTheme.Dark; break;
-            case ElementTheme.Light: _configurationSource.Theme = SystemBackdropTheme.Light; break;
-            case ElementTheme.Default: _configurationSource.Theme = SystemBackdropTheme.Default; break;
+            case ElementTheme.Dark:
+                _configurationSource.Theme = SystemBackdropTheme.Dark;
+                break;
+            case ElementTheme.Light:
+                _configurationSource.Theme = SystemBackdropTheme.Light;
+                break;
+            case ElementTheme.Default:
+                _configurationSource.Theme = SystemBackdropTheme.Default;
+                break;
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -9,70 +9,24 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
-public partial class RootPlayBarViewModel : INotifyPropertyChanged
+public partial class RootPlayBarViewModel : ObservableRecipient
 {
     public static RootPlayBarView? RootPlayBarView;
 
-    private bool _isDetail = false;
-    public bool IsDetail
-    {
-        get => _isDetail;
-        set
-        {
-            _isDetail = value;
-            OnPropertyChanged(nameof(IsDetail));
-        }
-    }
+    [ObservableProperty]
+    public partial bool IsDetail { get; set; } = false;
 
-    private bool _isFullScreen = false;
-    public bool IsFullScreen
-    {
-        get => _isFullScreen;
-        set
-        {
-            _isFullScreen = value;
-            OnPropertyChanged(nameof(IsFullScreen));
-        }
-    }
+    [ObservableProperty]
+    public partial bool IsFullScreen { get; set; } = false;
 
-    private bool _isDesktopLyricWindowStarted = false;
-    public bool IsDesktopLyricWindowStarted
-    {
-        get => _isDesktopLyricWindowStarted;
-        set
-        {
-            _isDesktopLyricWindowStarted = value;
-            OnPropertyChanged(nameof(IsDesktopLyricWindowStarted));
-        }
-    }
+    [ObservableProperty]
+    public partial bool IsDesktopLyricWindowStarted { get; set; } = false;
 
-    private Visibility _buttonVisibility = Visibility.Collapsed;
-    public Visibility ButtonVisibility
-    {
-        get => _buttonVisibility;
-        set
-        {
-            _buttonVisibility = value;
-            OnPropertyChanged(nameof(ButtonVisibility));
-        }
-    }
+    [ObservableProperty]
+    public partial Visibility ButtonVisibility { get; set; } = Visibility.Collapsed;
 
-    private bool _availability = false;
-    public bool Availability
-    {
-        get => _availability;
-        set
-        {
-            _availability = value;
-            OnPropertyChanged(nameof(Availability));
-        }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    public void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    [ObservableProperty]
+    public partial bool Availability { get; set; } = false;
 
     public RootPlayBarViewModel()
     {

@@ -1,22 +1,45 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
+using Windows.UI;
 
 namespace The_Untamed_Music_Player.Helpers;
+
+[JsonSerializable(typeof(bool))]
+[JsonSerializable(typeof(byte))]
+[JsonSerializable(typeof(int))]
+[JsonSerializable(typeof(double))]
+[JsonSerializable(typeof(string))]
+[JsonSerializable(typeof(Color))]
+[JsonSerializable(typeof(List<string>))]
+public partial class JsonContext : JsonSerializerContext
+{
+}
 
 public static class Json
 {
     public static async Task<T?> ToObjectAsync<T>(string value)
     {
-        return await Task.Run<T?>(() =>
+        return await Task.Run(() =>
         {
-            return JsonSerializer.Deserialize<T>(value);
+            if (JsonContext.Default.GetTypeInfo(typeof(T)) is not JsonTypeInfo<T> jsonTypeInfo)
+            {
+                throw new ArgumentNullException(nameof(T), $"JsonSerializable特性中未声明 {typeof(T)}.");
+            }
+            return JsonSerializer.Deserialize(value, jsonTypeInfo);
         });
     }
 
+
     public static async Task<string> StringifyAsync(object value)
     {
-        return await Task.Run<string>(() =>
+        return await Task.Run(() =>
         {
-            return JsonSerializer.Serialize(value);
+            var type = value.GetType();
+            var jsonTypeInfo = JsonContext.Default.GetTypeInfo(type);
+            return jsonTypeInfo == null
+                ? throw new ArgumentNullException(nameof(value), $"JsonSerializable特性中未声明 {type}.")
+                : JsonSerializer.Serialize(value, jsonTypeInfo);
         });
     }
 }

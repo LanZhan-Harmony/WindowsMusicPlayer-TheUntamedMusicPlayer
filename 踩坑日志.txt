@@ -5,4 +5,6 @@
 5. 依赖冲突。=>回退NUGET版本。
 6. 发生了未经处理的win32异常。=>如果跳转到App.xaml.cs，则打一个断点再启动一次。
 7. listview奇偶项异常。=>Win11的Bug，需要用特殊类解决。
-8. template里内容不能直接绑定到ViewModel。
+8. template里内容不能直接绑定到ViewModel，要通过static转。
+9. BitmapImage也是UI相关的，要用dispatcherqueue.TryEnque。
+10. AOT失败，升级NUGET到预览版。
