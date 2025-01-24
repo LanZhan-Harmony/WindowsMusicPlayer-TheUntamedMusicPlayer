@@ -18,7 +18,7 @@
                        FontSize="{x:Bind model:Data.MusicPlayer.GetLyricFont(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
                        Opacity="{x:Bind model:Data.MusicPlayer.GetLyricOpacity(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
                        SizeChanged="TextBlock_SizeChanged"
-                       Text="{x:Bind Content, Mode=OneWay}"
+                       Text="{x:Bind Content}"
                        TextWrapping="WrapWholeWords"/>
         </DataTemplate>
     </Page.Resources>

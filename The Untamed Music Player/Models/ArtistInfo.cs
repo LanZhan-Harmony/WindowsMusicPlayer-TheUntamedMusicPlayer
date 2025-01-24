@@ -8,19 +8,12 @@ public class ArtistInfo
     /// <summary>
     /// 艺术家名
     /// </summary>
-    public string Name
-    {
-        get; set;
-    } = "";
-
+    public string Name { get; set; } = "";
 
     /// <summary>
     /// 艺术家流派
     /// </summary>
-    public string Genre
-    {
-        get; set;
-    } = "";
+    public string Genre { get; set; } = "";
 
     /// <summary>
     /// 艺术家封面
@@ -33,34 +26,23 @@ public class ArtistInfo
     /// <summary>
     /// 艺术家歌曲总时长
     /// </summary>
-    public TimeSpan TotalDuration
-    {
-        get; set;
-    }
+    public TimeSpan TotalDuration { get; set; } = TimeSpan.Zero;
 
     /// <summary>
     /// 艺术家歌曲总数
     /// </summary>
-    public int TotalMusicNum
-    {
-        get; set;
-    }
+    public int TotalMusicNum { get; set; } = 1;
 
     /// <summary>
     /// 艺术家专辑总数
     /// </summary>
-    public int TotalAlbumNum
-    {
-        get; set;
-    }
+    public int TotalAlbumNum { get; set; } = 1;
 
     public ArtistInfo(BriefMusicInfo briefMusicInfo, string name)
     {
         Name = name;
         TotalDuration = briefMusicInfo.Duration;
         Genre = briefMusicInfo.GenreStr;
-        TotalMusicNum = 1;
-        TotalAlbumNum = 1;
         _albums.Add(briefMusicInfo.Album);
     }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Services;
@@ -8,60 +9,24 @@ using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class LocalArtistsViewModel : INotifyPropertyChanged
+public partial class LocalArtistsViewModel : ObservableRecipient
 {
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
-    public event PropertyChangedEventHandler? PropertyChanged;
-    public void OnPropertyChanged(string propertyName)
+
+    private readonly List<ArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
+
+    public List<string> SortBy { get; set; } = [.. "LocalArtists_SortBy".GetLocalized().Split(", ")];
+
+    public ObservableCollection<GroupInfoList> GroupedArtistList { get; set; } = [];
+
+    [ObservableProperty]
+    public partial bool IsProgressRingActive { get; set; } = true;
+
+    [ObservableProperty]
+    public partial byte SortMode { get; set; } = 0;
+    partial void OnSortModeChanged(byte value)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private bool _isProgressRingActive = true;
-    public bool IsProgressRingActive
-    {
-        get => _isProgressRingActive;
-        set
-        {
-            _isProgressRingActive = value;
-            OnPropertyChanged(nameof(IsProgressRingActive));
-        }
-    }
-
-    private List<string> _sortBy = [.. "LocalArtists_SortBy".GetLocalized().Split(", ")];
-    public List<string> SortBy
-    {
-        get => _sortBy;
-        set => _sortBy = value;
-    }
-
-    private byte _sortMode;
-    public byte SortMode
-    {
-        get => _sortMode;
-        set
-        {
-            _sortMode = value;
-            OnPropertyChanged(nameof(SortMode));
-            SaveSortModeAsync();
-        }
-    }
-
-    private List<ArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
-
-    public List<ArtistInfo> ArtistList
-    {
-        get => _artistList;
-        set => _artistList = value;
-    }
-
-    private ObservableCollection<GroupInfoList> _groupedArtistList = [];
-
-
-    public ObservableCollection<GroupInfoList> GroupedArtistList
-    {
-        get => _groupedArtistList;
-        set => _groupedArtistList = value;
+        SaveSortModeAsync();
     }
 
     public LocalArtistsViewModel()
@@ -109,16 +74,6 @@ public class LocalArtistsViewModel : INotifyPropertyChanged
         }
     }
 
-    public string GetSortByStr(byte SortMode)
-    {
-        return SortBy[SortMode];
-    }
-
-    public double GetArtistGridViewOpacity(bool isActive)
-    {
-        return isActive ? 0 : 1;
-    }
-
     public async Task SortArtists()
     {
         var sortTask = SortMode switch
@@ -135,7 +90,7 @@ public class LocalArtistsViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var sortedGroups = ArtistList
+            var sortedGroups = _artistList
                .OrderBy(m => m.Name, new ArtistTitleComparer())
                .GroupBy(m => m.Name == "MusicInfo_UnknownArtist".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
                .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -148,7 +103,7 @@ public class LocalArtistsViewModel : INotifyPropertyChanged
     {
         await Task.Run(() =>
         {
-            var sortedGroups = ArtistList
+            var sortedGroups = _artistList
                .OrderByDescending(m => m.Name, new ArtistTitleComparer())
                .GroupBy(m => m.Name == "MusicInfo_UnknownArtist".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
                .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -164,5 +119,15 @@ public class LocalArtistsViewModel : INotifyPropertyChanged
     public async void SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("ArtistSortMode", SortMode);
+    }
+
+    public string GetSortByStr(byte SortMode)
+    {
+        return SortBy[SortMode];
+    }
+
+    public double GetArtistGridViewOpacity(bool isActive)
+    {
+        return isActive ? 0 : 1;
     }
 }

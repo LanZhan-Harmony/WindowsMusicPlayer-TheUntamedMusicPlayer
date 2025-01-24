@@ -75,10 +75,6 @@ public class BriefMusicInfo
                 }
                 field = [.. tempArtists.Distinct()];
             }
-            else
-            {
-                field = [];
-            }
         }
     } = [];
 
@@ -88,35 +84,9 @@ public class BriefMusicInfo
     public string ArtistsStr { get; set; } = "";
 
     /// <summary>
-    /// 获取参与创作的艺术家名
-    /// </summary>
-    /// <returns></returns>
-    public string GetArtistsStr()
-    {
-        if (Artists.Length is 0)
-        {
-            return "MusicInfo_UnknownArtist".GetLocalized();
-        }
-        var sb = new StringBuilder();
-        foreach (var artist in Artists)
-        {
-            sb.Append(artist);
-            sb.Append(", ");
-        }
-        if (sb.Length > 0)
-        {
-            sb.Length -= 2; // 去掉最后一个逗号
-        }
-        return sb.ToString();
-    }
-
-    /// <summary>
     /// 时长
     /// </summary>
-    public TimeSpan Duration
-    {
-        get; set;
-    }
+    public TimeSpan Duration { get; set; } = TimeSpan.Zero;
 
     /// <summary>
     /// 时长字符串
@@ -124,35 +94,14 @@ public class BriefMusicInfo
     public string DurationStr { get; set; } = "";
 
     /// <summary>
-    /// 获取时长字符串
-    /// </summary>
-    /// <returns></returns>
-    public string GetDurationStr()
-    {
-        return Duration.Hours > 0 ? $"{Duration:hh\\:mm\\:ss}" : $"{Duration:mm\\:ss}";
-    }
-
-    /// <summary>
     /// 发行年份
     /// </summary>
-    public ushort Year
-    {
-        get; set;
-    }
+    public ushort Year { get; set; } = 0;
 
     /// <summary>
     /// 发行年份字符串, 为0时返回空字符串
     /// </summary>
     public string YearStr { get; set; } = "";
-
-    /// <summary>
-    /// 获取发行年份字符串
-    /// </summary>
-    /// <returns></returns>
-    public string GetYearStr()
-    {
-        return Year is 0 ? "" : Year.ToString();
-    }
 
     /// <summary>
     /// 封面(可能为空)
@@ -173,54 +122,9 @@ public class BriefMusicInfo
     public string GenreStr { get; set; } = "";
 
     /// <summary>
-    /// 获取流派字符串
-    /// </summary>
-    /// <returns></returns>
-    public string GetGenre()
-    {
-        if (Genre.Length == 0)
-        {
-            return "MusicInfo_UnknownGenre".GetLocalized();
-        }
-        var sb = new StringBuilder();
-        foreach (var genre in Genre)
-        {
-            sb.Append(genre);
-            sb.Append(", ");
-        }
-        if (sb.Length > 0)
-        {
-            sb.Length -= 2;
-        }
-        return sb.ToString();
-    }
-
-    /// <summary>
     /// 修改日期
     /// </summary>
-    public long ModifiedDate
-    {
-        get; set;
-    }
-
-    /// <summary>
-    /// 获取文本前景色
-    /// </summary>
-    /// <param name="currentMusic"></param>
-    /// <param name="isDarkTheme"></param>
-    /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    public SolidColorBrush GetTextForeground(DetailedMusicInfo currentMusic, bool isDarkTheme)
-    {
-        var isCurrentMusic = Path == currentMusic.Path;
-
-        if (isCurrentMusic)
-        {
-            var color = isDarkTheme ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3) : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
-            return new SolidColorBrush(color);
-        }
-
-        return new SolidColorBrush(isDarkTheme ? Colors.White : Colors.Black);
-    }
+    public long ModifiedDate { get; set; } = 0;
 
     public BriefMusicInfo()
     {
@@ -255,12 +159,16 @@ public class BriefMusicInfo
             Artists = ["MusicInfo_UnknownArtist".GetLocalized()];
             Genre = ["MusicInfo_UnknownGenre".GetLocalized()];
             GenreStr = GetGenre();
-            Duration = TimeSpan.Zero;
             DurationStr = GetDurationStr();
         }
     }
 
-    // 异步工厂方法
+    /// <summary>
+    /// 异步工厂方法
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="folder"></param>
+    /// <returns></returns>
     public static async Task<BriefMusicInfo> CreateAsync(string path, string folder)
     {
         var info = new BriefMusicInfo();
@@ -306,14 +214,17 @@ public class BriefMusicInfo
             info.Artists = ["MusicInfo_UnknownArtist".GetLocalized()];
             info.Genre = ["MusicInfo_UnknownGenre".GetLocalized()];
             info.GenreStr = info.GetGenre();
-            info.Duration = TimeSpan.Zero;
             info.DurationStr = info.GetDurationStr();
         }
         return info;
     }
 
-    // 异步加载封面方法
-    private Task LoadCoverAsync(byte[] coverBuffer)
+    /// <summary>
+    /// 异步加载封面方法
+    /// </summary>
+    /// <param name="coverBuffer"></param>
+    /// <returns></returns>
+    private Task<bool> LoadCoverAsync(byte[] coverBuffer)
     {
         var tcs = new TaskCompletionSource<bool>();
         App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
@@ -338,6 +249,87 @@ public class BriefMusicInfo
             }
         });
         return tcs.Task;
+    }
+
+    /// <summary>
+    /// 获取参与创作的艺术家名
+    /// </summary>
+    /// <returns></returns>
+    public string GetArtistsStr()
+    {
+        if (Artists.Length == 0)
+        {
+            return "MusicInfo_UnknownArtist".GetLocalized();
+        }
+        var sb = new StringBuilder();
+        foreach (var artist in Artists)
+        {
+            sb.Append(artist);
+            sb.Append(", ");
+        }
+        if (sb.Length > 0)
+        {
+            sb.Length -= 2; // 去掉最后一个逗号
+        }
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// 获取时长字符串
+    /// </summary>
+    /// <returns></returns>
+    public string GetDurationStr()
+    {
+        return Duration.Hours > 0 ? $"{Duration:hh\\:mm\\:ss}" : $"{Duration:mm\\:ss}";
+    }
+
+    /// <summary>
+    /// 获取流派字符串
+    /// </summary>
+    /// <returns></returns>
+    public string GetGenre()
+    {
+        if (Genre.Length == 0)
+        {
+            return "MusicInfo_UnknownGenre".GetLocalized();
+        }
+        var sb = new StringBuilder();
+        foreach (var genre in Genre)
+        {
+            sb.Append(genre);
+            sb.Append(", ");
+        }
+        if (sb.Length > 0)
+        {
+            sb.Length -= 2;
+        }
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// 获取发行年份字符串
+    /// </summary>
+    /// <returns></returns>
+    public string GetYearStr()
+    {
+        return Year is 0 ? "" : Year.ToString();
+    }
+
+    /// <summary>
+    /// 获取文本前景色
+    /// </summary>
+    /// <param name="currentMusic"></param>
+    /// <param name="isDarkTheme"></param>
+    /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
+    public SolidColorBrush GetTextForeground(DetailedMusicInfo currentMusic, bool isDarkTheme)
+    {
+        var isCurrentMusic = Path == currentMusic.Path;
+        if (isCurrentMusic)
+        {
+            var color = isDarkTheme ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3) : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
+            return new SolidColorBrush(color);
+        }
+        return new SolidColorBrush(isDarkTheme ? Colors.White : Colors.Black);
     }
 }
 
@@ -383,58 +375,13 @@ public class DetailedMusicInfo : BriefMusicInfo
                 }
                 field = [.. tempArtists.Distinct()];
             }
-            else
-            {
-                field = [];
-            }
         }
     } = [];
-
-    /// <summary>
-    /// 获取专辑艺术家字符串
-    /// </summary>
-    /// <returns></returns>
-    public string GetAlbumArtistsStr()
-    {
-        if (AlbumArtists == null || AlbumArtists.Length == 0)
-        {
-            return "";
-        }
-        var sb = new StringBuilder();
-        foreach (var artist in AlbumArtists)
-        {
-            sb.Append(artist);
-            sb.Append(", ");
-        }
-        if (sb.Length > 0)
-        {
-            sb.Length -= 2; // 去掉最后一个逗号
-        }
-        return sb.ToString();
-    }
 
     /// <summary>
     /// 艺术家和专辑名字符串
     /// </summary>
     public string ArtistAndAlbumStr { get; set; } = "";
-
-    /// <summary>
-    /// 获取艺术家和专辑名字符串
-    /// </summary>
-    /// <returns></returns>
-    public string GetArtistAndAlbumStr()
-    {
-        var artistsStr = GetArtistsStr();
-        if (string.IsNullOrEmpty(artistsStr))
-        {
-            return Album ?? "";
-        }
-        if (string.IsNullOrEmpty(Album))
-        {
-            return artistsStr;
-        }
-        return $"{artistsStr} • {Album}";
-    }
 
     /// <summary>
     /// 清晰封面(可能为空)
@@ -447,26 +394,17 @@ public class DetailedMusicInfo : BriefMusicInfo
     /// <summary>
     /// 封面缓冲数据
     /// </summary>
-    public byte[] CoverBuffer
-    {
-        get; set;
-    } = [];
+    public byte[] CoverBuffer { get; set; } = [];
 
     /// <summary>
     /// 比特率
     /// </summary>
-    public int BitRate
-    {
-        get; set;
-    }
+    public int BitRate { get; set; } = 0;
 
     /// <summary>
     /// 曲目
     /// </summary>
-    public int Track
-    {
-        get; set;
-    }
+    public int Track { get; set; } = 0;
 
     /// <summary>
     /// 歌词
@@ -501,11 +439,47 @@ public class DetailedMusicInfo : BriefMusicInfo
             Lyric = musicFile.Tag.Lyrics ?? "";
             BitRate = musicFile.Properties.AudioBitrate;
         }
-        catch
+        catch { }
+    }
+
+    /// <summary>
+    /// 获取专辑艺术家字符串
+    /// </summary>
+    /// <returns></returns>
+    public string GetAlbumArtistsStr()
+    {
+        if (AlbumArtists == null || AlbumArtists.Length == 0)
         {
-            AlbumArtists = [];
-            Track = 0;
-            BitRate = 0;
+            return "";
         }
+        var sb = new StringBuilder();
+        foreach (var artist in AlbumArtists)
+        {
+            sb.Append(artist);
+            sb.Append(", ");
+        }
+        if (sb.Length > 0)
+        {
+            sb.Length -= 2; // 去掉最后一个逗号
+        }
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// 获取艺术家和专辑名字符串
+    /// </summary>
+    /// <returns></returns>
+    public string GetArtistAndAlbumStr()
+    {
+        var artistsStr = GetArtistsStr();
+        if (string.IsNullOrEmpty(artistsStr))
+        {
+            return Album ?? "";
+        }
+        if (string.IsNullOrEmpty(Album))
+        {
+            return artistsStr;
+        }
+        return $"{artistsStr} • {Album}";
     }
 }

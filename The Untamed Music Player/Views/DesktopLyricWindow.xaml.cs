@@ -1,8 +1,10 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
+using Windows.Foundation;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -99,4 +101,42 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         _borderVisual.StartAnimation("Size.X", widthAnimation);
         _borderVisual.StartAnimation("Size.Y", heightAnimation);*//*
     }*/
+
+    private double GetTextBlockWidth(string currentLyricContent)
+    {
+        if (currentLyricContent == "")
+        {
+            return 100;
+        }
+        var textBlock = new TextBlock
+        {
+            Text = currentLyricContent,
+            FontFamily = Data.SettingsViewModel?.SelectedFont,
+            FontSize = 32
+        };
+        textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        return textBlock.DesiredSize.Width;
+    }
+
+    private double GetTextBlockHeight(string currentLyricContent)
+    {
+        var textBlock = new TextBlock
+        {
+            Text = currentLyricContent,
+            FontFamily = Data.SettingsViewModel?.SelectedFont,
+            FontSize = 32
+        };
+        textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        return textBlock.DesiredSize.Height;
+    }
+
+    private double GetBorderWidth(double textBlockWidth)
+    {
+        return textBlockWidth + 50;
+    }
+
+    private double GetBorderHeight(double textBlockHeight)
+    {
+        return textBlockHeight + 20;
+    }
 }

@@ -165,9 +165,7 @@ public partial class SettingsViewModel : ObservableRecipient
     public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
         var openPicker = new FolderPicker();
-
         var window = App.MainWindow;
-
         var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 
         WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
