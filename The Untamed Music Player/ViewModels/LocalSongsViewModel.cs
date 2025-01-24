@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -12,93 +13,38 @@ using Windows.UI;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class LocalSongsViewModel : INotifyPropertyChanged
+public partial class LocalSongsViewModel : ObservableRecipient
 {
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
-    public event PropertyChangedEventHandler? PropertyChanged;
 
-    public void OnPropertyChanged(string propertyName)
+    private bool _groupMode = true;
+
+    private readonly ConcurrentBag<BriefMusicInfo> _songList = Data.MusicLibrary.Songs;
+
+    public List<string> SortBy { get; set; } = [.. "LocalSongs_SortBy".GetLocalized().Split(", ")];
+
+    public ObservableCollection<GroupInfoList> GroupedSongList { get; set; } = [];
+
+    public ObservableCollection<BriefMusicInfo> NotGroupedSongList { get; set; } = [];
+
+    public ObservableCollection<string> Genres { get; set; } = Data.MusicLibrary.Genres;
+
+    [ObservableProperty]
+    public partial bool IsProgressRingActive { get; set; } = true;
+
+    [ObservableProperty]
+    public partial byte SortMode { get; set; } = 0;
+    partial void OnSortModeChanged(byte value)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        SetGroupMode();
+        SaveSortModeAsync();
     }
 
-    private bool _isProgressRingActive = true;
-    public bool IsProgressRingActive
+    [ObservableProperty]
+    public partial int GenreMode { get; set; } = 0;
+    partial void OnGenreModeChanged(int value)
     {
-        get => _isProgressRingActive;
-        set
-        {
-            _isProgressRingActive = value;
-            OnPropertyChanged(nameof(IsProgressRingActive));
-        }
-    }
-
-    private List<string> _sortBy = [.. "LocalSongs_SortBy".GetLocalized().Split(", ")];
-    public List<string> SortBy
-    {
-        get => _sortBy;
-        set => _sortBy = value;
-    }
-
-    private byte _sortMode;
-    public byte SortMode
-    {
-        get => _sortMode;
-        set
-        {
-            _sortMode = value;
-            SetGroupMode();
-            OnPropertyChanged(nameof(SortMode));
-            SaveSortModeAsync();
-        }
-    }
-
-    private bool _groupMode;
-    public bool GroupMode
-    {
-        get => _groupMode;
-        set => _groupMode = value;
-    }
-
-    private ConcurrentBag<BriefMusicInfo> _songList = Data.MusicLibrary.Songs;
-
-    public ConcurrentBag<BriefMusicInfo> SongList
-    {
-        get => _songList;
-        set => _songList = value;
-    }
-
-    private ObservableCollection<GroupInfoList> _groupedSongList = [];
-    public ObservableCollection<GroupInfoList> GroupedSongList
-    {
-        get => _groupedSongList;
-        set => _groupedSongList = value;
-    }
-
-    private ObservableCollection<BriefMusicInfo> _notGroupedSongList = [];
-    public ObservableCollection<BriefMusicInfo> NotGroupedSongList
-    {
-        get => _notGroupedSongList;
-        set => _notGroupedSongList = value;
-    }
-
-    private int _genreMode;
-    public int GenreMode
-    {
-        get => _genreMode;
-        set
-        {
-            _genreMode = value;
-            OnPropertyChanged(nameof(GenreMode));
-            SaveGenreModeAsync();
-        }
-    }
-
-    private ObservableCollection<string> _genres = Data.MusicLibrary.Genres;
-    public ObservableCollection<string> Genres
-    {
-        get => _genres;
-        set => _genres = value;
+        SaveGenreModeAsync();
     }
 
     public LocalSongsViewModel()
@@ -144,11 +90,6 @@ public class LocalSongsViewModel : INotifyPropertyChanged
         }
     }
 
-    public string GetSortByStr(byte SortMode)
-    {
-        return SortBy[SortMode];
-    }
-
     public void SortByListView_Loaded(object sender, RoutedEventArgs e)
     {
         if (sender is ListView listView)
@@ -182,11 +123,6 @@ public class LocalSongsViewModel : INotifyPropertyChanged
         }
     }
 
-    public string GetGenreStr(int GenreMode)
-    {
-        return Genres[GenreMode];
-    }
-
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayList("Songs:All", ConvertGroupedToFlatList(), SortMode);
@@ -202,41 +138,6 @@ public class LocalSongsViewModel : INotifyPropertyChanged
         if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
         {
             Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
-        }
-    }
-
-    public double GetSongListViewOpacity(bool isActive)
-    {
-        return isActive ? 0 : 1;
-    }
-
-    public double GetZoomedOutViewGridWidth(byte sortmode)
-    {
-        return sortmode switch
-        {
-            0 or 1 => 71,
-            _ => 426
-        };
-    }
-
-    public Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
-    {
-        return sortmode switch
-        {
-            0 or 1 => new Thickness(0, 0, 0, 0),
-            _ => new Thickness(15, 0, 15, 0)
-        };
-    }
-
-    public Brush GetAlternateBackgroundBrush(bool isDarkTheme)
-    {
-        if (isDarkTheme)
-        {
-            return new SolidColorBrush(Color.FromArgb(240, 48, 53, 57));
-        }
-        else
-        {
-            return new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
         }
     }
 
@@ -264,7 +165,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
 
     private void SetGroupMode()
     {
-        GroupMode = SortMode switch
+        _groupMode = SortMode switch
         {
             0 or 1 or 2 or 3 or 4 or 5 or 6 or 7 or 10 or 11 => true,
             _ => false
@@ -273,10 +174,10 @@ public class LocalSongsViewModel : INotifyPropertyChanged
 
     public async Task FilterSongs()
     {
-        GroupedSongList = [.. SongList
+        GroupedSongList = [.. _songList
             .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
             .Select(g => new GroupInfoList(g) { Key = g.Key })];
-        NotGroupedSongList = [.. SongList];
+        NotGroupedSongList = [.. _songList];
 
         if (GenreMode == 0)
         {
@@ -315,7 +216,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
 
     public ObservableCollection<BriefMusicInfo> ConvertGroupedToFlatList()
     {
-        if (GroupMode)
+        if (_groupMode)
         {
             var flatList = new ObservableCollection<BriefMusicInfo>();
             foreach (var group in GroupedSongList)
@@ -338,12 +239,13 @@ public class LocalSongsViewModel : INotifyPropertyChanged
 
     public object GetSongListViewSource(ICollectionView grouped, ObservableCollection<BriefMusicInfo> notgrouped)
     {
-        return GroupMode ? grouped : NotGroupedSongList;
+        return _groupMode ? grouped : NotGroupedSongList;
     }
 
     /// <summary>
     /// 根据歌曲名升序排序
     /// </summary>
+    /// <returns></returns>
     public async Task SortSongsByTitleAscending()
     {
         await Task.Run(() =>
@@ -362,6 +264,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
     /// <summary>
     /// 根据歌曲名降序排序
     /// </summary>
+    /// <returns></returns>
     public async Task SortSongsByTitleDescending()
     {
         await Task.Run(() =>
@@ -380,6 +283,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
     /// <summary>
     /// 根据艺术家名升序排序
     /// </summary>
+    /// <returns></returns>
     public async Task SortSongsByArtistAscending()
     {
         await Task.Run(() =>
@@ -398,6 +302,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
     /// <summary>
     /// 根据艺术家名降序排序
     /// </summary>
+    /// <returns></returns>
     public async Task SortSongsByArtistDescending()
     {
         await Task.Run(() =>
@@ -416,6 +321,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
     /// <summary>
     /// 根据专辑名升序排序
     /// </summary>
+    /// <returns></returns>
     public async Task SortSongsByAlbumAscending()
     {
         await Task.Run(() =>
@@ -434,6 +340,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
     /// <summary>
     /// 根据专辑名降序排序
     /// </summary>
+    /// <returns></returns>
     public async Task SortSongsByAlbumDescending()
     {
         await Task.Run(() =>
@@ -452,6 +359,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
     /// <summary>
     /// 根据发行年份升序排序
     /// </summary>
+    /// <returns></returns>
     public async Task SortSongsByYearAscending()
     {
         await Task.Run(() =>
@@ -513,7 +421,7 @@ public class LocalSongsViewModel : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// 根据文件夹排序
+    /// 根据文件夹升序排序
     /// </summary>
     /// <returns></returns>
     public async Task SortSongsByFolderAscending()
@@ -531,6 +439,10 @@ public class LocalSongsViewModel : INotifyPropertyChanged
         });
     }
 
+    /// <summary>
+    /// 根据文件夹降序排序
+    /// </summary>
+    /// <returns></returns>
     public async Task SortSongsByFolderDescending()
     {
         await Task.Run(() =>
@@ -561,5 +473,50 @@ public class LocalSongsViewModel : INotifyPropertyChanged
     public async void SaveGenreModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("GenreMode", GenreMode);
+    }
+
+    public string GetSortByStr(byte SortMode)
+    {
+        return SortBy[SortMode];
+    }
+
+    public string GetGenreStr(int GenreMode)
+    {
+        return Genres[GenreMode];
+    }
+
+    public double GetSongListViewOpacity(bool isActive)
+    {
+        return isActive ? 0 : 1;
+    }
+
+    public double GetZoomedOutViewGridWidth(byte sortmode)
+    {
+        return sortmode switch
+        {
+            0 or 1 => 71,
+            _ => 426
+        };
+    }
+
+    public Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
+    {
+        return sortmode switch
+        {
+            0 or 1 => new Thickness(0, 0, 0, 0),
+            _ => new Thickness(15, 0, 15, 0)
+        };
+    }
+
+    public Brush GetAlternateBackgroundBrush(bool isDarkTheme)
+    {
+        if (isDarkTheme)
+        {
+            return new SolidColorBrush(Color.FromArgb(240, 48, 53, 57));
+        }
+        else
+        {
+            return new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
+        }
     }
 }
