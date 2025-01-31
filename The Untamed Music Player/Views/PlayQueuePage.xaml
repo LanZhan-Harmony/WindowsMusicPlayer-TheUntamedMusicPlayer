@@ -10,7 +10,7 @@
 
     <Page.Resources>
         <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="model:BriefMusicInfo">
-            <Grid Height="46"
+            <Grid Height="52"
                   Background="Transparent" PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
@@ -321,7 +321,9 @@
         <ListView x:Name="PlayqueueListView"
                   Grid.Row="2"
                   Margin="0,22,0,0"
-                  CanDragItems="True" IsItemClickEnabled="True"
+                  helper:ListViewExtensions.ItemCornerRadius="8"
+                  helper:ListViewExtensions.ItemMargin="0,3,0,3" CanDragItems="True"
+                  IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.PlayQueueListView_ItemClick}"
                   ItemTemplate="{StaticResource PlayQueueListViewTemplate}"
                   ItemsSource="{x:Bind model:Data.MusicPlayer.GetPlayQueue(model:Data.MusicPlayer.PlayQueueName, model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"
