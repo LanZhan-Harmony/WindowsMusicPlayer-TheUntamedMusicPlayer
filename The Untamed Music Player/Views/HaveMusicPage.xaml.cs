@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -7,8 +8,16 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class HaveMusicPage : Page
 {
-    private readonly SettingsViewModel SettingsViewModel;
-    private int previousSelectedIndex = 0;
+    private int SelectionBarSelectedIndex
+    {
+        get;
+        set
+        {
+            field = value;
+            ViewModel.SaveSelectionBarSelectedIndex(value);
+        }
+    } = 0;
+
     public HaveMusicViewModel ViewModel
     {
         get;
@@ -16,8 +25,13 @@ public sealed partial class HaveMusicPage : Page
     public HaveMusicPage()
     {
         ViewModel = App.GetService<HaveMusicViewModel>();
+        _ = InitializeAsync();
         InitializeComponent();
-        SettingsViewModel = App.GetService<SettingsViewModel>();
+    }
+
+    private async Task InitializeAsync()
+    {
+        SelectionBarSelectedIndex = await ViewModel.LoadSelectionBarSelectedIndex();
     }
 
     private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
@@ -30,10 +44,19 @@ public sealed partial class HaveMusicPage : Page
             1 => typeof(LocalAlbumsPage),
             _ => typeof(LocalArtistsPage),
         };
-        var slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
+        var slideNavigationTransitionEffect = currentSelectedIndex - SelectionBarSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
 
         SelectFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
 
-        previousSelectedIndex = currentSelectedIndex;
+        SelectionBarSelectedIndex = currentSelectedIndex;
+    }
+
+    private void SelectorBar_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is SelectorBar selectorBar)
+        {
+            var selectedItem = selectorBar.Items[SelectionBarSelectedIndex];
+            selectorBar.SelectedItem = selectedItem;
+        }
     }
 }
