@@ -299,9 +299,11 @@
         <SemanticZoom Grid.Row="1" Margin="0,26,0,0">
             <SemanticZoom.ZoomedInView>
                 <GridView x:Name="AlbumGridView"
-                          IsItemClickEnabled="True"
+                          helper:ListViewExtensions.ItemCornerRadius="8" IsItemClickEnabled="True"
+                          ItemClick="AlbumGridView_ItemClick"
                           ItemTemplate="{StaticResource AlbumGridViewTemplate}"
                           ItemsSource="{x:Bind ViewModel.GetAlbumGridViewSource(GroupedAlbumList.View, ViewModel.NotGroupedAlbumList), Mode=OneWay}"
+                          Loaded="AlbumGridView_Loaded"
                           Opacity="{x:Bind ViewModel.GetAlbumGridViewOpacity(ViewModel.IsProgressRingActive), Mode=OneWay}"
                           SelectionMode="None">
                     <GridView.GroupStyle>

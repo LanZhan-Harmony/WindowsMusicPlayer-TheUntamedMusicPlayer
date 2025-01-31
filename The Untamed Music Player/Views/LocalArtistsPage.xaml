@@ -260,7 +260,7 @@
             </SemanticZoom.ZoomedInView>
             <SemanticZoom.ZoomedOutView>
                 <GridView HorizontalAlignment="Center" VerticalAlignment="Center"
-                          IsItemClickEnabled="True"
+                          helper:ListViewExtensions.ItemCornerRadius="8" IsItemClickEnabled="True"
                           ItemTemplate="{StaticResource ZoomedOutTemplate}"
                           ItemsSource="{x:Bind GroupedArtistList.View.CollectionGroups, Mode=OneWay}"
                           SelectionMode="None">

@@ -35,16 +35,28 @@
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="TitleGrid" Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock x:Uid="Shell_Home1"
                        Grid.Column="0"
                        FontSize="40"
                        FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
+            <SelectorBar x:Name="SelectorBar"
+                         Grid.Column="1"
+                         Margin="18,0,0,0"
+                         SelectionChanged="SelectorBar_SelectionChanged">
+                <SelectorBarItem x:Name="SelectorBarItemPage1" x:Uid="HaveMusic_Songs"
+                                 FontSize="18" IsSelected="True"/>
+                <SelectorBarItem x:Name="SelectorBarItemPage2" x:Uid="HaveMusic_Albums"
+                                 FontSize="18"/>
+                <SelectorBarItem x:Name="SelectorBarItemPage3" x:Uid="HaveMusic_Artists"
+                                 FontSize="18"/>
+            </SelectorBar>
             <AutoSuggestBox x:Uid="Home_SearchOnlineSongs"
-                            Grid.Column="1"
-                            Height="32"
+                            Grid.Column="2"
+                            Width="400" Height="32"
                             Margin="0,7,0,0" VerticalAlignment="Center"
                             QueryIcon="Find"
                             QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted}"

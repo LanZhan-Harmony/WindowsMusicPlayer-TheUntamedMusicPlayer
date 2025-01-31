@@ -11,11 +11,11 @@ public static class Data
     /// </summary>
     public static bool NotFirstUsed { get; set; } = false;
 
-    public static string? SelectedAlbum
+    public static AlbumInfo? SelectedAlbum
     {
         get; set;
     }
-    public static string? SelectedArtist
+    public static ArtistInfo? SelectedArtist
     {
         get; set;
     }
@@ -69,6 +69,10 @@ public static class Data
         get; set;
     }
     public static SettingsViewModel? SettingsViewModel
+    {
+        get; set;
+    }
+    public static ShellViewModel? ShellViewModel
     {
         get; set;
     }

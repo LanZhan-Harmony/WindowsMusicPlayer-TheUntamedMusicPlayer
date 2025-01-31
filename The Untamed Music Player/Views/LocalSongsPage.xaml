@@ -41,7 +41,7 @@
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefMusicInfo">
-            <Grid Height="46"
+            <Grid Height="52"
                   Background="Transparent" PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
@@ -261,10 +261,13 @@
         <SemanticZoom Grid.Row="1" Margin="0,26,0,0">
             <SemanticZoom.ZoomedInView>
                 <ListView x:Name="SongListView"
-                          CanDragItems="True" IsItemClickEnabled="True"
+                          helper:ListViewExtensions.ItemCornerRadius="8"
+                          helper:ListViewExtensions.ItemMargin="0,3,0,3" CanDragItems="True"
+                          IsItemClickEnabled="True"
                           ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                           ItemTemplate="{StaticResource SongListViewTemplate}"
                           ItemsSource="{x:Bind ViewModel.GetSongListViewSource(GroupedSongList.View, ViewModel.NotGroupedSongList), Mode=OneWay}"
+                          Loaded="SongListView_Loaded"
                           Opacity="{x:Bind ViewModel.GetSongListViewOpacity(ViewModel.IsProgressRingActive), Mode=OneWay}"
                           SelectionMode="None">
                     <ListView.ItemsPanel>
@@ -276,7 +279,7 @@
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
                     </ListView.GroupStyle>
                     <interactivity:Interaction.Behaviors>
-                        <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind ViewModel.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
+                        <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
                     </interactivity:Interaction.Behaviors>
                 </ListView>
             </SemanticZoom.ZoomedInView>
