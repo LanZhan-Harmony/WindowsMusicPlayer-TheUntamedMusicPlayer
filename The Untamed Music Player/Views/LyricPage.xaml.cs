@@ -67,21 +67,6 @@ public sealed partial class LyricPage : Page, IDisposable
     private void TextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         var textblock = (TextBlock)sender;
-        if (Data.MainWindow != null)
-        {
-            try
-            {
-                LyricViewer.Height = Data.MainWindow.Height - 117 - 40;
-            }
-            catch//切换到后台
-            {
-                LyricViewer.Height = 200;
-            }
-        }
-        else
-        {
-            LyricViewer.Height = 200;
-        }
         if (textblock.FontSize == 50 || textblock.FontSize == 24)
         {
             var currentScrollPosition = LyricViewer.VerticalOffset;
@@ -90,7 +75,7 @@ public sealed partial class LyricPage : Page, IDisposable
             // 计算出目标位置并滚动
             var targetPosition = textblock.TransformToVisual(LyricViewer).TransformPoint(point);
 
-            LyricViewer.ChangeView(null, targetPosition.Y - LyricViewer.Height / 2 + 40, null, disableAnimation: false);
+            LyricViewer.ChangeView(null, targetPosition.Y - LyricViewer.ActualHeight / 2 + 40, null, disableAnimation: false);
         }
     }
 

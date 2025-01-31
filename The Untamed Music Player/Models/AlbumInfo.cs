@@ -18,6 +18,8 @@ public class AlbumInfo
         get; set;
     }
 
+    public string CoverPath { get; set; } = "";
+
     /// <summary>
     /// 专辑艺术家
     /// </summary>
@@ -62,7 +64,11 @@ public class AlbumInfo
         Name = briefmusicInfo.Album;
         Year = briefmusicInfo.Year;
         ModifiedDate = briefmusicInfo.ModifiedDate;
-        Cover = briefmusicInfo.Cover;
+        if (briefmusicInfo.Cover != null)
+        {
+            Cover = briefmusicInfo.Cover;
+            CoverPath = briefmusicInfo.Path;
+        }
         Artists = briefmusicInfo.Artists;
         ArtistsStr = briefmusicInfo.ArtistsStr;
         GenreStr = briefmusicInfo.GenreStr;
@@ -77,7 +83,12 @@ public class AlbumInfo
     {
         TotalNum++;
         TotalDuration += briefmusicInfo.Duration;
-        Artists = Artists.Concat(briefmusicInfo.Artists).Distinct().ToArray();
+        if (Cover == null && briefmusicInfo.Cover != null)
+        {
+            Cover = briefmusicInfo.Cover;
+            CoverPath = briefmusicInfo.Path;
+        }
+        Artists = [.. Artists.Concat(briefmusicInfo.Artists).Distinct()];
         ArtistsStr = GetArtistsStr();
     }
 
@@ -104,6 +115,16 @@ public class AlbumInfo
         return sb.ToString();
     }
 
+    public byte[] GetCoverBytes()
+    {
+        if (Cover != null)
+        {
+            var musicFile = TagLib.File.Create(CoverPath);
+            return musicFile.Tag.Pictures[0].Data.Data;
+        }
+        return [];
+    }
+
     /// <summary>
     /// 获取专辑的歌曲数量和总时长字符串
     /// </summary>
@@ -114,14 +135,14 @@ public class AlbumInfo
         if (TotalDuration.Hours > 0)
         {
             return string.IsNullOrEmpty(yearStr)
-                ? $"{TotalNum} 首歌曲·{TotalDuration:hh\\:mm\\:ss} 歌曲长度"
-                : $"{yearStr}·{TotalNum} 首歌曲·{TotalDuration:hh\\:mm\\:ss} 歌曲长度";
+                ? $"{TotalNum} 首歌曲 • {TotalDuration:hh\\:mm\\:ss} 歌曲长度"
+                : $"{yearStr} • {TotalNum} 首歌曲 • {TotalDuration:hh\\:mm\\:ss} 歌曲长度";
         }
         else
         {
             return string.IsNullOrEmpty(yearStr)
-                ? $"{TotalNum} 首歌曲·{TotalDuration:mm\\:ss} 歌曲长度"
-                : $"{yearStr}·{TotalNum} 首歌曲·{TotalDuration:mm\\:ss} 歌曲长度";
+                ? $"{TotalNum} 首歌曲 • {TotalDuration:mm\\:ss} 歌曲长度"
+                : $"{yearStr} • {TotalNum} 首歌曲 • {TotalDuration:mm\\:ss} 歌曲长度";
         }
     }
 }

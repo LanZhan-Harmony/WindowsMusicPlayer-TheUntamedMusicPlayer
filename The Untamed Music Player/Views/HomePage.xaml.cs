@@ -16,4 +16,9 @@ public sealed partial class HomePage : Page
         ViewModel = App.GetService<HomeViewModel>();
         InitializeComponent();
     }
+
+    private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    {
+
+    }
 }

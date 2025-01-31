@@ -45,6 +45,7 @@ public partial class MainViewModel : ObservableRecipient
         _mainMindow.Closed += MainWindow_Closed;
         ((FrameworkElement)_mainMindow.Content).ActualThemeChanged += Window_ThemeChanged;
         Data.MainViewModel = this;
+        Data.SettingsViewModel ??= App.GetService<SettingsViewModel>();
     }
 
     public async void InitializeAsync()

@@ -70,6 +70,11 @@ public sealed partial class ShellPage : Page
 
     }
 
+    public Frame GetFrame()
+    {
+        return NavigationFrame;
+    }
+
     private static KeyboardAccelerator BuildKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers? modifiers = null)
     {
         var keyboardAccelerator = new KeyboardAccelerator() { Key = key };

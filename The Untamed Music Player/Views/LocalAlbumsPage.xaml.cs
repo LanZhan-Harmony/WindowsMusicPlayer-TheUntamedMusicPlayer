@@ -1,6 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
@@ -40,9 +42,9 @@ public sealed partial class LocalAlbumsPage : Page
     private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
     {
         var grid = sender as Grid;
-        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid?.FindName("PlayButton") as Button;
-        var menuButton = grid?.FindName("MenuButton") as Button;
+        var checkBox = grid!.FindName("ItemCheckBox") as CheckBox;
+        var playButton = grid!.FindName("PlayButton") as Button;
+        var menuButton = grid!.FindName("MenuButton") as Button;
         if (checkBox != null)
         {
             checkBox.Visibility = Visibility.Collapsed;
@@ -54,6 +56,33 @@ public sealed partial class LocalAlbumsPage : Page
         if (menuButton != null)
         {
             menuButton.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is AlbumInfo albumInfo)
+        {
+            var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedAlbum = albumInfo;
+            Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+        }
+    }
+
+    private async void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (Data.SelectedAlbum != null && sender is GridView gridView)
+        {
+            gridView.ScrollIntoView(Data.SelectedAlbum, ScrollIntoViewAlignment.Leading);
+            gridView.UpdateLayout();
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
+            if (animation != null)
+            {
+                await gridView.TryStartConnectedAnimationAsync(animation, Data.SelectedAlbum, "CoverBorder");
+            }
+            gridView.Focus(FocusState.Programmatic);
         }
     }
 }
