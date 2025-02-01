@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page x:Class="The_Untamed_Music_Player.Views.DesktopLyricPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:labs="using:CommunityToolkit.Labs.WinUI.MarqueeTextRns"
+      xmlns:local="using:The_Untamed_Music_Player.Views"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:model="using:The_Untamed_Music_Player.Models"
+      mc:Ignorable="d">
+
+    <Grid>
+        <Border x:Name="AnimatedBorder"
+                Height="{x:Bind GetBorderHeight(LyricContent.Height), Mode=OneWay}"
+                HorizontalAlignment="Center"
+                Background="Black" CornerRadius="30">
+            <TextBlock x:Name="LyricContent"
+                       Width="{x:Bind GetTextBlockWidth(model:Data.MusicPlayer.CurrentLyricContent), Mode=OneWay}"
+                       Height="{x:Bind GetTextBlockHeight(model:Data.MusicPlayer.CurrentLyricContent), Mode=OneWay}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontFamily="{x:Bind model:Data.SettingsViewModel.SelectedFont, Mode=OneWay}"
+                       FontSize="32" Foreground="#FDFDFD"
+                       SizeChanged="LyricContentTextBlock_SizeChanged"
+                       Text="{x:Bind model:Data.MusicPlayer.CurrentLyricContent, Mode=OneWay}"/>
+        </Border>
+    </Grid>
+</Page>
