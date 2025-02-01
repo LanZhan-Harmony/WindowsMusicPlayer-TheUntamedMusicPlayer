@@ -358,7 +358,7 @@
 
                         <!--  歌曲属性  -->
                         <MenuFlyoutItem x:Uid="PlayBar_Property"
-                                        AccessKey="P"
+                                        AccessKey="P" Click="PlayBarProperty_Click"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                                         KeyTipPlacementMode="Left">
                             <MenuFlyoutItem.Icon>

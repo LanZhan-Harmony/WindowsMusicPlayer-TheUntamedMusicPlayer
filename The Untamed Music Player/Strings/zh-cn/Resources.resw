@@ -510,4 +510,46 @@
   <data name="Settings_Reset.Content" xml:space="preserve">
     <value>重置</value>
   </data>
+  <data name="PropertiesDialog_Title.Text" xml:space="preserve">
+    <value>标题</value>
+  </data>
+  <data name="PropertiesDialog_Album.Text" xml:space="preserve">
+    <value>专辑</value>
+  </data>
+  <data name="PropertiesDialog_Track.Text" xml:space="preserve">
+    <value>曲目</value>
+  </data>
+  <data name="PropertiesDialog_Genre.Text" xml:space="preserve">
+    <value>流派</value>
+  </data>
+  <data name="PropertiesDialog_Bitrate.Text" xml:space="preserve">
+    <value>比特率</value>
+  </data>
+  <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
+    <value>参与创作的艺术家</value>
+  </data>
+  <data name="PropertiesDialog_AlbumArtist.Text" xml:space="preserve">
+    <value>专辑艺术家</value>
+  </data>
+  <data name="PropertiesDialog_Length.Text" xml:space="preserve">
+    <value>时长</value>
+  </data>
+  <data name="PropertiesDialog_Year.Text" xml:space="preserve">
+    <value>年份</value>
+  </data>
+  <data name="PropertiesDialog_ItemType.Text" xml:space="preserve">
+    <value>项目类型</value>
+  </data>
+  <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
+    <value>文件位置</value>
+  </data>
+  <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
+    <value>打开文件位置</value>
+  </data>
+  <data name="PropertiesDialog.Title" xml:space="preserve">
+    <value>属性</value>
+  </data>
+  <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
+    <value>关闭</value>
+  </data>
 </root>

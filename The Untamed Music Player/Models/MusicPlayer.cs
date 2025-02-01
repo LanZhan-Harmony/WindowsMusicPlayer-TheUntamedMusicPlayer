@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -35,7 +36,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 线程计时器
     /// </summary>
-    private ThreadPoolTimer? positionUpdateTimer;
+    private ThreadPoolTimer? _positionUpdateTimer;
 
     /// <summary>
     /// 线程锁开启状态, true为开启, false为关闭
@@ -280,9 +281,12 @@ public partial class MusicPlayer : ObservableRecipient
                 TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
                 _displayUpdater.MusicProperties.Title = CurrentMusic.Title;
                 _displayUpdater.MusicProperties.Artist = CurrentMusic.ArtistsStr == "未知艺术家" ? "" : CurrentMusic.ArtistsStr;
-                positionUpdateTimer = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler, TimeSpan.FromMilliseconds(250), UpdateTimerDestoyed);
+                _positionUpdateTimer = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler, TimeSpan.FromMilliseconds(250));
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.StackTrace);
+            }
         }
 
         if (CurrentMusic.Cover != null && CurrentMusic.CoverBuffer.Length != 0)
@@ -340,7 +344,7 @@ public partial class MusicPlayer : ObservableRecipient
         {
             try
             {
-                if (Player?.PlaybackSession == null || _lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                if (Player.PlaybackSession == null || _lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
                 {
                     return;
                 }
@@ -372,7 +376,10 @@ public partial class MusicPlayer : ObservableRecipient
                     });
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.StackTrace);
+            }
         }
     }
 
@@ -392,17 +399,6 @@ public partial class MusicPlayer : ObservableRecipient
             }
         }
         return CurrentLyric.Count - 1;
-    }
-
-    /// <summary>
-    /// 计时器销毁事件
-    /// </summary>
-    /// <param name="timer"></param>
-    private void UpdateTimerDestoyed(ThreadPoolTimer timer)
-    {
-        timer.Cancel();
-        positionUpdateTimer?.Cancel();
-        positionUpdateTimer = null;
     }
 
     /// <summary>
@@ -443,7 +439,10 @@ public partial class MusicPlayer : ObservableRecipient
                     break;
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
     }
 
     /// <summary>
@@ -529,7 +528,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 播放
     /// </summary>
-    private void Play()
+    public void Play()
     {
         Player?.Play();
     }
@@ -537,7 +536,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 暂停
     /// </summary>
-    private void Pause()
+    public void Pause()
     {
         Player?.Pause();
     }
@@ -545,14 +544,14 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 停止
     /// </summary>
-    private void Stop()
+    public void Stop()
     {
         Player?.Pause();
         CurrentPlayingTime = TimeSpan.Zero;
         CurrentPosition = 0;
         CurrentLyricContent = "";
-        positionUpdateTimer?.Cancel();
-        positionUpdateTimer = null;
+        _positionUpdateTimer?.Cancel();
+        _positionUpdateTimer = null;
     }
 
     /// <summary>
@@ -571,7 +570,10 @@ public partial class MusicPlayer : ObservableRecipient
 
             PlaySongByIndex(newIndex);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
     }
 
     /// <summary>
@@ -592,7 +594,10 @@ public partial class MusicPlayer : ObservableRecipient
 
             PlaySongByIndex(newIndex, isLast);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
     }
 
 

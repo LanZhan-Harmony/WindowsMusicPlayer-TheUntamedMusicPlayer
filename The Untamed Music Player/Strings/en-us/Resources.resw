@@ -510,4 +510,46 @@
   <data name="Settings_Reset.Content" xml:space="preserve">
     <value>Reset</value>
   </data>
+  <data name="PropertiesDialog_Title.Text" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="PropertiesDialog_Album.Text" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="PropertiesDialog_Track.Text" xml:space="preserve">
+    <value>Track</value>
+  </data>
+  <data name="PropertiesDialog_Genre.Text" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="PropertiesDialog_Bitrate.Text" xml:space="preserve">
+    <value>Bit rate</value>
+  </data>
+  <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
+    <value>Contributing artists</value>
+  </data>
+  <data name="PropertiesDialog_AlbumArtist.Text" xml:space="preserve">
+    <value>Album artist</value>
+  </data>
+  <data name="PropertiesDialog_Length.Text" xml:space="preserve">
+    <value>Length</value>
+  </data>
+  <data name="PropertiesDialog_Year.Text" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="PropertiesDialog_ItemType.Text" xml:space="preserve">
+    <value>Item type</value>
+  </data>
+  <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
+    <value>File location</value>
+  </data>
+  <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
+    <value>Open file location</value>
+  </data>
+  <data name="PropertiesDialog.Title" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
 </root>

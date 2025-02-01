@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -25,7 +26,7 @@ public sealed partial class RootPlayBarView : Page
         return ProgressSlider;
     }
 
-    private void SpeedListView_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void SpeedListView_Loaded(object sender, RoutedEventArgs e)
     {
         Data.MusicPlayer.SpeedListView_Loaded(sender, e);
     }
@@ -33,5 +34,11 @@ public sealed partial class RootPlayBarView : Page
     private void SpeedListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         Data.MusicPlayer.SpeedListView_SelectionChanged(sender, e);
+    }
+
+    private async void PlayBarProperty_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new PropertiesDialog() { XamlRoot = XamlRoot };
+        await dialog.ShowAsync();
     }
 }
