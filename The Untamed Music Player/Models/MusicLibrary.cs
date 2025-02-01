@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Helpers;
@@ -124,10 +125,13 @@ public partial class MusicLibrary : ObservableObject
                 _musicGenres.Clear();
             });
             ClearAllArtistMusicAlbums();
-            await Task.Run(() => AddFolderWatcher());
+            await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
         finally
         {
             _librarySemaphore.Release();
@@ -169,10 +173,13 @@ public partial class MusicLibrary : ObservableObject
             });
             ClearAllArtistMusicAlbums();
             FolderWatchers.Clear();
-            await Task.Run(() => AddFolderWatcher());
+            await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
         finally
         {
             _dispatcherQueue.TryEnqueue(() =>
@@ -216,7 +223,10 @@ public partial class MusicLibrary : ObservableObject
             // 等待所有子文件夹的扫描任务完成
             await Task.WhenAll(loadMusicTasks);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
     }
 
     private void UpdateAlbumInfo(BriefMusicInfo briefMusicInfo)
@@ -284,7 +294,10 @@ public partial class MusicLibrary : ObservableObject
                 FolderWatchers.Add(watcher);
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
     }
 
     private async void OnChanged(object sender, FileSystemEventArgs e)
@@ -302,7 +315,10 @@ public partial class MusicLibrary : ObservableObject
                 await LoadLibraryAgainAsync();
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
         finally
         {
             _isHandlingChange = false;
@@ -324,7 +340,10 @@ public partial class MusicLibrary : ObservableObject
                 await LoadLibraryAgainAsync();
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
         finally
         {
             _isHandlingChange = false;

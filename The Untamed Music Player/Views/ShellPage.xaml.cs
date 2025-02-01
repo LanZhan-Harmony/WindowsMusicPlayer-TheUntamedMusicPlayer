@@ -36,11 +36,8 @@ public sealed partial class ShellPage : Page
             Data.MainWindow.Activated += MainWindow_Activated;
         }
         AppTitleBarText.Text = "AppDisplayName".GetLocalized();
-
         Data.ShellPage = this;
     }
-
-
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
