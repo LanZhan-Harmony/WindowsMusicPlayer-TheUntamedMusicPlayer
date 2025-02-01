@@ -1,10 +1,9 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
-using Windows.Foundation;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -16,9 +15,6 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
     {
         get;
     }
-
-    /*private Compositor _compositor;
-    private Visual _borderVisual;*/
 
     public DesktopLyricWindow()
     {
@@ -59,21 +55,13 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         // 设置窗口大小
         appWindow.Resize(new SizeInt32(windowWidth, windowHeight));
 
-        /* var presenter = appWindow.Presenter as OverlappedPresenter;
-         if (presenter != null)
-         {
-             presenter.IsAlwaysOnTop = true;
-         }*/
-
         /*if (Content is FrameworkElement rootElement)
         {
             rootElement.RequestedTheme = ElementTheme.Dark;
         }*/
 
         Closed += Window_Closed;
-
-        /*_compositor = ElementCompositionPreview.GetElementVisual(Content).Compositor;
-        _borderVisual = ElementCompositionPreview.GetElementVisual(AnimatedBorder);*/
+        LyricFrame.Navigate(typeof(DesktopLyricPage), null, new DrillInNavigationTransitionInfo());
     }
 
     private void Window_Closed(object sender, WindowEventArgs args)
@@ -86,57 +74,5 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
 
     public void Dispose()
     {
-    }
-
-    /*private void LyricContentTextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        *//*var widthAnimation = _compositor.CreateScalarKeyFrameAnimation();
-        widthAnimation.InsertKeyFrame(1.0f, (float)LyricContent.ActualWidth);
-        widthAnimation.Duration = TimeSpan.FromMilliseconds(300);
-
-        var heightAnimation = _compositor.CreateScalarKeyFrameAnimation();
-        heightAnimation.InsertKeyFrame(1.0f, (float)LyricContent.ActualHeight);
-        heightAnimation.Duration = TimeSpan.FromMilliseconds(300);
-
-        _borderVisual.StartAnimation("Size.X", widthAnimation);
-        _borderVisual.StartAnimation("Size.Y", heightAnimation);*//*
-    }*/
-
-    private double GetTextBlockWidth(string currentLyricContent)
-    {
-        if (currentLyricContent == "")
-        {
-            return 100;
-        }
-        var textBlock = new TextBlock
-        {
-            Text = currentLyricContent,
-            FontFamily = Data.SettingsViewModel?.SelectedFont,
-            FontSize = 32
-        };
-        textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        return textBlock.DesiredSize.Width;
-    }
-
-    private double GetTextBlockHeight(string currentLyricContent)
-    {
-        var textBlock = new TextBlock
-        {
-            Text = currentLyricContent,
-            FontFamily = Data.SettingsViewModel?.SelectedFont,
-            FontSize = 32
-        };
-        textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        return textBlock.DesiredSize.Height;
-    }
-
-    private double GetBorderWidth(double textBlockWidth)
-    {
-        return textBlockWidth + 50;
-    }
-
-    private double GetBorderHeight(double textBlockHeight)
-    {
-        return textBlockHeight + 20;
     }
 }

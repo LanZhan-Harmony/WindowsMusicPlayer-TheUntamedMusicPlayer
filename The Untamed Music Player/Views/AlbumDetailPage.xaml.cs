@@ -65,25 +65,24 @@ public sealed partial class AlbumDetailPage : Page
 
     private async void AlbumDetailsPage_OnLoaded(object sender, RoutedEventArgs e)
     {
-        // Retrieve the ScrollViewer that the GridView is using internally
         var scrollViewer = _scrollViewer = SongListView.FindDescendant<ScrollViewer>() ??
-                                                    throw new Exception("Cannot find ScrollViewer in ListView");
+                                                    throw new Exception("Cannot find ScrollViewer in ListView"); // 检索 ListView 内部使用的 ScrollViewer
 
-        // Get the PropertySet that contains the scroll values from the ScrollViewer
-        _scrollerPropertySet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
-        _compositor = _scrollerPropertySet.Compositor;
 
-        // Create a PropertySet that has values to be referenced in the ExpressionAnimations below
+        _scrollerPropertySet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer); // 获取 ScrollViewer 中包含滚动值的属性集
+        _compositor = _scrollerPropertySet.Compositor; // 获取与 ScrollViewer 关联的 Compositor, Compositor 用于创建动画
+
+        // 创建一个属性集，其中包含下面的 ExpressionAnimations 中引用的值
         _props = _compositor.CreatePropertySet();
-        _props.InsertScalar("progress", 0);
+        _props.InsertScalar("progress", 0); // 插入一个标量值, 用于跟踪滚动进度
         _props.InsertScalar("clampSize", ClampSize);
         _props.InsertScalar("backgroundScaleFactor", BackgroundScaleFactor);
         _props.InsertScalar("coverScaleFactor", CoverScaleFactor);
         _props.InsertScalar("buttonPanelOffset", ButtonPanelOffset);
         _props.InsertScalar("headerPadding", 12);
 
-        // Get references to our property sets for use with ExpressionNodes
-        var scrollingProperties = _scrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>();
+
+        var scrollingProperties = _scrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>(); // 获取属性集的引用节点，以便在表达式动画中使用
 
         CreateHeaderAnimation(_props, scrollingProperties.Translation.Y);
 
@@ -98,6 +97,11 @@ public sealed partial class AlbumDetailPage : Page
         }
     }
 
+    /// <summary>
+    /// 创建头部的组合动画效果
+    /// </summary>
+    /// <param name="propSet"></param>
+    /// <param name="scrollVerticalOffset"></param>
     private void CreateHeaderAnimation(CompositionPropertySet propSet, ScalarNode scrollVerticalOffset)
     {
         var props = propSet.GetReference();
@@ -108,64 +112,64 @@ public sealed partial class AlbumDetailPage : Page
         var buttonPanelOffsetNode = props.GetScalarProperty("buttonPanelOffset");
         var headerPaddingNode = props.GetScalarProperty("headerPadding");
 
-        // Create and start an ExpressionAnimation to track scroll progress over the desired distance
+        // 创建并启动一个表达式动画，以跟踪滚动进度
         ExpressionNode progressAnimation = EF.Clamp(-scrollVerticalOffset / clampSizeNode, 0, 1);
         propSet.StartAnimation("progress", progressAnimation);
 
-        // Get the backing visual for the background in the header so that its properties can be animated
+        // 获取头部背景的后备视觉效果，以便可以对其属性进行动画处理
         var backgroundVisual = ElementCompositionPreview.GetElementVisual(BackgroundAcrylic);
 
-        // Create and start an ExpressionAnimation to scale and opacity fade in the backgound behind the header
+        // 创建并启动一个表达式动画，以缩放和淡入标题后面的背景
         ExpressionNode backgroundScaleAnimation = EF.Lerp(1, backgroundScaleFactorNode, progressNode);
         ExpressionNode backgroundOpacityAnimation = progressNode;
         backgroundVisual.StartAnimation("Scale.Y", backgroundScaleAnimation);
         backgroundVisual.StartAnimation("Opacity", backgroundOpacityAnimation);
 
-        // Get the backing visuals for the content container so that its properties can be animated
+        // 获取内容容器的后备视觉效果，以便可以对其属性进行动画处理
         var contentVisual = ElementCompositionPreview.GetElementVisual(ContentContainer);
         ElementCompositionPreview.SetIsTranslationEnabled(ContentContainer, true);
 
-        // Create and start an ExpressionAnimation to move the content container with scroll position
+        // 创建并启动一个表达式动画，以滚动位置移动内容容器
         ExpressionNode contentTranslationAnimation = progressNode * headerPaddingNode;
         contentVisual.StartAnimation("Translation.Y", contentTranslationAnimation);
 
-        // Get the backing visual for the cover art visual so that its properties can be animated
+        // 获取封面艺术视觉的后备视觉效果，以便可以对其属性进行动画处理
         var coverArtVisual = ElementCompositionPreview.GetElementVisual(CoverArt);
         ElementCompositionPreview.SetIsTranslationEnabled(CoverArt, true);
 
-        // Create and start an ExpressionAnimation to scale and move the cover art with scroll position
+        // 创建并启动一个表达式动画，以滚动位置缩放和移动封面艺术
         ExpressionNode coverArtScaleAnimation = EF.Lerp(1, coverScaleFactorNode, progressNode);
         ExpressionNode coverArtTranslationAnimation = progressNode * headerPaddingNode;
         coverArtVisual.StartAnimation("Scale.X", coverArtScaleAnimation);
         coverArtVisual.StartAnimation("Scale.Y", coverArtScaleAnimation);
         coverArtVisual.StartAnimation("Translation.X", coverArtTranslationAnimation);
 
-        // Get the backing visual for the text panel so that its properties can be animated
+        // 获取文本面板的后备视觉效果，以便可以对其属性进行动画处理
         var textVisual = ElementCompositionPreview.GetElementVisual(TextPanel);
         ElementCompositionPreview.SetIsTranslationEnabled(TextPanel, true);
 
-        // Create and start an ExpressionAnimation to move the text panel with scroll position
+        // 创建并启动一个表达式动画，以滚动位置移动文本面板
         ExpressionNode textTranslationAnimation = progressNode * (-clampSizeNode + headerPaddingNode);
         textVisual.StartAnimation("Translation.X", textTranslationAnimation);
 
-        // Get backing visuals for the additional text blocks so that their properties can be animated
+        // 获取附加文本块后备视觉效果，以便可以对其属性进行动画处理
         var subtitleVisual = ElementCompositionPreview.GetElementVisual(SubtitleText);
         var captionVisual = ElementCompositionPreview.GetElementVisual(CaptionText);
 
-        // Create an ExpressionAnimation that start opacity fade out animation with threshold for the additional text blocks
+        // 创建一个表达式动画，以开始使用附加文本块的阈值进行不透明度淡出动画
         var fadeThreshold = ExpressionValues.Constant.CreateConstantScalar("fadeThreshold", 0.6f);
         ExpressionNode textFadeAnimation = 1 - EF.Conditional(progressNode < fadeThreshold, progressNode / fadeThreshold, 1);
 
-        // Start opacity fade out animation on the additional text block visuals
+        // 在附加文本块视觉上启动不透明度淡出动画
         subtitleVisual.StartAnimation("Opacity", textFadeAnimation);
         textFadeAnimation.SetScalarParameter("fadeThreshold", 0.2f);
         captionVisual.StartAnimation("Opacity", textFadeAnimation);
 
-        // Get the backing visual for the button panel so that its properties can be animated
+        // 获取按钮面板的后备视觉效果，以便可以对其属性进行动画处理
         var buttonVisual = ElementCompositionPreview.GetElementVisual(ButtonPanel);
         ElementCompositionPreview.SetIsTranslationEnabled(ButtonPanel, true);
 
-        // Create and start an ExpressionAnimation to move the button panel with scroll position
+        // 创建并启动一个表达式动画，以滚动位置移动按钮面板
         ExpressionNode buttonTranslationAnimation = progressNode * (-buttonPanelOffsetNode);
         buttonVisual.StartAnimation("Translation.Y", buttonTranslationAnimation);
     }
