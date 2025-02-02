@@ -1,4 +1,5 @@
-﻿using The_Untamed_Music_Player.Helpers;
+﻿using Microsoft.UI.Xaml.Media;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.ViewModels;
 using The_Untamed_Music_Player.Views;
 
@@ -34,6 +35,16 @@ public static class Data
     /// 播放器支持的音频文件类型
     /// </summary>
     public static readonly string[] SupportedAudioTypes = [".flac", ".wav", ".m4a", ".aac", ".mp3", ".wma", ".ogg", ".oga", ".opus"];
+
+    /// <summary>
+    /// 歌词字体
+    /// </summary>
+    public static FontFamily SelectedFont { get; set; } = new("Microsoft YaHei");
+
+    /// <summary>
+    /// 是否显示歌词背景
+    /// </summary>
+    public static bool IsLyricBackgroundVisible = false;
 
     public static MusicPlayer MusicPlayer { get; set; } = new();
     public static MusicLibrary MusicLibrary { get; set; } = new();

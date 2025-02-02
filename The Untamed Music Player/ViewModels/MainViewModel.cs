@@ -3,6 +3,7 @@ using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
@@ -35,6 +36,12 @@ public partial class MainViewModel : ObservableRecipient
         get; set;
     }
 
+    [ObservableProperty]
+    public partial double MainWindowWidth
+    {
+        get; set;
+    }
+
     public MainViewModel()
     {
         _mainMindow = Data.MainWindow ?? new();
@@ -43,9 +50,9 @@ public partial class MainViewModel : ObservableRecipient
         InitializeAsync();
         _mainMindow.Activated += MainWindow_Activated;
         _mainMindow.Closed += MainWindow_Closed;
+        _mainMindow.SizeChanged += MainMindow_SizeChanged;
         ((FrameworkElement)_mainMindow.Content).ActualThemeChanged += Window_ThemeChanged;
         Data.MainViewModel = this;
-        Data.SettingsViewModel ??= App.GetService<SettingsViewModel>();
     }
 
     public async void InitializeAsync()
@@ -317,6 +324,11 @@ public partial class MainViewModel : ObservableRecipient
         Data.MusicPlayer.SaveCurrentStateAsync();
     }
 
+    private void MainMindow_SizeChanged(object sender, WindowSizeChangedEventArgs args)
+    {
+        MainWindowWidth = args.Size.Width;
+    }
+
     /// <summary>
     /// 从设置存储读取选定的材质
     /// </summary>
@@ -331,6 +343,12 @@ public partial class MainViewModel : ObservableRecipient
             IsFallBack = await _localSettingsService.ReadSettingAsync<bool>("IsFallBack");
             LuminosityOpacity = await _localSettingsService.ReadSettingAsync<byte>("LuminosityOpacity");
             TintColor = await _localSettingsService.ReadSettingAsync<Color>("TintColor");
+            var fontName = await _localSettingsService.ReadSettingAsync<string>("SelectedFont");
+            if (!string.IsNullOrEmpty(fontName))
+            {
+                Data.SelectedFont = new FontFamily(fontName);
+            }
+            Data.IsLyricBackgroundVisible = await _localSettingsService.ReadSettingAsync<bool>("IsLyricBackgroundVisible");
         }
         else
         {

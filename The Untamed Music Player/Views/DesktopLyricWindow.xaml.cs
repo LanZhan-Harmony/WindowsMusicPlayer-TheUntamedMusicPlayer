@@ -1,9 +1,14 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
+using Windows.Foundation;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -11,6 +16,25 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class DesktopLyricWindow : Window, IDisposable
 {
+    // 定义需要的Win32 API和常量
+    private const int GWL_EXSTYLE = -20;
+    private const int WS_EX_TOOLWINDOW = 0x00000080;
+    private const int WS_EX_APPWINDOW = 0x00040000;
+    [DllImport("user32.dll")]
+    private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+    [DllImport("user32.dll")]
+    private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+    [DllImport("user32.dll")]
+    private static extern uint GetDpiForWindow(IntPtr hWnd);
+
+    private Storyboard? _currentStoryboard;
+    private readonly TextBlock _measureTextBlock = new()
+    {
+        FontSize = 32,
+        FontFamily = Data.SelectedFont
+    };
+
     public DesktopLyricViewModel ViewModel
     {
         get;
@@ -25,6 +49,11 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         var hWnd = WindowNative.GetWindowHandle(this);
         var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
         var appWindow = AppWindow.GetFromWindowId(windowId);
+
+        var exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+        exStyle |= WS_EX_TOOLWINDOW;  // 添加工具窗口样式
+        exStyle &= ~WS_EX_APPWINDOW;  // 移除应用窗口样式
+        _ = SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
 
         ExtendsContentIntoTitleBar = true;
         appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed;
@@ -61,7 +90,6 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         }*/
 
         Closed += Window_Closed;
-        LyricFrame.Navigate(typeof(DesktopLyricPage), null, new DrillInNavigationTransitionInfo());
     }
 
     private void Window_Closed(object sender, WindowEventArgs args)
@@ -74,5 +102,77 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
 
     public void Dispose()
     {
+    }
+
+    private void CloseButton_Click(object sender, RoutedEventArgs e)
+    {
+        Close();
+        Dispose();
+        Data.RootPlayBarViewModel!.IsDesktopLyricWindowStarted = false;
+    }
+
+    private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        var grid = sender as Grid;
+        var button = grid?.FindName("CloseButton") as Button;
+        if (button != null)
+        {
+            button.Visibility = Visibility.Visible;
+        }
+    }
+
+    private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        var grid = sender as Grid;
+        var button = grid?.FindName("CloseButton") as Button;
+        if (button != null)
+        {
+            button.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private double GetTextBlockWidth(string currentLyricContent)
+    {
+        LyricContent.StopMarquee();
+        if (currentLyricContent == "")
+        {
+            return 100;
+        }
+        _measureTextBlock.Text = currentLyricContent;
+        _measureTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        return Math.Min(_measureTextBlock.DesiredSize.Width, 620);
+    }
+
+    private void LyricContentTextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        try
+        {
+            if (_currentStoryboard != null)
+            {
+                _currentStoryboard.Stop();
+                _currentStoryboard.Children.Clear();
+            }
+            var widthAnimation = new DoubleAnimation
+            {
+                From = e.PreviousSize.Width + 50,
+                To = e.NewSize.Width + 50,
+                Duration = TimeSpan.FromMilliseconds(300),
+                EnableDependentAnimation = true,
+                EasingFunction = new BackEase
+                {
+                    EasingMode = EasingMode.EaseOut,
+                    Amplitude = 0.9
+                }
+            };
+            Storyboard.SetTarget(widthAnimation, AnimatedBorder);
+            Storyboard.SetTargetProperty(widthAnimation, "Width");
+            _currentStoryboard = new Storyboard();
+            _currentStoryboard.Children.Add(widthAnimation);
+            _currentStoryboard.Begin();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+        }
     }
 }
