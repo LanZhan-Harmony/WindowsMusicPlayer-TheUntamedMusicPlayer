@@ -35,7 +35,7 @@ public sealed partial class LyricPage : Page, IDisposable
         };
         BindingOperations.SetBinding(ContentGridBackground, ImageBrush.ImageSourceProperty, contentGridBinding);*/
 
-        var isLyricBackgroundVisible = Data.SettingsViewModel?.IsLyricBackgroundVisible;
+        var isLyricBackgroundVisible = Data.IsLyricBackgroundVisible;
         if (isLyricBackgroundVisible == false)
         {
             ContentGridBackground.Opacity = 0;
@@ -47,11 +47,8 @@ public sealed partial class LyricPage : Page, IDisposable
                 TintOpacity = 0.8,
             };
 
-            var isDarkTheme = false;
-            if (Data.MainWindow != null)
-            {
-                isDarkTheme = ((FrameworkElement)Data.MainWindow.Content).ActualTheme == ElementTheme.Dark || (((FrameworkElement)Data.MainWindow.Content).ActualTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
-            }
+            var isDarkTheme = ((FrameworkElement)App.MainWindow!.Content).ActualTheme == ElementTheme.Dark || (((FrameworkElement)App.MainWindow.Content).ActualTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
+
             if (isDarkTheme)
             {
                 acrylicBrush.TintColor = Colors.Black;
