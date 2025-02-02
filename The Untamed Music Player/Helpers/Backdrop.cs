@@ -4,7 +4,7 @@ using Windows.UI.Composition;
 
 namespace The_Untamed_Music_Player.Helpers;
 
-public class ColorAnimatedBackdrop : CompositionBrushBackdrop
+public partial class ColorAnimatedBackdrop : CompositionBrushBackdrop
 {
     protected override CompositionBrush CreateBrush(Compositor compositor)
     {
@@ -23,7 +23,7 @@ public class ColorAnimatedBackdrop : CompositionBrushBackdrop
     }
 }
 
-public class BlurredBackdrop : CompositionBrushBackdrop
+public partial class BlurredBackdrop : CompositionBrushBackdrop
 {
     protected override CompositionBrush CreateBrush(Compositor compositor)
         => compositor.CreateHostBackdropBrush();

@@ -276,7 +276,7 @@ public partial class RootPlayBarViewModel : ObservableRecipient
 
     public void FullScreenButton_Click(object sender, RoutedEventArgs e)
     {
-        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(Data.MainWindow);
+        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
         var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
         var appWindow = AppWindow.GetFromWindowId(windowId);
 
@@ -297,7 +297,7 @@ public partial class RootPlayBarViewModel : ObservableRecipient
         if (!IsDesktopLyricWindowStarted)
         {
             Data.DesktopLyricWindow = new DesktopLyricWindow();
-            Data.DesktopLyricWindow.Activate();
+            Data.DesktopLyricWindow.Show();
             IsDesktopLyricWindowStarted = true;
         }
         else

@@ -15,7 +15,6 @@ public sealed partial class MainWindow : WindowEx
         get;
     }
 
-
     public MainWindow()
     {
         InitializeComponent();

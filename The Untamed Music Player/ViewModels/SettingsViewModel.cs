@@ -2,7 +2,6 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -35,19 +34,13 @@ public partial class SettingsViewModel : ObservableRecipient
     /// <summary>
     /// 是否启用窗口失去焦点回退
     /// </summary>
-    public bool IsFallBack
+    [ObservableProperty]
+    public partial bool IsFallBack { get; set; } = Data.MainViewModel!.IsFallBack;
+    partial void OnIsFallBackChanged(bool value)
     {
-        get;
-        set
-        {
-            field = value;
-            if (Data.MainViewModel != null)
-            {
-                Data.MainViewModel.IsFallBack = value;
-            }
-            SaveIsFallBackAsync(value);
-        }
-    } = Data.MainViewModel?.IsFallBack ?? true;
+        Data.MainViewModel!.IsFallBack = value;
+        SaveIsFallBackAsync(value);
+    }
 
     /// <summary>
     /// 是否显示歌词背景
@@ -58,6 +51,7 @@ public partial class SettingsViewModel : ObservableRecipient
         set
         {
             field = value;
+            Data.IsLyricBackgroundVisible = value;
             SaveLyricBackgroundVisibilityAsync(value);
         }
     }
@@ -94,18 +88,18 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 选中的字体
     /// </summary>
     [ObservableProperty]
-    public partial FontFamily SelectedFont { get; set; } = new("Microsoft YaHei");
+    public partial FontFamily SelectedFont { get; set; } = Data.SelectedFont;
     partial void OnSelectedFontChanged(FontFamily value)
     {
+        Data.SelectedFont = value;
         SaveSelectedFontAsync(value.Source);
     }
-
 
     /// <summary>
     /// 选中的材质
     /// </summary>
     [ObservableProperty]
-    public partial byte SelectedMaterial { get; set; } = Data.MainViewModel?.SelectedMaterial ?? 3;
+    public partial byte SelectedMaterial { get; set; } = Data.MainViewModel!.SelectedMaterial;
     partial void OnSelectedMaterialChanged(byte value)
     {
         SaveSelectedMaterialAsync(value);
@@ -115,13 +109,10 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 透明度
     /// </summary>
     [ObservableProperty]
-    public partial byte LuminosityOpacity { get; set; } = Data.MainViewModel?.LuminosityOpacity ?? 100;
+    public partial byte LuminosityOpacity { get; set; } = Data.MainViewModel!.LuminosityOpacity;
     partial void OnLuminosityOpacityChanged(byte value)
     {
-        if (Data.MainViewModel != null)
-        {
-            Data.MainViewModel.LuminosityOpacity = value;
-        }
+        Data.MainViewModel!.LuminosityOpacity = value;
         SaveLuminosityOpacityAsync(value);
     }
 
@@ -129,13 +120,10 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 背景颜色
     /// </summary>
     [ObservableProperty]
-    public partial Color TintColor { get; set; } = Data.MainViewModel?.TintColor ?? Colors.White;
+    public partial Color TintColor { get; set; } = Data.MainViewModel!.TintColor;
     partial void OnTintColorChanged(Color value)
     {
-        if (Data.MainViewModel != null)
-        {
-            Data.MainViewModel.TintColor = value;
-        }
+        Data.MainViewModel!.TintColor = value;
         SaveTintColorAsync(value);
     }
 
@@ -157,8 +145,6 @@ public partial class SettingsViewModel : ObservableRecipient
             });
 
         LoadFonts();
-        LoadSelectedFontAsync();
-        LoadLyricBackgroundVisibilityAsync();
         Data.SettingsViewModel = this;
     }
 
@@ -209,7 +195,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
     public void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (Data.MainViewModel != null && SelectedMaterial != Data.MainViewModel.SelectedMaterial)
+        if (SelectedMaterial != Data.MainViewModel!.SelectedMaterial)
         {
             Data.MainViewModel.SelectedMaterial = SelectedMaterial;
             Data.MainViewModel.ChangeMaterial(SelectedMaterial);
@@ -221,25 +207,21 @@ public partial class SettingsViewModel : ObservableRecipient
     public void ResetButton_Click(object sender, RoutedEventArgs e)
     {
         IsFallBack = true;
-        OnPropertyChanged(nameof(IsFallBack));
         SelectedMaterial = 3;
-        if (Data.MainViewModel != null)
-        {
-            Data.MainViewModel.ChangeMaterial(SelectedMaterial);
-            LuminosityOpacity = Data.MainViewModel.LuminosityOpacity;
-            TintColor = Data.MainViewModel.TintColor;
-        }
+        Data.MainViewModel!.ChangeMaterial(SelectedMaterial);
+        LuminosityOpacity = Data.MainViewModel.LuminosityOpacity;
+        TintColor = Data.MainViewModel.TintColor;
         OnPropertyChanged(nameof(SelectedMaterial));
     }
 
     public void LuminosityOpacitySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
     {
-        Data.MainViewModel?.ChangeLuminosityOpacity(LuminosityOpacity);
+        Data.MainViewModel!.ChangeLuminosityOpacity(LuminosityOpacity);
     }
 
     public void TintColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
     {
-        Data.MainViewModel?.ChangeTintColor(TintColor);
+        Data.MainViewModel!.ChangeTintColor(TintColor);
     }
 
     public void FontComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -299,21 +281,6 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         var folderPaths = Data.MusicLibrary.Folders?.Select(f => f.Path).ToList();
         await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths);//	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
-    }
-
-    private async void LoadSelectedFontAsync()
-    {
-        var fontName = await _localSettingsService.ReadSettingAsync<string>("SelectedFont");
-        if (!string.IsNullOrEmpty(fontName))
-        {
-            SelectedFont = new FontFamily(fontName);
-        }
-    }
-
-    private async void LoadLyricBackgroundVisibilityAsync()
-    {
-        var isLyricBackgroundVisible = await _localSettingsService.ReadSettingAsync<bool>("IsLyricBackgroundVisible");
-        IsLyricBackgroundVisible = isLyricBackgroundVisible;
     }
 
     private async void SaveSelectedFontAsync(string fontName)

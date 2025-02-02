@@ -82,9 +82,6 @@
 		<Content Remove="Assets\Wide310x150Logo.scale-400.png" />
 		<Content Remove="Assets\WindowIcon.png" />
 	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="Views\DesktopLyricPage.xaml" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Manifest Include="$(ApplicationManifest)" />
@@ -110,9 +107,6 @@
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<Page Update="Views\DesktopLyricPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</Page>
 		<Page Update="Views\DesktopLyricWindow.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
