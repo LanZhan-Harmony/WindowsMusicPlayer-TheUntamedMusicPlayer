@@ -16,6 +16,11 @@ namespace The_Untamed_Music_Player.Models;
 
 public partial class MusicPlayer : ObservableRecipient
 {
+
+    private readonly Thickness _defaultMargin = new(0, 20, 0, 20);
+    private readonly Thickness _highlightedMargin = new(0, 40, 0, 40);
+    private const double _defaultOpacity = 0.5;
+    private const double _highlightedOpacity = 1.0;
     private readonly ILocalSettingsService _localSettingsService;
 
     /// <summary>
@@ -37,6 +42,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// 线程计时器
     /// </summary>
     private ThreadPoolTimer? _positionUpdateTimer;
+
 
     /// <summary>
     /// 线程锁开启状态, true为开启, false为关闭
@@ -549,6 +555,7 @@ public partial class MusicPlayer : ObservableRecipient
         Player?.Pause();
         CurrentPlayingTime = TimeSpan.Zero;
         CurrentPosition = 0;
+        CurrentLyricIndex = 0;
         CurrentLyricContent = "";
         _positionUpdateTimer?.Cancel();
         _positionUpdateTimer = null;
@@ -831,19 +838,11 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="itemTime"></param>
     /// <param name="currentLyricIndex"></param>
     /// <returns></returns>
-    public double GetLyricFont(double itemTime, int currentLyricIndex)
+    public double GetLyricFont(double itemTime, int currentLyricIndex, double mainWindowWidth)
     {
-        var defaultFontSize = Data.MainWindow!.Width <= 1000 ? 16.0 : 20.0;
-        var highlightedFontSize = Data.MainWindow!.Width <= 1000 ? 24.0 : 50.0;
-
-        try
-        {
-            return itemTime == CurrentLyric[currentLyricIndex].Time ? highlightedFontSize : defaultFontSize;
-        }
-        catch
-        {
-            return defaultFontSize;
-        }
+        var defaultFontSize = mainWindowWidth <= 1000 ? 16.0 : 20.0;
+        var highlightedFontSize = mainWindowWidth <= 1000 ? 24.0 : 50.0;
+        return itemTime == CurrentLyric[currentLyricIndex].Time ? highlightedFontSize : defaultFontSize;
     }
 
     /// <summary>
@@ -854,17 +853,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// <returns></returns>
     public Thickness GetLyricMargin(double itemTime, int currentLyricIndex)
     {
-        var defaultMargin = new Thickness(0, 20, 0, 20);
-        var highlightedMargin = new Thickness(0, 40, 0, 40);
-
-        try
-        {
-            return itemTime == CurrentLyric[currentLyricIndex].Time ? highlightedMargin : defaultMargin;
-        }
-        catch
-        {
-            return defaultMargin;
-        }
+        return itemTime == CurrentLyric[currentLyricIndex].Time ? _highlightedMargin : _defaultMargin;
     }
 
     /// <summary>
@@ -875,17 +864,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// <returns></returns>
     public double GetLyricOpacity(double itemTime, int currentLyricIndex)
     {
-        const double defaultOpacity = 0.5;
-        const double highlightedOpacity = 1.0;
-
-        try
-        {
-            return itemTime == CurrentLyric[currentLyricIndex].Time ? highlightedOpacity : defaultOpacity;
-        }
-        catch
-        {
-            return defaultOpacity;
-        }
+        return itemTime == CurrentLyric[currentLyricIndex].Time ? _highlightedOpacity : _defaultOpacity;
     }
 
     /// <summary>

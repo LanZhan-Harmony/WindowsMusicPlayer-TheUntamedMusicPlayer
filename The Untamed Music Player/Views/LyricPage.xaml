@@ -10,13 +10,12 @@
       xmlns:ui="using:CommunityToolkit.WinUI"
       mc:Ignorable="d">
 
-
     <Page.Resources>
         <media:AttachedCardShadow x:Key="CommonShadow" Offset="4"/>
         <DataTemplate x:Key="LyricViewTemplate" x:DataType="model:LyricSlice">
             <TextBlock Margin="{x:Bind model:Data.MusicPlayer.GetLyricMargin(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
-                       FontFamily="{x:Bind model:Data.SettingsViewModel.SelectedFont}"
-                       FontSize="{x:Bind model:Data.MusicPlayer.GetLyricFont(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
+                       FontFamily="{x:Bind model:Data.SelectedFont}"
+                       FontSize="{x:Bind model:Data.MusicPlayer.GetLyricFont(Time, model:Data.MusicPlayer.CurrentLyricIndex, model:Data.MainViewModel.MainWindowWidth), Mode=OneWay}"
                        Opacity="{x:Bind model:Data.MusicPlayer.GetLyricOpacity(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
                        SizeChanged="TextBlock_SizeChanged"
                        Text="{x:Bind Content}"
