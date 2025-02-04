@@ -19,7 +19,7 @@ public sealed partial class MainWindow : WindowEx
     {
         InitializeComponent();
 
-        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/WindowIcon.ico"));
+        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppIcon/WindowIcon.ico"));
         Title = "AppDisplayName".GetLocalized();
         ExtendsContentIntoTitleBar = true;
 
@@ -31,7 +31,6 @@ public sealed partial class MainWindow : WindowEx
 
         ShellFrame.Navigate(typeof(ShellPage));
         RootPlayBarFrame.Navigate(typeof(RootPlayBarView));
-
         ViewModel = App.GetService<MainViewModel>();
     }
 

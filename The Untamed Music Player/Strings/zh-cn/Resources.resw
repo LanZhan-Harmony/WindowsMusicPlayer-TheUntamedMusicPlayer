@@ -552,4 +552,16 @@
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
     <value>关闭</value>
   </data>
+  <data name="DesktopLyricWindowTitle" xml:space="preserve">
+    <value>桌面歌词</value>
+  </data>
+  <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
+    <value>全部播放</value>
+  </data>
+  <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
+    <value>随机播放</value>
+  </data>
+  <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
+    <value>编辑信息</value>
+  </data>
 </root>
