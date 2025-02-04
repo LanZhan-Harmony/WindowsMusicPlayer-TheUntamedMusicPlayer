@@ -71,8 +71,8 @@ public partial class App : Application
             services.AddSingleton<IFileService, FileService>();
 
             // Views and ViewModels
-            services.AddSingleton<MainViewModel>();
-            services.AddSingleton<SettingsViewModel>();
+            services.AddTransient<MainViewModel>();
+            services.AddTransient<SettingsViewModel>();
             services.AddTransient<PlayListsViewModel>();
             services.AddTransient<PlayQueueViewModel>();
             services.AddTransient<MusicLibraryViewModel>();
@@ -82,9 +82,9 @@ public partial class App : Application
             services.AddTransient<LyricViewModel>();
             services.AddTransient<NoMusicViewModel>();
             services.AddTransient<HaveMusicViewModel>();
-            services.AddSingleton<LocalSongsViewModel>();
-            services.AddSingleton<LocalAlbumsViewModel>();
-            services.AddSingleton<LocalArtistsViewModel>();
+            services.AddTransient<LocalSongsViewModel>();
+            services.AddTransient<LocalAlbumsViewModel>();
+            services.AddTransient<LocalArtistsViewModel>();
             services.AddTransient<AlbumDetailViewModel>();
             services.AddTransient<ArtistDetailViewModel>();
             services.AddTransient<DesktopLyricViewModel>();

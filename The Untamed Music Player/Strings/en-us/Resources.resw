@@ -552,4 +552,16 @@
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="DesktopLyricWindowTitle" xml:space="preserve">
+    <value>Desktop lyric</value>
+  </data>
+  <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
+    <value>Play all</value>
+  </data>
+  <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
+    <value>Shuffle and play</value>
+  </data>
+  <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
+    <value>Edit info</value>
+  </data>
 </root>

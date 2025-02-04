@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
@@ -14,7 +15,7 @@ using WinRT.Interop;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class DesktopLyricWindow : Window, IDisposable
+public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 {
     // 定义需要的Win32 API和常量
     private const int GWL_EXSTYLE = -20;
@@ -50,14 +51,17 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
         var appWindow = AppWindow.GetFromWindowId(windowId);
 
-        var exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+        /*var exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
         exStyle |= WS_EX_TOOLWINDOW;  // 添加工具窗口样式
         exStyle &= ~WS_EX_APPWINDOW;  // 移除应用窗口样式
-        _ = SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
+        _ = SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);*/
 
         ExtendsContentIntoTitleBar = true;
         appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed;
         SetTitleBar(Draggable);
+        Title = "DesktopLyricWindowTitle".GetLocalized();
+
+        appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
 
         // 获取屏幕工作区大小
         var displayArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Primary);
@@ -72,17 +76,16 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         var windowHeight = screenHeight * 100 / 1080;
 
         // 计算窗口位置，使其位于屏幕下方
-        var x = (screenWidth - windowWidth) / 2; // 居中
         var y = screenHeight - screenHeight * 140 / 1080; // 底部
 
         // 设置窗口位置
-        appWindow.Move(new PointInt32(x, y));
+        DLW.SetWindowSize(1000, 100);
+        DLW.CenterOnScreen(null, null);
 
-        //设置窗口为 CompactOverlay 模式
-        appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
-
-        // 设置窗口大小
-        appWindow.Resize(new SizeInt32(windowWidth, windowHeight));
+        var currentPosition = appWindow.Position;
+        // 将窗口移动到新的位置
+        DLW.Move(currentPosition.X, y);
+        //DLW.SetIsAlwaysOnTop(true);
 
         /*if (Content is FrameworkElement rootElement)
         {
@@ -140,7 +143,7 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
         }
         _measureTextBlock.Text = currentLyricContent;
         _measureTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        return Math.Min(_measureTextBlock.DesiredSize.Width, 620);
+        return Math.Min(_measureTextBlock.DesiredSize.Width, 700);
     }
 
     private void LyricContentTextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -161,7 +164,7 @@ public sealed partial class DesktopLyricWindow : Window, IDisposable
                 EasingFunction = new BackEase
                 {
                     EasingMode = EasingMode.EaseOut,
-                    Amplitude = 0.9
+                    Amplitude = 1
                 }
             };
             Storyboard.SetTarget(widthAnimation, AnimatedBorder);
