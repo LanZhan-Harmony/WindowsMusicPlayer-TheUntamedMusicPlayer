@@ -242,12 +242,11 @@
                     <TextBlock x:Uid="Settings_About"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
-
                     <toolkit:SettingsCard x:Name="About" x:Uid="Settings_AboutDescription"
                                           Header="{x:Bind model:Data.AppDisplayName}">
                         <toolkit:SettingsCard.HeaderIcon>
                             <BitmapIcon AutomationProperties.AccessibilityView="Raw" ShowAsMonochrome="False"
-                                        UriSource="ms-appx:///Assets/WindowIcon.ico"/>
+                                        UriSource="ms-appx:///Assets/AppIcon/WindowIcon.ico"/>
                         </toolkit:SettingsCard.HeaderIcon>
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}"/>
                     </toolkit:SettingsCard>

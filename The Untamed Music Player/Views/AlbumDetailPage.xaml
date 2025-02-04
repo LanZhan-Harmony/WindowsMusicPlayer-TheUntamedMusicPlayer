@@ -147,10 +147,41 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="Header.Margin" Value="16,54,16,0"/>
+                        <Setter Target="Header.Margin" Value="16,54,16,-80"/>
+                        <Setter Target="ButtonStackPanel.Margin" Value="0,13,0,0"/>
+                        <Setter Target="CoverArt.Width" Value="136"/>
+                        <Setter Target="CoverArt.Height" Value="136"/>
                         <Setter Target="TitleText.FontSize" Value="28"/>
                         <Setter Target="SubtitleText.FontSize" Value="14"/>
+                        <Setter Target="SubtitleText.Margin" Value="0,9,0,0"/>
+                        <Setter Target="CaptionText.Margin" Value="0,4,0,0"/>
+                        <Setter Target="AddToButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="EditInfoButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                        <Setter Target="AddToFlyout.Visibility" Value="Visible"/>
+                        <Setter Target="EditInfoFlyout.Visibility" Value="Visible"/>
                         <Setter Target="SongListView.Padding" Value="12,0,12,0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Middle">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="641"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Header.Margin" Value="56,54,56,-80"/>
+                        <Setter Target="ButtonStackPanel.Margin" Value="0,25,0,0"/>
+                        <Setter Target="CoverArt.Width" Value="162"/>
+                        <Setter Target="CoverArt.Height" Value="162"/>
+                        <Setter Target="TitleText.FontSize" Value="28"/>
+                        <Setter Target="SubtitleText.FontSize" Value="20"/>
+                        <Setter Target="SubtitleText.Margin" Value="0,8,0,0"/>
+                        <Setter Target="CaptionText.Margin" Value="0,12,0,0"/>
+                        <Setter Target="AddToButton.Visibility" Value="Visible"/>
+                        <Setter Target="EditInfoButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                        <Setter Target="AddToFlyout.Visibility" Value="Collapsed"/>
+                        <Setter Target="EditInfoFlyout.Visibility" Value="Visible"/>
+                        <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
@@ -158,9 +189,17 @@
                         <AdaptiveTrigger MinWindowWidth="850"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="Header.Margin" Value="56,54,56,0"/>
+                        <Setter Target="Header.Margin" Value="56,54,56,-80"/>
+                        <Setter Target="ButtonStackPanel.Margin" Value="0,25,0,0"/>
+                        <Setter Target="CoverArt.Width" Value="208"/>
+                        <Setter Target="CoverArt.Height" Value="208"/>
                         <Setter Target="TitleText.FontSize" Value="40"/>
                         <Setter Target="SubtitleText.FontSize" Value="20"/>
+                        <Setter Target="SubtitleText.Margin" Value="0,8,0,0"/>
+                        <Setter Target="CaptionText.Margin" Value="0,12,0,0"/>
+                        <Setter Target="AddToButton.Visibility" Value="Visible"/>
+                        <Setter Target="EditInfoButton.Visibility" Value="Visible"/>
+                        <Setter Target="MoreButton.Visibility" Value="Collapsed"/>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -188,7 +227,6 @@
 
                 <Border x:Name="CoverArt"
                         Grid.Column="0"
-                        Width="192" Height="192"
                         Margin="0,0,20,0"
                         BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                         BorderThickness="1"
@@ -216,40 +254,99 @@
                                Text="{x:Bind ViewModel.Album.Name}"
                                TextWrapping="NoWrap"/>
                     <TextBlock x:Name="SubtitleText"
-                               Margin="0,8,0,0"
                                FontWeight="Normal"
                                Text="{x:Bind ViewModel.Album.GetArtistsStr()}"
                                TextWrapping="NoWrap"/>
                     <TextBlock x:Name="CaptionText"
-                               Margin="0,12,0,0"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="{x:Bind ViewModel.Album.GetCountAndDurationStr()}"
                                TextWrapping="NoWrap"/>
 
                     <Grid x:Name="ButtonPanel">
-                        <CommandBar Margin="-4,10,0,0" Padding="0"
-                                    HorizontalAlignment="Left"
-                                    DefaultLabelPosition="Right">
-                            <AppBarButton x:Name="PlayButton"
-                                          HorizontalAlignment="Stretch"
-                                          BackgroundSizing="OuterBorderEdge"
-                                          BorderBrush="{StaticResource AccentButtonBorderBrush}"
-                                          XYFocusDown="{x:Bind SongListView}">
-                                <AppBarButton.Icon>
-                                    <FontIcon Glyph="&#xE768;"/>
-                                </AppBarButton.Icon>
-                            </AppBarButton>
-
-                            <AppBarButton HorizontalAlignment="Stretch"
-                                          BorderBrush="{ThemeResource ButtonBorderBrush}"
-                                          XYFocusDown="{x:Bind SongListView}"
-                                          XYFocusLeft="{x:Bind PlayButton}">
-                                <AppBarButton.Icon>
-                                    <FontIcon Glyph="&#xE8B1;"/>
-                                </AppBarButton.Icon>
-                            </AppBarButton>
-                        </CommandBar>
+                        <StackPanel x:Name="ButtonStackPanel"
+                                    Padding="0" HorizontalAlignment="Left"
+                                    Orientation="Horizontal" Spacing="16">
+                            <Button x:Name="PlayButton"
+                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    XYFocusDown="{x:Bind SongListView}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="16" Glyph="&#xE768;"/>
+                                    <TextBlock x:Uid="AlbumDetail_PlayAll" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    XYFocusDown="{x:Bind SongListView}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
+                                    <TextBlock x:Uid="AlbumDetail_ShuffleAndPlay" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="AddToButton"
+                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    XYFocusDown="{x:Bind SongListView}">
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue" Width="216">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE90B;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator/>
+                                        <MenuFlyoutItem x:Uid="LocalSongs_AddTo_NewPlaylist">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE710;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="16" Glyph="&#xE710;"/>
+                                    <TextBlock x:Uid="LocalSongs_AddTo" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="EditInfoButton"
+                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    XYFocusDown="{x:Bind SongListView}"
+                                    XYFocusLeft="{x:Bind PlayButton}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="16" Glyph="&#xE70F;"/>
+                                    <TextBlock x:Uid="AlbumDetail_EditInfo" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="MoreButton"
+                                    Padding="11,9,11,9" HorizontalAlignment="Stretch">
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuFlyoutSubItem x:Name="AddToFlyout" x:Uid="LocalSongs_AddTo"
+                                                           Width="158">
+                                            <MenuFlyoutSubItem.Icon>
+                                                <FontIcon Glyph="&#xE710;"/>
+                                            </MenuFlyoutSubItem.Icon>
+                                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue" Width="216">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE90B;"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutSeparator/>
+                                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_NewPlaylist">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE710;"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                        </MenuFlyoutSubItem>
+                                        <MenuFlyoutItem x:Name="EditInfoFlyout" x:Uid="AlbumDetail_EditInfo"
+                                                        Width="158">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE70F;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                                <FontIcon FontSize="16" Glyph="&#xE712;"/>
+                            </Button>
+                        </StackPanel>
                     </Grid>
                 </StackPanel>
             </Grid>
@@ -261,12 +358,16 @@
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
                   ui:ListViewExtensions.ItemContainerStretchDirection="Horizontal"
+                  ui:ScrollViewerExtensions.VerticalScrollBarMargin="0,-150,0,0"
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind ViewModel.SongList}"
                   SelectionMode="None"
                   XYFocusUp="{x:Bind PlayButton}">
+            <ListView.Header>
+                <Border x:Name="ListHeaderPadding" Height="112"/>
+            </ListView.Header>
             <interactivity:Interaction.Behaviors>
                 <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
             </interactivity:Interaction.Behaviors>

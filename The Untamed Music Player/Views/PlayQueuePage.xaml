@@ -281,7 +281,7 @@
                     KeyTipPlacementMode="Bottom" Orientation="Horizontal"
                     Spacing="16">
             <Button x:Name="ClearButton" x:Uid="PlayQueue_ClearButton"
-                    Height="36"
+                    Padding="11,9,11,9"
                     AccessKey="CX"
                     Click="{x:Bind ViewModel.ClearButton_Click}">
                 <Button.KeyboardAccelerators>
@@ -294,7 +294,7 @@
                 </StackPanel>
             </Button>
             <Button x:Name="AddToButton"
-                    Height="36"
+                    Padding="11,9,11,9"
                     AccessKey="CW">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontSize="16" Glyph="&#xE710;"/>
@@ -303,7 +303,7 @@
                 </StackPanel>
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue">
+                        <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue" Width="216">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE90B;"/>
                             </MenuFlyoutItem.Icon>

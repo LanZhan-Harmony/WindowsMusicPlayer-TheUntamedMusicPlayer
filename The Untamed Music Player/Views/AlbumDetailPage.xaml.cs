@@ -32,7 +32,7 @@ public sealed partial class AlbumDetailPage : Page
     private const int ClampSize = 96;
     private const float BackgroundScaleFactor = 0.625f;
     private const float CoverScaleFactor = 0.5f;
-    private const int ButtonPanelOffset = 64;
+    private const int ButtonPanelOffset = 77;
     private float BackgroundVisualHeight => (float)(Header.ActualHeight * 2.5);
 
     private CompositionPropertySet? _props;
