@@ -1,5 +1,4 @@
-﻿namespace The_Untamed_Music_Player.Models;
-
+namespace The_Untamed_Music_Player.Models;
 public class LocalSettingsOptions
 {
     public string? ApplicationDataFolder

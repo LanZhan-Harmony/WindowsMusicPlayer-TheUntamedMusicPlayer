@@ -1,10 +1,8 @@
-﻿using Microsoft.UI.Xaml;
-
+using Microsoft.UI.Xaml;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Services;
-
 public class ThemeSelectorService : IThemeSelectorService
 {
     private const string SettingsKey = "AppBackgroundRequestedTheme";

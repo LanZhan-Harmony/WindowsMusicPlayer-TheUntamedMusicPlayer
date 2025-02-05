@@ -10,14 +10,13 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
-using Windows.Graphics;
 using WinRT.Interop;
 
 namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 {
-    // ¶¨ÒåĞèÒªµÄWin32 APIºÍ³£Á¿
+    // å®šä¹‰éœ€è¦çš„Win32 APIå’Œå¸¸é‡
     private const int GWL_EXSTYLE = -20;
     private const int WS_EX_TOOLWINDOW = 0x00000080;
     private const int WS_EX_APPWINDOW = 0x00040000;
@@ -46,14 +45,14 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         ViewModel = App.GetService<DesktopLyricViewModel>();
         InitializeComponent();
 
-        // »ñÈ¡´°¿Ú¾ä±ú
+        // è·å–çª—å£å¥æŸ„
         var hWnd = WindowNative.GetWindowHandle(this);
         var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
         var appWindow = AppWindow.GetFromWindowId(windowId);
 
         /*var exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
-        exStyle |= WS_EX_TOOLWINDOW;  // Ìí¼Ó¹¤¾ß´°¿ÚÑùÊ½
-        exStyle &= ~WS_EX_APPWINDOW;  // ÒÆ³ıÓ¦ÓÃ´°¿ÚÑùÊ½
+        exStyle |= WS_EX_TOOLWINDOW;  // æ·»åŠ å·¥å…·çª—å£æ ·å¼
+        exStyle &= ~WS_EX_APPWINDOW;  // ç§»é™¤åº”ç”¨çª—å£æ ·å¼
         _ = SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);*/
 
         ExtendsContentIntoTitleBar = true;
@@ -63,27 +62,27 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
         appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
 
-        // »ñÈ¡ÆÁÄ»¹¤×÷Çø´óĞ¡
+        // è·å–å±å¹•å·¥ä½œåŒºå¤§å°
         var displayArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Primary);
         var workArea = displayArea.WorkArea;
 
-        // ÆÁÄ»³¤¿í
+        // å±å¹•é•¿å®½
         var screenWidth = workArea.Width;
         var screenHeight = workArea.Height;
 
-        // ´°¿Ú³¤¿í
+        // çª—å£é•¿å®½
         var windowWidth = screenWidth * 1000 / 1920;
         var windowHeight = screenHeight * 100 / 1080;
 
-        // ¼ÆËã´°¿ÚÎ»ÖÃ£¬Ê¹ÆäÎ»ÓÚÆÁÄ»ÏÂ·½
-        var y = screenHeight - screenHeight * 140 / 1080; // µ×²¿
+        // è®¡ç®—çª—å£ä½ç½®ï¼Œä½¿å…¶ä½äºå±å¹•ä¸‹æ–¹
+        var y = screenHeight - screenHeight * 140 / 1080; // åº•éƒ¨
 
-        // ÉèÖÃ´°¿ÚÎ»ÖÃ
+        // è®¾ç½®çª—å£ä½ç½®
         DLW.SetWindowSize(1000, 100);
         DLW.CenterOnScreen(null, null);
 
         var currentPosition = appWindow.Position;
-        // ½«´°¿ÚÒÆ¶¯µ½ĞÂµÄÎ»ÖÃ
+        // å°†çª—å£ç§»åŠ¨åˆ°æ–°çš„ä½ç½®
         DLW.Move(currentPosition.X, y);
         //DLW.SetIsAlwaysOnTop(true);
 

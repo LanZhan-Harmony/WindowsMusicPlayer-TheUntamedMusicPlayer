@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;

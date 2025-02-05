@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <winuiex:WindowEx x:Name="DLW"
                   x:Class="The_Untamed_Music_Player.Views.DesktopLyricWindow"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

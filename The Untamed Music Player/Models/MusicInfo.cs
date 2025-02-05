@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
@@ -7,7 +7,6 @@ using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
-
 public class BriefMusicInfo
 {
     /// <summary>
@@ -121,13 +120,14 @@ public class BriefMusicInfo
     public static async Task<BriefMusicInfo> CreateAsync(string path, string folder)
     {
         var info = new BriefMusicInfo();
+        byte[]? coverBuffer = null;
         Task? coverTask = null;
         try
         {
             var musicFile = TagLib.File.Create(path);
-            if (musicFile.Tag.Pictures?.Length > 0)
+            if (musicFile.Tag.Pictures.Length > 0)
             {
-                var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
+                coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
                 coverTask = info.LoadCoverAsync(coverBuffer);
             }
             info.Path = path;
@@ -151,6 +151,7 @@ public class BriefMusicInfo
             if (coverTask != null)
             {
                 await coverTask;
+                Array.Clear(coverBuffer!, 0, coverBuffer!.Length);
             }
         }
         catch (Exception ex) when (ex is TagLib.CorruptFileException or TagLib.UnsupportedFormatException)
@@ -407,6 +408,7 @@ public class DetailedMusicInfo : BriefMusicInfo
                     DecodePixelHeight = 400
                 };
                 Cover.SetSource(stream.AsRandomAccessStream());
+                Array.Clear(coverBuffer, 0, coverBuffer.Length);
             }
             Album = musicFile.Tag.Album ?? "";
             ArtistsStr = GetArtistsStr();

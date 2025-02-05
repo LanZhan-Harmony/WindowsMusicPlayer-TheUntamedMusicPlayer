@@ -1,5 +1,4 @@
-﻿namespace The_Untamed_Music_Player.Contracts.Services;
-
+namespace The_Untamed_Music_Player.Contracts.Services;
 public interface IFileService
 {
     T Read<T>(string folderPath, string fileName);

@@ -1,10 +1,7 @@
-﻿using Windows.Storage;
+using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Helpers;
-
-// Use these extension methods to store and retrieve local and roaming app data
-// More details regarding storing and retrieving app data at https://docs.microsoft.com/windows/apps/design/app-settings/store-and-retrieve-app-data
 public static class SettingsStorageExtensions
 {
     private const string FileExtension = ".json";

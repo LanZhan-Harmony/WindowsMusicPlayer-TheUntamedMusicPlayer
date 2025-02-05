@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -9,8 +9,6 @@ using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player;
-
-// To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
 public partial class App : Application
 {
     // The .NET Generic Host provides dependency injection, configuration, logging, and other services.

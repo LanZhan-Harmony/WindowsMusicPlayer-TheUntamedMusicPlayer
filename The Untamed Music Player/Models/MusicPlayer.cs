@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
@@ -13,10 +13,8 @@ using Windows.Storage.Streams;
 using Windows.System.Threading;
 
 namespace The_Untamed_Music_Player.Models;
-
 public partial class MusicPlayer : ObservableRecipient
 {
-
     private readonly Thickness _defaultMargin = new(0, 20, 0, 20);
     private readonly Thickness _highlightedMargin = new(0, 40, 0, 40);
     private const double _defaultOpacity = 0.5;
