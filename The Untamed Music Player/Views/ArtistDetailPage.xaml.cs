@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,

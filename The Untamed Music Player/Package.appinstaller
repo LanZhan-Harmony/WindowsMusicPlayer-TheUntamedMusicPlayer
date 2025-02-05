@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <AppInstaller Uri="{AppInstallerUri}"
               Version="{Version}"
               xmlns="http://schemas.microsoft.com/appx/appinstaller/2017/2">

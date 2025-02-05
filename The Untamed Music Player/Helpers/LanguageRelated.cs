@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Text;
+using Microsoft.UI.Text;
 using The_Untamed_Music_Player.Models;
 using Windows.UI.Text;
 

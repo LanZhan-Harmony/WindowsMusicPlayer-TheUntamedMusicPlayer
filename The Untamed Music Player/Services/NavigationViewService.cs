@@ -1,13 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.UI.Xaml.Controls;
-
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Services;
-
 public class NavigationViewService : INavigationViewService
 {
     private readonly INavigationService _navigationService;

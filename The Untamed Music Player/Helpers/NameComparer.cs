@@ -1,4 +1,4 @@
-﻿using hyjiacan.py4n;
+using hyjiacan.py4n;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.Helpers;

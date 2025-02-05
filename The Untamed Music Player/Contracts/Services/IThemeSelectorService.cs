@@ -1,7 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace The_Untamed_Music_Player.Contracts.Services;
-
 public interface IThemeSelectorService
 {
     ElementTheme Theme

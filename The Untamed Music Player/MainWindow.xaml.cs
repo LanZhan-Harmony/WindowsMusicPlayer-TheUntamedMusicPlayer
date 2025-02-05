@@ -1,11 +1,11 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using The_Untamed_Music_Player.Views;
 using Windows.UI.ViewManagement;
-namespace The_Untamed_Music_Player;
 
+namespace The_Untamed_Music_Player;
 public sealed partial class MainWindow : WindowEx
 {
     private readonly Microsoft.UI.Dispatching.DispatcherQueue dispatcherQueue;

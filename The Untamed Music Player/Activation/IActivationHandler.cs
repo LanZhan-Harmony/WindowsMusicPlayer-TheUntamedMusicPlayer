@@ -1,5 +1,4 @@
-﻿namespace The_Untamed_Music_Player.Activation;
-
+namespace The_Untamed_Music_Player.Activation;
 public interface IActivationHandler
 {
     bool CanHandle(object args);

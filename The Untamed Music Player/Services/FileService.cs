@@ -1,9 +1,8 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json;
 using The_Untamed_Music_Player.Contracts.Services;
 
 namespace The_Untamed_Music_Player.Services;
-
 public class FileService : IFileService
 {
     public T Read<T>(string folderPath, string fileName)

@@ -1,7 +1,6 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace The_Untamed_Music_Player.Contracts.Services;
-
 public interface INavigationViewService
 {
     IList<object>? MenuItems

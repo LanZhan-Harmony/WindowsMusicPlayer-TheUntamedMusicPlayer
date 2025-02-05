@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
@@ -6,7 +6,6 @@ using The_Untamed_Music_Player.Models;
 using Windows.Storage;
 
 namespace The_Untamed_Music_Player.Services;
-
 public class LocalSettingsService : ILocalSettingsService
 {
     private const string _defaultApplicationDataFolder = "The Untamed Music Player/ApplicationData";

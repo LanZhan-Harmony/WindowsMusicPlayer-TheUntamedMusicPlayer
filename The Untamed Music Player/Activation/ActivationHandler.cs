@@ -1,5 +1,4 @@
-﻿namespace The_Untamed_Music_Player.Activation;
-
+namespace The_Untamed_Music_Player.Activation;
 // Extend this class to implement new ActivationHandlers. See DefaultActivationHandler for an example.
 // https://github.com/microsoft/TemplateStudio/blob/main/docs/WinUI/activation.md
 public abstract class ActivationHandler<T> : IActivationHandler

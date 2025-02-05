@@ -1,8 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 
 namespace The_Untamed_Music_Player.ViewModels;
-
 public partial class HomeViewModel : ObservableRecipient
 {
     public HomeViewModel()
