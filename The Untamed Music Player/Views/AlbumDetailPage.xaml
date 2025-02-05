@@ -162,7 +162,7 @@
                         <Setter Target="SongListView.Padding" Value="12,0,12,0"/>
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState x:Name="Middle">
+                <VisualState x:Name="Medium">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="641"/>
                     </VisualState.StateTriggers>
@@ -183,7 +183,7 @@
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState x:Name="Normal">
+                <VisualState x:Name="Large">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="850"/>
                     </VisualState.StateTriggers>
@@ -216,7 +216,7 @@
                        Fill="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
                        RadiusX="8" RadiusY="12"
                        Stroke="{ThemeResource ControlElevationBorderBrush}"
-                       StrokeThickness="1" Translation="0,0,32"/>
+                       StrokeThickness="1"/>
 
             <Grid x:Name="ContentContainer">
                 <Grid.ColumnDefinitions>
