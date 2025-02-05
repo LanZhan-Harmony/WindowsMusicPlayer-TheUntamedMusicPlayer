@@ -1,10 +1,9 @@
-﻿using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.ViewModels;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.Models;
-
 public static class Data
 {
     /// <summary>

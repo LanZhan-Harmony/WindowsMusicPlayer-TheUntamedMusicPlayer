@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Helpers;
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
@@ -9,7 +9,6 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
-
 public partial class LocalAlbumsViewModel : ObservableRecipient
 {
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();

@@ -1,8 +1,7 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace The_Untamed_Music_Player.Helpers;
-
 public class RuntimeHelper
 {
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]

@@ -1,10 +1,9 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Windows.UI;
 
 namespace The_Untamed_Music_Player.Helpers;
-
 [JsonSerializable(typeof(bool))]
 [JsonSerializable(typeof(byte))]
 [JsonSerializable(typeof(int))]
@@ -29,7 +28,6 @@ public static class Json
             return JsonSerializer.Deserialize(value, jsonTypeInfo);
         });
     }
-
 
     public static async Task<string> StringifyAsync(object value)
     {

@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace The_Untamed_Music_Player.Helpers;
 public class WindowsSystemDispatcherQueueHelper

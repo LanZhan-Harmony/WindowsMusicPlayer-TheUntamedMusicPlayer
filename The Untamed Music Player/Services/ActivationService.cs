@@ -1,10 +1,8 @@
-﻿using Microsoft.UI.Xaml;
-
+using Microsoft.UI.Xaml;
 using The_Untamed_Music_Player.Activation;
 using The_Untamed_Music_Player.Contracts.Services;
 
 namespace The_Untamed_Music_Player.Services;
-
 public class ActivationService : IActivationService
 {
     private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;

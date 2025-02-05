@@ -1,10 +1,9 @@
-﻿using CommunityToolkit.WinUI;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace The_Untamed_Music_Player.Helpers;
-
 public static class ListViewExtensions
 {
     public static readonly DependencyProperty ItemCornerRadiusProperty = DependencyProperty.RegisterAttached(

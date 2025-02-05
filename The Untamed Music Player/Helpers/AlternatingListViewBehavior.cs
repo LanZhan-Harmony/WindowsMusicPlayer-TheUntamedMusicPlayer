@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -7,7 +7,6 @@ using Microsoft.Xaml.Interactivity;
 using Windows.Foundation.Collections;
 
 namespace The_Untamed_Music_Player.Helpers;
-
 internal class AlternatingListViewBehavior : Behavior<ListViewBase>
 {
     public static readonly DependencyProperty AlternateBackgroundProperty = DependencyProperty.Register(

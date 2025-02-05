@@ -1,8 +1,7 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace The_Untamed_Music_Player.Helpers;
-
 // Helper class to set the navigation target for a NavigationViewItem.
 //
 // Usage in XAML:
