@@ -67,13 +67,6 @@ public sealed partial class PlayQueuePage : Page
 
     public Brush GetAlternateBackgroundBrush(bool isDarkTheme)
     {
-        if (isDarkTheme)
-        {
-            return new SolidColorBrush(Color.FromArgb(240, 48, 53, 57));
-        }
-        else
-        {
-            return new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
-        }
+        return isDarkTheme ? new SolidColorBrush(Color.FromArgb(240, 48, 53, 57)) : new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
     }
 }
