@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
@@ -15,13 +16,7 @@ using Windows.Storage.Streams;
 using Windows.UI;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace The_Untamed_Music_Player.Views;
-/// <summary>
-/// An empty page that can be used on its own or navigated to within a Frame.
-/// </summary>
 public sealed partial class AlbumDetailPage : Page
 {
     public AlbumDetailViewModel ViewModel
@@ -29,10 +24,19 @@ public sealed partial class AlbumDetailPage : Page
         get;
     }
 
-    private const int ClampSize = 96;
-    private const float BackgroundScaleFactor = 0.625f;
-    private const float CoverScaleFactor = 0.5f;
-    private const int ButtonPanelOffset = 77;
+    // 滚动进度的范围
+    private int ClampSize => GetValue(50, 80, 107);
+
+    // 背景在滚动时的缩放比例
+    private float BackgroundScaleFactor => GetValue(0.80f, 0.70f, 0.61f);
+
+    // 封面在滚动时的缩放比例
+    private float CoverScaleFactor => GetValue(0.632479f, 0.528571f, 0.488888f);
+
+    // 按钮面板在滚动时的偏移量
+    private int ButtonPanelOffset => GetValue(50, 77, 79);
+
+    // 背景的高度
     private float BackgroundVisualHeight => (float)(Header.ActualHeight * 2.5);
 
     private CompositionPropertySet? _props;
@@ -222,6 +226,23 @@ public sealed partial class AlbumDetailPage : Page
         _props?.InsertScalar("buttonPanelOffset", ButtonPanelOffset);
     }
 
+    // 辅助方法根据窗口宽度返回相应的值
+    private T GetValue<T>(T small, T medium, T large)
+    {
+        if (ActualWidth < 641)
+        {
+            return small;
+        }
+        else if (ActualWidth < 850)
+        {
+            return medium;
+        }
+        else
+        {
+            return large;
+        }
+    }
+
     private void BackgroundHost_OnSizeChanged(object sender, SizeChangedEventArgs e)
     {
         if (_backgroundVisual == null)
@@ -268,13 +289,6 @@ public sealed partial class AlbumDetailPage : Page
 
     public Brush GetAlternateBackgroundBrush(bool isDarkTheme)
     {
-        if (isDarkTheme)
-        {
-            return new SolidColorBrush(Color.FromArgb(240, 48, 53, 57));
-        }
-        else
-        {
-            return new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
-        }
+        return isDarkTheme ? new SolidColorBrush(Color.FromArgb(240, 48, 53, 57)) : new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
     }
 }
