@@ -1,16 +1,10 @@
-﻿using System.Runtime.InteropServices;
-
+using System.Runtime.InteropServices;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
-
 using Windows.UI;
 using Windows.UI.ViewManagement;
 
 namespace The_Untamed_Music_Player.Helpers;
-
-// Helper class to workaround custom title bar bugs.
-// DISCLAIMER: The resource key names and color values used below are subject to change. Do not depend on them.
-// https://github.com/microsoft/TemplateStudio/issues/4516
 internal class TitleBarHelper
 {
     private const int WAINACTIVE = 0x00;

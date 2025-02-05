@@ -1,10 +1,8 @@
-﻿using Microsoft.UI.Xaml;
-
+using Microsoft.UI.Xaml;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Activation;
-
 public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
     private readonly INavigationService _navigationService;

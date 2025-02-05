@@ -1,4 +1,3 @@
-﻿<?xml version="1.0" ?>
 <Page x:Class="The_Untamed_Music_Player.Views.LocalSongsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

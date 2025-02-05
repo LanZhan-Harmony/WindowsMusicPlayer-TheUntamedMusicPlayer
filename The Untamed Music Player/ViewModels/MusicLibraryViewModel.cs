@@ -1,10 +1,9 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
-
 public partial class MusicLibraryViewModel : ObservableRecipient
 {
     /// <summary>

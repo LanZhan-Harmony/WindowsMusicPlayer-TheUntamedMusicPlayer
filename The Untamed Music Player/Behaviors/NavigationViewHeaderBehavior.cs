@@ -1,12 +1,10 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Xaml.Interactivity;
-
 using The_Untamed_Music_Player.Contracts.Services;
 
 namespace The_Untamed_Music_Player.Behaviors;
-
 public class NavigationViewHeaderBehavior : Behavior<NavigationView>
 {
     private static NavigationViewHeaderBehavior? _current;

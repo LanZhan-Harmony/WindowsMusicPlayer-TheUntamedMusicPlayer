@@ -1,9 +1,8 @@
-﻿using Microsoft.UI;
+using Microsoft.UI;
 using Windows.UI;
 using Windows.UI.Composition;
 
 namespace The_Untamed_Music_Player.Helpers;
-
 public partial class ColorAnimatedBackdrop : CompositionBrushBackdrop
 {
     protected override CompositionBrush CreateBrush(Compositor compositor)

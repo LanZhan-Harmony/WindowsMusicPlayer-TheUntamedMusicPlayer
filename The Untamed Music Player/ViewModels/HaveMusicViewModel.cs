@@ -1,7 +1,6 @@
-﻿using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Contracts.Services;
 
 namespace The_Untamed_Music_Player.ViewModels;
-
 public class HaveMusicViewModel
 {
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();

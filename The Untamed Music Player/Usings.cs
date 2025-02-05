@@ -1,1 +1,1 @@
-﻿global using WinUIEx;
+global using WinUIEx;
