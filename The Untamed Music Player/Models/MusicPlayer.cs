@@ -320,7 +320,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     /// <param name="name"></param>
     /// <param name="list"></param>
-    public async void SetPlayList(string name, ObservableCollection<BriefMusicInfo> list, byte sortmode)
+    public async void SetPlayList(string name, ObservableCollection<BriefMusicInfo> list, byte sortmode = 0)
     {
         if (PlayQueue.Count != list.Count || PlayQueueName != name || _sortMode != sortmode)
         {

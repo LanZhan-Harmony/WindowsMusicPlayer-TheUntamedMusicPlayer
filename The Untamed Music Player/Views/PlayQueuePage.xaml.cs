@@ -1,9 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.ViewModels;
-using Windows.UI;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -63,10 +61,5 @@ public sealed partial class PlayQueuePage : Page
     private void PlayButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         ViewModel.PlayButton_Click(sender, e);
-    }
-
-    public Brush GetAlternateBackgroundBrush(bool isDarkTheme)
-    {
-        return isDarkTheme ? new SolidColorBrush(Color.FromArgb(240, 48, 53, 57)) : new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Xaml.Interactivity;
 using Windows.Foundation.Collections;
+using Windows.UI;
 
 namespace The_Untamed_Music_Player.Helpers;
 internal class AlternatingListViewBehavior : Behavior<ListViewBase>
@@ -143,5 +144,10 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
             border.Background = null;
             border.BorderThickness = default;
         }
+    }
+
+    public static Brush GetAlternateBackgroundBrush(bool isDarkTheme)
+    {
+        return isDarkTheme ? new SolidColorBrush(Color.FromArgb(240, 48, 53, 57)) : new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
     }
 }

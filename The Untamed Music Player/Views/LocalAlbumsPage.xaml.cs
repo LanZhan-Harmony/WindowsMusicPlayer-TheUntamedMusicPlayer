@@ -80,9 +80,15 @@ public sealed partial class LocalAlbumsPage : Page
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
             if (animation != null)
             {
+                animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(animation, Data.SelectedAlbum, "CoverBorder");
             }
             gridView.Focus(FocusState.Programmatic);
         }
+    }
+
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.PlayButton_Click(sender, e);
     }
 }

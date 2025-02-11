@@ -1,6 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
@@ -55,6 +57,34 @@ public sealed partial class LocalArtistsPage : Page
         if (menuButton != null)
         {
             menuButton.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void ArtistGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is ArtistInfo artistInfo)
+        {
+            var grid = (Grid)((ContentControl)ArtistGridView.ContainerFromItem(e.ClickedItem)).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedArtist = artistInfo;
+            Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+        }
+    }
+
+    private async void ArtistGridView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (Data.SelectedArtist != null && sender is GridView gridView)
+        {
+            gridView.ScrollIntoView(Data.SelectedArtist, ScrollIntoViewAlignment.Leading);
+            gridView.UpdateLayout();
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
+            if (animation != null)
+            {
+                animation.Configuration = new DirectConnectedAnimationConfiguration();
+                await gridView.TryStartConnectedAnimationAsync(animation, Data.SelectedArtist, "CoverBorder");
+            }
+            gridView.Focus(FocusState.Programmatic);
         }
     }
 }

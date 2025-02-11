@@ -278,7 +278,7 @@
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
                     </ListView.GroupStyle>
                     <interactivity:Interaction.Behaviors>
-                        <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
+                        <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
                     </interactivity:Interaction.Behaviors>
                 </ListView>
             </SemanticZoom.ZoomedInView>

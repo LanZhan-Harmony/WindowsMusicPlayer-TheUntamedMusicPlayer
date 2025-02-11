@@ -8,3 +8,4 @@
 8. template里内容不能直接绑定到ViewModel，要通过static转。
 9. BitmapImage也是UI相关的，要用dispatcherqueue.TryEnque。
 10. AOT失败，升级NUGET到预览版。
+11. template内容要使用VisualStateManager时，要用UserControl包裹起来。

@@ -329,7 +329,7 @@
                   ItemsSource="{x:Bind model:Data.MusicPlayer.GetPlayQueue(model:Data.MusicPlayer.PlayQueueName, model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"
                   SelectionMode="None">
             <interactivity:Interaction.Behaviors>
-                <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
+                <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
             </interactivity:Interaction.Behaviors>
         </ListView>
     </Grid>

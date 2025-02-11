@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -563,5 +563,47 @@
   </data>
   <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
     <value>编辑信息</value>
+  </data>
+  <data name="AlbumInfo_Songs" xml:space="preserve">
+    <value>首歌曲</value>
+  </data>
+  <data name="AlbumInfo_RunTime" xml:space="preserve">
+    <value>歌曲长度</value>
+  </data>
+  <data name="ArtistInfo_Albums" xml:space="preserve">
+    <value>个专辑</value>
+  </data>
+  <data name="ArtistInfo_Album" xml:space="preserve">
+    <value>个专辑</value>
+  </data>
+  <data name="ArtistInfo_Hours" xml:space="preserve">
+    <value>小时</value>
+  </data>
+  <data name="ArtistInfo_Hour" xml:space="preserve">
+    <value>小时</value>
+  </data>
+  <data name="ArtistInfo_Min" xml:space="preserve">
+    <value>分钟</value>
+  </data>
+  <data name="ArtistInfo_Sec" xml:space="preserve">
+    <value>秒</value>
+  </data>
+  <data name="ArtistInfo_Secs" xml:space="preserve">
+    <value>秒</value>
+  </data>
+  <data name="ArtistInfo_Mins" xml:space="preserve">
+    <value>分钟</value>
+  </data>
+  <data name="AlbumInfo_Song" xml:space="preserve">
+    <value>首歌曲</value>
+  </data>
+  <data name="ArtistInfo_Artist" xml:space="preserve">
+    <value>艺术家</value>
+  </data>
+  <data name="ArtistDetail_InYourLibrary.Text" xml:space="preserve">
+    <value>在库中</value>
+  </data>
+  <data name="AlbumInfo_UnknownYear" xml:space="preserve">
+    <value>未知年份</value>
   </data>
 </root>
