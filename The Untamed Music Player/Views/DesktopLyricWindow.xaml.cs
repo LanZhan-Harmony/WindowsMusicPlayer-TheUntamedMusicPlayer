@@ -138,7 +138,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         LyricContent.StopMarquee();
         if (currentLyricContent == "")
         {
-            return 100;
+            return 140;
         }
         _measureTextBlock.Text = currentLyricContent;
         _measureTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
@@ -149,21 +149,19 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     {
         try
         {
-            if (_currentStoryboard != null)
-            {
-                _currentStoryboard.Stop();
-                _currentStoryboard.Children.Clear();
-            }
+            _currentStoryboard?.Stop();
+            _currentStoryboard?.Children.Clear();
+            var newWidth = e.NewSize.Width;
             var widthAnimation = new DoubleAnimation
             {
                 From = e.PreviousSize.Width + 50,
-                To = e.NewSize.Width + 50,
+                To = newWidth > 140 ? newWidth + 50 : 190,
                 Duration = TimeSpan.FromMilliseconds(300),
                 EnableDependentAnimation = true,
                 EasingFunction = new BackEase
                 {
                     EasingMode = EasingMode.EaseOut,
-                    Amplitude = 1
+                    Amplitude = 0.8
                 }
             };
             Storyboard.SetTarget(widthAnimation, AnimatedBorder);

@@ -160,6 +160,8 @@
                         <Setter Target="AddToFlyout.Visibility" Value="Visible"/>
                         <Setter Target="EditInfoFlyout.Visibility" Value="Visible"/>
                         <Setter Target="SongListView.Padding" Value="12,0,12,0"/>
+                        <Setter Target="SongListView.Margin" Value="0,68,0,0"/>
+                        <Setter Target="ListHeaderPadding.Height" Value="81"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Medium">
@@ -181,6 +183,8 @@
                         <Setter Target="AddToFlyout.Visibility" Value="Collapsed"/>
                         <Setter Target="EditInfoFlyout.Visibility" Value="Visible"/>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
+                        <Setter Target="SongListView.Margin" Value="0,46,0,0"/>
+                        <Setter Target="ListHeaderPadding.Height" Value="103"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Large">
@@ -200,6 +204,8 @@
                         <Setter Target="EditInfoButton.Visibility" Value="Visible"/>
                         <Setter Target="MoreButton.Visibility" Value="Collapsed"/>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
+                        <Setter Target="SongListView.Margin" Value="0,15,0,0"/>
+                        <Setter Target="ListHeaderPadding.Height" Value="135"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -254,12 +260,12 @@
                                TextWrapping="NoWrap"/>
                     <TextBlock x:Name="SubtitleText"
                                FontWeight="Normal"
-                               Text="{x:Bind ViewModel.Album.GetArtistsStr()}"
+                               Text="{x:Bind ViewModel.Album.ArtistsStr}"
                                TextWrapping="NoWrap"/>
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind ViewModel.Album.GetCountAndDurationStr()}"
+                               Text="{x:Bind ViewModel.Album.GetDescriptionStr()}"
                                TextWrapping="NoWrap"/>
 
                     <Grid x:Name="ButtonPanel">
@@ -268,6 +274,7 @@
                                     Orientation="Horizontal" Spacing="16">
                             <Button x:Name="PlayButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    Click="{x:Bind ViewModel.PlayAllButton_Click}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -276,6 +283,7 @@
                                 </StackPanel>
                             </Button>
                             <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
@@ -353,22 +361,21 @@
 
         <ListView x:Name="SongListView"
                   Grid.Row="1"
-                  Margin="0,26,0,0"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
                   ui:ListViewExtensions.ItemContainerStretchDirection="Horizontal"
                   ui:ScrollViewerExtensions.VerticalScrollBarMargin="0,-150,0,0"
-                  CanDragItems="True" IsItemClickEnabled="True"
+                  IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind ViewModel.SongList}"
                   SelectionMode="None"
                   XYFocusUp="{x:Bind PlayButton}">
             <ListView.Header>
-                <Border x:Name="ListHeaderPadding" Height="112"/>
+                <Border x:Name="ListHeaderPadding"/>
             </ListView.Header>
             <interactivity:Interaction.Behaviors>
-                <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
+                <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
             </interactivity:Interaction.Behaviors>
         </ListView>
     </Grid>

@@ -2,6 +2,9 @@ using hyjiacan.py4n;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.Helpers;
+/// <summary>
+/// 标题比较器
+/// </summary>
 internal class TitleComparer : IComparer<string>
 {
     private static readonly PinyinFormat PinyinFormat1 = PinyinFormat.UPPERCASE | PinyinFormat.WITHOUT_TONE | PinyinFormat.WITH_V;
@@ -176,6 +179,9 @@ internal abstract class BaseArtistComparer<T> : IComparer<T>
     }
 }
 
+/// <summary>
+/// 艺术家比较器（用于歌曲:艺术家）
+/// </summary>
 internal class MusicArtistComparer : BaseArtistComparer<BriefMusicInfo>
 {
     public override int Compare(BriefMusicInfo? x, BriefMusicInfo? y)
@@ -184,6 +190,9 @@ internal class MusicArtistComparer : BaseArtistComparer<BriefMusicInfo>
     }
 }
 
+/// <summary>
+/// 艺术家比较器(用于专辑:艺术家)
+/// </summary>
 internal class AlbumArtistComparer : BaseArtistComparer<AlbumInfo>
 {
     public override int Compare(AlbumInfo? x, AlbumInfo? y)
@@ -192,6 +201,9 @@ internal class AlbumArtistComparer : BaseArtistComparer<AlbumInfo>
     }
 }
 
+/// <summary>
+/// 艺术家比较器(用于艺术家:A-Z)
+/// </summary>
 internal class ArtistTitleComparer : IComparer<string>
 {
     public int Compare(string? x, string? y)
@@ -252,6 +264,9 @@ internal class ArtistTitleComparer : IComparer<string>
     }
 }
 
+/// <summary>
+/// 专辑比较器(用于歌曲:专辑)
+/// </summary>
 internal class MusicAlbumComparer : IComparer<BriefMusicInfo>
 {
     public int Compare(BriefMusicInfo? x, BriefMusicInfo? y)
@@ -321,6 +336,9 @@ internal class MusicAlbumComparer : IComparer<BriefMusicInfo>
     }
 }
 
+/// <summary>
+/// 专辑比较器(用于专辑:A-Z)
+/// </summary>
 internal class AlbumTitleComparer : IComparer<string>
 {
     public int Compare(string? x, string? y)
@@ -380,6 +398,9 @@ internal class AlbumTitleComparer : IComparer<string>
     }
 }
 
+/// <summary>
+/// 文件夹比较器(用于歌曲:文件夹)
+/// </summary>
 internal class MusicFolderComparer : IComparer<BriefMusicInfo>
 {
     public int Compare(BriefMusicInfo? x, BriefMusicInfo? y)
@@ -411,6 +432,9 @@ internal class MusicFolderComparer : IComparer<BriefMusicInfo>
     }
 }
 
+/// <summary>
+/// 流派比较器
+/// </summary>
 internal class GenreComparer : IComparer<string>
 {
     public int Compare(string? x, string? y)
@@ -469,6 +493,17 @@ internal class GenreComparer : IComparer<string>
         else
         {
             return 2;
+        }
+    }
+
+    /// <summary>
+    /// 专辑比较器(用于艺术家:详细)
+    /// </summary>
+    internal class AlbumInfoTitleComparer : IComparer<AlbumInfo>
+    {
+        public int Compare(AlbumInfo? x, AlbumInfo? y)
+        {
+            return new TitleComparer().Compare(x?.Name, y?.Name);
         }
     }
 }

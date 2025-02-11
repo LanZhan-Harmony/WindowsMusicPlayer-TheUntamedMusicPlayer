@@ -7,22 +7,28 @@ using The_Untamed_Music_Player.Models;
 namespace The_Untamed_Music_Player.ViewModels;
 public partial class AlbumDetailViewModel : ObservableRecipient
 {
-    public AlbumInfo Album
+    public AlbumInfo Album { get; set; } = Data.SelectedAlbum!;
+
+    public ObservableCollection<BriefMusicInfo> SongList
     {
         get; set;
     }
 
-    public ObservableCollection<BriefMusicInfo> SongList { get; set; } = [];
-
     public AlbumDetailViewModel()
     {
-        Album = Data.SelectedAlbum ?? new AlbumInfo();
-        SongList = Data.MusicLibrary.GetMusicByAlbum(Album);
+        var tempList = Data.MusicLibrary.GetMusicsByAlbum(Album);
+        SongList = [.. tempList];
+    }
+
+    public void PlayAllButton_Click(object sender, RoutedEventArgs e)
+    {
+        Data.MusicPlayer.SetPlayList($"Songs:Album:{Album.Name}", SongList);
+        Data.MusicPlayer.PlaySongByPath(SongList[0].Path);
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"Songs:Album:{Album.Name}", SongList, 0);
+        Data.MusicPlayer.SetPlayList($"Songs:Album:{Album.Name}", SongList);
         if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
         {
             Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
@@ -31,7 +37,7 @@ public partial class AlbumDetailViewModel : ObservableRecipient
 
     public void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"Songs:Album:{Album.Name}", SongList, 0);
+        Data.MusicPlayer.SetPlayList($"Songs:Album:{Album.Name}", SongList);
         if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
         {
             Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
