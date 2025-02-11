@@ -1,8 +1,15 @@
-using System.Text;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Models;
+public class BriefAlbumInfo(AlbumInfo albumInfo)
+{
+    public string Name { get; set; } = albumInfo.Name;
+    public string YearStr { get; set; } = albumInfo.Year == 0 ? "AlbumInfo_UnknownYear".GetLocalized() : albumInfo.Year.ToString();
+    public BitmapImage? Cover { get; set; } = albumInfo.Cover;
+    public List<BriefMusicInfo> SongList { get; set; } = [.. Data.MusicLibrary.GetMusicsByAlbum(albumInfo)];
+}
+
 public class AlbumInfo
 {
     /// <summary>
@@ -18,6 +25,9 @@ public class AlbumInfo
         get; set;
     }
 
+    /// <summary>
+    /// 专辑封面来源歌曲的路径
+    /// </summary>
     public string CoverPath { get; set; } = "";
 
     /// <summary>
@@ -96,24 +106,7 @@ public class AlbumInfo
     /// 获取专辑艺术家字符串
     /// </summary>
     /// <returns></returns>
-    public string GetArtistsStr()
-    {
-        if (Artists == null || Artists.Length == 0)
-        {
-            return "MusicInfo_UnknownArtist".GetLocalized();
-        }
-        var sb = new StringBuilder();
-        foreach (var artist in Artists)
-        {
-            sb.Append(artist);
-            sb.Append(", ");
-        }
-        if (sb.Length > 0)
-        {
-            sb.Length -= 2; // 去掉最后一个逗号
-        }
-        return sb.ToString();
-    }
+    public string GetArtistsStr() => string.Join(", ", Artists);
 
     public byte[] GetCoverBytes()
     {
@@ -126,23 +119,26 @@ public class AlbumInfo
     }
 
     /// <summary>
-    /// 获取专辑的歌曲数量和总时长字符串
+    /// 获取专辑的简介字符串
     /// </summary>
     /// <returns></returns>
-    public string GetCountAndDurationStr()
+    public string GetDescriptionStr()
     {
-        var yearStr = Year == 0 ? "" : Year.ToString();
-        if (TotalDuration.Hours > 0)
+        var parts = new List<string>();
+        if (Year != 0)
         {
-            return string.IsNullOrEmpty(yearStr)
-                ? $"{TotalNum} 首歌曲 • {TotalDuration:hh\\:mm\\:ss} 歌曲长度"
-                : $"{yearStr} • {TotalNum} 首歌曲 • {TotalDuration:hh\\:mm\\:ss} 歌曲长度";
+            parts.Add(Year.ToString());
         }
-        else
+        if (GenreStr != "")
         {
-            return string.IsNullOrEmpty(yearStr)
-                ? $"{TotalNum} 首歌曲 • {TotalDuration:mm\\:ss} 歌曲长度"
-                : $"{yearStr} • {TotalNum} 首歌曲 • {TotalDuration:mm\\:ss} 歌曲长度";
+            parts.Add(GenreStr);
         }
+        parts.Add(TotalNum > 1
+            ? $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
+            : $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}");
+        parts.Add(TotalDuration.Hours > 0
+            ? $"{TotalDuration:hh\\:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
+            : $"{TotalDuration:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}");
+        return string.Join(" • ", parts);
     }
 }

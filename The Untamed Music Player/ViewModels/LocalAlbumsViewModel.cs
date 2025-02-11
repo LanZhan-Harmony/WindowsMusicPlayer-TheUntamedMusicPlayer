@@ -119,6 +119,17 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
         }
     }
 
+    public void PlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.DataContext is AlbumInfo albumInfo)
+        {
+            var tempList = Data.MusicLibrary.GetMusicsByAlbum(albumInfo);
+            var songList = new ObservableCollection<BriefMusicInfo>(tempList);
+            Data.MusicPlayer.SetPlayList($"Songs:Album:{albumInfo.Name}", songList);
+            Data.MusicPlayer.PlaySongByPath(songList[0].Path);
+        }
+    }
+
     public async Task SortAlbums()
     {
         var sortTask = SortMode switch

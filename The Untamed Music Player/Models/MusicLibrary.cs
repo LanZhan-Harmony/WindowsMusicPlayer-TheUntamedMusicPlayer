@@ -124,7 +124,6 @@ public partial class MusicLibrary : ObservableObject
                 .OrderBy(x => x, new GenreComparer())];
                 _musicGenres.Clear();
             });
-            ClearAllArtistMusicAlbums();
             await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
         }
@@ -171,7 +170,6 @@ public partial class MusicLibrary : ObservableObject
                 OnPropertyChanged("LibraryReloaded");
                 _musicGenres.Clear();
             });
-            ClearAllArtistMusicAlbums();
             FolderWatchers.Clear();
             await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
@@ -260,14 +258,6 @@ public partial class MusicLibrary : ObservableObject
         }
     }
 
-    public void ClearAllArtistMusicAlbums()
-    {
-        foreach (var artistInfo in Artists.Values)
-        {
-            artistInfo.ClearAlbums();
-        }
-    }
-
     private void AddFolderWatcher()
     {
         try
@@ -350,9 +340,9 @@ public partial class MusicLibrary : ObservableObject
         }
     }
 
-    public ObservableCollection<BriefMusicInfo> GetMusicByAlbum(AlbumInfo albumInfo)
+    public IOrderedEnumerable<BriefMusicInfo> GetMusicsByAlbum(AlbumInfo albumInfo)
     {
-        var list = new ObservableCollection<BriefMusicInfo>();
+        var list = new List<BriefMusicInfo>();
         var albumName = albumInfo.Name;
 
         foreach (var music in Songs)
@@ -363,22 +353,20 @@ public partial class MusicLibrary : ObservableObject
             }
         }
 
-        return list;
+        return list.OrderBy(m => m.Title, new TitleComparer());
     }
 
-    public ObservableCollection<AlbumInfo> GetAlbumByArtist(ArtistInfo artistInfo)
+    public List<BriefAlbumInfo> GetAlbumsByArtist(ArtistInfo artistInfo)
     {
-        var list = new ObservableCollection<AlbumInfo>();
-        var artistName = artistInfo.Name;
+        var list = new List<BriefAlbumInfo>();
+        var albums = artistInfo.Albums;
 
-        foreach (var album in Albums.Values)
+        foreach (var album in albums)
         {
-            if (album.Artists.Contains(artistName))
-            {
-                list.Add(album);
-            }
+            var albumInfo = Albums[album];
+            list.Add(new BriefAlbumInfo(albumInfo));
         }
 
-        return list;
+        return [.. list.OrderBy(m => m.Name, new AlbumTitleComparer())];
     }
 }

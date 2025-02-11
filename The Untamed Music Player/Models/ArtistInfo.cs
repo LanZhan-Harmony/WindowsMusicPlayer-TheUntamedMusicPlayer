@@ -1,9 +1,10 @@
 using Microsoft.UI.Xaml.Media.Imaging;
+using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Models;
 public class ArtistInfo
 {
-    private readonly HashSet<string> _albums = [];
+    public HashSet<string> Albums { get; set; } = [];
 
     /// <summary>
     /// 艺术家名
@@ -13,7 +14,7 @@ public class ArtistInfo
     /// <summary>
     /// 艺术家流派
     /// </summary>
-    public string Genre { get; set; } = "";
+    public string GenreStr { get; set; } = "";
 
     /// <summary>
     /// 艺术家封面
@@ -24,6 +25,11 @@ public class ArtistInfo
     }
 
     /// <summary>
+    /// 专辑封面来源歌曲的路径
+    /// </summary>
+    public string CoverPath { get; set; } = "";
+
+    /// <summary>
     /// 艺术家歌曲总时长
     /// </summary>
     public TimeSpan TotalDuration { get; set; } = TimeSpan.Zero;
@@ -31,7 +37,7 @@ public class ArtistInfo
     /// <summary>
     /// 艺术家歌曲总数
     /// </summary>
-    public int TotalMusicNum { get; set; } = 1;
+    public int TotalSongNum { get; set; } = 1;
 
     /// <summary>
     /// 艺术家专辑总数
@@ -42,8 +48,8 @@ public class ArtistInfo
     {
         Name = name;
         TotalDuration = briefMusicInfo.Duration;
-        Genre = briefMusicInfo.GenreStr;
-        _albums.Add(briefMusicInfo.Album);
+        GenreStr = briefMusicInfo.GenreStr;
+        Albums.Add(briefMusicInfo.Album);
     }
 
     /// <summary>
@@ -53,45 +59,50 @@ public class ArtistInfo
     public void Update(BriefMusicInfo briefMusicInfo)
     {
         TotalDuration += briefMusicInfo.Duration;
-        TotalMusicNum++;
+        TotalSongNum++;
         var album = briefMusicInfo.Album;
 
-        if (_albums.Add(album))
+        if (Albums.Add(album))
         {
             TotalAlbumNum++;
         }
     }
 
-    /// <summary>
-    /// 清空专辑哈希列表
-    /// </summary>
-    public void ClearAlbums()
+    public byte[] GetCoverBytes()
     {
-        _albums.Clear();
+        if (Cover != null)
+        {
+            var musicFile = TagLib.File.Create(CoverPath);
+            return musicFile.Tag.Pictures[0].Data.Data;
+        }
+        return [];
     }
 
     /// <summary>
-    /// 获取相册数量和歌曲数量
+    /// 获取专辑数量和歌曲数量
     /// </summary>
     /// <returns></returns>
-    public string GetCount()
+    public string GetCountStr()
     {
-        return $"{TotalAlbumNum} 个相册·{TotalMusicNum} 首歌曲·";
+        var albumStr = TotalAlbumNum > 1 ? "ArtistInfo_Albums".GetLocalized() : "ArtistInfo_Album".GetLocalized();
+        var songStr = TotalSongNum > 1 ? "AlbumInfo_Songs".GetLocalized() : "AlbumInfo_Song".GetLocalized();
+        return $"{TotalAlbumNum} {albumStr} • {TotalSongNum} {songStr} •";
     }
 
     /// <summary>
     /// 获取总时长
     /// </summary>
     /// <returns></returns>
-    public string GetDuration()
+    public string GetDurationStr()
     {
-        if (TotalDuration.Hours > 0)
-        {
-            return $"{TotalDuration.Hours} 小时 {TotalDuration.Minutes} 分钟 {TotalDuration.Seconds} 秒";
-        }
-        else
-        {
-            return $"{TotalDuration.Minutes} 分钟 {TotalDuration.Seconds} 秒";
-        }
+        var hourStr = TotalDuration.Hours > 1 ? "ArtistInfo_Hours".GetLocalized() : "ArtistInfo_Hour".GetLocalized();
+        var minuteStr = TotalDuration.Minutes > 1 ? "ArtistInfo_Mins".GetLocalized() : "ArtistInfo_Min".GetLocalized();
+        var secondStr = TotalDuration.Seconds > 1 ? "ArtistInfo_Secs".GetLocalized() : "ArtistInfo_Sec".GetLocalized();
+
+        return TotalDuration.Hours > 0
+            ? $"{TotalDuration.Hours} {hourStr} {TotalDuration.Minutes} {minuteStr} {TotalDuration.Seconds} {secondStr}"
+            : $"{TotalDuration.Minutes} {minuteStr} {TotalDuration.Seconds} {secondStr}";
     }
+
+    public string GetDescriptionStr() => $"{"ArtistInfo_Artist".GetLocalized()} • {GenreStr}";
 }

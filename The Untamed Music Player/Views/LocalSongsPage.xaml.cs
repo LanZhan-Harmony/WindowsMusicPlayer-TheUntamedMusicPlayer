@@ -1,10 +1,8 @@
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
-using Windows.UI;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -14,10 +12,19 @@ public sealed partial class LocalSongsPage : Page
     {
         get;
     }
+
+    private ScrollViewer? _scrollViewer;
+
     public LocalSongsPage()
     {
         ViewModel = App.GetService<LocalSongsViewModel>();
         InitializeComponent();
+        Unloaded += LocalSongsPage_Unloaded;
+    }
+
+    private void LocalSongsPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        ViewModel.ScrollViewerVerticalOffset = _scrollViewer!.VerticalOffset;
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -57,7 +64,13 @@ public sealed partial class LocalSongsPage : Page
 
     private void SongListView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.MusicPlayer.CurrentMusic != null && sender is ListView listView)
+        if (sender is ListView listView)
+        {
+            _scrollViewer = listView.FindDescendant<ScrollViewer>() ?? throw new Exception("未找到ScrollViewer");
+            _scrollViewer.ChangeView(null, ViewModel.ScrollViewerVerticalOffset, null, true);
+        }
+
+        /*if (Data.MusicPlayer.CurrentMusic != null && sender is ListView listView)
         {
             var path = Data.MusicPlayer.CurrentMusic.Path;
             var item = Data.MusicLibrary.Songs.FirstOrDefault(x => x.Path == path);
@@ -67,11 +80,6 @@ public sealed partial class LocalSongsPage : Page
                 listView.UpdateLayout();
                 listView.Focus(FocusState.Programmatic);
             }
-        }
-    }
-
-    public Brush GetAlternateBackgroundBrush(bool isDarkTheme)
-    {
-        return isDarkTheme ? new SolidColorBrush(Color.FromArgb(240, 48, 53, 57)) : new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
+        }*/
     }
 }
