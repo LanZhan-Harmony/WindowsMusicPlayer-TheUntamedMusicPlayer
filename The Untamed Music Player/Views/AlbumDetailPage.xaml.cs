@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Numerics;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
@@ -13,7 +12,6 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage.Streams;
-using Windows.UI;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
@@ -40,10 +38,8 @@ public sealed partial class AlbumDetailPage : Page
     private float BackgroundVisualHeight => (float)(Header.ActualHeight * 2.5);
 
     private CompositionPropertySet? _props;
-    private CompositionPropertySet? _scrollerPropertySet;
     private Compositor? _compositor;
     private SpriteVisual? _backgroundVisual;
-    private ScrollViewer? _scrollViewer;
 
     public AlbumDetailPage()
     {
@@ -69,12 +65,10 @@ public sealed partial class AlbumDetailPage : Page
 
     private async void AlbumDetailsPage_OnLoaded(object sender, RoutedEventArgs e)
     {
-        var scrollViewer = _scrollViewer = SongListView.FindDescendant<ScrollViewer>() ??
-                                                    throw new Exception("Cannot find ScrollViewer in ListView"); // 检索 ListView 内部使用的 ScrollViewer
+        var scrollViewer = SongListView.FindDescendant<ScrollViewer>() ?? throw new Exception("Cannot find ScrollViewer in ListView"); // 检索 ListView 内部使用的 ScrollViewer
 
-
-        _scrollerPropertySet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer); // 获取 ScrollViewer 中包含滚动值的属性集
-        _compositor = _scrollerPropertySet.Compositor; // 获取与 ScrollViewer 关联的 Compositor, Compositor 用于创建动画
+        var scrollerPropertySet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer); // 获取 ScrollViewer 中包含滚动值的属性集
+        _compositor = scrollerPropertySet.Compositor; // 获取与 ScrollViewer 关联的 Compositor, Compositor 用于创建动画
 
         // 创建一个属性集，其中包含下面的 ExpressionAnimations 中引用的值
         _props = _compositor.CreatePropertySet();
@@ -86,7 +80,7 @@ public sealed partial class AlbumDetailPage : Page
         _props.InsertScalar("headerPadding", 12);
 
 
-        var scrollingProperties = _scrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>(); // 获取属性集的引用节点，以便在表达式动画中使用
+        var scrollingProperties = scrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>(); // 获取属性集的引用节点，以便在表达式动画中使用
 
         CreateHeaderAnimation(_props, scrollingProperties.Translation.Y);
 
@@ -226,23 +220,6 @@ public sealed partial class AlbumDetailPage : Page
         _props?.InsertScalar("buttonPanelOffset", ButtonPanelOffset);
     }
 
-    // 辅助方法根据窗口宽度返回相应的值
-    private T GetValue<T>(T small, T medium, T large)
-    {
-        if (ActualWidth < 641)
-        {
-            return small;
-        }
-        else if (ActualWidth < 850)
-        {
-            return medium;
-        }
-        else
-        {
-            return large;
-        }
-    }
-
     private void BackgroundHost_OnSizeChanged(object sender, SizeChangedEventArgs e)
     {
         if (_backgroundVisual == null)
@@ -282,13 +259,32 @@ public sealed partial class AlbumDetailPage : Page
         }
     }
 
+    /// <summary>
+    /// 辅助方法根据窗口宽度返回相应的值
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="small"></param>
+    /// <param name="medium"></param>
+    /// <param name="large"></param>
+    /// <returns></returns>
+    private T GetValue<T>(T small, T medium, T large)
+    {
+        if (ActualWidth < 641)
+        {
+            return small;
+        }
+        else if (ActualWidth < 850)
+        {
+            return medium;
+        }
+        else
+        {
+            return large;
+        }
+    }
+
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
         ViewModel.PlayButton_Click(sender, e);
-    }
-
-    public Brush GetAlternateBackgroundBrush(bool isDarkTheme)
-    {
-        return isDarkTheme ? new SolidColorBrush(Color.FromArgb(240, 48, 53, 57)) : new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
     }
 }
