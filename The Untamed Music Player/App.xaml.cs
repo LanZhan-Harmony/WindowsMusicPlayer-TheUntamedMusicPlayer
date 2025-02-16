@@ -85,6 +85,7 @@ public partial class App : Application
             services.AddSingleton<LocalArtistsViewModel>();
             services.AddTransient<AlbumDetailViewModel>();
             services.AddTransient<ArtistDetailViewModel>();
+            services.AddTransient<OnlineSongsViewModel>();
             services.AddTransient<DesktopLyricViewModel>();
 
             // Configuration

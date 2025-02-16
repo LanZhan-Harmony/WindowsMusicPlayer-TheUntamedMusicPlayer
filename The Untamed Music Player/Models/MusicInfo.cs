@@ -3,11 +3,12 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
-public class BriefMusicInfo
+public class BriefMusicInfo : IBriefMusicInfoBase
 {
     /// <summary>
     /// 歌手分隔符
@@ -25,19 +26,14 @@ public class BriefMusicInfo
     public string Folder { get; set; } = "";
 
     /// <summary>
-    /// 项目类型
+    /// 歌曲名
     /// </summary>
-    public string ItemType { get; set; } = "";
+    public string Title { get; set; } = "";
 
     /// <summary>
     /// 专辑名, 为空时返回"未知专辑"
     /// </summary>
     public virtual string Album { get; set; } = "";
-
-    /// <summary>
-    /// 歌曲名
-    /// </summary>
-    public string Title { get; set; } = "";
 
     /// <summary>
     /// 参与创作的艺术家数组
@@ -61,7 +57,7 @@ public class BriefMusicInfo
     public TimeSpan Duration { get; set; } = TimeSpan.Zero;
 
     /// <summary>
-    /// 时长字符串
+    /// 时长字符串, 为空时返回00:00
     /// </summary>
     public virtual string DurationStr { get; set; } = "";
 
@@ -71,17 +67,14 @@ public class BriefMusicInfo
     public ushort Year { get; set; } = 0;
 
     /// <summary>
-    /// 发行年份字符串, 为0时返回空字符串
+    /// 发行年份字符串, 为0时返回""
     /// </summary>
     public string YearStr { get; set; } = "";
 
     /// <summary>
     /// 封面(可能为空)
     /// </summary>
-    public virtual BitmapImage? Cover
-    {
-        get; set;
-    }
+    public virtual BitmapImage? Cover { get; set; }
 
     /// <summary>
     /// 流派数组
@@ -98,9 +91,7 @@ public class BriefMusicInfo
     /// </summary>
     public long ModifiedDate { get; set; } = 0;
 
-    public BriefMusicInfo()
-    {
-    }
+    public BriefMusicInfo() { }
 
     /// <summary>
     /// 异步工厂方法
@@ -115,7 +106,6 @@ public class BriefMusicInfo
             Path = path,
             Folder = folder,
             ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds(),
-            ItemType = System.IO.Path.GetExtension(path).ToLower()
         };
 
         Task? coverTask = null;
@@ -131,14 +121,14 @@ public class BriefMusicInfo
             info.Title = string.IsNullOrEmpty(musicFile.Tag.Title) ? System.IO.Path.GetFileNameWithoutExtension(path) : musicFile.Tag.Title;
             string[] combinedArtists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
             info.Artists = combinedArtists.Length != 0 ? combinedArtists : ["MusicInfo_UnknownArtist".GetLocalized()];
-            info.ArtistsStr = info.GetArtistsStr();
+            info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(info.Artists);
             info.Year = (ushort)musicFile.Tag.Year;
-            info.YearStr = info.GetYearStr();
+            info.YearStr = IBriefMusicInfoBase.GetYearStr(info.Year);
             var genres = musicFile.Tag.Genres;
             info.Genre = genres.Length != 0 ? genres : ["MusicInfo_UnknownGenre".GetLocalized()];
-            info.GenreStr = info.GetGenreStr();
+            info.GenreStr = GetGenreStr(info.Genre);
             info.Duration = musicFile.Properties.Duration;
-            info.DurationStr = info.GetDurationStr();
+            info.DurationStr = IBriefMusicInfoBase.GetDurationStr(info.Duration);
 
             // 等待 LoadCoverAsync 任务完成
             if (coverTask != null)
@@ -152,10 +142,10 @@ public class BriefMusicInfo
             info.Title = System.IO.Path.GetFileNameWithoutExtension(path);
             info.Album = "MusicInfo_UnknownAlbum".GetLocalized();
             info.Artists = ["MusicInfo_UnknownArtist".GetLocalized()];
-            info.ArtistsStr = info.GetArtistsStr();
+            info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(info.Artists);
             info.Genre = ["MusicInfo_UnknownGenre".GetLocalized()];
-            info.GenreStr = info.GetGenreStr();
-            info.DurationStr = info.GetDurationStr();
+            info.GenreStr = GetGenreStr(info.Genre);
+            info.DurationStr = IBriefMusicInfoBase.GetDurationStr(info.Duration);
         }
         catch (Exception ex)
         {
@@ -197,28 +187,10 @@ public class BriefMusicInfo
     }
 
     /// <summary>
-    /// 获取参与创作的艺术家名字符串, 为空时返回"未知艺术家"
-    /// </summary>
-    /// <returns></returns>
-    protected virtual string GetArtistsStr() => string.Join(", ", Artists);
-
-    /// <summary>
-    /// 获取时长字符串
-    /// </summary>
-    /// <returns></returns>
-    protected virtual string GetDurationStr() => Duration.Hours > 0 ? $"{Duration:hh\\:mm\\:ss}" : $"{Duration:mm\\:ss}";
-
-    /// <summary>
     /// 获取流派字符串
     /// </summary>
     /// <returns></returns>
-    protected virtual string GetGenreStr() => string.Join(", ", Genre);
-
-    /// <summary>
-    /// 获取发行年份字符串
-    /// </summary>
-    /// <returns></returns>
-    protected string GetYearStr() => Year is 0 ? "" : Year.ToString();
+    protected static string GetGenreStr(string[] genre) => string.Join(", ", genre);
 
     /// <summary>
     /// 获取文本前景色
@@ -226,7 +198,7 @@ public class BriefMusicInfo
     /// <param name="currentMusic"></param>
     /// <param name="isDarkTheme"></param>
     /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    public SolidColorBrush GetTextForeground(DetailedMusicInfo currentMusic, bool isDarkTheme)
+    public SolidColorBrush GetTextForeground(IDetailedMusicInfoBase currentMusic, bool isDarkTheme)
     {
         var isCurrentMusic = Path == currentMusic.Path;
         if (isCurrentMusic)
@@ -238,8 +210,10 @@ public class BriefMusicInfo
     }
 }
 
-public class DetailedMusicInfo : BriefMusicInfo
+public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
 {
+    public bool IsOnline { get; set; } = false;
+
     /// <summary>
     /// 专辑名, 为空时返回""
     /// </summary>
@@ -256,20 +230,15 @@ public class DetailedMusicInfo : BriefMusicInfo
     public override string GenreStr { get; set; } = "";
 
     /// <summary>
-    /// 时长字符串
+    /// 时长字符串, 为空时返回""
     /// </summary>
     public override string DurationStr { get; set; } = "";
 
+
     /// <summary>
-    /// 专辑艺术家数组
+    /// 项目类型, 为空时返回""
     /// </summary>
-    private string[] AlbumArtists
-    {
-        get;
-        set => field = [.. value
-                    .SelectMany(artist => artist.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries))
-                    .Distinct()];
-    } = [];
+    public string ItemType { get; set; } = "";
 
     /// <summary>
     /// 专辑艺术家字符串, 为空时返回""
@@ -277,17 +246,14 @@ public class DetailedMusicInfo : BriefMusicInfo
     public string AlbumArtistsStr { get; set; } = "";
 
     /// <summary>
-    /// 艺术家和专辑名字符串
+    /// 艺术家和专辑名字符串, 为空时返回""
     /// </summary>
     public string ArtistAndAlbumStr { get; set; } = "";
 
     /// <summary>
     /// 清晰封面(可能为空)
     /// </summary>
-    public override BitmapImage? Cover
-    {
-        get; set;
-    }
+    public override BitmapImage? Cover { get; set; }
 
     /// <summary>
     /// 封面缓冲数据
@@ -295,23 +261,19 @@ public class DetailedMusicInfo : BriefMusicInfo
     public byte[] CoverBuffer { get; set; } = [];
 
     /// <summary>
-    /// 比特率
+    /// 比特率, 为空时返回""
     /// </summary>
     public string BitRate { get; set; } = "";
 
     /// <summary>
-    /// 曲目
+    /// 曲目, 为空时返回""
     /// </summary>
     public string Track { get; set; } = "";
 
     /// <summary>
-    /// 歌词
+    /// 歌词, 为空时返回""
     /// </summary>
     public string Lyric { get; set; } = "";
-
-    public DetailedMusicInfo()
-    {
-    }
 
     public DetailedMusicInfo(string path)
     {
@@ -337,16 +299,17 @@ public class DetailedMusicInfo : BriefMusicInfo
             Title = string.IsNullOrEmpty(musicFile.Tag.Title) ? System.IO.Path.GetFileNameWithoutExtension(path) : musicFile.Tag.Title;
             Album = musicFile.Tag.Album ?? "";
             Artists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
-            ArtistsStr = GetArtistsStr();
-            AlbumArtists = [.. musicFile.Tag.AlbumArtists];
-            AlbumArtistsStr = GetAlbumArtistsStr();
-            ArtistAndAlbumStr = GetArtistAndAlbumStr(ArtistsStr);
+            ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(Artists);
+            AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr([.. musicFile.Tag.AlbumArtists
+                .SelectMany(artist => artist.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries))
+                .Distinct()]);
+            ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(Album, ArtistsStr);
             Year = (ushort)musicFile.Tag.Year;
-            YearStr = GetYearStr();
+            YearStr = IBriefMusicInfoBase.GetYearStr(Year);
             Genre = musicFile.Tag.Genres;
-            GenreStr = GetGenreStr();
+            GenreStr = GetGenreStr(Genre);
             Duration = musicFile.Properties.Duration;
-            DurationStr = GetDurationStr();
+            DurationStr = IBriefMusicInfoBase.GetDurationStr(Duration);
             Track = musicFile.Tag.Track == 0 ? "" : musicFile.Tag.Track.ToString();
             Lyric = musicFile.Tag.Lyrics ?? "";
             BitRate = $"{musicFile.Properties.AudioBitrate} kbps";
@@ -359,46 +322,5 @@ public class DetailedMusicInfo : BriefMusicInfo
         {
             Debug.WriteLine(ex.StackTrace);
         }
-    }
-
-    /// <summary>
-    /// 获取参与创作的艺术家名字符串, 为空时返回""
-    /// </summary>
-    /// <returns></returns>
-    protected override string GetArtistsStr() => string.Join(", ", Artists);
-
-    /// <summary>
-    /// 获取时长字符串
-    /// </summary>
-    /// <returns></returns>
-    protected override string GetDurationStr() => Duration.Hours > 0 ? $"{Duration:hh\\:mm\\:ss}" : $"{Duration:mm\\:ss}";
-
-    /// <summary>
-    /// 获取流派字符串, 为空时返回""
-    /// </summary>
-    /// <returns></returns>
-    protected override string GetGenreStr() => string.Join(", ", Genre);
-
-    /// <summary>
-    /// 获取专辑艺术家字符串, 为空时返回""
-    /// </summary>
-    /// <returns></returns>
-    protected string GetAlbumArtistsStr() => string.Join(", ", AlbumArtists);
-
-    /// <summary>
-    /// 获取艺术家和专辑名字符串
-    /// </summary>
-    /// <returns></returns>
-    protected string GetArtistAndAlbumStr(string artistsStr)
-    {
-        if (string.IsNullOrEmpty(artistsStr))
-        {
-            return Album ?? "";
-        }
-        if (string.IsNullOrEmpty(Album))
-        {
-            return artistsStr;
-        }
-        return $"{artistsStr} • {Album}";
     }
 }

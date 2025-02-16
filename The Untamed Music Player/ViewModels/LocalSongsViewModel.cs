@@ -160,7 +160,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList("Songs:All", ConvertGroupedToFlatList(), SortMode);
+        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), SortMode);
         if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
         {
             Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
@@ -169,7 +169,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList("Songs:All", ConvertGroupedToFlatList(), SortMode);
+        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), SortMode);
         if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
         {
             Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
@@ -253,27 +253,11 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await SortSongs();
     }
 
-    public ObservableCollection<BriefMusicInfo> ConvertGroupedToFlatList()
+    private ObservableCollection<BriefMusicInfo> ConvertGroupedToFlatList()
     {
-        if (_isGrouped)
-        {
-            var flatList = new ObservableCollection<BriefMusicInfo>();
-            foreach (var group in GroupedSongList)
-            {
-                foreach (var item in group)
-                {
-                    if (item is BriefMusicInfo musicInfo)
-                    {
-                        flatList.Add(musicInfo);
-                    }
-                }
-            }
-            return flatList;
-        }
-        else
-        {
-            return NotGroupedSongList;
-        }
+        return _isGrouped
+            ? [.. GroupedSongList.SelectMany(group => group.OfType<BriefMusicInfo>())]
+            : NotGroupedSongList;
     }
 
     public object GetSongListViewSource(ICollectionView grouped, ObservableCollection<BriefMusicInfo> notgrouped)

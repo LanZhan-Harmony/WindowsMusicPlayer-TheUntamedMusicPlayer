@@ -20,10 +20,7 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILocalSettingsService _localSettingsService;
 
-    public ICommand SwitchThemeCommand
-    {
-        get;
-    }
+    public ICommand SwitchThemeCommand { get; }
 
     /// <summary>
     /// 是否显示文件夹为空信息
@@ -69,19 +66,13 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 深浅色主题
     /// </summary>
     [ObservableProperty]
-    public partial ElementTheme ElementTheme
-    {
-        get; set;
-    }
+    public partial ElementTheme ElementTheme { get; set; }
 
     /// <summary>
     /// 版本信息
     /// </summary>
     [ObservableProperty]
-    public partial string VersionDescription
-    {
-        get; set;
-    }
+    public partial string VersionDescription { get; set; }
 
     /// <summary>
     /// 选中的字体

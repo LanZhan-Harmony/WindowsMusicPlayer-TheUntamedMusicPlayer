@@ -1,11 +1,8 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+#pragma warning disable
 
 using System.Diagnostics;
 
-namespace System.Numerics;
-
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Numerics;
 internal readonly struct BigInteger
 {
     private const uint kuMaskHighBit = unchecked((uint)int.MinValue);
@@ -133,14 +130,14 @@ internal readonly struct BigInteger
             {
                 for (var i = 0; i < byteCount; i++)
                 {
-                    _sign = (_sign << 8) | value[i];
+                    _sign = _sign << 8 | value[i];
                 }
             }
             else
             {
                 for (var i = byteCount - 1; i >= 0; i--)
                 {
-                    _sign = (_sign << 8) | value[i];
+                    _sign = _sign << 8 | value[i];
                 }
             }
 
@@ -177,7 +174,7 @@ internal readonly struct BigInteger
                     for (var byteInDword = 0; byteInDword < 4; byteInDword++)
                     {
                         var curByteValue = value[curByte];
-                        val[curDword] = (val[curDword] << 8) | curByteValue;
+                        val[curDword] = val[curDword] << 8 | curByteValue;
                         curByte++;
                     }
 
@@ -192,7 +189,7 @@ internal readonly struct BigInteger
                     for (var byteInDword = 0; byteInDword < 4; byteInDword++)
                     {
                         var curByteValue = value[curByte];
-                        val[curDword] = (val[curDword] << 8) | curByteValue;
+                        val[curDword] = val[curDword] << 8 | curByteValue;
                         curByte--;
                     }
 
@@ -213,7 +210,7 @@ internal readonly struct BigInteger
                     for (curByte = 0; curByte < unalignedBytes; curByte++)
                     {
                         var curByteValue = value[curByte];
-                        val[curDword] = (val[curDword] << 8) | curByteValue;
+                        val[curDword] = val[curDword] << 8 | curByteValue;
                     }
                 }
                 else
@@ -221,7 +218,7 @@ internal readonly struct BigInteger
                     for (curByte = byteCountMinus1; curByte >= byteCount - unalignedBytes; curByte--)
                     {
                         var curByteValue = value[curByte];
-                        val[curDword] = (val[curDword] << 8) | curByteValue;
+                        val[curDword] = val[curDword] << 8 | curByteValue;
                     }
                 }
             }
@@ -254,7 +251,7 @@ internal readonly struct BigInteger
                         default:
                             if (unchecked((int)val[0]) > 0)
                             {
-                                _sign = (-1) * ((int)val[0]);
+                                _sign = -1 * (int)val[0];
                                 _bits = null;
                                 AssertValid();
                                 return;
@@ -343,7 +340,7 @@ internal readonly struct BigInteger
         get
         {
             AssertValid();
-            return (_sign >> (kcbitUint - 1)) - (-_sign >> (kcbitUint - 1));
+            return (_sign >> kcbitUint - 1) - (-_sign >> kcbitUint - 1);
         }
     }
 
@@ -432,7 +429,7 @@ internal readonly struct BigInteger
         var bits = _bits;
         if (bits == null)
         {
-            highByte = (byte)((sign < 0) ? 0xff : 0x00);
+            highByte = (byte)(sign < 0 ? 0xff : 0x00);
             highDword = unchecked((uint)sign);
         }
         else if (sign == -1)
@@ -565,9 +562,9 @@ internal readonly struct BigInteger
         }
 
         // Assert we're big endian, or little endian consistency holds.
-        Debug.Assert(isBigEndian || (!needExtraByte && curByte == length - 1) || (needExtraByte && curByte == length - 2));
+        Debug.Assert(isBigEndian || !needExtraByte && curByte == length - 1 || needExtraByte && curByte == length - 2);
         // Assert we're little endian, or big endian consistency holds.
-        Debug.Assert(!isBigEndian || (!needExtraByte && curByte == 0) || (needExtraByte && curByte == 1));
+        Debug.Assert(!isBigEndian || !needExtraByte && curByte == 0 || needExtraByte && curByte == 1);
 
         if (needExtraByte)
         {

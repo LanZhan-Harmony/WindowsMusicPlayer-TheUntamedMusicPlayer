@@ -8,7 +8,7 @@ using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage;
 
 namespace The_Untamed_Music_Player.Models;
-public partial class MusicLibrary : ObservableObject
+public partial class MusicLibrary : ObservableRecipient
 {
     /// <summary>
     /// 调度器队列
@@ -105,7 +105,7 @@ public partial class MusicLibrary : ObservableObject
         await _librarySemaphore.WaitAsync(); // 等待信号量, 只允许一个线程访问此函数
         try
         {
-            Data.hasMusicLibraryLoaded = true;
+            Data.HasMusicLibraryLoaded = true;
             var loadMusicTasks = new List<Task>();
             if (Folders.Any())
             {
@@ -120,8 +120,8 @@ public partial class MusicLibrary : ObservableObject
             {
                 OnPropertyChanged(nameof(HasMusics));
                 Genres = [.. _musicGenres.Keys
-                .Concat([ResourceExtensions.GetLocalized("MusicInfo_AllGenres")])
-                .OrderBy(x => x, new GenreComparer())];
+                    .Concat([ResourceExtensions.GetLocalized("MusicInfo_AllGenres")])
+                    .OrderBy(x => x, new GenreComparer())];
                 _musicGenres.Clear();
             });
             await Task.Run(AddFolderWatcher);
@@ -142,7 +142,7 @@ public partial class MusicLibrary : ObservableObject
         await _librarySemaphore.WaitAsync();
         try
         {
-            Data.hasMusicLibraryLoaded = true;
+            Data.HasMusicLibraryLoaded = true;
             _dispatcherQueue.TryEnqueue(() =>
             {
                 IsProgressRingActive = true;
@@ -165,8 +165,8 @@ public partial class MusicLibrary : ObservableObject
             {
                 OnPropertyChanged(nameof(HasMusics));
                 Genres = new([.. _musicGenres.Keys
-                .Concat([ResourceExtensions.GetLocalized("MusicInfo_AllGenres")])
-                .OrderBy(x => x, new GenreComparer())]);
+                    .Concat([ResourceExtensions.GetLocalized("MusicInfo_AllGenres")])
+                    .OrderBy(x => x, new GenreComparer())]);
                 OnPropertyChanged("LibraryReloaded");
                 _musicGenres.Clear();
             });
@@ -340,33 +340,30 @@ public partial class MusicLibrary : ObservableObject
         }
     }
 
-    public IOrderedEnumerable<BriefMusicInfo> GetMusicsByAlbum(AlbumInfo albumInfo)
-    {
-        var list = new List<BriefMusicInfo>();
-        var albumName = albumInfo.Name;
+    /// <summary>
+    /// 根据专辑信息获取歌曲列表
+    /// </summary>
+    /// <param name="albumInfo"></param>
+    /// <returns></returns>
+    public IOrderedEnumerable<BriefMusicInfo> GetSongsByAlbum(AlbumInfo albumInfo) => Songs
+        .Where(m => m.Album == albumInfo.Name)
+        .OrderBy(m => m.Title, new TitleComparer());
 
-        foreach (var music in Songs)
-        {
-            if (music.Album == albumName)
-            {
-                list.Add(music);
-            }
-        }
+    /// <summary>
+    /// 根据艺术家信息获取专辑列表
+    /// </summary>
+    /// <param name="artistInfo"></param>
+    /// <returns></returns>
+    public List<BriefAlbumInfo> GetAlbumsByArtist(ArtistInfo artistInfo) => [.. artistInfo.Albums
+        .Select(album => new BriefAlbumInfo(Albums[album]))
+        .OrderBy(m => m.Name, new AlbumTitleComparer())];
 
-        return list.OrderBy(m => m.Title, new TitleComparer());
-    }
-
-    public List<BriefAlbumInfo> GetAlbumsByArtist(ArtistInfo artistInfo)
-    {
-        var list = new List<BriefAlbumInfo>();
-        var albums = artistInfo.Albums;
-
-        foreach (var album in albums)
-        {
-            var albumInfo = Albums[album];
-            list.Add(new BriefAlbumInfo(albumInfo));
-        }
-
-        return [.. list.OrderBy(m => m.Name, new AlbumTitleComparer())];
-    }
+    /// <summary>
+    /// 根据艺术家信息获取歌曲列表
+    /// </summary>
+    /// <param name="artistInfo"></param>
+    /// <returns></returns>
+    public ObservableCollection<BriefMusicInfo> GetSongsByArtist(ArtistInfo artistInfo) => [.. artistInfo.Albums
+        .OrderBy(album => album, new AlbumTitleComparer())
+        .SelectMany(album => GetSongsByAlbum(Albums[album]))];
 }

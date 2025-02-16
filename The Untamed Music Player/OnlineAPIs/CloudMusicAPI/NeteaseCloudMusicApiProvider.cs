@@ -1,14 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using NeteaseCloudMusicApi.util;
-using Newtonsoft.Json;
-using static NeteaseCloudMusicApi.NeteaseCloudMusicApiProvider;
+#pragma warning disable
 
-namespace NeteaseCloudMusicApi;
+using System.Net;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
+using static The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.NeteaseCloudMusicApiProvider;
+
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 /// <summary>
 /// 网易云音乐API相关信息提供者
 /// </summary>
@@ -114,7 +112,7 @@ public sealed class NeteaseCloudMusicApiProvider
         SpecialHandle
     }
 
-    internal sealed class ParameterInfo(string key, NeteaseCloudMusicApiProvider.ParameterType type, string defaultValue)
+    internal sealed class ParameterInfo(string key, ParameterType type, string defaultValue)
     {
         public string Key = key;
         public ParameterType Type = type;
@@ -311,7 +309,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 发送/删除评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Comment = new("/comment", HttpMethod.Post, q => $"https://music.163.com/weapi/resource/comments/{(q["t"] == "1" ? "add" : (q["t"] == "0" ? "delete" : "reply"))}", [], BuildOptions("weapi", [new("os", "pc")]))
+    public static readonly NeteaseCloudMusicApiProvider Comment = new("/comment", HttpMethod.Post, q => $"https://music.163.com/weapi/resource/comments/{(q["t"] == "1" ? "add" : q["t"] == "0" ? "delete" : "reply")}", [], BuildOptions("weapi", [new("os", "pc")]))
     {
         DataProvider = queries =>
         {

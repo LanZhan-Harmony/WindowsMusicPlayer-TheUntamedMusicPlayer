@@ -1,5 +1,7 @@
+using CommunityToolkit.WinUI.Controls;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
@@ -15,10 +17,12 @@ public sealed partial class HomePage : Page
     {
         ViewModel = App.GetService<HomeViewModel>();
         InitializeComponent();
+        Data.HomePage = this;
+        ViewModel.Navigate(ViewModel.PageIndex, true);
     }
 
-    private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    public Frame GetFrame()
     {
-
+        return SelectFrame;
     }
 }

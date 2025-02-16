@@ -1,7 +1,8 @@
+#pragma warning disable
+
 using System.Net;
 
-namespace NeteaseCloudMusicApi.util;
-
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
 internal sealed class options
 {
     public string crypto;

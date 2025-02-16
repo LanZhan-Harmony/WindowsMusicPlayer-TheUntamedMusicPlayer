@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-
-namespace System.Extensions;
-
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
 internal static class HttpExtensions
 {
     public static string ToQueryString(this IEnumerable<KeyValuePair<string, string>> queries)
