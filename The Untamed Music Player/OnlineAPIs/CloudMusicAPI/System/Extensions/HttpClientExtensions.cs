@@ -1,10 +1,9 @@
-using System.Collections.Generic;
-using System.Net.Http;
+#pragma warning disable
+
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace System.Extensions;
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
 
 internal static class HttpClientExtensions
 {

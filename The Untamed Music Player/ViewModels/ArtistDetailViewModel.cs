@@ -1,4 +1,6 @@
+using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Models;
 
@@ -21,6 +23,41 @@ public class ArtistDetailViewModel
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
     {
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList());
+        Data.MusicPlayer.PlaySongByPath(AlbumList[0].SongList[0].Path);
+    }
+
+    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList());
+        if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
+        {
+            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+        }
+    }
+
+    public void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList());
+        if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
+        {
+            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+        }
+    }
+
+    public void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.DataContext is BriefAlbumInfo briefAlbumInfo)
+        {
+            var songList = new ObservableCollection<BriefMusicInfo>(briefAlbumInfo.SongList);
+            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{briefAlbumInfo.Name}", songList);
+            Data.MusicPlayer.PlaySongByPath(songList[0].Path);
+        }
+    }
+
+    private ObservableCollection<BriefMusicInfo> ConvertAllSongsToFlatList()
+    {
+        return [.. AlbumList.SelectMany(album => album.SongList)];
     }
 
     public async Task<int> LoadSelectionBarSelectedIndex()

@@ -216,6 +216,9 @@
   <data name="HaveMusic_Songs.Text" xml:space="preserve">
     <value>歌曲</value>
   </data>
+  <data name="Home_Playlists.Text" xml:space="preserve">
+    <value>歌单</value>
+  </data>
   <data name="HaveMusic_Albums.Text" xml:space="preserve">
     <value>专辑</value>
   </data>
@@ -605,5 +608,29 @@
   </data>
   <data name="AlbumInfo_UnknownYear" xml:space="preserve">
     <value>未知年份</value>
+  </data>
+  <data name="Home_MusicLibrary1.Text" xml:space="preserve">
+    <value>乐库1</value>
+  </data>
+  <data name="Home_MusicLibrary6.Text" xml:space="preserve">
+    <value>乐库6</value>
+  </data>
+  <data name="Home_MusicLibrary5.Text" xml:space="preserve">
+    <value>乐库5</value>
+  </data>
+  <data name="Home_MusicLibrary4.Text" xml:space="preserve">
+    <value>乐库4</value>
+  </data>
+  <data name="Home_MusicLibrary3.Text" xml:space="preserve">
+    <value>乐库3</value>
+  </data>
+  <data name="Home_MusicLibrary2.Text" xml:space="preserve">
+    <value>乐库2</value>
+  </data>
+  <data name="Home_NetworkError.Text" xml:space="preserve">
+    <value>网络异常，请稍后再试</value>
+  </data>
+  <data name="Home_Retry.Text" xml:space="preserve">
+    <value>重试</value>
   </data>
 </root>

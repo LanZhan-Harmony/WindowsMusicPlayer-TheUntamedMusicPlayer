@@ -87,4 +87,9 @@ public sealed partial class LocalArtistsPage : Page
             gridView.Focus(FocusState.Programmatic);
         }
     }
+
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.PlayButton_Click(sender, e);
+    }
 }

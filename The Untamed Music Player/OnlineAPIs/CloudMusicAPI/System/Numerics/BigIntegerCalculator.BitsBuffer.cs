@@ -1,15 +1,6 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
 using System.Diagnostics;
 
-namespace System.Numerics;
-
-// ATTENTION: always pass BitsBuffer by reference,
-// it's a structure for performance reasons. Furthermore
-// it's a mutable one, so use it only with care!
-
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Numerics;
 internal static partial class BigIntegerCalculator
 {
     internal struct BitsBuffer

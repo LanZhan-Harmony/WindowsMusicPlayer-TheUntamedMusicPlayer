@@ -57,7 +57,7 @@ public sealed partial class AlbumDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back)
+        if (e.NavigationMode == NavigationMode.Back && e.SourcePageType != typeof(ArtistDetailPage))
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", CoverArt);
         }

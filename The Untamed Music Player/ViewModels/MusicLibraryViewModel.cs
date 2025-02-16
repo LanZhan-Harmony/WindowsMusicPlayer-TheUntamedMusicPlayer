@@ -25,7 +25,7 @@ public partial class MusicLibraryViewModel : ObservableRecipient
     private async Task InitializeLibraryAsync()
     {
         Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
-        if (!Data.hasMusicLibraryLoaded)
+        if (!Data.HasMusicLibraryLoaded)
         {
             await Task.Run(Data.MusicLibrary.LoadLibraryAsync);
         }

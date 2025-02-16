@@ -1,19 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Extensions;
-using System.IO;
+#pragma warning disable
+
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
 
-namespace NeteaseCloudMusicApi.util;
-
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
 internal static partial class request
 {
     private static readonly string[] userAgentList = [

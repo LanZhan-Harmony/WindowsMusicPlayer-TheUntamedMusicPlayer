@@ -1,7 +1,8 @@
+#pragma warning disable
+
 using System.Text;
 
-namespace System.Extensions;
-
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
 internal static class ExceptionExtensions
 {
     /// <summary>
