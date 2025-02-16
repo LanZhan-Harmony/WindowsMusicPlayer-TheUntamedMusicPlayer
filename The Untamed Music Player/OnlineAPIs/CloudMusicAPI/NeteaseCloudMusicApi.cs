@@ -1,18 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Extensions;
-using System.IO;
-using System.Linq;
+#pragma warning disable
+
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using NeteaseCloudMusicApi.util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
 
-namespace NeteaseCloudMusicApi;
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 /// <summary>
 /// 网易云音乐API
 /// </summary>

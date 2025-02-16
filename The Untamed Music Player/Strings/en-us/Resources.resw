@@ -216,6 +216,9 @@
   <data name="HaveMusic_Songs.Text" xml:space="preserve">
     <value>Songs</value>
   </data>
+  <data name="Home_Playlists.Text" xml:space="preserve">
+    <value>Playlists</value>
+  </data>
   <data name="HaveMusic_Albums.Text" xml:space="preserve">
     <value>Albums</value>
   </data>
@@ -605,5 +608,29 @@
   </data>
   <data name="AlbumInfo_UnknownYear" xml:space="preserve">
     <value>Unknown year</value>
+  </data>
+  <data name="Home_MusicLibrary1.Text" xml:space="preserve">
+    <value>Music library 1</value>
+  </data>
+  <data name="Home_MusicLibrary6.Text" xml:space="preserve">
+    <value>Music library 6</value>
+  </data>
+  <data name="Home_MusicLibrary5.Text" xml:space="preserve">
+    <value>Music library 5</value>
+  </data>
+  <data name="Home_MusicLibrary4.Text" xml:space="preserve">
+    <value>Music library 4</value>
+  </data>
+  <data name="Home_MusicLibrary3.Text" xml:space="preserve">
+    <value>Music library 3</value>
+  </data>
+  <data name="Home_MusicLibrary2.Text" xml:space="preserve">
+    <value>Music library 2</value>
+  </data>
+  <data name="Home_NetworkError.Text" xml:space="preserve">
+    <value>Network error, please retry later</value>
+  </data>
+  <data name="Home_Retry.Text" xml:space="preserve">
+    <value>Retry</value>
   </data>
 </root>

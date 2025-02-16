@@ -92,7 +92,7 @@
                             Width="32" Height="32"
                             Margin="13,0,0,8" HorizontalAlignment="Left"
                             VerticalAlignment="Bottom"
-                            Canvas.ZIndex="2"
+                            Canvas.ZIndex="2" Click="PlayButton_Click"
                             Style="{StaticResource CircularButtonStyle}"
                             Visibility="Collapsed">
                         <FontIcon FontSize="12" Glyph="&#xE768;"/>

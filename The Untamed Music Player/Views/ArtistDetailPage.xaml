@@ -117,6 +117,7 @@
                     <ListView x:Name="SongListView"
                               helper:ListViewExtensions.ItemCornerRadius="8"
                               helper:ListViewExtensions.ItemMargin="0,3,0,3" IsItemClickEnabled="True"
+                              ItemClick="SongListView_ItemClick"
                               ItemTemplate="{StaticResource SongListViewTemplate}"
                               ItemsSource="{x:Bind SongList}"
                               SelectionMode="None">
@@ -197,6 +198,7 @@
                           IsThreeState="False" Visibility="Collapsed"/>
                 <Button x:Name="PlayButton" x:Uid="LocalSongs_PlayButton"
                         Grid.Column="1"
+                        Click="SongListViewPlayButton_Click"
                         DataContext="{x:Bind}"
                         Style="{StaticResource SmallPlayButtonStyle}"
                         Visibility="Collapsed">
@@ -307,6 +309,7 @@
                             Width="32" Height="32"
                             Margin="12,0,0,8" HorizontalAlignment="Left"
                             VerticalAlignment="Bottom"
+                            Click="AlbumGridViewPlayButton_Click"
                             DataContext="{x:Bind}"
                             Style="{StaticResource CircularButtonStyle}"
                             Visibility="Collapsed">
@@ -663,6 +666,7 @@
                     </ListView>
                     <GridView x:Name="AlbumGridView"
                               helper:ListViewExtensions.ItemCornerRadius="8" IsItemClickEnabled="True"
+                              ItemClick="AlbumGridView_ItemClick"
                               ItemTemplate="{StaticResource AlbumGridViewTemplate}"
                               ItemsSource="{x:Bind ViewModel.AlbumList}"
                               SelectionMode="None">
