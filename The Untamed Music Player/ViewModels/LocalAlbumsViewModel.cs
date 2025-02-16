@@ -123,9 +123,9 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
     {
         if (sender is Button button && button.DataContext is AlbumInfo albumInfo)
         {
-            var tempList = Data.MusicLibrary.GetMusicsByAlbum(albumInfo);
+            var tempList = Data.MusicLibrary.GetSongsByAlbum(albumInfo);
             var songList = new ObservableCollection<BriefMusicInfo>(tempList);
-            Data.MusicPlayer.SetPlayList($"Songs:Album:{albumInfo.Name}", songList);
+            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{albumInfo.Name}", songList);
             Data.MusicPlayer.PlaySongByPath(songList[0].Path);
         }
     }

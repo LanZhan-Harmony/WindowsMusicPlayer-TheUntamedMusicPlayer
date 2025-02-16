@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage.Streams;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
@@ -66,13 +67,24 @@ public sealed partial class ArtistDetailPage : Page
         SelectionBarSelectedIndex = await ViewModel.LoadSelectionBarSelectedIndex();
     }
 
+    /// <summary>
+    /// 当页面导航到此页时，将调用此方法。
+    /// </summary>
+    /// <param name="e"></param>
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
-        animation?.TryStart(CoverArt);
+        if (e.NavigationMode == NavigationMode.New)
+        {
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
+            animation?.TryStart(CoverArt);
+        }
     }
 
+    /// <summary>
+    /// 当页面从此页导航时，将调用此方法。
+    /// </summary>
+    /// <param name="e"></param>
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
@@ -346,4 +358,51 @@ public sealed partial class ArtistDetailPage : Page
         }
         SelectionBarSelectedIndex = currentSelectedIndex;
     }
+
+    private void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SongListViewPlayButton_Click(sender, e);
+    }
+
+    private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        ViewModel.SongListView_ItemClick(sender, e);
+    }
+
+    private void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.AlbumGridViewPlayButton_Click(sender, e);
+    }
+
+    private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is BriefAlbumInfo briefAlbumInfo)
+        {
+            var albumInfo = Data.MusicLibrary.Albums[briefAlbumInfo.Name];
+            if (albumInfo != null)
+            {
+                var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)).ContentTemplateRoot;
+                var border = (Border)grid.Children[1];
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+                Data.SelectedAlbum = albumInfo;
+                Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+            }
+        }
+    }
+
+    /*private void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (Data.SelectedBriefAlbum != null && sender is GridView gridView)
+        {
+            gridView.ScrollIntoView(Data.SelectedBriefAlbum, ScrollIntoViewAlignment.Leading);
+            gridView.UpdateLayout();
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
+            if (animation != null)
+            {
+                animation.Configuration = new DirectConnectedAnimationConfiguration();
+                await gridView.TryStartConnectedAnimationAsync(animation, Data.SelectedBriefAlbum, "CoverBorder");
+            }
+            gridView.Focus(FocusState.Programmatic);
+        }
+    }*/
 }

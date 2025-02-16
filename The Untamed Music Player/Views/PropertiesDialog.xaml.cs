@@ -1,13 +1,14 @@
 using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class PropertiesDialog : ContentDialog
 {
-    public DetailedMusicInfo Music { get; set; } = Data.MusicPlayer.CurrentMusic;
+    public IDetailedMusicInfoBase Music { get; set; } = Data.MusicPlayer.CurrentMusic!;
 
     public PropertiesDialog()
     {

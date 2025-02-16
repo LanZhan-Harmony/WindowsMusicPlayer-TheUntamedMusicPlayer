@@ -7,7 +7,7 @@ public class BriefAlbumInfo(AlbumInfo albumInfo)
     public string Name { get; set; } = albumInfo.Name;
     public string YearStr { get; set; } = albumInfo.Year == 0 ? "AlbumInfo_UnknownYear".GetLocalized() : albumInfo.Year.ToString();
     public BitmapImage? Cover { get; set; } = albumInfo.Cover;
-    public List<BriefMusicInfo> SongList { get; set; } = [.. Data.MusicLibrary.GetMusicsByAlbum(albumInfo)];
+    public List<BriefMusicInfo> SongList { get; set; } = [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
 }
 
 public class AlbumInfo

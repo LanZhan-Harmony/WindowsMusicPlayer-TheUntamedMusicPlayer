@@ -1,25 +1,132 @@
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.WinUI.Controls;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 public partial class HomeViewModel : ObservableRecipient
 {
+    public byte PageIndex
+    {
+        get;
+        set
+        {
+            field = value;
+            Data.OnlineMusicLibrary.PageIndex = value;
+        }
+    }
+
+    [ObservableProperty]
+    public partial byte MusicLibraryIndex { get; set; }
+    partial void OnMusicLibraryIndexChanged(byte value)
+    {
+        Data.OnlineMusicLibrary.MusicLibraryIndex = value;
+        SaveMusicLibraryIndex();
+    }
+
+    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+
     public HomeViewModel()
     {
+        Initialize();
     }
 
-    public void SuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    private async void Initialize()
     {
-
+        PageIndex = await LoadPageIndex();
+        MusicLibraryIndex = await LoadMusicLibraryIndex();
     }
 
-    public void SuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+    public async void SuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+        {
+            Data.OnlineMusicLibrary.KeyWords = sender.Text;
+            await Data.OnlineMusicLibrary.UpdateSearchResult();
+        }
     }
 
-    public void SuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    public async void SuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
+        if (args.ChosenSuggestion != null && args.ChosenSuggestion is SearchResult result)
+        {
+            var keyWords = result.Label;
+            Data.OnlineMusicLibrary.ClearSearchResult();
+            var currentSelectedIndex = result.Icon switch
+            {
+                "\uE8D6" => 0,
+                "\uE93C" => 1,
+                "\uE77B" => 2,
+                "\uE728" => 3,
+                _ => 0
+            };
+            Data.OnlineMusicLibrary.KeyWords = keyWords;
+            Navigate(currentSelectedIndex);
+            await Data.OnlineMusicLibrary.Search();
+        }
+        else
+        {
+            Data.OnlineMusicLibrary.KeyWords = args.QueryText;
+            Data.OnlineMusicLibrary.ClearSearchResult();
+            await Data.OnlineMusicLibrary.Search();
+        }
+    }
 
+    public void SelectorBar_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is SelectorBar selectorBar)
+        {
+            var selectedItem = selectorBar.Items[PageIndex];
+            selectorBar.SelectedItem = selectedItem;
+        }
+    }
+
+    public void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    {
+        var selectedItem = sender.SelectedItem;
+        var currentSelectedIndex = sender.Items.IndexOf(selectedItem);
+
+        Navigate(currentSelectedIndex);
+    }
+
+    public void Navigate(int currentSelectedIndex, bool isFirstLoaded = false)
+    {
+        if (!isFirstLoaded && PageIndex == currentSelectedIndex)
+        {
+            return;
+        }
+        var page = currentSelectedIndex switch
+        {
+            0 => typeof(OnlineSongsPage),
+            1 => typeof(OnlineAlbumsPage),
+            2 => typeof(OnlineArtistsPage),
+            3 => typeof(OnlinePlayListsPage),
+            _ => typeof(OnlineSongsPage)
+        };
+        var slideNavigationTransitionEffect = currentSelectedIndex - PageIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
+        PageIndex = (byte)currentSelectedIndex;
+        Data.HomePage.GetFrame().Navigate(page, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
+    }
+
+    public async Task<byte> LoadPageIndex()
+    {
+        return await _localSettingsService.ReadSettingAsync<byte>("HomePageIndex");
+    }
+    public async Task<byte> LoadMusicLibraryIndex()
+    {
+        return await _localSettingsService.ReadSettingAsync<byte>("HomeMusicLibraryIndex");
+    }
+    public async void SavePageIndex()
+    {
+        await _localSettingsService.SaveSettingAsync("HomePageIndex", PageIndex);
+    }
+    public async void SaveMusicLibraryIndex()
+    {
+        await _localSettingsService.SaveSettingAsync("HomeMusicLibraryIndex", MusicLibraryIndex);
     }
 }

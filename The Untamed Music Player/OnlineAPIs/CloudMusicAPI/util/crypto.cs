@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Numerics;
+#pragma warning disable
+
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
+using BigInteger = The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Numerics.BigInteger;
 
-namespace NeteaseCloudMusicApi.util;
-
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
 internal static class crypto
 {
     private static readonly byte[] iv = Encoding.ASCII.GetBytes("0102030405060708");

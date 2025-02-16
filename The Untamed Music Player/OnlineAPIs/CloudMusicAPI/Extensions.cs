@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
+#pragma warning disable
+
 using System.Security.Cryptography;
 using System.Text;
 
-namespace NeteaseCloudMusicApi;
-
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 internal static class Extensions
 {
     private static readonly MD5 _md5 = MD5.Create();
