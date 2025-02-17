@@ -151,7 +151,7 @@
     <value>关于</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
-    <value>© 2024 Untamed Corporation。保留所有权利。</value>
+    <value>© 2025 Untamed Corporation。保留所有权利。</value>
   </data>
   <data name="Settings_Library.Text" xml:space="preserve">
     <value>库</value>
@@ -632,5 +632,17 @@
   </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>重试</value>
+  </data>
+  <data name="Home_SearchResult.Text" xml:space="preserve">
+    <value>的搜索结果</value>
+  </data>
+  <data name="Settings_SourceCode.Content" xml:space="preserve">
+    <value>源代码</value>
+  </data>
+  <data name="Settings_Thanks.Header" xml:space="preserve">
+    <value>感谢 墨香铜臭 赋予本软件生命</value>
+  </data>
+  <data name="OnlineSongs_Download.Text" xml:space="preserve">
+    <value>下载</value>
   </data>
 </root>

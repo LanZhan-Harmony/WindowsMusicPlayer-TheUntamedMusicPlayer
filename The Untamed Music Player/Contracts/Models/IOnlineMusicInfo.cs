@@ -8,4 +8,5 @@ public interface IBriefOnlineMusicInfo : IBriefMusicInfoBase
 
 public interface IDetailedOnlineMusicInfo : IBriefOnlineMusicInfo, IDetailedMusicInfoBase
 {
+    string? CoverUrl { get; set; }
 }

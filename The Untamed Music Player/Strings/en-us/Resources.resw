@@ -151,7 +151,7 @@
     <value>About this application</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
-    <value>© 2024 Untamed Corporation. All rights reserved.</value>
+    <value>© 2025 Untamed Corporation. All rights reserved.</value>
   </data>
   <data name="Settings_Library.Text" xml:space="preserve">
     <value>Libraries</value>
@@ -632,5 +632,17 @@
   </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>Retry</value>
+  </data>
+  <data name="Home_SearchResult.Text" xml:space="preserve">
+    <value>'s search results</value>
+  </data>
+  <data name="Settings_SourceCode.Content" xml:space="preserve">
+    <value>Source Code</value>
+  </data>
+  <data name="Settings_Thanks.Header" xml:space="preserve">
+    <value>Thanks to MoXiangTongXiu for breathing life into this software</value>
+  </data>
+  <data name="OnlineSongs_Download.Text" xml:space="preserve">
+    <value>Download</value>
   </data>
 </root>

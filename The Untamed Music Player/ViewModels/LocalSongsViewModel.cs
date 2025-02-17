@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
@@ -42,17 +41,17 @@ public partial class LocalSongsViewModel : ObservableRecipient
     /// <summary>
     /// 分组的歌曲列表
     /// </summary>
-    public ObservableCollection<GroupInfoList> GroupedSongList { get; set; } = [];
+    public List<GroupInfoList> GroupedSongList { get; set; } = [];
 
     /// <summary>
     /// 未分组的歌曲列表
     /// </summary>
-    public ObservableCollection<BriefMusicInfo> NotGroupedSongList { get; set; } = [];
+    public List<BriefMusicInfo> NotGroupedSongList { get; set; } = [];
 
     /// <summary>
     /// 流派列表
     /// </summary>
-    public ObservableCollection<string> Genres { get; set; } = Data.MusicLibrary.Genres;
+    public List<string> Genres { get; set; } = Data.MusicLibrary.Genres;
 
     /// <summary>
     /// 是否显示加载进度环
@@ -102,7 +101,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if ((e.PropertyName == "LibraryReloaded"))
+        if (e.PropertyName == "LibraryReloaded")
         {
             LoadModeAndSongList();
         }
@@ -160,19 +159,19 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), SortMode);
+        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
         if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
         {
-            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
     }
 
     public void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), SortMode);
+        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
         if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
         {
-            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
     }
 
@@ -253,14 +252,14 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await SortSongs();
     }
 
-    private ObservableCollection<BriefMusicInfo> ConvertGroupedToFlatList()
+    private List<BriefMusicInfo> ConvertGroupedToFlatList()
     {
         return _isGrouped
             ? [.. GroupedSongList.SelectMany(group => group.OfType<BriefMusicInfo>())]
             : NotGroupedSongList;
     }
 
-    public object GetSongListViewSource(ICollectionView grouped, ObservableCollection<BriefMusicInfo> notgrouped)
+    public object GetSongListViewSource(ICollectionView grouped, List<BriefMusicInfo> notgrouped)
     {
         return _isGrouped ? grouped : NotGroupedSongList;
     }

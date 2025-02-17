@@ -33,7 +33,7 @@ public class AlbumInfo
     /// <summary>
     /// 专辑艺术家
     /// </summary>
-    public string[] Artists { get; set; } = [];
+    public string[]? Artists { get; set; } = [];
 
     /// <summary>
     /// 专辑艺术家字符串
@@ -98,7 +98,7 @@ public class AlbumInfo
             Cover = briefmusicInfo.Cover;
             CoverPath = briefmusicInfo.Path;
         }
-        Artists = [.. Artists.Concat(briefmusicInfo.Artists).Distinct()];
+        Artists = [.. Artists!.Concat(briefmusicInfo.Artists).Distinct()];
         ArtistsStr = GetArtistsStr();
     }
 
@@ -106,7 +106,7 @@ public class AlbumInfo
     /// 获取专辑艺术家字符串
     /// </summary>
     /// <returns></returns>
-    public string GetArtistsStr() => string.Join(", ", Artists);
+    public string GetArtistsStr() => string.Join(", ", Artists!);
 
     public byte[] GetCoverBytes()
     {
@@ -140,5 +140,11 @@ public class AlbumInfo
             ? $"{TotalDuration:hh\\:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
             : $"{TotalDuration:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}");
         return string.Join(" • ", parts);
+    }
+
+    public void ClearArtists()
+    {
+        Array.Clear(Artists!, 0, Artists!.Length);
+        Artists = null;
     }
 }

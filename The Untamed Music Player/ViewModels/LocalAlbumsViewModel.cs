@@ -19,11 +19,11 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
 
     public List<string> SortBy { get; set; } = [.. "LocalAlbums_SortBy".GetLocalized().Split(", ")];
 
-    public ObservableCollection<GroupInfoList> GroupedAlbumList { get; set; } = [];
+    public List<GroupInfoList> GroupedAlbumList { get; set; } = [];
 
-    public ObservableCollection<AlbumInfo> NotGroupedAlbumList { get; set; } = [];
+    public List<AlbumInfo> NotGroupedAlbumList { get; set; } = [];
 
-    public ObservableCollection<string> Genres { get; set; } = Data.MusicLibrary.Genres;
+    public List<string> Genres { get; set; } = Data.MusicLibrary.Genres;
 
     [ObservableProperty]
     public partial bool IsProgressRingActive { get; set; } = true;
@@ -125,8 +125,8 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
         {
             var tempList = Data.MusicLibrary.GetSongsByAlbum(albumInfo);
             var songList = new ObservableCollection<BriefMusicInfo>(tempList);
-            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{albumInfo.Name}", songList);
-            Data.MusicPlayer.PlaySongByPath(songList[0].Path);
+            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{albumInfo.Name}", songList, 0, SortMode);
+            Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
     }
 
@@ -199,7 +199,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
         await SortAlbums();
     }
 
-    public ICollectionView GetAlbumGridViewSource(ICollectionView grouped, ObservableCollection<AlbumInfo> notgrouped)
+    public ICollectionView GetAlbumGridViewSource(ICollectionView grouped, List<AlbumInfo> notgrouped)
     {
         return _groupMode ? grouped : new CollectionViewSource { Source = notgrouped }.View;
     }
