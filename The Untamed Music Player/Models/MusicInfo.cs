@@ -198,20 +198,24 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     /// <param name="currentMusic"></param>
     /// <param name="isDarkTheme"></param>
     /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    public SolidColorBrush GetTextForeground(IDetailedMusicInfoBase currentMusic, bool isDarkTheme)
+    public SolidColorBrush GetTextForeground(IDetailedMusicInfoBase? currentMusic, bool isDarkTheme)
     {
-        var isCurrentMusic = Path == currentMusic.Path;
-        if (isCurrentMusic)
+        var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
+
+        if (currentMusic != null && Path == currentMusic.Path)
         {
-            var color = isDarkTheme ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3) : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
-            return new SolidColorBrush(color);
+            var highlightColor = isDarkTheme
+                ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
+                : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
+            return new SolidColorBrush(highlightColor);
         }
-        return new SolidColorBrush(isDarkTheme ? Colors.White : Colors.Black);
+        return new SolidColorBrush(defaultColor);
     }
 }
 
 public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
 {
+    public bool IsPlayAvailable { get; set; } = true;
     public bool IsOnline { get; set; } = false;
 
     /// <summary>
@@ -258,7 +262,7 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
     /// <summary>
     /// 封面缓冲数据
     /// </summary>
-    public byte[] CoverBuffer { get; set; } = [];
+    public byte[]? CoverBuffer { get; set; }
 
     /// <summary>
     /// 比特率, 为空时返回""
@@ -275,14 +279,16 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
     /// </summary>
     public string Lyric { get; set; } = "";
 
+    public DetailedMusicInfo() { }
+
     public DetailedMusicInfo(string path)
     {
-        Path = path;
-        ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
-        ItemType = System.IO.Path.GetExtension(path).ToLower();
         try
         {
             var musicFile = TagLib.File.Create(path);
+            Path = path;
+            ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
+            ItemType = System.IO.Path.GetExtension(path).ToLower();
             if (musicFile.Tag.Pictures.Length != 0)
             {
                 var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
@@ -318,8 +324,13 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
         {
             Title = System.IO.Path.GetFileNameWithoutExtension(path);
         }
+        catch (Exception ex) when (ex is FileNotFoundException)
+        {
+            IsPlayAvailable = false;
+        }
         catch (Exception ex)
         {
+            IsPlayAvailable = false;
             Debug.WriteLine(ex.StackTrace);
         }
     }

@@ -14,7 +14,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
     {
         if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
         {
-            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
     }
 
@@ -22,7 +22,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
     {
         if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
         {
-            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
     }
 

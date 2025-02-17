@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
@@ -13,6 +13,10 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     public byte PageIndex { get; set; }
     public byte MusicLibraryIndex { get; set; }
     public string KeyWords { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial string KeyWordsText { get; set; } = null!;
+
     [ObservableProperty]
     public partial Visibility KeyWordsTextBlockVisibility { get; set; } = Visibility.Collapsed;
 
@@ -74,7 +78,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                 else
                 { }
             }
-            OnPropertyChanged(nameof(KeyWords));
+            KeyWordsText = KeyWords;
             KeyWordsTextBlockVisibility = Visibility.Visible;
             ListViewOpacity = 1;
         }
@@ -197,6 +201,24 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     public void ClearSearchResult()
     {
         SearchResultList = [];
+    }
+
+    public void OnlineSongsPlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        Data.MusicPlayer.SetPlayList($"OnlineSongs:Part:{KeyWords}", OnlineMusicInfoList, (byte)(MusicLibraryIndex + 1), 0);
+        if (sender is Button button && button.DataContext is IBriefOnlineMusicInfo info)
+        {
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+    }
+
+    public void OnlineSongsSongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        Data.MusicPlayer.SetPlayList($"OnlineSongs:Part:{KeyWords}", OnlineMusicInfoList, (byte)(MusicLibraryIndex + 1), 0);
+        if (e.ClickedItem is IBriefOnlineMusicInfo info)
+        {
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
     }
 
     public async void RetryButton_Click(object sender, RoutedEventArgs e)

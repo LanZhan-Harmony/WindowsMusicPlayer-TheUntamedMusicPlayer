@@ -242,14 +242,22 @@
                     <TextBlock x:Uid="Settings_About"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <toolkit:SettingsCard x:Name="About" x:Uid="Settings_AboutDescription"
-                                          Header="{x:Bind model:Data.AppDisplayName}">
-                        <toolkit:SettingsCard.HeaderIcon>
+                    <toolkit:SettingsExpander x:Name="About" x:Uid="Settings_AboutDescription"
+                                              Header="{x:Bind model:Data.AppDisplayName}">
+                        <toolkit:SettingsExpander.HeaderIcon>
                             <BitmapIcon AutomationProperties.AccessibilityView="Raw" ShowAsMonochrome="False"
                                         UriSource="ms-appx:///Assets/AppIcon/WindowIcon.ico"/>
-                        </toolkit:SettingsCard.HeaderIcon>
+                        </toolkit:SettingsExpander.HeaderIcon>
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}"/>
-                    </toolkit:SettingsCard>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard x:Uid="Settings_Thanks"/>
+                            <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
+                                <HyperlinkButton x:Uid="Settings_SourceCode"
+                                                 Margin="-12,0,0,0"
+                                                 NavigateUri="https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer"/>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
                 </StackPanel>
                 <TextBlock Height="20"/>
             </StackPanel>

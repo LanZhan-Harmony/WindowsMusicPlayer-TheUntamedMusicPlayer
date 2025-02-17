@@ -22,25 +22,25 @@ public partial class AlbumDetailViewModel : ObservableRecipient
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList);
-        Data.MusicPlayer.PlaySongByPath(SongList[0].Path);
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
+        Data.MusicPlayer.PlaySongByInfo(SongList[0]);
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList);
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
         if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
         {
-            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
     }
 
     public void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList);
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
         if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
         {
-            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
     }
 }

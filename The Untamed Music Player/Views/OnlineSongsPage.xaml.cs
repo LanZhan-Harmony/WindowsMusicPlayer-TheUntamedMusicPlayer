@@ -64,4 +64,9 @@ public sealed partial class OnlineSongsPage : Page
             }
         };
     }
+
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        Data.OnlineMusicLibrary.OnlineSongsPlayButton_Click(sender, e);
+    }
 }

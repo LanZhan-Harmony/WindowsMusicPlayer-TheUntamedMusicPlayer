@@ -1,4 +1,4 @@
-using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Newtonsoft.Json.Linq;
@@ -58,13 +58,14 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
 
     public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailedOnlineMusicInfo
     {
+        public bool IsPlayAvailable { get; set; } = true;
         public bool IsOnline { get; set; } = true;
         public string GenreStr { get; set; } = "";
         public string ItemType { get; set; } = "";
         public string AlbumArtistsStr { get; set; } = "";
         public string ArtistAndAlbumStr { get; set; } = "";
         public BitmapImage? Cover { get; set; }
-        public string CoverUrl { get; set; } = "";
+        public string? CoverUrl { get; set; }
         public string BitRate { get; set; } = "";
         public string Track { get; set; } = "";
         public string Lyric { get; set; } = "";
@@ -134,28 +135,41 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
             var (isOK2, albumResult) = albumTask.Result;
             var (isOK3, lyricResult) = lyricTask.Result;
             api.Dispose();
-            detailedInfo.CoverUrl = (string)albumResult["album"]!["picUrl"]!;
-            Task? coverTask = null;
-            if (!string.IsNullOrEmpty(detailedInfo.CoverUrl))
+            try
             {
-                using var httpClient = new HttpClient();
-                var coverBuffer = await httpClient.GetByteArrayAsync(detailedInfo.CoverUrl);
-                coverTask = LoadCoverAsync(coverBuffer, detailedInfo);
+                detailedInfo.CoverUrl = (string)albumResult["album"]!["picUrl"]!;
+                Task? coverTask = null;
+                if (!string.IsNullOrEmpty(detailedInfo.CoverUrl))
+                {
+                    using var httpClient = new HttpClient();
+                    var coverBuffer = await httpClient.GetByteArrayAsync(detailedInfo.CoverUrl);
+                    coverTask = LoadCoverAsync(coverBuffer, detailedInfo);
+                }
+                detailedInfo.ItemType = (string)songUrlResult["data"]![0]!["type"]!;
+                string[] albumArtists = [.. albumResult["album"]!["artists"]!
+                    .Select(t => (string)t["name"]!)
+                    .Distinct()];
+                detailedInfo.AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr(albumArtists);
+                detailedInfo.ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(detailedInfo.Album, detailedInfo.ArtistsStr);
+                detailedInfo.BitRate = $"{((int)songUrlResult["data"]![0]!["br"]!) / 1000} kbps";
+                detailedInfo.Lyric = (string)lyricResult["lrc"]!["lyric"]!;
+                if (coverTask != null)
+                {
+                    await coverTask;
+                }
+                return detailedInfo;
             }
-            detailedInfo.ItemType = (string)songUrlResult["data"]![0]!["type"]!;
-            string[] albumArtists = [.. albumResult["album"]!["artists"]!
-            .Select(t => (string)t["name"]!)
-            .Distinct()];
-            detailedInfo.AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr(albumArtists);
-            detailedInfo.ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(detailedInfo.Album, detailedInfo.ArtistsStr);
-            detailedInfo.BitRate = $"{((int)songUrlResult["data"]![0]!["br"]!) / 1000} kbps";
-            detailedInfo.Lyric = (string)lyricResult["lrc"]!["lyric"]!;
-            detailedInfo.IsAvailable = true;
-            if (coverTask != null)
+            catch (Exception ex) when (ex is NullReferenceException)
             {
-                await coverTask;
+                detailedInfo.IsPlayAvailable = false;
+                return detailedInfo;
             }
-            return detailedInfo;
+            catch (Exception ex)
+            {
+                detailedInfo.IsAvailable = false;
+                Debug.WriteLine(ex.StackTrace);
+                return detailedInfo;
+            }
         }
 
         private static Task<bool> LoadCoverAsync(byte[] coverBuffer, CloudDetailedOnlineMusicInfo info)

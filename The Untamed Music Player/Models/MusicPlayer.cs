@@ -12,6 +12,7 @@ using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
+using static The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.CloudBriefOnlineMusicInfo;
 
 namespace The_Untamed_Music_Player.Models;
 public partial class MusicPlayer : ObservableRecipient
@@ -38,9 +39,15 @@ public partial class MusicPlayer : ObservableRecipient
     private readonly SystemMediaTransportControlsDisplayUpdater _displayUpdater;
 
     /// <summary>
+    /// SMTC时间线属性
+    /// </summary>
+    private readonly SystemMediaTransportControlsTimelineProperties _timelineProperties = new();
+
+    /// <summary>
     /// 线程计时器
     /// </summary>
-    private ThreadPoolTimer? _positionUpdateTimer;
+    private ThreadPoolTimer? _positionUpdateTimer250ms;
+    private ThreadPoolTimer? _positionUpdateTimer2000ms;
 
     /// <summary>
     /// 线程锁开启状态, true为开启, false为关闭
@@ -88,12 +95,12 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 播放队列集合
     /// </summary>
-    private ObservableCollection<BriefMusicInfo> PlayQueue { get; set; } = [];
+    private ObservableCollection<IBriefMusicInfoBase> PlayQueue { get; set; } = [];
 
     /// <summary>
     /// 随机播放队列集合
     /// </summary>
-    private ObservableCollection<BriefMusicInfo> ShuffledPlayQueue { get; set; } = [];
+    private ObservableCollection<IBriefMusicInfoBase> ShuffledPlayQueue { get; set; } = [];
 
     /// <summary>
     /// 音乐播放器
@@ -140,11 +147,18 @@ public partial class MusicPlayer : ObservableRecipient
     /// 当前播放歌曲
     /// </summary>
     [ObservableProperty]
-    public partial IDetailedMusicInfoBase CurrentMusic { get; set; } = null!;
-    partial void OnCurrentMusicChanged(IDetailedMusicInfoBase value)
+    public partial IDetailedMusicInfoBase? CurrentMusic { get; set; }
+    partial void OnCurrentMusicChanged(IDetailedMusicInfoBase? value)
     {
-        SetSource(value.Path);
-        CurrentLyric = LyricSlice.GetLyricSlices(value.Lyric);
+        if (value!.IsPlayAvailable)
+        {
+            SetSource(value!.Path);
+            CurrentLyric = LyricSlice.GetLyricSlices(value.Lyric);
+        }
+        else
+        {
+            HandleSongNotAvailable();
+        }
     }
 
     /// <summary>
@@ -219,6 +233,8 @@ public partial class MusicPlayer : ObservableRecipient
         _displayUpdater.Type = MediaPlaybackType.Music;
         _systemControls.IsEnabled = true;
         _systemControls.ButtonPressed += SystemControls_ButtonPressed;
+        _timelineProperties.StartTime = TimeSpan.Zero;
+        _timelineProperties.MinSeekTime = TimeSpan.Zero;
         LoadCurrentStateAsync();
     }
 
@@ -226,27 +242,24 @@ public partial class MusicPlayer : ObservableRecipient
     /// 按路径播放歌曲
     /// </summary>
     /// <param name="path"></param>
-    public void PlaySongByPath(string path)
+    public async void PlaySongByInfo(IBriefMusicInfoBase info)
     {
-        lock (_mediaLock)
+        Stop();
+        CurrentMusic = await CreateDetailedMusicInfoAsync(info);
+        _systemControls.IsPlayEnabled = true;
+        _systemControls.IsPauseEnabled = true;
+
+        var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+        for (var i = 0; i < queue.Count; i++)
         {
-            Stop();
-            CurrentMusic = new DetailedMusicInfo(path);
-            _systemControls.IsPlayEnabled = true;
-            _systemControls.IsPauseEnabled = true;
-
-            var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
-            for (var i = 0; i < queue.Count; i++)
+            if (queue[i].Path == info.Path)
             {
-                if (queue[i].Path == path)
-                {
-                    PlayQueueIndex = i;
-                    break;
-                }
+                PlayQueueIndex = i;
+                break;
             }
-
-            Play();
         }
+
+        Play();
     }
 
     /// <summary>
@@ -254,20 +267,17 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     /// <param name="index"></param>
     /// <param name="isLast"></param>
-    private void PlaySongByIndex(int index, bool isLast = false)
+    private async void PlaySongByIndex(int index, bool isLast = false)
     {
-        lock (_mediaLock)
+        Stop();
+        var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
+        CurrentMusic = await CreateDetailedMusicInfoAsync(songToPlay);
+        PlayQueueIndex = isLast ? 0 : index;
+        _systemControls.IsPlayEnabled = true;
+        _systemControls.IsPauseEnabled = true;
+        if (!isLast)
         {
-            Stop();
-            var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
-            CurrentMusic = new DetailedMusicInfo(songToPlay.Path);
-            PlayQueueIndex = isLast ? 0 : index;
-            _systemControls.IsPlayEnabled = true;
-            _systemControls.IsPauseEnabled = true;
-            if (!isLast)
-            {
-                Play();
-            }
+            Play();
         }
     }
 
@@ -277,40 +287,58 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="path"></param>
     private async void SetSource(string path)
     {
-        lock (_mediaLock)
+        try
         {
-            try
+            Player.Source = null;
+            if (SourceMode == 0)
             {
-                Player.Source = null;
-                var mediaFileTask = StorageFile.GetFileFromPathAsync(path).AsTask();
-                mediaFileTask.Wait();
-                var mediaFile = mediaFileTask.Result;
+                var mediaFile = await StorageFile.GetFileFromPathAsync(path);
                 Player.Source = MediaSource.CreateFromStorageFile(mediaFile);
-                Player.PlaybackSession.PlaybackRate = PlaySpeed;
-                TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
-                _displayUpdater.MusicProperties.Title = CurrentMusic!.Title;
-                _displayUpdater.MusicProperties.Artist = CurrentMusic.ArtistsStr == "未知艺术家" ? "" : CurrentMusic.ArtistsStr;
-                _positionUpdateTimer = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler, TimeSpan.FromMilliseconds(250));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine(ex.StackTrace);
+                Player.Source = MediaSource.CreateFromUri(new Uri(path));
             }
+            Player.PlaybackSession.PlaybackRate = PlaySpeed;
+            TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
+            _displayUpdater.MusicProperties.Title = CurrentMusic!.Title;
+            _displayUpdater.MusicProperties.Artist = CurrentMusic.ArtistsStr == "未知艺术家" ? "" : CurrentMusic.ArtistsStr;
+            _timelineProperties.MaxSeekTime = Player.PlaybackSession.NaturalDuration;
+            _timelineProperties.EndTime = Player.PlaybackSession.NaturalDuration;
+            _positionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler250ms, TimeSpan.FromMilliseconds(250));
+            _positionUpdateTimer2000ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler2000ms, TimeSpan.FromMilliseconds(2000));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
         }
 
-        if (CurrentMusic!.Cover != null && CurrentMusic is DetailedMusicInfo info && info.CoverBuffer.Length != 0)
+        if (CurrentMusic!.Cover != null)
         {
-            try
+            if (SourceMode == 0)
             {
-                var tempFolder = ApplicationData.Current.TemporaryFolder;
-                var coverFileName = "Cover.jpg";
-                var coverFile = await tempFolder.CreateFileAsync(coverFileName, CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteBytesAsync(coverFile, info.CoverBuffer);
-                _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(coverFile);
+                try
+                {
+                    var info = (DetailedMusicInfo)CurrentMusic;
+                    var tempFolder = ApplicationData.Current.TemporaryFolder;
+                    var coverFileName = "Cover.jpg";
+                    var coverFile = await tempFolder.CreateFileAsync(coverFileName, CreationCollisionOption.ReplaceExisting);
+                    await FileIO.WriteBytesAsync(coverFile, info.CoverBuffer);
+                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(coverFile);
+                }
+                catch
+                {
+                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/NoCover.png"));
+                }
             }
-            catch
+            else
             {
-                _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/NoCover.png"));
+                try
+                {
+                    var info = (IDetailedOnlineMusicInfo)CurrentMusic;
+                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(info.CoverUrl!));
+                }
+                catch { }
             }
         }
         else
@@ -325,11 +353,12 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     /// <param name="name"></param>
     /// <param name="list"></param>
-    public async void SetPlayList(string name, IEnumerable<BriefMusicInfo> list, byte sortmode = 0)
+    public async void SetPlayList(string name, IEnumerable<IBriefMusicInfoBase> list, byte sourceMode = 0, byte sortMode = 0)
     {
-        if (PlayQueue.Count != list.Count() || PlayQueueName != name || _sortMode != sortmode)
+        if (PlayQueue.Count != list.Count() || PlayQueueName != name || _sortMode != sortMode || SourceMode != sourceMode)
         {
-            _sortMode = sortmode;
+            _sortMode = sortMode;
+            SourceMode = sourceMode;
             PlayQueueName = name;
             PlayQueue = [.. list];
             _playQueueLength = list.Count();
@@ -347,7 +376,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// 计时器更新事件
     /// </summary>
     /// <param name="timer"></param>
-    private void UpdateTimerHandler(ThreadPoolTimer timer)
+    private void UpdateTimerHandler250ms(ThreadPoolTimer timer)
     {
         lock (_mediaLock)
         {
@@ -391,7 +420,25 @@ public partial class MusicPlayer : ObservableRecipient
             }
         }
     }
-
+    private void UpdateTimerHandler2000ms(ThreadPoolTimer timer)
+    {
+        lock (_mediaLock)
+        {
+            try
+            {
+                if (Player.PlaybackSession == null || _lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                {
+                    return;
+                }
+                _timelineProperties.Position = Player.PlaybackSession.Position;
+                _systemControls.UpdateTimelineProperties(_timelineProperties);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.StackTrace);
+            }
+        }
+    }
 
     /// <summary>
     /// 获取当前歌词切片索引
@@ -467,7 +514,7 @@ public partial class MusicPlayer : ObservableRecipient
             {
                 if (RepeatMode == 2)
                 {
-                    PlaySongByPath(CurrentMusic!.Path);
+                    PlaySongByInfo(CurrentMusic!);
                 }
                 else
                 {
@@ -497,6 +544,21 @@ public partial class MusicPlayer : ObservableRecipient
         });
     }
 
+    private void HandleSongNotAvailable()
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (RepeatMode == 2 || SourceMode != 0)
+            {
+                Stop();
+            }
+            else
+            {
+                PlayNextSong();
+            }
+        });
+    }
+
     private void SystemControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
     {
         switch (args.Button)
@@ -508,16 +570,10 @@ public partial class MusicPlayer : ObservableRecipient
                 PlayPauseUpdate();
                 break;
             case SystemMediaTransportControlsButton.Previous:// 注意: 必须在UI线程中调用
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
-                {
-                    PlayPreviousSong();
-                });
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, PlayPreviousSong);
                 break;
             case SystemMediaTransportControlsButton.Next:
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
-                {
-                    PlayNextSong();
-                });
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, PlayNextSong);
                 break;
             default:
                 break;
@@ -560,8 +616,8 @@ public partial class MusicPlayer : ObservableRecipient
         CurrentPosition = 0;
         CurrentLyricIndex = 0;
         CurrentLyricContent = "";
-        _positionUpdateTimer?.Cancel();
-        _positionUpdateTimer = null;
+        _positionUpdateTimer250ms?.Cancel();
+        _positionUpdateTimer250ms = null;
     }
 
     /// <summary>
@@ -639,12 +695,15 @@ public partial class MusicPlayer : ObservableRecipient
         else
         {
             ShuffledPlayQueue.Clear();
-            for (var i = 0; i < PlayQueue.Count; i++)
+            if (CurrentMusic != null)
             {
-                if (PlayQueue[i].Path == CurrentMusic!.Path)
+                for (var i = 0; i < PlayQueue.Count; i++)
                 {
-                    PlayQueueIndex = i;
-                    break;
+                    if (PlayQueue[i].Path == CurrentMusic.Path)
+                    {
+                        PlayQueueIndex = i;
+                        break;
+                    }
                 }
             }
         }
@@ -667,13 +726,16 @@ public partial class MusicPlayer : ObservableRecipient
     {
         await Task.Run(() =>
         {
-            ShuffledPlayQueue = new ObservableCollection<BriefMusicInfo>([.. PlayQueue.OrderBy(x => Guid.NewGuid())]);
-            for (var i = 0; i < ShuffledPlayQueue.Count; i++)
+            ShuffledPlayQueue = new ObservableCollection<IBriefMusicInfoBase>([.. PlayQueue.OrderBy(x => Guid.NewGuid())]);
+            if (CurrentMusic != null)
             {
-                if (ShuffledPlayQueue[i].Path == CurrentMusic!.Path)
+                for (var i = 0; i < ShuffledPlayQueue.Count; i++)
                 {
-                    PlayQueueIndex = i;
-                    break;
+                    if (ShuffledPlayQueue[i].Path == CurrentMusic.Path)
+                    {
+                        PlayQueueIndex = i;
+                        break;
+                    }
                 }
             }
         });
@@ -701,6 +763,16 @@ public partial class MusicPlayer : ObservableRecipient
             Data.RootPlayBarViewModel.ButtonVisibility = PlayQueue.Any() ? Visibility.Visible : Visibility.Collapsed;
             Data.RootPlayBarViewModel.Availability = PlayQueue.Any();
         }
+    }
+
+    private async Task<IDetailedMusicInfoBase> CreateDetailedMusicInfoAsync(IBriefMusicInfoBase info)
+    {
+        return SourceMode switch
+        {
+            0 => new DetailedMusicInfo(info.Path),
+            1 => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
+            _ => new DetailedMusicInfo(info.Path),
+        };
     }
 
     /// <summary>
@@ -876,7 +948,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="PlayQueueName"></param>
     /// <param name="ShuffleMode"></param>
     /// <returns></returns>
-    public ObservableCollection<BriefMusicInfo> GetPlayQueue(string PlayQueueName, bool ShuffleMode) => ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+    public ObservableCollection<IBriefMusicInfoBase> GetPlayQueue(string PlayQueueName, bool ShuffleMode) => ShuffleMode ? ShuffledPlayQueue : PlayQueue;
 
 
     /// <summary>
@@ -884,17 +956,21 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     public async void SaveCurrentStateAsync()
     {
-        await _localSettingsService.SaveSettingAsync("CurrentMusic", CurrentMusic!.Path);
         /*var playqueuepaths = PlayQueue.Select(music => music.Path).ToList();
         await _localSettingsService.SaveSettingAsync("PlayQueuePaths", playqueuepaths);
         var shuffledplayqueuepaths = ShuffledPlayQueue.Select(music => music.Path).ToList();
         await _localSettingsService.SaveSettingAsync("ShuffledPlayQueuePaths", shuffledplayqueuepaths);
         await _localSettingsService.SaveSettingAsync("PlayQueueIndex", PlayQueueIndex);*/
+        await _localSettingsService.SaveSettingAsync("SourceMode", SourceMode);
         await _localSettingsService.SaveSettingAsync("ShuffleMode", ShuffleMode);
         await _localSettingsService.SaveSettingAsync("RepeatMode", RepeatMode);
         await _localSettingsService.SaveSettingAsync("IsMute", IsMute);
         await _localSettingsService.SaveSettingAsync("CurrentVolume", CurrentVolume);
         await _localSettingsService.SaveSettingAsync("PlaySpeed", PlaySpeed);
+        if (CurrentMusic != null)
+        {
+            await _localSettingsService.SaveSettingAsync("CurrentMusic", CurrentMusic.Path);
+        }
     }
 
     /// <summary>
@@ -902,11 +978,6 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     public async void LoadCurrentStateAsync()
     {
-        var currentMusicPath = await _localSettingsService.ReadSettingAsync<string>("CurrentMusic");
-        if (!string.IsNullOrEmpty(currentMusicPath))
-        {
-            CurrentMusic = new DetailedMusicInfo(currentMusicPath);
-        }
         /*var playqueuepaths = await _localSettingsService.ReadSettingAsync<List<string>>("PlayQueuePaths");
         if (playqueuepaths != null)
         {
@@ -934,9 +1005,15 @@ public partial class MusicPlayer : ObservableRecipient
             }
         }
         PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>("PlayQueueIndex");*/
+        SourceMode = await _localSettingsService.ReadSettingAsync<byte>("SourceMode");
         ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
         RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
         IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
+        var currentMusicPath = await _localSettingsService.ReadSettingAsync<string>("CurrentMusic");
+        if (!string.IsNullOrEmpty(currentMusicPath) && SourceMode == 0)
+        {
+            CurrentMusic = new DetailedMusicInfo(currentMusicPath);
+        }
         if (Data.NotFirstUsed)
         {
             CurrentVolume = await _localSettingsService.ReadSettingAsync<double>("CurrentVolume");
