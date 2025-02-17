@@ -65,17 +65,21 @@ public class LocalSettingsService : ILocalSettingsService
         return default;
     }
 
-    public async Task SaveSettingAsync<T>(string key, T value)
+    public async Task SaveSettingAsync<T>(string key, T? value)
     {
+        if (value == null)
+        {
+            return;
+        }
         if (RuntimeHelper.IsMSIX)
         {
-            ApplicationData.Current.LocalSettings.Values[key] = await Json.StringifyAsync(value!);
+            ApplicationData.Current.LocalSettings.Values[key] = await Json.StringifyAsync(value);
         }
         else
         {
             await InitializeAsync();
 
-            _settings[key] = await Json.StringifyAsync(value!);
+            _settings[key] = await Json.StringifyAsync(value);
 
             await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
         }

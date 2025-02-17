@@ -38,20 +38,24 @@ public interface IBriefMusicInfoBase
     /// <param name="currentMusic"></param>
     /// <param name="isDarkTheme"></param>
     /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    SolidColorBrush GetTextForeground(IDetailedMusicInfoBase currentMusic, bool isDarkTheme)
+    SolidColorBrush GetTextForeground(IDetailedMusicInfoBase? currentMusic, bool isDarkTheme)
     {
-        var isCurrentMusic = Path == currentMusic.Path;
-        if (isCurrentMusic)
+        var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
+
+        if (currentMusic != null && Path == currentMusic.Path)
         {
-            var color = isDarkTheme ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3) : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
-            return new SolidColorBrush(color);
+            var highlightColor = isDarkTheme
+                ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
+                : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
+            return new SolidColorBrush(highlightColor);
         }
-        return new SolidColorBrush(isDarkTheme ? Colors.White : Colors.Black);
+        return new SolidColorBrush(defaultColor);
     }
 }
 
 public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
 {
+    bool IsPlayAvailable { get; set; }
     bool IsOnline { get; set; }
     string GenreStr { get; set; }
     string ItemType { get; set; }

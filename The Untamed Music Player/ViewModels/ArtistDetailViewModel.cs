@@ -23,25 +23,25 @@ public class ArtistDetailViewModel
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList());
-        Data.MusicPlayer.PlaySongByPath(AlbumList[0].SongList[0].Path);
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList(), 0, 0);
+        Data.MusicPlayer.PlaySongByInfo(AlbumList[0].SongList[0]);
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList());
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList(), 0, 0);
         if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
         {
-            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
     }
 
     public void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList());
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList(), 0, 0);
         if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
         {
-            Data.MusicPlayer.PlaySongByPath(briefMusicInfo.Path);
+            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
     }
 
@@ -50,8 +50,8 @@ public class ArtistDetailViewModel
         if (sender is Button button && button.DataContext is BriefAlbumInfo briefAlbumInfo)
         {
             var songList = new ObservableCollection<BriefMusicInfo>(briefAlbumInfo.SongList);
-            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{briefAlbumInfo.Name}", songList);
-            Data.MusicPlayer.PlaySongByPath(songList[0].Path);
+            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{briefAlbumInfo.Name}", songList, 0, 0);
+            Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
     }
 

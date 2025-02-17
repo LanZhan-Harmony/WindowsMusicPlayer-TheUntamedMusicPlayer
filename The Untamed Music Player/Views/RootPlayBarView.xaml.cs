@@ -91,8 +91,12 @@ public sealed partial class RootPlayBarView : Page
         };
     }
 
-    public Visibility GetArtistAndAlbumStrVisibility(IDetailedMusicInfoBase detailedmusicinfo)
+    public Visibility GetArtistAndAlbumStrVisibility(IDetailedMusicInfoBase? detailedmusicinfo)
     {
+        if (detailedmusicinfo == null)
+        {
+            return Visibility.Collapsed;
+        }
         return detailedmusicinfo.ArtistAndAlbumStr == "" ? Visibility.Collapsed : Visibility.Visible;
     }
 

@@ -79,7 +79,7 @@ public partial class MusicLibrary : ObservableRecipient
     /// 流派列表
     /// </summary>
     [ObservableProperty]
-    public partial ObservableCollection<string> Genres { get; set; } = [];
+    public partial List<string> Genres { get; set; } = [];
 
     public MusicLibrary()
     {
@@ -126,6 +126,7 @@ public partial class MusicLibrary : ObservableRecipient
             });
             await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
+            ClearArtists();
         }
         catch (Exception ex)
         {
@@ -173,6 +174,7 @@ public partial class MusicLibrary : ObservableRecipient
             FolderWatchers.Clear();
             await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
+            ClearArtists();
         }
         catch (Exception ex)
         {
@@ -255,6 +257,14 @@ public partial class MusicLibrary : ObservableRecipient
             {
                 artistInfo.Update(briefMusicInfo);
             }
+        }
+    }
+
+    private void ClearArtists()
+    {
+        foreach (var album in Albums.Values)
+        {
+            album.ClearArtists();
         }
     }
 

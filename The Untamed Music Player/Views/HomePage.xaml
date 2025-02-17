@@ -33,6 +33,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
@@ -45,6 +46,7 @@
                         <Setter Target="TitleGrid.Margin" Value="16,36,16,0"/>
                         <Setter Target="AutoSuggestBox.Width" Value="140"/>
                         <Setter Target="Segmented.Margin" Value="16,24,16,0"/>
+                        <Setter Target="KeyWordsTextBlock.Margin" Value="12,-5,12,0"/>
                         <Setter Target="NetworkErrorFontIcon.FontSize" Value="75"/>
                         <Setter Target="NetworkErrorStackPanel.Spacing" Value="18"/>
                     </VisualState.Setters>
@@ -57,6 +59,7 @@
                         <Setter Target="TitleGrid.Margin" Value="56,36,56,0"/>
                         <Setter Target="AutoSuggestBox.Width" Value="190"/>
                         <Setter Target="Segmented.Margin" Value="56,24,56,0"/>
+                        <Setter Target="KeyWordsTextBlock.Margin" Value="52,-5,52,0"/>
                         <Setter Target="NetworkErrorFontIcon.FontSize" Value="130"/>
                         <Setter Target="NetworkErrorStackPanel.Spacing" Value="38"/>
                     </VisualState.Setters>
@@ -69,6 +72,7 @@
                         <Setter Target="TitleGrid.Margin" Value="56,36,56,0"/>
                         <Setter Target="AutoSuggestBox.Width" Value="400"/>
                         <Setter Target="Segmented.Margin" Value="56,24,56,0"/>
+                        <Setter Target="KeyWordsTextBlock.Margin" Value="52,-5,52,0"/>
                         <Setter Target="NetworkErrorFontIcon.FontSize" Value="130"/>
                         <Setter Target="NetworkErrorStackPanel.Spacing" Value="38"/>
                     </VisualState.Setters>
@@ -142,13 +146,21 @@
                 </controls:SegmentedItem>
             </controls:Segmented>
         </ScrollViewer>
-        <ProgressRing Grid.Row="2"
+        <TextBlock x:Name="KeyWordsTextBlock"
+                   Grid.Row="2"
+                   TextTrimming="WordEllipsis"
+                   Visibility="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsTextBlockVisibility, Mode=OneWay}">
+            <Run FontSize="30" FontWeight="Bold"
+                 Text="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsText, Mode=OneWay}"/>
+            <Run x:Uid="Home_SearchResult" FontSize="20"/>
+        </TextBlock>
+        <ProgressRing Grid.Row="2" Grid.RowSpan="2"
                       Width="50" Height="50"
                       Margin="0,24,0,0"
                       Canvas.ZIndex="1"
                       IsActive="{x:Bind model:Data.OnlineMusicLibrary.IsSearchProgressRingActive, Mode=OneWay}"/>
         <StackPanel x:Name="NetworkErrorStackPanel"
-                    Grid.Row="2"
+                    Grid.Row="2" Grid.RowSpan="2"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     Canvas.ZIndex="1" Orientation="Horizontal"
                     Visibility="{x:Bind model:Data.OnlineMusicLibrary.NetworkErrorVisibility, Mode=OneWay}">
@@ -163,6 +175,6 @@
                 </Button>
             </StackPanel>
         </StackPanel>
-        <Frame x:Name="SelectFrame" Grid.Row="2"/>
+        <Frame x:Name="SelectFrame" Grid.Row="3"/>
     </Grid>
 </Page>

@@ -28,6 +28,11 @@
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="OnlineSongs_Download">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE896;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
                         <MenuFlyoutSubItem x:Uid="LocalSongs_AddTo">
                             <MenuFlyoutSubItem.Icon>
@@ -82,6 +87,7 @@
                           IsThreeState="False" Visibility="Collapsed"/>
                 <Button x:Name="PlayButton" x:Uid="LocalSongs_PlayButton"
                         Grid.Column="1"
+                        Click="PlayButton_Click"
                         DataContext="{x:Bind}"
                         Style="{StaticResource SmallPlayButtonStyle}"
                         Visibility="Collapsed">
@@ -130,10 +136,6 @@
         </DataTemplate>
     </Page.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Narrow">
@@ -142,7 +144,6 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SongListView.Padding" Value="12,0,12,0"/>
-                        <Setter Target="KeyWordsTextBlock.Margin" Value="12,0,12,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
@@ -151,23 +152,15 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
-                        <Setter Target="KeyWordsTextBlock.Margin" Value="52,0,52,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <TextBlock x:Name="KeyWordsTextBlock"
-                   Grid.Row="0"
-                   Visibility="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsTextBlockVisibility, Mode=OneWay}">
-            <Run FontSize="30" FontWeight="Bold"
-                 Text="{x:Bind model:Data.OnlineMusicLibrary.KeyWords, Mode=OneWay}"/>
-            <Run FontSize="20" Text="的搜索结果"/>
-        </TextBlock>
         <ListView x:Name="SongListView"
-                  Grid.Row="1"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3" CanDragItems="True"
                   IsItemClickEnabled="True"
+                  ItemClick="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongsSongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineMusicInfoList, Mode=OneWay}"
                   Opacity="{x:Bind model:Data.OnlineMusicLibrary.ListViewOpacity, Mode=OneWay}"
