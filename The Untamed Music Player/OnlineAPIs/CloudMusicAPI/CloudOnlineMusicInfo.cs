@@ -146,7 +146,7 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
                     var coverBuffer = await httpClient.GetByteArrayAsync(detailedInfo.CoverUrl);
                     coverTask = LoadCoverAsync(coverBuffer, detailedInfo);
                 }
-                detailedInfo.ItemType = (string)songUrlResult["data"]![0]!["type"]!;
+                detailedInfo.ItemType = $".{(string)songUrlResult["data"]![0]!["type"]!}";
                 string[] albumArtists = [.. albumResult["album"]!["artists"]!
                     .Select(t => (string)t["name"]!)
                     .Distinct()];
