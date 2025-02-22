@@ -18,6 +18,7 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
     public virtual string DurationStr { get; set; } = "";
     public string YearStr { get; set; } = "";
 
+
     public CloudBriefOnlineMusicInfo() { }
 
     public static async Task<CloudBriefOnlineMusicInfo> CreateAsync(JToken jInfo, NeteaseCloudMusicApi api)
@@ -61,11 +62,11 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
         public bool IsPlayAvailable { get; set; } = true;
         public bool IsOnline { get; set; } = true;
         public string GenreStr { get; set; } = "";
-        public string ItemType { get; set; } = "";
         public string AlbumArtistsStr { get; set; } = "";
         public string ArtistAndAlbumStr { get; set; } = "";
         public BitmapImage? Cover { get; set; }
         public string? CoverUrl { get; set; }
+        public string ItemType { get; set; } = "";
         public string BitRate { get; set; } = "";
         public string Track { get; set; } = "";
         public string Lyric { get; set; } = "";
@@ -124,7 +125,7 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
                 AlbumID = info.AlbumID,
                 ArtistsStr = info.ArtistsStr,
                 DurationStr = info.DurationStr,
-                YearStr = info.YearStr
+                YearStr = info.YearStr,
             };
             var api = new NeteaseCloudMusicApi();
             var songUrlTask = api.RequestAsync(CloudMusicApiProviders.SongUrl, new Dictionary<string, string> { { "id", $"{info.ID}" } });

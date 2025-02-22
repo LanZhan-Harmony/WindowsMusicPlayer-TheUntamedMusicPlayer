@@ -75,7 +75,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 
     public void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is Button button && button.DataContext is ArtistInfo artistInfo)
+        if (sender is FrameworkElement { DataContext: ArtistInfo artistInfo })
         {
             var songList = Data.MusicLibrary.GetSongsByArtist(artistInfo);
             Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{artistInfo.Name}", songList, 0, SortMode);

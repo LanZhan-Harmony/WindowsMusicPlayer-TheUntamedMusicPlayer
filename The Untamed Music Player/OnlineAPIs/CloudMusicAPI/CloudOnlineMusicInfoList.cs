@@ -8,17 +8,15 @@ public partial class CloudBriefOnlineMusicInfoList : IBriefOnlineMusicInfoList
 {
     private readonly NeteaseCloudMusicApi _api = new();
     private const byte _limit = 30;
-    private ushort _offset = 0;
+    private ushort _page = 0;
     private int _songCount = 0;
     private int _listCount = 0;
 
-    public CloudBriefOnlineMusicInfoList()
-    {
-    }
+    public CloudBriefOnlineMusicInfoList() { }
 
     public async override Task SearchAsync(string keyWords)
     {
-        _offset = 0;
+        _page = 0;
         _listCount = 0;
         HasAllLoaded = false;
         Clear();
@@ -27,7 +25,7 @@ public partial class CloudBriefOnlineMusicInfoList : IBriefOnlineMusicInfoList
         {
             { "keywords", keyWords },
             { "limit", _limit.ToString() },
-            { "offset", _offset.ToString() }
+            { "offset", "0" }
         });
         if (!isOk)
         {
@@ -42,7 +40,7 @@ public partial class CloudBriefOnlineMusicInfoList : IBriefOnlineMusicInfoList
                 return;
             }
             await ProcessSongsAsync(result["result"]!["songs"]!);
-            _offset = 1;
+            _page = 1;
         }
         catch
         {
@@ -50,13 +48,13 @@ public partial class CloudBriefOnlineMusicInfoList : IBriefOnlineMusicInfoList
         }
     }
 
-    public async override Task SearchMore()
+    public async override Task SearchMoreAsync()
     {
         var (isOk, result) = await _api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
         {
             { "keywords", _keyWords },
             { "limit", _limit.ToString() },
-            { "offset", _offset.ToString() }
+            { "offset", (_page*30).ToString() }
         });
         if (!isOk)
         {
@@ -65,7 +63,7 @@ public partial class CloudBriefOnlineMusicInfoList : IBriefOnlineMusicInfoList
         try
         {
             await ProcessSongsAsync(result["result"]!["songs"]!);
-            _offset++;
+            _page++;
         }
         catch
         {
@@ -103,16 +101,17 @@ public partial class CloudBriefOnlineMusicInfoList : IBriefOnlineMusicInfoList
             }));
         }
         await Task.WhenAll(groupTasks);
+
         foreach (var info in infos)
         {
             Add(info);
         }
     }
 
-    protected new void Add(IBriefOnlineMusicInfo info)
+    protected new void Add(IBriefOnlineMusicInfo? info)
     {
         _listCount++;
-        if (info.IsAvailable)
+        if (info != null && info.IsAvailable)
         {
             base.Add(info);
         }
@@ -124,29 +123,34 @@ public partial class CloudBriefOnlineMusicInfoList : IBriefOnlineMusicInfoList
 
     public async override Task<List<SearchResult>> GetSearchResultAsync(string keyWords)
     {
-        var (isOk, result) = await _api.RequestAsync(CloudMusicApiProviders.SearchSuggest, new Dictionary<string, string> { { "keywords", $"{keyWords}" } });
-        if (!isOk)
-        {
-            Debug.WriteLine("获取网易云音乐搜索建议失败");
-            return [];
-        }
-        var songs = result["result"]!["songs"]?
-            .Select(t => (string)t["name"]!)
-            .Distinct() ?? [];
-        var albums = result["result"]!["albums"]?
-            .Select(t => (string)t["name"]!)
-            .Distinct() ?? [];
-        var artists = result["result"]!["artists"]?
-            .Select(t => (string)t["name"]!)
-            .Distinct() ?? [];
-        var playlists = result["result"]!["playlists"]?
-            .Select(t => (string)t["name"]!)
-            .Distinct() ?? [];
         var list = new List<SearchResult>();
-        AddResults(songs, 5, "\uE8D6", list);
-        AddResults(albums, 3, "\uE93C", list);
-        AddResults(artists, 3, "\uE77B", list);
-        AddResults(playlists, 2, "\uE728", list);
+        await Task.Run(async () =>
+        {
+            var (isOk, result) = await _api.RequestAsync(CloudMusicApiProviders.SearchSuggest, new Dictionary<string, string> { { "keywords", $"{keyWords}" } });
+            if (!isOk)
+            {
+                Debug.WriteLine("获取网易云音乐搜索建议失败");
+            }
+            else
+            {
+                var songs = result["result"]!["songs"]?
+                    .Select(t => (string)t["name"]!)
+                    .Distinct() ?? [];
+                var albums = result["result"]!["albums"]?
+                    .Select(t => (string)t["name"]!)
+                    .Distinct() ?? [];
+                var artists = result["result"]!["artists"]?
+                    .Select(t => (string)t["name"]!)
+                    .Distinct() ?? [];
+                var playlists = result["result"]!["playlists"]?
+                    .Select(t => (string)t["name"]!)
+                    .Distinct() ?? [];
+                AddResults(songs, 5, "\uE8D6", list);
+                AddResults(albums, 3, "\uE93C", list);
+                AddResults(artists, 3, "\uE77B", list);
+                AddResults(playlists, 2, "\uE728", list);
+            }
+        });
         return list;
     }
 
