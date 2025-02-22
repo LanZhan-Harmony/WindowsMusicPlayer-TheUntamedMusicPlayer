@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,10 +33,7 @@ public partial class App : Application
         return service;
     }
 
-    public static WindowEx? MainWindow
-    {
-        get; private set;
-    }
+    public static WindowEx? MainWindow { get; private set; }
 
     public static UIElement? AppTitlebar
     {
@@ -55,8 +53,10 @@ public partial class App : Application
             services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
 
             // Other Activation Handlers
+            services.AddTransient<IActivationHandler, AppNotificationActivationHandler>();
 
             // Services
+            services.AddSingleton<IAppNotificationService, AppNotificationService>();
             services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
@@ -97,6 +97,9 @@ public partial class App : Application
                     });
         }).
         Build();//生成容器
+
+        GetService<IAppNotificationService>().Initialize();
+        UnhandledException += App_UnhandledException;
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
@@ -104,5 +107,11 @@ public partial class App : Application
         base.OnLaunched(args);
         MainWindow = new MainWindow();
         await GetService<IActivationService>().ActivateAsync(args);
+    }
+
+    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    {
+        Debug.WriteLine(e.Message);
+        e.Handled = true;
     }
 }

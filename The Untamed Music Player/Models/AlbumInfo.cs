@@ -144,7 +144,10 @@ public class AlbumInfo
 
     public void ClearArtists()
     {
-        Array.Clear(Artists!, 0, Artists!.Length);
-        Artists = null;
+        if (Artists != null)
+        {
+            Array.Clear(Artists, 0, Artists.Length);
+            Artists = null;
+        }
     }
 }

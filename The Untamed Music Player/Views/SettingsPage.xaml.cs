@@ -22,9 +22,11 @@ public sealed partial class SettingsPage : Page
     private async void RemoveMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
         var folderName = "";
-        if (sender is Button button && button.DataContext is StorageFolder folder)
+        StorageFolder? folder = null;
+        if (sender is FrameworkElement { DataContext: StorageFolder storageFolder })
         {
-            folderName = folder.DisplayName;
+            folderName = storageFolder.DisplayName;
+            folder = storageFolder;
         }
         var titleTextBlock = new TextBlock
         {
@@ -46,7 +48,7 @@ public sealed partial class SettingsPage : Page
 
         if (result == ContentDialogResult.Primary)
         {
-            ViewModel.RemoveMusicFolderButtonClick(sender, e);
+            ViewModel.RemoveMusicFolder(folder!);
         }
     }
 

@@ -162,15 +162,7 @@ public partial class SettingsViewModel : ObservableRecipient
         }
     }
 
-    public void RemoveMusicFolderButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button button && button.DataContext is StorageFolder folder)
-        {
-            RemoveMusicFolder(folder);
-        }
-    }
-
-    private async void RemoveMusicFolder(StorageFolder folder)
+    public async void RemoveMusicFolder(StorageFolder folder)
     {
         Data.MusicLibrary.Folders?.Remove(folder);
         OnPropertyChanged(nameof(EmptyFolderMessageVisibility));

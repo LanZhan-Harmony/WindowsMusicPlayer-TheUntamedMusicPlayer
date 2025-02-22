@@ -20,7 +20,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
 
     public void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
+        if (sender is FrameworkElement { DataContext: BriefMusicInfo briefMusicInfo })
         {
             Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }

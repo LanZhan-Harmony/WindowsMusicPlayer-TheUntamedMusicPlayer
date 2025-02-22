@@ -15,7 +15,8 @@
     <Page.Resources>
         <ThemeShadow x:Name="SharedShadow"/>
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
-                                                        EmptyValue="Visible" NotEmptyValue="Collapsed"/>
+                                                        EmptyValue="Visible"
+                                                        NotEmptyValue="Collapsed"/>
         <DataTemplate x:Key="AlbumListViewTemplate" x:DataType="model:BriefAlbumInfo">
             <UserControl>
                 <Grid x:Name="AlbumListItemGrid"
@@ -88,8 +89,10 @@
                         </VisualStateGroup>
                     </VisualStateManager.VisualStateGroups>
                     <Border x:Name="AlbumCoverBorder"
-                            Grid.Row="0" Grid.Column="0"
-                            Padding="0" VerticalAlignment="Top"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="0"
+                            VerticalAlignment="Top"
                             CornerRadius="5">
                         <Grid>
                             <Image x:Name="AlbumCover"
@@ -109,14 +112,16 @@
                         <TextBlock MaxHeight="40"
                                    FontWeight="SemiBold"
                                    Text="{x:Bind Name}"
-                                   TextTrimming="WordEllipsis" TextWrapping="WrapWholeWords"/>
+                                   TextTrimming="WordEllipsis"
+                                   TextWrapping="WrapWholeWords"/>
                         <TextBlock FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    Text="{x:Bind YearStr}"/>
                     </StackPanel>
                     <ListView x:Name="SongListView"
                               helper:ListViewExtensions.ItemCornerRadius="8"
-                              helper:ListViewExtensions.ItemMargin="0,3,0,3" IsItemClickEnabled="True"
+                              helper:ListViewExtensions.ItemMargin="0,3,0,3"
+                              IsItemClickEnabled="True"
                               ItemClick="SongListView_ItemClick"
                               ItemTemplate="{StaticResource SongListViewTemplate}"
                               ItemsSource="{x:Bind SongList}"
@@ -130,7 +135,8 @@
         </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefMusicInfo">
             <Grid Height="52"
-                  Background="Transparent" PointerEntered="Grid_PointerEntered"
+                  Background="Transparent"
+                  PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
@@ -195,11 +201,11 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
-                          IsThreeState="False" Visibility="Collapsed"/>
+                          IsThreeState="False"
+                          Visibility="Collapsed"/>
                 <Button x:Name="PlayButton" x:Uid="LocalSongs_PlayButton"
                         Grid.Column="1"
                         Click="SongListViewPlayButton_Click"
-                        DataContext="{x:Bind}"
                         Style="{StaticResource SmallPlayButtonStyle}"
                         Visibility="Collapsed">
                     <FontIcon FontSize="16"
@@ -214,7 +220,8 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
-                        Background="Transparent" BorderBrush="Transparent">
+                        Background="Transparent"
+                        BorderBrush="Transparent">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind ArtistsStr}"
@@ -222,21 +229,24 @@
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
                 <TextBlock Grid.Column="4"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
                 <TextBlock Grid.Column="5"
-                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind GenreStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind GenreStr}"/>
                 <TextBlock Grid.Column="6"
-                           Margin="0,0,10,0" HorizontalAlignment="Right"
+                           Margin="0,0,10,0"
+                           HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
@@ -246,7 +256,8 @@
         </DataTemplate>
         <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:BriefAlbumInfo">
             <Grid Width="170" Height="226"
-                  Background="Transparent" PointerEntered="Grid_PointerEntered"
+                  Background="Transparent"
+                  PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
@@ -302,22 +313,24 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Canvas.ZIndex="2">
                     <CheckBox x:Name="ItemCheckBox"
-                              Margin="18,12,0,0" HorizontalAlignment="Left"
+                              Margin="18,12,0,0"
+                              HorizontalAlignment="Left"
                               VerticalAlignment="Top"
                               Visibility="Collapsed"/>
                     <Button x:Name="PlayButton"
                             Width="32" Height="32"
-                            Margin="12,0,0,8" HorizontalAlignment="Left"
+                            Margin="12,0,0,8"
+                            HorizontalAlignment="Left"
                             VerticalAlignment="Bottom"
                             Click="AlbumGridViewPlayButton_Click"
-                            DataContext="{x:Bind}"
                             Style="{StaticResource CircularButtonStyle}"
                             Visibility="Collapsed">
                         <FontIcon FontSize="12" Glyph="&#xE768;"/>
                     </Button>
                     <Button x:Name="MenuButton"
                             Width="32" Height="32"
-                            Margin="0,0,12,8" HorizontalAlignment="Right"
+                            Margin="0,0,12,8"
+                            HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
                             Style="{StaticResource CircularButtonStyle}"
                             Visibility="Collapsed">
@@ -374,18 +387,21 @@
                 <Border x:Name="CoverBorder"
                         Grid.Row="0"
                         Width="158" Height="158"
-                        Margin="0,6,0,2" Padding="0"
+                        Margin="0,6,0,2"
+                        Padding="0"
                         CornerRadius="5">
                     <Grid>
                         <Image x:Name="ControllerCover"
                                Width="160" Height="160"
-                               HorizontalAlignment="Left" VerticalAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
                                Canvas.ZIndex="1"
                                Source="{x:Bind Cover}"/>
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
-                            <FontIcon Canvas.ZIndex="0" FontSize="50"
+                            <FontIcon Canvas.ZIndex="0"
+                                      FontSize="50"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xE93C;"/>
                         </Grid>
@@ -492,7 +508,8 @@
 
         <Grid x:Name="BackgroundHost"
               Margin="0,-136,0,0"
-              FlowDirection="LeftToRight" SizeChanged="BackgroundHost_OnSizeChanged"/>
+              FlowDirection="LeftToRight"
+              SizeChanged="BackgroundHost_OnSizeChanged"/>
         <Grid x:Name="Header"
               Margin="0,0,0,-80"
               Canvas.ZIndex="1">
@@ -516,8 +533,10 @@
                         Grid.Column="0"
                         Margin="0,0,20,0"
                         BorderBrush="{ThemeResource ControlElevationBorderBrush}"
-                        BorderThickness="0" CornerRadius="100"
-                        FlowDirection="LeftToRight" SizeChanged="CoverArt_OnSizeChanged"
+                        BorderThickness="0"
+                        CornerRadius="100"
+                        FlowDirection="LeftToRight"
+                        SizeChanged="CoverArt_OnSizeChanged"
                         Translation="0,0,16">
                     <Border.Background>
                         <ImageBrush ImageSource="{x:Bind ViewModel.Artist.Cover}" Stretch="UniformToFill"/>
@@ -539,7 +558,8 @@
                                Text="{x:Bind ViewModel.Artist.Name}"
                                TextWrapping="NoWrap"/>
                     <TextBlock x:Name="SubtitleText"
-                               FontWeight="Normal" TextWrapping="NoWrap">
+                               FontWeight="Normal"
+                               TextWrapping="NoWrap">
                         <Run Text="{x:Bind ViewModel.Artist.GetCountStr()}"/>
                         <Run Foreground="{ThemeResource TextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.Artist.GetDurationStr()}"/>
                     </TextBlock>
@@ -551,10 +571,13 @@
 
                     <Grid x:Name="ButtonPanel">
                         <StackPanel x:Name="ButtonStackPanel"
-                                    Padding="0" HorizontalAlignment="Left"
-                                    Orientation="Horizontal" Spacing="16">
+                                    Padding="0"
+                                    HorizontalAlignment="Left"
+                                    Orientation="Horizontal"
+                                    Spacing="16">
                             <Button x:Name="PlayButton"
-                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    Padding="11,9,11,9"
+                                    HorizontalAlignment="Stretch"
                                     Click="{x:Bind ViewModel.PlayAllButton_Click}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     XYFocusDown="{x:Bind AlbumListView}">
@@ -563,7 +586,8 @@
                                     <TextBlock x:Uid="AlbumDetail_PlayAll" FontSize="12"/>
                                 </StackPanel>
                             </Button>
-                            <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                            <Button Padding="11,9,11,9"
+                                    HorizontalAlignment="Stretch"
                                     Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -572,7 +596,8 @@
                                 </StackPanel>
                             </Button>
                             <Button x:Name="AddToButton"
-                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    Padding="11,9,11,9"
+                                    HorizontalAlignment="Stretch"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
@@ -595,7 +620,8 @@
                                 </StackPanel>
                             </Button>
                             <Button x:Name="MoreButton"
-                                    Padding="11,9,11,9" HorizontalAlignment="Stretch">
+                                    Padding="11,9,11,9"
+                                    HorizontalAlignment="Stretch">
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
                                         <MenuFlyoutSubItem x:Name="AddToFlyout" x:Uid="LocalSongs_AddTo"
@@ -635,7 +661,8 @@
                            FontSize="20"/>
                 <SelectorBar Grid.Column="2"
                              VerticalAlignment="Center"
-                             Loaded="SelectorBar_Loaded" SelectionChanged="SelectorBar_SelectionChanged">
+                             Loaded="SelectorBar_Loaded"
+                             SelectionChanged="SelectorBar_SelectionChanged">
                     <SelectorBarItem>
                         <SelectorBarItem.Icon>
                             <FontIcon Glyph="&#xEA37;"/>
@@ -665,7 +692,8 @@
                         </ListView.Header>
                     </ListView>
                     <GridView x:Name="AlbumGridView"
-                              helper:ListViewExtensions.ItemCornerRadius="8" IsItemClickEnabled="True"
+                              helper:ListViewExtensions.ItemCornerRadius="8"
+                              IsItemClickEnabled="True"
                               ItemClick="AlbumGridView_ItemClick"
                               ItemTemplate="{StaticResource AlbumGridViewTemplate}"
                               ItemsSource="{x:Bind ViewModel.AlbumList}"

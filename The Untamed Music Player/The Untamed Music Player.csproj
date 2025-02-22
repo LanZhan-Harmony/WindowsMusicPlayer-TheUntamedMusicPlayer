@@ -19,6 +19,7 @@
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<PackageCertificateKeyFile>The Untamed Music Player_TemporaryKey.pfx</PackageCertificateKeyFile>
 		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<PublishSelfContained>true</PublishSelfContained>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
@@ -26,12 +27,12 @@
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<AppxBundle>Auto</AppxBundle>
-		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
+		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 		<LangVersion>preview</LangVersion>
-		<PublishAot>True</PublishAot>
+		<!--<PublishAot>True</PublishAot>
 		<PublishTrimmed>True</PublishTrimmed>
 		<IsAotCompatible>True</IsAotCompatible>
-		<!--<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>-->
+		<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>-->
 
 	</PropertyGroup>
 	<ItemGroup>
@@ -73,13 +74,13 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<Page Update="Views\OnlinePlayListsPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\OnlineArtistsPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\OnlineAlbumsPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\OnlineSongsPage.xaml">
 			<Generator>MSBuild:Compile</Generator>

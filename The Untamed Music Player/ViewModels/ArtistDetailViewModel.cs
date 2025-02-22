@@ -39,7 +39,7 @@ public class ArtistDetailViewModel
     public void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
         Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList(), 0, 0);
-        if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
+        if (sender is FrameworkElement { DataContext: BriefMusicInfo briefMusicInfo })
         {
             Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
@@ -47,7 +47,7 @@ public class ArtistDetailViewModel
 
     public void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is Button button && button.DataContext is BriefAlbumInfo briefAlbumInfo)
+        if (sender is FrameworkElement { DataContext: BriefAlbumInfo briefAlbumInfo })
         {
             var songList = new ObservableCollection<BriefMusicInfo>(briefAlbumInfo.SongList);
             Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{briefAlbumInfo.Name}", songList, 0, 0);
