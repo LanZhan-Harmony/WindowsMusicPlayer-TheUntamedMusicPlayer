@@ -8,6 +8,6 @@ public abstract class IBriefOnlineMusicInfoList : ObservableCollection<IBriefOnl
     public bool HasAllLoaded { get; set; } = false;
 
     public abstract Task SearchAsync(string keyWords);
-    public abstract Task SearchMore();
+    public abstract Task SearchMoreAsync();
     public abstract Task<List<SearchResult>> GetSearchResultAsync(string keyWords);
 }

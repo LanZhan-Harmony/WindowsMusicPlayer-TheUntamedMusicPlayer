@@ -190,7 +190,10 @@ public sealed partial class RootPlayBarView : Page
 
     private async void PlayBarProperty_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new PropertiesDialog() { XamlRoot = XamlRoot };
+        var dialog = new PropertiesDialog(Data.MusicPlayer.CurrentMusic!)
+        {
+            XamlRoot = XamlRoot
+        };
         await dialog.ShowAsync();
     }
 }

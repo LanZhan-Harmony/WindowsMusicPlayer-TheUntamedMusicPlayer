@@ -1,9 +1,12 @@
+using System.Diagnostics;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
+using static The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.CloudBriefOnlineMusicInfo;
 
 namespace The_Untamed_Music_Player.Views;
 public sealed partial class OnlineSongsPage : Page
@@ -67,6 +70,53 @@ public sealed partial class OnlineSongsPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.OnlineMusicLibrary.OnlineSongsPlayButton_Click(sender, e);
+        if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
+        {
+            Data.OnlineMusicLibrary.OnlineSongsPlayButton_Click(info);
+        }
+    }
+
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
+        {
+            Data.OnlineMusicLibrary.OnlineSongsPlayNextButton_Click(info);
+        }
+    }
+
+    private void DownloadButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
+        {
+            Data.OnlineMusicLibrary.OnlineSongsDownloadButton_Click(info);
+        }
+    }
+
+    private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
+        {
+            var music = await MusicPlayer.CreateDetailedMusicInfoAsync(info, (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1));
+            var dialog = new PropertiesDialog(music)
+            {
+                XamlRoot = XamlRoot
+            };
+            await dialog.ShowAsync();
+        }
+    }
+
+    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void SelectButton_Click(object sender, RoutedEventArgs e)
+    {
+
     }
 }

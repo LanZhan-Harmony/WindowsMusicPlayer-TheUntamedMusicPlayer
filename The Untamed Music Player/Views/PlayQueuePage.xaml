@@ -12,16 +12,17 @@
     <Page.Resources>
         <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="contract:IBriefMusicInfoBase">
             <Grid Height="52"
-                  Background="Transparent" PointerEntered="Grid_PointerEntered"
+                  Background="Transparent"
+                  PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Play">
+                        <MenuFlyoutItem x:Uid="LocalSongs_Play" Click="PlayButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE768;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_PlayNext">
+                        <MenuFlyoutItem x:Uid="LocalSongs_PlayNext" Click="PlayNextButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
@@ -43,38 +44,38 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="PlayQueue_Remove">
+                        <MenuFlyoutItem x:Uid="PlayQueue_Remove" Click="RemoveButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE711;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="PlayQueue_MoveUp">
+                        <MenuFlyoutItem x:Uid="PlayQueue_MoveUp" Click="MoveUpButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE74A;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="PlayQueue_MoveDown">
+                        <MenuFlyoutItem x:Uid="PlayQueue_MoveDown" Click="MoveDownButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE74B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Properties">
+                        <MenuFlyoutItem x:Uid="LocalSongs_Properties" Click="PropertiesButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE946;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_ShowAlbum">
+                        <MenuFlyoutItem x:Uid="LocalSongs_ShowAlbum" Click="ShowAlbumButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE93C;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_ShowArtist">
+                        <MenuFlyoutItem x:Uid="LocalSongs_ShowArtist" Click="ShowArtistButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE77B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Select">
+                        <MenuFlyoutItem x:Uid="LocalSongs_Select" Click="SelectButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE762;"/>
                             </MenuFlyoutItem.Icon>
@@ -92,13 +93,15 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
-                          IsThreeState="False" Visibility="Collapsed"/>
+                          IsThreeState="False"
+                          Visibility="Collapsed"/>
                 <Button x:Name="PlayButton" x:Uid="LocalSongs_PlayButton"
                         Grid.Column="1"
                         Padding="5"
-                        Background="Transparent" BorderBrush="Transparent"
-                        Canvas.ZIndex="1" Click="PlayButton_Click"
-                        DataContext="{x:Bind}"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Canvas.ZIndex="1"
+                        Click="PlayButton_Click"
                         Style="{StaticResource SmallPlayButtonStyle}"
                         Visibility="Collapsed">
                     <FontIcon FontSize="16"
@@ -107,7 +110,8 @@
                 </Button>
                 <FontIcon x:Name="MusicFontIcon"
                           Grid.Column="1"
-                          Canvas.ZIndex="0" FontSize="16"
+                          Canvas.ZIndex="0"
+                          FontSize="16"
                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                           Glyph="&#xE8D6;"/>
                 <TextBlock Grid.Column="2"
@@ -118,7 +122,8 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
-                        Background="Transparent" BorderBrush="Transparent">
+                        Background="Transparent"
+                        BorderBrush="Transparent">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind ArtistsStr}"
@@ -126,7 +131,8 @@
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
                 <Button Grid.Column="4"
-                        Background="Transparent" BorderBrush="Transparent">
+                        Background="Transparent"
+                        BorderBrush="Transparent">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind Album}"
@@ -134,14 +140,16 @@
                                ToolTipService.ToolTip="{x:Bind Album}"/>
                 </Button>
                 <TextBlock Grid.Column="5"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
                 <TextBlock Grid.Column="6"
-                           Margin="0,0,10,0" HorizontalAlignment="Right"
+                           Margin="0,0,10,0"
+                           HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
@@ -215,7 +223,8 @@
                                 <ControlTemplate>
                                     <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
-                                                    Orientation="Horizontal" Spacing="12">
+                                                    Orientation="Horizontal"
+                                                    Spacing="12">
                                             <FontIcon FontSize="16" Glyph="&#xE838;"/>
                                             <StackPanel>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_AddFilesToPlayQueue"/>
@@ -234,7 +243,8 @@
                                 <ControlTemplate>
                                     <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
-                                                    Orientation="Horizontal" Spacing="12">
+                                                    Orientation="Horizontal"
+                                                    Spacing="12">
                                             <FontIcon FontSize="16" Glyph="&#xE8B7;"/>
                                             <StackPanel>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_AddFolderToPlayQueue"/>
@@ -252,7 +262,8 @@
                                 <ControlTemplate>
                                     <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
-                                                    Orientation="Horizontal" Spacing="12">
+                                                    Orientation="Horizontal"
+                                                    Spacing="12">
                                             <FontIcon FontSize="16" Glyph="&#xE774;"/>
                                             <StackPanel>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_AddMediaFromURL"/>
@@ -271,7 +282,8 @@
         </Grid>
         <StackPanel x:Name="MenuPanel"
                     Grid.Row="1"
-                    KeyTipPlacementMode="Bottom" Orientation="Horizontal"
+                    KeyTipPlacementMode="Bottom"
+                    Orientation="Horizontal"
                     Spacing="16">
             <Button x:Name="ClearButton" x:Uid="PlayQueue_ClearButton"
                     Padding="11,9,11,9"
@@ -315,7 +327,8 @@
                   Grid.Row="2"
                   Margin="0,22,0,0"
                   helper:ListViewExtensions.ItemCornerRadius="8"
-                  helper:ListViewExtensions.ItemMargin="0,3,0,3" CanDragItems="True"
+                  helper:ListViewExtensions.ItemMargin="0,3,0,3"
+                  CanDragItems="True"
                   IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.PlayQueueListView_ItemClick}"
                   ItemTemplate="{StaticResource PlayQueueListViewTemplate}"

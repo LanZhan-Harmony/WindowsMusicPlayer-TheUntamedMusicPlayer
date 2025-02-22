@@ -8,22 +8,34 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class PropertiesDialog : ContentDialog
 {
-    public IDetailedMusicInfoBase Music { get; set; } = Data.MusicPlayer.CurrentMusic!;
+    public IDetailedMusicInfoBase Music { get; set; }
 
-    public PropertiesDialog()
+    public PropertiesDialog(IDetailedMusicInfoBase music)
     {
+        Music = music;
         InitializeComponent();
     }
 
     private void OpenFileLocationButton_Click(object sender, RoutedEventArgs e)
     {
         var filePath = Music.Path;
-        var startInfo = new ProcessStartInfo
+        if (filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase))
         {
-            FileName = "explorer.exe",
-            Arguments = $"/select,\"{filePath}\"",
-            UseShellExecute = true
-        };
-        Process.Start(startInfo);
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = filePath,
+                UseShellExecute = true
+            });
+        }
+        else
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = $"/select,\"{filePath}\"",
+                UseShellExecute = true
+            };
+            Process.Start(startInfo);
+        }
     }
 }

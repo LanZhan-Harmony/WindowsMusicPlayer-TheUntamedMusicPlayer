@@ -11,11 +11,23 @@
       xmlns:muxs="using:Microsoft.UI.Xaml.Controls"
       xmlns:storage="using:Windows.Storage"
       xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
-      xmlns:ui="using:CommunityToolkit.WinUI" xmlns:xaml="using:Microsoft.UI.Xaml"
+      xmlns:ui="using:CommunityToolkit.WinUI"
+      xmlns:xaml="using:Microsoft.UI.Xaml"
       mc:Ignorable="d">
 
     <Page.Resources>
         <helper:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+        <DataTemplate x:Key="MusicFolderTemplate" x:DataType="storage:StorageFolder">
+            <toolkit:SettingsCard Header="{x:Bind Path}">
+                <Button x:Name="removeFolder" x:Uid="Settings_RemoveFolder"
+                        Width="27" Height="27"
+                        Margin="0" Padding="0"
+                        Click="RemoveMusicFolderButton_Click"
+                        DataContext="{x:Bind}">
+                    <FontIcon FontSize="15" Glyph="&#xE711;"/>
+                </Button>
+            </toolkit:SettingsCard>
+        </DataTemplate>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -51,7 +63,8 @@
         </Grid>
         <ScrollViewer Grid.Row="1" Padding="0,0,0,16">
             <StackPanel x:Name="ContentArea"
-                        Orientation="Vertical" Spacing="34">
+                        Orientation="Vertical"
+                        Spacing="34">
 
                 <!--  动画  -->
                 <StackPanel.ChildrenTransitions>
@@ -72,6 +85,7 @@
 
                     <!--  音乐库位置  -->
                     <toolkit:SettingsExpander x:Name="musicFolder" x:Uid="Settings_MusicLibraryLocation"
+                                              ItemTemplate="{StaticResource MusicFolderTemplate}"
                                               ItemsSource="{x:Bind model:Data.MusicLibrary.Folders, Mode=OneWay}">
                         <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE8B7;"/>
@@ -82,23 +96,11 @@
                                 <TextBlock x:Uid="Settings_AddFolder"/>
                             </StackPanel>
                         </Button>
-                        <toolkit:SettingsExpander.ItemTemplate>
-                            <DataTemplate x:DataType="storage:StorageFolder">
-                                <toolkit:SettingsCard Header="{x:Bind Path}">
-                                    <Button x:Name="removeFolder" x:Uid="Settings_RemoveFolder"
-                                            Width="27" Height="27"
-                                            Margin="0" Padding="0"
-                                            Click="RemoveMusicFolderButton_Click"
-                                            DataContext="{x:Bind}">
-                                        <FontIcon FontSize="15" Glyph="&#xE711;"/>
-                                    </Button>
-                                </toolkit:SettingsCard>
-                            </DataTemplate>
-                        </toolkit:SettingsExpander.ItemTemplate>
                         <toolkit:SettingsExpander.ItemsFooter>
                             <Grid Height="35" Visibility="{x:Bind ViewModel.EmptyFolderMessageVisibility, Mode=OneWay}">
                                 <toolkit:SettingsCard x:Name="emptyFolderMessage"
-                                                      Background="Transparent" BorderBrush="Transparent"
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
                                                       ContentAlignment="Left"
                                                       Visibility="{x:Bind ViewModel.EmptyFolderMessageVisibility, Mode=OneWay}">
                                     <TextBlock x:Uid="Settings_NoFolder" Margin="42,0,0,8"/>
@@ -150,7 +152,8 @@
                                 <StackPanel>
                                     <RadioButton x:Uid="Settings_Theme_Light"
                                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                                 FontSize="15" GroupName="AppTheme"
+                                                 FontSize="15"
+                                                 GroupName="AppTheme"
                                                  IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
                                         <RadioButton.CommandParameter>
                                             <xaml:ElementTheme>Light</xaml:ElementTheme>
@@ -158,7 +161,8 @@
                                     </RadioButton>
                                     <RadioButton x:Uid="Settings_Theme_Dark"
                                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                                 FontSize="15" GroupName="AppTheme"
+                                                 FontSize="15"
+                                                 GroupName="AppTheme"
                                                  IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
                                         <RadioButton.CommandParameter>
                                             <xaml:ElementTheme>Dark</xaml:ElementTheme>
@@ -166,7 +170,8 @@
                                     </RadioButton>
                                     <RadioButton x:Uid="Settings_Theme_Default"
                                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                                 FontSize="15" GroupName="AppTheme"
+                                                 FontSize="15"
+                                                 GroupName="AppTheme"
                                                  IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
                                         <RadioButton.CommandParameter>
                                             <xaml:ElementTheme>Default</xaml:ElementTheme>
@@ -200,10 +205,14 @@
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundColor">
                                 <ColorPicker ColorChanged="{x:Bind ViewModel.TintColorPicker_ColorChanged}"
-                                             ColorSpectrumShape="Ring" IsAlphaEnabled="True"
-                                             IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
-                                             IsColorChannelTextInputVisible="True" IsColorSliderVisible="True"
-                                             IsHexInputVisible="True" IsMoreButtonVisible="True"
+                                             ColorSpectrumShape="Ring"
+                                             IsAlphaEnabled="True"
+                                             IsAlphaSliderVisible="True"
+                                             IsAlphaTextInputVisible="True"
+                                             IsColorChannelTextInputVisible="True"
+                                             IsColorSliderVisible="True"
+                                             IsHexInputVisible="True"
+                                             IsMoreButtonVisible="True"
                                              Color="{x:Bind ViewModel.TintColor, Mode=TwoWay}"/>
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
@@ -245,7 +254,8 @@
                     <toolkit:SettingsExpander x:Name="About" x:Uid="Settings_AboutDescription"
                                               Header="{x:Bind model:Data.AppDisplayName}">
                         <toolkit:SettingsExpander.HeaderIcon>
-                            <BitmapIcon AutomationProperties.AccessibilityView="Raw" ShowAsMonochrome="False"
+                            <BitmapIcon AutomationProperties.AccessibilityView="Raw"
+                                        ShowAsMonochrome="False"
                                         UriSource="ms-appx:///Assets/AppIcon/WindowIcon.ico"/>
                         </toolkit:SettingsExpander.HeaderIcon>
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}"/>

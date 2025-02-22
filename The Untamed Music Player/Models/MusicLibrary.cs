@@ -105,14 +105,16 @@ public partial class MusicLibrary : ObservableRecipient
         await _librarySemaphore.WaitAsync(); // 等待信号量, 只允许一个线程访问此函数
         try
         {
-            Data.HasMusicLibraryLoaded = true;
+            Songs.Clear();
+            Artists.Clear();
+            Albums.Clear();
             var loadMusicTasks = new List<Task>();
             if (Folders.Any())
             {
                 foreach (var folder in Folders)
                 {
                     _musicFolders.TryAdd(folder.Path, 0);
-                    await (LoadMusicAsync(folder, folder.DisplayName));
+                    await LoadMusicAsync(folder, folder.DisplayName);
                 }
             }
             await Task.WhenAll(loadMusicTasks);
@@ -127,6 +129,7 @@ public partial class MusicLibrary : ObservableRecipient
             await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
             ClearArtists();
+            Data.HasMusicLibraryLoaded = true;
         }
         catch (Exception ex)
         {
@@ -143,7 +146,6 @@ public partial class MusicLibrary : ObservableRecipient
         await _librarySemaphore.WaitAsync();
         try
         {
-            Data.HasMusicLibraryLoaded = true;
             _dispatcherQueue.TryEnqueue(() =>
             {
                 IsProgressRingActive = true;

@@ -34,24 +34,29 @@
             <Grid Width="{x:Bind model:Data.LocalSongsViewModel.GetZoomedOutViewGridWidth(model:Data.LocalSongsViewModel.SortMode)}">
                 <TextBlock Grid.Column="1"
                            Margin="{x:Bind model:Data.LocalSongsViewModel.GetZoomedOutViewTextBlockMargin(model:Data.LocalSongsViewModel.SortMode)}"
-                           HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Center"
                            Style="{StaticResource SubtitleTextBlockStyle}"
                            Text="{x:Bind ((helper:GroupInfoList)Group).Key}"
-                           TextAlignment="Center" TextTrimming="WordEllipsis"/>
+                           TextAlignment="Center"
+                           TextTrimming="WordEllipsis"/>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefMusicInfo">
             <Grid Height="52"
-                  Background="Transparent" PointerEntered="Grid_PointerEntered"
+                  Background="Transparent"
+                  PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Play" Width="216">
+                        <MenuFlyoutItem x:Uid="LocalSongs_Play"
+                                        Width="216"
+                                        Click="PlayButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE768;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_PlayNext">
+                        <MenuFlyoutItem x:Uid="LocalSongs_PlayNext" Click="PlayNextButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
@@ -73,28 +78,28 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_EditInfo">
+                        <MenuFlyoutItem x:Uid="LocalSongs_EditInfo" Click="EditInfoButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE70F;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Properties">
+                        <MenuFlyoutItem x:Uid="LocalSongs_Properties" Click="PropertiesButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE946;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_ShowAlbum">
+                        <MenuFlyoutItem x:Uid="LocalSongs_ShowAlbum" Click="ShowAlbumButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE93C;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_ShowArtist">
+                        <MenuFlyoutItem x:Uid="LocalSongs_ShowArtist" Click="ShowArtistButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE77B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Select">
+                        <MenuFlyoutItem x:Uid="LocalSongs_Select" Click="SelectButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE762;"/>
                             </MenuFlyoutItem.Icon>
@@ -113,11 +118,11 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
-                          IsThreeState="False" Visibility="Collapsed"/>
+                          IsThreeState="False"
+                          Visibility="Collapsed"/>
                 <Button x:Name="PlayButton" x:Uid="LocalSongs_PlayButton"
                         Grid.Column="1"
                         Click="PlayButton_Click"
-                        DataContext="{x:Bind}"
                         Style="{StaticResource SmallPlayButtonStyle}"
                         Visibility="Collapsed">
                     <FontIcon FontSize="16"
@@ -132,7 +137,8 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
-                        Background="Transparent" BorderBrush="Transparent">
+                        Background="Transparent"
+                        BorderBrush="Transparent">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind ArtistsStr}"
@@ -140,7 +146,8 @@
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
                 <Button Grid.Column="4"
-                        Background="Transparent" BorderBrush="Transparent">
+                        Background="Transparent"
+                        BorderBrush="Transparent">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind Album}"
@@ -148,21 +155,24 @@
                                ToolTipService.ToolTip="{x:Bind Album}"/>
                 </Button>
                 <TextBlock Grid.Column="5"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
                 <TextBlock Grid.Column="6"
-                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind GenreStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind GenreStr}"/>
                 <TextBlock Grid.Column="7"
-                           Margin="0,0,10,0" HorizontalAlignment="Right"
+                           Margin="0,0,10,0"
+                           HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
@@ -214,13 +224,15 @@
                 </StackPanel>
             </Button>
             <StackPanel Grid.Column="2"
-                        Orientation="Horizontal" Spacing="16">
+                        Orientation="Horizontal"
+                        Spacing="16">
                 <Button Background="Transparent" BorderBrush="Transparent">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <TextBlock x:Uid="LocalSongs_SortByChosen"/>
                         <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetSortByStr(ViewModel.SortMode), Mode=OneWay}"/>
                         <FontIcon Margin="8,0,0,0"
-                                  FontSize="12" Glyph="&#xE70D;"/>
+                                  FontSize="12"
+                                  Glyph="&#xE70D;"/>
                     </StackPanel>
                     <Button.Flyout>
                         <Flyout Placement="Bottom">
@@ -238,7 +250,8 @@
                         <TextBlock x:Uid="LocalSongs_GenreChosen"/>
                         <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetGenreStr(ViewModel.GenreMode), Mode=OneWay}"/>
                         <FontIcon Margin="8,0,0,0"
-                                  FontSize="12" Glyph="&#xE70D;"/>
+                                  FontSize="12"
+                                  Glyph="&#xE70D;"/>
                     </StackPanel>
                     <Button.Flyout>
                         <Flyout Placement="Bottom">
@@ -262,7 +275,8 @@
             <SemanticZoom.ZoomedInView>
                 <ListView x:Name="SongListView"
                           helper:ListViewExtensions.ItemCornerRadius="8"
-                          helper:ListViewExtensions.ItemMargin="0,3,0,3" CanDragItems="True"
+                          helper:ListViewExtensions.ItemMargin="0,3,0,3"
+                          CanDragItems="True"
                           IsItemClickEnabled="True"
                           ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                           ItemTemplate="{StaticResource SongListViewTemplate}"
@@ -284,7 +298,8 @@
                 </ListView>
             </SemanticZoom.ZoomedInView>
             <SemanticZoom.ZoomedOutView>
-                <GridView HorizontalAlignment="Center" VerticalAlignment="Center"
+                <GridView HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
                           IsItemClickEnabled="True"
                           ItemTemplate="{StaticResource ZoomedOutTemplate}"
                           ItemsSource="{x:Bind GroupedSongList.View.CollectionGroups, Mode=OneWay}"

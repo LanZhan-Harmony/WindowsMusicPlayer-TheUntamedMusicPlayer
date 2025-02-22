@@ -1,9 +1,15 @@
+using System.Data;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+using Windows.UI.Notifications;
 
 namespace The_Untamed_Music_Player.Models;
 public partial class OnlineMusicLibrary : ObservableRecipient
@@ -94,7 +100,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
     public async Task SearchMore()
     {
-        if (!_isSearchingMore)
+        if (!_isSearchingMore && !OnlineMusicInfoList.HasAllLoaded)
         {
             _isSearchingMore = true;
             if (OnlineMusicInfoList.HasAllLoaded || !await IsInternetAvailableAsync())
@@ -112,7 +118,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                         {
                             OnlineMusicInfoList = new CloudBriefOnlineMusicInfoList();
                         }
-                        await OnlineMusicInfoList.SearchMore();
+                        await OnlineMusicInfoList.SearchMoreAsync();
                     }
                     else if (MusicLibraryIndex == 1)
                     { }
@@ -203,21 +209,107 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         SearchResultList = [];
     }
 
-    public void OnlineSongsPlayButton_Click(object sender, RoutedEventArgs e)
-    {
-        Data.MusicPlayer.SetPlayList($"OnlineSongs:Part:{KeyWords}", OnlineMusicInfoList, (byte)(MusicLibraryIndex + 1), 0);
-        if (sender is Button button && button.DataContext is IBriefOnlineMusicInfo info)
-        {
-            Data.MusicPlayer.PlaySongByInfo(info);
-        }
-    }
-
     public void OnlineSongsSongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayList($"OnlineSongs:Part:{KeyWords}", OnlineMusicInfoList, (byte)(MusicLibraryIndex + 1), 0);
         if (e.ClickedItem is IBriefOnlineMusicInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
+        }
+    }
+
+    public void OnlineSongsPlayButton_Click(IBriefOnlineMusicInfo info)
+    {
+        Data.MusicPlayer.SetPlayList($"OnlineSongs:Part:{KeyWords}", OnlineMusicInfoList, (byte)(MusicLibraryIndex + 1), 0);
+        Data.MusicPlayer.PlaySongByInfo(info);
+    }
+
+    public void OnlineSongsPlayNextButton_Click(IBriefOnlineMusicInfo info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            var list = new List<IBriefOnlineMusicInfo> { info };
+            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list
+                , 0, 0);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToNextPlay(info);
+        }
+    }
+
+    public async void OnlineSongsDownloadButton_Click(IBriefOnlineMusicInfo info)
+    {
+        var detailedInfo = (IDetailedOnlineMusicInfo)await MusicPlayer.CreateDetailedMusicInfoAsync(info, (byte)(MusicLibraryIndex + 1));
+        var title = detailedInfo.Title;
+        var itemType = detailedInfo.ItemType;
+        var savePath = "C:/Users/Admin/音乐/" + title + itemType;
+        var tag = "OnlineMusicDownload";
+        var group = "Downloads";
+        var notification = new AppNotificationBuilder()
+            .AddProgressBar(new AppNotificationProgressBar() { Title = title }
+            .BindValue()
+            .BindValueStringOverride()
+            .BindStatus()
+            )
+            .SetHeroImage(detailedInfo.CoverUrl != null ? new Uri(detailedInfo.CoverUrl) : null)
+            .BuildNotification();
+        var data = new AppNotificationProgressData(1)
+        {
+            Title = title,
+            Value = 0,
+            ValueStringOverride = "下载进度: 0 %",
+            Status = "正在下载"
+        };
+        notification.Tag = tag;
+        notification.Group = group;
+        notification.Progress = data;
+        AppNotificationManager.Default.Show(notification);
+
+        await DownloadFileWithProgress(detailedInfo.Path, savePath, title);
+    }
+
+    private static async Task DownloadFileWithProgress(string url, string savePath, string title)
+    {
+        using var client = new HttpClient() { Timeout = TimeSpan.FromMinutes(1) };
+        using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+        response.EnsureSuccessStatusCode();
+
+        var totalBytes = response.Content.Headers.ContentLength;
+        using var contentStream = await response.Content.ReadAsStreamAsync();
+        using var fileStream = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+
+        var buffer = new byte[8192];
+        var totalRead = 0L;
+        var read = 0;
+        while ((read = await contentStream.ReadAsync(buffer)) > 0)
+        {
+            await fileStream.WriteAsync(buffer.AsMemory(0, read));
+            totalRead += read;
+            if (totalBytes.HasValue)
+            {
+                var progress = (int)(totalRead * 100 / totalBytes.Value);
+                await UpdateProgress(title, progress);
+            }
+        }
+    }
+
+    public static async Task UpdateProgress(string title, int progress)
+    {
+        var tag = "OnlineMusicDownload";
+        var group = "Downloads";
+        var data = new AppNotificationProgressData(2)
+        {
+            Title = title,
+            Value = progress,
+            ValueStringOverride = $"下载进度: {progress} %",
+            Status = "正在下载"
+        };
+        var result = await AppNotificationManager.Default.UpdateAsync(data, tag, group);
+        if (result == AppNotificationProgressResult.AppNotificationNotFound)
+        {
+            return;
         }
     }
 

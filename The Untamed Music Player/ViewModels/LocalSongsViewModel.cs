@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
@@ -104,74 +105,6 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (e.PropertyName == "LibraryReloaded")
         {
             LoadModeAndSongList();
-        }
-    }
-
-    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var currentsortmode = SortMode;
-        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
-        {
-            SortMode = (byte)selectedIndex;
-            if (SortMode != currentsortmode)
-            {
-                IsProgressRingActive = true;
-                await SortSongs();
-                OnPropertyChanged(nameof(GroupedSongList));
-                OnPropertyChanged(nameof(NotGroupedSongList));
-                IsProgressRingActive = false;
-            }
-        }
-    }
-
-    public void SortByListView_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is ListView listView)
-        {
-            listView.SelectedIndex = SortMode;
-        }
-    }
-
-    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var currentGenreMode = GenreMode;
-        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
-        {
-            GenreMode = selectedIndex;
-            if (GenreMode != currentGenreMode)
-            {
-                IsProgressRingActive = true;
-                await FilterSongs();
-                OnPropertyChanged(nameof(GroupedSongList));
-                OnPropertyChanged(nameof(NotGroupedSongList));
-                IsProgressRingActive = false;
-            }
-        }
-    }
-
-    public void GenreListView_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is ListView listView)
-        {
-            listView.SelectedIndex = GenreMode;
-        }
-    }
-
-    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
-        if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
-        {
-            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
-        }
-    }
-
-    public void PlayButton_Click(object sender, RoutedEventArgs e)
-    {
-        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
-        if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
-        {
-            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
     }
 
@@ -478,6 +411,96 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
             GroupedSongList = [.. sortedGroups];
         });
+    }
+
+    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var currentsortmode = SortMode;
+        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
+        {
+            SortMode = (byte)selectedIndex;
+            if (SortMode != currentsortmode)
+            {
+                IsProgressRingActive = true;
+                await SortSongs();
+                OnPropertyChanged(nameof(GroupedSongList));
+                OnPropertyChanged(nameof(NotGroupedSongList));
+                IsProgressRingActive = false;
+            }
+        }
+    }
+
+    public void SortByListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            listView.SelectedIndex = SortMode;
+        }
+    }
+
+    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var currentGenreMode = GenreMode;
+        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
+        {
+            GenreMode = selectedIndex;
+            if (GenreMode != currentGenreMode)
+            {
+                IsProgressRingActive = true;
+                await FilterSongs();
+                OnPropertyChanged(nameof(GroupedSongList));
+                OnPropertyChanged(nameof(NotGroupedSongList));
+                IsProgressRingActive = false;
+            }
+        }
+    }
+
+    public void GenreListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            listView.SelectedIndex = GenreMode;
+        }
+    }
+
+    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
+        if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
+        {
+            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
+        }
+    }
+
+    public void PlayButton_Click(BriefMusicInfo info)
+    {
+        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
+        Data.MusicPlayer.PlaySongByInfo(info);
+    }
+
+    public void PlayNextButton_Click(BriefMusicInfo info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            var list = new List<BriefMusicInfo> { info };
+            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list
+                , 0, 0);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToNextPlay(info);
+        }
+    }
+
+    public void ShowAlbumButton_Click(BriefMusicInfo info)
+    {
+
+    }
+
+    public void ShowArtistButton_Click(BriefMusicInfo info)
+    {
+
     }
 
     public async void LoadScrollViewerVerticalOffsetAsync()

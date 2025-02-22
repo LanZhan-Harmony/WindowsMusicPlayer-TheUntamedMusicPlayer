@@ -121,7 +121,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
 
     public void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is Button button && button.DataContext is AlbumInfo albumInfo)
+        if (sender is FrameworkElement { DataContext: AlbumInfo albumInfo })
         {
             var tempList = Data.MusicLibrary.GetSongsByAlbum(albumInfo);
             var songList = new ObservableCollection<BriefMusicInfo>(tempList);

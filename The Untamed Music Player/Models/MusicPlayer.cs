@@ -95,12 +95,12 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 播放队列集合
     /// </summary>
-    private ObservableCollection<IBriefMusicInfoBase> PlayQueue { get; set; } = [];
+    public ObservableCollection<IBriefMusicInfoBase> PlayQueue { get; set; } = [];
 
     /// <summary>
     /// 随机播放队列集合
     /// </summary>
-    private ObservableCollection<IBriefMusicInfoBase> ShuffledPlayQueue { get; set; } = [];
+    public ObservableCollection<IBriefMusicInfoBase> ShuffledPlayQueue { get; set; } = [];
 
     /// <summary>
     /// 音乐播放器
@@ -245,7 +245,7 @@ public partial class MusicPlayer : ObservableRecipient
     public async void PlaySongByInfo(IBriefMusicInfoBase info)
     {
         Stop();
-        CurrentMusic = await CreateDetailedMusicInfoAsync(info);
+        CurrentMusic = await CreateDetailedMusicInfoAsync(info, SourceMode);
         _systemControls.IsPlayEnabled = true;
         _systemControls.IsPauseEnabled = true;
 
@@ -271,7 +271,7 @@ public partial class MusicPlayer : ObservableRecipient
     {
         Stop();
         var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
-        CurrentMusic = await CreateDetailedMusicInfoAsync(songToPlay);
+        CurrentMusic = await CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
         PlayQueueIndex = isLast ? 0 : index;
         _systemControls.IsPlayEnabled = true;
         _systemControls.IsPauseEnabled = true;
@@ -279,6 +279,16 @@ public partial class MusicPlayer : ObservableRecipient
         {
             Play();
         }
+    }
+
+    /// <summary>
+    /// 将歌曲添加到下一首播放
+    /// </summary>
+    /// <param name="info"></param>
+    public void AddSongToNextPlay(IBriefMusicInfoBase info)
+    {
+        var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+        queue.Insert(PlayQueueIndex + 1, info);
     }
 
     /// <summary>
@@ -765,13 +775,13 @@ public partial class MusicPlayer : ObservableRecipient
         }
     }
 
-    private async Task<IDetailedMusicInfoBase> CreateDetailedMusicInfoAsync(IBriefMusicInfoBase info)
+    public static async Task<IDetailedMusicInfoBase> CreateDetailedMusicInfoAsync(IBriefMusicInfoBase info, byte sourceMode)
     {
-        return SourceMode switch
+        return sourceMode switch
         {
             0 => new DetailedMusicInfo(info.Path),
             1 => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
-            _ => new DetailedMusicInfo(info.Path),
+            _ => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
         };
     }
 

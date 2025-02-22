@@ -38,7 +38,7 @@ public partial class AlbumDetailViewModel : ObservableRecipient
     public void PlayButton_Click(object sender, RoutedEventArgs e)
     {
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
-        if (sender is Button button && button.DataContext is BriefMusicInfo briefMusicInfo)
+        if (sender is FrameworkElement { DataContext: BriefMusicInfo briefMusicInfo })
         {
             Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
         }
