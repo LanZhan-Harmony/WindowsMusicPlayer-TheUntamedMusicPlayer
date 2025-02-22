@@ -62,4 +62,44 @@ public sealed partial class PlayQueuePage : Page
     {
         ViewModel.PlayButton_Click(sender, e);
     }
+
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void RemoveButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void MoveUpButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void MoveDownButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void PropertiesButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void SelectButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
 }
