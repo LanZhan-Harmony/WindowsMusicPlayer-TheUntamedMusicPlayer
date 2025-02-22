@@ -247,11 +247,14 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         var savePath = "C:/Users/Admin/音乐/" + title + itemType;
         var tag = "OnlineMusicDownload";
         var group = "Downloads";
-        var notification = new AppNotificationBuilder()
+        var startNotification = new AppNotificationBuilder()
             .AddProgressBar(new AppNotificationProgressBar() { Title = title }
             .BindValue()
             .BindValueStringOverride()
             .BindStatus()
+            )
+            .AddButton(new AppNotificationButton("取消")
+            .AddArgument("action", "Cancel")
             )
             .SetHeroImage(detailedInfo.CoverUrl != null ? new Uri(detailedInfo.CoverUrl) : null)
             .BuildNotification();
@@ -262,12 +265,18 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             ValueStringOverride = "下载进度: 0 %",
             Status = "正在下载"
         };
-        notification.Tag = tag;
-        notification.Group = group;
-        notification.Progress = data;
-        AppNotificationManager.Default.Show(notification);
+        startNotification.Tag = tag;
+        startNotification.Group = group;
+        startNotification.Progress = data;
+        AppNotificationManager.Default.Show(startNotification);
 
         await DownloadFileWithProgress(detailedInfo.Path, savePath, title);
+
+        var finishNotification = new AppNotificationBuilder()
+            .AddText("下载完成")
+            .AddText(title)
+            .BuildNotification();
+        AppNotificationManager.Default.Show(finishNotification);
     }
 
     private static async Task DownloadFileWithProgress(string url, string savePath, string title)
@@ -290,12 +299,12 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             if (totalBytes.HasValue)
             {
                 var progress = (int)(totalRead * 100 / totalBytes.Value);
-                await UpdateProgress(title, progress);
+                UpdateProgress(title, progress);
             }
         }
     }
 
-    public static async Task UpdateProgress(string title, int progress)
+    public static async void UpdateProgress(string title, int progress)
     {
         var tag = "OnlineMusicDownload";
         var group = "Downloads";
