@@ -153,7 +153,7 @@ public partial class MusicPlayer : ObservableRecipient
         if (value!.IsPlayAvailable)
         {
             SetSource(value!.Path);
-            CurrentLyric = LyricSlice.GetLyricSlices(value.Lyric);
+            _ = UpdateLyric(value!.Lyric);
         }
         else
         {
@@ -218,7 +218,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// 当前歌词切片集合
     /// </summary>
     [ObservableProperty]
-    public partial ObservableCollection<LyricSlice> CurrentLyric { get; set; } = [];
+    public partial List<LyricSlice> CurrentLyric { get; set; } = [];
 
     public MusicPlayer()
     {
@@ -556,6 +556,10 @@ public partial class MusicPlayer : ObservableRecipient
 
     private void HandleSongNotAvailable()
     {
+        if (PlayQueue.Count == 0)
+        {
+            return;
+        }
         Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
         {
             if (RepeatMode == 2 || SourceMode != 0)
@@ -627,7 +631,9 @@ public partial class MusicPlayer : ObservableRecipient
         CurrentLyricIndex = 0;
         CurrentLyricContent = "";
         _positionUpdateTimer250ms?.Cancel();
+        _positionUpdateTimer2000ms?.Cancel();
         _positionUpdateTimer250ms = null;
+        _positionUpdateTimer2000ms = null;
     }
 
     /// <summary>
@@ -915,6 +921,11 @@ public partial class MusicPlayer : ObservableRecipient
                 _ => 2
             };
         }
+    }
+
+    public async Task UpdateLyric(string lyric)
+    {
+        CurrentLyric = await LyricSlice.GetLyricSlices(lyric);
     }
 
     /// <summary>

@@ -64,12 +64,6 @@ public partial class MusicLibrary : ObservableRecipient
     public partial bool IsProgressRingActive { get; set; } = false;
 
     /// <summary>
-    /// 是否启用刷新按钮
-    /// </summary>
-    [ObservableProperty]
-    public partial bool IsRefreshButtonEnabled { get; set; } = true;
-
-    /// <summary>
     /// 文件夹列表
     /// </summary>
     [ObservableProperty]
@@ -149,7 +143,6 @@ public partial class MusicLibrary : ObservableRecipient
             _dispatcherQueue.TryEnqueue(() =>
             {
                 IsProgressRingActive = true;
-                IsRefreshButtonEnabled = false;
             });
             Songs.Clear();
             Artists.Clear();
@@ -187,7 +180,6 @@ public partial class MusicLibrary : ObservableRecipient
             _dispatcherQueue.TryEnqueue(() =>
             {
                 IsProgressRingActive = false;
-                IsRefreshButtonEnabled = true;
             });
             _librarySemaphore.Release();
         }
