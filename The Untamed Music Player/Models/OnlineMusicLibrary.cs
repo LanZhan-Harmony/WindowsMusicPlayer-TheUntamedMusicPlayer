@@ -250,6 +250,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
     public async void OnlineSongsDownloadButton_Click(IBriefOnlineMusicInfo info)
     {
+        Data.IsMusicDownloading = true;
         var detailedInfo = (IDetailedOnlineMusicInfo)await MusicPlayer.CreateDetailedMusicInfoAsync(info, (byte)(MusicLibraryIndex + 1));
         var title = detailedInfo.Title;
         var itemType = detailedInfo.ItemType;
@@ -294,12 +295,15 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         }
         await WriteSongInfo(savePath, detailedInfo);
 
+        Data.IsMusicDownloading = false;
+
         await AppNotificationManager.Default.RemoveAllAsync();
         var finishNotification = new AppNotificationBuilder()
             .AddText("OnlineMusicLibrary_DownloadCompleted".GetLocalized())
             .AddText(title)
             .BuildNotification();
         AppNotificationManager.Default.Show(finishNotification);
+        _ = Data.MusicLibrary.LoadLibraryAgainAsync();
     }
 
     private static async Task DownloadFileWithProgress(string url, string savePath, string title)

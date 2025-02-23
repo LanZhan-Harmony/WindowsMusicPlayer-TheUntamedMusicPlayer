@@ -11,7 +11,15 @@ public static class Data
     /// </summary>
     public static bool NotFirstUsed { get; set; } = false;
 
+    /// <summary>
+    /// 是否已经加载了音乐库
+    /// </summary>
     public static bool HasMusicLibraryLoaded { get; set; } = false;
+
+    /// <summary>
+    /// 是否正在下载音乐
+    /// </summary>
+    public static bool IsMusicDownloading { get; set; } = false;
 
     public static AlbumInfo? SelectedAlbum { get; set; }
     public static ArtistInfo? SelectedArtist { get; set; }
