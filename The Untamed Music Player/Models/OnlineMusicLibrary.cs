@@ -6,14 +6,23 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using TagLib;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+using The_Untamed_Music_Player.Services;
+using Windows.Storage;
 using Windows.UI.Notifications;
 
 namespace The_Untamed_Music_Player.Models;
 public partial class OnlineMusicLibrary : ObservableRecipient
 {
+    private const string _tag = "OnlineMusicDownload";
+    private const string _group = "Downloads";
+
+    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+
     private bool _isSearchingMore = false;
 
     public byte PageIndex { get; set; }
@@ -244,36 +253,50 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         var detailedInfo = (IDetailedOnlineMusicInfo)await MusicPlayer.CreateDetailedMusicInfoAsync(info, (byte)(MusicLibraryIndex + 1));
         var title = detailedInfo.Title;
         var itemType = detailedInfo.ItemType;
-        var savePath = "C:/Users/Admin/音乐/" + title + itemType;
-        var tag = "OnlineMusicDownload";
-        var group = "Downloads";
+        var location = await LoadSongDownloadLocationAsync();
+        var savePath = GetUniqueFilePath(Path.Combine(location, title + itemType));
         var startNotification = new AppNotificationBuilder()
+            .AddText("OnlineMusicLibrary_DownloadingSong".GetLocalized())
             .AddProgressBar(new AppNotificationProgressBar() { Title = title }
             .BindValue()
             .BindValueStringOverride()
             .BindStatus()
             )
-            .AddButton(new AppNotificationButton("取消")
+            .AddButton(new AppNotificationButton("OnlineMusicLibrary_Cancel".GetLocalized())
             .AddArgument("action", "Cancel")
             )
-            .SetHeroImage(detailedInfo.CoverUrl != null ? new Uri(detailedInfo.CoverUrl) : null)
             .BuildNotification();
         var data = new AppNotificationProgressData(1)
         {
             Title = title,
             Value = 0,
-            ValueStringOverride = "下载进度: 0 %",
-            Status = "正在下载"
+            ValueStringOverride = $"{"OnlineMusicLibrary_Progress".GetLocalized()}: 0 %",
+            Status = "OnlineMusicLibrary_StartDownloading".GetLocalized()
         };
-        startNotification.Tag = tag;
-        startNotification.Group = group;
+        startNotification.Tag = _tag;
+        startNotification.Group = _group;
         startNotification.Progress = data;
+        await AppNotificationManager.Default.RemoveAllAsync();
         AppNotificationManager.Default.Show(startNotification);
 
-        await DownloadFileWithProgress(detailedInfo.Path, savePath, title);
+        try
+        {
+            await DownloadFileWithProgress(detailedInfo.Path, savePath, title);
+        }
+        catch
+        {
+            var errorNotification = new AppNotificationBuilder()
+                .AddText("OnlineMusicLibrary_DownloadFailed".GetLocalized())
+                .AddText(title)
+                .BuildNotification();
+            AppNotificationManager.Default.Show(errorNotification);
+            return;
+        }
+        await WriteSongInfo(savePath, detailedInfo);
 
+        await AppNotificationManager.Default.RemoveAllAsync();
         var finishNotification = new AppNotificationBuilder()
-            .AddText("下载完成")
+            .AddText("OnlineMusicLibrary_DownloadCompleted".GetLocalized())
             .AddText(title)
             .BuildNotification();
         AppNotificationManager.Default.Show(finishNotification);
@@ -304,18 +327,51 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         }
     }
 
+    public static async Task WriteSongInfo(string savePath, IDetailedOnlineMusicInfo detailedInfo)
+    {
+        try
+        {
+            var musicFile = TagLib.File.Create(savePath);
+            musicFile.Tag.Title = detailedInfo.Title;
+            musicFile.Tag.Album = detailedInfo.Album;
+            musicFile.Tag.Performers = detailedInfo.ArtistsStr.Split(", ");
+            musicFile.Tag.AlbumArtists = detailedInfo.AlbumArtistsStr.Split(", ");
+            musicFile.Tag.Year = string.IsNullOrEmpty(detailedInfo.YearStr) ? 0 : uint.Parse(detailedInfo.YearStr);
+            musicFile.Tag.Lyrics = detailedInfo.Lyric;
+            try
+            {
+                using var httpClient = new HttpClient();
+                var imageBytes = await httpClient.GetByteArrayAsync(detailedInfo.CoverUrl);
+                var picture = new Picture([.. imageBytes])
+                {
+                    Type = PictureType.FrontCover,
+                    Description = "Cover",
+                    MimeType = "image/png" // 若图片是png，则使用 "image/png"
+                };
+                musicFile.Tag.Pictures = [picture];
+            }
+            catch
+            {
+                Debug.WriteLine("获取封面失败");
+            }
+            musicFile.Save();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+        }
+    }
+
     public static async void UpdateProgress(string title, int progress)
     {
-        var tag = "OnlineMusicDownload";
-        var group = "Downloads";
         var data = new AppNotificationProgressData(2)
         {
             Title = title,
-            Value = progress,
-            ValueStringOverride = $"下载进度: {progress} %",
-            Status = "正在下载"
+            Value = (double)progress / 100,
+            ValueStringOverride = $"{"OnlineMusicLibrary_Progress".GetLocalized()}: {progress} %",
+            Status = "OnlineMusicLibrary_Downloading".GetLocalized()
         };
-        var result = await AppNotificationManager.Default.UpdateAsync(data, tag, group);
+        var result = await AppNotificationManager.Default.UpdateAsync(data, _tag, _group);
         if (result == AppNotificationProgressResult.AppNotificationNotFound)
         {
             return;
@@ -340,5 +396,26 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         {
             return false;
         }
+    }
+
+    private static string GetUniqueFilePath(string path)
+    {
+        var directory = Path.GetDirectoryName(path) ?? "";
+        var fileNameWithoutExt = Path.GetFileNameWithoutExtension(path);
+        var extension = Path.GetExtension(path);
+        var count = 1;
+        var uniquePath = path;
+        while (System.IO.File.Exists(uniquePath))
+        {
+            uniquePath = Path.Combine(directory, $"{fileNameWithoutExt}({count}){extension}");
+            count++;
+        }
+        return uniquePath;
+    }
+
+    private async Task<string> LoadSongDownloadLocationAsync()
+    {
+        var location = await _localSettingsService.ReadSettingAsync<string>("SongDownloadLocation");
+        return string.IsNullOrWhiteSpace(location) ? (await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)).SaveFolder.Path : location;
     }
 }

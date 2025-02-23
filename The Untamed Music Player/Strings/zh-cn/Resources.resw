@@ -645,4 +645,31 @@
   <data name="OnlineSongs_Download.Text" xml:space="preserve">
     <value>下载</value>
   </data>
+  <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
+    <value>歌曲下载位置</value>
+  </data>
+  <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
+    <value>更改</value>
+  </data>
+  <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
+    <value>开始下载</value>
+  </data>
+  <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="OnlineMusicLibrary_Progress" xml:space="preserve">
+    <value>进度</value>
+  </data>
+  <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
+    <value>正在下载……</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
+    <value>下载完成</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadFailed" xml:space="preserve">
+    <value>下载失败</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
+    <value>下载歌曲中</value>
+  </data>
 </root>
