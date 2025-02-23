@@ -296,7 +296,7 @@ public partial class MusicLibrary : ObservableRecipient
 
     private async void OnChanged(object sender, FileSystemEventArgs e)
     {
-        if (_isHandlingChange)
+        if (_isHandlingChange || Data.IsMusicDownloading)
         {
             return;
         }
@@ -321,7 +321,7 @@ public partial class MusicLibrary : ObservableRecipient
 
     private async void OnRenamed(object sender, RenamedEventArgs e)
     {
-        if (_isHandlingChange)
+        if (_isHandlingChange || Data.IsMusicDownloading)
         {
             return;
         }
