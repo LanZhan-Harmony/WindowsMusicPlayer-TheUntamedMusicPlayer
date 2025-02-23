@@ -118,8 +118,7 @@
                             <ProgressRing Width="24" Height="24"
                                           IsActive="{x:Bind model:Data.MusicLibrary.IsProgressRingActive, Mode=OneWay}"/>
                             <Button x:Name="refresh" x:Uid="Settings_Refresh"
-                                    Click="{x:Bind ViewModel.RefreshButton_Click}"
-                                    IsEnabled="{x:Bind model:Data.MusicLibrary.IsRefreshButtonEnabled, Mode=OneWay}"/>
+                                    Click="{x:Bind ViewModel.RefreshButton_Click}"/>
                         </StackPanel>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">
@@ -132,6 +131,19 @@
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
+
+                    <toolkit:SettingsCard x:Uid="Settings_SongDownloadLocation">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xE8B7;"/>
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <HyperlinkButton VerticalAlignment="Center"
+                                             Click="{x:Bind ViewModel.SongDownloadLocationButton_Click}"
+                                             Content="{x:Bind ViewModel.SongDownloadLocation, Mode=OneWay}"
+                                             FontSize="12"/>
+                            <Button x:Uid="Settings_ChangeSongDownloadLocation" Click="{x:Bind ViewModel.ChangeSongDownloadLocationButton_Click}"/>
+                        </StackPanel>
+                    </toolkit:SettingsCard>
                 </StackPanel>
 
                 <!--  个性化  -->

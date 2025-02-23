@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -26,6 +27,16 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 是否显示文件夹为空信息
     /// </summary>
     public Visibility EmptyFolderMessageVisibility => Data.MusicLibrary.Folders?.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+
+    /// <summary>
+    /// 歌曲下载位置
+    /// </summary>
+    [ObservableProperty]
+    public partial string SongDownloadLocation { get; set; } = "";
+    partial void OnSongDownloadLocationChanged(string value)
+    {
+        SaveSongDownloadLocationAsync(value);
+    }
 
     /// <summary>
     /// 是否启用窗口失去焦点回退
@@ -134,19 +145,22 @@ public partial class SettingsViewModel : ObservableRecipient
                 }
             });
 
+        LoadSongDownloadLocationAsync();
         LoadFonts();
         Data.SettingsViewModel = this;
     }
 
     public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
+        var senderButton = sender as Button;
+        senderButton!.IsEnabled = false;
         var openPicker = new FolderPicker();
         var window = App.MainWindow;
         var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 
         WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
 
-        openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
+        openPicker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
         openPicker.FileTypeFilter.Add("*");
 
         var folder = await openPicker.PickSingleFolderAsync();
@@ -160,6 +174,7 @@ public partial class SettingsViewModel : ObservableRecipient
                 await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync); // 重新加载音乐库
             }
         }
+        senderButton!.IsEnabled = true;
     }
 
     public async void RemoveMusicFolder(StorageFolder folder)
@@ -172,7 +187,33 @@ public partial class SettingsViewModel : ObservableRecipient
 
     public async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
+        var senderButton = sender as Button;
+        senderButton!.IsEnabled = false;
         await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync);
+        senderButton!.IsEnabled = true;
+    }
+
+    public void SongDownloadLocationButton_Click(object sender, RoutedEventArgs e)
+    {
+        Process.Start("explorer.exe", SongDownloadLocation);
+    }
+
+    public async void ChangeSongDownloadLocationButton_Click(object sender, RoutedEventArgs e)
+    {
+        var senderButton = sender as Button;
+        senderButton!.IsEnabled = false;
+        var openPicker = new FolderPicker();
+        var window = App.MainWindow;
+        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+        WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
+        openPicker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
+        openPicker.FileTypeFilter.Add("*");
+        var folder = await openPicker.PickSingleFolderAsync();
+        if (folder != null)
+        {
+            SongDownloadLocation = folder.Path;
+        }
+        senderButton!.IsEnabled = true;
     }
 
     public void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -259,10 +300,21 @@ public partial class SettingsViewModel : ObservableRecipient
         return $"{"Settings_Version".GetLocalized()} {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
     }
 
+    private async void LoadSongDownloadLocationAsync()
+    {
+        var location = await _localSettingsService.ReadSettingAsync<string>("SongDownloadLocation");
+        SongDownloadLocation = string.IsNullOrWhiteSpace(location) ? (await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)).SaveFolder.Path : location;
+    }
+
     private static async Task SaveFoldersAsync()
     {
         var folderPaths = Data.MusicLibrary.Folders?.Select(f => f.Path).ToList();
         await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths);//	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
+    }
+
+    private async void SaveSongDownloadLocationAsync(string songDownloadLocation)
+    {
+        await _localSettingsService.SaveSettingAsync("SongDownloadLocation", songDownloadLocation);
     }
 
     private async void SaveSelectedFontAsync(string fontName)

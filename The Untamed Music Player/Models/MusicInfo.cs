@@ -238,7 +238,6 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
     /// </summary>
     public override string DurationStr { get; set; } = "";
 
-
     /// <summary>
     /// 项目类型, 为空时返回""
     /// </summary>
