@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage.Streams;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
@@ -60,8 +61,9 @@ public sealed partial class AlbumDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back && e.SourcePageType == typeof(LocalAlbumsPage))
+        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "LocalAlbumsPage")
         {
+            Data.NavigatePage = "";
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", CoverArt);
         }
     }
