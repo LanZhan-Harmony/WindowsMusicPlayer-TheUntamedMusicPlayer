@@ -65,21 +65,6 @@ public partial class MusicPlayer : ObservableRecipient
     private int _playQueueLength = 0;
 
     /// <summary>
-    /// 当前歌曲在播放队列中的索引
-    /// </summary>
-    private int PlayQueueIndex
-    {
-        get;
-        set
-        {
-            field = value;
-            var repeatOffOrSingle = RepeatMode == 0 || RepeatMode == 2;
-            _systemControls.IsPreviousEnabled = !(value == 0 && repeatOffOrSingle);
-            _systemControls.IsNextEnabled = !(value == _playQueueLength - 1 && repeatOffOrSingle);
-        }
-    }
-
-    /// <summary>
     /// 播放速度
     /// </summary>
     private double PlaySpeed
@@ -122,6 +107,18 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial string PlayQueueName { get; set; } = "";
+
+    /// <summary>
+    /// 当前歌曲在播放队列中的索引
+    /// </summary>
+    [ObservableProperty]
+    public partial int PlayQueueIndex { get; set; }
+    partial void OnPlayQueueIndexChanged(int value)
+    {
+        var repeatOffOrSingle = RepeatMode == 0 || RepeatMode == 2;
+        _systemControls.IsPreviousEnabled = !(value == 0 && repeatOffOrSingle);
+        _systemControls.IsNextEnabled = !(value == _playQueueLength - 1 && repeatOffOrSingle);
+    }
 
     /// <summary>
     /// 循环播放模式, 0为不循环, 1为列表循环, 2为单曲循环
@@ -250,14 +247,9 @@ public partial class MusicPlayer : ObservableRecipient
         _systemControls.IsPauseEnabled = true;
 
         var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
-        for (var i = 0; i < queue.Count; i++)
-        {
-            if (queue[i].Path == info.Path)
-            {
-                PlayQueueIndex = i;
-                break;
-            }
-        }
+        PlayQueueIndex = queue
+            .Select((item, index) => new { item, index })
+            .FirstOrDefault(x => x.item.Path == info.Path)?.index ?? 0;
 
         Play();
     }
@@ -288,7 +280,61 @@ public partial class MusicPlayer : ObservableRecipient
     public void AddSongToNextPlay(IBriefMusicInfoBase info)
     {
         var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
-        queue.Insert(PlayQueueIndex + 1, info);
+        var insertIndex = PlayQueueIndex + 1;
+        queue.Insert(insertIndex, info);
+        // 仅更新从插入位置之后的索引
+        for (var i = insertIndex; i < queue.Count; i++)
+        {
+            queue[i].PlayQueueIndex = i;
+        }
+    }
+
+    /// <summary>
+    /// 从播放队列中移除歌曲
+    /// </summary>
+    /// <param name="info"></param>
+    public void RemoveSong(IBriefMusicInfoBase info)
+    {
+        var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+        var index = info.PlayQueueIndex;
+        queue.RemoveAt(index);
+        // 仅更新从删除位置之后的索引
+        for (var i = index; i < queue.Count; i++)
+        {
+            queue[i].PlayQueueIndex = i;
+        }
+    }
+
+    /// <summary>
+    /// 将歌曲上移
+    /// </summary>
+    /// <param name="info"></param>
+    public void MoveUpSong(IBriefMusicInfoBase info)
+    {
+        var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+        var index = info.PlayQueueIndex;
+        if (index > 0)
+        {
+            (queue[index - 1], queue[index]) = (queue[index], queue[index - 1]);
+            queue[index].PlayQueueIndex = index;
+            queue[index - 1].PlayQueueIndex = index - 1;
+        }
+    }
+
+    /// <summary>
+    /// 将歌曲下移
+    /// </summary>
+    /// <param name="info"></param>
+    public void MoveDownSong(IBriefMusicInfoBase info)
+    {
+        var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+        var index = info.PlayQueueIndex;
+        if (index < queue.Count - 1)
+        {
+            (queue[index + 1], queue[index]) = (queue[index], queue[index + 1]);
+            queue[index].PlayQueueIndex = index;
+            queue[index + 1].PlayQueueIndex = index + 1;
+        }
     }
 
     /// <summary>
@@ -363,7 +409,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     /// <param name="name"></param>
     /// <param name="list"></param>
-    public async void SetPlayList(string name, IEnumerable<IBriefMusicInfoBase> list, byte sourceMode = 0, byte sortMode = 0)
+    public void SetPlayList(string name, IEnumerable<IBriefMusicInfoBase> list, byte sourceMode = 0, byte sortMode = 0)
     {
         if (PlayQueue.Count != list.Count() || PlayQueueName != name || _sortMode != sortMode || SourceMode != sourceMode)
         {
@@ -372,13 +418,32 @@ public partial class MusicPlayer : ObservableRecipient
             PlayQueueName = name;
             PlayQueue = [.. list];
             _playQueueLength = list.Count();
-            var hasMusics = PlayQueue.Any();
+
+            bool hasMusics;
+            if (!ShuffleMode)
+            {
+                // 更新播放队列中每首歌曲的 PlayQueueIndex 为实际位置
+                for (var i = 0; i < PlayQueue.Count; i++)
+                {
+                    PlayQueue[i].PlayQueueIndex = i;
+                }
+                hasMusics = PlayQueue.Any();
+            }
+            else
+            {
+                UpdateShufflePlayQueue();
+                // 更新随机播放队列中每首歌曲的 PlayQueueIndex 为实际位置
+                for (var i = 0; i < ShuffledPlayQueue.Count; i++)
+                {
+                    ShuffledPlayQueue[i].PlayQueueIndex = i;
+                }
+                hasMusics = ShuffledPlayQueue.Any();
+            }
             if (Data.RootPlayBarViewModel != null)
             {
                 Data.RootPlayBarViewModel.ButtonVisibility = hasMusics ? Visibility.Visible : Visibility.Collapsed;
                 Data.RootPlayBarViewModel.Availability = hasMusics;
             }
-            await UpdateShufflePlayQueue();
         }
     }
 
@@ -701,26 +766,29 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 随机播放模式更新
     /// </summary>
-    public async void ShuffleModeUpdate()
+    public void ShuffleModeUpdate()
     {
         ShuffleMode = !ShuffleMode;
         if (ShuffleMode)
         {
-            await UpdateShufflePlayQueue();
+            UpdateShufflePlayQueue();
+            for (var i = 0; i < ShuffledPlayQueue.Count; i++)
+            {
+                ShuffledPlayQueue[i].PlayQueueIndex = i;
+            }
         }
         else
         {
             ShuffledPlayQueue.Clear();
             if (CurrentMusic != null)
             {
-                for (var i = 0; i < PlayQueue.Count; i++)
-                {
-                    if (PlayQueue[i].Path == CurrentMusic.Path)
-                    {
-                        PlayQueueIndex = i;
-                        break;
-                    }
-                }
+                PlayQueueIndex = PlayQueue
+                    .Select((item, index) => new { item, index })
+                    .FirstOrDefault(x => x.item.Path == CurrentMusic.Path)?.index ?? 0;
+            }
+            for (var i = 0; i < PlayQueue.Count; i++)
+            {
+                PlayQueue[i].PlayQueueIndex = i;
             }
         }
         OnPropertyChanged(nameof(ShuffleMode));
@@ -738,23 +806,17 @@ public partial class MusicPlayer : ObservableRecipient
     /// 随机播放队列更新
     /// </summary>
     /// <returns></returns>
-    public async Task UpdateShufflePlayQueue()
+    public void UpdateShufflePlayQueue()
     {
-        await Task.Run(() =>
+        ShuffledPlayQueue = new ObservableCollection<IBriefMusicInfoBase>(
+            [.. PlayQueue.OrderBy(x => Guid.NewGuid())]);
+        if (CurrentMusic != null)
         {
-            ShuffledPlayQueue = new ObservableCollection<IBriefMusicInfoBase>([.. PlayQueue.OrderBy(x => Guid.NewGuid())]);
-            if (CurrentMusic != null)
-            {
-                for (var i = 0; i < ShuffledPlayQueue.Count; i++)
-                {
-                    if (ShuffledPlayQueue[i].Path == CurrentMusic.Path)
-                    {
-                        PlayQueueIndex = i;
-                        break;
-                    }
-                }
-            }
-        });
+            // 更新当前歌曲在随机播放队列中的索引
+            PlayQueueIndex = ShuffledPlayQueue
+                .Select((item, index) => new { item, index })
+                .FirstOrDefault(x => x.item.Path == CurrentMusic.Path)?.index ?? 0;
+        }
     }
 
     /// <summary>

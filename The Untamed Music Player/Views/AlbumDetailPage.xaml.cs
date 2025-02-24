@@ -50,14 +50,17 @@ public sealed partial class AlbumDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
-        animation?.TryStart(CoverArt);
+        if (e.SourcePageType == typeof(LocalAlbumsPage) || e.SourcePageType == typeof(ArtistDetailPage))
+        {
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
+            animation?.TryStart(CoverArt);
+        }
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back && e.SourcePageType != typeof(ArtistDetailPage))
+        if (e.NavigationMode == NavigationMode.Back && e.SourcePageType == typeof(LocalAlbumsPage))
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", CoverArt);
         }

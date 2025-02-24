@@ -1,6 +1,4 @@
-using System.Data;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -11,9 +9,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
-using The_Untamed_Music_Player.Services;
 using Windows.Storage;
-using Windows.UI.Notifications;
 
 namespace The_Untamed_Music_Player.Models;
 public partial class OnlineMusicLibrary : ObservableRecipient
