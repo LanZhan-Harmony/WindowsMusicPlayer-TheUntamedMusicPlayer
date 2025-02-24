@@ -15,6 +15,12 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     /// </summary>
     protected static readonly char[] _delimiters = ['、', ',', '，', '|', '/'];
 
+    protected static readonly string _unknownAlbum = "MusicInfo_UnknownAlbum".GetLocalized();
+
+    protected static readonly string _unknownArtist = "MusicInfo_UnknownArtist".GetLocalized();
+
+    protected static readonly string _unknownGenre = "MusicInfo_UnknownGenre".GetLocalized();
+
     /// <summary>
     /// 在播放队列中的索引
     /// </summary>
@@ -122,15 +128,15 @@ public class BriefMusicInfo : IBriefMusicInfoBase
                 var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
                 coverTask = info.LoadCoverAsync(coverBuffer);
             }
-            info.Album = musicFile.Tag.Album ?? "MusicInfo_UnknownAlbum".GetLocalized();
+            info.Album = musicFile.Tag.Album ?? _unknownAlbum;
             info.Title = string.IsNullOrEmpty(musicFile.Tag.Title) ? System.IO.Path.GetFileNameWithoutExtension(path) : musicFile.Tag.Title;
             string[] combinedArtists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
-            info.Artists = combinedArtists.Length != 0 ? combinedArtists : ["MusicInfo_UnknownArtist".GetLocalized()];
+            info.Artists = combinedArtists.Length != 0 ? combinedArtists : [_unknownArtist];
             info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(info.Artists);
             info.Year = (ushort)musicFile.Tag.Year;
             info.YearStr = IBriefMusicInfoBase.GetYearStr(info.Year);
             var genres = musicFile.Tag.Genres;
-            info.Genre = genres.Length != 0 ? genres : ["MusicInfo_UnknownGenre".GetLocalized()];
+            info.Genre = genres.Length != 0 ? genres : [_unknownGenre];
             info.GenreStr = GetGenreStr(info.Genre);
             info.Duration = musicFile.Properties.Duration;
             info.DurationStr = IBriefMusicInfoBase.GetDurationStr(info.Duration);

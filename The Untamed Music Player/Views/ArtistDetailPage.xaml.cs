@@ -74,7 +74,7 @@ public sealed partial class ArtistDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.NavigationMode == NavigationMode.New && e.SourcePageType == typeof(LocalArtistsPage))
+        if (e.Parameter is string page && page == "LocalArtistPage")
         {
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
             animation?.TryStart(CoverArt);
@@ -385,7 +385,7 @@ public sealed partial class ArtistDetailPage : Page
                 var border = (Border)grid.Children[1];
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
                 Data.SelectedAlbum = albumInfo;
-                Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+                Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "ArtistDetailPage", new SuppressNavigationTransitionInfo());
             }
         }
     }
