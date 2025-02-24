@@ -1,7 +1,5 @@
-﻿using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
-using The_Untamed_Music_Player.Contracts.Services;
 
 namespace The_Untamed_Music_Player.Activation;
 public class AppNotificationActivationHandler : ActivationHandler<LaunchActivatedEventArgs>

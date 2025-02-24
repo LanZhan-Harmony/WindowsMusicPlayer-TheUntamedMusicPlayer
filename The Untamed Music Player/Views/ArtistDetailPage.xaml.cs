@@ -74,7 +74,7 @@ public sealed partial class ArtistDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.NavigationMode == NavigationMode.New)
+        if (e.NavigationMode == NavigationMode.New && e.SourcePageType == typeof(LocalArtistsPage))
         {
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
             animation?.TryStart(CoverArt);
@@ -88,7 +88,7 @@ public sealed partial class ArtistDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back)
+        if (e.NavigationMode == NavigationMode.Back && e.SourcePageType == typeof(LocalArtistsPage))
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", CoverArt);
         }
