@@ -560,7 +560,7 @@ public partial class MusicPlayer : ObservableRecipient
     {
         try
         {
-            switch (Player?.PlaybackSession.PlaybackState)
+            switch (sender.PlaybackState)
             {
                 case MediaPlaybackState.None:
                     break;
@@ -604,7 +604,7 @@ public partial class MusicPlayer : ObservableRecipient
     {
         Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
         {
-            if (Player?.PlaybackSession.PlaybackState == MediaPlaybackState.Paused && !_lockable)
+            if (sender.PlaybackSession.PlaybackState == MediaPlaybackState.Paused && !_lockable)
             {
                 if (RepeatMode == 2)
                 {
