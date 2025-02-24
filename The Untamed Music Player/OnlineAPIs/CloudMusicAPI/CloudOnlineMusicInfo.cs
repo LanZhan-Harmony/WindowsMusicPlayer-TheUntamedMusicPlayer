@@ -8,6 +8,7 @@ using Windows.Storage.Streams;
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
 {
+    public int PlayQueueIndex { get; set; } = 0;
     public bool IsAvailable { get; set; } = false;
     public string Path { get; set; } = "";
     public string Title { get; set; } = "";

@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 namespace The_Untamed_Music_Player.Contracts.Models;
 public interface IBriefMusicInfoBase
 {
+    int PlayQueueIndex { get; set; }
     string Path { get; set; }
     string Title { get; set; }
     string Album { get; set; }
@@ -43,6 +44,19 @@ public interface IBriefMusicInfoBase
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
 
         if (currentMusic != null && Path == currentMusic.Path)
+        {
+            var highlightColor = isDarkTheme
+                ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
+                : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
+            return new SolidColorBrush(highlightColor);
+        }
+        return new SolidColorBrush(defaultColor);
+    }
+
+    SolidColorBrush GetTextForeground(IDetailedMusicInfoBase? currentMusic, bool isDarkTheme, int playQueueIndex)
+    {
+        var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
+        if (currentMusic != null && Path == currentMusic.Path && PlayQueueIndex == playQueueIndex)
         {
             var highlightColor = isDarkTheme
                 ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)

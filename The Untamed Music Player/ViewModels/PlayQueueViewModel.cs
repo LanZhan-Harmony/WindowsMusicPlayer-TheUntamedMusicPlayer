@@ -1,7 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 public partial class PlayQueueViewModel : ObservableRecipient
@@ -12,17 +15,60 @@ public partial class PlayQueueViewModel : ObservableRecipient
 
     public void PlayQueueListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
+        if (e.ClickedItem is IBriefMusicInfoBase info)
         {
-            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
+            Data.MusicPlayer.PlaySongByInfo(info);
         }
     }
 
-    public void PlayButton_Click(object sender, RoutedEventArgs e)
+    public void PlayButton_Click(IBriefMusicInfoBase info)
     {
-        if (sender is FrameworkElement { DataContext: BriefMusicInfo briefMusicInfo })
+        Data.MusicPlayer.PlaySongByInfo(info);
+    }
+
+    public void PlayNextButton_Click(IBriefMusicInfoBase info)
+    {
+        Data.MusicPlayer.AddSongToNextPlay(info);
+    }
+
+    public void RemoveButton_Click(IBriefMusicInfoBase info)
+    {
+        Data.MusicPlayer.RemoveSong(info);
+    }
+
+    public void MoveUpButton_Click(IBriefMusicInfoBase info)
+    {
+        Data.MusicPlayer.MoveUpSong(info);
+    }
+
+    public void MoveDownButton_Click(IBriefMusicInfoBase info)
+    {
+        Data.MusicPlayer.MoveDownSong(info);
+    }
+
+    public void ShowAlbumButton_Click(IBriefMusicInfoBase info)
+    {
+        if (Data.MusicPlayer.SourceMode == 0)
         {
-            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
+            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong((BriefMusicInfo)info);
+            if (albumInfo != null)
+            {
+                Data.SelectedAlbum = albumInfo;
+                Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+            }
+        }
+    }
+
+    public void ShowArtistButton_Click(IBriefMusicInfoBase info)
+    {
+        if (Data.MusicPlayer.SourceMode == 0)
+        {
+            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong((BriefMusicInfo)info);
+            if (artistInfo != null)
+            {
+                Data.SelectedArtist = artistInfo;
+                Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+            }
         }
     }
 

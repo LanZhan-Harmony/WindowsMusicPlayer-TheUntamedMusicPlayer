@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
@@ -60,27 +61,42 @@ public sealed partial class PlayQueuePage : Page
 
     private void PlayButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        ViewModel.PlayButton_Click(sender, e);
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.PlayButton_Click(info);
+        }
     }
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.PlayNextButton_Click(info);
+        }
     }
 
     private void RemoveButton_Click(object sender, RoutedEventArgs e)
     {
-
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.RemoveButton_Click(info);
+        }
     }
 
     private void MoveUpButton_Click(object sender, RoutedEventArgs e)
     {
-
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.MoveUpButton_Click(info);
+        }
     }
 
     private void MoveDownButton_Click(object sender, RoutedEventArgs e)
     {
-
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.MoveDownButton_Click(info);
+        }
     }
 
     private void PropertiesButton_Click(object sender, RoutedEventArgs e)
@@ -90,12 +106,18 @@ public sealed partial class PlayQueuePage : Page
 
     private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.ShowAlbumButton_Click(info);
+        }
     }
 
     private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
     {
-
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.ShowArtistButton_Click(info);
+        }
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e)

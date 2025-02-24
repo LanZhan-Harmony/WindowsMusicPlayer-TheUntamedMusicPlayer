@@ -1,13 +1,15 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
-using The_Untamed_Music_Player.Contracts.Models;
+using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 public partial class LocalSongsViewModel : ObservableRecipient
@@ -93,11 +95,21 @@ public partial class LocalSongsViewModel : ObservableRecipient
     {
         await LoadSortModeAsync();
         await LoadGenreModeAsync();
-        await FilterSongs();
-        OnPropertyChanged(nameof(GroupedSongList));
-        OnPropertyChanged(nameof(NotGroupedSongList));
-        OnPropertyChanged(nameof(Genres));
-        IsProgressRingActive = false;
+        try
+        {
+            await FilterSongs();
+            OnPropertyChanged(nameof(GroupedSongList));
+            OnPropertyChanged(nameof(NotGroupedSongList));
+            OnPropertyChanged(nameof(Genres));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.StackTrace);
+        }
+        finally
+        {
+            IsProgressRingActive = false;
+        }
     }
 
     private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -495,12 +507,22 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void ShowAlbumButton_Click(BriefMusicInfo info)
     {
-
+        var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info);
+        if (albumInfo != null)
+        {
+            Data.SelectedAlbum = albumInfo;
+            Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+        }
     }
 
     public void ShowArtistButton_Click(BriefMusicInfo info)
     {
-
+        var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(info);
+        if (artistInfo != null)
+        {
+            Data.SelectedArtist = artistInfo;
+            Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+        }
     }
 
     public async void LoadScrollViewerVerticalOffsetAsync()

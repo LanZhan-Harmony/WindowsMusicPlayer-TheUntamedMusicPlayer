@@ -2,7 +2,6 @@ using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Models;
-using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.Views;
 
