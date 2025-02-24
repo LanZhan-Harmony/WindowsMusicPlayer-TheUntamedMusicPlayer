@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -282,6 +283,7 @@ public partial class MusicPlayer : ObservableRecipient
         var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
         var insertIndex = PlayQueueIndex + 1;
         queue.Insert(insertIndex, info);
+        _playQueueLength++;
         // 仅更新从插入位置之后的索引
         for (var i = insertIndex; i < queue.Count; i++)
         {
@@ -293,28 +295,50 @@ public partial class MusicPlayer : ObservableRecipient
     /// 从播放队列中移除歌曲
     /// </summary>
     /// <param name="info"></param>
-    public void RemoveSong(IBriefMusicInfoBase info)
+    public async Task RemoveSong(IBriefMusicInfoBase info)
     {
         var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
         var index = info.PlayQueueIndex;
+
+        // 如果删除的歌曲正好是当前播放歌曲
         if (index == PlayQueueIndex)
         {
             if (PlayState == 0)
             {
-
+                var newIndex = PlayQueueIndex < _playQueueLength - 1 ? PlayQueueIndex + 1 : 0;
+                var songToPlay = ShuffleMode ? ShuffledPlayQueue[newIndex] : PlayQueue[newIndex];
+                CurrentMusic = await CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
+                PlayQueueIndex = newIndex;
+                _systemControls.IsPauseEnabled = true;
+                _systemControls.IsPlayEnabled = true;
             }
             else
             {
                 PlayNextSong();
             }
         }
+        // 如果删除的歌曲在当前播放歌曲之前，则当前索引需要前移1位
+        else if (index < PlayQueueIndex)
+        {
+            PlayQueueIndex--;
+        }
+
+        // 移除队列中的歌曲
         queue.RemoveAt(index);
-        // 仅更新从删除位置之后的索引
+        _playQueueLength--;
+
+        // 更新从删除位置之后的索引
         for (var i = index; i < queue.Count; i++)
         {
             queue[i].PlayQueueIndex = i;
         }
+
+        if (queue.Count == 0)
+        {
+            ClearPlayQueue();
+        }
     }
+
 
     /// <summary>
     /// 将歌曲上移

@@ -295,10 +295,10 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
     {
         try
         {
-            var musicFile = TagLib.File.Create(path);
             Path = path;
             ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
             ItemType = System.IO.Path.GetExtension(path).ToLower();
+            var musicFile = TagLib.File.Create(path);
             if (musicFile.Tag.Pictures.Length != 0)
             {
                 var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;

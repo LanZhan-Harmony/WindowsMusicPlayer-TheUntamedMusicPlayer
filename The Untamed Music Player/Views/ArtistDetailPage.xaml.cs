@@ -88,8 +88,9 @@ public sealed partial class ArtistDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back && e.SourcePageType == typeof(LocalArtistsPage))
+        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "LocalArtistsPage")
         {
+            Data.NavigatePage = "";
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", CoverArt);
         }
     }
