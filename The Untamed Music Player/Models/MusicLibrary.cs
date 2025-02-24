@@ -116,13 +116,12 @@ public partial class MusicLibrary : ObservableRecipient
             {
                 OnPropertyChanged(nameof(HasMusics));
                 Genres = [.. _musicGenres.Keys
-                    .Concat([ResourceExtensions.GetLocalized("MusicInfo_AllGenres")])
+                    .Concat(["MusicInfo_AllGenres".GetLocalized()])
                     .OrderBy(x => x, new GenreComparer())];
                 _musicGenres.Clear();
             });
             await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
-            ClearArtists();
             Data.HasMusicLibraryLoaded = true;
         }
         catch (Exception ex)
@@ -161,7 +160,7 @@ public partial class MusicLibrary : ObservableRecipient
             {
                 OnPropertyChanged(nameof(HasMusics));
                 Genres = new([.. _musicGenres.Keys
-                    .Concat([ResourceExtensions.GetLocalized("MusicInfo_AllGenres")])
+                    .Concat(["MusicInfo_AllGenres".GetLocalized()])
                     .OrderBy(x => x, new GenreComparer())]);
                 OnPropertyChanged("LibraryReloaded");
                 _musicGenres.Clear();
@@ -169,7 +168,6 @@ public partial class MusicLibrary : ObservableRecipient
             FolderWatchers.Clear();
             await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
-            ClearArtists();
         }
         catch (Exception ex)
         {
@@ -251,14 +249,6 @@ public partial class MusicLibrary : ObservableRecipient
             {
                 artistInfo.Update(briefMusicInfo);
             }
-        }
-    }
-
-    private void ClearArtists()
-    {
-        foreach (var album in Albums.Values)
-        {
-            album.ClearArtists();
         }
     }
 

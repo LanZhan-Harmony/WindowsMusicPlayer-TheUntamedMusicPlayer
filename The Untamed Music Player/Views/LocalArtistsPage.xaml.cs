@@ -68,7 +68,7 @@ public sealed partial class LocalArtistsPage : Page
             var border = (Border)grid.Children[1];
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
             Data.SelectedArtist = artistInfo;
-            Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+            Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), "LocalArtistPage", new SuppressNavigationTransitionInfo());
         }
     }
 

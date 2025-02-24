@@ -50,7 +50,7 @@ public sealed partial class AlbumDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.SourcePageType == typeof(LocalAlbumsPage) || e.SourcePageType == typeof(ArtistDetailPage))
+        if (e.Parameter is string page && (page == "LocalAlbumsPage" || page == "ArtistDetailPage"))
         {
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
             animation?.TryStart(CoverArt);

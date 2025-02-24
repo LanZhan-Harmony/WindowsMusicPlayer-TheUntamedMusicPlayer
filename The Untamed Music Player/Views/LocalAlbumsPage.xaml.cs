@@ -67,7 +67,7 @@ public sealed partial class LocalAlbumsPage : Page
             var border = (Border)grid.Children[1];
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
             Data.SelectedAlbum = albumInfo;
-            Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+            Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "LocalAlbumsPage", new SuppressNavigationTransitionInfo());
         }
     }
 
