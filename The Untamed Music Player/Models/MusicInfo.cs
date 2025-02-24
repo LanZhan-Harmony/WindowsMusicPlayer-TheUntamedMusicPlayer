@@ -16,6 +16,11 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     protected static readonly char[] _delimiters = ['、', ',', '，', '|', '/'];
 
     /// <summary>
+    /// 在播放队列中的索引
+    /// </summary>
+    public int PlayQueueIndex { get; set; } = 0;
+
+    /// <summary>
     /// 文件位置
     /// </summary>
     public string Path { get; set; } = "";

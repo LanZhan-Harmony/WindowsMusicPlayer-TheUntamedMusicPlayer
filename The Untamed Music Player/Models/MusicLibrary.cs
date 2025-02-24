@@ -354,6 +354,14 @@ public partial class MusicLibrary : ObservableRecipient
         .OrderBy(m => m.Title, new TitleComparer());
 
     /// <summary>
+    /// 根据歌曲信息获取专辑信息
+    /// </summary>
+    /// <param name="briefMusicInfo"></param>
+    /// <returns></returns>
+    public AlbumInfo? GetAlbumInfoBySong(BriefMusicInfo briefMusicInfo) => Albums
+        .TryGetValue(briefMusicInfo.Album, out var albumInfo) ? albumInfo : null;
+
+    /// <summary>
     /// 根据艺术家信息获取专辑列表
     /// </summary>
     /// <param name="artistInfo"></param>
@@ -370,4 +378,12 @@ public partial class MusicLibrary : ObservableRecipient
     public ObservableCollection<BriefMusicInfo> GetSongsByArtist(ArtistInfo artistInfo) => [.. artistInfo.Albums
         .OrderBy(album => album, new AlbumTitleComparer())
         .SelectMany(album => GetSongsByAlbum(Albums[album]))];
+
+    /// <summary>
+    /// 根据歌曲信息获取艺术家信息
+    /// </summary>
+    /// <param name="briefMusicInfo"></param>
+    /// <returns></returns>
+    public ArtistInfo? GetArtistInfoBySong(BriefMusicInfo briefMusicInfo) => Artists
+        .TryGetValue(briefMusicInfo.Artists[0], out var artistInfo) ? artistInfo : null;
 }
