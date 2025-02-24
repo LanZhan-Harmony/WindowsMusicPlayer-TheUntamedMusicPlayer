@@ -4,8 +4,10 @@ using The_Untamed_Music_Player.Helpers;
 namespace The_Untamed_Music_Player.Models;
 public class BriefAlbumInfo(AlbumInfo albumInfo)
 {
+    protected static readonly string _unknownYear = "AlbumInfo_UnknownYear".GetLocalized();
+
     public string Name { get; set; } = albumInfo.Name;
-    public string YearStr { get; set; } = albumInfo.Year == 0 ? "AlbumInfo_UnknownYear".GetLocalized() : albumInfo.Year.ToString();
+    public string YearStr { get; set; } = albumInfo.Year == 0 ? _unknownYear : albumInfo.Year.ToString();
     public BitmapImage? Cover { get; set; } = albumInfo.Cover;
     public List<BriefMusicInfo> SongList { get; set; } = [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
 }
@@ -140,14 +142,5 @@ public class AlbumInfo
             ? $"{TotalDuration:hh\\:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
             : $"{TotalDuration:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}");
         return string.Join(" • ", parts);
-    }
-
-    public void ClearArtists()
-    {
-        if (Artists != null)
-        {
-            Array.Clear(Artists, 0, Artists.Length);
-            Artists = null;
-        }
     }
 }
