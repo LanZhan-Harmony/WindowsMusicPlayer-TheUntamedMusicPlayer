@@ -297,6 +297,17 @@ public partial class MusicPlayer : ObservableRecipient
     {
         var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
         var index = info.PlayQueueIndex;
+        if (index == PlayQueueIndex)
+        {
+            if (PlayState == 0)
+            {
+
+            }
+            else
+            {
+                PlayNextSong();
+            }
+        }
         queue.RemoveAt(index);
         // 仅更新从删除位置之后的索引
         for (var i = index; i < queue.Count; i++)
@@ -318,6 +329,10 @@ public partial class MusicPlayer : ObservableRecipient
             (queue[index - 1], queue[index]) = (queue[index], queue[index - 1]);
             queue[index].PlayQueueIndex = index;
             queue[index - 1].PlayQueueIndex = index - 1;
+            if (index == PlayQueueIndex)
+            {
+                PlayQueueIndex--;
+            }
         }
     }
 
@@ -334,6 +349,10 @@ public partial class MusicPlayer : ObservableRecipient
             (queue[index + 1], queue[index]) = (queue[index], queue[index + 1]);
             queue[index].PlayQueueIndex = index;
             queue[index + 1].PlayQueueIndex = index + 1;
+            if (index == PlayQueueIndex)
+            {
+                PlayQueueIndex++;
+            }
         }
     }
 
