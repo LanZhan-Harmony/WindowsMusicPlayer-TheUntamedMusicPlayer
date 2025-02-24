@@ -21,6 +21,8 @@ public static class Data
     /// </summary>
     public static bool IsMusicDownloading { get; set; } = false;
 
+
+    public static string? NavigatePage { get; set; }
     public static AlbumInfo? SelectedAlbum { get; set; }
     public static ArtistInfo? SelectedArtist { get; set; }
 

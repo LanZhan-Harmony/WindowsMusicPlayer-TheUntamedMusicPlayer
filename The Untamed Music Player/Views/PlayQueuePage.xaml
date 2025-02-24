@@ -114,7 +114,7 @@
                           Grid.Column="1"
                           Canvas.ZIndex="0"
                           FontSize="16"
-                          Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme,model:Data.MusicPlayer.PlayQueueIndex), Mode=OneWay}"
+                          Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme, model:Data.MusicPlayer.PlayQueueIndex), Mode=OneWay}"
                           Glyph="&#xE8D6;"/>
                 <TextBlock Grid.Column="2"
                            VerticalAlignment="Center"
@@ -125,7 +125,8 @@
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
                         Background="Transparent"
-                        BorderBrush="Transparent">
+                        BorderBrush="Transparent"
+                        Click="ShowArtistButton_Click">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme, model:Data.MusicPlayer.PlayQueueIndex), Mode=OneWay}"
                                Text="{x:Bind ArtistsStr}"
@@ -134,7 +135,8 @@
                 </Button>
                 <Button Grid.Column="4"
                         Background="Transparent"
-                        BorderBrush="Transparent">
+                        BorderBrush="Transparent"
+                        Click="ShowAlbumButton_Click">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme, model:Data.MusicPlayer.PlayQueueIndex), Mode=OneWay}"
                                Text="{x:Bind Album}"
