@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage.Streams;
@@ -290,6 +291,46 @@ public sealed partial class AlbumDetailPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.PlayButton_Click(sender, e);
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.PlayButton_Click(info);
+        }
+    }
+
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.PlayNextButton_Click(info);
+        }
+    }
+
+    private void EditInfoButton_Click(object sender, RoutedEventArgs e)
+    {
+    }
+
+    private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            var music = await MusicPlayer.CreateDetailedMusicInfoAsync(info, Data.MusicPlayer.SourceMode);
+            var dialog = new PropertiesDialog(music)
+            {
+                XamlRoot = XamlRoot
+            };
+            await dialog.ShowAsync();
+        }
+    }
+
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.ShowArtistButton_Click(info);
+        }
+    }
+
+    private void SelectButton_Click(object sender, RoutedEventArgs e)
+    {
     }
 }

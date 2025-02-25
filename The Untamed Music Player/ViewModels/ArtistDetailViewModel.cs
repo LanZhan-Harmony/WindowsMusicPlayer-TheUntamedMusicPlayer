@@ -1,8 +1,11 @@
 using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 public class ArtistDetailViewModel
@@ -27,35 +30,69 @@ public class ArtistDetailViewModel
         Data.MusicPlayer.PlaySongByInfo(AlbumList[0].SongList[0]);
     }
 
-    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    public void SongListView_ItemClick(IBriefMusicInfoBase info)
     {
         Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList(), 0, 0);
-        if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
+        Data.MusicPlayer.PlaySongByInfo(info);
+    }
+
+    public void SongListViewPlayButton_Click(IBriefMusicInfoBase info)
+    {
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList(), 0, 0);
+        Data.MusicPlayer.PlaySongByInfo(info);
+    }
+
+    public void SongListViewPlayNextButton_Click(IBriefMusicInfoBase info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
+            var list = new List<IBriefMusicInfoBase> { info };
+            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list
+                , 0, 0);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToNextPlay(info);
         }
     }
 
-    public void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
+    public void SongListViewShowAlbumButton_Click(IBriefMusicInfoBase info)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{Artist.Name}", ConvertAllSongsToFlatList(), 0, 0);
-        if (sender is FrameworkElement { DataContext: BriefMusicInfo briefMusicInfo })
+        if (Data.MusicPlayer.SourceMode == 0)
         {
-            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
+            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(((BriefMusicInfo)info).Album);
+            if (albumInfo != null)
+            {
+                Data.SelectedAlbum = albumInfo;
+                Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+            }
         }
     }
 
-    public void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
+    public void AlbumGridViewPlayButton_Click(BriefAlbumInfo info)
     {
-        if (sender is FrameworkElement { DataContext: BriefAlbumInfo briefAlbumInfo })
+        var songList = info.SongList;
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, 0);
+        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+    }
+
+    public void AlbumGridViewPlayNextButton_Click(BriefAlbumInfo info)
+    {
+        var songList = info.SongList;
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            var songList = new ObservableCollection<BriefMusicInfo>(briefAlbumInfo.SongList);
-            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{briefAlbumInfo.Name}", songList, 0, 0);
+            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList
+                , 0, 0);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
+        else
+        {
+            Data.MusicPlayer.AddSongsToNextPlay(songList);
+        }
     }
 
-    private ObservableCollection<BriefMusicInfo> ConvertAllSongsToFlatList()
+    private List<IBriefMusicInfoBase> ConvertAllSongsToFlatList()
     {
         return [.. AlbumList.SelectMany(album => album.SongList)];
     }
