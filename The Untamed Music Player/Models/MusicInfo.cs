@@ -24,7 +24,7 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     /// <summary>
     /// 在播放队列中的索引
     /// </summary>
-    public int PlayQueueIndex { get; set; } = 0;
+    public int PlayQueueIndex { get; set; } = -1;
 
     /// <summary>
     /// 文件位置
@@ -221,6 +221,11 @@ public class BriefMusicInfo : IBriefMusicInfoBase
             return new SolidColorBrush(highlightColor);
         }
         return new SolidColorBrush(defaultColor);
+    }
+
+    public object Clone()
+    {
+        return MemberwiseClone();
     }
 }
 
