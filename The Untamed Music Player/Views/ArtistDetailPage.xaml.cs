@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage.Streams;
@@ -360,19 +361,65 @@ public sealed partial class ArtistDetailPage : Page
         SelectionBarSelectedIndex = currentSelectedIndex;
     }
 
-    private void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
-    {
-        ViewModel.SongListViewPlayButton_Click(sender, e);
-    }
-
     private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        ViewModel.SongListView_ItemClick(sender, e);
+        if (e.ClickedItem is IBriefMusicInfoBase info)
+        {
+            ViewModel.SongListView_ItemClick(info);
+        }
+    }
+
+    private void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.SongListViewPlayButton_Click(info);
+        }
+    }
+
+    private void SongListViewPlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.SongListViewPlayNextButton_Click(info);
+        }
+    }
+
+    private void SongListViewEditInfoButton_Click(object sender, RoutedEventArgs e)
+    {
+    }
+
+    private async void SongListViewPropertiesButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            var music = await MusicPlayer.CreateDetailedMusicInfoAsync(info, Data.MusicPlayer.SourceMode);
+            var dialog = new PropertiesDialog(music)
+            {
+                XamlRoot = XamlRoot
+            };
+            await dialog.ShowAsync();
+        }
+    }
+
+    private void SongListViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        {
+            ViewModel.SongListViewShowAlbumButton_Click(info);
+        }
+    }
+
+    private void SongListViewSelectButton_Click(object sender, RoutedEventArgs e)
+    {
     }
 
     private void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.AlbumGridViewPlayButton_Click(sender, e);
+        if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
+        {
+            ViewModel.AlbumGridViewPlayButton_Click(info);
+        }
     }
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -389,6 +436,38 @@ public sealed partial class ArtistDetailPage : Page
                 Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "ArtistDetailPage", new SuppressNavigationTransitionInfo());
             }
         }
+    }
+
+    private void AlbumGridViewPlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
+        {
+            ViewModel.AlbumGridViewPlayNextButton_Click(info);
+        }
+    }
+
+    private void AlbumGridViewEditInfoButton_Click(object sender, RoutedEventArgs e)
+    {
+    }
+
+    private void AlbumGridViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
+        {
+            var albumInfo = Data.MusicLibrary.Albums[info.Name];
+            if (albumInfo != null)
+            {
+                var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
+                var border = (Border)grid.Children[1];
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+                Data.SelectedAlbum = albumInfo;
+                Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "ArtistDetailPage", new SuppressNavigationTransitionInfo());
+            }
+        }
+    }
+
+    private void AlbumGridViewSelectButton_Click(object sender, RoutedEventArgs e)
+    {
     }
 
     /*private void AlbumGridView_Loaded(object sender, RoutedEventArgs e)

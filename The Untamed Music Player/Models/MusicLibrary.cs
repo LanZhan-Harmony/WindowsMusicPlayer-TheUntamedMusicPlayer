@@ -348,8 +348,8 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="briefMusicInfo"></param>
     /// <returns></returns>
-    public AlbumInfo? GetAlbumInfoBySong(BriefMusicInfo briefMusicInfo) => Albums
-        .TryGetValue(briefMusicInfo.Album, out var albumInfo) ? albumInfo : null;
+    public AlbumInfo? GetAlbumInfoBySong(string album) => Albums
+        .TryGetValue(album, out var albumInfo) ? albumInfo : null;
 
     /// <summary>
     /// 根据艺术家信息获取专辑列表
@@ -374,6 +374,6 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="briefMusicInfo"></param>
     /// <returns></returns>
-    public ArtistInfo? GetArtistInfoBySong(BriefMusicInfo briefMusicInfo) => Artists
-        .TryGetValue(briefMusicInfo.Artists[0], out var artistInfo) ? artistInfo : null;
+    public ArtistInfo? GetArtistInfoBySong(string artist) => Artists
+        .TryGetValue(artist, out var artistInfo) ? artistInfo : null;
 }

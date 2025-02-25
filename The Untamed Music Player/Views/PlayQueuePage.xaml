@@ -91,6 +91,7 @@
                     <ColumnDefinition Width="1.5*"/>
                     <ColumnDefinition Width="1.3*"/>
                     <ColumnDefinition Width="55"/>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="70"/>
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
@@ -152,6 +153,14 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
                 <TextBlock Grid.Column="6"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           FontSize="12"
+                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme, model:Data.MusicPlayer.PlayQueueIndex), Mode=OneWay}"
+                           Text="{x:Bind GenreStr}"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTipService.ToolTip="{x:Bind GenreStr}"/>
+                <TextBlock Grid.Column="7"
                            Margin="0,0,10,0"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Center"

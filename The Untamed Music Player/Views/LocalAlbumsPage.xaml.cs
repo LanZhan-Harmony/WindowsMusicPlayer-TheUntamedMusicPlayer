@@ -61,12 +61,12 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is AlbumInfo albumInfo)
+        if (e.ClickedItem is AlbumInfo info)
         {
             var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)).ContentTemplateRoot;
             var border = (Border)grid.Children[1];
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedAlbum = albumInfo;
+            Data.SelectedAlbum = info;
             Data.NavigatePage = "LocalAlbumsPage";
             Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "LocalAlbumsPage", new SuppressNavigationTransitionInfo());
         }
@@ -90,6 +90,46 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.PlayButton_Click(sender, e);
+        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        {
+            ViewModel.PlayButton_Click(info);
+        }
+    }
+
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        {
+            ViewModel.PlayNextButton_Click(info);
+        }
+    }
+
+    private void EditInfoButton_Click(object sender, RoutedEventArgs e)
+    {
+    }
+
+    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        {
+            var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedAlbum = info;
+            Data.NavigatePage = "LocalAlbumsPage";
+            Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "LocalAlbumsPage", new SuppressNavigationTransitionInfo());
+        }
+    }
+
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        {
+            ViewModel.ShowArtistButton_Click(info);
+        }
+    }
+
+    private void SelectButton_Click(object sender, RoutedEventArgs e)
+    {
     }
 }
