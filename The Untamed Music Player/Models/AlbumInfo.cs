@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml.Media.Imaging;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Models;
@@ -9,7 +10,7 @@ public class BriefAlbumInfo(AlbumInfo albumInfo)
     public string Name { get; set; } = albumInfo.Name;
     public string YearStr { get; set; } = albumInfo.Year == 0 ? _unknownYear : albumInfo.Year.ToString();
     public BitmapImage? Cover { get; set; } = albumInfo.Cover;
-    public List<BriefMusicInfo> SongList { get; set; } = [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
+    public List<IBriefMusicInfoBase> SongList { get; set; } = [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
 }
 
 public class AlbumInfo
@@ -35,7 +36,7 @@ public class AlbumInfo
     /// <summary>
     /// 专辑艺术家
     /// </summary>
-    public string[]? Artists { get; set; } = [];
+    public string[] Artists { get; set; } = [];
 
     /// <summary>
     /// 专辑艺术家字符串

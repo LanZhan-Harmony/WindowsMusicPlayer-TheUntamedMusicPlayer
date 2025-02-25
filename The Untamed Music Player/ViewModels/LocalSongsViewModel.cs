@@ -478,9 +478,9 @@ public partial class LocalSongsViewModel : ObservableRecipient
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
-        if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
+        if (e.ClickedItem is BriefMusicInfo info)
         {
-            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
+            Data.MusicPlayer.PlaySongByInfo(info);
         }
     }
 
@@ -507,7 +507,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void ShowAlbumButton_Click(BriefMusicInfo info)
     {
-        var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info);
+        var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info.Album);
         if (albumInfo != null)
         {
             Data.SelectedAlbum = albumInfo;
@@ -517,7 +517,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void ShowArtistButton_Click(BriefMusicInfo info)
     {
-        var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(info);
+        var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(info.Artists[0]);
         if (artistInfo != null)
         {
             Data.SelectedArtist = artistInfo;

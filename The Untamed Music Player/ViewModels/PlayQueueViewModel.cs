@@ -31,9 +31,9 @@ public partial class PlayQueueViewModel : ObservableRecipient
         Data.MusicPlayer.AddSongToNextPlay(info);
     }
 
-    public void RemoveButton_Click(IBriefMusicInfoBase info)
+    public async void RemoveButton_Click(IBriefMusicInfoBase info)
     {
-        Data.MusicPlayer.RemoveSong(info);
+        await Data.MusicPlayer.RemoveSong(info);
     }
 
     public void MoveUpButton_Click(IBriefMusicInfoBase info)
@@ -50,7 +50,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
     {
         if (Data.MusicPlayer.SourceMode == 0)
         {
-            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong((BriefMusicInfo)info);
+            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(((BriefMusicInfo)info).Album);
             if (albumInfo != null)
             {
                 Data.SelectedAlbum = albumInfo;
@@ -63,7 +63,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
     {
         if (Data.MusicPlayer.SourceMode == 0)
         {
-            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong((BriefMusicInfo)info);
+            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(((BriefMusicInfo)info).Artists[0]);
             if (artistInfo != null)
             {
                 Data.SelectedArtist = artistInfo;

@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
-public interface IBriefMusicInfoBase
+public interface IBriefMusicInfoBase : ICloneable
 {
     int PlayQueueIndex { get; set; }
     string Path { get; set; }
@@ -12,6 +12,7 @@ public interface IBriefMusicInfoBase
     string ArtistsStr { get; set; }
     string DurationStr { get; set; }
     string YearStr { get; set; }
+    string GenreStr { get; set; }
 
     /// <summary>
     /// 获取参与创作的艺术家名字符串
@@ -71,7 +72,6 @@ public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
 {
     bool IsPlayAvailable { get; set; }
     bool IsOnline { get; set; }
-    string GenreStr { get; set; }
     string ItemType { get; set; }
     string AlbumArtistsStr { get; set; }
     string ArtistAndAlbumStr { get; set; }

@@ -2,14 +2,17 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 public partial class AlbumDetailViewModel : ObservableRecipient
 {
     public AlbumInfo Album { get; set; } = Data.SelectedAlbum!;
 
-    public ObservableCollection<BriefMusicInfo> SongList
+    public List<IBriefMusicInfoBase> SongList
     {
         get; set;
     }
@@ -29,18 +32,42 @@ public partial class AlbumDetailViewModel : ObservableRecipient
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
-        if (e.ClickedItem is BriefMusicInfo briefMusicInfo)
+        if (e.ClickedItem is IBriefMusicInfoBase info)
         {
-            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
+            Data.MusicPlayer.PlaySongByInfo(info);
         }
     }
 
-    public void PlayButton_Click(object sender, RoutedEventArgs e)
+    public void PlayButton_Click(IBriefMusicInfoBase info)
     {
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
-        if (sender is FrameworkElement { DataContext: BriefMusicInfo briefMusicInfo })
+        Data.MusicPlayer.PlaySongByInfo(info);
+    }
+
+    public void PlayNextButton_Click(IBriefMusicInfoBase info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.PlaySongByInfo(briefMusicInfo);
+            var list = new List<IBriefMusicInfoBase> { info };
+            Data.MusicPlayer.SetPlayList($"LocalSongs:Part", list, 0, 0);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToNextPlay(info);
+        }
+    }
+
+    public void ShowArtistButton_Click(IBriefMusicInfoBase info)
+    {
+        if (Data.MusicPlayer.SourceMode == 0)
+        {
+            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(((BriefMusicInfo)info).Artists[0]);
+            if (artistInfo != null)
+            {
+                Data.SelectedArtist = artistInfo;
+                Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+            }
         }
     }
 }
