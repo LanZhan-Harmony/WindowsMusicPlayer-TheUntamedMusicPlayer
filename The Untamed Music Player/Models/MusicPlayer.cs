@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,7 +13,6 @@ using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
-using static The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.CloudBriefOnlineMusicInfo;
 
 namespace The_Untamed_Music_Player.Models;
 public partial class MusicPlayer : ObservableRecipient
