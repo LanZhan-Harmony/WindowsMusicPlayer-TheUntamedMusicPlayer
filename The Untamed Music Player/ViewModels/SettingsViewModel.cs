@@ -303,7 +303,17 @@ public partial class SettingsViewModel : ObservableRecipient
     private async void LoadSongDownloadLocationAsync()
     {
         var location = await _localSettingsService.ReadSettingAsync<string>("SongDownloadLocation");
-        SongDownloadLocation = string.IsNullOrWhiteSpace(location) ? (await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)).SaveFolder.Path : location;
+        if (string.IsNullOrWhiteSpace(location))
+        {
+            var folder = (await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)).Folders.FirstOrDefault();
+            location = folder?.Path;
+            if (string.IsNullOrWhiteSpace(location))
+            {
+                location = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Music");
+                Directory.CreateDirectory(location);
+            }
+        }
+        SongDownloadLocation = location;
     }
 
     private static async Task SaveFoldersAsync()

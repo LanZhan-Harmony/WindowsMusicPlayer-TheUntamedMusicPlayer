@@ -663,6 +663,9 @@
   <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
     <value>Downloading...</value>
   </data>
+  <data name="OnlineMusicLibrary_OpenFolder" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
   <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
     <value>Download completed</value>
   </data>
