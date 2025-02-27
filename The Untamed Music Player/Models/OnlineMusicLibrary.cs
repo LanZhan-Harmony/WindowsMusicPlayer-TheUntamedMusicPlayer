@@ -260,7 +260,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             .BindStatus()
             )
             .AddButton(new AppNotificationButton("OnlineMusicLibrary_Cancel".GetLocalized())
-            .AddArgument("action", "Cancel")
+            .AddArgument("CancelAction", "Cancel")
             )
             .BuildNotification();
         var data = new AppNotificationProgressData(1)
@@ -297,6 +297,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         var finishNotification = new AppNotificationBuilder()
             .AddText("OnlineMusicLibrary_DownloadCompleted".GetLocalized())
             .AddText(title)
+            .AddButton(new AppNotificationButton("OnlineMusicLibrary_OpenFolder".GetLocalized())
+            .AddArgument("OpenFolderAction", savePath)
+            )
             .BuildNotification();
         AppNotificationManager.Default.Show(finishNotification);
         _ = Data.MusicLibrary.LoadLibraryAgainAsync();
@@ -315,6 +318,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         var buffer = new byte[8192];
         var totalRead = 0L;
         var read = 0;
+        var lastProgressUpdate = 0;
+        var lastUpdateTime = DateTime.Now;
+
         while ((read = await contentStream.ReadAsync(buffer)) > 0)
         {
             await fileStream.WriteAsync(buffer.AsMemory(0, read));
@@ -322,7 +328,15 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             if (totalBytes.HasValue)
             {
                 var progress = (int)(totalRead * 100 / totalBytes.Value);
-                UpdateProgress(title, progress);
+
+                // 仅在进度变化至少1%且距上次更新至少100ms时更新UI
+                var now = DateTime.Now;
+                if (progress > lastProgressUpdate && (progress - lastProgressUpdate >= 1 || (now - lastUpdateTime).TotalMilliseconds > 500))
+                {
+                    lastProgressUpdate = progress;
+                    lastUpdateTime = now;
+                    UpdateProgress(title, progress);
+                }
             }
         }
     }
@@ -416,6 +430,16 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     private async Task<string> LoadSongDownloadLocationAsync()
     {
         var location = await _localSettingsService.ReadSettingAsync<string>("SongDownloadLocation");
-        return string.IsNullOrWhiteSpace(location) ? (await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)).SaveFolder.Path : location;
+        if (string.IsNullOrWhiteSpace(location))
+        {
+            var folder = (await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)).Folders.FirstOrDefault();
+            location = folder?.Path;
+            if (string.IsNullOrWhiteSpace(location))
+            {
+                location = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Music");
+                Directory.CreateDirectory(location);
+            }
+        }
+        return location;
     }
 }

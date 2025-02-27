@@ -45,6 +45,7 @@ public partial class MainViewModel : ObservableRecipient
     {
         _mainMindow = Data.MainWindow ?? new();
         _backdropTarget = _mainMindow.As<ICompositionSupportsSystemBackdrop>();
+        MainWindowWidth = _mainMindow.Width;
         IsDarkTheme = ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark || (((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
         InitializeAsync();
         _mainMindow.Activated += MainWindow_Activated;
