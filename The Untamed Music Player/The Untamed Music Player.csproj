@@ -29,9 +29,9 @@
 		<AppxBundle>Auto</AppxBundle>
 		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 		<LangVersion>preview</LangVersion>
-		<PublishAot>True</PublishAot>
+		<!--<PublishAot>True</PublishAot>
 		<PublishTrimmed>True</PublishTrimmed>
-		<IsAotCompatible>True</IsAotCompatible>
+		<IsAotCompatible>True</IsAotCompatible>-->
 		<!--<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>-->
 
 	</PropertyGroup>

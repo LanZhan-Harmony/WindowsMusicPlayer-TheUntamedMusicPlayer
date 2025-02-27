@@ -663,6 +663,9 @@
   <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
     <value>正在下载……</value>
   </data>
+  <data name="OnlineMusicLibrary_OpenFolder" xml:space="preserve">
+    <value>打开文件夹</value>
+  </data>
   <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
     <value>下载完成</value>
   </data>
