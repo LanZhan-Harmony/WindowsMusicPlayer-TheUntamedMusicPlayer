@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Web;
 using Microsoft.Windows.AppNotifications;
 using The_Untamed_Music_Player.Contracts.Services;
@@ -27,12 +28,17 @@ public class AppNotificationService : IAppNotificationService
     /// <param name="args"></param>
     public static void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
     {
-        /*App.MainWindow!.DispatcherQueue.TryEnqueue(() =>
+        var arguments = args.Arguments;
+        if (arguments.TryGetValue("OpenFolderAction", out var savePath))
         {
-            App.MainWindow.ShowMessageDialogAsync("TODO: Handle notification invocations when your app is already running.", "Notification Invoked");
-
-            App.MainWindow.BringToFront();
-        });*/
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = $"/select,\"{savePath}\"",
+                UseShellExecute = true
+            };
+            Process.Start(startInfo);
+        }
     }
 
     public bool Show(string payload)
