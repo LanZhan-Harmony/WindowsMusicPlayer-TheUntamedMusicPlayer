@@ -96,7 +96,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
     private void Window_Closed(object sender, WindowEventArgs args)
     {
-        if (Data.RootPlayBarViewModel != null)
+        if (Data.RootPlayBarViewModel is not null)
         {
             Data.RootPlayBarViewModel.IsDesktopLyricWindowStarted = false;
         }
@@ -117,7 +117,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     {
         var grid = sender as Grid;
         var button = grid?.FindName("CloseButton") as Button;
-        if (button != null)
+        if (button is not null)
         {
             button.Visibility = Visibility.Visible;
         }
@@ -127,7 +127,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     {
         var grid = sender as Grid;
         var button = grid?.FindName("CloseButton") as Button;
-        if (button != null)
+        if (button is not null)
         {
             button.Visibility = Visibility.Collapsed;
         }

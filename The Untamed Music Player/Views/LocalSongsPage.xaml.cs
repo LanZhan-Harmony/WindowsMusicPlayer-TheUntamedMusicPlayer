@@ -33,11 +33,11 @@ public sealed partial class LocalSongsPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Visible;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Visible;
         }
@@ -48,11 +48,11 @@ public sealed partial class LocalSongsPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Collapsed;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Collapsed;
         }
@@ -66,11 +66,11 @@ public sealed partial class LocalSongsPage : Page
             _scrollViewer.ChangeView(null, ViewModel.ScrollViewerVerticalOffset, null, true);
         }
 
-        /*if (Data.MusicPlayer.CurrentMusic != null && sender is ListView listView)
+        /*if (Data.MusicPlayer.CurrentMusic is not null && sender is ListView listView)
         {
             var path = Data.MusicPlayer.CurrentMusic.Path;
             var item = Data.MusicLibrary.Songs.FirstOrDefault(x => x.Path == path);
-            if (item != null)
+            if (item is not null)
             {
                 listView.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
                 listView.UpdateLayout();

@@ -77,7 +77,7 @@ public class AlbumInfo
         Name = briefmusicInfo.Album;
         Year = briefmusicInfo.Year;
         ModifiedDate = briefmusicInfo.ModifiedDate;
-        if (briefmusicInfo.Cover != null)
+        if (briefmusicInfo.Cover is not null)
         {
             Cover = briefmusicInfo.Cover;
             CoverPath = briefmusicInfo.Path;
@@ -96,7 +96,7 @@ public class AlbumInfo
     {
         TotalNum++;
         TotalDuration += briefmusicInfo.Duration;
-        if (Cover == null && briefmusicInfo.Cover != null)
+        if (Cover is null && briefmusicInfo.Cover is not null)
         {
             Cover = briefmusicInfo.Cover;
             CoverPath = briefmusicInfo.Path;
@@ -113,7 +113,7 @@ public class AlbumInfo
 
     public byte[] GetCoverBytes()
     {
-        if (Cover != null)
+        if (Cover is not null)
         {
             var musicFile = TagLib.File.Create(CoverPath);
             return musicFile.Tag.Pictures[0].Data.Data;

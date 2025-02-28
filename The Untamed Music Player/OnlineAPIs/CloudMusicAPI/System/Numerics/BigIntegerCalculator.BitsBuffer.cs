@@ -20,7 +20,7 @@ internal static partial class BigIntegerCalculator
 
         public BitsBuffer(int size, uint[] value)
         {
-            Debug.Assert(value != null);
+            Debug.Assert(value is not null);
             Debug.Assert(size >= ActualLength(value));
 
             _bits = new uint[size];
@@ -82,7 +82,7 @@ internal static partial class BigIntegerCalculator
 
         public unsafe void Reduce(uint[] modulus)
         {
-            Debug.Assert(modulus != null);
+            Debug.Assert(modulus is not null);
 
             // Executes a modulo operation using the divide operation.
             // Thus, no need of any switching here, happens in-line.

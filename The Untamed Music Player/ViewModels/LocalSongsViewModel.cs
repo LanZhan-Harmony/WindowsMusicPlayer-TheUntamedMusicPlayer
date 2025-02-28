@@ -508,7 +508,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     public void ShowAlbumButton_Click(BriefMusicInfo info)
     {
         var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info.Album);
-        if (albumInfo != null)
+        if (albumInfo is not null)
         {
             Data.SelectedAlbum = albumInfo;
             Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
@@ -518,7 +518,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     public void ShowArtistButton_Click(BriefMusicInfo info)
     {
         var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(info.Artists[0]);
-        if (artistInfo != null)
+        if (artistInfo is not null)
         {
             Data.SelectedArtist = artistInfo;
             Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());

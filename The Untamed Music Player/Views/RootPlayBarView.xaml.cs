@@ -93,7 +93,7 @@ public sealed partial class RootPlayBarView : Page
 
     public Visibility GetArtistAndAlbumStrVisibility(IDetailedMusicInfoBase? detailedmusicinfo)
     {
-        if (detailedmusicinfo == null)
+        if (detailedmusicinfo is null)
         {
             return Visibility.Collapsed;
         }
