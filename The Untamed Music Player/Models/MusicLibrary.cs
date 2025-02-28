@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Helpers;
@@ -20,6 +21,9 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     private readonly SemaphoreSlim _librarySemaphore = new(1, 1);
 
+    /// <summary>
+    /// 是否正在处理文件夹变更事件, 防止同时音乐库
+    /// </summary>
     private bool _isHandlingChange = false;
 
     /// <summary>
@@ -88,7 +92,7 @@ public partial class MusicLibrary : ObservableRecipient
             foreach (var path in folderPaths)
             {
                 var folder = await StorageFolder.GetFolderFromPathAsync(path);
-                Folders?.Add(folder);
+                Folders.Add(folder);
             }
             OnPropertyChanged(nameof(SettingsViewModel.EmptyFolderMessageVisibility));
         }
@@ -108,7 +112,7 @@ public partial class MusicLibrary : ObservableRecipient
                 foreach (var folder in Folders)
                 {
                     _musicFolders.TryAdd(folder.Path, 0);
-                    await LoadMusicAsync(folder, folder.DisplayName);
+                    loadMusicTasks.Add(LoadMusicAsync(folder, folder.DisplayName));
                 }
             }
             await Task.WhenAll(loadMusicTasks);
@@ -238,8 +242,10 @@ public partial class MusicLibrary : ObservableRecipient
 
     private void UpdateArtistInfo(BriefMusicInfo briefMusicInfo)
     {
-        foreach (var artist in briefMusicInfo.Artists)
+        var span = briefMusicInfo.Artists.AsSpan();
+        for (var i = 0; i < span.Length; i++)
         {
+            var artist = span[i];
             if (!Artists.TryGetValue(artist, out var artistInfo))
             {
                 artistInfo = new ArtistInfo(briefMusicInfo, artist);

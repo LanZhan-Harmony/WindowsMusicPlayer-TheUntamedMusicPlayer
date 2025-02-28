@@ -9,12 +9,12 @@ public class ArtistInfo
     /// <summary>
     /// 艺术家名
     /// </summary>
-    public string Name { get; set; } = "";
+    public string Name { get; set; }
 
     /// <summary>
     /// 艺术家流派
     /// </summary>
-    public string GenreStr { get; set; } = "";
+    public string GenreStr { get; set; }
 
     /// <summary>
     /// 艺术家封面
@@ -27,12 +27,12 @@ public class ArtistInfo
     /// <summary>
     /// 专辑封面来源歌曲的路径
     /// </summary>
-    public string CoverPath { get; set; } = "";
+    public string? CoverPath { get; set; }
 
     /// <summary>
     /// 艺术家歌曲总时长
     /// </summary>
-    public TimeSpan TotalDuration { get; set; } = TimeSpan.Zero;
+    public TimeSpan TotalDuration { get; set; }
 
     /// <summary>
     /// 艺术家歌曲总数

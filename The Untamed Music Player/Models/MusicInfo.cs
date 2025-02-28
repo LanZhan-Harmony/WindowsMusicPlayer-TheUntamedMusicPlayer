@@ -29,22 +29,22 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     /// <summary>
     /// 文件位置
     /// </summary>
-    public string Path { get; set; } = "";
+    public string Path { get; set; } = null!;
 
     /// <summary>
     /// 所处文件夹
     /// </summary>
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = null!;
 
     /// <summary>
     /// 歌曲名
     /// </summary>
-    public string Title { get; set; } = "";
+    public string Title { get; set; } = null!;
 
     /// <summary>
     /// 专辑名, 为空时返回"未知专辑"
     /// </summary>
-    public virtual string Album { get; set; } = "";
+    public virtual string Album { get; set; } = null!;
 
     /// <summary>
     /// 参与创作的艺术家数组
@@ -55,22 +55,22 @@ public class BriefMusicInfo : IBriefMusicInfoBase
         set => field = [.. value
                     .SelectMany(artist => artist.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries))
                     .Distinct()];
-    } = [];
+    } = null!;
 
     /// <summary>
     /// 参与创作的艺术家名, 为空时返回"未知艺术家"
     /// </summary>
-    public virtual string ArtistsStr { get; set; } = "";
+    public virtual string ArtistsStr { get; set; } = null!;
 
     /// <summary>
     /// 时长
     /// </summary>
-    public TimeSpan Duration { get; set; } = TimeSpan.Zero;
+    public TimeSpan Duration { get; set; }
 
     /// <summary>
     /// 时长字符串, 为空时返回00:00
     /// </summary>
-    public virtual string DurationStr { get; set; } = "";
+    public virtual string DurationStr { get; set; } = null!;
 
     /// <summary>
     /// 发行年份
@@ -80,7 +80,7 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     /// <summary>
     /// 发行年份字符串, 为0时返回""
     /// </summary>
-    public string YearStr { get; set; } = "";
+    public string YearStr { get; set; } = null!;
 
     /// <summary>
     /// 封面(可能为空)
@@ -90,12 +90,12 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     /// <summary>
     /// 流派数组
     /// </summary>
-    public string[] Genre { get; set; } = [];
+    public string[] Genre { get; set; } = null!;
 
     /// <summary>
     /// 流派字符串, 为空时返回"未知流派"
     /// </summary>
-    public virtual string GenreStr { get; set; } = "";
+    public virtual string GenreStr { get; set; } = null!;
 
     /// <summary>
     /// 修改日期
@@ -151,10 +151,11 @@ public class BriefMusicInfo : IBriefMusicInfoBase
         {
             // 设置默认值
             info.Title = System.IO.Path.GetFileNameWithoutExtension(path);
-            info.Album = "MusicInfo_UnknownAlbum".GetLocalized();
-            info.Artists = ["MusicInfo_UnknownArtist".GetLocalized()];
+            info.Album = _unknownAlbum;
+            info.Artists = [_unknownArtist];
             info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(info.Artists);
-            info.Genre = ["MusicInfo_UnknownGenre".GetLocalized()];
+            info.YearStr = "";
+            info.Genre = [_unknownGenre];
             info.GenreStr = GetGenreStr(info.Genre);
             info.DurationStr = IBriefMusicInfoBase.GetDurationStr(info.Duration);
         }
