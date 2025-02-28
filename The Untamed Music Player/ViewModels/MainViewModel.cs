@@ -78,7 +78,7 @@ public partial class MainViewModel : ObservableRecipient
             _ => null
         };
 
-        if (_currentBackdropController != null)
+        if (_currentBackdropController is not null)
         {
             SetConfigurationSourceTheme();
             _currentBackdropController?.AddSystemBackdropTarget(_backdropTarget);
@@ -106,7 +106,7 @@ public partial class MainViewModel : ObservableRecipient
         {
             LuminosityOpacity = GetLuminosityOpacity();
             TintColor = GetTintColor();
-            if (Data.SettingsViewModel != null)
+            if (Data.SettingsViewModel is not null)
             {
                 Data.SettingsViewModel.LuminosityOpacity = LuminosityOpacity;
                 Data.SettingsViewModel.TintColor = TintColor;
@@ -250,7 +250,7 @@ public partial class MainViewModel : ObservableRecipient
             var color = IsDarkTheme ? darkColor : lightColor;
             micaController.TintColor = color;
             TintColor = color;
-            if (Data.SettingsViewModel != null)
+            if (Data.SettingsViewModel is not null)
             {
                 Data.SettingsViewModel.TintColor = color;
             }
@@ -277,7 +277,7 @@ public partial class MainViewModel : ObservableRecipient
             var color = IsDarkTheme ? darkColor : lightColor;
             desktopAcrylicController.TintColor = color;
             TintColor = color;
-            if (Data.SettingsViewModel != null)
+            if (Data.SettingsViewModel is not null)
             {
                 Data.SettingsViewModel.TintColor = color;
             }

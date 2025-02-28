@@ -332,7 +332,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
     public void ShowArtistButton_Click(AlbumInfo info)
     {
         var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(info.Artists[0]);
-        if (artistInfo != null)
+        if (artistInfo is not null)
         {
             Data.SelectedArtist = artistInfo;
             Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());

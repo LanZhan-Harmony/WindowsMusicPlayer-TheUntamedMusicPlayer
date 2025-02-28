@@ -33,7 +33,7 @@ public class NavigationViewService : INavigationViewService
 
     public void UnregisterEvents()
     {
-        if (_navigationView != null)
+        if (_navigationView is not null)
         {
             _navigationView.BackRequested -= OnBackRequested;
             _navigationView.ItemInvoked -= OnItemInvoked;
@@ -42,7 +42,7 @@ public class NavigationViewService : INavigationViewService
 
     public NavigationViewItem? GetSelectedItem(Type pageType)
     {
-        if (_navigationView != null)
+        if (_navigationView is not null)
         {
             return GetSelectedItem(_navigationView.MenuItems, pageType) ?? GetSelectedItem(_navigationView.FooterMenuItems, pageType);
         }
@@ -79,7 +79,7 @@ public class NavigationViewService : INavigationViewService
             }
 
             var selectedChild = GetSelectedItem(item.MenuItems, pageType);
-            if (selectedChild != null)
+            if (selectedChild is not null)
             {
                 return selectedChild;
             }

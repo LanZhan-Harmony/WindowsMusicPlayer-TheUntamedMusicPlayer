@@ -36,7 +36,7 @@ public class ActivationService : IActivationService
     {
         var activationHandler = _activationHandlers.FirstOrDefault(h => h.CanHandle(activationArgs));
 
-        if (activationHandler != null)
+        if (activationHandler is not null)
         {
             await activationHandler.HandleAsync(activationArgs);
         }

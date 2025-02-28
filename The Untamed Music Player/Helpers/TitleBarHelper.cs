@@ -19,7 +19,7 @@ internal class TitleBarHelper
 
     public static void UpdateTitleBar(ElementTheme theme)
     {
-        if (App.MainWindow != null && App.MainWindow.ExtendsContentIntoTitleBar)
+        if (App.MainWindow is not null && App.MainWindow.ExtendsContentIntoTitleBar)
         {
             if (theme == ElementTheme.Default)
             {
@@ -81,7 +81,7 @@ internal class TitleBarHelper
     public static void ApplySystemThemeToCaptionButtons()
     {
         var frame = App.AppTitlebar as FrameworkElement;
-        if (frame != null)
+        if (frame is not null)
         {
             UpdateTitleBar(frame.ActualTheme);
         }

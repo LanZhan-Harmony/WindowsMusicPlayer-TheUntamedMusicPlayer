@@ -30,7 +30,7 @@ public class FileService : IFileService
 
     public void Delete(string folderPath, string fileName)
     {
-        if (fileName != null && File.Exists(Path.Combine(folderPath, fileName)))
+        if (fileName is not null && File.Exists(Path.Combine(folderPath, fileName)))
         {
             File.Delete(Path.Combine(folderPath, fileName));
         }

@@ -77,7 +77,7 @@ public class NavigationViewHeaderBehavior : Behavior<NavigationView>
 
     private void UpdateHeader()
     {
-        if (_currentPage != null)
+        if (_currentPage is not null)
         {
             var headerMode = GetHeaderMode(_currentPage);
             if (headerMode == NavigationViewHeaderMode.Never)
@@ -88,7 +88,7 @@ public class NavigationViewHeaderBehavior : Behavior<NavigationView>
             else
             {
                 var headerFromPage = GetHeaderContext(_currentPage);
-                if (headerFromPage != null)
+                if (headerFromPage is not null)
                 {
                     AssociatedObject.Header = headerFromPage;
                 }
@@ -111,7 +111,7 @@ public class NavigationViewHeaderBehavior : Behavior<NavigationView>
 
     private void UpdateHeaderTemplate()
     {
-        if (_currentPage != null)
+        if (_currentPage is not null)
         {
             var headerTemplate = GetHeaderTemplate(_currentPage);
             AssociatedObject.HeaderTemplate = headerTemplate ?? DefaultHeaderTemplate;

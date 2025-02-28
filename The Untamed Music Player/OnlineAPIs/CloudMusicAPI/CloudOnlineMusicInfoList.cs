@@ -111,7 +111,7 @@ public partial class CloudBriefOnlineMusicInfoList : IBriefOnlineMusicInfoList
     protected new void Add(IBriefOnlineMusicInfo? info)
     {
         _listCount++;
-        if (info != null && info.IsAvailable)
+        if (info is not null && info.IsAvailable)
         {
             base.Add(info);
         }

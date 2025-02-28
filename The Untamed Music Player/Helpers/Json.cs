@@ -35,7 +35,7 @@ public static class Json
         {
             var type = value.GetType();
             var jsonTypeInfo = JsonContext.Default.GetTypeInfo(type);
-            return jsonTypeInfo == null
+            return jsonTypeInfo is null
                 ? throw new ArgumentNullException(nameof(value), $"JsonSerializable特性中未声明 {type}.")
                 : JsonSerializer.Serialize(value, jsonTypeInfo);
         });

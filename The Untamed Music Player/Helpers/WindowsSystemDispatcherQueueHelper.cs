@@ -17,20 +17,20 @@ public class WindowsSystemDispatcherQueueHelper
     private object? m_dispatcherQueueController = null;
     public void EnsureWindowsSystemDispatcherQueueController()
     {
-        if (Windows.System.DispatcherQueue.GetForCurrentThread() != null)
+        if (Windows.System.DispatcherQueue.GetForCurrentThread() is not null)
         {
             // one already exists, so we'll just use it.
             return;
         }
 
-        if (m_dispatcherQueueController == null)
+        if (m_dispatcherQueueController is null)
         {
             DispatcherQueueOptions options;
             options.dwSize = Marshal.SizeOf<DispatcherQueueOptions>();
             options.threadType = 2;    // DQTYPE_THREAD_CURRENT
             options.apartmentType = 2; // DQTAT_COM_STA
 
-            if (m_dispatcherQueueController != null)
+            if (m_dispatcherQueueController is not null)
             {
                 _ = CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
             }
