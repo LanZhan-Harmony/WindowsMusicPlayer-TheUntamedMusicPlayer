@@ -331,7 +331,7 @@ internal readonly struct BigInteger
         get
         {
             AssertValid();
-            return _bits == null ? (_sign & 1) == 0 : (_bits[0] & 1) == 0;
+            return _bits is null ? (_sign & 1) == 0 : (_bits[0] & 1) == 0;
         }
     }
 
@@ -355,9 +355,9 @@ internal readonly struct BigInteger
         exponent.AssertValid();
         modulus.AssertValid();
 
-        var trivialValue = value._bits == null;
-        var trivialExponent = exponent._bits == null;
-        var trivialModulus = modulus._bits == null;
+        var trivialValue = value._bits is null;
+        var trivialExponent = exponent._bits is null;
+        var trivialModulus = modulus._bits is null;
 
         if (trivialModulus)
         {
@@ -427,7 +427,7 @@ internal readonly struct BigInteger
         var nonZeroDwordIndex = 0;
         uint highDword;
         var bits = _bits;
-        if (bits == null)
+        if (bits is null)
         {
             highByte = (byte)(sign < 0 ? 0xff : 0x00);
             highDword = unchecked((uint)sign);
@@ -490,7 +490,7 @@ internal readonly struct BigInteger
         // Ensure high bit is 0 if positive, 1 if negative
         var needExtraByte = (msb & 0x80) != (highByte & 0x80) && !isUnsigned;
         var length = msbIndex + 1 + (needExtraByte ? 1 : 0);
-        if (bits != null)
+        if (bits is not null)
         {
             length = checked(4 * (bits.Length - 1) + length);
         }
@@ -517,7 +517,7 @@ internal readonly struct BigInteger
         var curByte = isBigEndian ? length - 1 : 0;
         var increment = isBigEndian ? -1 : 1;
 
-        if (bits != null)
+        if (bits is not null)
         {
             for (var i = 0; i < bits.Length - 1; i++)
             {
@@ -583,7 +583,7 @@ internal readonly struct BigInteger
     [Conditional("DEBUG")]
     private void AssertValid()
     {
-        if (_bits != null)
+        if (_bits is not null)
         {
             // _sign must be +1 or -1 when _bits is non-null
             Debug.Assert(_sign == 1 || _sign == -1);

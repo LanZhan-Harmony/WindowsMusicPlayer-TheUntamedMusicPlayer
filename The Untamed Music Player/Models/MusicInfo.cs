@@ -142,7 +142,7 @@ public class BriefMusicInfo : IBriefMusicInfoBase
             info.DurationStr = IBriefMusicInfoBase.GetDurationStr(info.Duration);
 
             // 等待 LoadCoverAsync 任务完成
-            if (coverTask != null)
+            if (coverTask is not null)
             {
                 await coverTask;
             }
@@ -213,7 +213,7 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
 
-        if (currentMusic != null && Path == currentMusic.Path)
+        if (currentMusic is not null && Path == currentMusic.Path)
         {
             var highlightColor = isDarkTheme
                 ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)

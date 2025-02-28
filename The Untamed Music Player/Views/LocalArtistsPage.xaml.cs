@@ -26,15 +26,15 @@ public sealed partial class LocalArtistsPage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Visible;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Visible;
         }
-        if (menuButton != null)
+        if (menuButton is not null)
         {
             menuButton.Visibility = Visibility.Visible;
         }
@@ -46,15 +46,15 @@ public sealed partial class LocalArtistsPage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Collapsed;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Collapsed;
         }
-        if (menuButton != null)
+        if (menuButton is not null)
         {
             menuButton.Visibility = Visibility.Collapsed;
         }
@@ -75,12 +75,12 @@ public sealed partial class LocalArtistsPage : Page
 
     private async void ArtistGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedArtist != null && sender is GridView gridView)
+        if (Data.SelectedArtist is not null && sender is GridView gridView)
         {
             gridView.ScrollIntoView(Data.SelectedArtist, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
-            if (animation != null)
+            if (animation is not null)
             {
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(animation, Data.SelectedArtist, "CoverBorder");

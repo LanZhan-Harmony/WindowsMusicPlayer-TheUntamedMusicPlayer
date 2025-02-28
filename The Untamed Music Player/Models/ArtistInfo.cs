@@ -70,7 +70,7 @@ public class ArtistInfo
 
     public byte[] GetCoverBytes()
     {
-        if (Cover != null)
+        if (Cover is not null)
         {
             var musicFile = TagLib.File.Create(CoverPath);
             return musicFile.Tag.Pictures[0].Data.Data;

@@ -32,7 +32,7 @@ public partial class LyricSlice(double time, string content)
                 var emptyLines = new List<LyricSlice>();
                 foreach (var line in lines)
                 {
-                    if (line != null)
+                    if (line is not null)
                     {
                         if (line.StartsWith("[ti:") || line.StartsWith("[ar:") || line.StartsWith("[al:") || line.StartsWith("[by:"))//歌曲名、艺人名、专辑名、歌词制作人
                         {

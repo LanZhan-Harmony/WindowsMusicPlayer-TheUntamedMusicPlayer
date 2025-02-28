@@ -160,7 +160,7 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
             detailedInfo.ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(detailedInfo.Album, detailedInfo.ArtistsStr);
             detailedInfo.BitRate = $"{((int)songUrlResult["data"]![0]!["br"]!) / 1000} kbps";
             detailedInfo.Lyric = (string)lyricResult["lrc"]!["lyric"]!;
-            if (coverTask != null)
+            if (coverTask is not null)
             {
                 await coverTask;
             }

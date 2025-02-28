@@ -215,7 +215,7 @@ public sealed partial class ArtistDetailPage : Page
 
     private async Task CreateImageBackgroundGradientVisual(ScalarNode scrollVerticalOffset, byte[] imageBytes)
     {
-        if (_compositor == null)
+        if (_compositor is null)
         {
             return;
         }
@@ -264,7 +264,7 @@ public sealed partial class ArtistDetailPage : Page
 
     private void BackgroundHost_OnSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if (_backgroundVisual == null)
+        if (_backgroundVisual is null)
         {
             return;
         }
@@ -277,15 +277,15 @@ public sealed partial class ArtistDetailPage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Visible;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Visible;
         }
-        if (menuButton != null)
+        if (menuButton is not null)
         {
             menuButton.Visibility = Visibility.Visible;
         }
@@ -297,15 +297,15 @@ public sealed partial class ArtistDetailPage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Collapsed;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Collapsed;
         }
-        if (menuButton != null)
+        if (menuButton is not null)
         {
             menuButton.Visibility = Visibility.Collapsed;
         }
@@ -427,7 +427,7 @@ public sealed partial class ArtistDetailPage : Page
         if (e.ClickedItem is BriefAlbumInfo briefAlbumInfo)
         {
             var albumInfo = Data.MusicLibrary.Albums[briefAlbumInfo.Name];
-            if (albumInfo != null)
+            if (albumInfo is not null)
             {
                 var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)).ContentTemplateRoot;
                 var border = (Border)grid.Children[1];
@@ -455,7 +455,7 @@ public sealed partial class ArtistDetailPage : Page
         if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
         {
             var albumInfo = Data.MusicLibrary.Albums[info.Name];
-            if (albumInfo != null)
+            if (albumInfo is not null)
             {
                 var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
                 var border = (Border)grid.Children[1];
@@ -472,12 +472,12 @@ public sealed partial class ArtistDetailPage : Page
 
     /*private void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedBriefAlbum != null && sender is GridView gridView)
+        if (Data.SelectedBriefAlbum is not null && sender is GridView gridView)
         {
             gridView.ScrollIntoView(Data.SelectedBriefAlbum, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
-            if (animation != null)
+            if (animation is not null)
             {
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(animation, Data.SelectedBriefAlbum, "CoverBorder");

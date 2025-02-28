@@ -421,7 +421,7 @@ public partial class MusicPlayer : ObservableRecipient
             Debug.WriteLine(ex.StackTrace);
         }
 
-        if (CurrentMusic!.Cover != null)
+        if (CurrentMusic!.Cover is not null)
         {
             if (SourceMode == 0)
             {
@@ -489,14 +489,14 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     ShuffledPlayQueue[i].PlayQueueIndex = i;
                 }
-                if (CurrentMusic != null)
+                if (CurrentMusic is not null)
                 {
                     // 更新当前歌曲在随机播放队列中的索引
                     PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
                 }
                 hasMusics = ShuffledPlayQueue.Any();
             }
-            if (Data.RootPlayBarViewModel != null)
+            if (Data.RootPlayBarViewModel is not null)
             {
                 Data.RootPlayBarViewModel.ButtonVisibility = hasMusics ? Visibility.Visible : Visibility.Collapsed;
                 Data.RootPlayBarViewModel.Availability = hasMusics;
@@ -514,7 +514,7 @@ public partial class MusicPlayer : ObservableRecipient
         {
             try
             {
-                if (Player.PlaybackSession == null || _lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                if (Player.PlaybackSession is null || _lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
                 {
                     return;
                 }
@@ -558,7 +558,7 @@ public partial class MusicPlayer : ObservableRecipient
         {
             try
             {
-                if (Player.PlaybackSession == null || _lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                if (Player.PlaybackSession is null || _lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
                 {
                     return;
                 }
@@ -833,7 +833,7 @@ public partial class MusicPlayer : ObservableRecipient
             {
                 ShuffledPlayQueue[i].PlayQueueIndex = i;
             }
-            if (CurrentMusic != null)
+            if (CurrentMusic is not null)
             {
                 PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
             }
@@ -845,7 +845,7 @@ public partial class MusicPlayer : ObservableRecipient
             {
                 PlayQueue[i].PlayQueueIndex = i;
             }
-            if (CurrentMusic != null)
+            if (CurrentMusic is not null)
             {
                 PlayQueueIndex = PlayQueue.FirstOrDefault(info => info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
             }
@@ -888,7 +888,7 @@ public partial class MusicPlayer : ObservableRecipient
         PlayQueueName = "";
         PlayQueueIndex = 0;
         _playQueueLength = 0;
-        if (Data.RootPlayBarViewModel != null)
+        if (Data.RootPlayBarViewModel is not null)
         {
             Data.RootPlayBarViewModel.ButtonVisibility = PlayQueue.Any() ? Visibility.Visible : Visibility.Collapsed;
             Data.RootPlayBarViewModel.Availability = PlayQueue.Any();
@@ -1102,7 +1102,7 @@ public partial class MusicPlayer : ObservableRecipient
         await _localSettingsService.SaveSettingAsync("IsMute", IsMute);
         await _localSettingsService.SaveSettingAsync("CurrentVolume", CurrentVolume);
         await _localSettingsService.SaveSettingAsync("PlaySpeed", PlaySpeed);
-        if (CurrentMusic != null)
+        if (CurrentMusic is not null)
         {
             await _localSettingsService.SaveSettingAsync("CurrentMusic", CurrentMusic.Path);
         }
@@ -1114,7 +1114,7 @@ public partial class MusicPlayer : ObservableRecipient
     public async void LoadCurrentStateAsync()
     {
         /*var playqueuepaths = await _localSettingsService.ReadSettingAsync<List<string>>("PlayQueuePaths");
-        if (playqueuepaths != null)
+        if (playqueuepaths is not null)
         {
             PlayQueue.Clear();
             foreach (var path in playqueuepaths)
@@ -1127,7 +1127,7 @@ public partial class MusicPlayer : ObservableRecipient
             }
         }
         var shuffledplayqueuepaths = await _localSettingsService.ReadSettingAsync<List<string>>("ShuffledPlayQueuePaths");
-        if (shuffledplayqueuepaths != null)
+        if (shuffledplayqueuepaths is not null)
         {
             ShuffledPlayQueue.Clear();
             foreach (var path in shuffledplayqueuepaths)
@@ -1159,7 +1159,7 @@ public partial class MusicPlayer : ObservableRecipient
             CurrentVolume = 100;
             PlaySpeed = 1;
         }
-        /*if (Data.RootPlayBarViewModel != null)
+        /*if (Data.RootPlayBarViewModel is not null)
         {
             Data.RootPlayBarViewModel.ButtonVisibility = PlayQueue.Any() ? Visibility.Visible : Visibility.Collapsed;
             Data.RootPlayBarViewModel.Availability = PlayQueue.Any();

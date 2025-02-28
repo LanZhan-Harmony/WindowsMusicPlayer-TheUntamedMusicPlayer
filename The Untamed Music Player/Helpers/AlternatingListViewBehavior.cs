@@ -53,7 +53,7 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
 
         AssociatedObject.ActualThemeChanged += OnActualThemeChanged;
         AssociatedObject.ContainerContentChanging += OnContainerContentChanging;
-        if (AssociatedObject.Items != null)
+        if (AssociatedObject.Items is not null)
         {
             AssociatedObject.Items.VectorChanged += ItemsOnVectorChanged;
         }
@@ -65,7 +65,7 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
 
         AssociatedObject.ActualThemeChanged -= OnActualThemeChanged;
         AssociatedObject.ContainerContentChanging -= OnContainerContentChanging;
-        if (AssociatedObject.Items != null)
+        if (AssociatedObject.Items is not null)
         {
             AssociatedObject.Items.VectorChanged -= ItemsOnVectorChanged;
         }
@@ -73,7 +73,7 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
 
     private void OnActualThemeChanged(FrameworkElement sender, object args)
     {
-        if (AssociatedObject.Items == null)
+        if (AssociatedObject.Items is null)
         {
             return;
         }
@@ -121,7 +121,7 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
 
     private void UpdateAlternateLayout(SelectorItem itemContainer, int itemIndex)
     {
-        if (itemIndex < 0 || AlternateBackground == null)
+        if (itemIndex < 0 || AlternateBackground is null)
         {
             return;
         }

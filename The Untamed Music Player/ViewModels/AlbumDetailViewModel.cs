@@ -62,7 +62,7 @@ public partial class AlbumDetailViewModel : ObservableRecipient
         if (Data.MusicPlayer.SourceMode == 0)
         {
             var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(((BriefMusicInfo)info).Artists[0]);
-            if (artistInfo != null)
+            if (artistInfo is not null)
             {
                 Data.SelectedArtist = artistInfo;
                 Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());

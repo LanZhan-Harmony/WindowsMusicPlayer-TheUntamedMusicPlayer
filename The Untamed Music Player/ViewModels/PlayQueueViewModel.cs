@@ -51,7 +51,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
         if (Data.MusicPlayer.SourceMode == 0)
         {
             var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(((BriefMusicInfo)info).Album);
-            if (albumInfo != null)
+            if (albumInfo is not null)
             {
                 Data.SelectedAlbum = albumInfo;
                 Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
@@ -64,7 +64,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
         if (Data.MusicPlayer.SourceMode == 0)
         {
             var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(((BriefMusicInfo)info).Artists[0]);
-            if (artistInfo != null)
+            if (artistInfo is not null)
             {
                 Data.SelectedArtist = artistInfo;
                 Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
