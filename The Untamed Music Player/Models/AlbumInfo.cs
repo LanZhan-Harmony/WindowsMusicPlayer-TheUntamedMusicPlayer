@@ -18,30 +18,27 @@ public class AlbumInfo
     /// <summary>
     /// 专辑名
     /// </summary>
-    public string Name { get; set; } = "";
+    public string Name { get; set; }
 
     /// <summary>
     /// 专辑封面
     /// </summary>
-    public BitmapImage? Cover
-    {
-        get; set;
-    }
+    public BitmapImage? Cover { get; set; }
 
     /// <summary>
     /// 专辑封面来源歌曲的路径
     /// </summary>
-    public string CoverPath { get; set; } = "";
+    public string? CoverPath { get; set; }
 
     /// <summary>
     /// 专辑艺术家
     /// </summary>
-    public string[] Artists { get; set; } = [];
+    public string[] Artists { get; set; }
 
     /// <summary>
     /// 专辑艺术家字符串
     /// </summary>
-    public string ArtistsStr { get; set; } = "";
+    public string ArtistsStr { get; set; }
 
     /// <summary>
     /// 专辑包含的歌曲数量
@@ -51,26 +48,22 @@ public class AlbumInfo
     /// <summary>
     /// 专辑包含的歌曲总时长
     /// </summary>
-    public TimeSpan TotalDuration { get; set; } = TimeSpan.Zero;
+    public TimeSpan TotalDuration { get; set; }
 
     /// <summary>
     /// 专辑发布年份
     /// </summary>
-    public ushort Year { get; set; } = 0;
+    public ushort Year { get; set; }
 
     /// <summary>
     /// 修改日期
     /// </summary>
-    public long ModifiedDate { get; set; } = 0;
+    public long ModifiedDate { get; set; }
 
     /// <summary>
     /// 专辑流派字符串
     /// </summary>
-    public string GenreStr { get; set; } = "";
-
-    public AlbumInfo()
-    {
-    }
+    public string GenreStr { get; set; }
 
     public AlbumInfo(BriefMusicInfo briefmusicInfo)
     {
@@ -115,8 +108,12 @@ public class AlbumInfo
     {
         if (Cover is not null)
         {
-            var musicFile = TagLib.File.Create(CoverPath);
-            return musicFile.Tag.Pictures[0].Data.Data;
+            try
+            {
+                var musicFile = TagLib.File.Create(CoverPath);
+                return musicFile.Tag.Pictures[0].Data.Data;
+            }
+            catch { }
         }
         return [];
     }
