@@ -164,7 +164,7 @@ public partial class SettingsViewModel : ObservableRecipient
         openPicker.FileTypeFilter.Add("*");
 
         var folder = await openPicker.PickSingleFolderAsync();
-        if (folder != null)
+        if (folder is not null)
         {
             if (!Data.MusicLibrary.Folders.Any(f => f.Path == folder.Path))
             {
@@ -209,7 +209,7 @@ public partial class SettingsViewModel : ObservableRecipient
         openPicker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
         openPicker.FileTypeFilter.Add("*");
         var folder = await openPicker.PickSingleFolderAsync();
-        if (folder != null)
+        if (folder is not null)
         {
             SongDownloadLocation = folder.Path;
         }

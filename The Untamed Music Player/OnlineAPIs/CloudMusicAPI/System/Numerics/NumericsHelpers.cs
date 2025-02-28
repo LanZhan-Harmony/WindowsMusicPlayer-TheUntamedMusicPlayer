@@ -3,7 +3,7 @@ internal static class NumericsHelpers
 {
     public static void DangerousMakeTwosComplement(uint[] d)
     {
-        if (d != null && d.Length > 0)
+        if (d is not null && d.Length > 0)
         {
             d[0] = unchecked(~d[0] + 1);
 

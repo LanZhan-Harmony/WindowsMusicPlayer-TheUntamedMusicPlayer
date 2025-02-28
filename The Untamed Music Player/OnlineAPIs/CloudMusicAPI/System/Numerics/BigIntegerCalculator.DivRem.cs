@@ -5,7 +5,7 @@ internal static partial class BigIntegerCalculator
 {
     public static uint Remainder(uint[] left, uint right)
     {
-        Debug.Assert(left != null);
+        Debug.Assert(left is not null);
         Debug.Assert(left.Length >= 1);
 
         // Same as above, but only computing the remainder.
@@ -22,8 +22,8 @@ internal static partial class BigIntegerCalculator
 
     public static unsafe uint[] Divide(uint[] left, uint[] right)
     {
-        Debug.Assert(left != null);
-        Debug.Assert(right != null);
+        Debug.Assert(left is not null);
+        Debug.Assert(right is not null);
         Debug.Assert(left.Length >= 1);
         Debug.Assert(right.Length >= 1);
         Debug.Assert(left.Length >= right.Length);
@@ -47,8 +47,8 @@ internal static partial class BigIntegerCalculator
 
     public static unsafe uint[] Remainder(uint[] left, uint[] right)
     {
-        Debug.Assert(left != null);
-        Debug.Assert(right != null);
+        Debug.Assert(left is not null);
+        Debug.Assert(right is not null);
         Debug.Assert(left.Length >= 1);
         Debug.Assert(right.Length >= 1);
         Debug.Assert(left.Length >= right.Length);
@@ -256,7 +256,7 @@ internal static partial class BigIntegerCalculator
 
     private static uint[] CreateCopy(uint[] value)
     {
-        Debug.Assert(value != null);
+        Debug.Assert(value is not null);
         Debug.Assert(value.Length != 0);
 
         var bits = new uint[value.Length];

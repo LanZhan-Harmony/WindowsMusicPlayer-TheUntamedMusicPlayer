@@ -83,7 +83,7 @@ public partial class MusicLibrary : ObservableRecipient
     public async void LoadFoldersAsync()
     {
         var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>("MusicFolders");//ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。ReadAsync<List<string>>("MusicFolders")：调用 SettingsStorageExtensions 类中的扩展方法 ReadAsync，从名为 "MusicFolders" 的文件中读取数据，并将其反序列化为 List<string> 类型。
-        if (folderPaths != null)
+        if (folderPaths is not null)
         {
             foreach (var path in folderPaths)
             {

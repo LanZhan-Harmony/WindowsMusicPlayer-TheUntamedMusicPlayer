@@ -27,11 +27,11 @@ public sealed partial class OnlineSongsPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Visible;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Visible;
         }
@@ -42,11 +42,11 @@ public sealed partial class OnlineSongsPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Collapsed;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Collapsed;
         }

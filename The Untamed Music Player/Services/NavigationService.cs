@@ -18,7 +18,7 @@ public class NavigationService : INavigationService
     {
         get
         {
-            if (_frame == null)
+            if (_frame is null)
             {
                 _frame = App.MainWindow?.Content as Frame;
                 RegisterFrameEvents();
@@ -36,7 +36,7 @@ public class NavigationService : INavigationService
     }
 
     [MemberNotNullWhen(true, nameof(Frame), nameof(_frame))]
-    public bool CanGoBack => Frame != null && Frame.CanGoBack;
+    public bool CanGoBack => Frame is not null && Frame.CanGoBack;
 
     public NavigationService(IPageService pageService)
     {
@@ -45,7 +45,7 @@ public class NavigationService : INavigationService
 
     private void RegisterFrameEvents()
     {
-        if (_frame != null)
+        if (_frame is not null)
         {
             _frame.Navigated += OnNavigated;
         }
@@ -53,7 +53,7 @@ public class NavigationService : INavigationService
 
     private void UnregisterFrameEvents()
     {
-        if (_frame != null)
+        if (_frame is not null)
         {
             _frame.Navigated -= OnNavigated;
         }
@@ -80,7 +80,7 @@ public class NavigationService : INavigationService
     {
         var pageType = _pageService.GetPageType(pageKey);
 
-        if (_frame != null && (_frame.Content?.GetType() != pageType || (parameter != null && !parameter.Equals(_lastParameterUsed))))
+        if (_frame is not null && (_frame.Content?.GetType() != pageType || (parameter is not null && !parameter.Equals(_lastParameterUsed))))
         {
             _frame.Tag = clearNavigation;
             var vmBeforeNavigation = _frame.GetPageViewModel();

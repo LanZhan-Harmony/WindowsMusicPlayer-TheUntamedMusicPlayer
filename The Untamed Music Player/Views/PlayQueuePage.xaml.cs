@@ -26,15 +26,15 @@ public sealed partial class PlayQueuePage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var fontIcon = grid?.FindName("MusicFontIcon") as FontIcon;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Visible;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Visible;
         }
-        if (fontIcon != null)
+        if (fontIcon is not null)
         {
             fontIcon.Visibility = Visibility.Collapsed;
         }
@@ -46,15 +46,15 @@ public sealed partial class PlayQueuePage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var fontIcon = grid?.FindName("MusicFontIcon") as FontIcon;
-        if (checkBox != null)
+        if (checkBox is not null)
         {
             checkBox.Visibility = Visibility.Collapsed;
         }
-        if (playButton != null)
+        if (playButton is not null)
         {
             playButton.Visibility = Visibility.Collapsed;
         }
-        if (fontIcon != null)
+        if (fontIcon is not null)
         {
             fontIcon.Visibility = Visibility.Visible;
         }
