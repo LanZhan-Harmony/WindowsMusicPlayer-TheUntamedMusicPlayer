@@ -191,8 +191,7 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
                 stream.Seek(0);
                 var bitmap = new BitmapImage
                 {
-                    DecodePixelWidth = 400,
-                    DecodePixelHeight = 400
+                    DecodePixelWidth = 400
                 };
                 await bitmap.SetSourceAsync(stream);
                 info.Cover = bitmap;

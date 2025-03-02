@@ -67,7 +67,8 @@
               Grid.Row="0"
               Height="33"
               VerticalAlignment="Center"
-              Canvas.ZIndex="1" IsHitTestVisible="True">
+              Canvas.ZIndex="1"
+              IsHitTestVisible="True">
             <StackPanel Orientation="Horizontal">
                 <Button Width="48" Height="39"
                         AccessKey="A"
@@ -75,17 +76,20 @@
                         FontSize="12"
                         Style="{StaticResource NavigationBackButtonNormalStyle}"/>
                 <Image Width="16" Height="16"
-                       Margin="12,0,0,0" HorizontalAlignment="Left"
+                       Margin="12,0,0,0"
+                       HorizontalAlignment="Left"
                        Source="/Assets/AppIcon/WindowIcon.ico"/>
                 <TextBlock x:Name="AppTitleBarText"
-                           Margin="12,0,0,0" VerticalAlignment="Center"
+                           Margin="12,0,0,0"
+                           VerticalAlignment="Center"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            Text="{x:Bind model:Data.AppDisplayName}"
                            TextWrapping="NoWrap"/>
             </StackPanel>
         </Grid>
         <Grid x:Name="ContentGrid"
-              Grid.Row="1" Grid.ColumnSpan="2">
+              Grid.Row="1"
+              Grid.ColumnSpan="2">
             <Grid.Background>
                 <ImageBrush x:Name="ContentGridBackground"
                             ImageSource="{x:Bind model:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"
@@ -103,14 +107,16 @@
                         CornerRadius="10">
                     <Canvas>
                         <Image x:Name="ControllerCover"
-                               HorizontalAlignment="Left" VerticalAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
                                Canvas.ZIndex="1"
                                Source="{x:Bind model:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"/>
                         <Grid x:Name="ControllerCoverGrid"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
                             <FontIcon x:Name="ControllerCoverFontIcon"
-                                      Canvas.ZIndex="0" FontSize="100"
+                                      Canvas.ZIndex="0"
+                                      FontSize="100"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xE8D6;"/>
                         </Grid>
@@ -119,7 +125,8 @@
                         <ui:AttachedDropShadow x:Name="DropShadow"
                                                BlurRadius="15"
                                                CastTo="{x:Bind ShadowTarget}"
-                                               CornerRadius="10" Opacity="0.2"
+                                               CornerRadius="10"
+                                               Opacity="0.2"
                                                Offset="20,20"/>
                     </ui:Effects.Shadow>
                 </Border>
@@ -129,7 +136,8 @@
                               VerticalScrollBarVisibility="Hidden">
                     <StackPanel>
                         <StackPanel Height="600"/>
-                        <ListView helper:ListViewExtensions.ItemCornerRadius="15" IsItemClickEnabled="True"
+                        <ListView helper:ListViewExtensions.ItemCornerRadius="15"
+                                  IsItemClickEnabled="True"
                                   ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
                                   ItemTemplate="{StaticResource LyricViewTemplate}"
                                   ItemsSource="{x:Bind model:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
