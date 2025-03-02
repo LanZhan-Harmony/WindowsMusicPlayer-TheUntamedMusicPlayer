@@ -183,8 +183,7 @@ public class BriefMusicInfo : IBriefMusicInfoBase
                 stream.Seek(0);
                 var bitmap = new BitmapImage
                 {
-                    DecodePixelWidth = 160,
-                    DecodePixelHeight = 160
+                    DecodePixelWidth = 160
                 };
                 await bitmap.SetSourceAsync(stream);
                 Cover = bitmap;
@@ -313,8 +312,7 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
                 stream.Seek(0, SeekOrigin.Begin);
                 Cover = new BitmapImage
                 {
-                    DecodePixelWidth = 400,
-                    DecodePixelHeight = 400
+                    DecodePixelWidth = 400
                 };
                 Cover.SetSource(stream.AsRandomAccessStream());
             }
