@@ -98,7 +98,8 @@
                         <Grid>
                             <Image x:Name="AlbumCover"
                                    Canvas.ZIndex="1"
-                                   Source="{x:Bind Cover}"/>
+                                   Source="{x:Bind Cover}"
+                                   Stretch="UniformToFill"/>
                             <Grid x:Name="NoAlbumCover"
                                   Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                                   Canvas.ZIndex="0">
@@ -404,7 +405,8 @@
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                Canvas.ZIndex="1"
-                               Source="{x:Bind Cover}"/>
+                               Source="{x:Bind Cover}"
+                               Stretch="UniformToFill"/>
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
