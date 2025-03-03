@@ -197,7 +197,8 @@
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                Canvas.ZIndex="1"
-                               Source="{x:Bind Cover}"/>
+                               Source="{x:Bind Cover}"
+                               Stretch="UniformToFill"/>
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
