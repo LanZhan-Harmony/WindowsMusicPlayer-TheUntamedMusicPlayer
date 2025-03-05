@@ -92,13 +92,13 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
         var (isOK2, albumResult) = albumTask.Result;
         var (isOK3, lyricResult) = lyricTask.Result;
         ID = info.ID;
-        Path = info.Path;
         Title = info.Title;
         Album = info.Album;
         AlbumID = info.AlbumID;
         ArtistsStr = info.ArtistsStr;
         DurationStr = info.DurationStr;
         YearStr = info.YearStr;
+        Path = (string)songUrlResult["data"]![0]!["url"]!; // 临时链接可能过期, 所以重新获取
         ItemType = (string)songUrlResult["data"]![0]!["type"]!;
         string[] albumArtists = [.. albumResult["album"]!["artists"]!
             .Select(t => (string)t["name"]!)
