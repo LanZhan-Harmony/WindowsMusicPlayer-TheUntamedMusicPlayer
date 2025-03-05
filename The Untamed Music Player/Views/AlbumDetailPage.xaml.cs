@@ -313,9 +313,9 @@ public sealed partial class AlbumDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
         {
-            if (info is BriefMusicInfo musicInfo)
+            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info);
+            if (music is not null)
             {
-                var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(musicInfo, 0);
                 var dialog = new PropertiesDialog(music)
                 {
                     XamlRoot = XamlRoot

@@ -270,15 +270,18 @@
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
                                Text="{x:Bind ViewModel.Album.Name}"
+                               TextTrimming="WordEllipsis"
                                TextWrapping="NoWrap"/>
                     <TextBlock x:Name="SubtitleText"
                                FontWeight="Normal"
                                Text="{x:Bind ViewModel.Album.ArtistsStr}"
+                               TextTrimming="WordEllipsis"
                                TextWrapping="NoWrap"/>
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="{x:Bind ViewModel.Album.GetDescriptionStr()}"
+                               TextTrimming="WordEllipsis"
                                TextWrapping="NoWrap"/>
 
                     <Grid x:Name="ButtonPanel">
