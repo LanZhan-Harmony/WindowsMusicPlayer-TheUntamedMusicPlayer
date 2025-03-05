@@ -247,7 +247,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     public async void OnlineSongsDownloadButton_Click(IBriefOnlineMusicInfo info)
     {
         Data.IsMusicDownloading = true;
-        var detailedInfo = (IDetailedOnlineMusicInfo)await MusicPlayer.CreateDetailedMusicInfoAsync(info, (byte)(MusicLibraryIndex + 1));
+        var detailedInfo = (IDetailedOnlineMusicInfo)await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info, (byte)(MusicLibraryIndex + 1));
         var title = detailedInfo.Title;
         var itemType = detailedInfo.ItemType;
         var location = await LoadSongDownloadLocationAsync();
