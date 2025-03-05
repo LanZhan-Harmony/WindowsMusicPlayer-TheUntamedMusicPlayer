@@ -313,12 +313,15 @@ public sealed partial class AlbumDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
         {
-            var music = await MusicPlayer.CreateDetailedMusicInfoAsync(info, Data.MusicPlayer.SourceMode);
-            var dialog = new PropertiesDialog(music)
+            if (info is BriefMusicInfo musicInfo)
             {
-                XamlRoot = XamlRoot
-            };
-            await dialog.ShowAsync();
+                var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(musicInfo, 0);
+                var dialog = new PropertiesDialog(music)
+                {
+                    XamlRoot = XamlRoot
+                };
+                await dialog.ShowAsync();
+            }
         }
     }
 

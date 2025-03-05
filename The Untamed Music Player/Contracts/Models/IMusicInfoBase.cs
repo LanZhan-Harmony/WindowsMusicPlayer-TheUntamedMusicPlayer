@@ -1,6 +1,8 @@
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
 public interface IBriefMusicInfoBase : ICloneable
@@ -104,5 +106,15 @@ public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
             return artistsStr;
         }
         return $"{artistsStr} • {album}";
+    }
+
+    static async Task<IDetailedMusicInfoBase> CreateDetailedMusicInfoAsync(IBriefMusicInfoBase info, byte sourceMode)
+    {
+        return sourceMode switch
+        {
+            0 => new DetailedMusicInfo(info.Path),
+            1 => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
+            _ => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
+        };
     }
 }

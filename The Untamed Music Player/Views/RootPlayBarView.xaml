@@ -9,7 +9,8 @@
       mc:Ignorable="d">
 
     <Grid Width="Auto" Height="Auto"
-          HorizontalAlignment="Stretch" VerticalAlignment="Center"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Center"
           KeyTipPlacementMode="Top">
 
         <Grid.RowDefinitions>
@@ -151,9 +152,11 @@
                     <Canvas>
                         <Image x:Name="ControllerCover"
                                Width="70" Height="70"
-                               HorizontalAlignment="Left" VerticalAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
                                Canvas.ZIndex="1"
-                               Source="{x:Bind model:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"/>
+                               Source="{x:Bind model:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"
+                               Stretch="UniformToFill"/>
                         <Grid Width="70" Height="70"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
@@ -170,11 +173,13 @@
                         <TextBlock Margin="10,0,0,4"
                                    FontSize="20" FontWeight="Medium"
                                    Text="{x:Bind model:Data.MusicPlayer.CurrentMusic.Title, Mode=OneWay}"
-                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"/>
                         <TextBlock Margin="10,0,0,0"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    Text="{x:Bind model:Data.MusicPlayer.CurrentMusic.ArtistAndAlbumStr, Mode=OneWay}"
-                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
                                    Visibility="{x:Bind GetArtistAndAlbumStrVisibility(model:Data.MusicPlayer.CurrentMusic), Mode=OneWay}"/>
                     </StackPanel>
                     <TextBlock Width="8" Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}"/>
@@ -390,7 +395,8 @@
                                 <MenuFlyoutItem.Template>
                                     <ControlTemplate>
                                         <ListView x:Name="SpeedListView"
-                                                  KeyTipPlacementMode="Left" Loaded="SpeedListView_Loaded"
+                                                  KeyTipPlacementMode="Left"
+                                                  Loaded="SpeedListView_Loaded"
                                                   SelectionChanged="SpeedListView_SelectionChanged">
                                             <ListViewItem Margin="0,2,0,1" AccessKey="G">
                                                 <ListViewItem.KeyboardAccelerators>
@@ -398,7 +404,8 @@
                                                 </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="0.25 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                    <TextBlock HorizontalAlignment="Right"
+                                                               VerticalAlignment="Center"
                                                                FontSize="12"
                                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                Text="Ctrl+Shift+G"/>
@@ -410,7 +417,8 @@
                                                 </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="0.5 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                    <TextBlock HorizontalAlignment="Right"
+                                                               VerticalAlignment="Center"
                                                                FontSize="12"
                                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                Text="Ctrl+Shift+H"/>
@@ -422,7 +430,8 @@
                                                 </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="1 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                    <TextBlock HorizontalAlignment="Right"
+                                                               VerticalAlignment="Center"
                                                                FontSize="12"
                                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                Text="Ctrl+Shift+J"/>
@@ -434,7 +443,8 @@
                                                 </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="1.5 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                    <TextBlock HorizontalAlignment="Right"
+                                                               VerticalAlignment="Center"
                                                                FontSize="12"
                                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                Text="Ctrl+Shift+K"/>
@@ -446,7 +456,8 @@
                                                 </ListViewItem.KeyboardAccelerators>
                                                 <Grid Width="125">
                                                     <TextBlock HorizontalAlignment="Left" Text="2 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                    <TextBlock HorizontalAlignment="Right"
+                                                               VerticalAlignment="Center"
                                                                FontSize="12"
                                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                Text="Ctrl+Shift+L"/>
