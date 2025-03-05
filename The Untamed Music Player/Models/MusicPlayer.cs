@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
-using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
