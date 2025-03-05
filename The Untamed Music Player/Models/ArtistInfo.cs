@@ -1,8 +1,9 @@
 using Microsoft.UI.Xaml.Media.Imaging;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Models;
-public class ArtistInfo
+public class ArtistInfo : IArtistInfoBase
 {
     public HashSet<string> Albums { get; set; } = [];
 
@@ -19,10 +20,7 @@ public class ArtistInfo
     /// <summary>
     /// 艺术家封面
     /// </summary>
-    public BitmapImage? Cover
-    {
-        get; set;
-    }
+    public BitmapImage? Cover { get; set; }
 
     /// <summary>
     /// 专辑封面来源歌曲的路径

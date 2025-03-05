@@ -13,7 +13,7 @@ public class BriefAlbumInfo(AlbumInfo albumInfo)
     public List<IBriefMusicInfoBase> SongList { get; set; } = [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
 }
 
-public class AlbumInfo
+public class AlbumInfo : IAlbumInfoBase
 {
     /// <summary>
     /// 专辑名
@@ -95,14 +95,8 @@ public class AlbumInfo
             CoverPath = briefmusicInfo.Path;
         }
         Artists = [.. Artists!.Concat(briefmusicInfo.Artists).Distinct()];
-        ArtistsStr = GetArtistsStr();
+        ArtistsStr = IAlbumInfoBase.GetArtistsStr(Artists);
     }
-
-    /// <summary>
-    /// 获取专辑艺术家字符串
-    /// </summary>
-    /// <returns></returns>
-    public string GetArtistsStr() => string.Join(", ", Artists!);
 
     public byte[] GetCoverBytes()
     {
