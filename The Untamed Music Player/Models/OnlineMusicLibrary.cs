@@ -372,7 +372,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         await Search();
     }
 
-    private static async Task<bool> IsInternetAvailableAsync()
+    public static async Task<bool> IsInternetAvailableAsync()
     {
         try
         {
