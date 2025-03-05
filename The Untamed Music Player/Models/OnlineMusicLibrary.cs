@@ -53,6 +53,12 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     public partial IBriefOnlineMusicInfoList OnlineMusicInfoList { get; set; } = null!;
 
     [ObservableProperty]
+    public partial IOnlineAlbumInfoList OnlineAlbumInfoList { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial IOnlineArtistInfoList OnlineArtistInfoList { get; set; } = null!;
+
+    [ObservableProperty]
     public partial List<SearchResult> SearchResultList { get; set; } = [];
 
     public async Task Search()
@@ -70,27 +76,25 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         IsSearchProgressRingActive = true;
         try
         {
-            if (PageIndex == 0)
+            switch (MusicLibraryIndex)
             {
-                switch (MusicLibraryIndex)
-                {
-                    case 0:
-                        var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
-                        OnlineMusicInfoList = cloudList;
-                        await CloudMusicSearchHelper.SearchSongsAsync(KeyWords, cloudList);
-                        break;
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                        // TODO: 其它 MusicLibraryIndex 分支实现
-                        break;
-                    default:
-                        // 默认行为或其它 MusicLibraryIndex 分支实现
-                        break;
-                }
+                case 0:
+                    var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
+                    OnlineMusicInfoList = cloudList;
+                    await CloudMusicSearchHelper.SearchAsync(KeyWords, cloudList);
+                    break;
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    // TODO: 其它 MusicLibraryIndex 分支实现
+                    break;
+                default:
+                    // 默认行为或其它 MusicLibraryIndex 分支实现
+                    break;
             }
+
             KeyWordsText = KeyWords;
             KeyWordsTextBlockVisibility = Visibility.Visible;
             ListViewOpacity = 1;
@@ -118,26 +122,23 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             IsSearchMoreProgressRingActive = true;
             try
             {
-                if (PageIndex == 0)
+                switch (MusicLibraryIndex)
                 {
-                    switch (MusicLibraryIndex)
-                    {
-                        case 0:
-                            var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
-                            OnlineMusicInfoList = cloudList;
-                            await CloudMusicSearchHelper.SearchMoreSongsAsync(cloudList);
-                            break;
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5:
-                            // TODO: 其它 MusicLibraryIndex 分支实现
-                            break;
-                        default:
-                            // 默认行为或其它 MusicLibraryIndex 分支实现
-                            break;
-                    }
+                    case 0:
+                        var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
+                        OnlineMusicInfoList = cloudList;
+                        await CloudMusicSearchHelper.SearchMoreAsync(cloudList);
+                        break;
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                        // TODO: 其它 MusicLibraryIndex 分支实现
+                        break;
+                    default:
+                        // 默认行为或其它 MusicLibraryIndex 分支实现
+                        break;
                 }
             }
             catch (Exception ex)
@@ -359,6 +360,11 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         {
             return;
         }
+    }
+
+    public void OnlineAlbumsAlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+
     }
 
     public async void RetryButton_Click(object sender, RoutedEventArgs e)

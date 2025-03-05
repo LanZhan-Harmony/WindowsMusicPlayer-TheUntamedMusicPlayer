@@ -11,10 +11,7 @@ public sealed partial class OnlineSongsPage : Page
 {
     private ScrollViewer? _scrollViewer;
 
-    public OnlineSongsViewModel ViewModel
-    {
-        get; set;
-    }
+    public OnlineSongsViewModel ViewModel { get; set; }
 
     public OnlineSongsPage()
     {
