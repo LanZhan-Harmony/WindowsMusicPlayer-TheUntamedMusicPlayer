@@ -117,4 +117,20 @@ public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
             _ => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
         };
     }
+
+    static async Task<IDetailedMusicInfoBase?> CreateDetailedMusicInfoAsync(IBriefMusicInfoBase info)
+    {
+        if (info is BriefMusicInfo)
+        {
+            return new DetailedMusicInfo(info.Path);
+        }
+        else if (info is CloudBriefOnlineMusicInfo cloudInfo)
+        {
+            return await CloudDetailedOnlineMusicInfo.CreateAsync(cloudInfo);
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

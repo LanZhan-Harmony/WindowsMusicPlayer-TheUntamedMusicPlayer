@@ -60,34 +60,36 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         KeyWordsTextBlockVisibility = Visibility.Collapsed;
         NetworkErrorVisibility = Visibility.Collapsed;
         ListViewOpacity = 0;
+
         if (!await IsInternetAvailableAsync())
         {
             NetworkErrorVisibility = Visibility.Visible;
             return;
         }
+
         IsSearchProgressRingActive = true;
         try
         {
             if (PageIndex == 0)
             {
-                if (MusicLibraryIndex == 0)
+                switch (MusicLibraryIndex)
                 {
-                    if (OnlineMusicInfoList is not CloudBriefOnlineMusicInfoList)
-                    {
-                        OnlineMusicInfoList = new CloudBriefOnlineMusicInfoList();
-                    }
-                    await OnlineMusicInfoList.SearchAsync(KeyWords);
+                    case 0:
+                        var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
+                        OnlineMusicInfoList = cloudList;
+                        await CloudMusicSearchHelper.SearchSongsAsync(KeyWords, cloudList);
+                        break;
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                        // TODO: 其它 MusicLibraryIndex 分支实现
+                        break;
+                    default:
+                        // 默认行为或其它 MusicLibraryIndex 分支实现
+                        break;
                 }
-                else if (MusicLibraryIndex == 1)
-                { }
-                else if (MusicLibraryIndex == 2)
-                { }
-                else if (MusicLibraryIndex == 3)
-                { }
-                else if (MusicLibraryIndex == 4)
-                { }
-                else
-                { }
             }
             KeyWordsText = KeyWords;
             KeyWordsTextBlockVisibility = Visibility.Visible;
@@ -103,6 +105,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         }
     }
 
+
     public async Task SearchMore()
     {
         if (!_isSearchingMore && !OnlineMusicInfoList.HasAllLoaded)
@@ -117,24 +120,24 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             {
                 if (PageIndex == 0)
                 {
-                    if (MusicLibraryIndex == 0)
+                    switch (MusicLibraryIndex)
                     {
-                        if (OnlineMusicInfoList is not CloudBriefOnlineMusicInfoList)
-                        {
-                            OnlineMusicInfoList = new CloudBriefOnlineMusicInfoList();
-                        }
-                        await OnlineMusicInfoList.SearchMoreAsync();
+                        case 0:
+                            var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
+                            OnlineMusicInfoList = cloudList;
+                            await CloudMusicSearchHelper.SearchMoreSongsAsync(cloudList);
+                            break;
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                            // TODO: 其它 MusicLibraryIndex 分支实现
+                            break;
+                        default:
+                            // 默认行为或其它 MusicLibraryIndex 分支实现
+                            break;
                     }
-                    else if (MusicLibraryIndex == 1)
-                    { }
-                    else if (MusicLibraryIndex == 2)
-                    { }
-                    else if (MusicLibraryIndex == 3)
-                    { }
-                    else if (MusicLibraryIndex == 4)
-                    { }
-                    else
-                    { }
                 }
             }
             catch (Exception ex)
@@ -153,54 +156,20 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     {
         if (!string.IsNullOrWhiteSpace(KeyWords))
         {
-            if (MusicLibraryIndex == 0)
+            switch (MusicLibraryIndex)
             {
-                if (OnlineMusicInfoList is not CloudBriefOnlineMusicInfoList)
-                {
-                    OnlineMusicInfoList = new CloudBriefOnlineMusicInfoList();
-                }
-                SearchResultList = await OnlineMusicInfoList.GetSearchResultAsync(KeyWords);
-            }
-            // 待修改
-            else if (MusicLibraryIndex == 1)
-            {
-                if (OnlineMusicInfoList is not CloudBriefOnlineMusicInfoList)
-                {
-                    OnlineMusicInfoList = new CloudBriefOnlineMusicInfoList();
-                }
-                SearchResultList = await OnlineMusicInfoList.GetSearchResultAsync(KeyWords);
-            }
-            else if (MusicLibraryIndex == 2)
-            {
-                if (OnlineMusicInfoList is not CloudBriefOnlineMusicInfoList)
-                {
-                    OnlineMusicInfoList = new CloudBriefOnlineMusicInfoList();
-                }
-                SearchResultList = await OnlineMusicInfoList.GetSearchResultAsync(KeyWords);
-            }
-            else if (MusicLibraryIndex == 3)
-            {
-                if (OnlineMusicInfoList is not CloudBriefOnlineMusicInfoList)
-                {
-                    OnlineMusicInfoList = new CloudBriefOnlineMusicInfoList();
-                }
-                SearchResultList = await OnlineMusicInfoList.GetSearchResultAsync(KeyWords);
-            }
-            else if (MusicLibraryIndex == 4)
-            {
-                if (OnlineMusicInfoList is not CloudBriefOnlineMusicInfoList)
-                {
-                    OnlineMusicInfoList = new CloudBriefOnlineMusicInfoList();
-                }
-                SearchResultList = await OnlineMusicInfoList.GetSearchResultAsync(KeyWords);
-            }
-            else
-            {
-                if (OnlineMusicInfoList is not CloudBriefOnlineMusicInfoList)
-                {
-                    OnlineMusicInfoList = new CloudBriefOnlineMusicInfoList();
-                }
-                SearchResultList = await OnlineMusicInfoList.GetSearchResultAsync(KeyWords);
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                default:
+                    // TODO: 其它 MusicLibraryIndex 分支实现
+                    var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
+                    OnlineMusicInfoList = cloudList;
+                    SearchResultList = await CloudMusicSearchHelper.GetSearchResultAsync(KeyWords);
+                    break;
             }
         }
         else
