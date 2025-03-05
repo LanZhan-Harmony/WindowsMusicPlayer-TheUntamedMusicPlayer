@@ -94,7 +94,7 @@ public sealed partial class OnlineSongsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
         {
-            var music = await MusicPlayer.CreateDetailedMusicInfoAsync(info, (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1));
+            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info, (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1));
             var dialog = new PropertiesDialog(music)
             {
                 XamlRoot = XamlRoot

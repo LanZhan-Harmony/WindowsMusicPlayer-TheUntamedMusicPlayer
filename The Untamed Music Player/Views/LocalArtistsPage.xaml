@@ -27,7 +27,8 @@
         <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="ICollectionViewGroup">
             <Grid Width="71">
                 <TextBlock Grid.Column="1"
-                           HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Center"
                            Style="{StaticResource SubtitleTextBlockStyle}"
                            Text="{x:Bind ((helper:GroupInfoList)Group).Key}"
                            TextAlignment="Center" TextTrimming="WordEllipsis"/>
@@ -35,7 +36,8 @@
         </DataTemplate>
         <DataTemplate x:Key="ArtistGridViewTemplate" x:DataType="model:ArtistInfo">
             <Grid Width="170" Height="226"
-                  Background="Transparent" PointerEntered="Grid_PointerEntered"
+                  Background="Transparent"
+                  PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
@@ -157,9 +159,11 @@
                     <Grid>
                         <Image x:Name="ControllerCover"
                                Width="160" Height="160"
-                               HorizontalAlignment="Left" VerticalAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
                                Canvas.ZIndex="1"
-                               Source="{x:Bind Cover}"/>
+                               Source="{x:Bind Cover}"
+                               Stretch="UniformToFill"/>
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
@@ -173,7 +177,8 @@
                            Margin="9,3,9,0" HorizontalAlignment="Center"
                            FontWeight="SemiBold"
                            Text="{x:Bind Name}"
-                           TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"/>
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="WrapWholeWords"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -247,7 +252,8 @@
         <SemanticZoom Grid.Row="1" Margin="0,26,0,0">
             <SemanticZoom.ZoomedInView>
                 <GridView x:Name="ArtistGridView"
-                          IsItemClickEnabled="True" ItemClick="ArtistGridView_ItemClick"
+                          IsItemClickEnabled="True"
+                          ItemClick="ArtistGridView_ItemClick"
                           ItemTemplate="{StaticResource ArtistGridViewTemplate}"
                           ItemsSource="{x:Bind GroupedArtistList.View, Mode=OneWay}"
                           Loaded="ArtistGridView_Loaded"
@@ -259,8 +265,10 @@
                 </GridView>
             </SemanticZoom.ZoomedInView>
             <SemanticZoom.ZoomedOutView>
-                <GridView HorizontalAlignment="Center" VerticalAlignment="Center"
-                          helper:ListViewExtensions.ItemCornerRadius="8" IsItemClickEnabled="True"
+                <GridView HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          helper:ListViewExtensions.ItemCornerRadius="8"
+                          IsItemClickEnabled="True"
                           ItemTemplate="{StaticResource ZoomedOutTemplate}"
                           ItemsSource="{x:Bind GroupedArtistList.View.CollectionGroups, Mode=OneWay}"
                           SelectionMode="None">

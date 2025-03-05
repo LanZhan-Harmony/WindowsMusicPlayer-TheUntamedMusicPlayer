@@ -59,9 +59,9 @@ public partial class AlbumDetailViewModel : ObservableRecipient
 
     public void ShowArtistButton_Click(IBriefMusicInfoBase info)
     {
-        if (Data.MusicPlayer.SourceMode == 0)
+        if (info is BriefMusicInfo musicInfo)
         {
-            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(((BriefMusicInfo)info).Artists[0]);
+            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(musicInfo.Artists[0]);
             if (artistInfo is not null)
             {
                 Data.SelectedArtist = artistInfo;

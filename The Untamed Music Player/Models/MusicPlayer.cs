@@ -242,7 +242,7 @@ public partial class MusicPlayer : ObservableRecipient
     public async void PlaySongByInfo(IBriefMusicInfoBase info)
     {
         Stop();
-        CurrentMusic = await CreateDetailedMusicInfoAsync(info, SourceMode);
+        CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info, SourceMode);
         _systemControls.IsPlayEnabled = true;
         _systemControls.IsPauseEnabled = true;
         PlayQueueIndex = info.PlayQueueIndex;
@@ -258,7 +258,7 @@ public partial class MusicPlayer : ObservableRecipient
     {
         Stop();
         var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
-        CurrentMusic = await CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
+        CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
         PlayQueueIndex = isLast ? 0 : index;
         _systemControls.IsPlayEnabled = true;
         _systemControls.IsPauseEnabled = true;
@@ -320,7 +320,7 @@ public partial class MusicPlayer : ObservableRecipient
             Stop();
             newIndex = PlayQueueIndex < _playQueueLength - 1 ? PlayQueueIndex + 1 : 0;
             var songToPlay = ShuffleMode ? ShuffledPlayQueue[newIndex] : PlayQueue[newIndex];
-            CurrentMusic = await CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
+            CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
             PlayQueueIndex = newIndex == 0 ? 0 : newIndex - 1;
             _systemControls.IsPauseEnabled = true;
             _systemControls.IsPlayEnabled = true;
@@ -665,7 +665,7 @@ public partial class MusicPlayer : ObservableRecipient
     {
         Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
         {
-            if (RepeatMode == 2)
+            if (RepeatMode == 2 || SourceMode != 0)
             {
                 Stop();
             }
@@ -893,16 +893,6 @@ public partial class MusicPlayer : ObservableRecipient
             Data.RootPlayBarViewModel.ButtonVisibility = PlayQueue.Any() ? Visibility.Visible : Visibility.Collapsed;
             Data.RootPlayBarViewModel.Availability = PlayQueue.Any();
         }
-    }
-
-    public static async Task<IDetailedMusicInfoBase> CreateDetailedMusicInfoAsync(IBriefMusicInfoBase info, byte sourceMode)
-    {
-        return sourceMode switch
-        {
-            0 => new DetailedMusicInfo(info.Path),
-            1 => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
-            _ => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
-        };
     }
 
     /// <summary>

@@ -57,9 +57,9 @@ public class ArtistDetailViewModel
 
     public void SongListViewShowAlbumButton_Click(IBriefMusicInfoBase info)
     {
-        if (Data.MusicPlayer.SourceMode == 0)
+        if (info is BriefMusicInfo musicInfo)
         {
-            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(((BriefMusicInfo)info).Album);
+            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(musicInfo.Album);
             if (albumInfo is not null)
             {
                 Data.SelectedAlbum = albumInfo;
