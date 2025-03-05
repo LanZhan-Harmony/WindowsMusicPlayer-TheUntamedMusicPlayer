@@ -9,7 +9,8 @@
       mc:Ignorable="d">
 
     <Grid Width="Auto" Height="Auto"
-          HorizontalAlignment="Stretch" VerticalAlignment="Center"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Center"
           KeyTipPlacementMode="Top">
 
         <Grid.RowDefinitions>
@@ -97,17 +98,15 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="0"
-                       Grid.Column="0"
+            <TextBlock Grid.Row="0" Grid.Column="0"
                        Margin="16,0,0,0"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        FontSize="12"
                        Text="{x:Bind GetCurrent(model:Data.MusicPlayer.CurrentPlayingTime), Mode=OneWay}"/>
             <Slider x:Name="ProgressSlider" x:Uid="PlayBar_Seek"
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Margin="25,0,5,0"
+                    Grid.Row="0" Grid.Column="1"
+                    Margin="23,0,23,0"
                     VerticalAlignment="Center"
                     AccessKey="S"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
@@ -116,16 +115,14 @@
                     Orientation="Horizontal"
                     Visibility="{x:Bind GetSliderVisibility(model:Data.MusicPlayer.PlayState), Mode=OneWay}"
                     Value="{x:Bind model:Data.MusicPlayer.CurrentPosition, Mode=OneWay}"/>
-            <ProgressBar Grid.Row="0"
-                         Grid.Column="1"
-                         Margin="25,0,5,0"
+            <ProgressBar Grid.Row="0" Grid.Column="1"
+                         Margin="23,0,23,0"
                          IsIndeterminate="True"
                          ShowError="False"
                          ShowPaused="False"
                          Visibility="{x:Bind GetProgressVisibility(model:Data.MusicPlayer.PlayState), Mode=OneWay}"/>
-            <TextBlock Grid.Row="0"
-                       Grid.Column="2"
-                       Margin="16,0,16,0"
+            <TextBlock Grid.Row="0" Grid.Column="2"
+                       Margin="0,0,16,0"
                        HorizontalAlignment="Right"
                        VerticalAlignment="Center"
                        FontSize="12"
@@ -134,10 +131,8 @@
 
         <!--  歌曲信息  -->
         <Button x:Uid="PlayBar_NowPlaying"
-                Grid.Row="1"
-                Grid.Column="0"
-                Height="80"
-                MinWidth="162"
+                Grid.Row="1" Grid.Column="0"
+                Height="80" MinWidth="162"
                 Margin="4,0,0,4"
                 HorizontalAlignment="Left"
                 AccessKey="Z"
@@ -156,8 +151,7 @@
                 </StackPanel.ChildrenTransitions>
                 <Border x:Name="CoverBorder"
                         Width="70" Height="70"
-                        Margin="4,0,0,0"
-                        Padding="0"
+                        Margin="4,0,0,0" Padding="0"
                         HorizontalAlignment="Left"
                         CornerRadius="3"
                         Visibility="{x:Bind GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}">
@@ -305,8 +299,7 @@
         </StackPanel>
 
         <!--  其他控制  -->
-        <StackPanel Grid.Row="1"
-                    Grid.Column="4"
+        <StackPanel Grid.Row="1" Grid.Column="4"
                     Margin="0,0,4,0"
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
