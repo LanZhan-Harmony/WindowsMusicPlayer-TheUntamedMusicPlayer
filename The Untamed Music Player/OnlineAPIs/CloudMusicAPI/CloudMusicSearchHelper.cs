@@ -7,7 +7,7 @@ public class CloudMusicSearchHelper
 {
     public static NeteaseCloudMusicApi Api { get; set; } = new();
 
-    public static async Task SearchSongsAsync(string keyWords, CloudBriefOnlineMusicInfoList list)
+    public static async Task SearchAsync(string keyWords, CloudBriefOnlineMusicInfoList list)
     {
         list.Page = 0;
         list.ListCount = 0;
@@ -41,7 +41,7 @@ public class CloudMusicSearchHelper
         }
     }
 
-    public static async Task SearchMoreSongsAsync(CloudBriefOnlineMusicInfoList list)
+    public static async Task SearchMoreAsync(CloudBriefOnlineMusicInfoList list)
     {
         var (isOk, result) = await Api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
         {

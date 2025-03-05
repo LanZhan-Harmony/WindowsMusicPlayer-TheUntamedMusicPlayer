@@ -6,7 +6,6 @@ public interface IAlbumInfoBase
     string Name { get; set; }
     BitmapImage? Cover { get; set; }
     string? CoverPath { get; set; }
-    string[] Artists { get; set; }
     string ArtistsStr { get; set; }
     int TotalNum { get; set; }
     TimeSpan TotalDuration { get; set; }
