@@ -37,7 +37,6 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
             }
             else
             {
-                info.Path = path;
                 info.Title = (string)jInfo["name"]!;
                 info.Album = (string)jInfo["album"]!["name"]!;
                 info.AlbumID = (long)jInfo["album"]!["id"]!;
@@ -79,53 +78,11 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
 
     public CloudDetailedOnlineMusicInfo() { }
 
-    public CloudDetailedOnlineMusicInfo(IBriefOnlineMusicInfo info)
-    {
-        var api = new NeteaseCloudMusicApi();
-        var songUrlTask = api.RequestAsync(CloudMusicApiProviders.SongUrl, new Dictionary<string, string> { { "id", $"{info.ID}" } });
-        var albumTask = api.RequestAsync(CloudMusicApiProviders.Album, new Dictionary<string, string> { { "id", $"{info.AlbumID}" } });
-        var lyricTask = api.RequestAsync(CloudMusicApiProviders.Lyric, new Dictionary<string, string> { { "id", $"{info.ID}" } });
-        songUrlTask.Wait();
-        albumTask.Wait();
-        lyricTask.Wait();
-        var (isOK1, songUrlResult) = songUrlTask.Result;
-        var (isOK2, albumResult) = albumTask.Result;
-        var (isOK3, lyricResult) = lyricTask.Result;
-        ID = info.ID;
-        Title = info.Title;
-        Album = info.Album;
-        AlbumID = info.AlbumID;
-        ArtistsStr = info.ArtistsStr;
-        DurationStr = info.DurationStr;
-        YearStr = info.YearStr;
-        Path = (string)songUrlResult["data"]![0]!["url"]!; // 临时链接可能过期, 所以重新获取
-        ItemType = (string)songUrlResult["data"]![0]!["type"]!;
-        string[] albumArtists = [.. albumResult["album"]!["artists"]!
-            .Select(t => (string)t["name"]!)
-            .Distinct()];
-        AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr(albumArtists);
-        ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(Album, ArtistsStr);
-        BitRate = $"{((int)songUrlResult["data"]![0]!["br"]!) / 1000} kbps";
-        CoverUrl = (string)albumResult["album"]!["picUrl"]!;
-        if (!string.IsNullOrEmpty(CoverUrl))
-        {
-            using var httpClient = new HttpClient();
-            var imageBytes = httpClient.GetByteArrayAsync(CoverUrl).Result;
-            using var stream = new MemoryStream(imageBytes);
-            var bitmap = new BitmapImage();
-            bitmap.SetSourceAsync(stream.AsRandomAccessStream()).AsTask().Wait();
-            Cover = bitmap;
-        }
-        Lyric = (string)lyricResult["lrc"]!["lyric"]!;
-        IsAvailable = true;
-    }
-
     public static async Task<CloudDetailedOnlineMusicInfo> CreateAsync(IBriefOnlineMusicInfo info)
     {
         var detailedInfo = new CloudDetailedOnlineMusicInfo
         {
             ID = info.ID,
-            Path = info.Path,
             Title = info.Title,
             Album = info.Album,
             AlbumID = info.AlbumID,
@@ -152,6 +109,7 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
                 var coverBuffer = await httpClient.GetByteArrayAsync(detailedInfo.CoverUrl);
                 coverTask = LoadCoverAsync(coverBuffer, detailedInfo);
             }
+            detailedInfo.Path = (string)songUrlResult["data"]![0]!["url"]!; // 临时链接可能过期, 所以重新获取
             detailedInfo.ItemType = $".{(string)songUrlResult["data"]![0]!["type"]!}";
             string[] albumArtists = [.. albumResult["album"]!["artists"]!
                     .Select(t => (string)t["name"]!)

@@ -213,7 +213,7 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
 
-        if (currentMusic is not null && Path == currentMusic.Path)
+        if (currentMusic is not null && !currentMusic.IsOnline && Path == ((BriefMusicInfo)currentMusic).Path)
         {
             var highlightColor = isDarkTheme
                 ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
