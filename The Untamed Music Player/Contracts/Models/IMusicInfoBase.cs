@@ -45,21 +45,29 @@ public interface IBriefMusicInfoBase : ICloneable
     SolidColorBrush GetTextForeground(IDetailedMusicInfoBase? currentMusic, bool isDarkTheme)
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
+        var highlightColor = isDarkTheme
+            ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
+            : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
 
-        if (currentMusic is not null && Path == currentMusic.Path)
+        if (currentMusic is not null &&
+            (currentMusic.IsOnline
+            ? ((IBriefOnlineMusicInfo)this).ID == ((IDetailedOnlineMusicInfo)currentMusic).ID
+            : Path == currentMusic.Path))
         {
-            var highlightColor = isDarkTheme
-                ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
-                : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
             return new SolidColorBrush(highlightColor);
         }
         return new SolidColorBrush(defaultColor);
     }
 
+
     SolidColorBrush GetTextForeground(IDetailedMusicInfoBase? currentMusic, bool isDarkTheme, int playQueueIndex)
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
-        if (currentMusic is not null && Path == currentMusic.Path && PlayQueueIndex == playQueueIndex)
+        if (currentMusic is not null &&
+            (currentMusic.IsOnline
+            ? ((IBriefOnlineMusicInfo)this).ID == ((IDetailedOnlineMusicInfo)currentMusic).ID
+            : Path == currentMusic.Path)
+            && PlayQueueIndex == playQueueIndex)
         {
             var highlightColor = isDarkTheme
                 ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
