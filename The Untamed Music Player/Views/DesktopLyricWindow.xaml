@@ -25,11 +25,12 @@
                 Background="Black" CornerRadius="30">
             <labs:MarqueeText x:Name="LyricContent"
                               Width="{x:Bind GetTextBlockWidth(model:Data.MusicPlayer.CurrentLyricContent), Mode=OneWay}"
-                              Height="35"
                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                               Behavior="Bouncing" Direction="Left"
                               FontFamily="{x:Bind model:Data.SelectedFont}"
                               FontSize="32" Foreground="#FDFDFD"
+                              Loaded="LyricContent_Loaded"
                               SizeChanged="LyricContentTextBlock_SizeChanged"
                               Text="{x:Bind model:Data.MusicPlayer.CurrentLyricContent, Mode=OneWay}"/>
         </Border>
