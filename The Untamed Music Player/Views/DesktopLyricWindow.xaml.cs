@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using CommunityToolkit.Labs.WinUI.MarqueeTextRns;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -133,6 +134,18 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         }
     }
 
+    private void LyricContent_Loaded(object sender, RoutedEventArgs e)
+    {
+        var textBlock = new TextBlock
+        {
+            Text = "TEST测试",
+            FontSize = 32,
+            FontFamily = Data.SelectedFont
+        };
+        textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        (sender as MarqueeText)!.Height = textBlock.DesiredSize.Height;
+    }
+
     private double GetTextBlockWidth(string currentLyricContent)
     {
         LyricContent.StopMarquee();
@@ -142,7 +155,17 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         }
         _measureTextBlock.Text = currentLyricContent;
         _measureTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        return Math.Min(_measureTextBlock.DesiredSize.Width, 700);
+        var width = _measureTextBlock.DesiredSize.Width;
+        if (width > 700)
+        {
+            // 在UI线程上延迟0.5秒后调用 StartMarquee
+            Task.Delay(500).ContinueWith(_ =>
+             {
+                 // 确保在UI线程上下文中执行
+                 DispatcherQueue.TryEnqueue(() => LyricContent.StartMarquee());
+             });
+        }
+        return Math.Min(width, 700);
     }
 
     private void LyricContentTextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
