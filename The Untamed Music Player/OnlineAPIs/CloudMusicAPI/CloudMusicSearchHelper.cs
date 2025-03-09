@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using The_Untamed_Music_Player.Models;
 
@@ -77,7 +78,7 @@ public class CloudMusicSearchHelper
             {
                 try
                 {
-                    var info = await CloudBriefOnlineMusicInfo.CreateAsync((JsonObject)songs[i]!, Api);
+                    var info = await CloudBriefOnlineMusicInfo.CreateAsync(songs[i]!, Api);
                     infos[i] = info;
                 }
                 catch (Exception ex)
@@ -109,16 +110,16 @@ public class CloudMusicSearchHelper
             else
             {
                 var songs = result["result"]?["songs"] is JsonArray songsArray
-                ? songsArray.Select(t => (string)t!["name"]!).Distinct()
+                ? songsArray.Select(node => JsonDocument.Parse(node!.ToJsonString()).RootElement.GetProperty("name").GetString()!).Distinct().ToList()
                 : [];
                 var albums = result["result"]?["albums"] is JsonArray albumsArray
-                ? albumsArray.Select(t => (string)t!["name"]!).Distinct()
+                ? albumsArray.Select(node => JsonDocument.Parse(node!.ToJsonString()).RootElement.GetProperty("name").GetString()!).Distinct().ToList()
                 : [];
                 var artists = result["result"]?["artists"] is JsonArray artistsArray
-                ? artistsArray.Select(t => (string)t!["name"]!).Distinct()
+                ? artistsArray.Select(node => JsonDocument.Parse(node!.ToJsonString()).RootElement.GetProperty("name").GetString()!).Distinct().ToList()
                 : [];
                 var playlists = result["result"]?["playlists"] is JsonArray playlistsArray
-                ? playlistsArray.Select(t => (string)t!["name"]!).Distinct()
+                ? playlistsArray.Select(node => JsonDocument.Parse(node!.ToJsonString()).RootElement.GetProperty("name").GetString()!).Distinct().ToList()
                 : [];
                 AddResults(songs, 5, "\uE8D6", list);
                 AddResults(albums, 3, "\uE93C", list);
@@ -129,7 +130,7 @@ public class CloudMusicSearchHelper
         return list;
     }
 
-    private static void AddResults(IEnumerable<string> items, int limit, string icon, List<SearchResult> list)
+    private static void AddResults(List<string> items, int limit, string icon, List<SearchResult> list)
     {
         foreach (var item in items.Take(limit))
         {
