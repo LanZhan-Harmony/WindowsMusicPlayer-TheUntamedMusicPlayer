@@ -43,12 +43,6 @@ public partial class MusicPlayer : ObservableRecipient
     private readonly SystemMediaTransportControlsTimelineProperties _timelineProperties = new();
 
     /// <summary>
-    /// 线程计时器
-    /// </summary>
-    private ThreadPoolTimer? _positionUpdateTimer250ms;
-    private ThreadPoolTimer? _positionUpdateTimer2000ms;
-
-    /// <summary>
     /// 线程锁开启状态, true为开启, false为关闭
     /// </summary>
     private bool _lockable = false;
@@ -75,6 +69,12 @@ public partial class MusicPlayer : ObservableRecipient
             Player.PlaybackSession.PlaybackRate = value;
         }
     } = 1;
+
+    /// <summary>
+    /// 线程计时器
+    /// </summary>
+    public ThreadPoolTimer? PositionUpdateTimer250ms;
+    public ThreadPoolTimer? PositionUpdateTimer2000ms;
 
     /// <summary>
     /// 播放队列集合
@@ -412,8 +412,8 @@ public partial class MusicPlayer : ObservableRecipient
             _displayUpdater.MusicProperties.Artist = CurrentMusic.ArtistsStr == "未知艺术家" ? "" : CurrentMusic.ArtistsStr;
             _timelineProperties.MaxSeekTime = Player.PlaybackSession.NaturalDuration;
             _timelineProperties.EndTime = Player.PlaybackSession.NaturalDuration;
-            _positionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler250ms, TimeSpan.FromMilliseconds(250));
-            _positionUpdateTimer2000ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler2000ms, TimeSpan.FromMilliseconds(2000));
+            PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler250ms, TimeSpan.FromMilliseconds(250));
+            PositionUpdateTimer2000ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler2000ms, TimeSpan.FromMilliseconds(2000));
         }
         catch (Exception ex)
         {
@@ -751,10 +751,10 @@ public partial class MusicPlayer : ObservableRecipient
         CurrentPosition = 0;
         CurrentLyricIndex = 0;
         CurrentLyricContent = "";
-        _positionUpdateTimer250ms?.Cancel();
-        _positionUpdateTimer2000ms?.Cancel();
-        _positionUpdateTimer250ms = null;
-        _positionUpdateTimer2000ms = null;
+        PositionUpdateTimer250ms?.Cancel();
+        PositionUpdateTimer2000ms?.Cancel();
+        PositionUpdateTimer250ms = null;
+        PositionUpdateTimer2000ms = null;
     }
 
     /// <summary>
