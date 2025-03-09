@@ -2,7 +2,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
 using BigInteger = The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Numerics.BigInteger;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
@@ -22,7 +22,7 @@ internal static class crypto
         string text;
         byte[] secretKey;
 
-        text = JsonConvert.SerializeObject(@object);
+        text = JsonSerializer.Serialize(@object);
         secretKey = new Random().RandomBytes(16);
         secretKey = secretKey.Select(n => (byte)base62[n % 62]).ToArray();
         return new Dictionary<string, string> {
@@ -35,7 +35,7 @@ internal static class crypto
     {
         string text;
 
-        text = JsonConvert.SerializeObject(@object);
+        text = JsonSerializer.Serialize(@object);
         return new Dictionary<string, string> {
             { "eparams", aesEncrypt(text.ToByteArrayUtf8(), CipherMode.ECB, linuxapiKey, null).ToHexStringUpper() }
         };
@@ -48,7 +48,7 @@ internal static class crypto
         string digest;
         string data;
 
-        text = JsonConvert.SerializeObject(@object);
+        text = JsonSerializer.Serialize(@object);
         message = $"nobody{url}use{text}md5forencrypt";
         digest = message.ToByteArrayUtf8().ComputeMd5().ToHexStringLower();
         data = $"{url}-36cd479b6b5-{text}-36cd479b6b5-{digest}";

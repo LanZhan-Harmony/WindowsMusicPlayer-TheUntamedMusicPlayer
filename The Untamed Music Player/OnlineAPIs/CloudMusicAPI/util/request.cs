@@ -3,9 +3,9 @@
 using System.IO.Compression;
 using System.Net;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
@@ -38,7 +38,7 @@ internal static partial class request
         };
     }
 
-    public static async Task<(bool, JObject)> createRequest(HttpClient client, HttpMethod method, string url, IEnumerable<KeyValuePair<string, string>> data_, options options)
+    public static async Task<(bool, JsonObject)> createRequest(HttpClient client, HttpMethod method, string url, IEnumerable<KeyValuePair<string, string>> data_, options options)
     {
         ArgumentNullException.ThrowIfNull(client);
 
@@ -52,7 +52,7 @@ internal static partial class request
 
         Dictionary<string, string> headers;
         Dictionary<string, string> data;
-        JObject answer;
+        JsonObject answer;
         HttpResponseMessage response;
 
         headers = new Dictionary<string, string>
@@ -133,13 +133,13 @@ internal static partial class request
                     }
 
                     headers["Cookie"] = string.Join("; ", header.Select(t => Uri.EscapeDataString(t.Key) + "=" + Uri.EscapeDataString(t.Value)));
-                    data["header"] = JsonConvert.SerializeObject(header);
+                    data["header"] = JsonSerializer.Serialize(header);
                     data = crypto.eapi(options.url, data);
                     url = MyRegex1().Replace(url, "eapi");
                     break;
                 }
         }
-        answer = new JObject {
+        answer = new JsonObject {
             { "status", 500 },
             { "body", null },
             { "cookie", null }
@@ -148,7 +148,7 @@ internal static partial class request
         try
         {
             IEnumerable<string> temp1;
-            JValue temp2;
+            JsonValue temp2;
             int temp3;
 
             response = await client.SendAsync(method, url, null, headers, data.ToQueryString(), "application/x-www-form-urlencoded");
@@ -162,7 +162,12 @@ internal static partial class request
                 temp1 = [];
             }
 
-            answer["cookie"] = new JArray(temp1.Select(x => MyRegex2().Replace(x, string.Empty)).Where(x => !string.IsNullOrEmpty(x)).ToList());
+            var cookieArray = new JsonArray();
+            temp1.Select(x => MyRegex2().Replace(x, string.Empty))
+                 .Where(x => !string.IsNullOrEmpty(x))
+                 .ToList()
+                 .ForEach(x => cookieArray.Add(x));
+            answer["cookie"] = cookieArray;
             if (options.crypto == "eapi")
             {
                 DeflateStream stream;
@@ -184,20 +189,20 @@ internal static partial class request
                 }
                 try
                 {
-                    answer["body"] = JObject.Parse(Encoding.UTF8.GetString(crypto.decrypt(buffer)));
-                    temp2 = (JValue)answer["body"]["code"];
+                    answer["body"] = JsonObject.Parse(Encoding.UTF8.GetString(crypto.decrypt(buffer)));
+                    temp2 = (JsonValue)answer["body"]["code"];
                     answer["status"] = temp2 is null ? (int)response.StatusCode : (int)temp2;
                 }
                 catch
                 {
-                    answer["body"] = JObject.Parse(Encoding.UTF8.GetString(buffer));
+                    answer["body"] = JsonObject.Parse(Encoding.UTF8.GetString(buffer));
                     answer["status"] = (int)response.StatusCode;
                 }
             }
             else
             {
-                answer["body"] = JObject.Parse(await response.Content.ReadAsStringAsync());
-                temp2 = (JValue)answer["body"]["code"];
+                answer["body"] = JsonObject.Parse(await response.Content.ReadAsStringAsync());
+                temp2 = (JsonValue)answer["body"]["code"];
                 answer["status"] = temp2 is null ? (int)response.StatusCode : (int)temp2;
                 if (temp2 is not null && (int)temp2 == 502)
                 {
@@ -212,7 +217,7 @@ internal static partial class request
         catch (Exception ex)
         {
             answer["status"] = 502;
-            answer["body"] = new JObject {
+            answer["body"] = new JsonObject {
                 { "code", 502 },
                 { "msg", ex.ToFullString() }
             };

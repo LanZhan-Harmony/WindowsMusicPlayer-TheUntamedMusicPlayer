@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using Newtonsoft.Json.Linq;
+using System.Diagnostics;
+using System.Text.Json.Nodes;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
@@ -32,7 +32,7 @@ public class CloudMusicSearchHelper
                 list.HasAllLoaded = true;
                 return;
             }
-            await ProcessSongsAsync(result["result"]!["songs"]!, list);
+            await ProcessSongsAsync((JsonArray)result["result"]!["songs"]!, list);
             list.Page = 1;
         }
         catch
@@ -55,7 +55,7 @@ public class CloudMusicSearchHelper
         }
         try
         {
-            await ProcessSongsAsync(result["result"]!["songs"]!, list);
+            await ProcessSongsAsync((JsonArray)result["result"]!["songs"]!, list);
             list.Page++;
         }
         catch
@@ -64,9 +64,9 @@ public class CloudMusicSearchHelper
         }
     }
 
-    private static async Task ProcessSongsAsync(JToken songs, CloudBriefOnlineMusicInfoList list)
+    private static async Task ProcessSongsAsync(JsonArray songs, CloudBriefOnlineMusicInfoList list)
     {
-        var actualCount = songs.Count();
+        var actualCount = songs.Count;
         var infos = new CloudBriefOnlineMusicInfo[actualCount];
 
         // 使用 Parallel.ForEachAsync 限制并发数为 8
@@ -77,7 +77,7 @@ public class CloudMusicSearchHelper
             {
                 try
                 {
-                    var info = await CloudBriefOnlineMusicInfo.CreateAsync(songs[i]!, Api);
+                    var info = await CloudBriefOnlineMusicInfo.CreateAsync((JsonObject)songs[i]!, Api);
                     infos[i] = info;
                 }
                 catch (Exception ex)
@@ -108,18 +108,18 @@ public class CloudMusicSearchHelper
             }
             else
             {
-                var songs = result["result"]!["songs"]?
-                    .Select(t => (string)t["name"]!)
-                    .Distinct() ?? [];
-                var albums = result["result"]!["albums"]?
-                    .Select(t => (string)t["name"]!)
-                    .Distinct() ?? [];
-                var artists = result["result"]!["artists"]?
-                    .Select(t => (string)t["name"]!)
-                    .Distinct() ?? [];
-                var playlists = result["result"]!["playlists"]?
-                    .Select(t => (string)t["name"]!)
-                    .Distinct() ?? [];
+                var songs = result["result"]?["songs"] is JsonArray songsArray
+                ? songsArray.Select(t => (string)t!["name"]!).Distinct()
+                : [];
+                var albums = result["result"]?["albums"] is JsonArray albumsArray
+                ? albumsArray.Select(t => (string)t!["name"]!).Distinct()
+                : [];
+                var artists = result["result"]?["artists"] is JsonArray artistsArray
+                ? artistsArray.Select(t => (string)t!["name"]!).Distinct()
+                : [];
+                var playlists = result["result"]?["playlists"] is JsonArray playlistsArray
+                ? playlistsArray.Select(t => (string)t!["name"]!).Distinct()
+                : [];
                 AddResults(songs, 5, "\uE8D6", list);
                 AddResults(albums, 3, "\uE93C", list);
                 AddResults(artists, 3, "\uE77B", list);

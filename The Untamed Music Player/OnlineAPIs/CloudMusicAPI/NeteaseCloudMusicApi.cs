@@ -2,9 +2,8 @@
 
 using System.Net;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
 
@@ -60,7 +59,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     /// <param name="queries">参数</param>
     /// <param name="result">请求结果</param>
     /// <returns></returns>
-    public bool Request(NeteaseCloudMusicApiProvider provider, Dictionary<string, string> queries, out JObject result)
+    public bool Request(NeteaseCloudMusicApiProvider provider, Dictionary<string, string> queries, out JsonObject result)
     {
         bool isOk;
 
@@ -74,7 +73,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     /// <param name="provider">API提供者</param>
     /// <param name="queries">参数</param>
     /// <returns></returns>
-    public Task<(bool, JObject)> RequestAsync(NeteaseCloudMusicApiProvider provider, Dictionary<string, string> queries)
+    public Task<(bool, JsonObject)> RequestAsync(NeteaseCloudMusicApiProvider provider, Dictionary<string, string> queries)
     {
         ArgumentNullException.ThrowIfNull(provider);
 
@@ -100,7 +99,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         return RequestAsync(provider.Method, provider.Url(queries), provider.Data(queries), provider.Options);
     }
 
-    private async Task<(bool, JObject)> RequestAsync(HttpMethod method, string url, IEnumerable<KeyValuePair<string, string>> data, options options)
+    private async Task<(bool, JsonObject)> RequestAsync(HttpMethod method, string url, IEnumerable<KeyValuePair<string, string>> data, options options)
     {
         ArgumentNullException.ThrowIfNull(method);
 
@@ -111,10 +110,10 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         ArgumentNullException.ThrowIfNull(options);
 
         bool isOk;
-        JObject json;
+        JsonObject json;
 
         (isOk, json) = await request.createRequest(_client, method, url, data, options);
-        json = (JObject)json["body"];
+        json = (JsonObject)json["body"];
         if (!isOk && (int?)json["code"] == 301)
         {
             json["msg"] = "需要登录";
@@ -123,12 +122,12 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         return (isOk, json);
     }
 
-    private async Task<(bool, JObject)> HandleCheckMusicAsync(Dictionary<string, string> queries)
+    private async Task<(bool, JsonObject)> HandleCheckMusicAsync(Dictionary<string, string> queries)
     {
         NeteaseCloudMusicApiProvider provider;
         bool isOk;
-        JObject json;
-        JObject result;
+        JsonObject json;
+        JsonObject result;
         bool playable;
 
         provider = CloudMusicApiProviders.CheckMusic;
@@ -138,19 +137,22 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
             return (false, null);
         }
 
-        playable = (int?)json["code"] == 200 && (int?)json.SelectToken("data[0].code") == 200;
-        result = new JObject {
+        playable = (int?)json["code"] == 200 &&
+           json["data"] is JsonArray dataArray &&
+           dataArray.Count > 0 &&
+           (int?)dataArray[0]?["code"] == 200;
+        result = new JsonObject {
                 { "success", playable },
                 { "message", playable ? "ok" : "亲爱的,暂无版权"}
             };
         return (true, result);
     }
 
-    private async Task<(bool, JObject)> HandleLoginAsync(Dictionary<string, string> queries)
+    private async Task<(bool, JsonObject)> HandleLoginAsync(Dictionary<string, string> queries)
     {
         NeteaseCloudMusicApiProvider provider;
         bool isOk;
-        JObject json;
+        JsonObject json;
 
         provider = CloudMusicApiProviders.Login;
         (isOk, json) = await RequestAsync(provider.Method, provider.Url(queries), provider.Data(queries), provider.Options);
@@ -161,7 +163,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
 
         if ((int?)json["code"] == 502)
         {
-            json = new JObject {
+            json = new JsonObject {
                     { "msg", "账号或密码错误" },
                     { "code", 502 },
                     { "message", "账号或密码错误" }
@@ -171,7 +173,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         return (isOk, json);
     }
 
-    private async Task<(bool, JObject)> HandleLoginStatusAsync()
+    private async Task<(bool, JsonObject)> HandleLoginStatusAsync()
     {
         HttpResponseMessage response;
 
@@ -183,7 +185,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
 
             string s;
             int index;
-            JObject json;
+            JsonObject json;
 
             response = await _client.GetAsync("https://music.163.com");
             s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
@@ -193,13 +195,13 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
                 goto errorExit;
             }
 
-            json = new JObject {
+            json = new JsonObject {
                     { "code", 200 }
                 };
-            using (var reader = new StringReader(s[(index + GUSER.Length)..]))
-            using (JsonReader jsonReader = new JsonTextReader(reader))
+            var profileJson = JsonNode.Parse(s[(index + GUSER.Length)..]);
+            if (profileJson != null)
             {
-                json.Add("profile", JObject.Load(jsonReader));
+                json.Add("profile", profileJson.AsObject());
             }
 
             index = s.IndexOf(GBINDS, StringComparison.Ordinal);
@@ -208,10 +210,10 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
                 goto errorExit;
             }
 
-            using (var reader = new StringReader(s[(index + GBINDS.Length)..]))
-            using (JsonReader jsonReader = new JsonTextReader(reader))
+            var bindingsJson = JsonNode.Parse(s[(index + GBINDS.Length)..]);
+            if (bindingsJson != null)
             {
-                json.Add("bindings", JArray.Load(jsonReader));
+                json.Add("bindings", bindingsJson.AsArray());
             }
 
             return (true, json);
@@ -225,12 +227,12 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
             response?.Dispose();
         }
     errorExit:
-        return (false, new JObject {
+        return (false, new JsonObject {
                 { "code", 301 }
             });
     }
 
-    private async Task<(bool, JObject)> HandleRelatedPlaylistAsync(Dictionary<string, string> queries)
+    private async Task<(bool, JsonObject)> HandleRelatedPlaylistAsync(Dictionary<string, string> queries)
     {
         HttpResponseMessage response;
 
@@ -239,28 +241,30 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         {
             string s;
             MatchCollection matchs;
-            JArray playlists;
+            JsonArray playlists;
 
             response = await _client.SendAsync(HttpMethod.Get, "https://music.163.com/playlist", new QueryCollection { { "id", queries["id"] } }, new QueryCollection { { "User-Agent", request.chooseUserAgent("pc") } });
             s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
             matchs = MyRegex().Matches(s);
-            playlists = new JArray(matchs.Cast<Match>().Select(match => new JObject {
-                    { "creator", new JObject {
-                        { "userId", match.Groups[4].Value["/user/home?id=".Length..] },
-                        { "nickname", match.Groups[5].Value }
-                    } },
-                    { "coverImgUrl", match.Groups[1].Value[..^"?param=50y50".Length] },
-                    { "name", match.Groups[3].Value },
-                    { "id", match.Groups[2].Value["/playlist?id=".Length..] },
-                }));
-            return (true, new JObject {
+            playlists = new JsonArray();
+            matchs.Cast<Match>().Select(match => new JsonObject {
+                { "creator", new JsonObject {
+                    { "userId", match.Groups[4].Value["/user/home?id=".Length..] },
+                    { "nickname", match.Groups[5].Value }
+                } },
+                { "coverImgUrl", match.Groups[1].Value[..^"?param=50y50".Length] },
+                { "name", match.Groups[3].Value },
+                { "id", match.Groups[2].Value["/playlist?id=".Length..] },
+            }).ToList().ForEach(obj => playlists.Add(obj));
+
+            return (true, new JsonObject {
                     { "code", 200 },
                     { "playlists", playlists }
                 });
         }
         catch (Exception ex)
         {
-            return (false, new JObject {
+            return (false, new JsonObject {
                     { "code", 500 },
                     { "msg", ex.ToFullString() }
                 });
