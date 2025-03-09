@@ -1,8 +1,8 @@
 #pragma warning disable
 
 using System.Net;
+using System.Text.Json;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
 using static The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.NeteaseCloudMusicApiProvider;
 
@@ -752,15 +752,15 @@ public static partial class CloudMusicApiProviders
     /// 全部 mv
     /// </summary>
     public static readonly NeteaseCloudMusicApiProvider MvAll = new("/mv/all", HttpMethod.Post, q => "https://interface.music.163.com/api/mv/all", [
-            new("tags", ParameterType.SpecialHandle, null) { SpecialHandler = q => JsonConvert.SerializeObject(new QueryCollection {
-                { "地区", q.GetValueOrDefault("area", "全部") },
-                { "类型", q.GetValueOrDefault("type", "全部") },
-                { "排序", q.GetValueOrDefault("order", "上升最快") }
-            }) },
-            new("limit", ParameterType.Optional, "30"),
-            new("offset", ParameterType.Optional, "0"),
-            new("total", ParameterType.Constant, "true")
-        ], BuildOptions("weapi"));
+        new("tags", ParameterType.SpecialHandle, null) { SpecialHandler = q => JsonSerializer.Serialize(new QueryCollection {
+            { "地区", q.GetValueOrDefault("area", "全部") },
+            { "类型", q.GetValueOrDefault("type", "全部") },
+            { "排序", q.GetValueOrDefault("order", "上升最快") }
+        }) },
+        new("limit", ParameterType.Optional, "30"),
+        new("offset", ParameterType.Optional, "0"),
+        new("total", ParameterType.Constant, "true")
+    ], BuildOptions("weapi"));
 
     /// <summary>
     /// 获取 mv 数据
@@ -1016,9 +1016,9 @@ public static partial class CloudMusicApiProviders
     /// 听歌打卡
     /// </summary>
     public static readonly NeteaseCloudMusicApiProvider Scrobble = new("/scrobble", HttpMethod.Post, q => "https://music.163.com/weapi/feedback/weblog", [
-            new("logs", ParameterType.SpecialHandle, null) { SpecialHandler = q => JsonConvert.SerializeObject(new QueryCollection {
+            new("logs", ParameterType.SpecialHandle, null) { SpecialHandler = q => JsonSerializer.Serialize(new QueryCollection {
                 { "action", "play" },
-                { "json", JsonConvert.SerializeObject(new QueryCollection {
+                { "json", JsonSerializer.Serialize(new QueryCollection {
                     { "id", q["id"] },
                     { "sourceId", q["sourceId"] },
                     { "time", q["time"] },

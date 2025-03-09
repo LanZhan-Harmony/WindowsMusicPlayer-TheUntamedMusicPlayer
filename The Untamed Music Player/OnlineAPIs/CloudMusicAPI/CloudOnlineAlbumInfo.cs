@@ -1,5 +1,5 @@
-﻿using Microsoft.UI.Xaml.Media.Imaging;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
+using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
 
@@ -17,7 +17,7 @@ public class CloudOnlineAlbumInfo : IOnlineAlbumInfo
     public ushort Year { get; set; }
     public long ModifiedDate { get; set; }
 
-    public static async Task<CloudOnlineAlbumInfo> CreateAsync(JToken jInfo)
+    public static async Task<CloudOnlineAlbumInfo> CreateAsync(JsonObject jInfo)
     {
         return new CloudOnlineAlbumInfo();
     }
