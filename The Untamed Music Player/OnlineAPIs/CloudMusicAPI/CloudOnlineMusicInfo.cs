@@ -22,15 +22,14 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
 
     public CloudBriefOnlineMusicInfo() { }
 
-    public static async Task<CloudBriefOnlineMusicInfo> CreateAsync(JsonObject jInfo, NeteaseCloudMusicApi api)
+    public static async Task<CloudBriefOnlineMusicInfo> CreateAsync(JsonNode jInfo, NeteaseCloudMusicApi api)
     {
         var info = new CloudBriefOnlineMusicInfo();
         try
         {
             info.ID = (long)jInfo["id"]!;
             var (isOK, songUrlResult) = await api.RequestAsync(CloudMusicApiProviders.SongUrl, new Dictionary<string, string> { { "id", $"{info.ID}" } });
-            var path = (string)songUrlResult["data"]![0]!["url"]!;
-            if (string.IsNullOrEmpty(path) || !isOK || path == "null")
+            if (songUrlResult["data"] is null || songUrlResult["data"]![0]!["url"] is null)
             {
                 info.IsAvailable = false;
                 return info;
