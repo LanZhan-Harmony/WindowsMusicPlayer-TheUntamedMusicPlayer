@@ -184,6 +184,14 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         SearchResultList = [];
     }
 
+    public void AutoSuggestBox_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is AutoSuggestBox autoSuggestBox)
+        {
+            autoSuggestBox.Text = KeyWords;
+        }
+    }
+
     public void OnlineSongsSongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayList($"OnlineSongs:Part:{KeyWords}", OnlineMusicInfoList, (byte)(MusicLibraryIndex + 1), 0);
