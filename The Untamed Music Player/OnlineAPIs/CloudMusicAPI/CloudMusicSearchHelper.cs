@@ -15,26 +15,47 @@ public class CloudMusicSearchHelper
         list.HasAllLoaded = false;
         list.Clear();
         list.KeyWords = keyWords;
-        var (isOk, result) = await Api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
-        {
-            { "keywords", keyWords },
-            { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
-            { "offset", "0" }
-        });
-        if (!isOk)
-        {
-            throw new Exception();
-        }
+
         try
         {
-            list.SongCount = (int)result["result"]!["songCount"]!;
-            if (list.SongCount == 0)
+            var (_, result) = await Api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
             {
-                list.HasAllLoaded = true;
-                return;
+                { "keywords", keyWords },
+                { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
+                { "offset", "0" }
+            });
+            var jsonString = result.ToJsonString();
+            using var document = JsonDocument.Parse(jsonString);
+            var root = document.RootElement;
+
+            // 获取songCount
+            if (root.TryGetProperty("result", out var resultElement) &&
+                resultElement.TryGetProperty("songCount", out var songCountElement))
+            {
+                list.SongCount = songCountElement.GetInt32();
+
+                if (list.SongCount == 0)
+                {
+                    list.HasAllLoaded = true;
+                    return;
+                }
+
+                // 获取songs数组
+                if (resultElement.TryGetProperty("songs", out var songsElement) &&
+                    songsElement.ValueKind == JsonValueKind.Array)
+                {
+                    await ProcessSongsAsync(songsElement, list);
+                    list.Page = 1;
+                }
+                else
+                {
+                    throw new Exception("获取歌曲列表失败");
+                }
             }
-            await ProcessSongsAsync((JsonArray)result["result"]!["songs"]!, list);
-            list.Page = 1;
+            else
+            {
+                throw new Exception("获取歌曲数量失败");
+            }
         }
         catch
         {
@@ -44,30 +65,41 @@ public class CloudMusicSearchHelper
 
     public static async Task SearchMoreAsync(CloudBriefOnlineMusicInfoList list)
     {
-        var (isOk, result) = await Api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
-        {
-            { "keywords", list.KeyWords },
-            { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
-            { "offset", (list.Page * 30).ToString() }
-        });
-        if (!isOk)
-        {
-            throw new Exception();
-        }
         try
         {
-            await ProcessSongsAsync((JsonArray)result["result"]!["songs"]!, list);
-            list.Page++;
+            var (_, result) = await Api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
+            {
+                { "keywords", list.KeyWords },
+                { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
+                { "offset", (list.Page * 30).ToString() }
+            });
+
+            var jsonString = result.ToJsonString();
+            using var document = JsonDocument.Parse(jsonString);
+            var root = document.RootElement;
+
+            // 获取songs数组
+            if (root.TryGetProperty("result", out var resultElement) &&
+                resultElement.TryGetProperty("songs", out var songsElement) &&
+                songsElement.ValueKind == JsonValueKind.Array)
+            {
+                await ProcessSongsAsync(songsElement, list);
+                list.Page++;
+            }
+            else
+            {
+                throw new Exception("获取歌曲列表失败");
+            }
         }
         catch
         {
-            throw new Exception("搜索失败");
+            throw new Exception("搜索更多失败");
         }
     }
 
-    private static async Task ProcessSongsAsync(JsonArray songs, CloudBriefOnlineMusicInfoList list)
+    private static async Task ProcessSongsAsync(JsonElement songsElement, CloudBriefOnlineMusicInfoList list)
     {
-        var actualCount = songs.Count;
+        var actualCount = songsElement.GetArrayLength();
         var infos = new CloudBriefOnlineMusicInfo[actualCount];
 
         // 使用 Parallel.ForEachAsync 限制并发数为 8
@@ -78,7 +110,7 @@ public class CloudMusicSearchHelper
             {
                 try
                 {
-                    var info = await CloudBriefOnlineMusicInfo.CreateAsync(songs[i]!, Api);
+                    var info = await CloudBriefOnlineMusicInfo.CreateAsync(songsElement[i]!, Api);
                     infos[i] = info;
                 }
                 catch (Exception ex)
