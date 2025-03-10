@@ -93,7 +93,8 @@
                           Grid.Column="1"
                           Margin="18,0,10,-9" Padding="0,0,0,9"
                           HorizontalAlignment="Left"
-                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled"
                           VerticalScrollMode="Disabled">
                 <SelectorBar Grid.Column="1"
                              Loaded="{x:Bind ViewModel.SelectorBar_Loaded}"
@@ -114,6 +115,7 @@
                             Margin="0,7,0,0" VerticalAlignment="Center"
                             ItemTemplate="{StaticResource SearchResultTemplate}"
                             ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.SearchResultList, Mode=OneWay}"
+                            Loaded="{x:Bind model:Data.OnlineMusicLibrary.AutoSuggestBox_Loaded}"
                             QueryIcon="Find"
                             QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted}"
                             TextChanged="{x:Bind ViewModel.SuggestBox_TextChanged}"/>
@@ -121,7 +123,8 @@
         <ScrollViewer x:Name="Segmented"
                       Grid.Row="1"
                       Padding="0,0,0,13"
-                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Disabled"
                       VerticalScrollMode="Disabled">
             <controls:Segmented SelectedIndex="{x:Bind ViewModel.MusicLibraryIndex, Mode=TwoWay}" SelectionMode="Single">
                 <controls:SegmentedItem>
@@ -161,7 +164,8 @@
                       IsActive="{x:Bind model:Data.OnlineMusicLibrary.IsSearchProgressRingActive, Mode=OneWay}"/>
         <StackPanel x:Name="NetworkErrorStackPanel"
                     Grid.Row="2" Grid.RowSpan="2"
-                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     Canvas.ZIndex="1" Orientation="Horizontal"
                     Visibility="{x:Bind model:Data.OnlineMusicLibrary.NetworkErrorVisibility, Mode=OneWay}">
             <FontIcon x:Name="NetworkErrorFontIcon" Glyph="&#xEB56;"/>

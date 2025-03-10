@@ -24,8 +24,7 @@ public class CloudMusicSearchHelper
                 { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
                 { "offset", "0" }
             });
-            var jsonString = result.ToJsonString();
-            using var document = JsonDocument.Parse(jsonString);
+            using var document = JsonDocument.Parse(result.ToJsonString());
             var root = document.RootElement;
 
             // 获取songCount
@@ -41,8 +40,7 @@ public class CloudMusicSearchHelper
                 }
 
                 // 获取songs数组
-                if (resultElement.TryGetProperty("songs", out var songsElement) &&
-                    songsElement.ValueKind == JsonValueKind.Array)
+                if (resultElement.TryGetProperty("songs", out var songsElement))
                 {
                     await ProcessSongsAsync(songsElement, list);
                     list.Page = 1;
@@ -73,15 +71,12 @@ public class CloudMusicSearchHelper
                 { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
                 { "offset", (list.Page * 30).ToString() }
             });
-
-            var jsonString = result.ToJsonString();
-            using var document = JsonDocument.Parse(jsonString);
+            using var document = JsonDocument.Parse(result.ToJsonString());
             var root = document.RootElement;
 
             // 获取songs数组
             if (root.TryGetProperty("result", out var resultElement) &&
-                resultElement.TryGetProperty("songs", out var songsElement) &&
-                songsElement.ValueKind == JsonValueKind.Array)
+                resultElement.TryGetProperty("songs", out var songsElement))
             {
                 await ProcessSongsAsync(songsElement, list);
                 list.Page++;
@@ -134,39 +129,48 @@ public class CloudMusicSearchHelper
         var list = new List<SearchResult>();
         await Task.Run(async () =>
         {
-            var (isOk, result) = await Api.RequestAsync(CloudMusicApiProviders.SearchSuggest, new Dictionary<string, string> { { "keywords", $"{keyWords}" } });
-            if (!isOk)
+            try
+            {
+                var (isOk, result) = await Api.RequestAsync(CloudMusicApiProviders.SearchSuggest, new Dictionary<string, string> { { "keywords", $"{keyWords}" } });
+
+                using var document = JsonDocument.Parse(result.ToJsonString());
+                var root = document.RootElement;
+
+                if (root.TryGetProperty("result", out var resultElement))
+                {
+                    AddResultsFromProperty(resultElement, "songs", 5, "\uE8D6", list);
+                    AddResultsFromProperty(resultElement, "albums", 3, "\uE93C", list);
+                    AddResultsFromProperty(resultElement, "artists", 3, "\uE77B", list);
+                    AddResultsFromProperty(resultElement, "playlists", 2, "\uE728", list);
+                }
+            }
+            catch
             {
                 Debug.WriteLine("获取网易云音乐搜索建议失败");
-            }
-            else
-            {
-                var songs = result["result"]?["songs"] is JsonArray songsArray
-                ? songsArray.Select(node => JsonDocument.Parse(node!.ToJsonString()).RootElement.GetProperty("name").GetString()!).Distinct().ToList()
-                : [];
-                var albums = result["result"]?["albums"] is JsonArray albumsArray
-                ? albumsArray.Select(node => JsonDocument.Parse(node!.ToJsonString()).RootElement.GetProperty("name").GetString()!).Distinct().ToList()
-                : [];
-                var artists = result["result"]?["artists"] is JsonArray artistsArray
-                ? artistsArray.Select(node => JsonDocument.Parse(node!.ToJsonString()).RootElement.GetProperty("name").GetString()!).Distinct().ToList()
-                : [];
-                var playlists = result["result"]?["playlists"] is JsonArray playlistsArray
-                ? playlistsArray.Select(node => JsonDocument.Parse(node!.ToJsonString()).RootElement.GetProperty("name").GetString()!).Distinct().ToList()
-                : [];
-                AddResults(songs, 5, "\uE8D6", list);
-                AddResults(albums, 3, "\uE93C", list);
-                AddResults(artists, 3, "\uE77B", list);
-                AddResults(playlists, 2, "\uE728", list);
             }
         });
         return list;
     }
 
-    private static void AddResults(List<string> items, int limit, string icon, List<SearchResult> list)
+    private static void AddResultsFromProperty(JsonElement element, string propertyName, int limit, string icon, List<SearchResult> list)
     {
-        foreach (var item in items.Take(limit))
+        if (!element.TryGetProperty(propertyName, out var arrayElement))
         {
-            list.Add(new SearchResult { Icon = icon, Label = item });
+            return;
+        }
+
+        var names = arrayElement.EnumerateArray()
+            .Select(item => item.GetProperty("name").GetString()!)
+            .Distinct()
+            .Take(limit);
+
+        foreach (var name in names)
+        {
+            list.Add(new SearchResult
+            {
+                Icon = icon,
+                Label = name
+            });
         }
     }
 }
