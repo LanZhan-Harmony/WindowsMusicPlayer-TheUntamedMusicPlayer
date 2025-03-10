@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
@@ -10,7 +11,7 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
 {
     public int PlayQueueIndex { get; set; } = -1;
     public bool IsAvailable { get; set; } = false;
-    public string Path { get; set; } = "";
+    public string Path { get; set; } = null!;
     public string Title { get; set; } = "";
     public long ID { get; set; } = 0;
     public virtual string Album { get; set; } = "";
@@ -22,32 +23,36 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
 
     public CloudBriefOnlineMusicInfo() { }
 
-    public static async Task<CloudBriefOnlineMusicInfo> CreateAsync(JsonNode jInfo, NeteaseCloudMusicApi api)
+    public static async Task<CloudBriefOnlineMusicInfo> CreateAsync(JsonElement jInfo, NeteaseCloudMusicApi api)
     {
         var info = new CloudBriefOnlineMusicInfo();
         try
         {
-            info.ID = (long)jInfo["id"]!;
-            var (isOK, songUrlResult) = await api.RequestAsync(CloudMusicApiProviders.SongUrl, new Dictionary<string, string> { { "id", $"{info.ID}" } });
-            if (songUrlResult["data"] is null || songUrlResult["data"]![0]!["url"] is null)
+            info.ID = jInfo.GetProperty("id").GetInt64();
+
+            var (_, songUrlResult) = await api.RequestAsync(CloudMusicApiProviders.SongUrl, new Dictionary<string, string> { { "id", $"{info.ID}" } });
+            if (songUrlResult["data"]![0]!["url"] is null)
             {
                 info.IsAvailable = false;
                 return info;
             }
-            else
-            {
-                info.Title = (string)jInfo["name"]!;
-                info.Album = (string)jInfo["album"]!["name"]!;
-                info.AlbumID = (long)jInfo["album"]!["id"]!;
-                string[] artists = [.. ((JsonArray)jInfo["artists"]!)
-                    .Select(t => (string)t!["name"]!)
-                    .Distinct()];
-                info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(artists);
-                info.DurationStr = IBriefMusicInfoBase.GetDurationStr(TimeSpan.FromMilliseconds((long)jInfo["duration"]!));
-                info.YearStr = IBriefMusicInfoBase.GetYearStr((ushort)DateTimeOffset.FromUnixTimeMilliseconds((long)jInfo["album"]!["publishTime"]!).Year);
-                info.IsAvailable = true;
-                return info;
-            }
+
+            var albumElement = jInfo.GetProperty("album");
+            info.Title = jInfo.GetProperty("name").GetString()!;
+            info.Album = albumElement.GetProperty("name").GetString()!;
+            info.AlbumID = albumElement.GetProperty("id").GetInt64();
+            var artistsElement = jInfo.GetProperty("artists");
+            string[] artists = [.. artistsElement.EnumerateArray()
+            .Select(t => t.GetProperty("name").GetString()!)
+            .Distinct()];
+            info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(artists);
+            info.DurationStr = IBriefMusicInfoBase.GetDurationStr(
+                TimeSpan.FromMilliseconds(jInfo.GetProperty("duration").GetInt64()));
+            info.YearStr = IBriefMusicInfoBase.GetYearStr(
+                (ushort)DateTimeOffset.FromUnixTimeMilliseconds(albumElement.GetProperty("publishTime").GetInt64()).Year);
+
+            info.IsAvailable = true;
+            return info;
         }
         catch
         {

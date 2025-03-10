@@ -491,7 +491,9 @@ public partial class MusicPlayer : ObservableRecipient
                 if (CurrentMusic is not null)
                 {
                     // 更新当前歌曲在随机播放队列中的索引
-                    PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
+                    PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => CurrentMusic.IsOnline
+                    ? ((IBriefOnlineMusicInfo)info).ID == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
+                    : info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
                 }
                 hasMusics = ShuffledPlayQueue.Any();
             }
@@ -834,7 +836,9 @@ public partial class MusicPlayer : ObservableRecipient
             }
             if (CurrentMusic is not null)
             {
-                PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
+                PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => CurrentMusic.IsOnline
+                ? ((IBriefOnlineMusicInfo)info).ID == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
+                : info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
             }
         }
         else
@@ -846,7 +850,9 @@ public partial class MusicPlayer : ObservableRecipient
             }
             if (CurrentMusic is not null)
             {
-                PlayQueueIndex = PlayQueue.FirstOrDefault(info => info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
+                PlayQueueIndex = PlayQueue.FirstOrDefault(info => CurrentMusic.IsOnline
+                ? ((IBriefOnlineMusicInfo)info).ID == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
+                : info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
             }
         }
         OnPropertyChanged(nameof(ShuffleMode));
