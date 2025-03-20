@@ -4,11 +4,15 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
 {
+    protected static readonly string _unknownAlbum = "MusicInfo_UnknownAlbum".GetLocalized();
+    protected static readonly string _unknownArtist = "MusicInfo_UnknownArtist".GetLocalized();
+
     public int PlayQueueIndex { get; set; } = -1;
     public bool IsAvailable { get; set; } = false;
     public string Path { get; set; } = null!;
@@ -39,12 +43,14 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
 
             var albumElement = jInfo.GetProperty("album");
             info.Title = jInfo.GetProperty("name").GetString()!;
-            info.Album = albumElement.GetProperty("name").GetString()!;
+            var album = albumElement.GetProperty("name").GetString()!;
+            info.Album = string.IsNullOrWhiteSpace(album) ? _unknownAlbum : album;
             info.AlbumID = albumElement.GetProperty("id").GetInt64();
             var artistsElement = jInfo.GetProperty("artists");
             string[] artists = [.. artistsElement.EnumerateArray()
-            .Select(t => t.GetProperty("name").GetString()!)
-            .Distinct()];
+                .Select(t => t.GetProperty("name").GetString()!)
+                .Distinct()
+                .DefaultIfEmpty(_unknownArtist)];
             info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(artists);
             info.DurationStr = IBriefMusicInfoBase.GetDurationStr(
                 TimeSpan.FromMilliseconds(jInfo.GetProperty("duration").GetInt64()));
@@ -88,9 +94,7 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
         {
             ID = info.ID,
             Title = info.Title,
-            Album = info.Album,
             AlbumID = info.AlbumID,
-            ArtistsStr = info.ArtistsStr,
             DurationStr = info.DurationStr,
             YearStr = info.YearStr,
         };
@@ -105,19 +109,24 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
         api.Dispose();
         try
         {
-            detailedInfo.CoverUrl = (string)albumResult["album"]!["picUrl"]!;
-            Task? coverTask = null;
-            if (!string.IsNullOrEmpty(detailedInfo.CoverUrl))
-            {
-                coverTask = LoadCoverAsync(detailedInfo);
-            }
             detailedInfo.Path = (string)songUrlResult["data"]![0]!["url"]!; // 临时链接可能过期, 所以重新获取
-            detailedInfo.ItemType = $".{(string)songUrlResult["data"]![0]!["type"]!}";
-            string[] albumArtists = [.. ((JsonArray)albumResult["album"]!["artists"]!)
+            Task? coverTask = null;
+            if (info.Album != _unknownAlbum)
+            {
+                detailedInfo.Album = info.Album;
+                detailedInfo.CoverUrl = (string)albumResult["album"]!["picUrl"]!;
+                if (!string.IsNullOrEmpty(detailedInfo.CoverUrl))
+                {
+                    coverTask = LoadCoverAsync(detailedInfo);
+                }
+                string[] albumArtists = [.. ((JsonArray)albumResult["album"]!["artists"]!)
                     .Select(t => (string)t!["name"]!)
                     .Distinct()];
-            detailedInfo.AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr(albumArtists);
+                detailedInfo.AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr(albumArtists);
+            }
+            detailedInfo.ArtistsStr = info.ArtistsStr == _unknownArtist ? "" : info.ArtistsStr;
             detailedInfo.ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(detailedInfo.Album, detailedInfo.ArtistsStr);
+            detailedInfo.ItemType = $".{(string)songUrlResult["data"]![0]!["type"]!}";
             detailedInfo.BitRate = $"{((int)songUrlResult["data"]![0]!["br"]!) / 1000} kbps";
             detailedInfo.Lyric = (string)lyricResult["lrc"]!["lyric"]!;
             if (coverTask is not null)
@@ -128,7 +137,10 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
         }
         catch (Exception ex) when (ex is NullReferenceException)
         {
-            detailedInfo.IsPlayAvailable = false;
+            if (string.IsNullOrWhiteSpace(detailedInfo.Path))
+            {
+                detailedInfo.IsPlayAvailable = false;
+            }
             return detailedInfo;
         }
         catch (Exception ex)
