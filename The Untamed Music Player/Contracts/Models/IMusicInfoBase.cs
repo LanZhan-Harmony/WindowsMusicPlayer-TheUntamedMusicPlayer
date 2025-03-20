@@ -34,7 +34,7 @@ public interface IBriefMusicInfoBase : ICloneable
     /// </summary>
     /// <param name="year"></param>
     /// <returns></returns>
-    static string GetYearStr(ushort year) => year is 0 ? "" : year.ToString();
+    static string GetYearStr(ushort year) => year is 0 or 1970 ? "" : year.ToString();
 
     /// <summary>
     /// 获取文本前景色

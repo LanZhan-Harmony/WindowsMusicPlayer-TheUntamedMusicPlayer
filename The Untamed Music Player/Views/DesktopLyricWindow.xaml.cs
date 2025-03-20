@@ -17,18 +17,6 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 {
-    // 定义需要的Win32 API和常量
-    private const int GWL_EXSTYLE = -20;
-    private const int WS_EX_TOOLWINDOW = 0x00000080;
-    private const int WS_EX_APPWINDOW = 0x00040000;
-    [DllImport("user32.dll")]
-    private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-
-    [DllImport("user32.dll")]
-    private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-    [DllImport("user32.dll")]
-    private static extern uint GetDpiForWindow(IntPtr hWnd);
-
     private Storyboard? _currentStoryboard;
     private readonly TextBlock _measureTextBlock = new()
     {
@@ -86,11 +74,6 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         // 将窗口移动到新的位置
         DLW.Move(currentPosition.X, y);
         //DLW.SetIsAlwaysOnTop(true);
-
-        /*if (Content is FrameworkElement rootElement)
-        {
-            rootElement.RequestedTheme = ElementTheme.Dark;
-        }*/
 
         Closed += Window_Closed;
     }
