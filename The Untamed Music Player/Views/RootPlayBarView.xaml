@@ -215,7 +215,7 @@
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="H" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
-                <ic:SymbolIcon FontSize="20" Symbol="{x:Bind GetShuffleModeIcon(model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"/>
+                <ic:SymbolIcon FontSize="16" Symbol="{x:Bind GetShuffleModeIcon(model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"/>
             </Button>
 
             <!--  上一曲  -->
