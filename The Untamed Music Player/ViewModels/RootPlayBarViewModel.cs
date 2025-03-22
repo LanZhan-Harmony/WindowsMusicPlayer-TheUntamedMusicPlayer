@@ -10,6 +10,8 @@ using The_Untamed_Music_Player.Views;
 namespace The_Untamed_Music_Player.ViewModels;
 public partial class RootPlayBarViewModel : ObservableRecipient
 {
+    public bool IsDesktopLyricWindowStarted = false;
+
     public static RootPlayBarView? RootPlayBarView;
 
     [ObservableProperty]
@@ -17,9 +19,6 @@ public partial class RootPlayBarViewModel : ObservableRecipient
 
     [ObservableProperty]
     public partial bool IsFullScreen { get; set; } = false;
-
-    [ObservableProperty]
-    public partial bool IsDesktopLyricWindowStarted { get; set; } = false;
 
     [ObservableProperty]
     public partial Visibility ButtonVisibility { get; set; } = Visibility.Collapsed;
