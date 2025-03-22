@@ -5,18 +5,42 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
+using Windows.System;
 using WinRT.Interop;
 
 namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 {
+    private const int GWL_EXSTYLE = -20;
+    private const int WS_EX_TOOLWINDOW = 0x00000080;
+    private const int WS_EX_APPWINDOW = 0x00040000;
+
+    private readonly nint _hWnd;
+
+    // 用于周期性检查鼠标位置的计时器
+    private DispatcherTimer? _mousePositionTimer;
+
+    // 检测鼠标是否在我们的窗口上的变量
+    private bool _isMouseOverBorder = false;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct POINT { public int x; public int y; }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int left;
+        public int top;
+        public int right;
+        public int bottom;
+    }
+
     private Storyboard? _currentStoryboard;
     private readonly TextBlock _measureTextBlock = new()
     {
@@ -35,21 +59,23 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         InitializeComponent();
 
         // 获取窗口句柄
-        var hWnd = WindowNative.GetWindowHandle(this);
-        var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+        _hWnd = WindowNative.GetWindowHandle(this);
+        var windowId = Win32Interop.GetWindowIdFromWindow(_hWnd);
         var appWindow = AppWindow.GetFromWindowId(windowId);
 
-        /*var exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+        MakeWindowClickThrough(_hWnd, true);
+
+        var exStyle = GetWindowLong(_hWnd, GWL_EXSTYLE);
         exStyle |= WS_EX_TOOLWINDOW;  // 添加工具窗口样式
         exStyle &= ~WS_EX_APPWINDOW;  // 移除应用窗口样式
-        _ = SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);*/
+        _ = SetWindowLong(_hWnd, GWL_EXSTYLE, exStyle);
 
         ExtendsContentIntoTitleBar = true;
         appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed;
         SetTitleBar(Draggable);
         Title = "DesktopLyricWindowTitle".GetLocalized();
 
-        appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
+        SetTopmost(_hWnd, true);
 
         // 获取屏幕工作区大小
         var displayArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Primary);
@@ -73,9 +99,121 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         var currentPosition = appWindow.Position;
         // 将窗口移动到新的位置
         DLW.Move(currentPosition.X, y);
-        //DLW.SetIsAlwaysOnTop(true);
 
+        InitMousePositionTimer();
         Closed += Window_Closed;
+    }
+
+    // P/Invoke 声明
+    [DllImport("user32.dll")]
+    private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+    [DllImport("user32.dll")]
+    private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+    [DllImport("user32.dll")]
+    private static extern bool GetCursorPos(out POINT lpPoint);
+
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+    private void InitMousePositionTimer()
+    {
+        _mousePositionTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(250)
+        };
+        _mousePositionTimer.Tick += MousePositionTimer_Tick;
+        _mousePositionTimer.Start();
+    }
+
+    private void MousePositionTimer_Tick(object? sender, object e)
+    {
+        SetTopmost(_hWnd, true);
+
+        // 获取当前鼠标位置
+        GetCursorPos(out var mousePoint);
+
+        // 获取窗口句柄
+        var hWnd = WindowNative.GetWindowHandle(this);
+
+        // 获取AnimatedBorder在屏幕上的位置
+        var borderRect = GetElementScreenRect(AnimatedBorder);
+
+        // 检查鼠标是否在AnimatedBorder上
+        var isOverBorder = mousePoint.x >= borderRect.left && mousePoint.x <= borderRect.right &&
+                             mousePoint.y >= borderRect.top && mousePoint.y <= borderRect.bottom;
+
+        // 如果鼠标状态改变
+        if (isOverBorder != _isMouseOverBorder)
+        {
+            _isMouseOverBorder = isOverBorder;
+            MakeWindowClickThrough(hWnd, !isOverBorder);
+        }
+    }
+
+    private RECT GetElementScreenRect(FrameworkElement element)
+    {
+        var hWnd = WindowNative.GetWindowHandle(this);
+
+        // 获取元素在窗口中的位置
+        var transform = element.TransformToVisual(null);
+        var position = transform.TransformPoint(new Point(0, 0));
+
+        // 获取窗口在屏幕上的位置
+        GetWindowRect(hWnd, out var windowRect);
+
+        return new RECT
+        {
+            left = windowRect.left + (int)position.X,
+            top = windowRect.top + (int)position.Y,
+            right = windowRect.left + (int)(position.X + element.ActualWidth),
+            bottom = windowRect.top + (int)(position.Y + element.ActualHeight)
+        };
+    }
+
+    // 设置窗口是否点击穿透
+    private static void MakeWindowClickThrough(IntPtr hwnd, bool isClickThrough)
+    {
+        const int GWL_EXSTYLE = -20;
+        const int WS_EX_LAYERED = 0x00080000;
+        const int WS_EX_TRANSPARENT = 0x00000020;
+
+        var currentStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+
+        if (isClickThrough)
+        {
+            // 添加 WS_EX_TRANSPARENT 使窗口点击穿透
+            _ = SetWindowLong(hwnd, GWL_EXSTYLE, currentStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT);
+        }
+        else
+        {
+            // 移除 WS_EX_TRANSPARENT 使窗口可接收点击
+            _ = SetWindowLong(hwnd, GWL_EXSTYLE, (currentStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT);
+        }
+    }
+
+    // 设置窗口置顶，直接使用Win32 API替代User32类
+    public static void SetTopmost(IntPtr hwnd, bool value)
+    {
+        if (hwnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        // SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE
+        const uint SWP_NOMOVE = 0x0002;
+        const uint SWP_NOSIZE = 0x0001;
+        const uint SWP_NOACTIVATE = 0x0010;
+        const uint flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE;
+
+        // HWND_TOPMOST = -1, HWND_NOTOPMOST = -2
+        var position = value ? new IntPtr(-1) : new IntPtr(-2);
+
+        SetWindowPos(hwnd, position, 0, 0, 0, 0, flags);
     }
 
     private void Window_Closed(object sender, WindowEventArgs args)
@@ -84,37 +222,16 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         {
             Data.RootPlayBarViewModel.IsDesktopLyricWindowStarted = false;
         }
+        // 停止计时器
+        if (_mousePositionTimer != null)
+        {
+            _mousePositionTimer.Stop();
+            _mousePositionTimer = null;
+        }
     }
 
     public void Dispose()
     {
-    }
-
-    private void CloseButton_Click(object sender, RoutedEventArgs e)
-    {
-        Close();
-        Dispose();
-        Data.RootPlayBarViewModel!.IsDesktopLyricWindowStarted = false;
-    }
-
-    private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var button = grid?.FindName("CloseButton") as Button;
-        if (button is not null)
-        {
-            button.Visibility = Visibility.Visible;
-        }
-    }
-
-    private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var button = grid?.FindName("CloseButton") as Button;
-        if (button is not null)
-        {
-            button.Visibility = Visibility.Collapsed;
-        }
     }
 
     private void LyricContent_Loaded(object sender, RoutedEventArgs e)
