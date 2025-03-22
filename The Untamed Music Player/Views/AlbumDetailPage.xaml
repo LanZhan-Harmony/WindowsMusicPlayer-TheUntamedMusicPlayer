@@ -16,12 +16,10 @@
     <Page.Resources>
         <ThemeShadow x:Name="SharedShadow"/>
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
-                                                        EmptyValue="Visible"
-                                                        NotEmptyValue="Collapsed"/>
+                                                        EmptyValue="Visible" NotEmptyValue="Collapsed"/>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="contract:IBriefMusicInfoBase">
             <Grid Height="52"
-                  Background="Transparent"
-                  PointerEntered="Grid_PointerEntered"
+                  Background="Transparent" PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
@@ -88,8 +86,7 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
-                          IsThreeState="False"
-                          Visibility="Collapsed"/>
+                          IsThreeState="False" Visibility="Collapsed"/>
                 <Button x:Name="PlayButton" x:Uid="LocalSongs_PlayButton"
                         Grid.Column="1"
                         Click="PlayButton_Click"
@@ -108,8 +105,7 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
+                        Background="Transparent" BorderBrush="Transparent"
                         Click="ShowArtistButton_Click">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
@@ -118,24 +114,21 @@
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
                 <TextBlock Grid.Column="4"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
                 <TextBlock Grid.Column="5"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left" VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind GenreStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind GenreStr}"/>
                 <TextBlock Grid.Column="6"
-                           Margin="0,0,10,0"
-                           HorizontalAlignment="Right"
+                           Margin="0,0,10,0" HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
@@ -224,8 +217,7 @@
         <Grid x:Name="BackgroundHost"
               Grid.Row="0"
               Margin="0,-136,0,0"
-              FlowDirection="LeftToRight"
-              SizeChanged="BackgroundHost_OnSizeChanged"/>
+              FlowDirection="LeftToRight" SizeChanged="BackgroundHost_OnSizeChanged"/>
         <Grid x:Name="Header"
               Grid.Row="0"
               Margin="0,0,0,-80"
@@ -250,8 +242,7 @@
                         CornerRadius="{StaticResource OverlayCornerRadius}"
                         FlowDirection="LeftToRight"
                         Shadow="{StaticResource SharedShadow}"
-                        SizeChanged="AlbumArt_OnSizeChanged"
-                        Translation="0,0,16">
+                        SizeChanged="AlbumArt_OnSizeChanged" Translation="0,0,16">
                     <Border.Background>
                         <ImageBrush ImageSource="{x:Bind ViewModel.Album.Cover}" Stretch="UniformToFill"/>
                     </Border.Background>
@@ -270,29 +261,25 @@
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
                                Text="{x:Bind ViewModel.Album.Name}"
-                               TextTrimming="WordEllipsis"
-                               TextWrapping="NoWrap"/>
+                               TextTrimming="WordEllipsis" TextWrapping="NoWrap"
+                               ToolTipService.ToolTip="{x:Bind ViewModel.Album.Name}"/>
                     <TextBlock x:Name="SubtitleText"
                                FontWeight="Normal"
                                Text="{x:Bind ViewModel.Album.ArtistsStr}"
-                               TextTrimming="WordEllipsis"
-                               TextWrapping="NoWrap"/>
+                               TextTrimming="WordEllipsis" TextWrapping="NoWrap"
+                               ToolTipService.ToolTip="{x:Bind ViewModel.Album.ArtistsStr}"/>
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="{x:Bind ViewModel.Album.GetDescriptionStr()}"
-                               TextTrimming="WordEllipsis"
-                               TextWrapping="NoWrap"/>
+                               TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
 
                     <Grid x:Name="ButtonPanel">
                         <StackPanel x:Name="ButtonStackPanel"
-                                    Padding="0"
-                                    HorizontalAlignment="Left"
-                                    Orientation="Horizontal"
-                                    Spacing="16">
+                                    Padding="0" HorizontalAlignment="Left"
+                                    Orientation="Horizontal" Spacing="16">
                             <Button x:Name="PlayButton"
-                                    Padding="11,9,11,9"
-                                    HorizontalAlignment="Stretch"
+                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     Click="{x:Bind ViewModel.PlayAllButton_Click}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     XYFocusDown="{x:Bind SongListView}">
@@ -301,8 +288,7 @@
                                     <TextBlock x:Uid="AlbumDetail_PlayAll" FontSize="12"/>
                                 </StackPanel>
                             </Button>
-                            <Button Padding="11,9,11,9"
-                                    HorizontalAlignment="Stretch"
+                            <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -311,8 +297,7 @@
                                 </StackPanel>
                             </Button>
                             <Button x:Name="AddToButton"
-                                    Padding="11,9,11,9"
-                                    HorizontalAlignment="Stretch"
+                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
@@ -335,8 +320,7 @@
                                 </StackPanel>
                             </Button>
                             <Button x:Name="EditInfoButton"
-                                    Padding="11,9,11,9"
-                                    HorizontalAlignment="Stretch"
+                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     XYFocusDown="{x:Bind SongListView}"
                                     XYFocusLeft="{x:Bind PlayButton}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -345,8 +329,7 @@
                                 </StackPanel>
                             </Button>
                             <Button x:Name="MoreButton"
-                                    Padding="11,9,11,9"
-                                    HorizontalAlignment="Stretch">
+                                    Padding="11,9,11,9" HorizontalAlignment="Stretch">
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
                                         <MenuFlyoutSubItem x:Name="AddToFlyout" x:Uid="LocalSongs_AddTo"
