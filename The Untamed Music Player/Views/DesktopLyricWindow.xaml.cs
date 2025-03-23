@@ -123,6 +123,9 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     [DllImport("user32.dll")]
     private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
+    [DllImport("user32.dll")]
+    private static extern uint GetDpiForWindow(IntPtr hWnd);
+
     private void InitMousePositionTimer()
     {
         _updateTimer250ms = new DispatcherTimer
@@ -164,6 +167,10 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     {
         var hWnd = WindowNative.GetWindowHandle(this);
 
+        // 获取DPI缩放因子
+        var dpi = GetDpiForWindow(hWnd);
+        var scaleFactor = dpi / 96.0; // 96是标准DPI
+
         // 获取元素在窗口中的位置
         var transform = element.TransformToVisual(null);
         var position = transform.TransformPoint(new Point(0, 0));
@@ -171,12 +178,13 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         // 获取窗口在屏幕上的位置
         GetWindowRect(hWnd, out var windowRect);
 
+        // 考虑DPI缩放
         return new RECT
         {
-            left = windowRect.left + (int)position.X,
-            top = windowRect.top + (int)position.Y,
-            right = windowRect.left + (int)(position.X + element.ActualWidth),
-            bottom = windowRect.top + (int)(position.Y + element.ActualHeight)
+            left = windowRect.left + (int)(position.X * scaleFactor),
+            top = windowRect.top + (int)(position.Y * scaleFactor),
+            right = windowRect.left + (int)((position.X + element.ActualWidth) * scaleFactor),
+            bottom = windowRect.top + (int)((position.Y + element.ActualHeight) * scaleFactor)
         };
     }
 
