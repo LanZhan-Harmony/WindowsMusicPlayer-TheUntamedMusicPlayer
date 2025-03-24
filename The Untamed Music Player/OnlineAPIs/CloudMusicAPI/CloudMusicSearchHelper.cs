@@ -6,19 +6,23 @@ using The_Untamed_Music_Player.Models;
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 public class CloudMusicSearchHelper
 {
-    public static NeteaseCloudMusicApi Api { get; set; } = new();
+    private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
+
+    private static NeteaseCloudMusicApi _api { get; set; } = new();
 
     public static async Task SearchAsync(string keyWords, CloudBriefOnlineMusicInfoList list)
     {
+        await _searchSemaphore.WaitAsync();
         list.Page = 0;
         list.ListCount = 0;
         list.HasAllLoaded = false;
         list.Clear();
+        list.SearchedSongIDs.Clear();
         list.KeyWords = keyWords;
 
         try
         {
-            var (_, result) = await Api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
+            var (_, result) = await _api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
             {
                 { "keywords", keyWords },
                 { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
@@ -59,13 +63,18 @@ public class CloudMusicSearchHelper
         {
             throw new Exception("搜索失败");
         }
+        finally
+        {
+            _searchSemaphore.Release();
+        }
     }
 
     public static async Task SearchMoreAsync(CloudBriefOnlineMusicInfoList list)
     {
+        await _searchSemaphore.WaitAsync();
         try
         {
-            var (_, result) = await Api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
+            var (_, result) = await _api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
             {
                 { "keywords", list.KeyWords },
                 { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
@@ -90,6 +99,10 @@ public class CloudMusicSearchHelper
         {
             throw new Exception("搜索更多失败");
         }
+        finally
+        {
+            _searchSemaphore.Release();
+        }
     }
 
     private static async Task ProcessSongsAsync(JsonElement songsElement, CloudBriefOnlineMusicInfoList list)
@@ -105,7 +118,7 @@ public class CloudMusicSearchHelper
             {
                 try
                 {
-                    var info = await CloudBriefOnlineMusicInfo.CreateAsync(songsElement[i]!, Api);
+                    var info = await CloudBriefOnlineMusicInfo.CreateAsync(songsElement[i]!, _api);
                     infos[i] = info;
                 }
                 catch (Exception ex)
@@ -131,7 +144,7 @@ public class CloudMusicSearchHelper
         {
             try
             {
-                var (isOk, result) = await Api.RequestAsync(CloudMusicApiProviders.SearchSuggest, new Dictionary<string, string> { { "keywords", $"{keyWords}" } });
+                var (isOk, result) = await _api.RequestAsync(CloudMusicApiProviders.SearchSuggest, new Dictionary<string, string> { { "keywords", $"{keyWords}" } });
 
                 using var document = JsonDocument.Parse(result.ToJsonString());
                 var root = document.RootElement;
