@@ -57,7 +57,6 @@
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250310001" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.0" />
 		<PackageReference Include="System.Drawing.Common" Version="9.0.3" />
-		<PackageReference Include="System.Memory" Version="4.6.2" />
 		<PackageReference Include="TagLibSharp" Version="2.3.0" />
 		<PackageReference Include="WinUIEx" Version="2.5.1" />
 	</ItemGroup>
@@ -66,21 +65,6 @@
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<Page Update="Views\OnlinePlayListsPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\OnlineArtistsPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\OnlineAlbumsPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\OnlineSongsPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\DesktopLyricWindow.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
