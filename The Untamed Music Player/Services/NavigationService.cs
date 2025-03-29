@@ -6,9 +6,9 @@ using The_Untamed_Music_Player.Contracts.ViewModels;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Services;
-public class NavigationService : INavigationService
+public class NavigationService(IPageService pageService) : INavigationService
 {
-    private readonly IPageService _pageService;
+    private readonly IPageService _pageService = pageService;
     private object? _lastParameterUsed;
     private Frame? _frame;
 
@@ -37,11 +37,6 @@ public class NavigationService : INavigationService
 
     [MemberNotNullWhen(true, nameof(Frame), nameof(_frame))]
     public bool CanGoBack => Frame is not null && Frame.CanGoBack;
-
-    public NavigationService(IPageService pageService)
-    {
-        _pageService = pageService;
-    }
 
     private void RegisterFrameEvents()
     {

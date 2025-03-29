@@ -908,7 +908,7 @@ public partial class MusicPlayer : ObservableRecipient
     public void ProgressLock(object sender, PointerRoutedEventArgs e)
     {
         _lockable = true;
-        CurrentPlayingTime = TimeSpan.FromMilliseconds((double)((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100);
+        CurrentPlayingTime = TimeSpan.FromMilliseconds(((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100);
     }
 
     /// <summary>
@@ -918,7 +918,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="e"></param>
     public void SliderUpdate(object sender, PointerRoutedEventArgs e)
     {
-        CurrentPlayingTime = TimeSpan.FromMilliseconds((double)((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100);
+        CurrentPlayingTime = TimeSpan.FromMilliseconds(((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100);
         CurrentLyricIndex = GetCurrentLyricIndex(CurrentPlayingTime.TotalMilliseconds);
     }
 
@@ -929,7 +929,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="e"></param>
     public void ProgressUpdate(object sender, PointerRoutedEventArgs e)
     {
-        Player.PlaybackSession.Position = TimeSpan.FromMilliseconds((double)((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100);
+        Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100);
         CurrentPlayingTime = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
         TotalPlayingTime = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
         if (TotalPlayingTime.TotalMilliseconds > 0)
