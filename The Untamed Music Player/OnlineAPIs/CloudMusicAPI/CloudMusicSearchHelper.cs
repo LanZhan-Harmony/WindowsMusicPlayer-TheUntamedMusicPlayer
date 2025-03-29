@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
@@ -8,7 +7,7 @@ public class CloudMusicSearchHelper
 {
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
 
-    private static NeteaseCloudMusicApi _api { get; set; } = new();
+    private static readonly NeteaseCloudMusicApi _api = new();
 
     public static async Task SearchAsync(string keyWords, CloudBriefOnlineMusicInfoList list)
     {

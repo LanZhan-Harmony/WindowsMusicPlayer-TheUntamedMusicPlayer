@@ -5,7 +5,7 @@ using Windows.UI;
 using Windows.UI.ViewManagement;
 
 namespace The_Untamed_Music_Player.Helpers;
-internal class TitleBarHelper
+public class TitleBarHelper
 {
     private const int WAINACTIVE = 0x00;
     private const int WAACTIVE = 0x01;

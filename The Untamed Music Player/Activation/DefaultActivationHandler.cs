@@ -3,14 +3,9 @@ using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Activation;
-public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
+public class DefaultActivationHandler(INavigationService navigationService) : ActivationHandler<LaunchActivatedEventArgs>
 {
-    private readonly INavigationService _navigationService;
-
-    public DefaultActivationHandler(INavigationService navigationService)
-    {
-        _navigationService = navigationService;
-    }
+    private readonly INavigationService _navigationService = navigationService;
 
     protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
     {

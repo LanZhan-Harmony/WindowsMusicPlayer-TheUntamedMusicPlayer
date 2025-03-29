@@ -10,9 +10,9 @@ using The_Untamed_Music_Player.Views;
 namespace The_Untamed_Music_Player.ViewModels;
 public partial class RootPlayBarViewModel : ObservableRecipient
 {
-    public bool IsDesktopLyricWindowStarted = false;
+    public bool IsDesktopLyricWindowStarted { get; set; } = false;
 
-    public static RootPlayBarView? RootPlayBarView;
+    public static RootPlayBarView? RootPlayBarView { get; set; }
 
     [ObservableProperty]
     public partial bool IsDetail { get; set; } = false;
