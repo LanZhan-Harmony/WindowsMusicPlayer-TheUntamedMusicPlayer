@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -36,7 +37,7 @@ public sealed partial class LyricPage : Page, IDisposable
         BindingOperations.SetBinding(ContentGridBackground, ImageBrush.ImageSourceProperty, contentGridBinding);*/
 
         var isLyricBackgroundVisible = Data.IsLyricBackgroundVisible;
-        if (isLyricBackgroundVisible == false)
+        if (!isLyricBackgroundVisible)
         {
             ContentGridBackground.Opacity = 0;
         }
@@ -73,6 +74,7 @@ public sealed partial class LyricPage : Page, IDisposable
             var targetPosition = textblock.TransformToVisual(LyricViewer).TransformPoint(point);
 
             LyricViewer.ChangeView(null, targetPosition.Y - LyricViewer.ActualHeight / 2 + 40, null, disableAnimation: false);
+            Debug.WriteLine(LyricView.ActualHeight);
         }
     }
 

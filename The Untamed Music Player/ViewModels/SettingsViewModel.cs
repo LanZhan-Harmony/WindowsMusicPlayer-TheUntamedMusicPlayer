@@ -164,15 +164,12 @@ public partial class SettingsViewModel : ObservableRecipient
         openPicker.FileTypeFilter.Add("*");
 
         var folder = await openPicker.PickSingleFolderAsync();
-        if (folder is not null)
+        if (folder is not null && !Data.MusicLibrary.Folders.Any(f => f.Path == folder.Path))
         {
-            if (!Data.MusicLibrary.Folders.Any(f => f.Path == folder.Path))
-            {
-                Data.MusicLibrary.Folders.Add(folder);
-                OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
-                await SaveFoldersAsync();
-                await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync); // 重新加载音乐库
-            }
+            Data.MusicLibrary.Folders.Add(folder);
+            OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
+            await SaveFoldersAsync();
+            await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync); // 重新加载音乐库
         }
         senderButton!.IsEnabled = true;
     }

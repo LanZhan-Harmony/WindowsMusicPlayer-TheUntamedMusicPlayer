@@ -30,16 +30,10 @@ public partial class MainViewModel : ObservableRecipient
     public Color TintColor { get; set; } = default;
 
     [ObservableProperty]
-    public partial bool IsDarkTheme
-    {
-        get; set;
-    }
+    public partial bool IsDarkTheme { get; set; }
 
     [ObservableProperty]
-    public partial double MainWindowWidth
-    {
-        get; set;
-    }
+    public partial double MainWindowWidth { get; set; }
 
     public MainViewModel()
     {
