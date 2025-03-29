@@ -103,9 +103,9 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
         var albumTask = api.RequestAsync(CloudMusicApiProviders.Album, new Dictionary<string, string> { { "id", $"{info.AlbumID}" } });
         var lyricTask = api.RequestAsync(CloudMusicApiProviders.Lyric, new Dictionary<string, string> { { "id", $"{info.ID}" } });
         await Task.WhenAll(songUrlTask, albumTask, lyricTask);
-        var (isOK1, songUrlResult) = songUrlTask.Result;
-        var (isOK2, albumResult) = albumTask.Result;
-        var (isOK3, lyricResult) = lyricTask.Result;
+        var (_, songUrlResult) = songUrlTask.Result;
+        var (_, albumResult) = albumTask.Result;
+        var (_, lyricResult) = lyricTask.Result;
         api.Dispose();
         try
         {
@@ -135,7 +135,7 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
             }
             return detailedInfo;
         }
-        catch (Exception ex) when (ex is NullReferenceException)
+        catch (NullReferenceException)
         {
             if (string.IsNullOrWhiteSpace(detailedInfo.Path))
             {

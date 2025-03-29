@@ -3,18 +3,13 @@ using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Services;
-public class ThemeSelectorService : IThemeSelectorService
+public class ThemeSelectorService(ILocalSettingsService localSettingsService) : IThemeSelectorService
 {
     private const string SettingsKey = "AppBackgroundRequestedTheme";
 
     public ElementTheme Theme { get; set; } = ElementTheme.Default;
 
-    private readonly ILocalSettingsService _localSettingsService;
-
-    public ThemeSelectorService(ILocalSettingsService localSettingsService)
-    {
-        _localSettingsService = localSettingsService;
-    }
+    private readonly ILocalSettingsService _localSettingsService = localSettingsService;
 
     public async Task InitializeAsync()
     {

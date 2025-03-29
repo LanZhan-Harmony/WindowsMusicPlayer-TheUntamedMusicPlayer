@@ -1,7 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
-using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 public class CloudOnlineAlbumInfo : IOnlineAlbumInfo
