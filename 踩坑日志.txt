@@ -1,4 +1,4 @@
-1. 需要先部署项目，然后才能进行调试。请在配置服务器中启用部署。=>重启Visual Studio。
+1. 需要先部署项目，然后才能进行调试。请在配置服务器中启用部署。=>关掉正在运行的程序。
 2. 使用navigateto(page)时。page的构造函数不能有参。
 3. onlaunched方法可能比App的构造函数先执行完。
 4. Template Studio中不导航到MainWindow的原因是MainWindow的content=null。
@@ -9,3 +9,4 @@
 9. BitmapImage也是UI相关的，要用dispatcherqueue.TryEnque。
 10. AOT失败，升级NUGET到预览版。
 11. template内容要使用VisualStateManager时，要用UserControl包裹起来。
+12. 新建一个副窗口后主窗口频繁失焦。=>不要把整个窗口都设置为标题栏。
