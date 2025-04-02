@@ -51,7 +51,7 @@ public partial class HomeViewModel : ObservableRecipient
 
     public async void SuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        if (args.ChosenSuggestion is not null && args.ChosenSuggestion is SearchResult result)
+        if (args.ChosenSuggestion is SearchResult result)
         {
             var keyWords = result.Label;
             Data.OnlineMusicLibrary.ClearSearchResult();
