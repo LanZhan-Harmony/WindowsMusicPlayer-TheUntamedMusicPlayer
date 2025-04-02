@@ -73,8 +73,8 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 线程计时器
     /// </summary>
-    public ThreadPoolTimer? PositionUpdateTimer250ms;
-    public ThreadPoolTimer? PositionUpdateTimer2000ms;
+    public ThreadPoolTimer? PositionUpdateTimer250ms { get; set; }
+    public ThreadPoolTimer? PositionUpdateTimer2000ms { get; set; }
 
     /// <summary>
     /// 播放队列集合

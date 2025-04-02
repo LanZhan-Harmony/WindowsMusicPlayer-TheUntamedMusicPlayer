@@ -143,7 +143,7 @@ public class CloudMusicSearchHelper
         {
             try
             {
-                var (isOk, result) = await _api.RequestAsync(CloudMusicApiProviders.SearchSuggest, new Dictionary<string, string> { { "keywords", $"{keyWords}" } });
+                var (_, result) = await _api.RequestAsync(CloudMusicApiProviders.SearchSuggest, new Dictionary<string, string> { { "keywords", $"{keyWords}" } });
 
                 using var document = JsonDocument.Parse(result.ToJsonString());
                 var root = document.RootElement;
