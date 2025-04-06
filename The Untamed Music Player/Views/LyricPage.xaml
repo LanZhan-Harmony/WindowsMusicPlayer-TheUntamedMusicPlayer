@@ -103,7 +103,8 @@
                         CornerRadius="10">
                     <Canvas>
                         <Image x:Name="ControllerCover"
-                               HorizontalAlignment="Left" VerticalAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
                                Canvas.ZIndex="1"
                                Source="{x:Bind model:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"/>
                         <Grid x:Name="ControllerCoverGrid"
@@ -127,19 +128,17 @@
                               Grid.Column="1"
                               Margin="20,20,50,20"
                               VerticalScrollBarVisibility="Hidden">
-                    <ListView x:Name="LyricView" helper:ListViewExtensions.ItemCornerRadius="15"
-                              IsItemClickEnabled="True"
-                              ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
-                              ItemTemplate="{StaticResource LyricViewTemplate}"
-                              ItemsSource="{x:Bind model:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
-                              SelectionMode="None">
-                        <ListView.Header>
-                            <StackPanel Height="600"/>
-                        </ListView.Header>
-                        <ListView.Footer>
-                            <StackPanel Height="600"/>
-                        </ListView.Footer>
-                    </ListView>
+                    <StackPanel>
+                        <StackPanel Height="600"/>
+                        <ListView x:Name="LyricView"
+                                  helper:ListViewExtensions.ItemCornerRadius="15"
+                                  IsItemClickEnabled="True"
+                                  ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
+                                  ItemTemplate="{StaticResource LyricViewTemplate}"
+                                  ItemsSource="{x:Bind model:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
+                                  SelectionMode="None"/>
+                        <StackPanel Height="600"/>
+                    </StackPanel>
                 </ScrollViewer>
             </Grid>
         </Grid>
