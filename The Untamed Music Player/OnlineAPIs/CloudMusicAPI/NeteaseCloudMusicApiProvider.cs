@@ -3,7 +3,8 @@
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Utils;
 using static The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.NeteaseCloudMusicApiProvider;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
@@ -17,7 +18,7 @@ public sealed class NeteaseCloudMusicApiProvider
     private readonly string _route;
     private readonly ParameterInfo[] _parameterInfos;
     private readonly HttpMethod _method;
-    private readonly options _options;
+    private readonly Options _options;
     private readonly Func<Dictionary<string, string>, string> _url;
     private Func<Dictionary<string, string>, IEnumerable<KeyValuePair<string, string>>> _dataProvider;
 
@@ -30,7 +31,7 @@ public sealed class NeteaseCloudMusicApiProvider
 
     internal Func<Dictionary<string, string>, IEnumerable<KeyValuePair<string, string>>> Data => _dataProvider ?? GetData;
 
-    internal options Options => _options;
+    internal Options Options => _options;
 
     internal Func<Dictionary<string, string>, IEnumerable<KeyValuePair<string, string>>> DataProvider
     {
@@ -48,7 +49,7 @@ public sealed class NeteaseCloudMusicApiProvider
         _route = name;
     }
 
-    internal NeteaseCloudMusicApiProvider(string name, HttpMethod method, Func<Dictionary<string, string>, string> url, ParameterInfo[] parameterInfos, options options)
+    internal NeteaseCloudMusicApiProvider(string name, HttpMethod method, Func<Dictionary<string, string>, string> url, ParameterInfo[] parameterInfos, Options options)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -1396,16 +1397,16 @@ public static partial class CloudMusicApiProviders
     /// </summary>
     public static readonly NeteaseCloudMusicApiProvider Weblog = new("/weblog", HttpMethod.Post, q => "https://music.163.com/weapi/feedback/weblog", [], BuildOptions("weapi"));
 
-    private static options BuildOptions(string crypto) => BuildOptions(crypto, null);
+    private static Options BuildOptions(string crypto) => BuildOptions(crypto, null);
 
-    private static options BuildOptions(string crypto, IEnumerable<Cookie> cookies) => BuildOptions(crypto, cookies, null);
+    private static Options BuildOptions(string crypto, IEnumerable<Cookie> cookies) => BuildOptions(crypto, cookies, null);
 
-    private static options BuildOptions(string crypto, IEnumerable<Cookie> cookies, string ua) => BuildOptions(crypto, cookies, ua, null);
+    private static Options BuildOptions(string crypto, IEnumerable<Cookie> cookies, string ua) => BuildOptions(crypto, cookies, ua, null);
 
-    private static options BuildOptions(string crypto, IEnumerable<Cookie> cookies, string ua, string url)
+    private static Options BuildOptions(string crypto, IEnumerable<Cookie> cookies, string ua, string url)
     {
         CookieCollection cookieCollection;
-        options options;
+        Options options;
 
         cookieCollection = [];
         if (cookies is not null)
@@ -1416,7 +1417,7 @@ public static partial class CloudMusicApiProviders
             }
         }
 
-        options = new options
+        options = new Options
         {
             crypto = crypto,
             cookie = cookieCollection,

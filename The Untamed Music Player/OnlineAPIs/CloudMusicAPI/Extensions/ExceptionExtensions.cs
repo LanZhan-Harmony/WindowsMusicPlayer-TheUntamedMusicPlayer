@@ -1,8 +1,13 @@
 #pragma warning disable
 
 using System.Text;
+using The_Untamed_Music_Player;
+using The_Untamed_Music_Player.OnlineAPIs;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
 
-namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
 internal static class ExceptionExtensions
 {
     /// <summary>
@@ -26,9 +31,7 @@ internal static class ExceptionExtensions
     {
         ArgumentNullException.ThrowIfNull(exception);
 
-        StringBuilder sb;
-
-        sb = new StringBuilder();
+        var sb = new StringBuilder();
         DumpException(exception, sb);
         return sb.ToString();
     }
