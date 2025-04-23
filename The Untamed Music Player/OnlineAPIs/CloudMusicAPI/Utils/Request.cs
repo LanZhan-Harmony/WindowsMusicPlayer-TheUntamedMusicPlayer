@@ -6,10 +6,10 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
 
-namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
-internal static partial class request
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Utils;
+internal static partial class Request
 {
     private static readonly string[] userAgentList = [
         "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1",
@@ -28,7 +28,7 @@ internal static partial class request
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0"
     ];
 
-    public static string chooseUserAgent(string ua)
+    public static string ChooseUserAgent(string ua)
     {
         return ua switch
         {
@@ -38,7 +38,7 @@ internal static partial class request
         };
     }
 
-    public static async Task<(bool, JsonObject)> createRequest(HttpClient client, HttpMethod method, string url, IEnumerable<KeyValuePair<string, string>> data_, options options)
+    public static async Task<(bool, JsonObject)> CreateRequest(HttpClient client, HttpMethod method, string url, IEnumerable<KeyValuePair<string, string>> data_, Options options)
     {
         ArgumentNullException.ThrowIfNull(client);
 
@@ -57,7 +57,7 @@ internal static partial class request
 
         headers = new Dictionary<string, string>
         {
-            ["User-Agent"] = chooseUserAgent(options.ua),
+            ["User-Agent"] = ChooseUserAgent(options.ua),
             ["Cookie"] = string.Join("; ", options.cookie.Cast<Cookie>().Select(t => Uri.EscapeDataString(t.Name) + "=" + Uri.EscapeDataString(t.Value)))
         };
         if (method == HttpMethod.Post)
@@ -81,13 +81,13 @@ internal static partial class request
             case "weapi":
                 {
                     data["csrf_token"] = options.cookie["__csrf"]?.Value ?? string.Empty;
-                    data = crypto.weapi(data);
+                    data = Crypto.WEApi(data);
                     url = MyRegex1().Replace(url, "weapi");
                     break;
                 }
             case "linuxapi":
                 {
-                    data = crypto.linuxapi(new Dictionary<string, object> {
+                    data = Crypto.LinuxApi(new Dictionary<string, object> {
                     { "method", method.Method },
                     { "url", MyRegex1().Replace(url, "api") },
                     { "params", data }
@@ -134,7 +134,7 @@ internal static partial class request
 
                     headers["Cookie"] = string.Join("; ", header.Select(t => Uri.EscapeDataString(t.Key) + "=" + Uri.EscapeDataString(t.Value)));
                     data["header"] = JsonSerializer.Serialize(header);
-                    data = crypto.eapi(options.url, data);
+                    data = Crypto.EApi(options.url, data);
                     url = MyRegex1().Replace(url, "eapi");
                     break;
                 }
@@ -189,7 +189,7 @@ internal static partial class request
                 }
                 try
                 {
-                    answer["body"] = JsonObject.Parse(Encoding.UTF8.GetString(crypto.decrypt(buffer)));
+                    answer["body"] = JsonObject.Parse(Encoding.UTF8.GetString(Crypto.Decrypt(buffer)));
                     temp2 = (JsonValue)answer["body"]["code"];
                     answer["status"] = temp2 is null ? (int)response.StatusCode : (int)temp2;
                 }

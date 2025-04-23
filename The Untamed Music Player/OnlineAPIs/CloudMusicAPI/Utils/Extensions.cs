@@ -3,7 +3,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Utils;
 internal static class Extensions
 {
     private static readonly MD5 _md5 = MD5.Create();
@@ -12,27 +12,21 @@ internal static class Extensions
 
     public static string ToHexStringLower(this byte[] value)
     {
-        StringBuilder sb;
-
-        sb = new StringBuilder();
+        var sb = new StringBuilder();
         for (var i = 0; i < value.Length; i++)
         {
             sb.Append(value[i].ToString("x2"));
         }
-
         return sb.ToString();
     }
 
     public static string ToHexStringUpper(this byte[] value)
     {
-        StringBuilder sb;
-
-        sb = new StringBuilder();
+        var sb = new StringBuilder();
         for (var i = 0; i < value.Length; i++)
         {
             sb.Append(value[i].ToString("X2"));
         }
-
         return sb.ToString();
     }
 

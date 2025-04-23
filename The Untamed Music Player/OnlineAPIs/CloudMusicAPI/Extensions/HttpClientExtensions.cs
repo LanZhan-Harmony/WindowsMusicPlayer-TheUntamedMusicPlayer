@@ -2,9 +2,13 @@
 
 using System.Net.Http.Headers;
 using System.Text;
+using The_Untamed_Music_Player;
+using The_Untamed_Music_Player.OnlineAPIs;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
 
-namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
-
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
 internal static class HttpClientExtensions
 {
     public static Task<HttpResponseMessage> SendAsync(this HttpClient client, HttpMethod method, string url) => client.SendAsync(method, url, null, null);
