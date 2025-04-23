@@ -4,8 +4,8 @@ using System.Net;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.System.Extensions;
-using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.util;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Utils;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 /// <summary>
@@ -53,21 +53,6 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     }
 
     /// <summary>
-    /// API请求（如果.NET版本支持，请使用值元组异步版本 <see cref="RequestAsync(NeteaseCloudMusicApiProvider, Dictionary{string, string})"/>）
-    /// </summary>
-    /// <param name="provider">API提供者</param>
-    /// <param name="queries">参数</param>
-    /// <param name="result">请求结果</param>
-    /// <returns></returns>
-    public bool Request(NeteaseCloudMusicApiProvider provider, Dictionary<string, string> queries, out JsonObject result)
-    {
-        bool isOk;
-
-        (isOk, result) = RequestAsync(provider, queries).Result;
-        return isOk;
-    }
-
-    /// <summary>
     /// API请求
     /// </summary>
     /// <param name="provider">API提供者</param>
@@ -99,7 +84,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         return RequestAsync(provider.Method, provider.Url(queries), provider.Data(queries), provider.Options);
     }
 
-    private async Task<(bool, JsonObject)> RequestAsync(HttpMethod method, string url, IEnumerable<KeyValuePair<string, string>> data, options options)
+    private async Task<(bool, JsonObject)> RequestAsync(HttpMethod method, string url, IEnumerable<KeyValuePair<string, string>> data, Options options)
     {
         ArgumentNullException.ThrowIfNull(method);
 
@@ -112,7 +97,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         bool isOk;
         JsonObject json;
 
-        (isOk, json) = await request.createRequest(_client, method, url, data, options);
+        (isOk, json) = await Request.CreateRequest(_client, method, url, data, options);
         json = (JsonObject)json["body"];
         if (!isOk && (int?)json["code"] == 301)
         {
@@ -243,7 +228,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
             MatchCollection matchs;
             JsonArray playlists;
 
-            response = await _client.SendAsync(HttpMethod.Get, "https://music.163.com/playlist", new QueryCollection { { "id", queries["id"] } }, new QueryCollection { { "User-Agent", request.chooseUserAgent("pc") } });
+            response = await _client.SendAsync(HttpMethod.Get, "https://music.163.com/playlist", new QueryCollection { { "id", queries["id"] } }, new QueryCollection { { "User-Agent", Request.ChooseUserAgent("pc") } });
             s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
             matchs = MyRegex().Matches(s);
             playlists = new JsonArray();
