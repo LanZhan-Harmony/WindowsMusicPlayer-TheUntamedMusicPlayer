@@ -10,7 +10,7 @@
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
     </ContentDialog.Resources>
-    <ScrollViewer>
+    <ScrollViewer Margin="-24,0,-24,0">
         <StackPanel>
             <Grid Width="625">
                 <Grid.RowDefinitions>
@@ -22,7 +22,7 @@
                     <ColumnDefinition x:Name="Column1" Width="17"/>
                     <ColumnDefinition x:Name="Column2" Width="*"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Row="0" Grid.Column="0">
+                <StackPanel Grid.Row="0" Grid.Column="0" Padding="24,0,0,0">
                     <StackPanel>
                         <TextBlock x:Uid="PropertiesDialog_Title"
                                    FontSize="12"
@@ -60,7 +60,7 @@
                         <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Music.BitRate}"/>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Grid.Row="0" Grid.Column="2">
+                <StackPanel Grid.Row="0" Grid.Column="2" Padding="0,0,24,0">
                     <StackPanel>
                         <TextBlock x:Uid="PropertiesDialog_ContributingArtists"
                                    FontSize="12"
@@ -96,7 +96,7 @@
                         <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Music.ItemType}"/>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Grid.Row="1" Grid.ColumnSpan="3">
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Padding="24,0,24,0">
                     <StackPanel Margin="0,18,0,0">
                         <TextBlock x:Uid="PropertiesDialog_FileLocation"
                                    FontSize="12"
@@ -108,7 +108,7 @@
                 </StackPanel>
             </Grid>
             <HyperlinkButton x:Uid="PropertiesDialog_OpenFileLocation"
-                             Margin="-12,18,0,0"
+                             Margin="12,18,0,0"
                              Click="OpenFileLocationButton_Click"/>
         </StackPanel>
     </ScrollViewer>
