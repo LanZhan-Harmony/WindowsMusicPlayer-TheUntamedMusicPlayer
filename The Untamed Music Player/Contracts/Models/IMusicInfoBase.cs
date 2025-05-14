@@ -155,7 +155,7 @@ public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
     {
         return sourceMode switch
         {
-            0 => new DetailedMusicInfo(info.Path),
+            0 => new DetailedMusicInfo((BriefMusicInfo)info),
             1 => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
             _ => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
         };
