@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
@@ -127,10 +126,7 @@ public partial class RootPlayBarViewModel : ObservableRecipient
 
     public void FullScreenButton_Click(object sender, RoutedEventArgs e)
     {
-        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
-        var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-        var appWindow = AppWindow.GetFromWindowId(windowId);
-
+        var appWindow = App.MainWindow!.AppWindow;
         if (appWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen)
         {
             appWindow.SetPresenter(AppWindowPresenterKind.Default);
@@ -148,7 +144,7 @@ public partial class RootPlayBarViewModel : ObservableRecipient
         if (!IsDesktopLyricWindowStarted)
         {
             Data.DesktopLyricWindow = new DesktopLyricWindow();
-            Data.DesktopLyricWindow.Show();
+            Data.DesktopLyricWindow.Activate();
             IsDesktopLyricWindowStarted = true;
         }
         else
