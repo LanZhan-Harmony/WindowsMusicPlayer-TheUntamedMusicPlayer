@@ -166,6 +166,7 @@ public class BriefMusicInfo : IBriefMusicInfoBase
         }
         catch (Exception ex)
         {
+            info.IsPlayAvailable = false;
             Debug.WriteLine(ex.StackTrace);
         }
         return info;
@@ -354,54 +355,6 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
 
     public DetailedMusicInfo(string path)
     {
-        try
-        {
-            Path = path;
-            ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
-            ItemType = System.IO.Path.GetExtension(path).ToLower();
-            var musicFile = TagLib.File.Create(path);
-            if (musicFile.Tag.Pictures.Length != 0)
-            {
-                var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
-                CoverBuffer = coverBuffer;
-                using var stream = new MemoryStream(coverBuffer);
-                stream.Seek(0, SeekOrigin.Begin);
-                Cover = new BitmapImage
-                {
-                    DecodePixelWidth = 400
-                };
-                Cover.SetSource(stream.AsRandomAccessStream());
-            }
-            Title = string.IsNullOrEmpty(musicFile.Tag.Title) ? System.IO.Path.GetFileNameWithoutExtension(path) : musicFile.Tag.Title;
-            Album = musicFile.Tag.Album ?? "";
-            Artists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
-            ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(Artists);
-            AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr([.. musicFile.Tag.AlbumArtists
-                .SelectMany(artist => artist.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries))
-                .Distinct()]);
-            ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(Album, ArtistsStr);
-            Year = (ushort)musicFile.Tag.Year;
-            YearStr = IBriefMusicInfoBase.GetYearStr(Year);
-            Genre = musicFile.Tag.Genres;
-            GenreStr = GetGenreStr(Genre);
-            Duration = musicFile.Properties.Duration;
-            DurationStr = IBriefMusicInfoBase.GetDurationStr(Duration);
-            Track = musicFile.Tag.Track == 0 ? "" : musicFile.Tag.Track.ToString();
-            Lyric = musicFile.Tag.Lyrics ?? "";
-            BitRate = $"{musicFile.Properties.AudioBitrate} kbps";
-        }
-        catch (Exception ex) when (ex is TagLib.CorruptFileException or TagLib.UnsupportedFormatException)
-        {
-            Title = System.IO.Path.GetFileNameWithoutExtension(path);
-        }
-        catch (Exception ex) when (ex is FileNotFoundException)
-        {
-            IsPlayAvailable = false;
-        }
-        catch (Exception ex)
-        {
-            IsPlayAvailable = false;
-            Debug.WriteLine(ex.StackTrace);
-        }
+        Path = path;
     }
 }
