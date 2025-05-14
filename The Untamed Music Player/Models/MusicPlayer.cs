@@ -28,6 +28,11 @@ public partial class MusicPlayer : ObservableRecipient
     private readonly Lock _mediaLock = new();
 
     /// <summary>
+    /// 当前播放的歌曲简要版
+    /// </summary>
+    private IBriefMusicInfoBase _currentBriefMusic = null!;
+
+    /// <summary>
     /// SMTC控件
     /// </summary>
     private readonly SystemMediaTransportControls _systemControls;
@@ -46,6 +51,11 @@ public partial class MusicPlayer : ObservableRecipient
     /// 线程锁开启状态, true为开启, false为关闭
     /// </summary>
     private bool _lockable = false;
+
+    /// <summary>
+    /// 播放失败次数
+    /// </summary>
+    private byte _failedCount = 0;
 
     /// <summary>
     /// 排序方式
@@ -229,6 +239,7 @@ public partial class MusicPlayer : ObservableRecipient
     public async void PlaySongByInfo(IBriefMusicInfoBase info)
     {
         Stop();
+        _currentBriefMusic = info;
         CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info, SourceMode);
         PlayQueueIndex = info.PlayQueueIndex;
         if (CurrentMusic!.IsPlayAvailable)
@@ -254,6 +265,7 @@ public partial class MusicPlayer : ObservableRecipient
     {
         Stop();
         var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
+        _currentBriefMusic = songToPlay;
         CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
         PlayQueueIndex = isLast ? 0 : index;
         if (CurrentMusic!.IsPlayAvailable)
@@ -325,6 +337,7 @@ public partial class MusicPlayer : ObservableRecipient
             Stop();
             newIndex = PlayQueueIndex < _playQueueLength - 1 ? PlayQueueIndex + 1 : 0;
             var songToPlay = ShuffleMode ? ShuffledPlayQueue[newIndex] : PlayQueue[newIndex];
+            _currentBriefMusic = songToPlay;
             CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
             PlayQueueIndex = newIndex == 0 ? 0 : newIndex - 1;
             if (PlayState != 0)
@@ -687,7 +700,17 @@ public partial class MusicPlayer : ObservableRecipient
             }
             else
             {
-                PlayNextSong();
+                _currentBriefMusic.IsPlayAvailable = false;
+                _failedCount++;
+                if (_failedCount > 2)
+                {
+                    _failedCount = 0;
+                    Stop();
+                }
+                else
+                {
+                    PlayNextSong();
+                }
             }
         });
     }
