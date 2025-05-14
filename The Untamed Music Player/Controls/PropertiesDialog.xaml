@@ -1,9 +1,9 @@
 <ContentDialog x:Uid="PropertiesDialog"
-               x:Class="The_Untamed_Music_Player.Views.PropertiesDialog"
+               x:Class="The_Untamed_Music_Player.Controls.PropertiesDialog"
                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-               xmlns:local="using:The_Untamed_Music_Player.Views"
+               xmlns:local="using:The_Untamed_Music_Player.Controls"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                Style="{StaticResource DefaultContentDialogStyle}"
                mc:Ignorable="d">
@@ -22,7 +22,8 @@
                     <ColumnDefinition x:Name="Column1" Width="17"/>
                     <ColumnDefinition x:Name="Column2" Width="*"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Row="0" Grid.Column="0" Padding="24,0,0,0">
+                <StackPanel Grid.Row="0" Grid.Column="0"
+                            Padding="24,0,0,0">
                     <StackPanel>
                         <TextBlock x:Uid="PropertiesDialog_Title"
                                    FontSize="12"
@@ -60,7 +61,8 @@
                         <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Music.BitRate}"/>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Grid.Row="0" Grid.Column="2" Padding="0,0,24,0">
+                <StackPanel Grid.Row="0" Grid.Column="2"
+                            Padding="0,0,24,0">
                     <StackPanel>
                         <TextBlock x:Uid="PropertiesDialog_ContributingArtists"
                                    FontSize="12"
@@ -96,7 +98,8 @@
                         <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Music.ItemType}"/>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Padding="24,0,24,0">
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="3"
+                            Padding="24,0,24,0">
                     <StackPanel Margin="0,18,0,0">
                         <TextBlock x:Uid="PropertiesDialog_FileLocation"
                                    FontSize="12"
