@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Models;
 
-namespace The_Untamed_Music_Player.Views;
+namespace The_Untamed_Music_Player.Controls;
 
 public sealed partial class PropertiesDialog : ContentDialog
 {

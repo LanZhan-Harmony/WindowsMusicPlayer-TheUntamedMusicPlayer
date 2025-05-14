@@ -14,7 +14,7 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
     protected static readonly string _unknownArtist = "MusicInfo_UnknownArtist".GetLocalized();
 
     public int PlayQueueIndex { get; set; } = -1;
-    public bool IsAvailable { get; set; } = false;
+    public bool IsPlayAvailable { get; set; } = false;
     public string Path { get; set; } = null!;
     public string Title { get; set; } = "";
     public long ID { get; set; } = 0;
@@ -37,7 +37,7 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
             var (_, songUrlResult) = await api.RequestAsync(CloudMusicApiProviders.SongUrl, new Dictionary<string, string> { { "id", $"{info.ID}" } });
             if (songUrlResult["data"]![0]!["url"] is null)
             {
-                info.IsAvailable = false;
+                info.IsPlayAvailable = false;
                 return info;
             }
 
@@ -57,12 +57,12 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
             info.YearStr = IBriefMusicInfoBase.GetYearStr(
                 (ushort)DateTimeOffset.FromUnixTimeMilliseconds(albumElement.GetProperty("publishTime").GetInt64()).Year);
 
-            info.IsAvailable = true;
+            info.IsPlayAvailable = true;
             return info;
         }
         catch
         {
-            info.IsAvailable = false;
+            info.IsPlayAvailable = false;
             return info;
         }
     }
@@ -75,7 +75,6 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
 
 public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailedOnlineMusicInfo
 {
-    public bool IsPlayAvailable { get; set; } = true;
     public bool IsOnline { get; set; } = true;
     public string AlbumArtistsStr { get; set; } = "";
     public string ArtistAndAlbumStr { get; set; } = "";
@@ -92,6 +91,7 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
     {
         var detailedInfo = new CloudDetailedOnlineMusicInfo
         {
+            IsPlayAvailable = info.IsPlayAvailable,
             ID = info.ID,
             Title = info.Title,
             AlbumID = info.AlbumID,
@@ -145,7 +145,7 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
         }
         catch (Exception ex)
         {
-            detailedInfo.IsAvailable = false;
+            detailedInfo.IsPlayAvailable = false;
             Debug.WriteLine(ex.StackTrace);
             return detailedInfo;
         }

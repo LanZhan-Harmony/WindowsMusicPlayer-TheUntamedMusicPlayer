@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 

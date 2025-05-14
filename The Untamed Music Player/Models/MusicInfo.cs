@@ -22,6 +22,11 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     protected static readonly string _unknownGenre = "MusicInfo_UnknownGenre".GetLocalized();
 
     /// <summary>
+    /// 是否可以播放
+    /// </summary>
+    public bool IsPlayAvailable { get; set; } = true;
+
+    /// <summary>
     /// 在播放队列中的索引
     /// </summary>
     public int PlayQueueIndex { get; set; } = -1;
@@ -231,7 +236,6 @@ public class BriefMusicInfo : IBriefMusicInfoBase
 
 public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
 {
-    public bool IsPlayAvailable { get; set; } = true;
     public bool IsOnline { get; set; } = false;
 
     /// <summary>
@@ -294,7 +298,59 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
     /// </summary>
     public string Lyric { get; set; } = "";
 
-    public DetailedMusicInfo() { }
+    public DetailedMusicInfo(BriefMusicInfo info)
+    {
+        try
+        {
+            IsPlayAvailable = info.IsPlayAvailable;
+            Path = info.Path;
+            Folder = info.Folder;
+            var musicFile = TagLib.File.Create(Path);
+            Title = info.Title;
+            Album = musicFile.Tag.Album ?? "";
+            Artists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
+            ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(Artists);
+            AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr([.. musicFile.Tag.AlbumArtists
+                .SelectMany(artist => artist.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries))
+                .Distinct()]);
+            ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(Album, ArtistsStr);
+            Year = info.Year;
+            YearStr = info.YearStr;
+            Genre = musicFile.Tag.Genres;
+            GenreStr = GetGenreStr(Genre);
+            Duration = info.Duration;
+            DurationStr = IBriefMusicInfoBase.GetDurationStr(Duration);
+            Track = musicFile.Tag.Track == 0 ? "" : musicFile.Tag.Track.ToString();
+            Lyric = musicFile.Tag.Lyrics ?? "";
+            BitRate = $"{musicFile.Properties.AudioBitrate} kbps";
+            ModifiedDate = info.ModifiedDate;
+            ItemType = System.IO.Path.GetExtension(Path).ToLower();
+            if (musicFile.Tag.Pictures.Length != 0)
+            {
+                var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
+                CoverBuffer = coverBuffer;
+                using var stream = new MemoryStream(coverBuffer);
+                stream.Seek(0, SeekOrigin.Begin);
+                Cover = new BitmapImage
+                {
+                    DecodePixelWidth = 400
+                };
+                Cover.SetSource(stream.AsRandomAccessStream());
+            }
+        }
+        catch (Exception ex) when (ex is TagLib.CorruptFileException or TagLib.UnsupportedFormatException)
+        {
+        }
+        catch (Exception ex) when (ex is FileNotFoundException)
+        {
+            IsPlayAvailable = false;
+        }
+        catch (Exception ex)
+        {
+            IsPlayAvailable = false;
+            Debug.WriteLine(ex.StackTrace);
+        }
+    }
 
     public DetailedMusicInfo(string path)
     {

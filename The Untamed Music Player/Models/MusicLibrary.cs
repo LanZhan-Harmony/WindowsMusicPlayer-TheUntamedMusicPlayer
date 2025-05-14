@@ -241,10 +241,8 @@ public partial class MusicLibrary : ObservableRecipient
 
     private void UpdateArtistInfo(BriefMusicInfo briefMusicInfo)
     {
-        var span = briefMusicInfo.Artists.AsSpan();
-        for (var i = 0; i < span.Length; i++)
+        foreach (var artist in briefMusicInfo.Artists)
         {
-            var artist = span[i];
             if (!Artists.TryGetValue(artist, out var artistInfo))
             {
                 artistInfo = new ArtistInfo(briefMusicInfo, artist);

@@ -144,18 +144,6 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial IDetailedMusicInfoBase? CurrentMusic { get; set; }
-    partial void OnCurrentMusicChanged(IDetailedMusicInfoBase? value)
-    {
-        if (value!.IsPlayAvailable)
-        {
-            SetSource(value!.Path);
-            _ = UpdateLyric(value!.Lyric);
-        }
-        else
-        {
-            HandleSongNotAvailable();
-        }
-    }
 
     /// <summary>
     /// 当前播放时间
@@ -242,10 +230,19 @@ public partial class MusicPlayer : ObservableRecipient
     {
         Stop();
         CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info, SourceMode);
-        _systemControls.IsPlayEnabled = true;
-        _systemControls.IsPauseEnabled = true;
         PlayQueueIndex = info.PlayQueueIndex;
-        Play();
+        if (CurrentMusic!.IsPlayAvailable)
+        {
+            SetSource(CurrentMusic!.Path);
+            _ = UpdateLyric(CurrentMusic!.Lyric);
+            _systemControls.IsPlayEnabled = true;
+            _systemControls.IsPauseEnabled = true;
+            Play();
+        }
+        else
+        {
+            HandleSongNotAvailable();
+        }
     }
 
     /// <summary>
@@ -259,11 +256,20 @@ public partial class MusicPlayer : ObservableRecipient
         var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
         CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
         PlayQueueIndex = isLast ? 0 : index;
-        _systemControls.IsPlayEnabled = true;
-        _systemControls.IsPauseEnabled = true;
-        if (!isLast)
+        if (CurrentMusic!.IsPlayAvailable)
         {
-            Play();
+            SetSource(CurrentMusic!.Path);
+            _ = UpdateLyric(CurrentMusic!.Lyric);
+            _systemControls.IsPlayEnabled = true;
+            _systemControls.IsPauseEnabled = true;
+            if (!isLast)
+            {
+                Play();
+            }
+        }
+        else
+        {
+            HandleSongNotAvailable();
         }
     }
 
@@ -321,11 +327,20 @@ public partial class MusicPlayer : ObservableRecipient
             var songToPlay = ShuffleMode ? ShuffledPlayQueue[newIndex] : PlayQueue[newIndex];
             CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
             PlayQueueIndex = newIndex == 0 ? 0 : newIndex - 1;
-            _systemControls.IsPauseEnabled = true;
-            _systemControls.IsPlayEnabled = true;
             if (PlayState != 0)
             {
-                Play();
+                if (CurrentMusic!.IsPlayAvailable)
+                {
+                    SetSource(CurrentMusic!.Path);
+                    _ = UpdateLyric(CurrentMusic!.Lyric);
+                    _systemControls.IsPauseEnabled = true;
+                    _systemControls.IsPlayEnabled = true;
+                    Play();
+                }
+                else
+                {
+                    HandleSongNotAvailable();
+                }
             }
         }
         else if (index < PlayQueueIndex) // 删除歌曲在当前播放歌曲之前时，当前索引前移1位
@@ -428,7 +443,7 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     var info = (DetailedMusicInfo)CurrentMusic;
                     var tempFolder = ApplicationData.Current.TemporaryFolder;
-                    var coverFileName = "Cover.jpg";
+                    const string coverFileName = "Cover.jpg";
                     var coverFile = await tempFolder.CreateFileAsync(coverFileName, CreationCollisionOption.ReplaceExisting);
                     await FileIO.WriteBytesAsync(coverFile, info.CoverBuffer);
                     _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(coverFile);
@@ -886,6 +901,7 @@ public partial class MusicPlayer : ObservableRecipient
         _systemControls.IsPauseEnabled = false;
         _systemControls.IsPreviousEnabled = false;
         _systemControls.IsNextEnabled = false;
+        CurrentPlayingTime = TimeSpan.Zero;
         TotalPlayingTime = TimeSpan.Zero;
         PlayQueue.Clear();
         ShuffledPlayQueue.Clear();

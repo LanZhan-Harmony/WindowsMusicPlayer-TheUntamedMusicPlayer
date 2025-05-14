@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Labs.WinUI.MarqueeTextRns;
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -19,7 +18,6 @@ namespace The_Untamed_Music_Player.Views;
 public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 {
     private readonly nint _hWnd;
-    private readonly AppWindow _appWindow;
 
     private bool _isDragging = false; // 检测是否在拖动的变量
     private bool _isMouseOverBorder = false; // 检测鼠标是否在窗口上的变量
@@ -59,12 +57,9 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         ExtendsContentIntoTitleBar = true;
         Title = "DesktopLyricWindowTitle".GetLocalized();
 
-        // 获取窗口句柄
-        _hWnd = WindowNative.GetWindowHandle(this);
-        var windowId = Win32Interop.GetWindowIdFromWindow(_hWnd);
-        _appWindow = AppWindow.GetFromWindowId(windowId);
+        _hWnd = WindowNative.GetWindowHandle(this); // 获取窗口句柄
 
-        _appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed; // 去除右上角三键
+        AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed; // 去除右上角三键
         MakeWindowClickThrough(true);
 
         const int GWL_EXSTYLE = -20;
@@ -77,15 +72,14 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
         SetTopmost(true);
 
-        var displayArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Primary); // 获取屏幕工作区大小
-        var workArea = displayArea.WorkArea;
+        var workArea = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest).WorkArea;// 获取屏幕工作区大小
         var screenHeight = workArea.Height;
         var y = screenHeight - screenHeight * 140 / 1080; // 计算窗口位置，使其位于屏幕下方
 
         this.SetWindowSize(1000, 100);
         this.CenterOnScreen(null, null); // 设置窗口位置
 
-        var currentPosition = _appWindow.Position;
+        var currentPosition = AppWindow.Position;
 
         // 将窗口移动到新的位置
         this.Move(currentPosition.X, y);
@@ -207,7 +201,6 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         {
             Data.RootPlayBarViewModel.IsDesktopLyricWindowStarted = false;
         }
-        // 停止计时器
         if (_updateTimer250ms != null)
         {
             _updateTimer250ms.Stop();
@@ -239,7 +232,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         var deltaY = point.Y - _lastPointerPosition.Y;
 
         // 更新窗口位置
-        this.Move(_appWindow.Position.X + deltaX, _appWindow.Position.Y + deltaY);
+        this.Move(AppWindow.Position.X + deltaX, AppWindow.Position.Y + deltaY);
 
         _lastPointerPosition = point;
     }
