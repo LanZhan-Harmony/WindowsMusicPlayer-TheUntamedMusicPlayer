@@ -7,13 +7,49 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 namespace The_Untamed_Music_Player.Contracts.Models;
 public interface IBriefMusicInfoBase : ICloneable
 {
+    /// <summary>
+    /// 是否可以播放
+    /// </summary>
+    bool IsPlayAvailable { get; set; }
+
+    /// <summary>
+    /// 在播放队列中的索引
+    /// </summary>
     int PlayQueueIndex { get; set; }
+
+    /// <summary>
+    /// 路径
+    /// </summary>
     string Path { get; set; }
+
+    /// <summary>
+    /// 歌曲名
+    /// </summary>
     string Title { get; set; }
+
+    /// <summary>
+    /// 专辑名
+    /// </summary>
     string Album { get; set; }
+
+    /// <summary>
+    /// 艺术家名字符串
+    /// </summary>
     string ArtistsStr { get; set; }
+
+    /// <summary>
+    /// 时长字符串
+    /// </summary>
     string DurationStr { get; set; }
+
+    /// <summary>
+    /// 发行年份字符串
+    /// </summary>
     string YearStr { get; set; }
+
+    /// <summary>
+    /// 流派字符串
+    /// </summary>
     string GenreStr { get; set; }
 
     /// <summary>
@@ -80,7 +116,6 @@ public interface IBriefMusicInfoBase : ICloneable
 
 public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
 {
-    bool IsPlayAvailable { get; set; }
     bool IsOnline { get; set; }
     string ItemType { get; set; }
     string AlbumArtistsStr { get; set; }
