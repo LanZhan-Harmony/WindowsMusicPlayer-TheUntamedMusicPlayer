@@ -16,7 +16,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
 
     private bool _groupMode = true;
 
-    private readonly List<AlbumInfo> _albumList = [.. Data.MusicLibrary.Albums.Values];
+    private List<AlbumInfo> _albumList = [.. Data.MusicLibrary.Albums.Values];
 
     public List<string> SortBy { get; set; } = [.. "LocalAlbums_SortBy".GetLocalized().Split(", ")];
 
@@ -64,8 +64,9 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
 
     private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if ((e.PropertyName == "LibraryReloaded"))
+        if (e.PropertyName == "LibraryReloaded")
         {
+            _albumList = [.. Data.MusicLibrary.Albums.Values];
             LoadModeAndAlbumList();
         }
     }

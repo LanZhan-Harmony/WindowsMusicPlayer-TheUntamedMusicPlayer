@@ -12,7 +12,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 {
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
 
-    private readonly List<ArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
+    private List<ArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
 
     public List<string> SortBy { get; set; } = [.. "LocalArtists_SortBy".GetLocalized().Split(", ")];
 
@@ -44,8 +44,9 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 
     private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if ((e.PropertyName == "LibraryReloaded"))
+        if (e.PropertyName == "LibraryReloaded")
         {
+            _artistList = [.. Data.MusicLibrary.Artists.Values];
             LoadModeAndArtistList();
         }
     }
