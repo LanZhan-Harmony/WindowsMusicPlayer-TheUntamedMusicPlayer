@@ -59,7 +59,7 @@ public class FileManager
         }
     }
 
-    public static async Task SavePlayQueueDataAsync(ObservableCollection<IBriefMusicInfoBase> playQueue, ObservableCollection<IBriefMusicInfoBase> shuffledPlayQueue)
+    public static async void SavePlayQueueDataAsync(ObservableCollection<IBriefMusicInfoBase> playQueue, ObservableCollection<IBriefMusicInfoBase> shuffledPlayQueue)
     {
         var localFolder = ApplicationData.Current.LocalFolder;
         var playQueueFolder = await localFolder.CreateFolderAsync("PlayQueueData", CreationCollisionOption.OpenIfExists);
