@@ -3,6 +3,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Models;
+// [MemoryPack.MemoryPackable]
 public class ArtistInfo : IArtistInfoBase
 {
     public HashSet<string> Albums { get; set; } = [];
