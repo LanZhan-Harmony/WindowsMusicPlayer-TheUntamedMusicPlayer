@@ -2,13 +2,15 @@ using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
-public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
+[MemoryPackable]
+public partial class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
 {
     protected static readonly string _unknownAlbum = "MusicInfo_UnknownAlbum".GetLocalized();
     protected static readonly string _unknownArtist = "MusicInfo_UnknownArtist".GetLocalized();
@@ -25,6 +27,7 @@ public class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
     public string YearStr { get; set; } = "";
     public string GenreStr { get; set; } = "";
 
+    [MemoryPackConstructor]
     public CloudBriefOnlineMusicInfo() { }
 
     public static async Task<CloudBriefOnlineMusicInfo> CreateAsync(JsonElement jInfo, NeteaseCloudMusicApi api)

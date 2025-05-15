@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json.Serialization;
+using MemoryPack;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -8,8 +10,8 @@ using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
-// [MemoryPack.MemoryPackable]
-public class BriefMusicInfo : IBriefMusicInfoBase
+[MemoryPackable]
+public partial class BriefMusicInfo : IBriefMusicInfoBase
 {
     /// <summary>
     /// 歌手分隔符
@@ -91,6 +93,8 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     /// <summary>
     /// 封面(可能为空)
     /// </summary>
+    [MemoryPackIgnore]
+    [JsonIgnore]
     public virtual BitmapImage? Cover { get; set; }
 
     /// <summary>
@@ -108,6 +112,7 @@ public class BriefMusicInfo : IBriefMusicInfoBase
     /// </summary>
     public long ModifiedDate { get; set; } = 0;
 
+    [MemoryPackConstructor]
     public BriefMusicInfo() { }
 
     /// <summary>

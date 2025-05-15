@@ -1,3 +1,4 @@
+using MemoryPack;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -5,7 +6,10 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
-public interface IBriefMusicInfoBase : ICloneable
+[MemoryPackable]
+[MemoryPackUnion(0, typeof(BriefMusicInfo))]
+[MemoryPackUnion(1, typeof(CloudBriefOnlineMusicInfo))]
+public partial interface IBriefMusicInfoBase : ICloneable
 {
     /// <summary>
     /// 是否可以播放
@@ -163,9 +167,9 @@ public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
 
     static async Task<IDetailedMusicInfoBase?> CreateDetailedMusicInfoAsync(IBriefMusicInfoBase info)
     {
-        if (info is BriefMusicInfo)
+        if (info is BriefMusicInfo briefInfo)
         {
-            return new DetailedMusicInfo(info.Path);
+            return new DetailedMusicInfo(briefInfo);
         }
         else if (info is CloudBriefOnlineMusicInfo cloudInfo)
         {
