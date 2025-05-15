@@ -358,9 +358,4 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
             Debug.WriteLine(ex.StackTrace);
         }
     }
-
-    public DetailedMusicInfo(string path)
-    {
-        Path = path;
-    }
 }
