@@ -23,6 +23,11 @@ public partial class MusicPlayer : ObservableRecipient
     private readonly ILocalSettingsService _localSettingsService;
 
     /// <summary>
+    /// 用于SMTC显示封面图片的流
+    /// </summary>
+    private static InMemoryRandomAccessStream _currentCoverStream = null!;
+
+    /// <summary>
     /// 线程锁, 用于限制对Player的访问
     /// </summary>
     private readonly Lock _mediaLock = new();
@@ -455,11 +460,12 @@ public partial class MusicPlayer : ObservableRecipient
                 try
                 {
                     var info = (DetailedMusicInfo)CurrentMusic;
-                    var tempFolder = ApplicationData.Current.TemporaryFolder;
-                    const string coverFileName = "Cover.jpg";
-                    var coverFile = await tempFolder.CreateFileAsync(coverFileName, CreationCollisionOption.ReplaceExisting);
-                    await FileIO.WriteBytesAsync(coverFile, info.CoverBuffer);
-                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(coverFile);
+                    _currentCoverStream = new InMemoryRandomAccessStream();
+                    using var writer = new DataWriter(_currentCoverStream.GetOutputStreamAt(0));
+                    writer.WriteBytes(info.CoverBuffer);
+                    await writer.StoreAsync();
+                    _currentCoverStream.Seek(0);
+                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromStream(_currentCoverStream);
                 }
                 catch
                 {
@@ -729,7 +735,16 @@ public partial class MusicPlayer : ObservableRecipient
             }
             else
             {
-                PlayNextSong();
+                _failedCount++;
+                if (_failedCount > 2)
+                {
+                    _failedCount = 0;
+                    Stop();
+                }
+                else
+                {
+                    PlayNextSong();
+                }
             }
         });
     }
