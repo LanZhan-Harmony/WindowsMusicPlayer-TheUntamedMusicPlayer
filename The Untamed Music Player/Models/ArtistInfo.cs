@@ -1,26 +1,28 @@
+using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Models;
-// [MemoryPack.MemoryPackable]
-public class ArtistInfo : IArtistInfoBase
+[MemoryPackable]
+public partial class ArtistInfo : IArtistInfoBase
 {
     public HashSet<string> Albums { get; set; } = [];
 
     /// <summary>
     /// 艺术家名
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     /// <summary>
     /// 艺术家流派
     /// </summary>
-    public string GenreStr { get; set; }
+    public string GenreStr { get; set; } = null!;
 
     /// <summary>
     /// 艺术家封面
     /// </summary>
+    [MemoryPackIgnore]
     public BitmapImage? Cover { get; set; }
 
     /// <summary>
@@ -42,6 +44,9 @@ public class ArtistInfo : IArtistInfoBase
     /// 艺术家专辑总数
     /// </summary>
     public int TotalAlbumNum { get; set; } = 1;
+
+    [MemoryPackConstructor]
+    public ArtistInfo() { }
 
     public ArtistInfo(BriefMusicInfo briefMusicInfo, string name)
     {

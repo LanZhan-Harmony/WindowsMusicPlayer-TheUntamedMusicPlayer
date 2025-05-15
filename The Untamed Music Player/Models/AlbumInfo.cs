@@ -1,6 +1,10 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
+using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
 public class BriefAlbumInfo(AlbumInfo albumInfo)
@@ -13,17 +17,18 @@ public class BriefAlbumInfo(AlbumInfo albumInfo)
     public List<IBriefMusicInfoBase> SongList { get; set; } = [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
 }
 
-// [MemoryPack.MemoryPackable]
-public class AlbumInfo : IAlbumInfoBase
+[MemoryPackable]
+public partial class AlbumInfo : IAlbumInfoBase
 {
     /// <summary>
     /// 专辑名
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     /// <summary>
     /// 专辑封面
     /// </summary>
+    [MemoryPackIgnore]
     public BitmapImage? Cover { get; set; }
 
     /// <summary>
@@ -34,12 +39,12 @@ public class AlbumInfo : IAlbumInfoBase
     /// <summary>
     /// 专辑艺术家
     /// </summary>
-    public string[] Artists { get; set; }
+    public string[] Artists { get; set; } = null!;
 
     /// <summary>
     /// 专辑艺术家字符串
     /// </summary>
-    public string ArtistsStr { get; set; }
+    public string ArtistsStr { get; set; } = null!;
 
     /// <summary>
     /// 专辑包含的歌曲数量
@@ -64,7 +69,10 @@ public class AlbumInfo : IAlbumInfoBase
     /// <summary>
     /// 专辑流派字符串
     /// </summary>
-    public string GenreStr { get; set; }
+    public string GenreStr { get; set; } = null!;
+
+    [MemoryPackConstructor]
+    public AlbumInfo() { }
 
     public AlbumInfo(BriefMusicInfo briefmusicInfo)
     {
@@ -135,5 +143,32 @@ public class AlbumInfo : IAlbumInfoBase
             ? $"{TotalDuration:hh\\:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
             : $"{TotalDuration:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}");
         return string.Join(" • ", parts);
+    }
+
+    public void LoadCover()
+    {
+        if (!string.IsNullOrEmpty(CoverPath))
+        {
+            var coverBuffer = TagLib.File.Create(CoverPath).Tag.Pictures[0].Data.Data;
+            App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
+            {
+                try
+                {
+                    using var stream = new InMemoryRandomAccessStream();
+                    await stream.WriteAsync(coverBuffer.AsBuffer());
+                    stream.Seek(0);
+                    var bitmap = new BitmapImage
+                    {
+                        DecodePixelWidth = 160
+                    };
+                    await bitmap.SetSourceAsync(stream);
+                    Cover = bitmap;
+                }
+                catch
+                {
+                    Debug.WriteLine($"专辑封面加载失败：{Name}");
+                }
+            });
+        }
     }
 }

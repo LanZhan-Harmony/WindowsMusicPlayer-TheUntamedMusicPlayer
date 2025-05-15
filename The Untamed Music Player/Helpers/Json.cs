@@ -1,6 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using Windows.UI;
 
 namespace The_Untamed_Music_Player.Helpers;
@@ -11,6 +14,8 @@ namespace The_Untamed_Music_Player.Helpers;
 [JsonSerializable(typeof(string))]
 [JsonSerializable(typeof(Color))]
 [JsonSerializable(typeof(List<string>))]
+[JsonSerializable(typeof(BriefMusicInfo))]
+[JsonSerializable(typeof(CloudBriefOnlineMusicInfo))]
 public partial class JsonContext : JsonSerializerContext
 {
 }
