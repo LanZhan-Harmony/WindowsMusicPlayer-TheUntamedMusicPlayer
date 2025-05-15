@@ -1,11 +1,15 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography;
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
 public partial class MusicLibrary : ObservableRecipient
@@ -105,6 +109,17 @@ public partial class MusicLibrary : ObservableRecipient
             Songs.Clear();
             Artists.Clear();
             Albums.Clear();
+            /*var (needRescan, libraryData) = await FileManager.LoadLibraryDataAsync(Folders);
+            if (!needRescan)
+            {
+                Songs = libraryData.Songs;
+                Albums = libraryData.Albums;
+                Artists = libraryData.Artists;
+                Genres = libraryData.Genres;
+                await Task.Run(AddFolderWatcher);
+            }
+            else
+            {*/
             var loadMusicTasks = new List<Task>();
             if (Folders.Any())
             {
@@ -125,6 +140,9 @@ public partial class MusicLibrary : ObservableRecipient
             });
             await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
+            /* var data = new MusicLibraryData(Songs, Albums, Artists, Genres);
+             FileManager.SaveLibraryDataAsync(Folders, data);
+         }*/
             Data.HasMusicLibraryLoaded = true;
         }
         catch (Exception ex)
@@ -134,6 +152,7 @@ public partial class MusicLibrary : ObservableRecipient
         finally
         {
             _librarySemaphore.Release();
+            GC.Collect();
         }
     }
 
@@ -171,6 +190,8 @@ public partial class MusicLibrary : ObservableRecipient
             FolderWatchers.Clear();
             await Task.Run(AddFolderWatcher);
             _musicFolders.Clear();
+            /*var data = new MusicLibraryData(Songs, Albums, Artists, Genres);
+            FileManager.SaveLibraryDataAsync(Folders, data);*/
         }
         catch (Exception ex)
         {
@@ -183,6 +204,7 @@ public partial class MusicLibrary : ObservableRecipient
                 IsProgressRingActive = false;
             });
             _librarySemaphore.Release();
+            GC.Collect();
         }
     }
 
@@ -213,6 +235,7 @@ public partial class MusicLibrary : ObservableRecipient
                 _musicGenres.TryAdd(briefMusicInfo.GenreStr, 0);
                 UpdateAlbumInfo(briefMusicInfo);
                 UpdateArtistInfo(briefMusicInfo);
+                briefMusicInfo.Cover = null;
             }
 
             // 等待所有子文件夹的扫描任务完成

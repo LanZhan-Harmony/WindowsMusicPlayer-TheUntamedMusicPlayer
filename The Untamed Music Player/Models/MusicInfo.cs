@@ -8,6 +8,7 @@ using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
+// [MemoryPack.MemoryPackable]
 public class BriefMusicInfo : IBriefMusicInfoBase
 {
     /// <summary>

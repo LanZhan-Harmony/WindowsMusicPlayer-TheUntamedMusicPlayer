@@ -13,6 +13,7 @@ public class BriefAlbumInfo(AlbumInfo albumInfo)
     public List<IBriefMusicInfoBase> SongList { get; set; } = [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
 }
 
+// [MemoryPack.MemoryPackable]
 public class AlbumInfo : IAlbumInfoBase
 {
     /// <summary>
