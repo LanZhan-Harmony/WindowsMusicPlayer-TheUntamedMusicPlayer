@@ -105,7 +105,7 @@ public sealed partial class LocalSongsPage : Page
     {
         if (sender is FrameworkElement { DataContext: BriefMusicInfo info })
         {
-            var music = new DetailedMusicInfo(info.Path);
+            var music = new DetailedMusicInfo(info);
             var dialog = new PropertiesDialog(music)
             {
                 XamlRoot = XamlRoot
