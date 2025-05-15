@@ -450,6 +450,13 @@ public partial class MusicPlayer : ObservableRecipient
             _timelineProperties.EndTime = Player.PlaybackSession.NaturalDuration;
             PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler250ms, TimeSpan.FromMilliseconds(250));
             PositionUpdateTimer2000ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler2000ms, TimeSpan.FromMilliseconds(2000));
+            if (ShuffleMode)
+            {
+                // 更新当前歌曲在随机播放队列中的索引
+                PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => CurrentMusic.IsOnline
+                ? ((IBriefOnlineMusicInfo)info).ID == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
+                : info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
+            }
         }
         catch (Exception ex)
         {
@@ -507,7 +514,6 @@ public partial class MusicPlayer : ObservableRecipient
             PlayQueue = [.. list];
             _playQueueLength = list.Count();
 
-            bool hasMusics;
             if (!ShuffleMode)
             {
                 // 更新播放队列中每首歌曲的 PlayQueueIndex 为实际位置
@@ -515,7 +521,6 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     PlayQueue[i].PlayQueueIndex = i;
                 }
-                hasMusics = PlayQueue.Any();
             }
             else
             {
@@ -525,14 +530,8 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     ShuffledPlayQueue[i].PlayQueueIndex = i;
                 }
-                if (CurrentMusic is not null)
-                {
-                    // 更新当前歌曲在随机播放队列中的索引
-                    PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => CurrentMusic.IsOnline
-                    ? ((IBriefOnlineMusicInfo)info).ID == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
-                    : info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
-                }
             }
+            FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
         }
     }
 
@@ -906,6 +905,7 @@ public partial class MusicPlayer : ObservableRecipient
             }
         }
         OnPropertyChanged(nameof(ShuffleMode));
+        FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
     }
 
     /// <summary>
@@ -948,6 +948,7 @@ public partial class MusicPlayer : ObservableRecipient
         _systemControls.IsPauseEnabled = false;
         _systemControls.IsPreviousEnabled = false;
         _systemControls.IsNextEnabled = false;
+        FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
     }
 
     /// <summary>
@@ -1143,7 +1144,6 @@ public partial class MusicPlayer : ObservableRecipient
         await _localSettingsService.SaveSettingAsync("CurrentVolume", CurrentVolume);
         await _localSettingsService.SaveSettingAsync("PlaySpeed", PlaySpeed);
         await _localSettingsService.SaveSettingAsync("CurrentBriefMusic", _currentBriefMusic);
-        await FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
     }
 
     /// <summary>
@@ -1164,6 +1164,7 @@ public partial class MusicPlayer : ObservableRecipient
                 _ => null
             };
         (PlayQueue, ShuffledPlayQueue) = await FileManager.LoadPlayQueueDataAsync();
+        _playQueueLength = PlayQueue.Count;
         if (_currentBriefMusic is not null)
         {
             CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(_currentBriefMusic);

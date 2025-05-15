@@ -27,7 +27,7 @@
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<AppxBundle>Auto</AppxBundle>
-		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
+		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 		<LangVersion>preview</LangVersion>
 		<!--<PublishAot>True</PublishAot>
 		<PublishTrimmed>True</PublishTrimmed>
