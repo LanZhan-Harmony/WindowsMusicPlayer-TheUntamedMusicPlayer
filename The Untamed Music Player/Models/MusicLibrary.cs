@@ -90,8 +90,16 @@ public partial class MusicLibrary : ObservableRecipient
         {
             foreach (var path in folderPaths)
             {
-                var folder = await StorageFolder.GetFolderFromPathAsync(path);
-                Folders.Add(folder);
+                try
+                {
+                    if (!Directory.Exists(path))
+                    {
+                        continue;
+                    }
+                    var folder = await StorageFolder.GetFolderFromPathAsync(path);
+                    Folders.Add(folder);
+                }
+                catch { }
             }
             OnPropertyChanged(nameof(SettingsViewModel.EmptyFolderMessageVisibility));
         }
