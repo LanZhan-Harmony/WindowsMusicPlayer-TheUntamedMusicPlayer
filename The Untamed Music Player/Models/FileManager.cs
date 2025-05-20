@@ -63,10 +63,7 @@ public class FileManager
     {
         var localFolder = ApplicationData.Current.LocalFolder;
         var playQueueFolder = await localFolder.CreateFolderAsync("PlayQueueData", CreationCollisionOption.OpenIfExists);
-        if (!playQueue.Any())
-        {
-            return;
-        }
+
         // 保存播放队列
         await SaveObjectToFileAsync(playQueueFolder, "PlayQueue", playQueue.ToArray());
         // 保存随机播放队列
