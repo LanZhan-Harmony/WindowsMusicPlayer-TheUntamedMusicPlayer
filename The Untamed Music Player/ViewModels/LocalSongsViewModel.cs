@@ -175,7 +175,9 @@ public partial class LocalSongsViewModel : ObservableRecipient
             // 过滤GroupedSongList
             foreach (var group in GroupedSongList)
             {
-                var filteredItems = group.Where(item => item is BriefMusicInfo musicInfo && musicInfo.GenreStr == genreToFilter).ToList();
+                var filteredItems = group
+                    .Where(item => item is BriefMusicInfo musicInfo && musicInfo.GenreStr == genreToFilter)
+                    .ToList();
                 group.Clear();
                 foreach (var item in filteredItems)
                 {
@@ -186,7 +188,9 @@ public partial class LocalSongsViewModel : ObservableRecipient
         var filterNotGroupedTask = Task.Run(() =>
         {
             // 过滤NotGroupedSongList
-            var filteredSongs = NotGroupedSongList.Where(musicInfo => musicInfo.GenreStr == genreToFilter).ToList();
+            var filteredSongs = NotGroupedSongList
+                .Where(musicInfo => musicInfo.GenreStr == genreToFilter)
+                .ToList();
             NotGroupedSongList.Clear();
             foreach (var song in filteredSongs)
             {
@@ -200,7 +204,8 @@ public partial class LocalSongsViewModel : ObservableRecipient
     private List<BriefMusicInfo> ConvertGroupedToFlatList()
     {
         return _isGrouped
-            ? [.. GroupedSongList.SelectMany(group => group.OfType<BriefMusicInfo>())]
+            ? [.. GroupedSongList
+                .SelectMany(group => group.OfType<BriefMusicInfo>())]
             : NotGroupedSongList;
     }
 
@@ -218,11 +223,11 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
-               .SelectMany(group => group)
-               .OfType<BriefMusicInfo>()
-               .OrderBy(m => m.Title, new TitleComparer())
-               .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
-               .Select(g => new GroupInfoList(g) { Key = g.Key });
+                .SelectMany(group => group)
+                .OfType<BriefMusicInfo>()
+                .OrderBy(m => m.Title, new TitleComparer())
+                .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
+                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
             GroupedSongList = [.. sortedGroups];
         });
