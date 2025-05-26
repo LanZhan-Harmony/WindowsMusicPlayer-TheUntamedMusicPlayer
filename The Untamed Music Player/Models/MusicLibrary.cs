@@ -142,9 +142,9 @@ public partial class MusicLibrary : ObservableRecipient
                     .Concat(["MusicInfo_AllGenres".GetLocalized()])
                     .OrderBy(x => x, new GenreComparer())];
                 _musicGenres.Clear();
-                _musicFolders.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres);
                 await Task.Run(AddFolderWatcher);
+                _musicFolders.Clear();
                 FileManager.SaveLibraryDataAsync(Folders, data);
             }
             Data.HasMusicLibraryLoaded = true;
@@ -191,9 +191,9 @@ public partial class MusicLibrary : ObservableRecipient
                 .OrderBy(x => x, new GenreComparer())];
             _musicGenres.Clear();
             FolderWatchers.Clear();
-            _musicFolders.Clear();
             var data = new MusicLibraryData(Songs, Albums, Artists, Genres);
             await Task.Run(AddFolderWatcher);
+            _musicFolders.Clear();
             FileManager.SaveLibraryDataAsync(Folders, data);
         }
         catch (Exception ex)
