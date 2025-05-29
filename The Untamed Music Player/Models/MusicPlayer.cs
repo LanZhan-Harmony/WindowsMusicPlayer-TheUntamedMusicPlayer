@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -549,7 +550,7 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     return;
                 }
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                App.MainWindow!.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
                 {
                     CurrentPlayingTime = Player.PlaybackSession.Position;
                     TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
@@ -562,7 +563,7 @@ public partial class MusicPlayer : ObservableRecipient
                 var dispatcherQueue = Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
                 if (CurrentLyric.Count > 0)
                 {
-                    dispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    dispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, () =>
                     {
                         CurrentLyricIndex = GetCurrentLyricIndex(Player.PlaybackSession.Position.TotalMilliseconds);
                         CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
@@ -570,7 +571,7 @@ public partial class MusicPlayer : ObservableRecipient
                 }
                 else
                 {
-                    dispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    dispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, () =>
                     {
                         CurrentLyricIndex = 0;
                         CurrentLyricContent = "";
@@ -635,20 +636,20 @@ public partial class MusicPlayer : ObservableRecipient
                     break;
                 case MediaPlaybackState.Opening:
                 case MediaPlaybackState.Buffering:
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
                     {
                         PlayState = 2;
                     });
                     break;
                 case MediaPlaybackState.Playing:
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
                     {
                         PlayState = 1;
                         _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                     });
                     break;
                 case MediaPlaybackState.Paused:
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
                     {
                         PlayState = 0;
                         _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
@@ -756,10 +757,10 @@ public partial class MusicPlayer : ObservableRecipient
                 PlayPauseUpdate();
                 break;
             case SystemMediaTransportControlsButton.Previous:// 注意: 必须在UI线程中调用
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, PlayPreviousSong);
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, PlayPreviousSong);
                 break;
             case SystemMediaTransportControlsButton.Next:
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, PlayNextSong);
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, PlayNextSong);
                 break;
             default:
                 break;
@@ -1151,42 +1152,52 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     public async void LoadCurrentStateAsync()
     {
-        PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>("PlayQueueIndex");
-        SourceMode = await _localSettingsService.ReadSettingAsync<byte>("SourceMode");
-        ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
-        RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
-        IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
-        _currentBriefMusic =
-            SourceMode switch
+        try
+        {
+            PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>("PlayQueueIndex");
+            SourceMode = await _localSettingsService.ReadSettingAsync<byte>("SourceMode");
+            ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
+            RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
+            IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
+            _currentBriefMusic =
+                SourceMode switch
+                {
+                    0 => await _localSettingsService.ReadSettingAsync<BriefMusicInfo>("CurrentBriefMusic"),
+                    1 => await _localSettingsService.ReadSettingAsync<CloudBriefOnlineMusicInfo>("CurrentBriefMusic"),
+                    _ => null
+                };
+            (PlayQueue, ShuffledPlayQueue) = await FileManager.LoadPlayQueueDataAsync();
+            _playQueueLength = PlayQueue.Count;
+            if (_currentBriefMusic is not null)
             {
-                0 => await _localSettingsService.ReadSettingAsync<BriefMusicInfo>("CurrentBriefMusic"),
-                1 => await _localSettingsService.ReadSettingAsync<CloudBriefOnlineMusicInfo>("CurrentBriefMusic"),
-                _ => null
-            };
-        (PlayQueue, ShuffledPlayQueue) = await FileManager.LoadPlayQueueDataAsync();
-        _playQueueLength = PlayQueue.Count;
-        if (_currentBriefMusic is not null)
-        {
-            CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(_currentBriefMusic);
-            SetSource(CurrentMusic!.Path);
-            _ = UpdateLyric(CurrentMusic!.Lyric);
-            _systemControls.IsPlayEnabled = true;
-            _systemControls.IsPauseEnabled = true;
+                CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(_currentBriefMusic);
+                SetSource(CurrentMusic!.Path);
+                _ = UpdateLyric(CurrentMusic!.Lyric);
+                _systemControls.IsPlayEnabled = true;
+                _systemControls.IsPauseEnabled = true;
+            }
+            if (Data.NotFirstUsed)
+            {
+                CurrentVolume = await _localSettingsService.ReadSettingAsync<double>("CurrentVolume");
+                PlaySpeed = await _localSettingsService.ReadSettingAsync<double>("PlaySpeed");
+            }
+            else
+            {
+                CurrentVolume = 100;
+                PlaySpeed = 1;
+            }
+            Data.RootPlayBarViewModel?.ButtonVisibility = CurrentMusic is not null && PlayQueue.Any() ? Visibility.Visible : Visibility.Collapsed;
+            Data.RootPlayBarViewModel?.Availability = CurrentMusic is not null && PlayQueue.Any();
         }
-        if (Data.NotFirstUsed)
+        catch (Exception ex)
         {
-            CurrentVolume = await _localSettingsService.ReadSettingAsync<double>("CurrentVolume");
-            PlaySpeed = await _localSettingsService.ReadSettingAsync<double>("PlaySpeed");
-        }
-        else
-        {
-            CurrentVolume = 100;
-            PlaySpeed = 1;
-        }
-        if (Data.RootPlayBarViewModel is not null)
-        {
-            Data.RootPlayBarViewModel.ButtonVisibility = CurrentMusic is not null && PlayQueue.Any() ? Visibility.Visible : Visibility.Collapsed;
-            Data.RootPlayBarViewModel.Availability = CurrentMusic is not null && PlayQueue.Any();
+            _currentBriefMusic = null;
+            CurrentMusic = null;
+            PlayQueue = [];
+            ShuffledPlayQueue = [];
+            Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Collapsed;
+            Data.RootPlayBarViewModel?.Availability = false;
+            Debug.WriteLine(ex.StackTrace);
         }
     }
 }
