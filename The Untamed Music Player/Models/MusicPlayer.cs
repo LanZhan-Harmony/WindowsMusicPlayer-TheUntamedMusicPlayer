@@ -550,7 +550,7 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     return;
                 }
-                App.MainWindow!.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+                App.MainWindow?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
                 {
                     CurrentPlayingTime = Player.PlaybackSession.Position;
                     TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
