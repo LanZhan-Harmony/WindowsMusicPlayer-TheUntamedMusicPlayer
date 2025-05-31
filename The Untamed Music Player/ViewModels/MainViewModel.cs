@@ -307,17 +307,17 @@ public partial class MainViewModel : ObservableRecipient
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
+        Data.MusicPlayer.Stop();
+        Data.MusicPlayer.PositionUpdateTimer250ms?.Cancel();
+        Data.MusicPlayer.PositionUpdateTimer2000ms?.Cancel();
+        Data.MusicPlayer.PositionUpdateTimer250ms = null;
+        Data.MusicPlayer.PositionUpdateTimer2000ms = null;
         _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
         _mainMindow.Activated -= MainWindow_Activated;
         Data.DesktopLyricWindow?.Close();
         Data.DesktopLyricWindow?.Dispose();
-        Data.MusicPlayer.PositionUpdateTimer250ms?.Cancel();
-        Data.MusicPlayer.PositionUpdateTimer250ms = null;
-        Data.MusicPlayer.PositionUpdateTimer2000ms?.Cancel();
-        Data.MusicPlayer.PositionUpdateTimer2000ms = null;
-        Data.MusicPlayer.Stop();
         Data.MusicPlayer.Player.Dispose();
         Data.MusicPlayer.SaveCurrentStateAsync();
     }

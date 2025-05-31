@@ -1,21 +1,15 @@
-using System.Runtime.InteropServices;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Windows.UI;
 using Windows.UI.ViewManagement;
+using static The_Untamed_Music_Player.Helpers.ExternFunction;
 
 namespace The_Untamed_Music_Player.Helpers;
-public class TitleBarHelper
+public partial class TitleBarHelper
 {
     private const int WAINACTIVE = 0x00;
     private const int WAACTIVE = 0x01;
     private const int WMACTIVATE = 0x0006;
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetActiveWindow();
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam);
 
     public static void UpdateTitleBar(ElementTheme theme)
     {
