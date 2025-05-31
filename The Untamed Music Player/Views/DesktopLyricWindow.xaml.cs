@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using CommunityToolkit.Labs.WinUI.MarqueeTextRns;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -12,6 +11,7 @@ using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
 using Windows.System;
 using WinRT.Interop;
+using static The_Untamed_Music_Player.Helpers.ExternFunction;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -24,22 +24,6 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
     private POINT _lastPointerPosition;
     private DispatcherTimer? _updateTimer250ms; // 用于周期性检查鼠标位置和置顶的计时器
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct POINT
-    {
-        public int X;
-        public int Y;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct RECT
-    {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
-    }
 
     private Storyboard? _currentStoryboard;
     private readonly TextBlock _measureTextBlock = new()
@@ -54,12 +38,14 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     {
         ViewModel = App.GetService<DesktopLyricViewModel>();
         InitializeComponent();
-        ExtendsContentIntoTitleBar = true;
         Title = "DesktopLyricWindowTitle".GetLocalized();
 
         _hWnd = WindowNative.GetWindowHandle(this); // 获取窗口句柄
 
-        AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed; // 去除右上角三键
+        var presenter = OverlappedPresenter.Create();
+        presenter.SetBorderAndTitleBar(false, false);
+        AppWindow.SetPresenter(presenter);
+
         MakeWindowClickThrough(true);
 
         const int GWL_EXSTYLE = -20;
@@ -87,22 +73,6 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         InitMousePositionTimer();
         Closed += Window_Closed;
     }
-
-    // P/Invoke 声明
-    [DllImport("user32.dll")]
-    private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-
-    [DllImport("user32.dll")]
-    private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
-    [DllImport("user32.dll")]
-    private static extern bool GetCursorPos(out POINT lpPoint);
-
-    [DllImport("user32.dll")]
-    private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
-
-    [DllImport("user32.dll")]
-    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
     private void InitMousePositionTimer()
     {
