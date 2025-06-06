@@ -4,7 +4,6 @@ using System.Diagnostics;
 using The_Untamed_Music_Player.Contracts.Models;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace The_Untamed_Music_Player.Models;
 public class FileManager
