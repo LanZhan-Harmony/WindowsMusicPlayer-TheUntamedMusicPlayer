@@ -50,7 +50,7 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
 		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
 		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
-		<PackageReference Include="FluentIcons.WinUI" Version="1.1.300" />
+		<PackageReference Include="FluentIcons.WinUI" Version="1.1.302" />
 		<PackageReference Include="hyjiacan.pinyin4net" Version="4.1.1" />
 		<PackageReference Include="MemoryPack" Version="1.21.4" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
