@@ -74,7 +74,6 @@ public sealed partial class LyricPage : Page, IDisposable
             var targetPosition = textblock.TransformToVisual(LyricViewer).TransformPoint(point);
 
             LyricViewer.ChangeView(null, targetPosition.Y - LyricViewer.ActualHeight / 2 + 40, null, disableAnimation: false);
-            Debug.WriteLine(LyricView.ActualHeight);
         }
     }
 

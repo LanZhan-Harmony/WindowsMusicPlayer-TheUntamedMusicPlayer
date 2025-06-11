@@ -312,8 +312,8 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
             IsPlayAvailable = info.IsPlayAvailable;
             Path = info.Path;
             Folder = info.Folder;
-            var musicFile = TagLib.File.Create(Path);
             Title = info.Title;
+            var musicFile = TagLib.File.Create(Path);
             Album = musicFile.Tag.Album ?? "";
             Artists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
             ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(Artists);
