@@ -3,7 +3,9 @@ using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Services;
-public class ThemeSelectorService(ILocalSettingsService localSettingsService) : IThemeSelectorService
+
+public class ThemeSelectorService(ILocalSettingsService localSettingsService)
+    : IThemeSelectorService
 {
     private const string SettingsKey = "AppBackgroundRequestedTheme";
 

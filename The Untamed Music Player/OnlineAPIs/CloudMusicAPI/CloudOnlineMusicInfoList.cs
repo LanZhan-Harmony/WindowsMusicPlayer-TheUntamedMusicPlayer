@@ -1,6 +1,7 @@
 using The_Untamed_Music_Player.Contracts.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+
 public partial class CloudBriefOnlineMusicInfoList : IBriefOnlineMusicInfoList
 {
     public const byte Limit = 30;

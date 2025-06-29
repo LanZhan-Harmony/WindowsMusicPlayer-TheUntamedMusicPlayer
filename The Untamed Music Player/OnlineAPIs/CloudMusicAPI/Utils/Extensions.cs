@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Utils;
+
 internal static class Extensions
 {
     private static readonly MD5 _md5 = MD5.Create();
@@ -43,5 +44,9 @@ internal static class Extensions
         return buffer;
     }
 
-    public static TValue GetValueOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue) => dictionary.TryGetValue(key, out var value) ? value : defaultValue;
+    public static TValue GetValueOrDefault<TKey, TValue>(
+        this Dictionary<TKey, TValue> dictionary,
+        TKey key,
+        TValue defaultValue
+    ) => dictionary.TryGetValue(key, out var value) ? value : defaultValue;
 }

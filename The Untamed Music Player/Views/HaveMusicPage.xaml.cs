@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.ViewModels;
 
-
 namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class HaveMusicPage : Page
@@ -18,10 +17,8 @@ public sealed partial class HaveMusicPage : Page
         }
     } = 0;
 
-    public HaveMusicViewModel ViewModel
-    {
-        get;
-    }
+    public HaveMusicViewModel ViewModel { get; }
+
     public HaveMusicPage()
     {
         ViewModel = App.GetService<HaveMusicViewModel>();
@@ -34,7 +31,10 @@ public sealed partial class HaveMusicPage : Page
         SelectionBarSelectedIndex = await ViewModel.LoadSelectionBarSelectedIndex();
     }
 
-    private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    private void SelectorBar_SelectionChanged(
+        SelectorBar sender,
+        SelectorBarSelectionChangedEventArgs args
+    )
     {
         var selectedItem = sender.SelectedItem;
         var currentSelectedIndex = sender.Items.IndexOf(selectedItem);
@@ -44,9 +44,16 @@ public sealed partial class HaveMusicPage : Page
             1 => typeof(LocalAlbumsPage),
             _ => typeof(LocalArtistsPage),
         };
-        var slideNavigationTransitionEffect = currentSelectedIndex - SelectionBarSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
+        var slideNavigationTransitionEffect =
+            currentSelectedIndex - SelectionBarSelectedIndex > 0
+                ? SlideNavigationTransitionEffect.FromRight
+                : SlideNavigationTransitionEffect.FromLeft;
 
-        SelectFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
+        SelectFrame.Navigate(
+            pageType,
+            null,
+            new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect }
+        );
 
         SelectionBarSelectedIndex = currentSelectedIndex;
     }

@@ -20,11 +20,7 @@ public sealed partial class PropertiesDialog : ContentDialog
         var filePath = Music.Path;
         if (filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase))
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = filePath,
-                UseShellExecute = true
-            });
+            Process.Start(new ProcessStartInfo { FileName = filePath, UseShellExecute = true });
         }
         else
         {
@@ -32,7 +28,7 @@ public sealed partial class PropertiesDialog : ContentDialog
             {
                 FileName = "explorer.exe",
                 Arguments = $"/select,\"{filePath}\"",
-                UseShellExecute = true
+                UseShellExecute = true,
             };
             Process.Start(startInfo);
         }
