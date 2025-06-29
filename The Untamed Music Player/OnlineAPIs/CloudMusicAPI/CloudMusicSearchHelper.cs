@@ -3,6 +3,7 @@ using System.Text.Json;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+
 public class CloudMusicSearchHelper
 {
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
@@ -21,18 +22,23 @@ public class CloudMusicSearchHelper
 
         try
         {
-            var (_, result) = await _api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
-            {
-                { "keywords", keyWords },
-                { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
-                { "offset", "0" }
-            });
+            var (_, result) = await _api.RequestAsync(
+                CloudMusicApiProviders.Search,
+                new Dictionary<string, string>
+                {
+                    { "keywords", keyWords },
+                    { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
+                    { "offset", "0" },
+                }
+            );
             using var document = JsonDocument.Parse(result.ToJsonString());
             var root = document.RootElement;
 
             // 获取songCount
-            if (root.TryGetProperty("result", out var resultElement) &&
-                resultElement.TryGetProperty("songCount", out var songCountElement))
+            if (
+                root.TryGetProperty("result", out var resultElement)
+                && resultElement.TryGetProperty("songCount", out var songCountElement)
+            )
             {
                 list.SongCount = songCountElement.GetInt32();
 
@@ -73,18 +79,23 @@ public class CloudMusicSearchHelper
         await _searchSemaphore.WaitAsync();
         try
         {
-            var (_, result) = await _api.RequestAsync(CloudMusicApiProviders.Search, new Dictionary<string, string>
-            {
-                { "keywords", list.KeyWords },
-                { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
-                { "offset", (list.Page * 30).ToString() }
-            });
+            var (_, result) = await _api.RequestAsync(
+                CloudMusicApiProviders.Search,
+                new Dictionary<string, string>
+                {
+                    { "keywords", list.KeyWords },
+                    { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
+                    { "offset", (list.Page * 30).ToString() },
+                }
+            );
             using var document = JsonDocument.Parse(result.ToJsonString());
             var root = document.RootElement;
 
             // 获取songs数组
-            if (root.TryGetProperty("result", out var resultElement) &&
-                resultElement.TryGetProperty("songs", out var songsElement))
+            if (
+                root.TryGetProperty("result", out var resultElement)
+                && resultElement.TryGetProperty("songs", out var songsElement)
+            )
             {
                 await ProcessSongsAsync(songsElement, list);
                 list.Page++;
@@ -104,12 +115,15 @@ public class CloudMusicSearchHelper
         }
     }
 
-    private static async Task ProcessSongsAsync(JsonElement songsElement, CloudBriefOnlineMusicInfoList list)
+    private static async Task ProcessSongsAsync(
+        JsonElement songsElement,
+        CloudBriefOnlineMusicInfoList list
+    )
     {
         var actualCount = songsElement.GetArrayLength();
         var infos = new CloudBriefOnlineMusicInfo[actualCount];
 
-        // 使用 Parallel.ForEachAsync 限制并发数为 8
+        // Parallel.ForEachAsync 默认使用核心数为CPU核心总数
         await Parallel.ForEachAsync(
             Enumerable.Range(0, actualCount),
             new ParallelOptions(),
@@ -128,7 +142,8 @@ public class CloudMusicSearchHelper
                     }
                     Debug.WriteLine(ex.StackTrace);
                 }
-            });
+            }
+        );
 
         foreach (var info in infos)
         {
@@ -143,7 +158,10 @@ public class CloudMusicSearchHelper
         {
             try
             {
-                var (_, result) = await _api.RequestAsync(CloudMusicApiProviders.SearchSuggest, new Dictionary<string, string> { { "keywords", $"{keyWords}" } });
+                var (_, result) = await _api.RequestAsync(
+                    CloudMusicApiProviders.SearchSuggest,
+                    new Dictionary<string, string> { { "keywords", $"{keyWords}" } }
+                );
 
                 using var document = JsonDocument.Parse(result.ToJsonString());
                 var root = document.RootElement;
@@ -164,25 +182,28 @@ public class CloudMusicSearchHelper
         return list;
     }
 
-    private static void AddResultsFromProperty(JsonElement element, string propertyName, int limit, string icon, List<SearchResult> list)
+    private static void AddResultsFromProperty(
+        JsonElement element,
+        string propertyName,
+        int limit,
+        string icon,
+        List<SearchResult> list
+    )
     {
         if (!element.TryGetProperty(propertyName, out var arrayElement))
         {
             return;
         }
 
-        var names = arrayElement.EnumerateArray()
+        var names = arrayElement
+            .EnumerateArray()
             .Select(item => item.GetProperty("name").GetString()!)
             .Distinct()
             .Take(limit);
 
         foreach (var name in names)
         {
-            list.Add(new SearchResult
-            {
-                Icon = icon,
-                Label = name
-            });
+            list.Add(new SearchResult { Icon = icon, Label = name });
         }
     }
 }

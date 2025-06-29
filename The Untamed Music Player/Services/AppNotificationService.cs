@@ -1,10 +1,11 @@
-﻿using System.Collections.Specialized;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Web;
 using Microsoft.Windows.AppNotifications;
 using The_Untamed_Music_Player.Contracts.Services;
 
 namespace The_Untamed_Music_Player.Services;
+
 public class AppNotificationService : IAppNotificationService
 {
     public AppNotificationService() { }
@@ -26,7 +27,10 @@ public class AppNotificationService : IAppNotificationService
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
-    public static void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
+    public static void OnNotificationInvoked(
+        AppNotificationManager sender,
+        AppNotificationActivatedEventArgs args
+    )
     {
         var arguments = args.Arguments;
         if (arguments.TryGetValue("OpenFolderAction", out var savePath))
@@ -35,7 +39,7 @@ public class AppNotificationService : IAppNotificationService
             {
                 FileName = "explorer.exe",
                 Arguments = $"/select,\"{savePath}\"",
-                UseShellExecute = true
+                UseShellExecute = true,
             };
             Process.Start(startInfo);
         }

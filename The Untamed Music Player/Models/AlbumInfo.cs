@@ -7,14 +7,17 @@ using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
+
 public class BriefAlbumInfo(AlbumInfo albumInfo)
 {
     protected static readonly string _unknownYear = "AlbumInfo_UnknownYear".GetLocalized();
 
     public string Name { get; set; } = albumInfo.Name;
-    public string YearStr { get; set; } = albumInfo.Year == 0 ? _unknownYear : albumInfo.Year.ToString();
+    public string YearStr { get; set; } =
+        albumInfo.Year == 0 ? _unknownYear : albumInfo.Year.ToString();
     public BitmapImage? Cover { get; set; } = albumInfo.Cover;
-    public List<IBriefMusicInfoBase> SongList { get; set; } = [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
+    public List<IBriefMusicInfoBase> SongList { get; set; } =
+        [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
 }
 
 [MemoryPackable]
@@ -136,12 +139,16 @@ public partial class AlbumInfo : IAlbumInfoBase
         {
             parts.Add(GenreStr);
         }
-        parts.Add(TotalNum > 1
-            ? $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
-            : $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}");
-        parts.Add(TotalDuration.Hours > 0
-            ? $"{TotalDuration:hh\\:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
-            : $"{TotalDuration:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}");
+        parts.Add(
+            TotalNum > 1
+                ? $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
+                : $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}"
+        );
+        parts.Add(
+            TotalDuration.Hours > 0
+                ? $"{TotalDuration:hh\\:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
+                : $"{TotalDuration:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
+        );
         return string.Join(" • ", parts);
     }
 
@@ -157,10 +164,7 @@ public partial class AlbumInfo : IAlbumInfoBase
                     using var stream = new InMemoryRandomAccessStream();
                     await stream.WriteAsync(coverBuffer.AsBuffer());
                     stream.Seek(0);
-                    var bitmap = new BitmapImage
-                    {
-                        DecodePixelWidth = 160
-                    };
+                    var bitmap = new BitmapImage { DecodePixelWidth = 160 };
                     await bitmap.SetSourceAsync(stream);
                     Cover = bitmap;
                 }

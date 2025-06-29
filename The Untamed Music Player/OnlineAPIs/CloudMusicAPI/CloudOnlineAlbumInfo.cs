@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+
 public class CloudOnlineAlbumInfo : IOnlineAlbumInfo
 {
     public long ID { get; set; }
@@ -25,6 +26,7 @@ public class CloudOnlineAlbumInfo : IOnlineAlbumInfo
     {
         return [];
     }
+
     public string GetDescriptionStr()
     {
         return "";

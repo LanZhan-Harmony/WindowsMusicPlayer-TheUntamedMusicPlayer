@@ -2,6 +2,7 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
+
 public interface IBriefOnlineMusicInfo : IBriefMusicInfoBase
 {
     long ID { get; set; }
@@ -11,7 +12,11 @@ public interface IBriefOnlineMusicInfo : IBriefMusicInfoBase
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
 
-        if (currentMusic is not null && currentMusic.IsOnline && ID == ((IDetailedOnlineMusicInfo)currentMusic).ID)
+        if (
+            currentMusic is not null
+            && currentMusic.IsOnline
+            && ID == ((IDetailedOnlineMusicInfo)currentMusic).ID
+        )
         {
             var highlightColor = isDarkTheme
                 ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
