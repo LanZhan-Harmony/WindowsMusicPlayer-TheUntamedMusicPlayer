@@ -1,6 +1,7 @@
-﻿using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
+
 public interface IAlbumInfoBase
 {
     string Name { get; set; }

@@ -9,10 +9,7 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class LocalArtistsPage : Page
 {
-    public LocalArtistsViewModel ViewModel
-    {
-        get;
-    }
+    public LocalArtistsViewModel ViewModel { get; }
 
     public LocalArtistsPage()
     {
@@ -64,12 +61,22 @@ public sealed partial class LocalArtistsPage : Page
     {
         if (e.ClickedItem is ArtistInfo artistInfo)
         {
-            var grid = (Grid)((ContentControl)ArtistGridView.ContainerFromItem(e.ClickedItem)).ContentTemplateRoot;
+            var grid = (Grid)
+                (
+                    (ContentControl)ArtistGridView.ContainerFromItem(e.ClickedItem)
+                ).ContentTemplateRoot;
             var border = (Border)grid.Children[1];
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
             Data.SelectedArtist = artistInfo;
             Data.NavigatePage = "LocalArtistsPage";
-            Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), "LocalArtistPage", new SuppressNavigationTransitionInfo());
+            Data.ShellPage!.GetFrame()
+                .Navigate(
+                    typeof(ArtistDetailPage),
+                    "LocalArtistPage",
+                    new SuppressNavigationTransitionInfo()
+                );
         }
     }
 
@@ -79,11 +86,17 @@ public sealed partial class LocalArtistsPage : Page
         {
             gridView.ScrollIntoView(Data.SelectedArtist, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
-            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
+            var animation = ConnectedAnimationService
+                .GetForCurrentView()
+                .GetAnimation("BackConnectedAnimation");
             if (animation is not null)
             {
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
-                await gridView.TryStartConnectedAnimationAsync(animation, Data.SelectedArtist, "CoverBorder");
+                await gridView.TryStartConnectedAnimationAsync(
+                    animation,
+                    Data.SelectedArtist,
+                    "CoverBorder"
+                );
             }
             gridView.Focus(FocusState.Programmatic);
         }

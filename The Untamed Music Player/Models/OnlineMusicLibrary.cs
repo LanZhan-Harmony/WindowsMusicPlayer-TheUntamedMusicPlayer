@@ -12,12 +12,14 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using Windows.Storage;
 
 namespace The_Untamed_Music_Player.Models;
+
 public partial class OnlineMusicLibrary : ObservableRecipient
 {
     private const string _tag = "OnlineMusicDownload";
     private const string _group = "Downloads";
 
-    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
 
     private bool _isSearchingMore = false;
 
@@ -109,7 +111,6 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         }
     }
 
-
     public async Task SearchMore()
     {
         if (!_isSearchingMore && !OnlineMusicInfoList.HasAllLoaded)
@@ -194,7 +195,12 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
     public void OnlineSongsSongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"OnlineSongs:Part:{KeyWords}", OnlineMusicInfoList, (byte)(MusicLibraryIndex + 1), 0);
+        Data.MusicPlayer.SetPlayList(
+            $"OnlineSongs:Part:{KeyWords}",
+            OnlineMusicInfoList,
+            (byte)(MusicLibraryIndex + 1),
+            0
+        );
         if (e.ClickedItem is IBriefOnlineMusicInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
@@ -203,7 +209,12 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
     public void OnlineSongsPlayButton_Click(IBriefOnlineMusicInfo info)
     {
-        Data.MusicPlayer.SetPlayList($"OnlineSongs:Part:{KeyWords}", OnlineMusicInfoList, (byte)(MusicLibraryIndex + 1), 0);
+        Data.MusicPlayer.SetPlayList(
+            $"OnlineSongs:Part:{KeyWords}",
+            OnlineMusicInfoList,
+            (byte)(MusicLibraryIndex + 1),
+            0
+        );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
@@ -212,8 +223,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<IBriefOnlineMusicInfo> { info };
-            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list
-                , 0, 0);
+            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
@@ -225,20 +235,28 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     public async void OnlineSongsDownloadButton_Click(IBriefOnlineMusicInfo info)
     {
         Data.IsMusicDownloading = true;
-        var detailedInfo = (IDetailedOnlineMusicInfo)await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info, (byte)(MusicLibraryIndex + 1));
+        var detailedInfo = (IDetailedOnlineMusicInfo)
+            await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(
+                info,
+                (byte)(MusicLibraryIndex + 1)
+            );
         var title = detailedInfo.Title;
         var itemType = detailedInfo.ItemType;
         var location = await LoadSongDownloadLocationAsync();
         var savePath = GetUniqueFilePath(Path.Combine(location, title + itemType));
         var startNotification = new AppNotificationBuilder()
             .AddText("OnlineMusicLibrary_DownloadingSong".GetLocalized())
-            .AddProgressBar(new AppNotificationProgressBar() { Title = title }
-            .BindValue()
-            .BindValueStringOverride()
-            .BindStatus()
+            .AddProgressBar(
+                new AppNotificationProgressBar() { Title = title }
+                    .BindValue()
+                    .BindValueStringOverride()
+                    .BindStatus()
             )
-            .AddButton(new AppNotificationButton("OnlineMusicLibrary_Cancel".GetLocalized())
-            .AddArgument("CancelAction", "Cancel")
+            .AddButton(
+                new AppNotificationButton("OnlineMusicLibrary_Cancel".GetLocalized()).AddArgument(
+                    "CancelAction",
+                    "Cancel"
+                )
             )
             .BuildNotification();
         var data = new AppNotificationProgressData(1)
@@ -246,7 +264,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             Title = title,
             Value = 0,
             ValueStringOverride = $"{"OnlineMusicLibrary_Progress".GetLocalized()}: 0 %",
-            Status = "OnlineMusicLibrary_StartDownloading".GetLocalized()
+            Status = "OnlineMusicLibrary_StartDownloading".GetLocalized(),
         };
         startNotification.Tag = _tag;
         startNotification.Group = _group;
@@ -275,8 +293,10 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         var finishNotification = new AppNotificationBuilder()
             .AddText("OnlineMusicLibrary_DownloadCompleted".GetLocalized())
             .AddText(title)
-            .AddButton(new AppNotificationButton("OnlineMusicLibrary_OpenFolder".GetLocalized())
-            .AddArgument("OpenFolderAction", savePath)
+            .AddButton(
+                new AppNotificationButton(
+                    "OnlineMusicLibrary_OpenFolder".GetLocalized()
+                ).AddArgument("OpenFolderAction", savePath)
             )
             .BuildNotification();
         AppNotificationManager.Default.Show(finishNotification);
@@ -291,7 +311,14 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
         var totalBytes = response.Content.Headers.ContentLength;
         using var contentStream = await response.Content.ReadAsStreamAsync();
-        using var fileStream = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+        using var fileStream = new FileStream(
+            savePath,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.None,
+            8192,
+            true
+        );
 
         var buffer = new byte[8192];
         var totalRead = 0L;
@@ -309,7 +336,13 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
                 // 仅在进度变化至少1%且距上次更新至少100ms时更新UI
                 var now = DateTime.Now;
-                if (progress > lastProgressUpdate && (progress - lastProgressUpdate >= 1 || (now - lastUpdateTime).TotalMilliseconds > 500))
+                if (
+                    progress > lastProgressUpdate
+                    && (
+                        progress - lastProgressUpdate >= 1
+                        || (now - lastUpdateTime).TotalMilliseconds > 500
+                    )
+                )
                 {
                     lastProgressUpdate = progress;
                     lastUpdateTime = now;
@@ -328,7 +361,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             musicFile.Tag.Album = detailedInfo.Album;
             musicFile.Tag.Performers = detailedInfo.ArtistsStr.Split(", ");
             musicFile.Tag.AlbumArtists = detailedInfo.AlbumArtistsStr.Split(", ");
-            musicFile.Tag.Year = string.IsNullOrEmpty(detailedInfo.YearStr) ? 0 : uint.Parse(detailedInfo.YearStr);
+            musicFile.Tag.Year = string.IsNullOrEmpty(detailedInfo.YearStr)
+                ? 0
+                : uint.Parse(detailedInfo.YearStr);
             musicFile.Tag.Lyrics = detailedInfo.Lyric;
             try
             {
@@ -338,7 +373,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                 {
                     Type = PictureType.FrontCover,
                     Description = "Cover",
-                    MimeType = "image/png" // 若图片是png，则使用 "image/png"
+                    MimeType = "image/png", // 若图片是png，则使用 "image/png"
                 };
                 musicFile.Tag.Pictures = [picture];
             }
@@ -361,7 +396,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             Title = title,
             Value = (double)progress / 100,
             ValueStringOverride = $"{"OnlineMusicLibrary_Progress".GetLocalized()}: {progress} %",
-            Status = "OnlineMusicLibrary_Downloading".GetLocalized()
+            Status = "OnlineMusicLibrary_Downloading".GetLocalized(),
         };
         var result = await AppNotificationManager.Default.UpdateAsync(data, _tag, _group);
         if (result == AppNotificationProgressResult.AppNotificationNotFound)
@@ -370,10 +405,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         }
     }
 
-    public void OnlineAlbumsAlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-
-    }
+    public void OnlineAlbumsAlbumGridView_ItemClick(object sender, ItemClickEventArgs e) { }
 
     public async void RetryButton_Click(object sender, RoutedEventArgs e)
     {
@@ -415,11 +447,16 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         var location = await _localSettingsService.ReadSettingAsync<string>("SongDownloadLocation");
         if (string.IsNullOrWhiteSpace(location))
         {
-            var folder = (await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)).Folders.FirstOrDefault();
+            var folder = (
+                await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)
+            ).Folders.FirstOrDefault();
             location = folder?.Path;
             if (string.IsNullOrWhiteSpace(location))
             {
-                location = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Music");
+                location = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    "Music"
+                );
                 Directory.CreateDirectory(location);
             }
         }

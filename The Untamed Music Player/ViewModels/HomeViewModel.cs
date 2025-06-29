@@ -7,6 +7,7 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class HomeViewModel : ObservableRecipient
 {
     public byte PageIndex
@@ -21,13 +22,15 @@ public partial class HomeViewModel : ObservableRecipient
 
     [ObservableProperty]
     public partial byte MusicLibraryIndex { get; set; }
+
     partial void OnMusicLibraryIndexChanged(byte value)
     {
         Data.OnlineMusicLibrary.MusicLibraryIndex = value;
         SaveMusicLibraryIndex();
     }
 
-    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
 
     public HomeViewModel()
     {
@@ -40,7 +43,10 @@ public partial class HomeViewModel : ObservableRecipient
         MusicLibraryIndex = await LoadMusicLibraryIndex();
     }
 
-    public async void SuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    public async void SuggestBox_TextChanged(
+        AutoSuggestBox sender,
+        AutoSuggestBoxTextChangedEventArgs args
+    )
     {
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
@@ -49,7 +55,10 @@ public partial class HomeViewModel : ObservableRecipient
         }
     }
 
-    public async void SuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    public async void SuggestBox_QuerySubmitted(
+        AutoSuggestBox sender,
+        AutoSuggestBoxQuerySubmittedEventArgs args
+    )
     {
         if (args.ChosenSuggestion is SearchResult result)
         {
@@ -61,7 +70,7 @@ public partial class HomeViewModel : ObservableRecipient
                 "\uE93C" => 1,
                 "\uE77B" => 2,
                 "\uE728" => 3,
-                _ => 0
+                _ => 0,
             };
             Data.OnlineMusicLibrary.KeyWords = keyWords;
             Navigate(currentSelectedIndex);
@@ -84,7 +93,10 @@ public partial class HomeViewModel : ObservableRecipient
         }
     }
 
-    public void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    public void SelectorBar_SelectionChanged(
+        SelectorBar sender,
+        SelectorBarSelectionChangedEventArgs args
+    )
     {
         var selectedItem = sender.SelectedItem;
         var currentSelectedIndex = sender.Items.IndexOf(selectedItem);
@@ -104,25 +116,36 @@ public partial class HomeViewModel : ObservableRecipient
             1 => typeof(OnlineAlbumsPage),
             2 => typeof(OnlineArtistsPage),
             3 => typeof(OnlinePlayListsPage),
-            _ => typeof(OnlineSongsPage)
+            _ => typeof(OnlineSongsPage),
         };
-        var slideNavigationTransitionEffect = currentSelectedIndex - PageIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
+        var slideNavigationTransitionEffect =
+            currentSelectedIndex - PageIndex > 0
+                ? SlideNavigationTransitionEffect.FromRight
+                : SlideNavigationTransitionEffect.FromLeft;
         PageIndex = (byte)currentSelectedIndex;
-        Data.HomePage.GetFrame().Navigate(page, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
+        Data.HomePage.GetFrame()
+            .Navigate(
+                page,
+                null,
+                new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect }
+            );
     }
 
     public async Task<byte> LoadPageIndex()
     {
         return await _localSettingsService.ReadSettingAsync<byte>("HomePageIndex");
     }
+
     public async Task<byte> LoadMusicLibraryIndex()
     {
         return await _localSettingsService.ReadSettingAsync<byte>("HomeMusicLibraryIndex");
     }
+
     public async void SavePageIndex()
     {
         await _localSettingsService.SaveSettingAsync("HomePageIndex", PageIndex);
     }
+
     public async void SaveMusicLibraryIndex()
     {
         await _localSettingsService.SaveSettingAsync("HomeMusicLibraryIndex", MusicLibraryIndex);

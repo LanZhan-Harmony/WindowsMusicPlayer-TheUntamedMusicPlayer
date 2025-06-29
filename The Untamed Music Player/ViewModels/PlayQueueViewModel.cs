@@ -7,11 +7,10 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class PlayQueueViewModel : ObservableRecipient
 {
-    public PlayQueueViewModel()
-    {
-    }
+    public PlayQueueViewModel() { }
 
     public void PlayQueueListView_ItemClick(object sender, ItemClickEventArgs e)
     {
@@ -54,7 +53,12 @@ public partial class PlayQueueViewModel : ObservableRecipient
             if (albumInfo is not null)
             {
                 Data.SelectedAlbum = albumInfo;
-                Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+                Data.ShellPage!.GetFrame()
+                    .Navigate(
+                        typeof(AlbumDetailPage),
+                        null,
+                        new SuppressNavigationTransitionInfo()
+                    );
             }
         }
     }
@@ -63,11 +67,18 @@ public partial class PlayQueueViewModel : ObservableRecipient
     {
         if (Data.MusicPlayer.SourceMode == 0)
         {
-            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(((BriefMusicInfo)info).Artists[0]);
+            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(
+                ((BriefMusicInfo)info).Artists[0]
+            );
             if (artistInfo is not null)
             {
                 Data.SelectedArtist = artistInfo;
-                Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+                Data.ShellPage!.GetFrame()
+                    .Navigate(
+                        typeof(ArtistDetailPage),
+                        null,
+                        new SuppressNavigationTransitionInfo()
+                    );
             }
         }
     }

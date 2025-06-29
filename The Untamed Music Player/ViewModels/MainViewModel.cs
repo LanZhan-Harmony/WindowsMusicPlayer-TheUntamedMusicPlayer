@@ -11,9 +11,11 @@ using Windows.UI;
 using WinRT;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class MainViewModel : ObservableRecipient
 {
-    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
     private readonly MainWindow _mainMindow;
     private readonly ICompositionSupportsSystemBackdrop? _backdropTarget;
     private readonly SystemBackdropConfiguration _configurationSource = new()
@@ -40,7 +42,12 @@ public partial class MainViewModel : ObservableRecipient
         _mainMindow = Data.MainWindow ?? new();
         _backdropTarget = _mainMindow.As<ICompositionSupportsSystemBackdrop>();
         MainWindowWidth = _mainMindow.Width;
-        IsDarkTheme = ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark || (((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
+        IsDarkTheme =
+            ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark
+            || (
+                ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default
+                && App.Current.RequestedTheme == ApplicationTheme.Dark
+            );
         InitializeAsync();
         _mainMindow.Activated += MainWindow_Activated;
         _mainMindow.Closed += MainWindow_Closed;
@@ -69,7 +76,7 @@ public partial class MainViewModel : ObservableRecipient
             3 => new DesktopAcrylicController { Kind = DesktopAcrylicKind.Default },
             4 => new DesktopAcrylicController { Kind = DesktopAcrylicKind.Base },
             5 => new DesktopAcrylicController { Kind = DesktopAcrylicKind.Thin },
-            _ => null
+            _ => null,
         };
 
         if (_currentBackdropController is not null)
@@ -86,7 +93,7 @@ public partial class MainViewModel : ObservableRecipient
                 6 => TrySetBlurBackdrop(),
                 7 => TrySetTransparentBackdrop(),
                 8 => TrySetAnimatedBackdrop(),
-                _ => false
+                _ => false,
             };
         }
 
@@ -217,14 +224,20 @@ public partial class MainViewModel : ObservableRecipient
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
         SetConfigurationSourceTheme();
-        IsDarkTheme = ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark || (((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
+        IsDarkTheme =
+            ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark
+            || (
+                ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default
+                && App.Current.RequestedTheme == ApplicationTheme.Dark
+            );
         ChangeTheme();
         SaveIsDarkThemeAsync();
     }
 
     private void ChangeTheme()
     {
-        Color darkColor, lightColor;
+        Color darkColor,
+            lightColor;
 
         if (_currentBackdropController is MicaController micaController)
         {
@@ -298,10 +311,12 @@ public partial class MainViewModel : ObservableRecipient
     {
         if (IsFallBack)
         {
-            _currentBackdropController?.SetSystemBackdropConfiguration(new()
-            {
-                IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated
-            });
+            _currentBackdropController?.SetSystemBackdropConfiguration(
+                new()
+                {
+                    IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated,
+                }
+            );
         }
     }
 
@@ -336,17 +351,25 @@ public partial class MainViewModel : ObservableRecipient
         Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
         if (Data.NotFirstUsed)
         {
-            _previousIsDarkTheme = await _localSettingsService.ReadSettingAsync<bool>("IsDarkTheme");
-            SelectedMaterial = await _localSettingsService.ReadSettingAsync<byte>("SelectedMaterial");
+            _previousIsDarkTheme = await _localSettingsService.ReadSettingAsync<bool>(
+                "IsDarkTheme"
+            );
+            SelectedMaterial = await _localSettingsService.ReadSettingAsync<byte>(
+                "SelectedMaterial"
+            );
             IsFallBack = await _localSettingsService.ReadSettingAsync<bool>("IsFallBack");
-            LuminosityOpacity = await _localSettingsService.ReadSettingAsync<byte>("LuminosityOpacity");
+            LuminosityOpacity = await _localSettingsService.ReadSettingAsync<byte>(
+                "LuminosityOpacity"
+            );
             TintColor = await _localSettingsService.ReadSettingAsync<Color>("TintColor");
             var fontName = await _localSettingsService.ReadSettingAsync<string>("SelectedFont");
             if (!string.IsNullOrEmpty(fontName))
             {
                 Data.SelectedFont = new FontFamily(fontName);
             }
-            Data.IsLyricBackgroundVisible = await _localSettingsService.ReadSettingAsync<bool>("IsLyricBackgroundVisible");
+            Data.IsLyricBackgroundVisible = await _localSettingsService.ReadSettingAsync<bool>(
+                "IsLyricBackgroundVisible"
+            );
         }
         else
         {

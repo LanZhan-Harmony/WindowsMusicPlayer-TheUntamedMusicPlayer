@@ -7,6 +7,7 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class RootPlayBarViewModel : ObservableRecipient
 {
     public bool IsDesktopLyricWindowStarted { get; set; } = false;
@@ -29,9 +30,27 @@ public partial class RootPlayBarViewModel : ObservableRecipient
     {
         Data.RootPlayBarViewModel = this;
 
-        RootPlayBarView?.GetProgressSlider().AddHandler(UIElement.PointerPressedEvent, new PointerEventHandler(Data.MusicPlayer.ProgressLock), true);
-        RootPlayBarView?.GetProgressSlider().AddHandler(UIElement.PointerMovedEvent, new PointerEventHandler(Data.MusicPlayer.SliderUpdate), true);
-        RootPlayBarView?.GetProgressSlider().AddHandler(UIElement.PointerReleasedEvent, new PointerEventHandler(Data.MusicPlayer.ProgressUpdate), true);
+        RootPlayBarView
+            ?.GetProgressSlider()
+            .AddHandler(
+                UIElement.PointerPressedEvent,
+                new PointerEventHandler(Data.MusicPlayer.ProgressLock),
+                true
+            );
+        RootPlayBarView
+            ?.GetProgressSlider()
+            .AddHandler(
+                UIElement.PointerMovedEvent,
+                new PointerEventHandler(Data.MusicPlayer.SliderUpdate),
+                true
+            );
+        RootPlayBarView
+            ?.GetProgressSlider()
+            .AddHandler(
+                UIElement.PointerReleasedEvent,
+                new PointerEventHandler(Data.MusicPlayer.ProgressUpdate),
+                true
+            );
     }
 
     public void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
@@ -46,14 +65,14 @@ public partial class RootPlayBarViewModel : ObservableRecipient
             {
                 From = 1.0,
                 To = 0,
-                Duration = new Duration(TimeSpan.FromSeconds(0.1))
+                Duration = new Duration(TimeSpan.FromSeconds(0.1)),
             };
 
             var fadeInAnimation = new DoubleAnimation
             {
                 From = 0,
                 To = 1.0,
-                Duration = new Duration(TimeSpan.FromSeconds(0.2))
+                Duration = new Duration(TimeSpan.FromSeconds(0.2)),
             };
 
             var fadeOutStoryboard = new Storyboard();
@@ -76,7 +95,6 @@ public partial class RootPlayBarViewModel : ObservableRecipient
             fadeOutStoryboard.Begin();
 
             IsDetail = true;
-
         }
         else
         {
@@ -88,14 +106,14 @@ public partial class RootPlayBarViewModel : ObservableRecipient
             {
                 From = 1.0,
                 To = 0,
-                Duration = new Duration(TimeSpan.FromSeconds(0.1))
+                Duration = new Duration(TimeSpan.FromSeconds(0.1)),
             };
 
             var fadeInAnimation = new DoubleAnimation
             {
                 From = 0,
                 To = 1.0,
-                Duration = new Duration(TimeSpan.FromSeconds(0.2))
+                Duration = new Duration(TimeSpan.FromSeconds(0.2)),
             };
 
             var fadeOutStoryboard = new Storyboard();

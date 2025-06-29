@@ -7,20 +7,11 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace The_Untamed_Music_Player.Views;
 
-/// <summary>
-/// An empty page that can be used on its own or navigated to within a Frame.
-/// </summary>
 public sealed partial class LyricPage : Page, IDisposable
 {
-    public LyricViewModel ViewModel
-    {
-        get;
-    }
+    public LyricViewModel ViewModel { get; }
 
     public LyricPage()
     {
@@ -43,12 +34,14 @@ public sealed partial class LyricPage : Page, IDisposable
         }
         else
         {
-            var acrylicBrush = new AcrylicBrush
-            {
-                TintOpacity = 0.8,
-            };
+            var acrylicBrush = new AcrylicBrush { TintOpacity = 0.8 };
 
-            var isDarkTheme = ((FrameworkElement)App.MainWindow!.Content).ActualTheme == ElementTheme.Dark || (((FrameworkElement)App.MainWindow.Content).ActualTheme == ElementTheme.Default && App.Current.RequestedTheme == ApplicationTheme.Dark);
+            var isDarkTheme =
+                ((FrameworkElement)App.MainWindow!.Content).ActualTheme == ElementTheme.Dark
+                || (
+                    ((FrameworkElement)App.MainWindow.Content).ActualTheme == ElementTheme.Default
+                    && App.Current.RequestedTheme == ApplicationTheme.Dark
+                );
 
             if (isDarkTheme)
             {
@@ -73,11 +66,14 @@ public sealed partial class LyricPage : Page, IDisposable
             // 计算出目标位置并滚动
             var targetPosition = textblock.TransformToVisual(LyricViewer).TransformPoint(point);
 
-            LyricViewer.ChangeView(null, targetPosition.Y - LyricViewer.ActualHeight / 2 + 40, null, disableAnimation: false);
+            LyricViewer.ChangeView(
+                null,
+                targetPosition.Y - LyricViewer.ActualHeight / 2 + 40,
+                null,
+                disableAnimation: false
+            );
         }
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 }
