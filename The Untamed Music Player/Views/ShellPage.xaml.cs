@@ -8,18 +8,15 @@ using The_Untamed_Music_Player.ViewModels;
 using Windows.System;
 
 namespace The_Untamed_Music_Player.Views;
+
 public sealed partial class ShellPage : Page
 {
-    public ShellViewModel ViewModel
-    {
-        get;
-    }
+    public ShellViewModel ViewModel { get; }
 
-    public ShellPage()//注意修改, 不能有参数
+    public ShellPage() //注意修改, 不能有参数
     {
         ViewModel = App.GetService<ShellViewModel>();
         InitializeComponent();
-
 
         ViewModel.NavigationService.Frame = NavigationFrame;
         ViewModel.NavigationViewService.Initialize(NavigationViewControl);
@@ -31,12 +28,10 @@ public sealed partial class ShellPage : Page
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-
         TitleBarHelper.UpdateTitleBar(RequestedTheme);
 
         //KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
         //KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
-
     }
 
     private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
@@ -44,17 +39,20 @@ public sealed partial class ShellPage : Page
         App.AppTitlebar = AppTitleBarText as UIElement;
     }
 
-    public void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
+    public void NavigationViewControl_DisplayModeChanged(
+        NavigationView sender,
+        NavigationViewDisplayModeChangedEventArgs args
+    )
     {
-
         AppTitleBar.Margin = new Thickness()
         {
-            Left = sender.CompactPaneLength * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 2 : 1),
+            Left =
+                sender.CompactPaneLength
+                * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 2 : 1),
             Top = AppTitleBar.Margin.Top,
             Right = AppTitleBar.Margin.Right,
-            Bottom = AppTitleBar.Margin.Bottom
+            Bottom = AppTitleBar.Margin.Bottom,
         };
-
     }
 
     public Frame GetFrame()
@@ -62,7 +60,10 @@ public sealed partial class ShellPage : Page
         return NavigationFrame;
     }
 
-    private static KeyboardAccelerator BuildKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers? modifiers = null)
+    private static KeyboardAccelerator BuildKeyboardAccelerator(
+        VirtualKey key,
+        VirtualKeyModifiers? modifiers = null
+    )
     {
         var keyboardAccelerator = new KeyboardAccelerator() { Key = key };
 
@@ -76,7 +77,10 @@ public sealed partial class ShellPage : Page
         return keyboardAccelerator;
     }
 
-    private static void OnKeyboardAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    private static void OnKeyboardAcceleratorInvoked(
+        KeyboardAccelerator sender,
+        KeyboardAcceleratorInvokedEventArgs args
+    )
     {
         var navigationService = App.GetService<INavigationService>();
 

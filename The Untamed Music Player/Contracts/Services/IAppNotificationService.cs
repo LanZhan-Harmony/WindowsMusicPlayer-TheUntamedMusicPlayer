@@ -1,6 +1,7 @@
-﻿using System.Collections.Specialized;
+using System.Collections.Specialized;
 
 namespace The_Untamed_Music_Player.Contracts.Services;
+
 public interface IAppNotificationService
 {
     void Initialize();

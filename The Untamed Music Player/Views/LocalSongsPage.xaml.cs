@@ -10,10 +10,7 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class LocalSongsPage : Page
 {
-    public LocalSongsViewModel ViewModel
-    {
-        get;
-    }
+    public LocalSongsViewModel ViewModel { get; }
 
     private ScrollViewer? _scrollViewer;
 
@@ -63,7 +60,9 @@ public sealed partial class LocalSongsPage : Page
     {
         if (sender is ListView listView)
         {
-            _scrollViewer = listView.FindDescendant<ScrollViewer>() ?? throw new Exception("未找到ScrollViewer");
+            _scrollViewer =
+                listView.FindDescendant<ScrollViewer>()
+                ?? throw new Exception("未找到ScrollViewer");
             _scrollViewer.ChangeView(null, ViewModel.ScrollViewerVerticalOffset, null, true);
         }
 
@@ -96,20 +95,14 @@ public sealed partial class LocalSongsPage : Page
         }
     }
 
-    private void EditInfoButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
+    private void EditInfoButton_Click(object sender, RoutedEventArgs e) { }
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: BriefMusicInfo info })
         {
             var music = new DetailedMusicInfo(info);
-            var dialog = new PropertiesDialog(music)
-            {
-                XamlRoot = XamlRoot
-            };
+            var dialog = new PropertiesDialog(music) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }
@@ -130,8 +123,5 @@ public sealed partial class LocalSongsPage : Page
         }
     }
 
-    private void SelectButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
+    private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }

@@ -6,6 +6,7 @@ using The_Untamed_Music_Player.Contracts.ViewModels;
 using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Services;
+
 public class NavigationService(IPageService pageService) : INavigationService
 {
     private readonly IPageService _pageService = pageService;
@@ -26,7 +27,6 @@ public class NavigationService(IPageService pageService) : INavigationService
 
             return _frame;
         }
-
         set
         {
             UnregisterFrameEvents();
@@ -75,7 +75,13 @@ public class NavigationService(IPageService pageService) : INavigationService
     {
         var pageType = _pageService.GetPageType(pageKey);
 
-        if (_frame is not null && (_frame.Content?.GetType() != pageType || (parameter is not null && !parameter.Equals(_lastParameterUsed))))
+        if (
+            _frame is not null
+            && (
+                _frame.Content?.GetType() != pageType
+                || (parameter is not null && !parameter.Equals(_lastParameterUsed))
+            )
+        )
         {
             _frame.Tag = clearNavigation;
             var vmBeforeNavigation = _frame.GetPageViewModel();

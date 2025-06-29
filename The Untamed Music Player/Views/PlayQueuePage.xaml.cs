@@ -10,10 +10,7 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class PlayQueuePage : Page
 {
-    public PlayQueueViewModel ViewModel
-    {
-        get;
-    }
+    public PlayQueueViewModel ViewModel { get; }
 
     public PlayQueuePage()
     {
@@ -105,11 +102,11 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
         {
-            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info, Data.MusicPlayer.SourceMode);
-            var dialog = new PropertiesDialog(music)
-            {
-                XamlRoot = XamlRoot
-            };
+            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(
+                info,
+                Data.MusicPlayer.SourceMode
+            );
+            var dialog = new PropertiesDialog(music) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }
@@ -130,8 +127,5 @@ public sealed partial class PlayQueuePage : Page
         }
     }
 
-    private void SelectButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
+    private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }

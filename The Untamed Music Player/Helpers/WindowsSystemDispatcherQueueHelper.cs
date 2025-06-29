@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 
 namespace The_Untamed_Music_Player.Helpers;
+
 public class WindowsSystemDispatcherQueueHelper
 {
     [StructLayout(LayoutKind.Sequential)]
@@ -12,9 +13,13 @@ public class WindowsSystemDispatcherQueueHelper
     }
 
     [DllImport("CoreMessaging.dll")]
-    private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
+    private static extern int CreateDispatcherQueueController(
+        [In] DispatcherQueueOptions options,
+        [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController
+    );
 
     private object? m_dispatcherQueueController = null;
+
     public void EnsureWindowsSystemDispatcherQueueController()
     {
         if (Windows.System.DispatcherQueue.GetForCurrentThread() is not null)
@@ -27,7 +32,7 @@ public class WindowsSystemDispatcherQueueHelper
         {
             DispatcherQueueOptions options;
             options.dwSize = Marshal.SizeOf<DispatcherQueueOptions>();
-            options.threadType = 2;    // DQTYPE_THREAD_CURRENT
+            options.threadType = 2; // DQTYPE_THREAD_CURRENT
             options.apartmentType = 2; // DQTAT_COM_STA
 
             if (m_dispatcherQueueController is not null)

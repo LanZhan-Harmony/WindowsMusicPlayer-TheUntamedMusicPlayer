@@ -17,12 +17,10 @@ using Windows.Storage.Streams;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
+
 public sealed partial class ArtistDetailPage : Page
 {
-    public ArtistDetailViewModel ViewModel
-    {
-        get;
-    }
+    public ArtistDetailViewModel ViewModel { get; }
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 80, 107);
@@ -38,7 +36,6 @@ public sealed partial class ArtistDetailPage : Page
 
     // 偏移量
     private int SelectorBarOffset => GetValue(50, 72, 79);
-
 
     // 背景的高度
     private float BackgroundVisualHeight => (float)(Header.ActualHeight * 2.5);
@@ -78,7 +75,9 @@ public sealed partial class ArtistDetailPage : Page
         base.OnNavigatedTo(e);
         if (e.Parameter is string page && page == "LocalArtistPage")
         {
-            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
+            var animation = ConnectedAnimationService
+                .GetForCurrentView()
+                .GetAnimation("ForwardConnectedAnimation");
             animation?.TryStart(CoverArt);
         }
     }
@@ -93,7 +92,9 @@ public sealed partial class ArtistDetailPage : Page
         if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "LocalArtistsPage")
         {
             Data.NavigatePage = "";
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", CoverArt);
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("BackConnectedAnimation", CoverArt);
         }
     }
 
@@ -101,7 +102,8 @@ public sealed partial class ArtistDetailPage : Page
     {
         var listScrollViewer = SharedScrollViewer;
 
-        var listScrollerPropertySet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(listScrollViewer); // 获取 ScrollViewer 中包含滚动值的属性集
+        var listScrollerPropertySet =
+            ElementCompositionPreview.GetScrollViewerManipulationPropertySet(listScrollViewer); // 获取 ScrollViewer 中包含滚动值的属性集
         _compositor = listScrollerPropertySet.Compositor; // 获取与 ScrollViewer 关联的 Compositor, Compositor 用于创建动画
 
         // 创建一个属性集，其中包含下面的 ExpressionAnimations 中引用的值
@@ -114,7 +116,8 @@ public sealed partial class ArtistDetailPage : Page
         _props.InsertScalar("selectorBarOffset", SelectorBarOffset);
         _props.InsertScalar("headerPadding", 12);
 
-        var listScrollingProperties = listScrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>(); // 获取属性集的引用节点，以便在表达式动画中使用
+        var listScrollingProperties =
+            listScrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>(); // 获取属性集的引用节点，以便在表达式动画中使用
 
         CreateHeaderAnimation(_props, listScrollingProperties.Translation.Y);
 
@@ -123,7 +126,10 @@ public sealed partial class ArtistDetailPage : Page
             var coverBytes = ViewModel.Artist.GetCoverBytes();
             if (coverBytes.Length != 0)
             {
-                await CreateImageBackgroundGradientVisual(listScrollingProperties.Translation.Y, coverBytes);
+                await CreateImageBackgroundGradientVisual(
+                    listScrollingProperties.Translation.Y,
+                    coverBytes
+                );
             }
         }
     }
@@ -133,7 +139,10 @@ public sealed partial class ArtistDetailPage : Page
     /// </summary>
     /// <param name="propSet"></param>
     /// <param name="scrollVerticalOffset"></param>
-    private void CreateHeaderAnimation(CompositionPropertySet propSet, ScalarNode scrollVerticalOffset)
+    private void CreateHeaderAnimation(
+        CompositionPropertySet propSet,
+        ScalarNode scrollVerticalOffset
+    )
     {
         var props = propSet.GetReference();
         var progressNode = props.GetScalarProperty("progress");
@@ -152,7 +161,11 @@ public sealed partial class ArtistDetailPage : Page
         var backgroundVisual = ElementCompositionPreview.GetElementVisual(BackgroundAcrylic);
 
         // 创建并启动一个表达式动画，以缩放和淡入标题后面的背景
-        ExpressionNode backgroundScaleAnimation = EF.Lerp(1, backgroundScaleFactorNode, progressNode);
+        ExpressionNode backgroundScaleAnimation = EF.Lerp(
+            1,
+            backgroundScaleFactorNode,
+            progressNode
+        );
         ExpressionNode backgroundOpacityAnimation = progressNode;
         backgroundVisual.StartAnimation("Scale.Y", backgroundScaleAnimation);
         backgroundVisual.StartAnimation("Opacity", backgroundOpacityAnimation);
@@ -181,7 +194,8 @@ public sealed partial class ArtistDetailPage : Page
         ElementCompositionPreview.SetIsTranslationEnabled(TextPanel, true);
 
         // 创建并启动一个表达式动画，以滚动位置移动文本面板
-        ExpressionNode textTranslationAnimation = progressNode * (-clampSizeNode + headerPaddingNode);
+        ExpressionNode textTranslationAnimation =
+            progressNode * (-clampSizeNode + headerPaddingNode);
         textVisual.StartAnimation("Translation.X", textTranslationAnimation);
 
         // 获取附加文本块后备视觉效果，以便可以对其属性进行动画处理
@@ -190,7 +204,8 @@ public sealed partial class ArtistDetailPage : Page
 
         // 创建一个表达式动画，以开始使用附加文本块的阈值进行不透明度淡出动画
         var fadeThreshold = ExpressionValues.Constant.CreateConstantScalar("fadeThreshold", 0.6f);
-        ExpressionNode textFadeAnimation = 1 - EF.Conditional(progressNode < fadeThreshold, progressNode / fadeThreshold, 1);
+        ExpressionNode textFadeAnimation =
+            1 - EF.Conditional(progressNode < fadeThreshold, progressNode / fadeThreshold, 1);
 
         // 在附加文本块视觉上启动不透明度淡出动画
         subtitleVisual.StartAnimation("Opacity", textFadeAnimation);
@@ -214,7 +229,10 @@ public sealed partial class ArtistDetailPage : Page
         selectorBarVisual.StartAnimation("Translation.Y", selectorBarTranslationAnimation);
     }
 
-    private async Task CreateImageBackgroundGradientVisual(ScalarNode scrollVerticalOffset, byte[] imageBytes)
+    private async Task CreateImageBackgroundGradientVisual(
+        ScalarNode scrollVerticalOffset,
+        byte[] imageBytes
+    )
     {
         if (_compositor is null)
         {
@@ -345,7 +363,10 @@ public sealed partial class ArtistDetailPage : Page
         }
     }
 
-    private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    private void SelectorBar_SelectionChanged(
+        SelectorBar sender,
+        SelectorBarSelectionChangedEventArgs args
+    )
     {
         var selectedItem = sender.SelectedItem;
         var currentSelectedIndex = sender.Items.IndexOf(selectedItem);
@@ -386,9 +407,7 @@ public sealed partial class ArtistDetailPage : Page
         }
     }
 
-    private void SongListViewEditInfoButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
+    private void SongListViewEditInfoButton_Click(object sender, RoutedEventArgs e) { }
 
     private async void SongListViewPropertiesButton_Click(object sender, RoutedEventArgs e)
     {
@@ -397,10 +416,7 @@ public sealed partial class ArtistDetailPage : Page
             var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info);
             if (music is not null)
             {
-                var dialog = new PropertiesDialog(music)
-                {
-                    XamlRoot = XamlRoot
-                };
+                var dialog = new PropertiesDialog(music) { XamlRoot = XamlRoot };
                 await dialog.ShowAsync();
             }
         }
@@ -414,9 +430,7 @@ public sealed partial class ArtistDetailPage : Page
         }
     }
 
-    private void SongListViewSelectButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
+    private void SongListViewSelectButton_Click(object sender, RoutedEventArgs e) { }
 
     private void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
@@ -433,11 +447,21 @@ public sealed partial class ArtistDetailPage : Page
             var albumInfo = Data.MusicLibrary.Albums[briefAlbumInfo.Name];
             if (albumInfo is not null)
             {
-                var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)).ContentTemplateRoot;
+                var grid = (Grid)
+                    (
+                        (ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)
+                    ).ContentTemplateRoot;
                 var border = (Border)grid.Children[1];
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+                ConnectedAnimationService
+                    .GetForCurrentView()
+                    .PrepareToAnimate("ForwardConnectedAnimation", border);
                 Data.SelectedAlbum = albumInfo;
-                Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "ArtistDetailPage", new SuppressNavigationTransitionInfo());
+                Data.ShellPage!.GetFrame()
+                    .Navigate(
+                        typeof(AlbumDetailPage),
+                        "ArtistDetailPage",
+                        new SuppressNavigationTransitionInfo()
+                    );
             }
         }
     }
@@ -450,9 +474,7 @@ public sealed partial class ArtistDetailPage : Page
         }
     }
 
-    private void AlbumGridViewEditInfoButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
+    private void AlbumGridViewEditInfoButton_Click(object sender, RoutedEventArgs e) { }
 
     private void AlbumGridViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
@@ -461,18 +483,24 @@ public sealed partial class ArtistDetailPage : Page
             var albumInfo = Data.MusicLibrary.Albums[info.Name];
             if (albumInfo is not null)
             {
-                var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
+                var grid = (Grid)
+                    ((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
                 var border = (Border)grid.Children[1];
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+                ConnectedAnimationService
+                    .GetForCurrentView()
+                    .PrepareToAnimate("ForwardConnectedAnimation", border);
                 Data.SelectedAlbum = albumInfo;
-                Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "ArtistDetailPage", new SuppressNavigationTransitionInfo());
+                Data.ShellPage!.GetFrame()
+                    .Navigate(
+                        typeof(AlbumDetailPage),
+                        "ArtistDetailPage",
+                        new SuppressNavigationTransitionInfo()
+                    );
             }
         }
     }
 
-    private void AlbumGridViewSelectButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
+    private void AlbumGridViewSelectButton_Click(object sender, RoutedEventArgs e) { }
 
     /*private void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
     {
