@@ -4,6 +4,7 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class MusicLibraryViewModel : ObservableRecipient
 {
     /// <summary>
@@ -47,6 +48,7 @@ public partial class MusicLibraryViewModel : ObservableRecipient
     private void UpdateContentFrame()
     {
         _hasNavigated = true;
-        Data.MusicLibraryPage?.GetContentFrame().Navigate(Data.MusicLibrary.HasMusics ? typeof(HaveMusicPage) : typeof(NoMusicPage));
+        Data.MusicLibraryPage?.GetContentFrame()
+            .Navigate(Data.MusicLibrary.HasMusics ? typeof(HaveMusicPage) : typeof(NoMusicPage));
     }
 }

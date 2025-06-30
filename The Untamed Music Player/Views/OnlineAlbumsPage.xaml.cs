@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
+
 public sealed partial class OnlineAlbumsPage : Page
 {
     public OnlineAlbumsViewModel ViewModel { get; set; }
@@ -54,33 +55,15 @@ public sealed partial class OnlineAlbumsPage : Page
         }
     }
 
-    private void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
-    {
+    private void AlbumGridView_Loaded(object sender, RoutedEventArgs e) { }
 
-    }
+    private void PlayButton_Click(object sender, RoutedEventArgs e) { }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e)
-    {
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e) { }
 
-    }
+    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e) { }
 
-    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
-    {
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e) { }
 
-    }
-
-    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void SelectButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
+    private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
