@@ -5,6 +5,7 @@ using Windows.UI.ViewManagement;
 using static The_Untamed_Music_Player.Helpers.ExternFunction;
 
 namespace The_Untamed_Music_Player.Helpers;
+
 public partial class TitleBarHelper
 {
     private const int WAINACTIVE = 0x00;
@@ -25,35 +26,38 @@ public partial class TitleBarHelper
 
             if (theme == ElementTheme.Default)
             {
-                theme = Application.Current.RequestedTheme == ApplicationTheme.Light ? ElementTheme.Light : ElementTheme.Dark;
+                theme =
+                    Application.Current.RequestedTheme == ApplicationTheme.Light
+                        ? ElementTheme.Light
+                        : ElementTheme.Dark;
             }
 
             App.MainWindow.AppWindow.TitleBar.ButtonForegroundColor = theme switch
             {
                 ElementTheme.Dark => Colors.White,
                 ElementTheme.Light => Colors.Black,
-                _ => Colors.Transparent
+                _ => Colors.Transparent,
             };
 
             App.MainWindow.AppWindow.TitleBar.ButtonHoverForegroundColor = theme switch
             {
                 ElementTheme.Dark => Colors.White,
                 ElementTheme.Light => Colors.Black,
-                _ => Colors.Transparent
+                _ => Colors.Transparent,
             };
 
             App.MainWindow.AppWindow.TitleBar.ButtonHoverBackgroundColor = theme switch
             {
                 ElementTheme.Dark => Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF),
                 ElementTheme.Light => Color.FromArgb(0x33, 0x00, 0x00, 0x00),
-                _ => Colors.Transparent
+                _ => Colors.Transparent,
             };
 
             App.MainWindow.AppWindow.TitleBar.ButtonPressedBackgroundColor = theme switch
             {
                 ElementTheme.Dark => Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF),
                 ElementTheme.Light => Color.FromArgb(0x66, 0x00, 0x00, 0x00),
-                _ => Colors.Transparent
+                _ => Colors.Transparent,
             };
 
             App.MainWindow.AppWindow.TitleBar.BackgroundColor = Colors.Transparent;

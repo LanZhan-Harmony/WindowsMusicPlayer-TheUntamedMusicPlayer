@@ -2,13 +2,16 @@ using hyjiacan.py4n;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.Helpers;
+
 /// <summary>
 /// 标题比较器
 /// </summary>
 internal class TitleComparer : IComparer<string>
 {
-    private static readonly PinyinFormat PinyinFormat1 = PinyinFormat.UPPERCASE | PinyinFormat.WITHOUT_TONE | PinyinFormat.WITH_V;
-    private static readonly PinyinFormat PinyinFormat2 = PinyinFormat.LOWERCASE | PinyinFormat.WITHOUT_TONE | PinyinFormat.WITH_V;
+    private static readonly PinyinFormat PinyinFormat1 =
+        PinyinFormat.UPPERCASE | PinyinFormat.WITHOUT_TONE | PinyinFormat.WITH_V;
+    private static readonly PinyinFormat PinyinFormat2 =
+        PinyinFormat.LOWERCASE | PinyinFormat.WITHOUT_TONE | PinyinFormat.WITH_V;
 
     public static string GetPinyinFirstLetter(char text)
     {
@@ -51,7 +54,11 @@ internal class TitleComparer : IComparer<string>
         }
 
         // 如果分组优先级相同，则按分组键排序
-        var groupComparison = string.Compare(xGroupKey, yGroupKey, StringComparison.OrdinalIgnoreCase);
+        var groupComparison = string.Compare(
+            xGroupKey,
+            yGroupKey,
+            StringComparison.OrdinalIgnoreCase
+        );
         if (groupComparison != 0)
         {
             return groupComparison;
@@ -118,7 +125,12 @@ internal abstract class BaseArtistComparer<T> : IComparer<T>
 {
     public abstract int Compare(T? x, T? y);
 
-    protected static int CompareByProperty(string? xProperty, string? yProperty, string? xTitle, string? yTitle)
+    protected static int CompareByProperty(
+        string? xProperty,
+        string? yProperty,
+        string? xTitle,
+        string? yTitle
+    )
     {
         if (string.IsNullOrEmpty(xProperty) && string.IsNullOrEmpty(yProperty))
         {
@@ -143,7 +155,11 @@ internal abstract class BaseArtistComparer<T> : IComparer<T>
         }
 
         var groupComparison = TitleComparer.IsChinese(xFirstChar)
-            ? string.Compare(TitleComparer.GetPinyin(xProperty), TitleComparer.GetPinyin(yProperty), StringComparison.OrdinalIgnoreCase)
+            ? string.Compare(
+                TitleComparer.GetPinyin(xProperty),
+                TitleComparer.GetPinyin(yProperty),
+                StringComparison.OrdinalIgnoreCase
+            )
             : string.Compare(xProperty, yProperty, StringComparison.OrdinalIgnoreCase);
 
         if (groupComparison != 0)
@@ -233,7 +249,11 @@ internal class ArtistTitleComparer : IComparer<string>
             return xPriority.CompareTo(yPriority);
         }
         var groupComparison = TitleComparer.IsChinese(xFirstChar)
-            ? string.Compare(TitleComparer.GetPinyin(xProperty), TitleComparer.GetPinyin(yProperty), StringComparison.OrdinalIgnoreCase)
+            ? string.Compare(
+                TitleComparer.GetPinyin(xProperty),
+                TitleComparer.GetPinyin(yProperty),
+                StringComparison.OrdinalIgnoreCase
+            )
             : string.Compare(xProperty, yProperty, StringComparison.OrdinalIgnoreCase);
 
         return groupComparison;
@@ -274,7 +294,12 @@ internal class MusicAlbumComparer : IComparer<BriefMusicInfo>
         return CompareByProperty(x?.Album, y?.Album, x?.Title, y?.Title);
     }
 
-    private static int CompareByProperty(string? xProperty, string? yProperty, string? xTitle, string? yTitle)
+    private static int CompareByProperty(
+        string? xProperty,
+        string? yProperty,
+        string? xTitle,
+        string? yTitle
+    )
     {
         if (string.IsNullOrEmpty(xProperty) && string.IsNullOrEmpty(yProperty))
         {
@@ -300,7 +325,11 @@ internal class MusicAlbumComparer : IComparer<BriefMusicInfo>
         }
 
         var groupComparison = TitleComparer.IsChinese(xFirstChar)
-            ? string.Compare(TitleComparer.GetPinyin(xProperty), TitleComparer.GetPinyin(yProperty), StringComparison.OrdinalIgnoreCase)
+            ? string.Compare(
+                TitleComparer.GetPinyin(xProperty),
+                TitleComparer.GetPinyin(yProperty),
+                StringComparison.OrdinalIgnoreCase
+            )
             : string.Compare(xProperty, yProperty, StringComparison.OrdinalIgnoreCase);
 
         if (groupComparison != 0)
@@ -368,7 +397,11 @@ internal class AlbumTitleComparer : IComparer<string>
             return xPriority.CompareTo(yPriority);
         }
         var groupComparison = TitleComparer.IsChinese(xFirstChar)
-            ? string.Compare(TitleComparer.GetPinyin(xProperty), TitleComparer.GetPinyin(yProperty), StringComparison.OrdinalIgnoreCase)
+            ? string.Compare(
+                TitleComparer.GetPinyin(xProperty),
+                TitleComparer.GetPinyin(yProperty),
+                StringComparison.OrdinalIgnoreCase
+            )
             : string.Compare(xProperty, yProperty, StringComparison.OrdinalIgnoreCase);
         return groupComparison;
     }
@@ -408,7 +441,12 @@ internal class MusicFolderComparer : IComparer<BriefMusicInfo>
         return CompareByProperty(x?.Folder, y?.Folder, x?.Title, y?.Title);
     }
 
-    private static int CompareByProperty(string? xProperty, string? yProperty, string? xTitle, string? yTitle)
+    private static int CompareByProperty(
+        string? xProperty,
+        string? yProperty,
+        string? xTitle,
+        string? yTitle
+    )
     {
         if (string.IsNullOrEmpty(xProperty) && string.IsNullOrEmpty(yProperty))
         {
@@ -463,7 +501,11 @@ internal class GenreComparer : IComparer<string>
         }
 
         var groupComparison = TitleComparer.IsChinese(xFirstChar)
-            ? string.Compare(TitleComparer.GetPinyin(x), TitleComparer.GetPinyin(y), StringComparison.OrdinalIgnoreCase)
+            ? string.Compare(
+                TitleComparer.GetPinyin(x),
+                TitleComparer.GetPinyin(y),
+                StringComparison.OrdinalIgnoreCase
+            )
             : string.Compare(x, y, StringComparison.OrdinalIgnoreCase);
         return groupComparison;
     }

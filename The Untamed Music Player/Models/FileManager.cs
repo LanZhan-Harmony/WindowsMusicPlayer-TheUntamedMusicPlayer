@@ -6,12 +6,16 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
+
 public class FileManager
 {
     /// <summary>
     /// 保存音乐库数据到文件
     /// </summary>
-    public static async void SaveLibraryDataAsync(ObservableCollection<StorageFolder> folders, MusicLibraryData data)
+    public static async void SaveLibraryDataAsync(
+        ObservableCollection<StorageFolder> folders,
+        MusicLibraryData data
+    )
     {
         var songs = data.Songs;
         var albums = data.Albums;
@@ -27,8 +31,10 @@ public class FileManager
         {
             // 创建音乐库数据目录
             var localFolder = ApplicationData.Current.LocalFolder;
-            var libraryFolder = await localFolder.CreateFolderAsync("LibraryData",
-                CreationCollisionOption.OpenIfExists);
+            var libraryFolder = await localFolder.CreateFolderAsync(
+                "LibraryData",
+                CreationCollisionOption.OpenIfExists
+            );
 
             // 计算并保存文件夹指纹
             var folderFingerprints = new Dictionary<string, string>();
@@ -42,10 +48,18 @@ public class FileManager
             await SaveObjectToFileAsync(libraryFolder, "Songs", songs.ToArray());
 
             // 保存专辑数据 - 将 ConcurrentDictionary 转换为 Dictionary
-            await SaveObjectToFileAsync(libraryFolder, "Albums", albums.ToDictionary(kv => kv.Key, kv => kv.Value));
+            await SaveObjectToFileAsync(
+                libraryFolder,
+                "Albums",
+                albums.ToDictionary(kv => kv.Key, kv => kv.Value)
+            );
 
             // 保存艺术家数据
-            await SaveObjectToFileAsync(libraryFolder, "Artists", artists.ToDictionary(kv => kv.Key, kv => kv.Value));
+            await SaveObjectToFileAsync(
+                libraryFolder,
+                "Artists",
+                artists.ToDictionary(kv => kv.Key, kv => kv.Value)
+            );
 
             // 保存流派列表
             await SaveObjectToFileAsync(libraryFolder, "Genres", genres.ToArray());
@@ -58,15 +72,25 @@ public class FileManager
         }
     }
 
-    public static async void SavePlayQueueDataAsync(ObservableCollection<IBriefMusicInfoBase> playQueue, ObservableCollection<IBriefMusicInfoBase> shuffledPlayQueue)
+    public static async void SavePlayQueueDataAsync(
+        ObservableCollection<IBriefMusicInfoBase> playQueue,
+        ObservableCollection<IBriefMusicInfoBase> shuffledPlayQueue
+    )
     {
         var localFolder = ApplicationData.Current.LocalFolder;
-        var playQueueFolder = await localFolder.CreateFolderAsync("PlayQueueData", CreationCollisionOption.OpenIfExists);
+        var playQueueFolder = await localFolder.CreateFolderAsync(
+            "PlayQueueData",
+            CreationCollisionOption.OpenIfExists
+        );
 
         // 保存播放队列
         await SaveObjectToFileAsync(playQueueFolder, "PlayQueue", playQueue.ToArray());
         // 保存随机播放队列
-        await SaveObjectToFileAsync(playQueueFolder, "ShuffledPlayQueue", shuffledPlayQueue.ToArray());
+        await SaveObjectToFileAsync(
+            playQueueFolder,
+            "ShuffledPlayQueue",
+            shuffledPlayQueue.ToArray()
+        );
         Debug.WriteLine("播放队列数据保存成功");
     }
 
@@ -74,7 +98,8 @@ public class FileManager
     /// 从文件加载音乐库数据
     /// </summary>
     public static async Task<(bool needRescan, MusicLibraryData data)> LoadLibraryDataAsync(
-    ObservableCollection<StorageFolder> folders)
+        ObservableCollection<StorageFolder> folders
+    )
     {
         var data = new MusicLibraryData();
 
@@ -96,7 +121,10 @@ public class FileManager
             }
 
             // 读取保存的文件夹指纹
-            var savedFingerprints = await LoadObjectFromFileAsync<Dictionary<string, string>>(libraryFolder, "FolderFingerprints");
+            var savedFingerprints = await LoadObjectFromFileAsync<Dictionary<string, string>>(
+                libraryFolder,
+                "FolderFingerprints"
+            );
             if (savedFingerprints == null)
             {
                 return (true, data);
@@ -123,8 +151,14 @@ public class FileManager
 
             // 并行加载所有数据文件
             var songsTask = LoadObjectFromFileAsync<BriefMusicInfo[]>(libraryFolder, "Songs");
-            var albumsTask = LoadObjectFromFileAsync<Dictionary<string, AlbumInfo>>(libraryFolder, "Albums");
-            var artistsTask = LoadObjectFromFileAsync<Dictionary<string, ArtistInfo>>(libraryFolder, "Artists");
+            var albumsTask = LoadObjectFromFileAsync<Dictionary<string, AlbumInfo>>(
+                libraryFolder,
+                "Albums"
+            );
+            var artistsTask = LoadObjectFromFileAsync<Dictionary<string, ArtistInfo>>(
+                libraryFolder,
+                "Artists"
+            );
             var genresTask = LoadObjectFromFileAsync<string[]>(libraryFolder, "Genres");
 
             await Task.WhenAll(songsTask, albumsTask, artistsTask, genresTask);
@@ -134,7 +168,12 @@ public class FileManager
             var artistsDict = artistsTask.Result;
             var genresArray = genresTask.Result;
 
-            if (songsArray == null || albumsDict == null || artistsDict == null || genresArray == null)
+            if (
+                songsArray == null
+                || albumsDict == null
+                || artistsDict == null
+                || genresArray == null
+            )
             {
                 return (true, data);
             }
@@ -161,7 +200,10 @@ public class FileManager
         }
     }
 
-    public static async Task<(ObservableCollection<IBriefMusicInfoBase> playQueue, ObservableCollection<IBriefMusicInfoBase> shuffledPlayQueue)> LoadPlayQueueDataAsync()
+    public static async Task<(
+        ObservableCollection<IBriefMusicInfoBase> playQueue,
+        ObservableCollection<IBriefMusicInfoBase> shuffledPlayQueue
+    )> LoadPlayQueueDataAsync()
     {
         try
         {
@@ -178,8 +220,14 @@ public class FileManager
                 return ([], []);
             }
 
-            var playQueuetask = LoadObjectFromFileAsync<IBriefMusicInfoBase[]>(playQueueFolder, "PlayQueue");
-            var shuffledPlayQueuetask = LoadObjectFromFileAsync<IBriefMusicInfoBase[]>(playQueueFolder, "ShuffledPlayQueue");
+            var playQueuetask = LoadObjectFromFileAsync<IBriefMusicInfoBase[]>(
+                playQueueFolder,
+                "PlayQueue"
+            );
+            var shuffledPlayQueuetask = LoadObjectFromFileAsync<IBriefMusicInfoBase[]>(
+                playQueueFolder,
+                "ShuffledPlayQueue"
+            );
 
             await Task.WhenAll(playQueuetask, shuffledPlayQueuetask);
 
@@ -204,7 +252,10 @@ public class FileManager
     public static async Task SaveObjectToFileAsync<T>(StorageFolder folder, string fileName, T obj)
     {
         var data = MemoryPack.MemoryPackSerializer.Serialize(obj);
-        var file = await folder.CreateFileAsync(fileName + ".bin", CreationCollisionOption.ReplaceExisting);
+        var file = await folder.CreateFileAsync(
+            fileName + ".bin",
+            CreationCollisionOption.ReplaceExisting
+        );
         await FileIO.WriteBytesAsync(file, data);
     }
 
@@ -255,7 +306,10 @@ public class FileManager
             // 计算文件数和最新修改时间
             foreach (var item in items)
             {
-                if (item is StorageFile file && Data.SupportedAudioTypes.Contains(file.FileType.ToLower()))
+                if (
+                    item is StorageFile file
+                    && Data.SupportedAudioTypes.Contains(file.FileType.ToLower())
+                )
                 {
                     fileCount++;
                     var props = await file.GetBasicPropertiesAsync();
@@ -295,7 +349,10 @@ public class FileManager
     /// <summary>
     /// 检查文件夹指纹是否匹配
     /// </summary>
-    private static async Task<(bool isMatch, string folderPath)> CheckFolderFingerprintAsync(StorageFolder folder, Dictionary<string, string> savedFingerprints)
+    private static async Task<(bool isMatch, string folderPath)> CheckFolderFingerprintAsync(
+        StorageFolder folder,
+        Dictionary<string, string> savedFingerprints
+    )
     {
         if (!savedFingerprints.TryGetValue(folder.Path, out var savedFingerprint))
         {
@@ -306,7 +363,6 @@ public class FileManager
         return (currentFingerprint == savedFingerprint, folder.Path);
     }
 }
-
 
 /// <summary>
 /// 音乐库数据容器
@@ -319,7 +375,13 @@ public class MusicLibraryData
     public List<string> Genres { get; set; } = null!;
 
     public MusicLibraryData() { }
-    public MusicLibraryData(ConcurrentBag<BriefMusicInfo> songs, ConcurrentDictionary<string, AlbumInfo> albums, ConcurrentDictionary<string, ArtistInfo> artists, List<string> genres)
+
+    public MusicLibraryData(
+        ConcurrentBag<BriefMusicInfo> songs,
+        ConcurrentDictionary<string, AlbumInfo> albums,
+        ConcurrentDictionary<string, ArtistInfo> artists,
+        List<string> genres
+    )
     {
         Songs = songs;
         Albums = albums;

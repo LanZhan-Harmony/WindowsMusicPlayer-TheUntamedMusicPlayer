@@ -8,6 +8,7 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
+
 public sealed partial class OnlineSongsPage : Page
 {
     private ScrollViewer? _scrollViewer;
@@ -52,11 +53,17 @@ public sealed partial class OnlineSongsPage : Page
 
     private void OnlineSongsPage_Loaded(object sender, RoutedEventArgs e)
     {
-        _scrollViewer = SongListView.FindDescendant<ScrollViewer>() ?? throw new Exception("Cannot find ScrollViewer in ListView"); // 检索 ListView 内部使用的 ScrollViewer
+        _scrollViewer =
+            SongListView.FindDescendant<ScrollViewer>()
+            ?? throw new Exception("Cannot find ScrollViewer in ListView"); // 检索 ListView 内部使用的 ScrollViewer
 
         _scrollViewer.ViewChanged += async (s, e) =>
         {
-            if (!Data.OnlineMusicLibrary.OnlineMusicInfoList.HasAllLoaded && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight >= _scrollViewer.ExtentHeight - 50)
+            if (
+                !Data.OnlineMusicLibrary.OnlineMusicInfoList.HasAllLoaded
+                && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
+                    >= _scrollViewer.ExtentHeight - 50
+            )
             {
                 await Data.OnlineMusicLibrary.SearchMore();
                 await Task.Delay(3000);
@@ -92,27 +99,18 @@ public sealed partial class OnlineSongsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
         {
-            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info, (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1));
-            var dialog = new PropertiesDialog(music)
-            {
-                XamlRoot = XamlRoot
-            };
+            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(
+                info,
+                (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1)
+            );
+            var dialog = new PropertiesDialog(music) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }
 
-    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
-    {
+    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e) { }
 
-    }
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e) { }
 
-    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void SelectButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
+    private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }

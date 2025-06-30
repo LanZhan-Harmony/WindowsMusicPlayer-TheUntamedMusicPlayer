@@ -29,7 +29,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private readonly TextBlock _measureTextBlock = new()
     {
         FontSize = 32,
-        FontFamily = Data.SelectedFont
+        FontFamily = Data.SelectedFont,
     };
 
     public DesktopLyricViewModel ViewModel { get; }
@@ -52,13 +52,15 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         const int WS_EX_TOOLWINDOW = 0x00000080;
         const int WS_EX_APPWINDOW = 0x00040000;
         var exStyle = GetWindowLong(_hWnd, GWL_EXSTYLE);
-        exStyle |= WS_EX_TOOLWINDOW;  // 添加工具窗口样式
-        exStyle &= ~WS_EX_APPWINDOW;  // 移除应用窗口样式
+        exStyle |= WS_EX_TOOLWINDOW; // 添加工具窗口样式
+        exStyle &= ~WS_EX_APPWINDOW; // 移除应用窗口样式
         _ = SetWindowLong(_hWnd, GWL_EXSTYLE, exStyle);
 
         SetTopmost(true);
 
-        var workArea = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest).WorkArea;// 获取屏幕工作区大小
+        var workArea = DisplayArea
+            .GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest)
+            .WorkArea; // 获取屏幕工作区大小
         var screenHeight = workArea.Height;
         var y = screenHeight - screenHeight * 140 / 1080; // 计算窗口位置，使其位于屏幕下方
 
@@ -76,10 +78,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
     private void InitMousePositionTimer()
     {
-        _updateTimer250ms = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(250)
-        };
+        _updateTimer250ms = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
         _updateTimer250ms.Tick += MousePositionTimer_Tick;
         _updateTimer250ms.Start();
     }
@@ -95,7 +94,8 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         var borderRect = GetElementScreenRect(AnimatedBorder);
 
         // 检查鼠标是否在AnimatedBorder上
-        var isOverBorder = mousePoint.X >= borderRect.Left
+        var isOverBorder =
+            mousePoint.X >= borderRect.Left
             && mousePoint.X <= borderRect.Right
             && mousePoint.Y >= borderRect.Top
             && mousePoint.Y <= borderRect.Bottom;
@@ -127,7 +127,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
             Left = windowRect.Left + (int)(position.X * scaleFactor),
             Top = windowRect.Top + (int)(position.Y * scaleFactor),
             Right = windowRect.Left + (int)((position.X + element.ActualWidth) * scaleFactor),
-            Bottom = windowRect.Top + (int)((position.Y + element.ActualHeight) * scaleFactor)
+            Bottom = windowRect.Top + (int)((position.Y + element.ActualHeight) * scaleFactor),
         };
     }
 
@@ -148,7 +148,11 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         else
         {
             // 移除 WS_EX_TRANSPARENT 使窗口可接收点击
-            _ = SetWindowLong(_hWnd, GWL_EXSTYLE, (currentStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT);
+            _ = SetWindowLong(
+                _hWnd,
+                GWL_EXSTYLE,
+                (currentStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT
+            );
         }
     }
 
@@ -219,7 +223,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         {
             Text = "TEST测试",
             FontSize = 32,
-            FontFamily = Data.SelectedFont
+            FontFamily = Data.SelectedFont,
         };
         textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         (sender as MarqueeText)!.Height = textBlock.DesiredSize.Height;
@@ -238,11 +242,12 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         if (width > 700)
         {
             // 在UI线程上延迟0.5秒后调用 StartMarquee
-            Task.Delay(500).ContinueWith(_ =>
-             {
-                 // 确保在UI线程上下文中执行
-                 DispatcherQueue.TryEnqueue(() => LyricContent.StartMarquee());
-             });
+            Task.Delay(500)
+                .ContinueWith(_ =>
+                {
+                    // 确保在UI线程上下文中执行
+                    DispatcherQueue.TryEnqueue(() => LyricContent.StartMarquee());
+                });
         }
         return Math.Min(width, 700);
     }
@@ -260,11 +265,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
                 To = newWidth > 140 ? newWidth + 50 : 190,
                 Duration = TimeSpan.FromMilliseconds(300),
                 EnableDependentAnimation = true,
-                EasingFunction = new BackEase
-                {
-                    EasingMode = EasingMode.EaseOut,
-                    Amplitude = 0.8
-                }
+                EasingFunction = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.8 },
             };
             Storyboard.SetTarget(widthAnimation, AnimatedBorder);
             Storyboard.SetTargetProperty(widthAnimation, "Width");

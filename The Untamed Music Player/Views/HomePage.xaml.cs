@@ -6,10 +6,7 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class HomePage : Page
 {
-    public HomeViewModel ViewModel
-    {
-        get;
-    }
+    public HomeViewModel ViewModel { get; }
 
     public HomePage()
     {

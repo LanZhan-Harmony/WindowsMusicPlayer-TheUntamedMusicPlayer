@@ -8,26 +8,32 @@ using Windows.Foundation.Collections;
 using Windows.UI;
 
 namespace The_Untamed_Music_Player.Helpers;
+
 internal class AlternatingListViewBehavior : Behavior<ListViewBase>
 {
-    public static readonly DependencyProperty AlternateBackgroundProperty = DependencyProperty.Register(
-        nameof(AlternateBackground),
-        typeof(Brush),
-        typeof(AlternatingListViewBehavior),
-        new PropertyMetadata(default(Brush)));
+    public static readonly DependencyProperty AlternateBackgroundProperty =
+        DependencyProperty.Register(
+            nameof(AlternateBackground),
+            typeof(Brush),
+            typeof(AlternatingListViewBehavior),
+            new PropertyMetadata(default(Brush))
+        );
 
-    public static readonly DependencyProperty AlternateBorderThicknessProperty = DependencyProperty.Register(
-        nameof(AlternateBorderThickness),
-        typeof(Thickness),
-        typeof(AlternatingListViewBehavior),
-        new PropertyMetadata(default(Thickness)));
+    public static readonly DependencyProperty AlternateBorderThicknessProperty =
+        DependencyProperty.Register(
+            nameof(AlternateBorderThickness),
+            typeof(Thickness),
+            typeof(AlternatingListViewBehavior),
+            new PropertyMetadata(default(Thickness))
+        );
 
-    public static readonly DependencyProperty AlternateBorderBrushProperty = DependencyProperty.Register(
-        nameof(AlternateBorderBrush),
-        typeof(Brush),
-        typeof(AlternatingListViewBehavior),
-        new PropertyMetadata(default(Brush?)));
-
+    public static readonly DependencyProperty AlternateBorderBrushProperty =
+        DependencyProperty.Register(
+            nameof(AlternateBorderBrush),
+            typeof(Brush),
+            typeof(AlternatingListViewBehavior),
+            new PropertyMetadata(default(Brush?))
+        );
 
     public Brush? AlternateBorderBrush
     {
@@ -87,7 +93,10 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
         }
     }
 
-    private void ItemsOnVectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs args)
+    private void ItemsOnVectorChanged(
+        IObservableVector<object> sender,
+        IVectorChangedEventArgs args
+    )
     {
         // If the index is at the end we can ignore
         if (args.Index == sender.Count - 1)
@@ -109,7 +118,10 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
         }
     }
 
-    private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    private void OnContainerContentChanging(
+        ListViewBase sender,
+        ContainerContentChangingEventArgs args
+    )
     {
         if (args.Phase > 0 || args.InRecycleQueue)
         {
@@ -148,6 +160,8 @@ internal class AlternatingListViewBehavior : Behavior<ListViewBase>
 
     public static Brush GetAlternateBackgroundBrush(bool isDarkTheme)
     {
-        return isDarkTheme ? new SolidColorBrush(Color.FromArgb(240, 48, 53, 57)) : new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
+        return isDarkTheme
+            ? new SolidColorBrush(Color.FromArgb(240, 48, 53, 57))
+            : new SolidColorBrush(Color.FromArgb(240, 253, 254, 254));
     }
 }

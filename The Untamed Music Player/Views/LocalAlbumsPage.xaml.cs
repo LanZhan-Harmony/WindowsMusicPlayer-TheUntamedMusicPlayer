@@ -9,10 +9,8 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class LocalAlbumsPage : Page
 {
-    public LocalAlbumsViewModel ViewModel
-    {
-        get;
-    }
+    public LocalAlbumsViewModel ViewModel { get; }
+
     public LocalAlbumsPage()
     {
         ViewModel = App.GetService<LocalAlbumsViewModel>();
@@ -63,12 +61,22 @@ public sealed partial class LocalAlbumsPage : Page
     {
         if (e.ClickedItem is AlbumInfo info)
         {
-            var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)).ContentTemplateRoot;
+            var grid = (Grid)
+                (
+                    (ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)
+                ).ContentTemplateRoot;
             var border = (Border)grid.Children[1];
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
             Data.SelectedAlbum = info;
             Data.NavigatePage = "LocalAlbumsPage";
-            Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "LocalAlbumsPage", new SuppressNavigationTransitionInfo());
+            Data.ShellPage!.GetFrame()
+                .Navigate(
+                    typeof(AlbumDetailPage),
+                    "LocalAlbumsPage",
+                    new SuppressNavigationTransitionInfo()
+                );
         }
     }
 
@@ -78,11 +86,17 @@ public sealed partial class LocalAlbumsPage : Page
         {
             gridView.ScrollIntoView(Data.SelectedAlbum, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
-            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
+            var animation = ConnectedAnimationService
+                .GetForCurrentView()
+                .GetAnimation("BackConnectedAnimation");
             if (animation is not null)
             {
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
-                await gridView.TryStartConnectedAnimationAsync(animation, Data.SelectedAlbum, "CoverBorder");
+                await gridView.TryStartConnectedAnimationAsync(
+                    animation,
+                    Data.SelectedAlbum,
+                    "CoverBorder"
+                );
             }
             gridView.Focus(FocusState.Programmatic);
         }
@@ -104,20 +118,26 @@ public sealed partial class LocalAlbumsPage : Page
         }
     }
 
-    private void EditInfoButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
+    private void EditInfoButton_Click(object sender, RoutedEventArgs e) { }
 
     private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: AlbumInfo info })
         {
-            var grid = (Grid)((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
+            var grid = (Grid)
+                ((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
             var border = (Border)grid.Children[1];
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", border);
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
             Data.SelectedAlbum = info;
             Data.NavigatePage = "LocalAlbumsPage";
-            Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), "LocalAlbumsPage", new SuppressNavigationTransitionInfo());
+            Data.ShellPage!.GetFrame()
+                .Navigate(
+                    typeof(AlbumDetailPage),
+                    "LocalAlbumsPage",
+                    new SuppressNavigationTransitionInfo()
+                );
         }
     }
 
@@ -129,7 +149,5 @@ public sealed partial class LocalAlbumsPage : Page
         }
     }
 
-    private void SelectButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
+    private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }

@@ -6,6 +6,7 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
+
 [MemoryPackable]
 [MemoryPackUnion(0, typeof(BriefMusicInfo))]
 [MemoryPackUnion(1, typeof(CloudBriefOnlineMusicInfo))]
@@ -67,7 +68,8 @@ public partial interface IBriefMusicInfoBase : ICloneable
     /// 获取时长字符串
     /// </summary>
     /// <returns></returns>
-    static string GetDurationStr(TimeSpan duration) => duration.Hours > 0 ? $"{duration:hh\\:mm\\:ss}" : $"{duration:mm\\:ss}";
+    static string GetDurationStr(TimeSpan duration) =>
+        duration.Hours > 0 ? $"{duration:hh\\:mm\\:ss}" : $"{duration:mm\\:ss}";
 
     /// <summary>
     /// 获取发行年份字符串
@@ -89,25 +91,38 @@ public partial interface IBriefMusicInfoBase : ICloneable
             ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
             : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
 
-        if (currentMusic is not null &&
-            (currentMusic.IsOnline
-            ? ((IBriefOnlineMusicInfo)this).ID == ((IDetailedOnlineMusicInfo)currentMusic).ID
-            : Path == currentMusic.Path))
+        if (
+            currentMusic is not null
+            && (
+                currentMusic.IsOnline
+                    ? ((IBriefOnlineMusicInfo)this).ID
+                        == ((IDetailedOnlineMusicInfo)currentMusic).ID
+                    : Path == currentMusic.Path
+            )
+        )
         {
             return new SolidColorBrush(highlightColor);
         }
         return new SolidColorBrush(defaultColor);
     }
 
-
-    SolidColorBrush GetTextForeground(IDetailedMusicInfoBase? currentMusic, bool isDarkTheme, int playQueueIndex)
+    SolidColorBrush GetTextForeground(
+        IDetailedMusicInfoBase? currentMusic,
+        bool isDarkTheme,
+        int playQueueIndex
+    )
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
-        if (currentMusic is not null &&
-            (currentMusic.IsOnline
-            ? ((IBriefOnlineMusicInfo)this).ID == ((IDetailedOnlineMusicInfo)currentMusic).ID
-            : Path == currentMusic.Path)
-            && PlayQueueIndex == playQueueIndex)
+        if (
+            currentMusic is not null
+            && (
+                currentMusic.IsOnline
+                    ? ((IBriefOnlineMusicInfo)this).ID
+                        == ((IDetailedOnlineMusicInfo)currentMusic).ID
+                    : Path == currentMusic.Path
+            )
+            && PlayQueueIndex == playQueueIndex
+        )
         {
             var highlightColor = isDarkTheme
                 ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
@@ -155,7 +170,10 @@ public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
         return $"{artistsStr} • {album}";
     }
 
-    static async Task<IDetailedMusicInfoBase> CreateDetailedMusicInfoAsync(IBriefMusicInfoBase info, byte sourceMode)
+    static async Task<IDetailedMusicInfoBase> CreateDetailedMusicInfoAsync(
+        IBriefMusicInfoBase info,
+        byte sourceMode
+    )
     {
         return sourceMode switch
         {
@@ -165,7 +183,9 @@ public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
         };
     }
 
-    static async Task<IDetailedMusicInfoBase?> CreateDetailedMusicInfoAsync(IBriefMusicInfoBase info)
+    static async Task<IDetailedMusicInfoBase?> CreateDetailedMusicInfoAsync(
+        IBriefMusicInfoBase info
+    )
     {
         if (info is BriefMusicInfo briefInfo)
         {
