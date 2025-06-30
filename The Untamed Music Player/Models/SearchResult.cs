@@ -1,4 +1,5 @@
 namespace The_Untamed_Music_Player.Models;
+
 public class SearchResult
 {
     public string Icon { get; set; } = null!;

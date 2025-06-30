@@ -12,9 +12,11 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class LocalSongsViewModel : ObservableRecipient
 {
-    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
 
     public double ScrollViewerVerticalOffset
     {
@@ -67,6 +69,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial byte SortMode { get; set; } = 0;
+
     partial void OnSortModeChanged(byte value)
     {
         SetGroupMode();
@@ -78,6 +81,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial int GenreMode { get; set; } = 0;
+
     partial void OnGenreModeChanged(int value)
     {
         SaveGenreModeAsync();
@@ -136,7 +140,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
             9 => SortSongsByModifiedTimeDescending(),
             10 => SortSongsByFolderAscending(),
             11 => SortSongsByFolderDescending(),
-            _ => SortSongsByTitleAscending()
+            _ => SortSongsByTitleAscending(),
         };
 
         await sortTask;
@@ -147,7 +151,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         _isGrouped = SortMode switch
         {
             0 or 1 or 2 or 3 or 4 or 5 or 6 or 7 or 10 or 11 => true,
-            _ => false
+            _ => false,
         };
     }
 
@@ -157,9 +161,12 @@ public partial class LocalSongsViewModel : ObservableRecipient
     /// <returns></returns>
     public async Task FilterSongs()
     {
-        GroupedSongList = [.. _songList
-            .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
-            .Select(g => new GroupInfoList(g) { Key = g.Key })];
+        GroupedSongList =
+        [
+            .. _songList
+                .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
+                .Select(g => new GroupInfoList(g) { Key = g.Key }),
+        ];
         NotGroupedSongList = [.. _songList];
 
         if (GenreMode == 0)
@@ -176,7 +183,9 @@ public partial class LocalSongsViewModel : ObservableRecipient
             foreach (var group in GroupedSongList)
             {
                 var filteredItems = group
-                    .Where(item => item is BriefMusicInfo musicInfo && musicInfo.GenreStr == genreToFilter)
+                    .Where(item =>
+                        item is BriefMusicInfo musicInfo && musicInfo.GenreStr == genreToFilter
+                    )
                     .ToList();
                 group.Clear();
                 foreach (var item in filteredItems)
@@ -204,8 +213,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     private List<BriefMusicInfo> ConvertGroupedToFlatList()
     {
         return _isGrouped
-            ? [.. GroupedSongList
-                .SelectMany(group => group.OfType<BriefMusicInfo>())]
+            ? [.. GroupedSongList.SelectMany(group => group.OfType<BriefMusicInfo>())]
             : NotGroupedSongList;
     }
 
@@ -371,8 +379,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     {
         await Task.Run(() =>
         {
-            var sortedGroups = NotGroupedSongList
-                .OrderBy(m => m.ModifiedDate);
+            var sortedGroups = NotGroupedSongList.OrderBy(m => m.ModifiedDate);
 
             NotGroupedSongList = [.. sortedGroups];
         });
@@ -385,8 +392,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     {
         await Task.Run(() =>
         {
-            var sortedGroups = NotGroupedSongList
-                .OrderByDescending(m => m.ModifiedDate);
+            var sortedGroups = NotGroupedSongList.OrderByDescending(m => m.ModifiedDate);
 
             NotGroupedSongList = [.. sortedGroups];
         });
@@ -500,8 +506,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<BriefMusicInfo> { info };
-            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list
-                , 0, 0);
+            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
@@ -516,7 +521,8 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (albumInfo is not null)
         {
             Data.SelectedAlbum = albumInfo;
-            Data.ShellPage!.GetFrame().Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+            Data.ShellPage!.GetFrame()
+                .Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
         }
     }
 
@@ -526,30 +532,41 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (artistInfo is not null)
         {
             Data.SelectedArtist = artistInfo;
-            Data.ShellPage!.GetFrame().Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+            Data.ShellPage!.GetFrame()
+                .Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
         }
     }
 
     public async void LoadScrollViewerVerticalOffsetAsync()
     {
-        ScrollViewerVerticalOffset = await _localSettingsService.ReadSettingAsync<double>("LocalSongsScrollViewerVerticalOffset");
+        ScrollViewerVerticalOffset = await _localSettingsService.ReadSettingAsync<double>(
+            "LocalSongsScrollViewerVerticalOffset"
+        );
     }
+
     public async Task LoadSortModeAsync()
     {
         SortMode = await _localSettingsService.ReadSettingAsync<byte>("SortMode");
     }
+
     public async Task LoadGenreModeAsync()
     {
         GenreMode = await _localSettingsService.ReadSettingAsync<int>("GenreMode");
     }
+
     public async void SaveScrollViewerVerticalOffsetAsync()
     {
-        await _localSettingsService.SaveSettingAsync("LocalSongsScrollViewerVerticalOffset", ScrollViewerVerticalOffset);
+        await _localSettingsService.SaveSettingAsync(
+            "LocalSongsScrollViewerVerticalOffset",
+            ScrollViewerVerticalOffset
+        );
     }
+
     public async void SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("SortMode", SortMode);
     }
+
     public async void SaveGenreModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("GenreMode", GenreMode);
@@ -575,7 +592,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         return sortmode switch
         {
             0 or 1 => 71,
-            _ => 426
+            _ => 426,
         };
     }
 
@@ -584,7 +601,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         return sortmode switch
         {
             0 or 1 => new Thickness(0, 0, 0, 0),
-            _ => new Thickness(15, 0, 15, 0)
+            _ => new Thickness(15, 0, 15, 0),
         };
     }
 }

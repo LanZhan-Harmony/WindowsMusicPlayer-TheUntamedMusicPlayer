@@ -3,7 +3,12 @@ using The_Untamed_Music_Player.Activation;
 using The_Untamed_Music_Player.Contracts.Services;
 
 namespace The_Untamed_Music_Player.Services;
-public class ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler, IEnumerable<IActivationHandler> activationHandlers, IThemeSelectorService themeSelectorService) : IActivationService
+
+public class ActivationService(
+    ActivationHandler<LaunchActivatedEventArgs> defaultHandler,
+    IEnumerable<IActivationHandler> activationHandlers,
+    IThemeSelectorService themeSelectorService
+) : IActivationService
 {
     private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler = defaultHandler;
     private readonly IEnumerable<IActivationHandler> _activationHandlers = activationHandlers;
@@ -13,7 +18,6 @@ public class ActivationService(ActivationHandler<LaunchActivatedEventArgs> defau
     {
         // Execute tasks before activation.
         await InitializeAsync();
-
 
         // Handle activation via ActivationHandlers.
         await HandleActivationAsync(activationArgs);
@@ -27,7 +31,9 @@ public class ActivationService(ActivationHandler<LaunchActivatedEventArgs> defau
 
     private async Task HandleActivationAsync(object activationArgs)
     {
-        var activationHandler = _activationHandlers.FirstOrDefault(h => h.CanHandle(activationArgs));
+        var activationHandler = _activationHandlers.FirstOrDefault(h =>
+            h.CanHandle(activationArgs)
+        );
 
         if (activationHandler is not null)
         {

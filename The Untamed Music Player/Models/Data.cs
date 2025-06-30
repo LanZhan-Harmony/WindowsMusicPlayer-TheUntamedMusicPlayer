@@ -4,6 +4,7 @@ using The_Untamed_Music_Player.ViewModels;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.Models;
+
 public static class Data
 {
     /// <summary>
@@ -20,7 +21,6 @@ public static class Data
     /// 是否正在下载音乐
     /// </summary>
     public static bool IsMusicDownloading { get; set; } = false;
-
 
     public static string? NavigatePage { get; set; }
     public static AlbumInfo? SelectedAlbum { get; set; }
@@ -39,7 +39,18 @@ public static class Data
     /// <summary>
     /// 播放器支持的音频文件类型
     /// </summary>
-    public static readonly string[] SupportedAudioTypes = [".flac", ".wav", ".m4a", ".aac", ".mp3", ".wma", ".ogg", ".oga", ".opus"];
+    public static readonly string[] SupportedAudioTypes =
+    [
+        ".flac",
+        ".wav",
+        ".m4a",
+        ".aac",
+        ".mp3",
+        ".wma",
+        ".ogg",
+        ".oga",
+        ".opus",
+    ];
 
     /// <summary>
     /// 歌词字体

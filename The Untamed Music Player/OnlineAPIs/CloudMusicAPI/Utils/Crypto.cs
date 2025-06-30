@@ -6,13 +6,15 @@ using System.Text;
 using System.Text.Json;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Utils;
+
 internal static class Crypto
 {
     private static readonly byte[] iv = Encoding.ASCII.GetBytes("0102030405060708");
     private static readonly byte[] presetKey = Encoding.ASCII.GetBytes("0CoJUm6Qyw8W8jud");
     private static readonly byte[] linuxapiKey = Encoding.ASCII.GetBytes("rFgB&h#%2?^eDg:Q");
     private const string base62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private const string publicKey = "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDgtQn2JZ34ZC28NWYpAUd98iZ37BUrX/aKzmFbt7clFSs6sXqHauqKWqdtLkF2KexO40H1YTX8z2lSgBBOAxLsvaklV8k4cBFK9snQXE9/DDaFt6Rr7iVZMldczhC0JNgTz+SHXT6CBHuX3e9SdB1Ua44oncaTWz7OBGLbCiK45wIDAQAB\n-----END PUBLIC KEY-----";
+    private const string publicKey =
+        "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDgtQn2JZ34ZC28NWYpAUd98iZ37BUrX/aKzmFbt7clFSs6sXqHauqKWqdtLkF2KexO40H1YTX8z2lSgBBOAxLsvaklV8k4cBFK9snQXE9/DDaFt6Rr7iVZMldczhC0JNgTz+SHXT6CBHuX3e9SdB1Ua44oncaTWz7OBGLbCiK45wIDAQAB\n-----END PUBLIC KEY-----";
     private static readonly byte[] eapiKey = Encoding.ASCII.GetBytes("e82ckenh8dichen8");
 
     private static RSAParameters? _cachedPublicKey;
@@ -25,9 +27,27 @@ internal static class Crypto
         text = JsonSerializer.Serialize(@object);
         secretKey = new Random().RandomBytes(16);
         secretKey = [.. secretKey.Select(n => (byte)base62[n % 62])];
-        return new Dictionary<string, string> {
-            { "params", AesEncrypt(AesEncrypt(text.ToByteArrayUtf8(), CipherMode.CBC, presetKey, iv).ToBase64String().ToByteArrayUtf8(), CipherMode.CBC, secretKey, iv).ToBase64String() },
-            { "encSecKey", RsaEncrypt([.. secretKey.AsEnumerable().Reverse()]/*, publicKey*/).ToHexStringLower() }
+        return new Dictionary<string, string>
+        {
+            {
+                "params",
+                AesEncrypt(
+                        AesEncrypt(text.ToByteArrayUtf8(), CipherMode.CBC, presetKey, iv)
+                            .ToBase64String()
+                            .ToByteArrayUtf8(),
+                        CipherMode.CBC,
+                        secretKey,
+                        iv
+                    )
+                    .ToBase64String()
+            },
+            {
+                "encSecKey",
+                RsaEncrypt(
+                        [.. secretKey.AsEnumerable().Reverse()] /*, publicKey*/
+                    )
+                    .ToHexStringLower()
+            },
         };
     }
 
@@ -36,8 +56,13 @@ internal static class Crypto
         string text;
 
         text = JsonSerializer.Serialize(@object);
-        return new Dictionary<string, string> {
-            { "eparams", AesEncrypt(text.ToByteArrayUtf8(), CipherMode.ECB, linuxapiKey, null).ToHexStringUpper() }
+        return new Dictionary<string, string>
+        {
+            {
+                "eparams",
+                AesEncrypt(text.ToByteArrayUtf8(), CipherMode.ECB, linuxapiKey, null)
+                    .ToHexStringUpper()
+            },
         };
     }
 
@@ -52,12 +77,17 @@ internal static class Crypto
         message = $"nobody{url}use{text}md5forencrypt";
         digest = message.ToByteArrayUtf8().ComputeMd5().ToHexStringLower();
         data = $"{url}-36cd479b6b5-{text}-36cd479b6b5-{digest}";
-        return new Dictionary<string, string> {
-            { "params", AesEncrypt(data.ToByteArrayUtf8(), CipherMode.ECB, eapiKey, null).ToHexStringUpper() }
+        return new Dictionary<string, string>
+        {
+            {
+                "params",
+                AesEncrypt(data.ToByteArrayUtf8(), CipherMode.ECB, eapiKey, null).ToHexStringUpper()
+            },
         };
     }
 
-    public static byte[] Decrypt(byte[] cipherBuffer) => AesDecrypt(cipherBuffer, CipherMode.ECB, eapiKey, null);
+    public static byte[] Decrypt(byte[] cipherBuffer) =>
+        AesDecrypt(cipherBuffer, CipherMode.ECB, eapiKey, null);
 
     private static byte[] AesEncrypt(byte[] buffer, CipherMode mode, byte[] key, byte[] iv)
     {
@@ -89,18 +119,22 @@ internal static class Crypto
         return cryptoTransform.TransformFinalBlock(buffer, 0, buffer.Length);
     }
 
-    private static byte[] RsaEncrypt(byte[] buffer/*, string key*/)
+    private static byte[] RsaEncrypt(
+        byte[] buffer /*, string key*/
+    )
     {
         RSAParameters rsaParameters;
 
         _cachedPublicKey ??= ParsePublicKey(publicKey);
 
         rsaParameters = _cachedPublicKey.Value;
-        return BigInteger.ModPow(
-            new BigInteger(buffer, true, true),
-            new BigInteger(rsaParameters.Exponent, true, true),
-            new BigInteger(rsaParameters.Modulus, true, true)
-            ).ToByteArray(true, true);
+        return BigInteger
+            .ModPow(
+                new BigInteger(buffer, true, true),
+                new BigInteger(rsaParameters.Exponent, true, true),
+                new BigInteger(rsaParameters.Modulus, true, true)
+            )
+            .ToByteArray(true, true);
     }
 
     private static RSAParameters ParsePublicKey(string _publicKey)
@@ -134,7 +168,28 @@ internal static class Crypto
         }
 
         _oid = _reader.ReadBytes(15);
-        if (!_oid.SequenceEqual(new byte[] { 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00 }))
+        if (
+            !_oid.SequenceEqual(
+                new byte[]
+                {
+                    0x30,
+                    0x0D,
+                    0x06,
+                    0x09,
+                    0x2A,
+                    0x86,
+                    0x48,
+                    0x86,
+                    0xF7,
+                    0x0D,
+                    0x01,
+                    0x01,
+                    0x01,
+                    0x05,
+                    0x00,
+                }
+            )
+        )
         {
             throw new ArgumentException(null, nameof(_publicKey));
         }
@@ -203,10 +258,6 @@ internal static class Crypto
 
         _exponentLength = _reader.ReadByte();
         _exponent = _reader.ReadBytes(_exponentLength);
-        return new RSAParameters
-        {
-            Modulus = _modulus,
-            Exponent = _exponent
-        };
+        return new RSAParameters { Modulus = _modulus, Exponent = _exponent };
     }
 }

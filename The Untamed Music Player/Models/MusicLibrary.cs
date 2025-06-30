@@ -8,6 +8,7 @@ using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage;
 
 namespace The_Untamed_Music_Player.Models;
+
 public partial class MusicLibrary : ObservableRecipient
 {
     /// <summary>
@@ -85,7 +86,9 @@ public partial class MusicLibrary : ObservableRecipient
 
     public async void LoadFoldersAsync()
     {
-        var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>("MusicFolders");//ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。ReadAsync<List<string>>("MusicFolders")：调用 SettingsStorageExtensions 类中的扩展方法 ReadAsync，从名为 "MusicFolders" 的文件中读取数据，并将其反序列化为 List<string> 类型。
+        var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>(
+            "MusicFolders"
+        ); //ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。ReadAsync<List<string>>("MusicFolders")：调用 SettingsStorageExtensions 类中的扩展方法 ReadAsync，从名为 "MusicFolders" 的文件中读取数据，并将其反序列化为 List<string> 类型。
         if (folderPaths is not null)
         {
             foreach (var path in folderPaths)
@@ -138,9 +141,12 @@ public partial class MusicLibrary : ObservableRecipient
                 {
                     OnPropertyChanged(nameof(HasMusics));
                 });
-                Genres = [.. _musicGenres.Keys
-                    .Concat(["MusicInfo_AllGenres".GetLocalized()])
-                    .OrderBy(x => x, new GenreComparer())];
+                Genres =
+                [
+                    .. _musicGenres
+                        .Keys.Concat(["MusicInfo_AllGenres".GetLocalized()])
+                        .OrderBy(x => x, new GenreComparer()),
+                ];
                 _musicGenres.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres);
                 await Task.Run(AddFolderWatcher);
@@ -186,9 +192,12 @@ public partial class MusicLibrary : ObservableRecipient
             {
                 OnPropertyChanged(nameof(HasMusics));
             });
-            Genres = [.. _musicGenres.Keys
-                .Concat(["MusicInfo_AllGenres".GetLocalized()])
-                .OrderBy(x => x, new GenreComparer())];
+            Genres =
+            [
+                .. _musicGenres
+                    .Keys.Concat(["MusicInfo_AllGenres".GetLocalized()])
+                    .OrderBy(x => x, new GenreComparer()),
+            ];
             _musicGenres.Clear();
             FolderWatchers.Clear();
             var data = new MusicLibraryData(Songs, Albums, Artists, Genres);
@@ -229,7 +238,9 @@ public partial class MusicLibrary : ObservableRecipient
             }
 
             // 同时处理当前文件夹的文件
-            var supportedFiles = entries.OfType<StorageFile>().Where(file => Data.SupportedAudioTypes.Contains(file.FileType.ToLower()));
+            var supportedFiles = entries
+                .OfType<StorageFile>()
+                .Where(file => Data.SupportedAudioTypes.Contains(file.FileType.ToLower()));
 
             foreach (var file in supportedFiles)
             {
@@ -289,8 +300,11 @@ public partial class MusicLibrary : ObservableRecipient
             {
                 var watcher = new FileSystemWatcher(folder)
                 {
-                    NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite,
-                    IncludeSubdirectories = false
+                    NotifyFilter =
+                        NotifyFilters.FileName
+                        | NotifyFilters.DirectoryName
+                        | NotifyFilters.LastWrite,
+                    IncludeSubdirectories = false,
                 };
 
                 watcher.Changed -= OnChanged;
@@ -368,43 +382,48 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="albumInfo"></param>
     /// <returns></returns>
-    public IOrderedEnumerable<BriefMusicInfo> GetSongsByAlbum(AlbumInfo albumInfo) => Songs
-        .Where(m => m.Album == albumInfo.Name)
-        .OrderBy(m => m.Title, new TitleComparer());
+    public IOrderedEnumerable<BriefMusicInfo> GetSongsByAlbum(AlbumInfo albumInfo) =>
+        Songs.Where(m => m.Album == albumInfo.Name).OrderBy(m => m.Title, new TitleComparer());
 
     /// <summary>
     /// 根据歌曲信息获取专辑信息
     /// </summary>
     /// <param name="briefMusicInfo"></param>
     /// <returns></returns>
-    public AlbumInfo? GetAlbumInfoBySong(string album) => Albums
-        .TryGetValue(album, out var albumInfo) ? albumInfo : null;
+    public AlbumInfo? GetAlbumInfoBySong(string album) =>
+        Albums.TryGetValue(album, out var albumInfo) ? albumInfo : null;
 
     /// <summary>
     /// 根据艺术家信息获取专辑列表
     /// </summary>
     /// <param name="artistInfo"></param>
     /// <returns></returns>
-    public List<BriefAlbumInfo> GetAlbumsByArtist(ArtistInfo artistInfo) => [.. artistInfo.Albums
-        .Select(album => new BriefAlbumInfo(Albums[album]))
-        .OrderBy(m => m.Name, new AlbumTitleComparer())];
+    public List<BriefAlbumInfo> GetAlbumsByArtist(ArtistInfo artistInfo) =>
+        [
+            .. artistInfo
+                .Albums.Select(album => new BriefAlbumInfo(Albums[album]))
+                .OrderBy(m => m.Name, new AlbumTitleComparer()),
+        ];
 
     /// <summary>
     /// 根据艺术家信息获取歌曲列表
     /// </summary>
     /// <param name="artistInfo"></param>
     /// <returns></returns>
-    public ObservableCollection<BriefMusicInfo> GetSongsByArtist(ArtistInfo artistInfo) => [.. artistInfo.Albums
-        .OrderBy(album => album, new AlbumTitleComparer())
-        .SelectMany(album => GetSongsByAlbum(Albums[album]))];
+    public ObservableCollection<BriefMusicInfo> GetSongsByArtist(ArtistInfo artistInfo) =>
+        [
+            .. artistInfo
+                .Albums.OrderBy(album => album, new AlbumTitleComparer())
+                .SelectMany(album => GetSongsByAlbum(Albums[album])),
+        ];
 
     /// <summary>
     /// 根据歌曲信息获取艺术家信息
     /// </summary>
     /// <param name="briefMusicInfo"></param>
     /// <returns></returns>
-    public ArtistInfo? GetArtistInfoBySong(string artist) => Artists
-        .TryGetValue(artist, out var artistInfo) ? artistInfo : null;
+    public ArtistInfo? GetArtistInfoBySong(string artist) =>
+        Artists.TryGetValue(artist, out var artistInfo) ? artistInfo : null;
 
     private async Task EnqueueAndWaitAsync(Action action)
     {

@@ -3,11 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class LyricViewModel : ObservableRecipient
 {
-    public LyricViewModel()
-    {
-    }
+    public LyricViewModel() { }
 
     public void ListView_ItemClick(object sender, ItemClickEventArgs e)
     {

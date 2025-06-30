@@ -1,4 +1,3 @@
-﻿namespace The_Untamed_Music_Player.ViewModels;
-public class OnlinePlayListsViewModel
-{
-}
+namespace The_Untamed_Music_Player.ViewModels;
+
+public class OnlinePlayListsViewModel { }

@@ -16,6 +16,7 @@ using Windows.Storage.Pickers;
 using Windows.UI;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class SettingsViewModel : ObservableRecipient
 {
     private readonly IThemeSelectorService _themeSelectorService;
@@ -26,13 +27,15 @@ public partial class SettingsViewModel : ObservableRecipient
     /// <summary>
     /// 是否显示文件夹为空信息
     /// </summary>
-    public Visibility EmptyFolderMessageVisibility => Data.MusicLibrary.Folders?.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+    public Visibility EmptyFolderMessageVisibility =>
+        Data.MusicLibrary.Folders?.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
 
     /// <summary>
     /// 歌曲下载位置
     /// </summary>
     [ObservableProperty]
     public partial string SongDownloadLocation { get; set; } = "";
+
     partial void OnSongDownloadLocationChanged(string value)
     {
         SaveSongDownloadLocationAsync(value);
@@ -43,6 +46,7 @@ public partial class SettingsViewModel : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial bool IsFallBack { get; set; } = Data.MainViewModel!.IsFallBack;
+
     partial void OnIsFallBackChanged(bool value)
     {
         Data.MainViewModel!.IsFallBack = value;
@@ -71,7 +75,8 @@ public partial class SettingsViewModel : ObservableRecipient
     /// <summary>
     /// 窗口材质列表
     /// </summary>
-    public List<string> Materials { get; set; } = [.. "Settings_Materials".GetLocalized().Split(", ")];
+    public List<string> Materials { get; set; } =
+        [.. "Settings_Materials".GetLocalized().Split(", ")];
 
     /// <summary>
     /// 深浅色主题
@@ -90,6 +95,7 @@ public partial class SettingsViewModel : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial FontFamily SelectedFont { get; set; } = Data.SelectedFont;
+
     partial void OnSelectedFontChanged(FontFamily value)
     {
         Data.SelectedFont = value;
@@ -101,6 +107,7 @@ public partial class SettingsViewModel : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial byte SelectedMaterial { get; set; } = Data.MainViewModel!.SelectedMaterial;
+
     partial void OnSelectedMaterialChanged(byte value)
     {
         SaveSelectedMaterialAsync(value);
@@ -111,6 +118,7 @@ public partial class SettingsViewModel : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial byte LuminosityOpacity { get; set; } = Data.MainViewModel!.LuminosityOpacity;
+
     partial void OnLuminosityOpacityChanged(byte value)
     {
         Data.MainViewModel!.LuminosityOpacity = value;
@@ -122,6 +130,7 @@ public partial class SettingsViewModel : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial Color TintColor { get; set; } = Data.MainViewModel!.TintColor;
+
     partial void OnTintColorChanged(Color value)
     {
         Data.MainViewModel!.TintColor = value;
@@ -143,7 +152,8 @@ public partial class SettingsViewModel : ObservableRecipient
                     ElementTheme = param;
                     await _themeSelectorService.SetThemeAsync(param);
                 }
-            });
+            }
+        );
 
         LoadSongDownloadLocationAsync();
         LoadFonts();
@@ -234,7 +244,10 @@ public partial class SettingsViewModel : ObservableRecipient
         OnPropertyChanged(nameof(SelectedMaterial));
     }
 
-    public void LuminosityOpacitySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+    public void LuminosityOpacitySlider_ValueChanged(
+        object sender,
+        RangeBaseValueChangedEventArgs e
+    )
     {
         Data.MainViewModel!.ChangeLuminosityOpacity(LuminosityOpacity);
     }
@@ -287,7 +300,12 @@ public partial class SettingsViewModel : ObservableRecipient
         {
             var packageVersion = Package.Current.Id.Version;
 
-            version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+            version = new(
+                packageVersion.Major,
+                packageVersion.Minor,
+                packageVersion.Build,
+                packageVersion.Revision
+            );
         }
         else
         {
@@ -302,11 +320,16 @@ public partial class SettingsViewModel : ObservableRecipient
         var location = await _localSettingsService.ReadSettingAsync<string>("SongDownloadLocation");
         if (string.IsNullOrWhiteSpace(location))
         {
-            var folder = (await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)).Folders.FirstOrDefault();
+            var folder = (
+                await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)
+            ).Folders.FirstOrDefault();
             location = folder?.Path;
             if (string.IsNullOrWhiteSpace(location))
             {
-                location = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Music");
+                location = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    "Music"
+                );
                 Directory.CreateDirectory(location);
             }
         }
@@ -316,7 +339,7 @@ public partial class SettingsViewModel : ObservableRecipient
     private static async Task SaveFoldersAsync()
     {
         var folderPaths = Data.MusicLibrary.Folders?.Select(f => f.Path).ToList();
-        await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths);//	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
+        await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths); //	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
     }
 
     private async void SaveSongDownloadLocationAsync(string songDownloadLocation)
@@ -351,6 +374,9 @@ public partial class SettingsViewModel : ObservableRecipient
 
     private async void SaveLyricBackgroundVisibilityAsync(bool isLyricBackgroundVisible)
     {
-        await _localSettingsService.SaveSettingAsync("IsLyricBackgroundVisible", isLyricBackgroundVisible);
+        await _localSettingsService.SaveSettingAsync(
+            "IsLyricBackgroundVisible",
+            isLyricBackgroundVisible
+        );
     }
 }

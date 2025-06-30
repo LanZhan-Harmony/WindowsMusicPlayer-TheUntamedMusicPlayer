@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 
 namespace The_Untamed_Music_Player.Models;
+
 public partial class LyricSlice(double time, string content)
 {
     public string Content { get; set; } = content;
@@ -54,7 +55,12 @@ public partial class LyricSlice(double time, string content)
                     }
                     continue;
                 }
-                if (line.StartsWith("[ti:") || line.StartsWith("[ar:") || line.StartsWith("[al:") || line.StartsWith("[by:"))
+                if (
+                    line.StartsWith("[ti:")
+                    || line.StartsWith("[ar:")
+                    || line.StartsWith("[al:")
+                    || line.StartsWith("[by:")
+                )
                 {
                     continue;
                 }
@@ -72,13 +78,16 @@ public partial class LyricSlice(double time, string content)
                     var word = wordMatch.Groups[1].Value;
                     var isEmptyWord = string.IsNullOrWhiteSpace(word);
 
-                    var currentTime = TimeSpan.Parse("00:" + timeMatches[0].Groups[1].Value).TotalMilliseconds + offset;
+                    var currentTime =
+                        TimeSpan.Parse("00:" + timeMatches[0].Groups[1].Value).TotalMilliseconds
+                        + offset;
 
                     if (isEmptyWord)
                     {
                         if (!inEmptyBlock)
                         {
-                            emptyStartTime = currentTime != lastTime ? currentTime : (lastTime ?? 0) + 1;
+                            emptyStartTime =
+                                currentTime != lastTime ? currentTime : (lastTime ?? 0) + 1;
                             inEmptyBlock = true;
                         }
                     }
@@ -95,7 +104,9 @@ public partial class LyricSlice(double time, string content)
 
                         foreach (Match timeMatch in timeMatches)
                         {
-                            var time = TimeSpan.Parse("00:" + timeMatch.Groups[1].Value).TotalMilliseconds + offset;
+                            var time =
+                                TimeSpan.Parse("00:" + timeMatch.Groups[1].Value).TotalMilliseconds
+                                + offset;
                             lyricSlices.Add(new LyricSlice(time, word));
                             lastTime = time;
                         }
@@ -113,7 +124,6 @@ public partial class LyricSlice(double time, string content)
             {
                 lyricSlices.Add(new LyricSlice(emptyStartTime, "•••"));
             }
-
         });
         return [.. lyricSlices.OrderBy(t => t.Time)];
     }

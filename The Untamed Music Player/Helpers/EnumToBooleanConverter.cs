@@ -2,11 +2,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
 namespace The_Untamed_Music_Player.Helpers;
+
 public partial class EnumToBooleanConverter : IValueConverter
 {
-    public EnumToBooleanConverter()
-    {
-    }
+    public EnumToBooleanConverter() { }
 
     public object Convert(object value, Type targetType, object parameter, string language)
     {

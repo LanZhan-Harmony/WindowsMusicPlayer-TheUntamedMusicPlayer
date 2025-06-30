@@ -7,12 +7,10 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
+
 public sealed partial class RootPlayBarView : Page
 {
-    public RootPlayBarViewModel ViewModel
-    {
-        get;
-    }
+    public RootPlayBarViewModel ViewModel { get; }
 
     public RootPlayBarView()
     {
@@ -98,7 +96,9 @@ public sealed partial class RootPlayBarView : Page
         {
             return Visibility.Collapsed;
         }
-        return detailedmusicinfo.ArtistAndAlbumStr == "" ? Visibility.Collapsed : Visibility.Visible;
+        return detailedmusicinfo.ArtistAndAlbumStr == ""
+            ? Visibility.Collapsed
+            : Visibility.Visible;
     }
 
     public Visibility GetNotDetailedVisibility(bool isdetail)
@@ -108,12 +108,16 @@ public sealed partial class RootPlayBarView : Page
 
     public string GetShuffleModeToolTip(bool shufflemode)
     {
-        return shufflemode ? "PlayBar_ShuffleOn".GetLocalized() : "PlayBar_ShuffleOff".GetLocalized();
+        return shufflemode
+            ? "PlayBar_ShuffleOn".GetLocalized()
+            : "PlayBar_ShuffleOff".GetLocalized();
     }
 
     public FluentIcons.Common.Symbol GetShuffleModeIcon(bool shufflemode)
     {
-        return shufflemode ? FluentIcons.Common.Symbol.ArrowShuffle : FluentIcons.Common.Symbol.ArrowShuffleOff;
+        return shufflemode
+            ? FluentIcons.Common.Symbol.ArrowShuffle
+            : FluentIcons.Common.Symbol.ArrowShuffleOff;
     }
 
     public string GetRepeatModeIcon(byte repeatmode)
@@ -155,7 +159,9 @@ public sealed partial class RootPlayBarView : Page
 
     public string GetMoreShuffleModeText(bool shufflemode)
     {
-        return shufflemode ? "PlayBar_More_ShuffleOn".GetLocalized() : "PlayBar_More_ShuffleOff".GetLocalized();
+        return shufflemode
+            ? "PlayBar_More_ShuffleOn".GetLocalized()
+            : "PlayBar_More_ShuffleOff".GetLocalized();
     }
 
     public string GetMoreRepeatModeText(byte repeatmode)
@@ -191,10 +197,7 @@ public sealed partial class RootPlayBarView : Page
 
     private async void PlayBarProperty_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new PropertiesDialog(Data.MusicPlayer.CurrentMusic!)
-        {
-            XamlRoot = XamlRoot
-        };
+        var dialog = new PropertiesDialog(Data.MusicPlayer.CurrentMusic!) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
     }
 }
