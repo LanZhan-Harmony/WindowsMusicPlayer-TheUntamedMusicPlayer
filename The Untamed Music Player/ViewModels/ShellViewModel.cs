@@ -5,31 +5,23 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class ShellViewModel : ObservableRecipient
 {
     [ObservableProperty]
-    public partial bool IsBackEnabled
-    {
-        get; set;
-    }
+    public partial bool IsBackEnabled { get; set; }
 
     [ObservableProperty]
-    public partial object? Selected
-    {
-        get; set;
-    }
+    public partial object? Selected { get; set; }
 
-    public INavigationService NavigationService
-    {
-        get;
-    }
+    public INavigationService NavigationService { get; }
 
-    public INavigationViewService NavigationViewService
-    {
-        get;
-    }
+    public INavigationViewService NavigationViewService { get; }
 
-    public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService)
+    public ShellViewModel(
+        INavigationService navigationService,
+        INavigationViewService navigationViewService
+    )
     {
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;

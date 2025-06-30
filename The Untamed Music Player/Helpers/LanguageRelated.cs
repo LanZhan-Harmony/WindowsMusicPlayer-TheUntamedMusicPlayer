@@ -3,6 +3,7 @@ using The_Untamed_Music_Player.Models;
 using Windows.UI.Text;
 
 namespace The_Untamed_Music_Player.Helpers;
+
 public class LanguageRelated
 {
     public static FontWeight GetTitleFontWeight()
@@ -11,7 +12,7 @@ public class LanguageRelated
         {
             "简体中文" => FontWeights.SemiLight,
             "English" => FontWeights.SemiBold,
-            _ => FontWeights.SemiLight
+            _ => FontWeights.SemiLight,
         };
     }
 }

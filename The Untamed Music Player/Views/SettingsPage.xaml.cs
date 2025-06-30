@@ -6,12 +6,10 @@ using Windows.Storage;
 using Windows.System;
 
 namespace The_Untamed_Music_Player.Views;
+
 public sealed partial class SettingsPage : Page
 {
-    public SettingsViewModel ViewModel
-    {
-        get; set;
-    }
+    public SettingsViewModel ViewModel { get; set; }
 
     public SettingsPage()
     {
@@ -31,17 +29,20 @@ public sealed partial class SettingsPage : Page
         var titleTextBlock = new TextBlock
         {
             Text = "Settings_Dialog1Title".GetLocalized(),
-            FontWeight = Microsoft.UI.Text.FontWeights.Normal
+            FontWeight = Microsoft.UI.Text.FontWeights.Normal,
         };
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
             Title = titleTextBlock,
-            Content = "Settings_Dialog1Content1".GetLocalized() + folderName + "Settings_Dialog1Content2".GetLocalized(),
+            Content =
+                "Settings_Dialog1Content1".GetLocalized()
+                + folderName
+                + "Settings_Dialog1Content2".GetLocalized(),
             PrimaryButtonText = "Settings_Dialog1Primary".GetLocalized(),
             CloseButtonText = "Settings_Dialog1Close".GetLocalized(),
-            DefaultButton = ContentDialogButton.Primary
+            DefaultButton = ContentDialogButton.Primary,
         };
 
         var result = await dialog.ShowAsync();
@@ -57,7 +58,7 @@ public sealed partial class SettingsPage : Page
         var titleTextBlock = new TextBlock
         {
             Text = "Settings_Dialog2Title".GetLocalized(),
-            FontWeight = Microsoft.UI.Text.FontWeights.Normal
+            FontWeight = Microsoft.UI.Text.FontWeights.Normal,
         };
         var dialog = new ContentDialog
         {
@@ -67,7 +68,7 @@ public sealed partial class SettingsPage : Page
             Content = "Settings_Dialog2Content".GetLocalized(),
             PrimaryButtonText = "Settings_Dialog2Primary".GetLocalized(),
             CloseButtonText = "Settings_Dialog2Close".GetLocalized(),
-            DefaultButton = ContentDialogButton.Close
+            DefaultButton = ContentDialogButton.Close,
         };
 
         var result = await dialog.ShowAsync();

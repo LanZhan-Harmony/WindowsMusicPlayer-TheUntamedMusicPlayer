@@ -4,19 +4,24 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace The_Untamed_Music_Player.Helpers;
+
 public static class ListViewExtensions
 {
-    public static readonly DependencyProperty ItemCornerRadiusProperty = DependencyProperty.RegisterAttached(
-        "ItemCornerRadius",
-        typeof(CornerRadius),
-        typeof(ListViewExtensions),
-        new PropertyMetadata(default(CornerRadius), OnAttachedPropertyChanged));
+    public static readonly DependencyProperty ItemCornerRadiusProperty =
+        DependencyProperty.RegisterAttached(
+            "ItemCornerRadius",
+            typeof(CornerRadius),
+            typeof(ListViewExtensions),
+            new PropertyMetadata(default(CornerRadius), OnAttachedPropertyChanged)
+        );
 
-    public static readonly DependencyProperty ItemMarginProperty = DependencyProperty.RegisterAttached(
-        "ItemMargin",
-        typeof(Thickness),
-        typeof(ListViewExtensions),
-        new PropertyMetadata(default(Thickness), OnAttachedPropertyChanged));
+    public static readonly DependencyProperty ItemMarginProperty =
+        DependencyProperty.RegisterAttached(
+            "ItemMargin",
+            typeof(Thickness),
+            typeof(ListViewExtensions),
+            new PropertyMetadata(default(Thickness), OnAttachedPropertyChanged)
+        );
 
     public static void SetItemMargin(DependencyObject element, Thickness value)
     {
@@ -38,7 +43,10 @@ public static class ListViewExtensions
         return (CornerRadius)element.GetValue(ItemCornerRadiusProperty);
     }
 
-    private static void OnAttachedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void OnAttachedPropertyChanged(
+        DependencyObject d,
+        DependencyPropertyChangedEventArgs e
+    )
     {
         if (d is not ListViewBase listView)
         {
@@ -48,7 +56,10 @@ public static class ListViewExtensions
         listView.ContainerContentChanging += ListViewOnContainerContentChanging;
     }
 
-    private static void ListViewOnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    private static void ListViewOnContainerContentChanging(
+        ListViewBase sender,
+        ContainerContentChangingEventArgs args
+    )
     {
         if (args.Phase > 0 || args.InRecycleQueue)
         {

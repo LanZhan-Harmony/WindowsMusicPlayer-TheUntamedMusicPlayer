@@ -16,6 +16,7 @@ using Windows.Storage.Streams;
 using Windows.System.Threading;
 
 namespace The_Untamed_Music_Player.Models;
+
 public partial class MusicPlayer : ObservableRecipient
 {
     private readonly Thickness _defaultMargin = new(0, 20, 0, 20);
@@ -106,7 +107,8 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 音乐播放器
     /// </summary>
-    public MediaPlayer Player { get; set; } = new() { AudioCategory = MediaPlayerAudioCategory.Media };
+    public MediaPlayer Player { get; set; } =
+        new() { AudioCategory = MediaPlayerAudioCategory.Media };
 
     /// <summary>
     /// 歌曲来源模式, 0为本地, 1为网易
@@ -129,6 +131,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial int PlayQueueIndex { get; set; }
+
     partial void OnPlayQueueIndexChanged(int value)
     {
         var repeatOffOrSingle = RepeatMode == 0 || RepeatMode == 2;
@@ -141,6 +144,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial byte RepeatMode { get; set; } = 0;
+
     partial void OnRepeatModeChanged(byte value)
     {
         var isFirstSong = PlayQueueIndex == 0;
@@ -185,6 +189,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial double CurrentVolume { get; set; } = 100;
+
     partial void OnCurrentVolumeChanged(double value)
     {
         if (!IsMute)
@@ -198,6 +203,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     [ObservableProperty]
     public partial bool IsMute { get; set; } = false;
+
     partial void OnIsMuteChanged(bool value)
     {
         Player.IsMuted = value;
@@ -273,7 +279,10 @@ public partial class MusicPlayer : ObservableRecipient
         Stop();
         var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
         _currentBriefMusic = songToPlay;
-        CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
+        CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(
+            songToPlay,
+            SourceMode
+        );
         PlayQueueIndex = isLast ? 0 : index;
         if (CurrentMusic!.IsPlayAvailable)
         {
@@ -345,7 +354,10 @@ public partial class MusicPlayer : ObservableRecipient
             newIndex = PlayQueueIndex < _playQueueLength - 1 ? PlayQueueIndex + 1 : 0;
             var songToPlay = ShuffleMode ? ShuffledPlayQueue[newIndex] : PlayQueue[newIndex];
             _currentBriefMusic = songToPlay;
-            CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(songToPlay, SourceMode);
+            CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(
+                songToPlay,
+                SourceMode
+            );
             PlayQueueIndex = newIndex == 0 ? 0 : newIndex - 1;
             if (PlayState != 0)
             {
@@ -446,17 +458,30 @@ public partial class MusicPlayer : ObservableRecipient
             Player.PlaybackSession.PlaybackRate = PlaySpeed;
             TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
             _displayUpdater.MusicProperties.Title = CurrentMusic!.Title;
-            _displayUpdater.MusicProperties.Artist = CurrentMusic.ArtistsStr == "未知艺术家" ? "" : CurrentMusic.ArtistsStr;
+            _displayUpdater.MusicProperties.Artist =
+                CurrentMusic.ArtistsStr == "未知艺术家" ? "" : CurrentMusic.ArtistsStr;
             _timelineProperties.MaxSeekTime = Player.PlaybackSession.NaturalDuration;
             _timelineProperties.EndTime = Player.PlaybackSession.NaturalDuration;
-            PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler250ms, TimeSpan.FromMilliseconds(250));
-            PositionUpdateTimer2000ms = ThreadPoolTimer.CreatePeriodicTimer(UpdateTimerHandler2000ms, TimeSpan.FromMilliseconds(2000));
+            PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(
+                UpdateTimerHandler250ms,
+                TimeSpan.FromMilliseconds(250)
+            );
+            PositionUpdateTimer2000ms = ThreadPoolTimer.CreatePeriodicTimer(
+                UpdateTimerHandler2000ms,
+                TimeSpan.FromMilliseconds(2000)
+            );
             if (ShuffleMode)
             {
                 // 更新当前歌曲在随机播放队列中的索引
-                PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => CurrentMusic.IsOnline
-                ? ((IBriefOnlineMusicInfo)info).ID == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
-                : info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
+                PlayQueueIndex =
+                    ShuffledPlayQueue
+                        .FirstOrDefault(info =>
+                            CurrentMusic.IsOnline
+                                ? ((IBriefOnlineMusicInfo)info).ID
+                                    == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
+                                : info.Path == CurrentMusic.Path
+                        )
+                        ?.PlayQueueIndex ?? 0;
             }
         }
         catch (Exception ex)
@@ -476,11 +501,15 @@ public partial class MusicPlayer : ObservableRecipient
                     writer.WriteBytes(info.CoverBuffer);
                     await writer.StoreAsync();
                     _currentCoverStream.Seek(0);
-                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromStream(_currentCoverStream);
+                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromStream(
+                        _currentCoverStream
+                    );
                 }
                 catch
                 {
-                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/NoCover.png"));
+                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
+                        new Uri("ms-appx:///Assets/NoCover.png")
+                    );
                 }
             }
             else
@@ -488,14 +517,18 @@ public partial class MusicPlayer : ObservableRecipient
                 try
                 {
                     var info = (IDetailedOnlineMusicInfo)CurrentMusic;
-                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(info.CoverUrl!));
+                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
+                        new Uri(info.CoverUrl!)
+                    );
                 }
                 catch { }
             }
         }
         else
         {
-            _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/NoCover.png"));
+            _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
+                new Uri("ms-appx:///Assets/NoCover.png")
+            );
         }
         _displayUpdater.Update();
     }
@@ -505,9 +538,19 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     /// <param name="name"></param>
     /// <param name="list"></param>
-    public void SetPlayList(string name, IEnumerable<IBriefMusicInfoBase> list, byte sourceMode = 0, byte sortMode = 0)
+    public void SetPlayList(
+        string name,
+        IEnumerable<IBriefMusicInfoBase> list,
+        byte sourceMode = 0,
+        byte sortMode = 0
+    )
     {
-        if (PlayQueue.Count != list.Count() || PlayQueueName != name || _sortMode != sortMode || SourceMode != sourceMode)
+        if (
+            PlayQueue.Count != list.Count()
+            || PlayQueueName != name
+            || _sortMode != sortMode
+            || SourceMode != sourceMode
+        )
         {
             _sortMode = sortMode;
             SourceMode = sourceMode;
@@ -546,36 +589,57 @@ public partial class MusicPlayer : ObservableRecipient
         {
             try
             {
-                if (Player.PlaybackSession is null || _lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                if (
+                    Player.PlaybackSession is null
+                    || _lockable
+                    || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing
+                )
                 {
                     return;
                 }
-                App.MainWindow?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
-                {
-                    CurrentPlayingTime = Player.PlaybackSession.Position;
-                    TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
-                    if (TotalPlayingTime.TotalMilliseconds > 0)
+                App.MainWindow?.DispatcherQueue.TryEnqueue(
+                    DispatcherQueuePriority.Low,
+                    () =>
                     {
-                        CurrentPosition = 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
+                        CurrentPlayingTime = Player.PlaybackSession.Position;
+                        TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
+                        if (TotalPlayingTime.TotalMilliseconds > 0)
+                        {
+                            CurrentPosition =
+                                100
+                                * (
+                                    CurrentPlayingTime.TotalMilliseconds
+                                    / TotalPlayingTime.TotalMilliseconds
+                                );
+                        }
                     }
-                });
+                );
 
-                var dispatcherQueue = Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
+                var dispatcherQueue =
+                    Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
                 if (CurrentLyric.Count > 0)
                 {
-                    dispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, () =>
-                    {
-                        CurrentLyricIndex = GetCurrentLyricIndex(Player.PlaybackSession.Position.TotalMilliseconds);
-                        CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
-                    });
+                    dispatcherQueue?.TryEnqueue(
+                        DispatcherQueuePriority.Low,
+                        () =>
+                        {
+                            CurrentLyricIndex = GetCurrentLyricIndex(
+                                Player.PlaybackSession.Position.TotalMilliseconds
+                            );
+                            CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
+                        }
+                    );
                 }
                 else
                 {
-                    dispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, () =>
-                    {
-                        CurrentLyricIndex = 0;
-                        CurrentLyricContent = "";
-                    });
+                    dispatcherQueue?.TryEnqueue(
+                        DispatcherQueuePriority.Low,
+                        () =>
+                        {
+                            CurrentLyricIndex = 0;
+                            CurrentLyricContent = "";
+                        }
+                    );
                 }
             }
             catch (Exception ex)
@@ -584,13 +648,18 @@ public partial class MusicPlayer : ObservableRecipient
             }
         }
     }
+
     private void UpdateTimerHandler2000ms(ThreadPoolTimer timer)
     {
         lock (_mediaLock)
         {
             try
             {
-                if (Player.PlaybackSession is null || _lockable || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                if (
+                    Player.PlaybackSession is null
+                    || _lockable
+                    || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing
+                )
                 {
                     return;
                 }
@@ -636,24 +705,33 @@ public partial class MusicPlayer : ObservableRecipient
                     break;
                 case MediaPlaybackState.Opening:
                 case MediaPlaybackState.Buffering:
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
-                    {
-                        PlayState = 2;
-                    });
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+                        DispatcherQueuePriority.Low,
+                        () =>
+                        {
+                            PlayState = 2;
+                        }
+                    );
                     break;
                 case MediaPlaybackState.Playing:
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
-                    {
-                        PlayState = 1;
-                        _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
-                    });
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+                        DispatcherQueuePriority.Low,
+                        () =>
+                        {
+                            PlayState = 1;
+                            _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
+                        }
+                    );
                     break;
                 case MediaPlaybackState.Paused:
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
-                    {
-                        PlayState = 0;
-                        _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
-                    });
+                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+                        DispatcherQueuePriority.Low,
+                        () =>
+                        {
+                            PlayState = 0;
+                            _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
+                        }
+                    );
                     break;
                 default:
                     break;
@@ -746,7 +824,10 @@ public partial class MusicPlayer : ObservableRecipient
         });
     }
 
-    private void SystemControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
+    private void SystemControls_ButtonPressed(
+        SystemMediaTransportControls sender,
+        SystemMediaTransportControlsButtonPressedEventArgs args
+    )
     {
         switch (args.Button)
         {
@@ -756,11 +837,17 @@ public partial class MusicPlayer : ObservableRecipient
             case SystemMediaTransportControlsButton.Pause:
                 PlayPauseUpdate();
                 break;
-            case SystemMediaTransportControlsButton.Previous:// 注意: 必须在UI线程中调用
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, PlayPreviousSong);
+            case SystemMediaTransportControlsButton.Previous: // 注意: 必须在UI线程中调用
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+                    DispatcherQueuePriority.Low,
+                    PlayPreviousSong
+                );
                 break;
             case SystemMediaTransportControlsButton.Next:
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, PlayNextSong);
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+                    DispatcherQueuePriority.Low,
+                    PlayNextSong
+                );
                 break;
             default:
                 break;
@@ -855,7 +942,6 @@ public partial class MusicPlayer : ObservableRecipient
         }
     }
 
-
     /// <summary>
     /// 播放按钮更新
     /// </summary>
@@ -886,9 +972,15 @@ public partial class MusicPlayer : ObservableRecipient
             }
             if (CurrentMusic is not null)
             {
-                PlayQueueIndex = ShuffledPlayQueue.FirstOrDefault(info => CurrentMusic.IsOnline
-                ? ((IBriefOnlineMusicInfo)info).ID == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
-                : info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
+                PlayQueueIndex =
+                    ShuffledPlayQueue
+                        .FirstOrDefault(info =>
+                            CurrentMusic.IsOnline
+                                ? ((IBriefOnlineMusicInfo)info).ID
+                                    == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
+                                : info.Path == CurrentMusic.Path
+                        )
+                        ?.PlayQueueIndex ?? 0;
             }
         }
         else
@@ -900,9 +992,15 @@ public partial class MusicPlayer : ObservableRecipient
             }
             if (CurrentMusic is not null)
             {
-                PlayQueueIndex = PlayQueue.FirstOrDefault(info => CurrentMusic.IsOnline
-                ? ((IBriefOnlineMusicInfo)info).ID == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
-                : info.Path == CurrentMusic.Path)?.PlayQueueIndex ?? 0;
+                PlayQueueIndex =
+                    PlayQueue
+                        .FirstOrDefault(info =>
+                            CurrentMusic.IsOnline
+                                ? ((IBriefOnlineMusicInfo)info).ID
+                                    == ((IDetailedOnlineMusicInfo)CurrentMusic).ID
+                                : info.Path == CurrentMusic.Path
+                        )
+                        ?.PlayQueueIndex ?? 0;
             }
         }
         OnPropertyChanged(nameof(ShuffleMode));
@@ -924,7 +1022,8 @@ public partial class MusicPlayer : ObservableRecipient
     public void UpdateShufflePlayQueue()
     {
         ShuffledPlayQueue = new ObservableCollection<IBriefMusicInfoBase>(
-            [.. PlayQueue.OrderBy(x => Guid.NewGuid())]);
+            [.. PlayQueue.OrderBy(x => Guid.NewGuid())]
+        );
     }
 
     /// <summary>
@@ -960,7 +1059,9 @@ public partial class MusicPlayer : ObservableRecipient
     public void ProgressLock(object sender, PointerRoutedEventArgs e)
     {
         _lockable = true;
-        CurrentPlayingTime = TimeSpan.FromMilliseconds(((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100);
+        CurrentPlayingTime = TimeSpan.FromMilliseconds(
+            ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100
+        );
     }
 
     /// <summary>
@@ -970,7 +1071,9 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="e"></param>
     public void SliderUpdate(object sender, PointerRoutedEventArgs e)
     {
-        CurrentPlayingTime = TimeSpan.FromMilliseconds(((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100);
+        CurrentPlayingTime = TimeSpan.FromMilliseconds(
+            ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100
+        );
         CurrentLyricIndex = GetCurrentLyricIndex(CurrentPlayingTime.TotalMilliseconds);
     }
 
@@ -981,14 +1084,19 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="e"></param>
     public void ProgressUpdate(object sender, PointerRoutedEventArgs e)
     {
-        Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100);
+        Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(
+            ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100
+        );
         CurrentPlayingTime = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
         TotalPlayingTime = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
         if (TotalPlayingTime.TotalMilliseconds > 0)
         {
-            CurrentPosition = 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
+            CurrentPosition =
+                100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+        CurrentLyricIndex = GetCurrentLyricIndex(
+            (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
+        );
         _lockable = false;
     }
 
@@ -1004,9 +1112,12 @@ public partial class MusicPlayer : ObservableRecipient
         TotalPlayingTime = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
         if (TotalPlayingTime.TotalMilliseconds > 0)
         {
-            CurrentPosition = 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
+            CurrentPosition =
+                100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+        CurrentLyricIndex = GetCurrentLyricIndex(
+            (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
+        );
         _lockable = false;
     }
 
@@ -1019,36 +1130,49 @@ public partial class MusicPlayer : ObservableRecipient
         }
         else
         {
-            Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(Player.PlaybackSession.Position.TotalMilliseconds - 10000);
+            Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(
+                Player.PlaybackSession.Position.TotalMilliseconds - 10000
+            );
         }
         CurrentPlayingTime = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
         TotalPlayingTime = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
         if (TotalPlayingTime.TotalMilliseconds > 0)
         {
-            CurrentPosition = 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
+            CurrentPosition =
+                100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+        CurrentLyricIndex = GetCurrentLyricIndex(
+            (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
+        );
         _lockable = false;
     }
 
     public void SkipForw30sButton_Click(object sender, RoutedEventArgs e)
     {
         _lockable = true;
-        if (Player.PlaybackSession.Position.TotalMilliseconds + 30000 > TotalPlayingTime.TotalMilliseconds)
+        if (
+            Player.PlaybackSession.Position.TotalMilliseconds + 30000
+            > TotalPlayingTime.TotalMilliseconds
+        )
         {
             Player.PlaybackSession.Position = TotalPlayingTime;
         }
         else
         {
-            Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(Player.PlaybackSession.Position.TotalMilliseconds + 30000);
+            Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(
+                Player.PlaybackSession.Position.TotalMilliseconds + 30000
+            );
         }
         CurrentPlayingTime = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
         TotalPlayingTime = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
         if (TotalPlayingTime.TotalMilliseconds > 0)
         {
-            CurrentPosition = 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
+            CurrentPosition =
+                100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex((Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds);
+        CurrentLyricIndex = GetCurrentLyricIndex(
+            (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
+        );
         _lockable = false;
     }
 
@@ -1063,7 +1187,7 @@ public partial class MusicPlayer : ObservableRecipient
                 2 => 1,
                 3 => 1.5,
                 4 => 2,
-                _ => 1
+                _ => 1,
             };
         }
     }
@@ -1079,7 +1203,7 @@ public partial class MusicPlayer : ObservableRecipient
                 1 => 2,
                 1.5 => 3,
                 2 => 4,
-                _ => 2
+                _ => 2,
             };
         }
     }
@@ -1099,7 +1223,9 @@ public partial class MusicPlayer : ObservableRecipient
     {
         var defaultFontSize = mainWindowWidth <= 1000 ? 16.0 : 20.0;
         var highlightedFontSize = mainWindowWidth <= 1000 ? 24.0 : 50.0;
-        return itemTime == CurrentLyric[currentLyricIndex].Time ? highlightedFontSize : defaultFontSize;
+        return itemTime == CurrentLyric[currentLyricIndex].Time
+            ? highlightedFontSize
+            : defaultFontSize;
     }
 
     /// <summary>
@@ -1110,18 +1236,22 @@ public partial class MusicPlayer : ObservableRecipient
     /// <returns></returns>
     public Thickness GetLyricMargin(double itemTime, int currentLyricIndex)
     {
-        return itemTime == CurrentLyric[currentLyricIndex].Time ? _highlightedMargin : _defaultMargin;
+        return itemTime == CurrentLyric[currentLyricIndex].Time
+            ? _highlightedMargin
+            : _defaultMargin;
     }
 
     /// <summary>
-    /// 获取歌词透明度 
+    /// 获取歌词透明度
     /// </summary>
     /// <param name="itemTime"></param>
     /// <param name="currentLyricIndex"></param>
     /// <returns></returns>
     public double GetLyricOpacity(double itemTime, int currentLyricIndex)
     {
-        return itemTime == CurrentLyric[currentLyricIndex].Time ? _highlightedOpacity : _defaultOpacity;
+        return itemTime == CurrentLyric[currentLyricIndex].Time
+            ? _highlightedOpacity
+            : _defaultOpacity;
     }
 
     /// <summary>
@@ -1130,7 +1260,10 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="PlayQueueName"></param>
     /// <param name="ShuffleMode"></param>
     /// <returns></returns>
-    public ObservableCollection<IBriefMusicInfoBase> GetPlayQueue(string PlayQueueName, bool ShuffleMode) => ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+    public ObservableCollection<IBriefMusicInfoBase> GetPlayQueue(
+        string PlayQueueName,
+        bool ShuffleMode
+    ) => ShuffleMode ? ShuffledPlayQueue : PlayQueue;
 
     /// <summary>
     /// 保存当前播放状态至设置存储
@@ -1159,18 +1292,23 @@ public partial class MusicPlayer : ObservableRecipient
             ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
             RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
             IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
-            _currentBriefMusic =
-                SourceMode switch
-                {
-                    0 => await _localSettingsService.ReadSettingAsync<BriefMusicInfo>("CurrentBriefMusic"),
-                    1 => await _localSettingsService.ReadSettingAsync<CloudBriefOnlineMusicInfo>("CurrentBriefMusic"),
-                    _ => null
-                };
+            _currentBriefMusic = SourceMode switch
+            {
+                0 => await _localSettingsService.ReadSettingAsync<BriefMusicInfo>(
+                    "CurrentBriefMusic"
+                ),
+                1 => await _localSettingsService.ReadSettingAsync<CloudBriefOnlineMusicInfo>(
+                    "CurrentBriefMusic"
+                ),
+                _ => null,
+            };
             (PlayQueue, ShuffledPlayQueue) = await FileManager.LoadPlayQueueDataAsync();
             _playQueueLength = PlayQueue.Count;
             if (_currentBriefMusic is not null)
             {
-                CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(_currentBriefMusic);
+                CurrentMusic = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(
+                    _currentBriefMusic
+                );
                 SetSource(CurrentMusic!.Path);
                 _ = UpdateLyric(CurrentMusic!.Lyric);
                 _systemControls.IsPlayEnabled = true;
@@ -1178,7 +1316,9 @@ public partial class MusicPlayer : ObservableRecipient
             }
             if (Data.NotFirstUsed)
             {
-                CurrentVolume = await _localSettingsService.ReadSettingAsync<double>("CurrentVolume");
+                CurrentVolume = await _localSettingsService.ReadSettingAsync<double>(
+                    "CurrentVolume"
+                );
                 PlaySpeed = await _localSettingsService.ReadSettingAsync<double>("PlaySpeed");
             }
             else
@@ -1186,7 +1326,10 @@ public partial class MusicPlayer : ObservableRecipient
                 CurrentVolume = 100;
                 PlaySpeed = 1;
             }
-            Data.RootPlayBarViewModel?.ButtonVisibility = CurrentMusic is not null && PlayQueue.Any() ? Visibility.Visible : Visibility.Collapsed;
+            Data.RootPlayBarViewModel?.ButtonVisibility =
+                CurrentMusic is not null && PlayQueue.Any()
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             Data.RootPlayBarViewModel?.Availability = CurrentMusic is not null && PlayQueue.Any();
         }
         catch (Exception ex)

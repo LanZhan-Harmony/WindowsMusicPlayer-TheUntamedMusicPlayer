@@ -6,6 +6,7 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using Windows.UI;
 
 namespace The_Untamed_Music_Player.Helpers;
+
 [JsonSerializable(typeof(bool))]
 [JsonSerializable(typeof(byte))]
 [JsonSerializable(typeof(int))]
@@ -15,9 +16,7 @@ namespace The_Untamed_Music_Player.Helpers;
 [JsonSerializable(typeof(List<string>))]
 [JsonSerializable(typeof(BriefMusicInfo))]
 [JsonSerializable(typeof(CloudBriefOnlineMusicInfo))]
-public partial class JsonContext : JsonSerializerContext
-{
-}
+public partial class JsonContext : JsonSerializerContext { }
 
 public static class Json
 {
@@ -27,7 +26,10 @@ public static class Json
         {
             if (JsonContext.Default.GetTypeInfo(typeof(T)) is not JsonTypeInfo<T> jsonTypeInfo)
             {
-                throw new ArgumentNullException(nameof(T), $"JsonSerializable特性中未声明 {typeof(T)}.");
+                throw new ArgumentNullException(
+                    nameof(T),
+                    $"JsonSerializable特性中未声明 {typeof(T)}."
+                );
             }
             return JsonSerializer.Deserialize(value, jsonTypeInfo);
         });
@@ -40,7 +42,10 @@ public static class Json
             var type = value.GetType();
             var jsonTypeInfo = JsonContext.Default.GetTypeInfo(type);
             return jsonTypeInfo is null
-                ? throw new ArgumentNullException(nameof(value), $"JsonSerializable特性中未声明 {type}.")
+                ? throw new ArgumentNullException(
+                    nameof(value),
+                    $"JsonSerializable特性中未声明 {type}."
+                )
                 : JsonSerializer.Serialize(value, jsonTypeInfo);
         });
     }

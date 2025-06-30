@@ -1,14 +1,16 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 
 namespace The_Untamed_Music_Player.Activation;
+
 public class AppNotificationActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
     public AppNotificationActivationHandler() { }
 
     protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
     {
-        return AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind == ExtendedActivationKind.AppNotification;
+        return AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind
+            == ExtendedActivationKind.AppNotification;
     }
 
     /// <summary>

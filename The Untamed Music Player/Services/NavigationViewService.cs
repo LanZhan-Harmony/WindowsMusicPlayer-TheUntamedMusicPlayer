@@ -5,7 +5,9 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Services;
-public class NavigationViewService(INavigationService navigationService, IPageService pageService) : INavigationViewService
+
+public class NavigationViewService(INavigationService navigationService, IPageService pageService)
+    : INavigationViewService
 {
     private readonly INavigationService _navigationService = navigationService;
 
@@ -38,13 +40,17 @@ public class NavigationViewService(INavigationService navigationService, IPageSe
     {
         if (_navigationView is not null)
         {
-            return GetSelectedItem(_navigationView.MenuItems, pageType) ?? GetSelectedItem(_navigationView.FooterMenuItems, pageType);
+            return GetSelectedItem(_navigationView.MenuItems, pageType)
+                ?? GetSelectedItem(_navigationView.FooterMenuItems, pageType);
         }
 
         return null;
     }
 
-    private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) => _navigationService.GoBack();
+    private void OnBackRequested(
+        NavigationView sender,
+        NavigationViewBackRequestedEventArgs args
+    ) => _navigationService.GoBack();
 
     private void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {

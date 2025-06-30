@@ -8,13 +8,16 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.ViewModels;
+
 public partial class LocalArtistsViewModel : ObservableRecipient
 {
-    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
 
     private List<ArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
 
-    public List<string> SortBy { get; set; } = [.. "LocalArtists_SortBy".GetLocalized().Split(", ")];
+    public List<string> SortBy { get; set; } =
+        [.. "LocalArtists_SortBy".GetLocalized().Split(", ")];
 
     public ObservableCollection<GroupInfoList> GroupedArtistList { get; set; } = [];
 
@@ -23,6 +26,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 
     [ObservableProperty]
     public partial byte SortMode { get; set; } = 0;
+
     partial void OnSortModeChanged(byte value)
     {
         SaveSortModeAsync();
@@ -66,6 +70,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
             }
         }
     }
+
     public void SortByListView_Loaded(object sender, RoutedEventArgs e)
     {
         if (sender is ListView listView)
@@ -79,7 +84,12 @@ public partial class LocalArtistsViewModel : ObservableRecipient
         if (sender is FrameworkElement { DataContext: ArtistInfo artistInfo })
         {
             var songList = Data.MusicLibrary.GetSongsByArtist(artistInfo);
-            Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{artistInfo.Name}", songList, 0, SortMode);
+            Data.MusicPlayer.SetPlayList(
+                $"LocalSongs:Artist:{artistInfo.Name}",
+                songList,
+                0,
+                SortMode
+            );
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
     }
@@ -90,7 +100,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
         {
             0 => SortArtistsByTitleAscending(),
             1 => SortArtistsByTitleDescending(),
-            _ => SortArtistsByTitleAscending()
+            _ => SortArtistsByTitleAscending(),
         };
 
         await sortTask;
@@ -101,9 +111,13 @@ public partial class LocalArtistsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = _artistList
-               .OrderBy(m => m.Name, new ArtistTitleComparer())
-               .GroupBy(m => m.Name == "MusicInfo_UnknownArtist".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
-               .Select(g => new GroupInfoList(g) { Key = g.Key });
+                .OrderBy(m => m.Name, new ArtistTitleComparer())
+                .GroupBy(m =>
+                    m.Name == "MusicInfo_UnknownArtist".GetLocalized()
+                        ? "..."
+                        : TitleComparer.GetGroupKey(m.Name[0])
+                )
+                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
             GroupedArtistList = [.. sortedGroups];
         });
@@ -114,9 +128,13 @@ public partial class LocalArtistsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = _artistList
-               .OrderByDescending(m => m.Name, new ArtistTitleComparer())
-               .GroupBy(m => m.Name == "MusicInfo_UnknownArtist".GetLocalized() ? "..." : TitleComparer.GetGroupKey(m.Name[0]))
-               .Select(g => new GroupInfoList(g) { Key = g.Key });
+                .OrderByDescending(m => m.Name, new ArtistTitleComparer())
+                .GroupBy(m =>
+                    m.Name == "MusicInfo_UnknownArtist".GetLocalized()
+                        ? "..."
+                        : TitleComparer.GetGroupKey(m.Name[0])
+                )
+                .Select(g => new GroupInfoList(g) { Key = g.Key });
 
             GroupedArtistList = [.. sortedGroups];
         });
@@ -126,6 +144,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
     {
         SortMode = await _localSettingsService.ReadSettingAsync<byte>("ArtistSortMode");
     }
+
     public async void SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("ArtistSortMode", SortMode);

@@ -44,14 +44,21 @@ public static partial class ExternFunction
 
     [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+    public static partial bool SetWindowPos(
+        IntPtr hWnd,
+        IntPtr hWndInsertAfter,
+        int X,
+        int Y,
+        int cx,
+        int cy,
+        uint uFlags
+    );
 
     [LibraryImport("user32.dll")]
     public static partial IntPtr GetActiveWindow();
 
     [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
     public static partial IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam);
-
 
     public static IntPtr GetWindowLong(IntPtr hWnd, int nIndex)
     {
@@ -60,6 +67,8 @@ public static partial class ExternFunction
 
     public static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
     {
-        return _is64BitProcess ? SetWindowLong64(hWnd, nIndex, dwNewLong) : SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32());
+        return _is64BitProcess
+            ? SetWindowLong64(hWnd, nIndex, dwNewLong)
+            : SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32());
     }
 }

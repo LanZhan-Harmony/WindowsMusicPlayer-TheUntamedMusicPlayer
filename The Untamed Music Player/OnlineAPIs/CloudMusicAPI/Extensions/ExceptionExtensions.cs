@@ -8,6 +8,7 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
+
 internal static class ExceptionExtensions
 {
     /// <summary>
@@ -19,7 +20,9 @@ internal static class ExceptionExtensions
     {
         ArgumentNullException.ThrowIfNull(exception);
 
-        return exception.InnerException is null ? exception : exception.InnerException.GetInmostException();
+        return exception.InnerException is null
+            ? exception
+            : exception.InnerException.GetInmostException();
     }
 
     /// <summary>
