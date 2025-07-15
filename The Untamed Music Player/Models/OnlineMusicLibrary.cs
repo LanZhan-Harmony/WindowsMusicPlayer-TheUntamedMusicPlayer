@@ -9,6 +9,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 using Windows.Storage;
 
 namespace The_Untamed_Music_Player.Models;
@@ -52,7 +53,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     public partial bool IsSearchMoreProgressRingActive { get; set; } = false;
 
     [ObservableProperty]
-    public partial IBriefOnlineMusicInfoList OnlineMusicInfoList { get; set; } = null!;
+    public partial IBriefOnlineSongInfoList OnlineSongInfoList { get; set; } = null!;
 
     [ObservableProperty]
     public partial IOnlineAlbumInfoList OnlineAlbumInfoList { get; set; } = null!;
@@ -81,9 +82,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             switch (MusicLibraryIndex)
             {
                 case 0:
-                    var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
-                    OnlineMusicInfoList = cloudList;
-                    await CloudMusicSearchHelper.SearchAsync(KeyWords, cloudList);
+                    var cloudList = OnlineSongInfoList as CloudBriefOnlineSongInfoList ?? [];
+                    OnlineSongInfoList = cloudList;
+                    await CloudSongSearchHelper.SearchAsync(KeyWords, cloudList);
                     break;
                 case 1:
                 case 2:
@@ -113,10 +114,10 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
     public async Task SearchMore()
     {
-        if (!_isSearchingMore && !OnlineMusicInfoList.HasAllLoaded)
+        if (!_isSearchingMore && !OnlineSongInfoList.HasAllLoaded)
         {
             _isSearchingMore = true;
-            if (OnlineMusicInfoList.HasAllLoaded || !await IsInternetAvailableAsync())
+            if (OnlineSongInfoList.HasAllLoaded || !await IsInternetAvailableAsync())
             {
                 return;
             }
@@ -126,9 +127,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                 switch (MusicLibraryIndex)
                 {
                     case 0:
-                        var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
-                        OnlineMusicInfoList = cloudList;
-                        await CloudMusicSearchHelper.SearchMoreAsync(cloudList);
+                        var cloudList = OnlineSongInfoList as CloudBriefOnlineSongInfoList ?? [];
+                        OnlineSongInfoList = cloudList;
+                        await CloudSongSearchHelper.SearchMoreAsync(cloudList);
                         break;
                     case 1:
                     case 2:
@@ -168,9 +169,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                 case 5:
                 default:
                     // TODO: 其它 MusicLibraryIndex 分支实现
-                    var cloudList = OnlineMusicInfoList as CloudBriefOnlineMusicInfoList ?? [];
-                    OnlineMusicInfoList = cloudList;
-                    SearchResultList = await CloudMusicSearchHelper.GetSearchResultAsync(KeyWords);
+                    var cloudList = OnlineSongInfoList as CloudBriefOnlineSongInfoList ?? [];
+                    OnlineSongInfoList = cloudList;
+                    SearchResultList = await CloudSongSearchHelper.GetSearchSuggestAsync(KeyWords);
                     break;
             }
         }
@@ -197,32 +198,32 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     {
         Data.MusicPlayer.SetPlayList(
             $"OnlineSongs:Part:{KeyWords}",
-            OnlineMusicInfoList,
+            OnlineSongInfoList,
             (byte)(MusicLibraryIndex + 1),
             0
         );
-        if (e.ClickedItem is IBriefOnlineMusicInfo info)
+        if (e.ClickedItem is IBriefOnlineSongInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
         }
     }
 
-    public void OnlineSongsPlayButton_Click(IBriefOnlineMusicInfo info)
+    public void OnlineSongsPlayButton_Click(IBriefOnlineSongInfo info)
     {
         Data.MusicPlayer.SetPlayList(
             $"OnlineSongs:Part:{KeyWords}",
-            OnlineMusicInfoList,
+            OnlineSongInfoList,
             (byte)(MusicLibraryIndex + 1),
             0
         );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
-    public void OnlineSongsPlayNextButton_Click(IBriefOnlineMusicInfo info)
+    public void OnlineSongsPlayNextButton_Click(IBriefOnlineSongInfo info)
     {
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            var list = new List<IBriefOnlineMusicInfo> { info };
+            var list = new List<IBriefOnlineSongInfo> { info };
             Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
@@ -232,11 +233,11 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         }
     }
 
-    public async void OnlineSongsDownloadButton_Click(IBriefOnlineMusicInfo info)
+    public async void OnlineSongsDownloadButton_Click(IBriefOnlineSongInfo info)
     {
         Data.IsMusicDownloading = true;
-        var detailedInfo = (IDetailedOnlineMusicInfo)
-            await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(
+        var detailedInfo = (IDetailedOnlineSongInfo)
+            await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
                 info,
                 (byte)(MusicLibraryIndex + 1)
             );
@@ -352,7 +353,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         }
     }
 
-    public static async Task WriteSongInfo(string savePath, IDetailedOnlineMusicInfo detailedInfo)
+    public static async Task WriteSongInfo(string savePath, IDetailedOnlineSongInfo detailedInfo)
     {
         try
         {

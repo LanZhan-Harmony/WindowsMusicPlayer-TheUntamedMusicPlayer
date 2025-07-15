@@ -49,23 +49,23 @@ public partial class ArtistInfo : IArtistInfoBase
     [MemoryPackConstructor]
     public ArtistInfo() { }
 
-    public ArtistInfo(BriefMusicInfo briefMusicInfo, string name)
+    public ArtistInfo(BriefSongInfo briefSongInfo, string name)
     {
         Name = name;
-        TotalDuration = briefMusicInfo.Duration;
-        GenreStr = briefMusicInfo.GenreStr;
-        Albums.Add(briefMusicInfo.Album);
+        TotalDuration = briefSongInfo.Duration;
+        GenreStr = briefSongInfo.GenreStr;
+        Albums.Add(briefSongInfo.Album);
     }
 
     /// <summary>
     /// 扫描歌曲时更新艺术家信息
     /// </summary>
-    /// <param name="briefMusicInfo"></param>
-    public void Update(BriefMusicInfo briefMusicInfo)
+    /// <param name="briefSongInfo"></param>
+    public void Update(BriefSongInfo briefSongInfo)
     {
-        TotalDuration += briefMusicInfo.Duration;
+        TotalDuration += briefSongInfo.Duration;
         TotalSongNum++;
-        var album = briefMusicInfo.Album;
+        var album = briefSongInfo.Album;
 
         if (Albums.Add(album))
         {

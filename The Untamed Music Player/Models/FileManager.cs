@@ -73,8 +73,8 @@ public class FileManager
     }
 
     public static async void SavePlayQueueDataAsync(
-        ObservableCollection<IBriefMusicInfoBase> playQueue,
-        ObservableCollection<IBriefMusicInfoBase> shuffledPlayQueue
+        ObservableCollection<IBriefSongInfoBase> playQueue,
+        ObservableCollection<IBriefSongInfoBase> shuffledPlayQueue
     )
     {
         var localFolder = ApplicationData.Current.LocalFolder;
@@ -150,7 +150,7 @@ public class FileManager
             }
 
             // 并行加载所有数据文件
-            var songsTask = LoadObjectFromFileAsync<BriefMusicInfo[]>(libraryFolder, "Songs");
+            var songsTask = LoadObjectFromFileAsync<BriefSongInfo[]>(libraryFolder, "Songs");
             var albumsTask = LoadObjectFromFileAsync<Dictionary<string, AlbumInfo>>(
                 libraryFolder,
                 "Albums"
@@ -201,8 +201,8 @@ public class FileManager
     }
 
     public static async Task<(
-        ObservableCollection<IBriefMusicInfoBase> playQueue,
-        ObservableCollection<IBriefMusicInfoBase> shuffledPlayQueue
+        ObservableCollection<IBriefSongInfoBase> playQueue,
+        ObservableCollection<IBriefSongInfoBase> shuffledPlayQueue
     )> LoadPlayQueueDataAsync()
     {
         try
@@ -220,11 +220,11 @@ public class FileManager
                 return ([], []);
             }
 
-            var playQueuetask = LoadObjectFromFileAsync<IBriefMusicInfoBase[]>(
+            var playQueuetask = LoadObjectFromFileAsync<IBriefSongInfoBase[]>(
                 playQueueFolder,
                 "PlayQueue"
             );
-            var shuffledPlayQueuetask = LoadObjectFromFileAsync<IBriefMusicInfoBase[]>(
+            var shuffledPlayQueuetask = LoadObjectFromFileAsync<IBriefSongInfoBase[]>(
                 playQueueFolder,
                 "ShuffledPlayQueue"
             );
@@ -235,8 +235,8 @@ public class FileManager
             var shuffledPlayQueueArray = shuffledPlayQueuetask.Result ?? [];
 
             return (
-                new ObservableCollection<IBriefMusicInfoBase>(playQueueArray),
-                new ObservableCollection<IBriefMusicInfoBase>(shuffledPlayQueueArray)
+                new ObservableCollection<IBriefSongInfoBase>(playQueueArray),
+                new ObservableCollection<IBriefSongInfoBase>(shuffledPlayQueueArray)
             );
         }
         catch (Exception ex)
@@ -369,7 +369,7 @@ public class FileManager
 /// </summary>
 public class MusicLibraryData
 {
-    public ConcurrentBag<BriefMusicInfo> Songs { get; set; } = null!;
+    public ConcurrentBag<BriefSongInfo> Songs { get; set; } = null!;
     public ConcurrentDictionary<string, AlbumInfo> Albums { get; set; } = null!;
     public ConcurrentDictionary<string, ArtistInfo> Artists { get; set; } = null!;
     public List<string> Genres { get; set; } = null!;
@@ -377,7 +377,7 @@ public class MusicLibraryData
     public MusicLibraryData() { }
 
     public MusicLibraryData(
-        ConcurrentBag<BriefMusicInfo> songs,
+        ConcurrentBag<BriefSongInfo> songs,
         ConcurrentDictionary<string, AlbumInfo> albums,
         ConcurrentDictionary<string, ArtistInfo> artists,
         List<string> genres

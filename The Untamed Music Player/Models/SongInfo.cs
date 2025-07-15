@@ -12,18 +12,18 @@ using Windows.Storage.Streams;
 namespace The_Untamed_Music_Player.Models;
 
 [MemoryPackable]
-public partial class BriefMusicInfo : IBriefMusicInfoBase
+public partial class BriefSongInfo : IBriefSongInfoBase
 {
     /// <summary>
     /// 歌手分隔符
     /// </summary>
     protected static readonly char[] _delimiters = ['、', ',', '，', '|', '/'];
 
-    protected static readonly string _unknownAlbum = "MusicInfo_UnknownAlbum".GetLocalized();
+    protected static readonly string _unknownAlbum = "SongInfo_UnknownAlbum".GetLocalized();
 
-    protected static readonly string _unknownArtist = "MusicInfo_UnknownArtist".GetLocalized();
+    protected static readonly string _unknownArtist = "SongInfo_UnknownArtist".GetLocalized();
 
-    protected static readonly string _unknownGenre = "MusicInfo_UnknownGenre".GetLocalized();
+    protected static readonly string _unknownGenre = "SongInfo_UnknownGenre".GetLocalized();
 
     /// <summary>
     /// 是否可以播放
@@ -119,7 +119,7 @@ public partial class BriefMusicInfo : IBriefMusicInfoBase
     public long ModifiedDate { get; set; } = 0;
 
     [MemoryPackConstructor]
-    public BriefMusicInfo() { }
+    public BriefSongInfo() { }
 
     /// <summary>
     /// 异步工厂方法
@@ -127,9 +127,9 @@ public partial class BriefMusicInfo : IBriefMusicInfoBase
     /// <param name="path"></param>
     /// <param name="folder"></param>
     /// <returns></returns>
-    public static async Task<BriefMusicInfo> CreateAsync(string path, string folder)
+    public static async Task<BriefSongInfo> CreateAsync(string path, string folder)
     {
-        var info = new BriefMusicInfo
+        var info = new BriefSongInfo
         {
             Path = path,
             Folder = folder,
@@ -151,14 +151,14 @@ public partial class BriefMusicInfo : IBriefMusicInfoBase
                 : musicFile.Tag.Title;
             string[] combinedArtists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
             info.Artists = combinedArtists.Length != 0 ? combinedArtists : [_unknownArtist];
-            info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(info.Artists);
+            info.ArtistsStr = IBriefSongInfoBase.GetArtistsStr(info.Artists);
             info.Year = (ushort)musicFile.Tag.Year;
-            info.YearStr = IBriefMusicInfoBase.GetYearStr(info.Year);
+            info.YearStr = IBriefSongInfoBase.GetYearStr(info.Year);
             var genres = musicFile.Tag.Genres;
             info.Genre = genres.Length != 0 ? genres : [_unknownGenre];
             info.GenreStr = GetGenreStr(info.Genre);
             info.Duration = musicFile.Properties.Duration;
-            info.DurationStr = IBriefMusicInfoBase.GetDurationStr(info.Duration);
+            info.DurationStr = IBriefSongInfoBase.GetDurationStr(info.Duration);
 
             // 等待 LoadCoverAsync 任务完成
             if (coverTask is not null)
@@ -173,11 +173,11 @@ public partial class BriefMusicInfo : IBriefMusicInfoBase
             info.Title = System.IO.Path.GetFileNameWithoutExtension(path);
             info.Album = _unknownAlbum;
             info.Artists = [_unknownArtist];
-            info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(info.Artists);
+            info.ArtistsStr = IBriefSongInfoBase.GetArtistsStr(info.Artists);
             info.YearStr = "";
             info.Genre = [_unknownGenre];
             info.GenreStr = GetGenreStr(info.Genre);
-            info.DurationStr = IBriefMusicInfoBase.GetDurationStr(info.Duration);
+            info.DurationStr = IBriefSongInfoBase.GetDurationStr(info.Duration);
         }
         catch (Exception ex)
         {
@@ -224,17 +224,17 @@ public partial class BriefMusicInfo : IBriefMusicInfoBase
     /// <summary>
     /// 获取文本前景色
     /// </summary>
-    /// <param name="currentMusic"></param>
+    /// <param name="currentSong"></param>
     /// <param name="isDarkTheme"></param>
     /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    public SolidColorBrush GetTextForeground(IDetailedMusicInfoBase? currentMusic, bool isDarkTheme)
+    public SolidColorBrush GetTextForeground(IDetailedSongInfoBase? currentSong, bool isDarkTheme)
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
 
         if (
-            currentMusic is not null
-            && !currentMusic.IsOnline
-            && Path == ((BriefMusicInfo)currentMusic).Path
+            currentSong is not null
+            && !currentSong.IsOnline
+            && Path == ((BriefSongInfo)currentSong).Path
         )
         {
             var highlightColor = isDarkTheme
@@ -251,7 +251,7 @@ public partial class BriefMusicInfo : IBriefMusicInfoBase
     }
 }
 
-public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
+public class DetailedSongInfo : BriefSongInfo, IDetailedSongInfoBase
 {
     public bool IsOnline { get; set; } = false;
 
@@ -315,7 +315,7 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
     /// </summary>
     public string Lyric { get; set; } = "";
 
-    public DetailedMusicInfo(BriefMusicInfo info)
+    public DetailedSongInfo(BriefSongInfo info)
     {
         try
         {
@@ -326,8 +326,8 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
             var musicFile = TagLib.File.Create(Path);
             Album = musicFile.Tag.Album ?? "";
             Artists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
-            ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(Artists);
-            AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr(
+            ArtistsStr = IBriefSongInfoBase.GetArtistsStr(Artists);
+            AlbumArtistsStr = IDetailedSongInfoBase.GetAlbumArtistsStr(
                 [
                     .. musicFile
                         .Tag.AlbumArtists.SelectMany(artist =>
@@ -336,13 +336,13 @@ public class DetailedMusicInfo : BriefMusicInfo, IDetailedMusicInfoBase
                         .Distinct(),
                 ]
             );
-            ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(Album, ArtistsStr);
+            ArtistAndAlbumStr = IDetailedSongInfoBase.GetArtistAndAlbumStr(Album, ArtistsStr);
             Year = info.Year;
             YearStr = info.YearStr;
             Genre = musicFile.Tag.Genres;
             GenreStr = GetGenreStr(Genre);
             Duration = info.Duration;
-            DurationStr = IBriefMusicInfoBase.GetDurationStr(Duration);
+            DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
             Track = musicFile.Tag.Track == 0 ? "" : musicFile.Tag.Track.ToString();
             Lyric = musicFile.Tag.Lyrics ?? "";
             BitRate = $"{musicFile.Properties.AudioBitrate} kbps";

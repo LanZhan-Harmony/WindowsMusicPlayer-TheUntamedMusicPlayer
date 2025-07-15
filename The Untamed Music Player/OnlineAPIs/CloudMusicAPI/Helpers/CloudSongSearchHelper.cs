@@ -2,15 +2,15 @@ using System.Diagnostics;
 using System.Text.Json;
 using The_Untamed_Music_Player.Models;
 
-namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 
-public class CloudMusicSearchHelper
+public class CloudSongSearchHelper
 {
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
 
     private static readonly NeteaseCloudMusicApi _api = new();
 
-    public static async Task SearchAsync(string keyWords, CloudBriefOnlineMusicInfoList list)
+    public static async Task SearchAsync(string keyWords, CloudBriefOnlineSongInfoList list)
     {
         await _searchSemaphore.WaitAsync();
         list.Page = 0;
@@ -27,7 +27,8 @@ public class CloudMusicSearchHelper
                 new Dictionary<string, string>
                 {
                     { "keywords", keyWords },
-                    { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
+                    { "type", "1" },
+                    { "limit", CloudBriefOnlineSongInfoList.Limit.ToString() },
                     { "offset", "0" },
                 }
             );
@@ -74,7 +75,7 @@ public class CloudMusicSearchHelper
         }
     }
 
-    public static async Task SearchMoreAsync(CloudBriefOnlineMusicInfoList list)
+    public static async Task SearchMoreAsync(CloudBriefOnlineSongInfoList list)
     {
         await _searchSemaphore.WaitAsync();
         try
@@ -84,7 +85,7 @@ public class CloudMusicSearchHelper
                 new Dictionary<string, string>
                 {
                     { "keywords", list.KeyWords },
-                    { "limit", CloudBriefOnlineMusicInfoList.Limit.ToString() },
+                    { "limit", CloudBriefOnlineSongInfoList.Limit.ToString() },
                     { "offset", (list.Page * 30).ToString() },
                 }
             );
@@ -117,11 +118,11 @@ public class CloudMusicSearchHelper
 
     private static async Task ProcessSongsAsync(
         JsonElement songsElement,
-        CloudBriefOnlineMusicInfoList list
+        CloudBriefOnlineSongInfoList list
     )
     {
         var actualCount = songsElement.GetArrayLength();
-        var infos = new CloudBriefOnlineMusicInfo[actualCount];
+        var infos = new CloudBriefOnlineSongInfo[actualCount];
 
         // Parallel.ForEachAsync 默认使用核心数为CPU核心总数
         await Parallel.ForEachAsync(
@@ -131,7 +132,7 @@ public class CloudMusicSearchHelper
             {
                 try
                 {
-                    var info = await CloudBriefOnlineMusicInfo.CreateAsync(songsElement[i]!, _api);
+                    var info = await CloudBriefOnlineSongInfo.CreateAsync(songsElement[i]!, _api);
                     infos[i] = info;
                 }
                 catch (Exception ex)
@@ -151,7 +152,7 @@ public class CloudMusicSearchHelper
         }
     }
 
-    public static async Task<List<SearchResult>> GetSearchResultAsync(string keyWords)
+    public static async Task<List<SearchResult>> GetSearchSuggestAsync(string keyWords)
     {
         var list = new List<SearchResult>();
         await Task.Run(async () =>
