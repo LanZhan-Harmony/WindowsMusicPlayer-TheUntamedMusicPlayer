@@ -495,7 +495,7 @@ public partial class MusicPlayer : ObservableRecipient
             {
                 try
                 {
-                    var info = (DetailedSongInfo)CurrentSong;
+                    var info = (DetailedLocalSongInfo)CurrentSong;
                     _currentCoverStream = new InMemoryRandomAccessStream();
                     using var writer = new DataWriter(_currentCoverStream.GetOutputStreamAt(0));
                     writer.WriteBytes(info.CoverBuffer);
@@ -1294,7 +1294,7 @@ public partial class MusicPlayer : ObservableRecipient
             IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
             _currentBriefSong = SourceMode switch
             {
-                0 => await _localSettingsService.ReadSettingAsync<BriefSongInfo>(
+                0 => await _localSettingsService.ReadSettingAsync<BriefLocalSongInfo>(
                     "CurrentBriefSong"
                 ),
                 1 => await _localSettingsService.ReadSettingAsync<CloudBriefOnlineSongInfo>(

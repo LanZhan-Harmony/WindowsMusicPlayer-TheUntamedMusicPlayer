@@ -8,7 +8,7 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 namespace The_Untamed_Music_Player.Contracts.Models;
 
 [MemoryPackable]
-[MemoryPackUnion(0, typeof(BriefSongInfo))]
+[MemoryPackUnion(0, typeof(BriefLocalSongInfo))]
 [MemoryPackUnion(1, typeof(CloudBriefOnlineSongInfo))]
 public partial interface IBriefSongInfoBase : ICloneable
 {
@@ -175,7 +175,7 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
     {
         return sourceMode switch
         {
-            0 => new DetailedSongInfo((BriefSongInfo)info),
+            0 => new DetailedLocalSongInfo((BriefLocalSongInfo)info),
             1 => await CloudDetailedOnlineSongInfo.CreateAsync((IBriefOnlineSongInfo)info),
             _ => await CloudDetailedOnlineSongInfo.CreateAsync((IBriefOnlineSongInfo)info),
         };
@@ -183,9 +183,9 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
 
     static async Task<IDetailedSongInfoBase?> CreateDetailedSongInfoAsync(IBriefSongInfoBase info)
     {
-        if (info is BriefSongInfo briefInfo)
+        if (info is BriefLocalSongInfo briefInfo)
         {
-            return new DetailedSongInfo(briefInfo);
+            return new DetailedLocalSongInfo(briefInfo);
         }
         else if (info is CloudBriefOnlineSongInfo cloudInfo)
         {

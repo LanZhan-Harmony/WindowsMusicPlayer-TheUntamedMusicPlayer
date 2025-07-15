@@ -12,7 +12,7 @@ using Windows.Storage.Streams;
 namespace The_Untamed_Music_Player.Models;
 
 [MemoryPackable]
-public partial class BriefSongInfo : IBriefSongInfoBase
+public partial class BriefLocalSongInfo : IBriefSongInfoBase
 {
     /// <summary>
     /// 歌手分隔符
@@ -119,7 +119,7 @@ public partial class BriefSongInfo : IBriefSongInfoBase
     public long ModifiedDate { get; set; } = 0;
 
     [MemoryPackConstructor]
-    public BriefSongInfo() { }
+    public BriefLocalSongInfo() { }
 
     /// <summary>
     /// 异步工厂方法
@@ -127,9 +127,9 @@ public partial class BriefSongInfo : IBriefSongInfoBase
     /// <param name="path"></param>
     /// <param name="folder"></param>
     /// <returns></returns>
-    public static async Task<BriefSongInfo> CreateAsync(string path, string folder)
+    public static async Task<BriefLocalSongInfo> CreateAsync(string path, string folder)
     {
-        var info = new BriefSongInfo
+        var info = new BriefLocalSongInfo
         {
             Path = path,
             Folder = folder,
@@ -234,7 +234,7 @@ public partial class BriefSongInfo : IBriefSongInfoBase
         if (
             currentSong is not null
             && !currentSong.IsOnline
-            && Path == ((BriefSongInfo)currentSong).Path
+            && Path == ((BriefLocalSongInfo)currentSong).Path
         )
         {
             var highlightColor = isDarkTheme
@@ -251,7 +251,7 @@ public partial class BriefSongInfo : IBriefSongInfoBase
     }
 }
 
-public class DetailedSongInfo : BriefSongInfo, IDetailedSongInfoBase
+public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
 {
     public bool IsOnline { get; set; } = false;
 
@@ -315,7 +315,7 @@ public class DetailedSongInfo : BriefSongInfo, IDetailedSongInfoBase
     /// </summary>
     public string Lyric { get; set; } = "";
 
-    public DetailedSongInfo(BriefSongInfo info)
+    public DetailedLocalSongInfo(BriefLocalSongInfo info)
     {
         try
         {

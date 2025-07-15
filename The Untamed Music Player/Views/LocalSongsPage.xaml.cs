@@ -81,7 +81,7 @@ public sealed partial class LocalSongsPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.PlayButton_Click(info);
         }
@@ -89,7 +89,7 @@ public sealed partial class LocalSongsPage : Page
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.PlayNextButton_Click(info);
         }
@@ -99,9 +99,9 @@ public sealed partial class LocalSongsPage : Page
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            var song = new DetailedSongInfo(info);
+            var song = new DetailedLocalSongInfo(info);
             var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
@@ -109,7 +109,7 @@ public sealed partial class LocalSongsPage : Page
 
     private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.ShowAlbumButton_Click(info);
         }
@@ -117,7 +117,7 @@ public sealed partial class LocalSongsPage : Page
 
     private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.ShowArtistButton_Click(info);
         }

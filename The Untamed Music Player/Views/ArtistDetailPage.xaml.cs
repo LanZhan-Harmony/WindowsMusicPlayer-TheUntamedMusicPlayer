@@ -434,7 +434,7 @@ public sealed partial class ArtistDetailPage : Page
 
     private void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
+        if (sender is FrameworkElement { DataContext: BriefLocalAlbumInfo info })
         {
             ViewModel.AlbumGridViewPlayButton_Click(info);
         }
@@ -442,10 +442,10 @@ public sealed partial class ArtistDetailPage : Page
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is BriefAlbumInfo briefAlbumInfo)
+        if (e.ClickedItem is BriefLocalAlbumInfo briefLocalAlbumInfo)
         {
-            var albumInfo = Data.MusicLibrary.Albums[briefAlbumInfo.Name];
-            if (albumInfo is not null)
+            var localAlbumInfo = Data.MusicLibrary.Albums[briefLocalAlbumInfo.Name];
+            if (localAlbumInfo is not null)
             {
                 var grid = (Grid)
                     (
@@ -455,7 +455,7 @@ public sealed partial class ArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.SelectedAlbum = albumInfo;
+                Data.SelectedAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(AlbumDetailPage),
@@ -468,7 +468,7 @@ public sealed partial class ArtistDetailPage : Page
 
     private void AlbumGridViewPlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
+        if (sender is FrameworkElement { DataContext: BriefLocalAlbumInfo info })
         {
             ViewModel.AlbumGridViewPlayNextButton_Click(info);
         }
@@ -478,10 +478,10 @@ public sealed partial class ArtistDetailPage : Page
 
     private void AlbumGridViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
+        if (sender is FrameworkElement { DataContext: BriefLocalAlbumInfo info })
         {
-            var albumInfo = Data.MusicLibrary.Albums[info.Name];
-            if (albumInfo is not null)
+            var localAlbumInfo = Data.MusicLibrary.Albums[info.Name];
+            if (localAlbumInfo is not null)
             {
                 var grid = (Grid)
                     ((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
@@ -489,7 +489,7 @@ public sealed partial class ArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.SelectedAlbum = albumInfo;
+                Data.SelectedAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(AlbumDetailPage),
