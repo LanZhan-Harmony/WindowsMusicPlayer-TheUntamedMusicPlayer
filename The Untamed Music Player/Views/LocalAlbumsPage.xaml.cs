@@ -59,7 +59,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is AlbumInfo info)
+        if (e.ClickedItem is LocalAlbumInfo info)
         {
             var grid = (Grid)
                 (
@@ -104,7 +104,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
             ViewModel.PlayButton_Click(info);
         }
@@ -112,7 +112,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
             ViewModel.PlayNextButton_Click(info);
         }
@@ -122,7 +122,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
             var grid = (Grid)
                 ((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
@@ -143,7 +143,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
             ViewModel.ShowArtistButton_Click(info);
         }

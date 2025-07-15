@@ -23,8 +23,8 @@ public static class Data
     public static bool IsMusicDownloading { get; set; } = false;
 
     public static string? NavigatePage { get; set; }
-    public static AlbumInfo? SelectedAlbum { get; set; }
-    public static ArtistInfo? SelectedArtist { get; set; }
+    public static LocalAlbumInfo? SelectedAlbum { get; set; }
+    public static LocalArtistInfo? SelectedArtist { get; set; }
 
     /// <summary>
     /// 软件显示名称

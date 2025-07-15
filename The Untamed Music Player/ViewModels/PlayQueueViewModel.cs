@@ -49,10 +49,10 @@ public partial class PlayQueueViewModel : ObservableRecipient
     {
         if (Data.MusicPlayer.SourceMode == 0)
         {
-            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(((BriefSongInfo)info).Album);
-            if (albumInfo is not null)
+            var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(((BriefLocalSongInfo)info).Album);
+            if (localAlbumInfo is not null)
             {
-                Data.SelectedAlbum = albumInfo;
+                Data.SelectedAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(AlbumDetailPage),
@@ -67,12 +67,12 @@ public partial class PlayQueueViewModel : ObservableRecipient
     {
         if (Data.MusicPlayer.SourceMode == 0)
         {
-            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(
-                ((BriefSongInfo)info).Artists[0]
+            var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(
+                ((BriefLocalSongInfo)info).Artists[0]
             );
-            if (artistInfo is not null)
+            if (localArtistInfo is not null)
             {
-                Data.SelectedArtist = artistInfo;
+                Data.SelectedArtist = localArtistInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(ArtistDetailPage),

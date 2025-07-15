@@ -40,7 +40,7 @@
                            TextAlignment="Center" TextTrimming="WordEllipsis"/>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:AlbumInfo">
+        <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:LocalAlbumInfo">
             <Grid Width="170" Height="226"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
