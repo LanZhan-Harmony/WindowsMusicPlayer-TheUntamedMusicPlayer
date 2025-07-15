@@ -17,7 +17,7 @@
         <ThemeShadow x:Name="SharedShadow"/>
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
-        <DataTemplate x:Key="AlbumListViewTemplate" x:DataType="model:BriefAlbumInfo">
+        <DataTemplate x:Key="AlbumListViewTemplate" x:DataType="model:BriefLocalAlbumInfo">
             <UserControl>
                 <Grid x:Name="AlbumListItemGrid"
                       Margin="-15,0,-10,0"
@@ -248,7 +248,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:BriefAlbumInfo">
+        <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:BriefLocalAlbumInfo">
             <Grid Width="170" Height="226"
                   Background="Transparent" PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
