@@ -12,7 +12,7 @@ public partial class AlbumDetailViewModel : ObservableRecipient
 {
     public AlbumInfo Album { get; set; } = Data.SelectedAlbum!;
 
-    public List<IBriefMusicInfoBase> SongList { get; set; }
+    public List<IBriefSongInfoBase> SongList { get; set; }
 
     public AlbumDetailViewModel()
     {
@@ -29,23 +29,23 @@ public partial class AlbumDetailViewModel : ObservableRecipient
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
-        if (e.ClickedItem is IBriefMusicInfoBase info)
+        if (e.ClickedItem is IBriefSongInfoBase info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
         }
     }
 
-    public void PlayButton_Click(IBriefMusicInfoBase info)
+    public void PlayButton_Click(IBriefSongInfoBase info)
     {
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
-    public void PlayNextButton_Click(IBriefMusicInfoBase info)
+    public void PlayNextButton_Click(IBriefSongInfoBase info)
     {
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            var list = new List<IBriefMusicInfoBase> { info };
+            var list = new List<IBriefSongInfoBase> { info };
             Data.MusicPlayer.SetPlayList($"LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
@@ -55,11 +55,11 @@ public partial class AlbumDetailViewModel : ObservableRecipient
         }
     }
 
-    public void ShowArtistButton_Click(IBriefMusicInfoBase info)
+    public void ShowArtistButton_Click(IBriefSongInfoBase info)
     {
-        if (info is BriefMusicInfo musicInfo)
+        if (info is BriefSongInfo SongInfo)
         {
-            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(musicInfo.Artists[0]);
+            var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(SongInfo.Artists[0]);
             if (artistInfo is not null)
             {
                 Data.SelectedArtist = artistInfo;

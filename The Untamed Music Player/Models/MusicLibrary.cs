@@ -49,7 +49,7 @@ public partial class MusicLibrary : ObservableRecipient
     /// <summary>
     /// 歌曲列表
     /// </summary>
-    public ConcurrentBag<BriefMusicInfo> Songs { get; set; } = [];
+    public ConcurrentBag<BriefSongInfo> Songs { get; set; } = [];
 
     /// <summary>
     /// 专辑列表
@@ -144,7 +144,7 @@ public partial class MusicLibrary : ObservableRecipient
                 Genres =
                 [
                     .. _musicGenres
-                        .Keys.Concat(["MusicInfo_AllGenres".GetLocalized()])
+                        .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                         .OrderBy(x => x, new GenreComparer()),
                 ];
                 _musicGenres.Clear();
@@ -195,7 +195,7 @@ public partial class MusicLibrary : ObservableRecipient
             Genres =
             [
                 .. _musicGenres
-                    .Keys.Concat(["MusicInfo_AllGenres".GetLocalized()])
+                    .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                     .OrderBy(x => x, new GenreComparer()),
             ];
             _musicGenres.Clear();
@@ -244,12 +244,12 @@ public partial class MusicLibrary : ObservableRecipient
 
             foreach (var file in supportedFiles)
             {
-                var briefMusicInfo = await BriefMusicInfo.CreateAsync(file.Path, foldername);
-                Songs.Add(briefMusicInfo);
-                _musicGenres.TryAdd(briefMusicInfo.GenreStr, 0);
-                UpdateAlbumInfo(briefMusicInfo);
-                UpdateArtistInfo(briefMusicInfo);
-                briefMusicInfo.Cover = null;
+                var briefSongInfo = await BriefSongInfo.CreateAsync(file.Path, foldername);
+                Songs.Add(briefSongInfo);
+                _musicGenres.TryAdd(briefSongInfo.GenreStr, 0);
+                UpdateAlbumInfo(briefSongInfo);
+                UpdateArtistInfo(briefSongInfo);
+                briefSongInfo.Cover = null;
             }
 
             // 等待所有子文件夹的扫描任务完成
@@ -261,33 +261,33 @@ public partial class MusicLibrary : ObservableRecipient
         }
     }
 
-    private void UpdateAlbumInfo(BriefMusicInfo briefMusicInfo)
+    private void UpdateAlbumInfo(BriefSongInfo briefSongInfo)
     {
-        var album = briefMusicInfo.Album;
+        var album = briefSongInfo.Album;
 
         if (!Albums.TryGetValue(album, out var albumInfo))
         {
-            albumInfo = new AlbumInfo(briefMusicInfo);
+            albumInfo = new AlbumInfo(briefSongInfo);
             Albums[album] = albumInfo;
         }
         else
         {
-            albumInfo.Update(briefMusicInfo);
+            albumInfo.Update(briefSongInfo);
         }
     }
 
-    private void UpdateArtistInfo(BriefMusicInfo briefMusicInfo)
+    private void UpdateArtistInfo(BriefSongInfo briefSongInfo)
     {
-        foreach (var artist in briefMusicInfo.Artists)
+        foreach (var artist in briefSongInfo.Artists)
         {
             if (!Artists.TryGetValue(artist, out var artistInfo))
             {
-                artistInfo = new ArtistInfo(briefMusicInfo, artist);
+                artistInfo = new ArtistInfo(briefSongInfo, artist);
                 Artists[artist] = artistInfo;
             }
             else
             {
-                artistInfo.Update(briefMusicInfo);
+                artistInfo.Update(briefSongInfo);
             }
         }
     }
@@ -382,13 +382,13 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="albumInfo"></param>
     /// <returns></returns>
-    public IOrderedEnumerable<BriefMusicInfo> GetSongsByAlbum(AlbumInfo albumInfo) =>
+    public IOrderedEnumerable<BriefSongInfo> GetSongsByAlbum(AlbumInfo albumInfo) =>
         Songs.Where(m => m.Album == albumInfo.Name).OrderBy(m => m.Title, new TitleComparer());
 
     /// <summary>
     /// 根据歌曲信息获取专辑信息
     /// </summary>
-    /// <param name="briefMusicInfo"></param>
+    /// <param name="briefSongInfo"></param>
     /// <returns></returns>
     public AlbumInfo? GetAlbumInfoBySong(string album) =>
         Albums.TryGetValue(album, out var albumInfo) ? albumInfo : null;
@@ -410,7 +410,7 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="artistInfo"></param>
     /// <returns></returns>
-    public ObservableCollection<BriefMusicInfo> GetSongsByArtist(ArtistInfo artistInfo) =>
+    public ObservableCollection<BriefSongInfo> GetSongsByArtist(ArtistInfo artistInfo) =>
         [
             .. artistInfo
                 .Albums.OrderBy(album => album, new AlbumTitleComparer())
@@ -420,7 +420,7 @@ public partial class MusicLibrary : ObservableRecipient
     /// <summary>
     /// 根据歌曲信息获取艺术家信息
     /// </summary>
-    /// <param name="briefMusicInfo"></param>
+    /// <param name="briefSongInfo"></param>
     /// <returns></returns>
     public ArtistInfo? GetArtistInfoBySong(string artist) =>
         Artists.TryGetValue(artist, out var artistInfo) ? artistInfo : null;

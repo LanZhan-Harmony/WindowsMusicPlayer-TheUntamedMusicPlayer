@@ -7,17 +7,17 @@ namespace The_Untamed_Music_Player.Controls;
 
 public sealed partial class PropertiesDialog : ContentDialog
 {
-    public IDetailedMusicInfoBase Music { get; set; }
+    public IDetailedSongInfoBase Song { get; set; }
 
-    public PropertiesDialog(IDetailedMusicInfoBase music)
+    public PropertiesDialog(IDetailedSongInfoBase song)
     {
-        Music = music;
+        Song = song;
         InitializeComponent();
     }
 
     private void OpenFileLocationButton_Click(object sender, RoutedEventArgs e)
     {
-        var filePath = Music.Path;
+        var filePath = Song.Path;
         if (filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase))
         {
             Process.Start(new ProcessStartInfo { FileName = filePath, UseShellExecute = true });

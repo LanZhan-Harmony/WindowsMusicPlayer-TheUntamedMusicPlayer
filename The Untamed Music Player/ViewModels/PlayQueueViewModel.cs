@@ -14,42 +14,42 @@ public partial class PlayQueueViewModel : ObservableRecipient
 
     public void PlayQueueListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is IBriefMusicInfoBase info)
+        if (e.ClickedItem is IBriefSongInfoBase info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
         }
     }
 
-    public void PlayButton_Click(IBriefMusicInfoBase info)
+    public void PlayButton_Click(IBriefSongInfoBase info)
     {
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
-    public void PlayNextButton_Click(IBriefMusicInfoBase info)
+    public void PlayNextButton_Click(IBriefSongInfoBase info)
     {
         Data.MusicPlayer.AddSongToNextPlay(info);
     }
 
-    public async void RemoveButton_Click(IBriefMusicInfoBase info)
+    public async void RemoveButton_Click(IBriefSongInfoBase info)
     {
         await Data.MusicPlayer.RemoveSong(info);
     }
 
-    public void MoveUpButton_Click(IBriefMusicInfoBase info)
+    public void MoveUpButton_Click(IBriefSongInfoBase info)
     {
         Data.MusicPlayer.MoveUpSong(info);
     }
 
-    public void MoveDownButton_Click(IBriefMusicInfoBase info)
+    public void MoveDownButton_Click(IBriefSongInfoBase info)
     {
         Data.MusicPlayer.MoveDownSong(info);
     }
 
-    public void ShowAlbumButton_Click(IBriefMusicInfoBase info)
+    public void ShowAlbumButton_Click(IBriefSongInfoBase info)
     {
         if (Data.MusicPlayer.SourceMode == 0)
         {
-            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(((BriefMusicInfo)info).Album);
+            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(((BriefSongInfo)info).Album);
             if (albumInfo is not null)
             {
                 Data.SelectedAlbum = albumInfo;
@@ -63,12 +63,12 @@ public partial class PlayQueueViewModel : ObservableRecipient
         }
     }
 
-    public void ShowArtistButton_Click(IBriefMusicInfoBase info)
+    public void ShowArtistButton_Click(IBriefSongInfoBase info)
     {
         if (Data.MusicPlayer.SourceMode == 0)
         {
             var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(
-                ((BriefMusicInfo)info).Artists[0]
+                ((BriefSongInfo)info).Artists[0]
             );
             if (artistInfo is not null)
             {

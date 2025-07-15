@@ -385,7 +385,7 @@ public sealed partial class ArtistDetailPage : Page
 
     private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is IBriefMusicInfoBase info)
+        if (e.ClickedItem is IBriefSongInfoBase info)
         {
             ViewModel.SongListView_ItemClick(info);
         }
@@ -393,7 +393,7 @@ public sealed partial class ArtistDetailPage : Page
 
     private void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.SongListViewPlayButton_Click(info);
         }
@@ -401,7 +401,7 @@ public sealed partial class ArtistDetailPage : Page
 
     private void SongListViewPlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.SongListViewPlayNextButton_Click(info);
         }
@@ -411,12 +411,12 @@ public sealed partial class ArtistDetailPage : Page
 
     private async void SongListViewPropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
-            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info);
-            if (music is not null)
+            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            if (song is not null)
             {
-                var dialog = new PropertiesDialog(music) { XamlRoot = XamlRoot };
+                var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
                 await dialog.ShowAsync();
             }
         }
@@ -424,7 +424,7 @@ public sealed partial class ArtistDetailPage : Page
 
     private void SongListViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.SongListViewShowAlbumButton_Click(info);
         }

@@ -11,10 +11,10 @@ using Windows.Storage.Streams;
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
 [MemoryPackable]
-public partial class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
+public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
 {
-    protected static readonly string _unknownAlbum = "MusicInfo_UnknownAlbum".GetLocalized();
-    protected static readonly string _unknownArtist = "MusicInfo_UnknownArtist".GetLocalized();
+    protected static readonly string _unknownAlbum = "SongInfo_UnknownAlbum".GetLocalized();
+    protected static readonly string _unknownArtist = "SongInfo_UnknownArtist".GetLocalized();
 
     public int PlayQueueIndex { get; set; } = -1;
     public bool IsPlayAvailable { get; set; } = false;
@@ -29,14 +29,14 @@ public partial class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
     public string GenreStr { get; set; } = "";
 
     [MemoryPackConstructor]
-    public CloudBriefOnlineMusicInfo() { }
+    public CloudBriefOnlineSongInfo() { }
 
-    public static async Task<CloudBriefOnlineMusicInfo> CreateAsync(
+    public static async Task<CloudBriefOnlineSongInfo> CreateAsync(
         JsonElement jInfo,
         NeteaseCloudMusicApi api
     )
     {
-        var info = new CloudBriefOnlineMusicInfo();
+        var info = new CloudBriefOnlineSongInfo();
         try
         {
             info.ID = jInfo.GetProperty("id").GetInt64();
@@ -65,11 +65,11 @@ public partial class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
                     .Distinct()
                     .DefaultIfEmpty(_unknownArtist),
             ];
-            info.ArtistsStr = IBriefMusicInfoBase.GetArtistsStr(artists);
-            info.DurationStr = IBriefMusicInfoBase.GetDurationStr(
+            info.ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
+            info.DurationStr = IBriefSongInfoBase.GetDurationStr(
                 TimeSpan.FromMilliseconds(jInfo.GetProperty("duration").GetInt64())
             );
-            info.YearStr = IBriefMusicInfoBase.GetYearStr(
+            info.YearStr = IBriefSongInfoBase.GetYearStr(
                 (ushort)
                     DateTimeOffset
                         .FromUnixTimeMilliseconds(
@@ -94,7 +94,7 @@ public partial class CloudBriefOnlineMusicInfo : IBriefOnlineMusicInfo
     }
 }
 
-public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailedOnlineMusicInfo
+public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOnlineSongInfo
 {
     public bool IsOnline { get; set; } = true;
     public string AlbumArtistsStr { get; set; } = "";
@@ -106,11 +106,11 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
     public string Track { get; set; } = "";
     public string Lyric { get; set; } = "";
 
-    public CloudDetailedOnlineMusicInfo() { }
+    public CloudDetailedOnlineSongInfo() { }
 
-    public static async Task<CloudDetailedOnlineMusicInfo> CreateAsync(IBriefOnlineMusicInfo info)
+    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(IBriefOnlineSongInfo info)
     {
-        var detailedInfo = new CloudDetailedOnlineMusicInfo
+        var detailedInfo = new CloudDetailedOnlineSongInfo
         {
             IsPlayAvailable = info.IsPlayAvailable,
             ID = info.ID,
@@ -155,12 +155,12 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
                         .Select(t => (string)t!["name"]!)
                         .Distinct(),
                 ];
-                detailedInfo.AlbumArtistsStr = IDetailedMusicInfoBase.GetAlbumArtistsStr(
+                detailedInfo.AlbumArtistsStr = IDetailedSongInfoBase.GetAlbumArtistsStr(
                     albumArtists
                 );
             }
             detailedInfo.ArtistsStr = info.ArtistsStr == _unknownArtist ? "" : info.ArtistsStr;
-            detailedInfo.ArtistAndAlbumStr = IDetailedMusicInfoBase.GetArtistAndAlbumStr(
+            detailedInfo.ArtistAndAlbumStr = IDetailedSongInfoBase.GetArtistAndAlbumStr(
                 detailedInfo.Album,
                 detailedInfo.ArtistsStr
             );
@@ -189,7 +189,7 @@ public class CloudDetailedOnlineMusicInfo : CloudBriefOnlineMusicInfo, IDetailed
         }
     }
 
-    private static async Task<bool> LoadCoverAsync(CloudDetailedOnlineMusicInfo info)
+    private static async Task<bool> LoadCoverAsync(CloudDetailedOnlineSongInfo info)
     {
         using var httpClient = new HttpClient();
         var coverBuffer = await httpClient.GetByteArrayAsync(info.CoverUrl);

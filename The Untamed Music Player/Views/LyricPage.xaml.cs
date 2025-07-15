@@ -21,7 +21,7 @@ public sealed partial class LyricPage : Page, IDisposable
         // 设置 ContentGridBackground 的绑定
         /*var contentGridBinding = new Binding
         {
-            Path = new PropertyPath("CurrentMusic.Cover"),
+            Path = new PropertyPath("CurrentSong.Cover"),
             Source = Data.MusicPlayer,
             Mode = BindingMode.OneWay
         };
