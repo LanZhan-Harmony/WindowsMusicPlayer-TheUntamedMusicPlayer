@@ -12,7 +12,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="SongListViewTemplate" x:DataType="contract:IBriefOnlineMusicInfo">
+        <DataTemplate x:Key="SongListViewTemplate" x:DataType="contract:IBriefOnlineSongInfo">
             <Grid Height="52"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -101,7 +101,7 @@
                 <TextBlock Grid.Column="2"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind Title}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
@@ -109,7 +109,7 @@
                         Background="Transparent"
                         BorderBrush="Transparent">
                     <TextBlock FontSize="12"
-                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind ArtistsStr}"
                                TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
@@ -118,7 +118,7 @@
                         Background="Transparent"
                         BorderBrush="Transparent">
                     <TextBlock FontSize="12"
-                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind Album}"
                                TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{x:Bind Album}"/>
@@ -127,7 +127,7 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
@@ -136,7 +136,7 @@
                            HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentMusic, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind DurationStr}"
                            TextTrimming="CharacterEllipsis"/>
             </Grid>
@@ -170,7 +170,7 @@
                   IsItemClickEnabled="True"
                   ItemClick="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongsSongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
-                  ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineMusicInfoList, Mode=OneWay}"
+                  ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
                   Opacity="{x:Bind model:Data.OnlineMusicLibrary.ListViewOpacity, Mode=OneWay}"
                   SelectionMode="None">
             <ListView.Footer>

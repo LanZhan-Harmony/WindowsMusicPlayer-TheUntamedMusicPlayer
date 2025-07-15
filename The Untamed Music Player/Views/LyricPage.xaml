@@ -88,7 +88,7 @@
               Grid.Row="1" Grid.ColumnSpan="2">
             <Grid.Background>
                 <ImageBrush x:Name="ContentGridBackground"
-                            ImageSource="{x:Bind model:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"
+                            ImageSource="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"
                             Stretch="UniformToFill"/>
             </Grid.Background>
             <Grid x:Name="SecondaryContentGrid">
@@ -106,7 +106,7 @@
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                Canvas.ZIndex="1"
-                               Source="{x:Bind model:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"/>
+                               Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"/>
                         <Grid x:Name="ControllerCoverGrid"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">

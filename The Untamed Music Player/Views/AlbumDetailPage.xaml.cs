@@ -313,7 +313,7 @@ public sealed partial class AlbumDetailPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.PlayButton_Click(info);
         }
@@ -321,7 +321,7 @@ public sealed partial class AlbumDetailPage : Page
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.PlayNextButton_Click(info);
         }
@@ -331,12 +331,12 @@ public sealed partial class AlbumDetailPage : Page
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
-            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(info);
-            if (music is not null)
+            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            if (song is not null)
             {
-                var dialog = new PropertiesDialog(music) { XamlRoot = XamlRoot };
+                var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
                 await dialog.ShowAsync();
             }
         }
@@ -344,7 +344,7 @@ public sealed partial class AlbumDetailPage : Page
 
     private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.ShowArtistButton_Click(info);
         }

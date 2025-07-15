@@ -170,7 +170,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
                 .OfType<AlbumInfo>()
                 .OrderBy(m => m.Name, new AlbumTitleComparer())
                 .GroupBy(m =>
-                    m.Name == "MusicInfo_UnknownAlbum".GetLocalized()
+                    m.Name == "SongInfo_UnknownAlbum".GetLocalized()
                         ? "..."
                         : TitleComparer.GetGroupKey(m.Name[0])
                 )
@@ -189,7 +189,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
                 .OfType<AlbumInfo>()
                 .OrderByDescending(m => m.Name, new AlbumTitleComparer())
                 .GroupBy(m =>
-                    m.Name == "MusicInfo_UnknownAlbum".GetLocalized()
+                    m.Name == "SongInfo_UnknownAlbum".GetLocalized()
                         ? "..."
                         : TitleComparer.GetGroupKey(m.Name[0])
                 )
@@ -331,7 +331,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
     public void PlayButton_Click(AlbumInfo info)
     {
         var tempList = Data.MusicLibrary.GetSongsByAlbum(info);
-        var songList = new List<BriefMusicInfo>(tempList);
+        var songList = new List<BriefSongInfo>(tempList);
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, SortMode);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
@@ -339,7 +339,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
     public void PlayNextButton_Click(AlbumInfo info)
     {
         var tempList = Data.MusicLibrary.GetSongsByAlbum(info);
-        var songList = new List<BriefMusicInfo>(tempList);
+        var songList = new List<BriefSongInfo>(tempList);
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, 0);

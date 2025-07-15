@@ -60,7 +60,7 @@ public sealed partial class PlayQueuePage : Page
 
     private void PlayButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.PlayButton_Click(info);
         }
@@ -68,7 +68,7 @@ public sealed partial class PlayQueuePage : Page
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.PlayNextButton_Click(info);
         }
@@ -76,7 +76,7 @@ public sealed partial class PlayQueuePage : Page
 
     private void RemoveButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.RemoveButton_Click(info);
         }
@@ -84,7 +84,7 @@ public sealed partial class PlayQueuePage : Page
 
     private void MoveUpButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.MoveUpButton_Click(info);
         }
@@ -92,7 +92,7 @@ public sealed partial class PlayQueuePage : Page
 
     private void MoveDownButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.MoveDownButton_Click(info);
         }
@@ -100,20 +100,20 @@ public sealed partial class PlayQueuePage : Page
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
-            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(
+            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
                 info,
                 Data.MusicPlayer.SourceMode
             );
-            var dialog = new PropertiesDialog(music) { XamlRoot = XamlRoot };
+            var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }
 
     private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.ShowAlbumButton_Click(info);
         }
@@ -121,7 +121,7 @@ public sealed partial class PlayQueuePage : Page
 
     private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefMusicInfoBase info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.ShowArtistButton_Click(info);
         }

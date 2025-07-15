@@ -354,13 +354,13 @@
   <data name="LocalAlbums_SortBy" xml:space="preserve">
     <value>A - Z, Z - A, Release year (Asc), Release year (Desc), Artist (Asc), Artist (Desc), Date added (Asc), Date added (Desc)</value>
   </data>
-  <data name="MusicInfo_UnknownArtist" xml:space="preserve">
+  <data name="SongInfo_UnknownArtist" xml:space="preserve">
     <value>Unknown artist</value>
   </data>
-  <data name="MusicInfo_UnknownGenre" xml:space="preserve">
+  <data name="SongInfo_UnknownGenre" xml:space="preserve">
     <value>Unknown genre</value>
   </data>
-  <data name="MusicInfo_UnknownAlbum" xml:space="preserve">
+  <data name="SongInfo_UnknownAlbum" xml:space="preserve">
     <value>Unknown album</value>
   </data>
   <data name="LocalSongs_SortByChosen.Text" xml:space="preserve">
@@ -480,7 +480,7 @@
   <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
     <value>Full screen</value>
   </data>
-  <data name="MusicInfo_AllGenres" xml:space="preserve">
+  <data name="SongInfo_AllGenres" xml:space="preserve">
     <value>All genres</value>
   </data>
   <data name="LocalSongs_IndexingLibraries.Text" xml:space="preserve">

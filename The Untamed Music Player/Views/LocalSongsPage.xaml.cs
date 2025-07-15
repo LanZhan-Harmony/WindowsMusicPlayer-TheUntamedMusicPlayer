@@ -66,9 +66,9 @@ public sealed partial class LocalSongsPage : Page
             _scrollViewer.ChangeView(null, ViewModel.ScrollViewerVerticalOffset, null, true);
         }
 
-        /*if (Data.MusicPlayer.CurrentMusic is not null && sender is ListView listView)
+        /*if (Data.MusicPlayer.CurrentSong is not null && sender is ListView listView)
         {
-            var path = Data.MusicPlayer.CurrentMusic.Path;
+            var path = Data.MusicPlayer.CurrentSong.Path;
             var item = Data.MusicLibrary.Songs.FirstOrDefault(x => x.Path == path);
             if (item is not null)
             {
@@ -81,7 +81,7 @@ public sealed partial class LocalSongsPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefMusicInfo info })
+        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
         {
             ViewModel.PlayButton_Click(info);
         }
@@ -89,7 +89,7 @@ public sealed partial class LocalSongsPage : Page
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefMusicInfo info })
+        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
         {
             ViewModel.PlayNextButton_Click(info);
         }
@@ -99,17 +99,17 @@ public sealed partial class LocalSongsPage : Page
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefMusicInfo info })
+        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
         {
-            var music = new DetailedMusicInfo(info);
-            var dialog = new PropertiesDialog(music) { XamlRoot = XamlRoot };
+            var song = new DetailedSongInfo(info);
+            var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }
 
     private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefMusicInfo info })
+        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
         {
             ViewModel.ShowAlbumButton_Click(info);
         }
@@ -117,7 +117,7 @@ public sealed partial class LocalSongsPage : Page
 
     private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefMusicInfo info })
+        if (sender is FrameworkElement { DataContext: BriefSongInfo info })
         {
             ViewModel.ShowArtistButton_Click(info);
         }

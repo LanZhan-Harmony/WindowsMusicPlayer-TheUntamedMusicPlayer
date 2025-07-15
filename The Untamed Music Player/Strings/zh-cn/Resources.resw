@@ -354,13 +354,13 @@
   <data name="LocalAlbums_SortBy" xml:space="preserve">
     <value>A-Z, Z-A, 发行年份 (升序), 发行年份 (降序), 歌手 (升序), 歌手 (降序), 已添加日期 (升序), 已添加日期 (降序)</value>
   </data>
-  <data name="MusicInfo_UnknownArtist" xml:space="preserve">
+  <data name="SongInfo_UnknownArtist" xml:space="preserve">
     <value>未知艺术家</value>
   </data>
-  <data name="MusicInfo_UnknownGenre" xml:space="preserve">
+  <data name="SongInfo_UnknownGenre" xml:space="preserve">
     <value>未知流派</value>
   </data>
-  <data name="MusicInfo_UnknownAlbum" xml:space="preserve">
+  <data name="SongInfo_UnknownAlbum" xml:space="preserve">
     <value>未知专辑</value>
   </data>
   <data name="LocalSongs_SortByChosen.Text" xml:space="preserve">
@@ -480,7 +480,7 @@
   <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
     <value>全屏</value>
   </data>
-  <data name="MusicInfo_AllGenres" xml:space="preserve">
+  <data name="SongInfo_AllGenres" xml:space="preserve">
     <value>所有流派</value>
   </data>
   <data name="LocalSongs_IndexingLibraries.Text" xml:space="preserve">

@@ -29,7 +29,7 @@
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock IsTextSelectionEnabled="True"
-                                   Text="{x:Bind Music.Title}"
+                                   Text="{x:Bind Song.Title}"
                                    TextWrapping="WrapWholeWords"/>
                     </StackPanel>
                     <StackPanel Margin="0,30,0,0">
@@ -37,28 +37,28 @@
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock IsTextSelectionEnabled="True"
-                                   Text="{x:Bind Music.Album}"
+                                   Text="{x:Bind Song.Album}"
                                    TextWrapping="WrapWholeWords"/>
                     </StackPanel>
                     <StackPanel Margin="0,18,0,0">
                         <TextBlock x:Uid="PropertiesDialog_Track"
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Music.Track}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Song.Track}"/>
                     </StackPanel>
                     <StackPanel Margin="0,18,0,0">
                         <TextBlock x:Uid="PropertiesDialog_Genre"
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock IsTextSelectionEnabled="True"
-                                   Text="{x:Bind Music.GenreStr}"
+                                   Text="{x:Bind Song.GenreStr}"
                                    TextWrapping="WrapWholeWords"/>
                     </StackPanel>
                     <StackPanel Margin="0,18,0,0">
                         <TextBlock x:Uid="PropertiesDialog_Bitrate"
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Music.BitRate}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Song.BitRate}"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="2"
@@ -68,7 +68,7 @@
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock IsTextSelectionEnabled="True"
-                                   Text="{x:Bind Music.ArtistsStr}"
+                                   Text="{x:Bind Song.ArtistsStr}"
                                    TextWrapping="WrapWholeWords"/>
                     </StackPanel>
                     <StackPanel Margin="0,30,0,0">
@@ -76,26 +76,26 @@
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock IsTextSelectionEnabled="True"
-                                   Text="{x:Bind Music.AlbumArtistsStr}"
+                                   Text="{x:Bind Song.AlbumArtistsStr}"
                                    TextWrapping="WrapWholeWords"/>
                     </StackPanel>
                     <StackPanel Margin="0,18,0,0">
                         <TextBlock x:Uid="PropertiesDialog_Length"
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Music.DurationStr}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Song.DurationStr}"/>
                     </StackPanel>
                     <StackPanel Margin="0,18,0,0">
                         <TextBlock x:Uid="PropertiesDialog_Year"
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Music.YearStr}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Song.YearStr}"/>
                     </StackPanel>
                     <StackPanel Margin="0,18,0,0">
                         <TextBlock x:Uid="PropertiesDialog_ItemType"
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Music.ItemType}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Song.ItemType}"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="3"
@@ -105,7 +105,7 @@
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock IsTextSelectionEnabled="True"
-                                   Text="{x:Bind Music.Path}"
+                                   Text="{x:Bind Song.Path}"
                                    TextWrapping="WrapWholeWords"/>
                     </StackPanel>
                 </StackPanel>

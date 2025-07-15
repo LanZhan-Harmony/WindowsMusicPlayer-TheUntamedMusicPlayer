@@ -172,7 +172,7 @@ internal abstract class BaseArtistComparer<T> : IComparer<T>
 
     protected static int GetGroupPriority(string property)
     {
-        if (property == "MusicInfo_UnknownArtist".GetLocalized())
+        if (property == "SongInfo_UnknownArtist".GetLocalized())
         {
             return 0;
         }
@@ -198,9 +198,9 @@ internal abstract class BaseArtistComparer<T> : IComparer<T>
 /// <summary>
 /// 艺术家比较器（用于歌曲:艺术家）
 /// </summary>
-internal class MusicArtistComparer : BaseArtistComparer<BriefMusicInfo>
+internal class MusicArtistComparer : BaseArtistComparer<BriefSongInfo>
 {
-    public override int Compare(BriefMusicInfo? x, BriefMusicInfo? y)
+    public override int Compare(BriefSongInfo? x, BriefSongInfo? y)
     {
         return CompareByProperty(x?.ArtistsStr, y?.ArtistsStr, x?.Title, y?.Title);
     }
@@ -261,7 +261,7 @@ internal class ArtistTitleComparer : IComparer<string>
 
     protected static int GetGroupPriority(string property)
     {
-        if (property == "MusicInfo_UnknownArtist".GetLocalized())
+        if (property == "SongInfo_UnknownArtist".GetLocalized())
         {
             return 0;
         }
@@ -287,9 +287,9 @@ internal class ArtistTitleComparer : IComparer<string>
 /// <summary>
 /// 专辑比较器(用于歌曲:专辑)
 /// </summary>
-internal class MusicAlbumComparer : IComparer<BriefMusicInfo>
+internal class MusicAlbumComparer : IComparer<BriefSongInfo>
 {
-    public int Compare(BriefMusicInfo? x, BriefMusicInfo? y)
+    public int Compare(BriefSongInfo? x, BriefSongInfo? y)
     {
         return CompareByProperty(x?.Album, y?.Album, x?.Title, y?.Title);
     }
@@ -342,7 +342,7 @@ internal class MusicAlbumComparer : IComparer<BriefMusicInfo>
 
     private static int GetGroupPriority(string property)
     {
-        if (property == "MusicInfo_UnknownAlbum".GetLocalized())
+        if (property == "SongInfo_UnknownAlbum".GetLocalized())
         {
             return 0;
         }
@@ -408,7 +408,7 @@ internal class AlbumTitleComparer : IComparer<string>
 
     private static int GetGroupPriority(string property)
     {
-        if (property == "MusicInfo_UnknownAlbum".GetLocalized())
+        if (property == "SongInfo_UnknownAlbum".GetLocalized())
         {
             return 0;
         }
@@ -434,9 +434,9 @@ internal class AlbumTitleComparer : IComparer<string>
 /// <summary>
 /// 文件夹比较器(用于歌曲:文件夹)
 /// </summary>
-internal class MusicFolderComparer : IComparer<BriefMusicInfo>
+internal class MusicFolderComparer : IComparer<BriefSongInfo>
 {
-    public int Compare(BriefMusicInfo? x, BriefMusicInfo? y)
+    public int Compare(BriefSongInfo? x, BriefSongInfo? y)
     {
         return CompareByProperty(x?.Folder, y?.Folder, x?.Title, y?.Title);
     }
@@ -512,11 +512,11 @@ internal class GenreComparer : IComparer<string>
 
     private static int GetGroupPriority(string property)
     {
-        if (property == "MusicInfo_AllGenres".GetLocalized())
+        if (property == "SongInfo_AllGenres".GetLocalized())
         {
             return 0;
         }
-        else if (property == "MusicInfo_UnknownGenre".GetLocalized())
+        else if (property == "SongInfo_UnknownGenre".GetLocalized())
         {
             return 1;
         }

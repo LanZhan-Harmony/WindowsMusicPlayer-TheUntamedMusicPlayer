@@ -32,7 +32,7 @@ public class ArtistDetailViewModel
         Data.MusicPlayer.PlaySongByInfo(AlbumList[0].SongList[0]);
     }
 
-    public void SongListView_ItemClick(IBriefMusicInfoBase info)
+    public void SongListView_ItemClick(IBriefSongInfoBase info)
     {
         Data.MusicPlayer.SetPlayList(
             $"LocalSongs:Artist:{Artist.Name}",
@@ -43,7 +43,7 @@ public class ArtistDetailViewModel
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
-    public void SongListViewPlayButton_Click(IBriefMusicInfoBase info)
+    public void SongListViewPlayButton_Click(IBriefSongInfoBase info)
     {
         Data.MusicPlayer.SetPlayList(
             $"LocalSongs:Artist:{Artist.Name}",
@@ -54,11 +54,11 @@ public class ArtistDetailViewModel
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
-    public void SongListViewPlayNextButton_Click(IBriefMusicInfoBase info)
+    public void SongListViewPlayNextButton_Click(IBriefSongInfoBase info)
     {
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            var list = new List<IBriefMusicInfoBase> { info };
+            var list = new List<IBriefSongInfoBase> { info };
             Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
@@ -68,11 +68,11 @@ public class ArtistDetailViewModel
         }
     }
 
-    public void SongListViewShowAlbumButton_Click(IBriefMusicInfoBase info)
+    public void SongListViewShowAlbumButton_Click(IBriefSongInfoBase info)
     {
-        if (info is BriefMusicInfo musicInfo)
+        if (info is BriefSongInfo SongInfo)
         {
-            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(musicInfo.Album);
+            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(SongInfo.Album);
             if (albumInfo is not null)
             {
                 Data.SelectedAlbum = albumInfo;
@@ -107,7 +107,7 @@ public class ArtistDetailViewModel
         }
     }
 
-    private List<IBriefMusicInfoBase> ConvertAllSongsToFlatList()
+    private List<IBriefSongInfoBase> ConvertAllSongsToFlatList()
     {
         return [.. AlbumList.SelectMany(album => album.SongList)];
     }

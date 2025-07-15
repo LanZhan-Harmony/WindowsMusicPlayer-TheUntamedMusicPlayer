@@ -90,13 +90,13 @@ public sealed partial class RootPlayBarView : Page
         };
     }
 
-    public Visibility GetArtistAndAlbumStrVisibility(IDetailedMusicInfoBase? detailedmusicinfo)
+    public Visibility GetArtistAndAlbumStrVisibility(IDetailedSongInfoBase? detailedSongInfo)
     {
-        if (detailedmusicinfo is null)
+        if (detailedSongInfo is null)
         {
             return Visibility.Collapsed;
         }
-        return detailedmusicinfo.ArtistAndAlbumStr == ""
+        return detailedSongInfo.ArtistAndAlbumStr == ""
             ? Visibility.Collapsed
             : Visibility.Visible;
     }
@@ -197,7 +197,7 @@ public sealed partial class RootPlayBarView : Page
 
     private async void PlayBarProperty_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new PropertiesDialog(Data.MusicPlayer.CurrentMusic!) { XamlRoot = XamlRoot };
+        var dialog = new PropertiesDialog(Data.MusicPlayer.CurrentSong!) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
     }
 }

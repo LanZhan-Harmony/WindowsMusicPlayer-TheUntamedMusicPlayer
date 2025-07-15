@@ -60,7 +60,7 @@ public sealed partial class OnlineSongsPage : Page
         _scrollViewer.ViewChanged += async (s, e) =>
         {
             if (
-                !Data.OnlineMusicLibrary.OnlineMusicInfoList.HasAllLoaded
+                !Data.OnlineMusicLibrary.OnlineSongInfoList.HasAllLoaded
                 && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
                     >= _scrollViewer.ExtentHeight - 50
             )
@@ -73,7 +73,7 @@ public sealed partial class OnlineSongsPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
             Data.OnlineMusicLibrary.OnlineSongsPlayButton_Click(info);
         }
@@ -81,7 +81,7 @@ public sealed partial class OnlineSongsPage : Page
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
             Data.OnlineMusicLibrary.OnlineSongsPlayNextButton_Click(info);
         }
@@ -89,7 +89,7 @@ public sealed partial class OnlineSongsPage : Page
 
     private void DownloadButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
             Data.OnlineMusicLibrary.OnlineSongsDownloadButton_Click(info);
         }
@@ -97,13 +97,13 @@ public sealed partial class OnlineSongsPage : Page
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefOnlineMusicInfo info })
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            var music = await IDetailedMusicInfoBase.CreateDetailedMusicInfoAsync(
+            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
                 info,
                 (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1)
             );
-            var dialog = new PropertiesDialog(music) { XamlRoot = XamlRoot };
+            var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }
