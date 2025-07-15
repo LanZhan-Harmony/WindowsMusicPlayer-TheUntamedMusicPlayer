@@ -150,12 +150,12 @@ public class FileManager
             }
 
             // 并行加载所有数据文件
-            var songsTask = LoadObjectFromFileAsync<BriefSongInfo[]>(libraryFolder, "Songs");
-            var albumsTask = LoadObjectFromFileAsync<Dictionary<string, AlbumInfo>>(
+            var songsTask = LoadObjectFromFileAsync<BriefLocalSongInfo[]>(libraryFolder, "Songs");
+            var albumsTask = LoadObjectFromFileAsync<Dictionary<string, LocalAlbumInfo>>(
                 libraryFolder,
                 "Albums"
             );
-            var artistsTask = LoadObjectFromFileAsync<Dictionary<string, ArtistInfo>>(
+            var artistsTask = LoadObjectFromFileAsync<Dictionary<string, LocalArtistInfo>>(
                 libraryFolder,
                 "Artists"
             );
@@ -180,8 +180,8 @@ public class FileManager
 
             // 填充数据结构
             data.Songs = [.. songsArray];
-            data.Albums = new ConcurrentDictionary<string, AlbumInfo>(albumsDict);
-            data.Artists = new ConcurrentDictionary<string, ArtistInfo>(artistsDict);
+            data.Albums = new ConcurrentDictionary<string, LocalAlbumInfo>(albumsDict);
+            data.Artists = new ConcurrentDictionary<string, LocalArtistInfo>(artistsDict);
             data.Genres = [.. genresArray];
 
             // 并行加载所有专辑封面
@@ -369,17 +369,17 @@ public class FileManager
 /// </summary>
 public class MusicLibraryData
 {
-    public ConcurrentBag<BriefSongInfo> Songs { get; set; } = null!;
-    public ConcurrentDictionary<string, AlbumInfo> Albums { get; set; } = null!;
-    public ConcurrentDictionary<string, ArtistInfo> Artists { get; set; } = null!;
+    public ConcurrentBag<BriefLocalSongInfo> Songs { get; set; } = null!;
+    public ConcurrentDictionary<string, LocalAlbumInfo> Albums { get; set; } = null!;
+    public ConcurrentDictionary<string, LocalArtistInfo> Artists { get; set; } = null!;
     public List<string> Genres { get; set; } = null!;
 
     public MusicLibraryData() { }
 
     public MusicLibraryData(
-        ConcurrentBag<BriefSongInfo> songs,
-        ConcurrentDictionary<string, AlbumInfo> albums,
-        ConcurrentDictionary<string, ArtistInfo> artists,
+        ConcurrentBag<BriefLocalSongInfo> songs,
+        ConcurrentDictionary<string, LocalAlbumInfo> albums,
+        ConcurrentDictionary<string, LocalArtistInfo> artists,
         List<string> genres
     )
     {

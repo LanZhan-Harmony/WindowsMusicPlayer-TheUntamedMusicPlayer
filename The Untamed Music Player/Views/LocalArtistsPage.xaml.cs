@@ -59,7 +59,7 @@ public sealed partial class LocalArtistsPage : Page
 
     private void ArtistGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is ArtistInfo artistInfo)
+        if (e.ClickedItem is LocalArtistInfo localArtistInfo)
         {
             var grid = (Grid)
                 (
@@ -69,7 +69,7 @@ public sealed partial class LocalArtistsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedArtist = artistInfo;
+            Data.SelectedArtist = localArtistInfo;
             Data.NavigatePage = "LocalArtistsPage";
             Data.ShellPage!.GetFrame()
                 .Navigate(

@@ -35,7 +35,7 @@
                            TextTrimming="WordEllipsis"/>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="ArtistGridViewTemplate" x:DataType="model:ArtistInfo">
+        <DataTemplate x:Key="ArtistGridViewTemplate" x:DataType="model:LocalArtistInfo">
             <Grid Width="170" Height="226"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
