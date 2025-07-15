@@ -3,19 +3,19 @@ using Microsoft.UI.Xaml.Media;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
 
-public interface IBriefOnlineMusicInfo : IBriefMusicInfoBase
+public interface IBriefOnlineSongInfo : IBriefSongInfoBase
 {
     long ID { get; set; }
     long AlbumID { get; set; }
 
-    new SolidColorBrush GetTextForeground(IDetailedMusicInfoBase? currentMusic, bool isDarkTheme)
+    new SolidColorBrush GetTextForeground(IDetailedSongInfoBase? currentSong, bool isDarkTheme)
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
 
         if (
-            currentMusic is not null
-            && currentMusic.IsOnline
-            && ID == ((IDetailedOnlineMusicInfo)currentMusic).ID
+            currentSong is not null
+            && currentSong.IsOnline
+            && ID == ((IDetailedOnlineSongInfo)currentSong).ID
         )
         {
             var highlightColor = isDarkTheme
@@ -27,7 +27,7 @@ public interface IBriefOnlineMusicInfo : IBriefMusicInfoBase
     }
 }
 
-public interface IDetailedOnlineMusicInfo : IBriefOnlineMusicInfo, IDetailedMusicInfoBase
+public interface IDetailedOnlineSongInfo : IBriefOnlineSongInfo, IDetailedSongInfoBase
 {
     string? CoverUrl { get; set; }
 }

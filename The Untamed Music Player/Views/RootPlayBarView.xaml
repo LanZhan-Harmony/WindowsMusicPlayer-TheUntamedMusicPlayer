@@ -161,7 +161,7 @@
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                Canvas.ZIndex="1"
-                               Source="{x:Bind model:Data.MusicPlayer.CurrentMusic.Cover, Mode=OneWay}"
+                               Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"
                                Stretch="UniformToFill"/>
                         <Grid Width="70" Height="70"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
@@ -181,15 +181,15 @@
                         <TextBlock Margin="10,0,0,4"
                                    FontSize="20"
                                    FontWeight="Medium"
-                                   Text="{x:Bind model:Data.MusicPlayer.CurrentMusic.Title, Mode=OneWay}"
+                                   Text="{x:Bind model:Data.MusicPlayer.CurrentSong.Title, Mode=OneWay}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"/>
                         <TextBlock Margin="10,0,0,0"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Bind model:Data.MusicPlayer.CurrentMusic.ArtistAndAlbumStr, Mode=OneWay}"
+                                   Text="{x:Bind model:Data.MusicPlayer.CurrentSong.ArtistAndAlbumStr, Mode=OneWay}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
-                                   Visibility="{x:Bind GetArtistAndAlbumStrVisibility(model:Data.MusicPlayer.CurrentMusic), Mode=OneWay}"/>
+                                   Visibility="{x:Bind GetArtistAndAlbumStrVisibility(model:Data.MusicPlayer.CurrentSong), Mode=OneWay}"/>
                     </StackPanel>
                     <TextBlock Width="8" Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}"/>
                 </StackPanel>

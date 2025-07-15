@@ -113,7 +113,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
             var sortedGroups = _artistList
                 .OrderBy(m => m.Name, new ArtistTitleComparer())
                 .GroupBy(m =>
-                    m.Name == "MusicInfo_UnknownArtist".GetLocalized()
+                    m.Name == "SongInfo_UnknownArtist".GetLocalized()
                         ? "..."
                         : TitleComparer.GetGroupKey(m.Name[0])
                 )
@@ -130,7 +130,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
             var sortedGroups = _artistList
                 .OrderByDescending(m => m.Name, new ArtistTitleComparer())
                 .GroupBy(m =>
-                    m.Name == "MusicInfo_UnknownArtist".GetLocalized()
+                    m.Name == "SongInfo_UnknownArtist".GetLocalized()
                         ? "..."
                         : TitleComparer.GetGroupKey(m.Name[0])
                 )

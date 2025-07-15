@@ -8,9 +8,9 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 namespace The_Untamed_Music_Player.Contracts.Models;
 
 [MemoryPackable]
-[MemoryPackUnion(0, typeof(BriefMusicInfo))]
-[MemoryPackUnion(1, typeof(CloudBriefOnlineMusicInfo))]
-public partial interface IBriefMusicInfoBase : ICloneable
+[MemoryPackUnion(0, typeof(BriefSongInfo))]
+[MemoryPackUnion(1, typeof(CloudBriefOnlineSongInfo))]
+public partial interface IBriefSongInfoBase : ICloneable
 {
     /// <summary>
     /// 是否可以播放
@@ -81,10 +81,10 @@ public partial interface IBriefMusicInfoBase : ICloneable
     /// <summary>
     /// 获取文本前景色
     /// </summary>
-    /// <param name="currentMusic"></param>
+    /// <param name="currentSong"></param>
     /// <param name="isDarkTheme"></param>
     /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    SolidColorBrush GetTextForeground(IDetailedMusicInfoBase? currentMusic, bool isDarkTheme)
+    SolidColorBrush GetTextForeground(IDetailedSongInfoBase? currentSong, bool isDarkTheme)
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
         var highlightColor = isDarkTheme
@@ -92,12 +92,11 @@ public partial interface IBriefMusicInfoBase : ICloneable
             : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
 
         if (
-            currentMusic is not null
+            currentSong is not null
             && (
-                currentMusic.IsOnline
-                    ? ((IBriefOnlineMusicInfo)this).ID
-                        == ((IDetailedOnlineMusicInfo)currentMusic).ID
-                    : Path == currentMusic.Path
+                currentSong.IsOnline
+                    ? ((IBriefOnlineSongInfo)this).ID == ((IDetailedOnlineSongInfo)currentSong).ID
+                    : Path == currentSong.Path
             )
         )
         {
@@ -107,19 +106,18 @@ public partial interface IBriefMusicInfoBase : ICloneable
     }
 
     SolidColorBrush GetTextForeground(
-        IDetailedMusicInfoBase? currentMusic,
+        IDetailedSongInfoBase? currentSong,
         bool isDarkTheme,
         int playQueueIndex
     )
     {
         var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
         if (
-            currentMusic is not null
+            currentSong is not null
             && (
-                currentMusic.IsOnline
-                    ? ((IBriefOnlineMusicInfo)this).ID
-                        == ((IDetailedOnlineMusicInfo)currentMusic).ID
-                    : Path == currentMusic.Path
+                currentSong.IsOnline
+                    ? ((IBriefOnlineSongInfo)this).ID == ((IDetailedOnlineSongInfo)currentSong).ID
+                    : Path == currentSong.Path
             )
             && PlayQueueIndex == playQueueIndex
         )
@@ -133,7 +131,7 @@ public partial interface IBriefMusicInfoBase : ICloneable
     }
 }
 
-public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
+public interface IDetailedSongInfoBase : IBriefSongInfoBase
 {
     bool IsOnline { get; set; }
     string ItemType { get; set; }
@@ -170,30 +168,28 @@ public interface IDetailedMusicInfoBase : IBriefMusicInfoBase
         return $"{artistsStr} • {album}";
     }
 
-    static async Task<IDetailedMusicInfoBase> CreateDetailedMusicInfoAsync(
-        IBriefMusicInfoBase info,
+    static async Task<IDetailedSongInfoBase> CreateDetailedSongInfoAsync(
+        IBriefSongInfoBase info,
         byte sourceMode
     )
     {
         return sourceMode switch
         {
-            0 => new DetailedMusicInfo((BriefMusicInfo)info),
-            1 => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
-            _ => await CloudDetailedOnlineMusicInfo.CreateAsync((IBriefOnlineMusicInfo)info),
+            0 => new DetailedSongInfo((BriefSongInfo)info),
+            1 => await CloudDetailedOnlineSongInfo.CreateAsync((IBriefOnlineSongInfo)info),
+            _ => await CloudDetailedOnlineSongInfo.CreateAsync((IBriefOnlineSongInfo)info),
         };
     }
 
-    static async Task<IDetailedMusicInfoBase?> CreateDetailedMusicInfoAsync(
-        IBriefMusicInfoBase info
-    )
+    static async Task<IDetailedSongInfoBase?> CreateDetailedSongInfoAsync(IBriefSongInfoBase info)
     {
-        if (info is BriefMusicInfo briefInfo)
+        if (info is BriefSongInfo briefInfo)
         {
-            return new DetailedMusicInfo(briefInfo);
+            return new DetailedSongInfo(briefInfo);
         }
-        else if (info is CloudBriefOnlineMusicInfo cloudInfo)
+        else if (info is CloudBriefOnlineSongInfo cloudInfo)
         {
-            return await CloudDetailedOnlineMusicInfo.CreateAsync(cloudInfo);
+            return await CloudDetailedOnlineSongInfo.CreateAsync(cloudInfo);
         }
         else
         {

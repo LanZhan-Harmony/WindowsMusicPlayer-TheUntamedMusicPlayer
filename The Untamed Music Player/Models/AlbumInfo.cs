@@ -16,7 +16,7 @@ public class BriefAlbumInfo(AlbumInfo albumInfo)
     public string YearStr { get; set; } =
         albumInfo.Year == 0 ? _unknownYear : albumInfo.Year.ToString();
     public BitmapImage? Cover { get; set; } = albumInfo.Cover;
-    public List<IBriefMusicInfoBase> SongList { get; set; } =
+    public List<IBriefSongInfoBase> SongList { get; set; } =
         [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
 }
 
@@ -77,36 +77,36 @@ public partial class AlbumInfo : IAlbumInfoBase
     [MemoryPackConstructor]
     public AlbumInfo() { }
 
-    public AlbumInfo(BriefMusicInfo briefmusicInfo)
+    public AlbumInfo(BriefSongInfo briefSongInfo)
     {
-        Name = briefmusicInfo.Album;
-        Year = briefmusicInfo.Year;
-        ModifiedDate = briefmusicInfo.ModifiedDate;
-        if (briefmusicInfo.Cover is not null)
+        Name = briefSongInfo.Album;
+        Year = briefSongInfo.Year;
+        ModifiedDate = briefSongInfo.ModifiedDate;
+        if (briefSongInfo.Cover is not null)
         {
-            Cover = briefmusicInfo.Cover;
-            CoverPath = briefmusicInfo.Path;
+            Cover = briefSongInfo.Cover;
+            CoverPath = briefSongInfo.Path;
         }
-        Artists = briefmusicInfo.Artists;
-        ArtistsStr = briefmusicInfo.ArtistsStr;
-        GenreStr = briefmusicInfo.GenreStr;
-        TotalDuration = briefmusicInfo.Duration;
+        Artists = briefSongInfo.Artists;
+        ArtistsStr = briefSongInfo.ArtistsStr;
+        GenreStr = briefSongInfo.GenreStr;
+        TotalDuration = briefSongInfo.Duration;
     }
 
     /// <summary>
     /// 扫描歌曲时更新专辑信息
     /// </summary>
-    /// <param name="briefmusicInfo"></param>
-    public void Update(BriefMusicInfo briefmusicInfo)
+    /// <param name="briefSongInfo"></param>
+    public void Update(BriefSongInfo briefSongInfo)
     {
         TotalNum++;
-        TotalDuration += briefmusicInfo.Duration;
-        if (Cover is null && briefmusicInfo.Cover is not null)
+        TotalDuration += briefSongInfo.Duration;
+        if (Cover is null && briefSongInfo.Cover is not null)
         {
-            Cover = briefmusicInfo.Cover;
-            CoverPath = briefmusicInfo.Path;
+            Cover = briefSongInfo.Cover;
+            CoverPath = briefSongInfo.Path;
         }
-        Artists = [.. Artists!.Concat(briefmusicInfo.Artists).Distinct()];
+        Artists = [.. Artists!.Concat(briefSongInfo.Artists).Distinct()];
         ArtistsStr = IAlbumInfoBase.GetArtistsStr(Artists);
     }
 
