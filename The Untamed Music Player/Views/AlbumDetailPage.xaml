@@ -19,7 +19,8 @@
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="contract:IBriefSongInfoBase">
             <Grid Height="52"
-                  Background="Transparent" PointerEntered="Grid_PointerEntered"
+                  Background="Transparent"
+                  PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
@@ -114,14 +115,16 @@
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
                 <TextBlock Grid.Column="4"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
                 <TextBlock Grid.Column="5"
-                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind GenreStr}"
@@ -217,7 +220,8 @@
         <Grid x:Name="BackgroundHost"
               Grid.Row="0"
               Margin="0,-136,0,0"
-              FlowDirection="LeftToRight" SizeChanged="BackgroundHost_OnSizeChanged"/>
+              FlowDirection="LeftToRight"
+              SizeChanged="BackgroundHost_OnSizeChanged"/>
         <Grid x:Name="Header"
               Grid.Row="0"
               Margin="0,0,0,-80"
@@ -242,7 +246,8 @@
                         CornerRadius="{StaticResource OverlayCornerRadius}"
                         FlowDirection="LeftToRight"
                         Shadow="{StaticResource SharedShadow}"
-                        SizeChanged="AlbumArt_OnSizeChanged" Translation="0,0,16">
+                        SizeChanged="AlbumArt_OnSizeChanged"
+                        Translation="0,0,16">
                     <Border.Background>
                         <ImageBrush ImageSource="{x:Bind ViewModel.Album.Cover}" Stretch="UniformToFill"/>
                     </Border.Background>
@@ -369,6 +374,7 @@
                   Grid.Row="1"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
+                  ui:ListViewExtensions.AlternateColor="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                   ui:ListViewExtensions.ItemContainerStretchDirection="Horizontal"
                   ui:ScrollViewerExtensions.VerticalScrollBarMargin="0,-150,0,0"
                   IsItemClickEnabled="True"
@@ -380,9 +386,6 @@
             <ListView.Header>
                 <Border x:Name="ListHeaderPadding"/>
             </ListView.Header>
-            <interactivity:Interaction.Behaviors>
-                <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
-            </interactivity:Interaction.Behaviors>
         </ListView>
     </Grid>
 </Page>

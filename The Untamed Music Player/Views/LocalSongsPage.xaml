@@ -7,6 +7,7 @@
       xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
+      xmlns:ui="using:CommunityToolkit.WinUI"
       xmlns:viewmodel="using:The_Untamed_Music_Player.ViewModels"
       mc:Ignorable="d">
 
@@ -38,8 +39,7 @@
                            VerticalAlignment="Center"
                            Style="{StaticResource SubtitleTextBlockStyle}"
                            Text="{x:Bind ((helper:GroupInfoList)Group).Key}"
-                           TextAlignment="Center"
-                           TextTrimming="WordEllipsis"/>
+                           TextAlignment="Center" TextTrimming="WordEllipsis"/>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefLocalSongInfo">
@@ -118,8 +118,7 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
-                          IsThreeState="False"
-                          Visibility="Collapsed"/>
+                          IsThreeState="False" Visibility="Collapsed"/>
                 <Button x:Name="PlayButton" x:Uid="LocalSongs_PlayButton"
                         Grid.Column="1"
                         Click="PlayButton_Click"
@@ -137,8 +136,7 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
+                        Background="Transparent" BorderBrush="Transparent"
                         Click="ShowArtistButton_Click">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
@@ -147,8 +145,7 @@
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
                 <Button Grid.Column="4"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
+                        Background="Transparent" BorderBrush="Transparent"
                         Click="ShowAlbumButton_Click">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
@@ -173,8 +170,7 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind GenreStr}"/>
                 <TextBlock Grid.Column="7"
-                           Margin="0,0,10,0"
-                           HorizontalAlignment="Right"
+                           Margin="0,0,10,0" HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
@@ -226,15 +222,13 @@
                 </StackPanel>
             </Button>
             <StackPanel Grid.Column="2"
-                        Orientation="Horizontal"
-                        Spacing="16">
+                        Orientation="Horizontal" Spacing="16">
                 <Button Background="Transparent" BorderBrush="Transparent">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <TextBlock x:Uid="LocalSongs_SortByChosen"/>
                         <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetSortByStr(ViewModel.SortMode), Mode=OneWay}"/>
                         <FontIcon Margin="8,0,0,0"
-                                  FontSize="12"
-                                  Glyph="&#xE70D;"/>
+                                  FontSize="12" Glyph="&#xE70D;"/>
                     </StackPanel>
                     <Button.Flyout>
                         <Flyout Placement="Bottom">
@@ -252,8 +246,7 @@
                         <TextBlock x:Uid="LocalSongs_GenreChosen"/>
                         <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetGenreStr(ViewModel.GenreMode), Mode=OneWay}"/>
                         <FontIcon Margin="8,0,0,0"
-                                  FontSize="12"
-                                  Glyph="&#xE70D;"/>
+                                  FontSize="12" Glyph="&#xE70D;"/>
                     </StackPanel>
                     <Button.Flyout>
                         <Flyout Placement="Bottom">
@@ -278,8 +271,8 @@
                 <ListView x:Name="SongListView"
                           helper:ListViewExtensions.ItemCornerRadius="8"
                           helper:ListViewExtensions.ItemMargin="0,3,0,3"
-                          CanDragItems="True"
-                          IsItemClickEnabled="True"
+                          ui:ListViewExtensions.AlternateColor="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                          CanDragItems="True" IsItemClickEnabled="True"
                           ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                           ItemTemplate="{StaticResource SongListViewTemplate}"
                           ItemsSource="{x:Bind ViewModel.GetSongListViewSource(GroupedSongList.View, ViewModel.NotGroupedSongList), Mode=OneWay}"
@@ -294,9 +287,6 @@
                     <ListView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
                     </ListView.GroupStyle>
-                    <interactivity:Interaction.Behaviors>
-                        <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
-                    </interactivity:Interaction.Behaviors>
                 </ListView>
             </SemanticZoom.ZoomedInView>
             <SemanticZoom.ZoomedOutView>
