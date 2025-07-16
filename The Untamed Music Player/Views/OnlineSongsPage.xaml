@@ -8,6 +8,7 @@
       xmlns:local="using:The_Untamed_Music_Player.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
+      xmlns:ui="using:CommunityToolkit.WinUI"
       Loaded="OnlineSongsPage_Loaded"
       mc:Ignorable="d">
 
@@ -87,8 +88,7 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
-                          IsThreeState="False"
-                          Visibility="Collapsed"/>
+                          IsThreeState="False" Visibility="Collapsed"/>
                 <Button x:Name="PlayButton" x:Uid="LocalSongs_PlayButton"
                         Grid.Column="1"
                         Click="PlayButton_Click"
@@ -106,8 +106,7 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
-                        Background="Transparent"
-                        BorderBrush="Transparent">
+                        Background="Transparent" BorderBrush="Transparent">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind ArtistsStr}"
@@ -115,8 +114,7 @@
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
                 <Button Grid.Column="4"
-                        Background="Transparent"
-                        BorderBrush="Transparent">
+                        Background="Transparent" BorderBrush="Transparent">
                     <TextBlock FontSize="12"
                                Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                                Text="{x:Bind Album}"
@@ -132,8 +130,7 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
                 <TextBlock Grid.Column="6"
-                           Margin="0,0,10,0"
-                           HorizontalAlignment="Right"
+                           Margin="0,0,10,0" HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
@@ -166,8 +163,8 @@
         <ListView x:Name="SongListView"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
-                  CanDragItems="True"
-                  IsItemClickEnabled="True"
+                  ui:ListViewExtensions.AlternateColor="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                  CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongsSongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
@@ -178,9 +175,6 @@
                               Margin="0,5,0,5"
                               Visibility="{x:Bind model:Data.OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
             </ListView.Footer>
-            <interactivity:Interaction.Behaviors>
-                <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
-            </interactivity:Interaction.Behaviors>
         </ListView>
     </Grid>
 </Page>
