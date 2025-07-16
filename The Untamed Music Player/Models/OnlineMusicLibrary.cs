@@ -84,7 +84,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                 case 0:
                     var cloudList = OnlineSongInfoList as CloudBriefOnlineSongInfoList ?? [];
                     OnlineSongInfoList = cloudList;
-                    await CloudSongSearchHelper.SearchAsync(KeyWords, cloudList);
+                    await CloudSongSearchHelper.SearchSongsAsync(KeyWords, cloudList);
                     break;
                 case 1:
                 case 2:
@@ -129,7 +129,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                     case 0:
                         var cloudList = OnlineSongInfoList as CloudBriefOnlineSongInfoList ?? [];
                         OnlineSongInfoList = cloudList;
-                        await CloudSongSearchHelper.SearchMoreAsync(cloudList);
+                        await CloudSongSearchHelper.SearchMoreSongsAsync(cloudList);
                         break;
                     case 1:
                     case 2:
@@ -171,7 +171,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                     // TODO: 其它 MusicLibraryIndex 分支实现
                     var cloudList = OnlineSongInfoList as CloudBriefOnlineSongInfoList ?? [];
                     OnlineSongInfoList = cloudList;
-                    SearchResultList = await CloudSongSearchHelper.GetSearchSuggestAsync(KeyWords);
+                    SearchResultList = await CloudSuggestSearchHelper.GetSearchSuggestAsync(
+                        KeyWords
+                    );
                     break;
             }
         }
