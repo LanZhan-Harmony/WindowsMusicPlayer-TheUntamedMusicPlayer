@@ -122,7 +122,7 @@ public class CloudAlbumSearchHelper
     )
     {
         var actualCount = albumsElement.GetArrayLength();
-        var infos = new CloudOnlineAlbumInfo[actualCount];
+        var infos = new BriefCloudOnlineAlbumInfo[actualCount];
 
         await Parallel.ForEachAsync(
             Enumerable.Range(0, actualCount),
@@ -131,8 +131,8 @@ public class CloudAlbumSearchHelper
             {
                 try
                 {
-                    //var info = await CloudOnlineAlbumInfo.CreateAsync(albumsElement[i]!, _api);
-                    //infos[i] = info;
+                    var info = await BriefCloudOnlineAlbumInfo.CreateAsync(albumsElement[i]!);
+                    infos[i] = info;
                 }
                 catch (Exception ex)
                 {

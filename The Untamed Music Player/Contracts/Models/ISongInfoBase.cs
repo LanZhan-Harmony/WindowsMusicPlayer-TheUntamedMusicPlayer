@@ -77,37 +77,6 @@ public partial interface IBriefSongInfoBase : ICloneable
     /// <param name="year"></param>
     /// <returns></returns>
     static string GetYearStr(ushort year) => year is 0 or 1970 ? "" : year.ToString();
-
-    /// <summary>
-    /// 获取文本前景色
-    /// </summary>
-    /// <param name="currentSong"></param>
-    /// <param name="isDarkTheme"></param>
-    /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    SolidColorBrush GetTextForeground(
-        IDetailedSongInfoBase? currentSong,
-        bool isDarkTheme,
-        int playQueueIndex
-    )
-    {
-        var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
-        if (
-            currentSong is not null
-            && (
-                currentSong.IsOnline
-                    ? ((IBriefOnlineSongInfo)this).ID == ((IDetailedOnlineSongInfo)currentSong).ID
-                    : Path == currentSong.Path
-            )
-            && PlayQueueIndex == playQueueIndex
-        )
-        {
-            var highlightColor = isDarkTheme
-                ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
-                : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
-            return new SolidColorBrush(highlightColor);
-        }
-        return new SolidColorBrush(defaultColor);
-    }
 }
 
 public interface IDetailedSongInfoBase : IBriefSongInfoBase

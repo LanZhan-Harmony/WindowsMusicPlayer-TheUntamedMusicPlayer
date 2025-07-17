@@ -10,7 +10,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="contract:IOnlineAlbumInfo">
+        <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="contract:IBriefOnlineAlbumInfo">
             <Grid Width="170" Height="226"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -71,14 +71,12 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Canvas.ZIndex="2">
                     <CheckBox x:Name="ItemCheckBox"
-                              Margin="18,12,0,0"
-                              HorizontalAlignment="Left"
+                              Margin="18,12,0,0" HorizontalAlignment="Left"
                               VerticalAlignment="Top"
                               Visibility="Collapsed"/>
                     <Button x:Name="PlayButton"
                             Width="32" Height="32"
-                            Margin="12,0,0,8"
-                            HorizontalAlignment="Left"
+                            Margin="12,0,0,8" HorizontalAlignment="Left"
                             VerticalAlignment="Bottom"
                             Click="PlayButton_Click"
                             Style="{StaticResource CircularButtonStyle}"
@@ -87,8 +85,7 @@
                     </Button>
                     <Button x:Name="MenuButton"
                             Width="32" Height="32"
-                            Margin="0,0,12,8"
-                            HorizontalAlignment="Right"
+                            Margin="0,0,12,8" HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
                             Style="{StaticResource CircularButtonStyle}"
                             Visibility="Collapsed">
@@ -160,8 +157,7 @@
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
-                            <FontIcon Canvas.ZIndex="0"
-                                      FontSize="50"
+                            <FontIcon Canvas.ZIndex="0" FontSize="50"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xE93C;"/>
                         </Grid>
