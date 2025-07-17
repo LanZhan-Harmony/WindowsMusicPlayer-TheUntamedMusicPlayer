@@ -221,30 +221,6 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     /// <returns></returns>
     protected static string GetGenreStr(string[] genre) => string.Join(", ", genre);
 
-    /// <summary>
-    /// 获取文本前景色
-    /// </summary>
-    /// <param name="currentSong"></param>
-    /// <param name="isDarkTheme"></param>
-    /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    public SolidColorBrush GetTextForeground(IDetailedSongInfoBase? currentSong, bool isDarkTheme)
-    {
-        var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
-
-        if (
-            currentSong is not null
-            && !currentSong.IsOnline
-            && Path == ((BriefLocalSongInfo)currentSong).Path
-        )
-        {
-            var highlightColor = isDarkTheme
-                ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
-                : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
-            return new SolidColorBrush(highlightColor);
-        }
-        return new SolidColorBrush(defaultColor);
-    }
-
     public object Clone()
     {
         return MemberwiseClone();
