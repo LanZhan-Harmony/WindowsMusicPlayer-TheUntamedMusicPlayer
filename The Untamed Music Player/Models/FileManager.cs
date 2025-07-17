@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using The_Untamed_Music_Player.Contracts.Models;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -125,7 +126,7 @@ public class FileManager
                 libraryFolder,
                 "FolderFingerprints"
             );
-            if (savedFingerprints == null)
+            if (savedFingerprints is null)
             {
                 return (true, data);
             }
@@ -169,10 +170,10 @@ public class FileManager
             var genresArray = genresTask.Result;
 
             if (
-                songsArray == null
-                || albumsDict == null
-                || artistsDict == null
-                || genresArray == null
+                songsArray is null
+                || albumsDict is null
+                || artistsDict is null
+                || genresArray is null
             )
             {
                 return (true, data);
@@ -262,7 +263,9 @@ public class FileManager
     /// <summary>
     /// 从文件加载对象
     /// </summary>
-    public static async Task<T?> LoadObjectFromFileAsync<T>(StorageFolder folder, string fileName)
+    public static async Task<T?> LoadObjectFromFileAsync<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T
+    >(StorageFolder folder, string fileName)
     {
         try
         {
