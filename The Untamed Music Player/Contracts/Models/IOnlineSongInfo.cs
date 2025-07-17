@@ -8,5 +8,5 @@ public interface IBriefOnlineSongInfo : IBriefSongInfoBase
 
 public interface IDetailedOnlineSongInfo : IBriefOnlineSongInfo, IDetailedSongInfoBase
 {
-    string? CoverUrl { get; set; }
+    string? CoverPath { get; set; }
 }

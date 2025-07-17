@@ -100,7 +100,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
     public string AlbumArtistsStr { get; set; } = "";
     public string ArtistAndAlbumStr { get; set; } = "";
     public BitmapImage? Cover { get; set; }
-    public string? CoverUrl { get; set; }
+    public string? CoverPath { get; set; }
     public string ItemType { get; set; } = "";
     public string BitRate { get; set; } = "";
     public string Track { get; set; } = "";
@@ -119,7 +119,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
             DurationStr = info.DurationStr,
             YearStr = info.YearStr,
         };
-        var api = new NeteaseCloudMusicApi();
+        var api = App.GetService<NeteaseCloudMusicApi>();
         var songUrlTask = api.RequestAsync(
             CloudMusicApiProviders.SongUrl,
             new Dictionary<string, string> { { "id", $"{info.ID}" } }
@@ -144,8 +144,8 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
             if (info.Album != _unknownAlbum)
             {
                 detailedInfo.Album = info.Album;
-                detailedInfo.CoverUrl = (string)albumResult["album"]!["picUrl"]!;
-                if (!string.IsNullOrEmpty(detailedInfo.CoverUrl))
+                detailedInfo.CoverPath = (string)albumResult["album"]!["picUrl"]!;
+                if (!string.IsNullOrEmpty(detailedInfo.CoverPath))
                 {
                     coverTask = LoadCoverAsync(detailedInfo);
                 }
@@ -192,7 +192,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
     private static async Task<bool> LoadCoverAsync(CloudDetailedOnlineSongInfo info)
     {
         using var httpClient = new HttpClient();
-        var coverBuffer = await httpClient.GetByteArrayAsync(info.CoverUrl);
+        var coverBuffer = await httpClient.GetByteArrayAsync(info.CoverPath);
         var tcs = new TaskCompletionSource<bool>();
         App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
         {
