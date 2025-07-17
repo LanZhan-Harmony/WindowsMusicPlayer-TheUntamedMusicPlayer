@@ -371,7 +371,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             try
             {
                 using var httpClient = new HttpClient();
-                var imageBytes = await httpClient.GetByteArrayAsync(detailedInfo.CoverUrl);
+                var imageBytes = await httpClient.GetByteArrayAsync(detailedInfo.CoverPath);
                 var picture = new Picture([.. imageBytes])
                 {
                     Type = PictureType.FrontCover,

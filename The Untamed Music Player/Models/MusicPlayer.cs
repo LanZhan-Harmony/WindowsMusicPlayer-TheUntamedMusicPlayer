@@ -518,7 +518,7 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     var info = (IDetailedOnlineSongInfo)CurrentSong;
                     _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
-                        new Uri(info.CoverUrl!)
+                        new Uri(info.CoverPath!)
                     );
                 }
                 catch { }
