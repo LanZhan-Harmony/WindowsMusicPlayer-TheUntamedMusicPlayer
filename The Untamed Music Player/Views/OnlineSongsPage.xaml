@@ -98,42 +98,42 @@
                               Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                               Glyph="&#xE768;"/>
                 </Button>
-                <TextBlock Grid.Column="2"
+                <TextBlock x:Name="TitleText"
+                           Grid.Column="2"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind Title}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
                         Background="Transparent" BorderBrush="Transparent">
-                    <TextBlock FontSize="12"
-                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                    <TextBlock x:Name="ArtistText"
+                               FontSize="12"
                                Text="{x:Bind ArtistsStr}"
                                TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
                 <Button Grid.Column="4"
                         Background="Transparent" BorderBrush="Transparent">
-                    <TextBlock FontSize="12"
-                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                    <TextBlock x:Name="AlbumText"
+                               FontSize="12"
                                Text="{x:Bind Album}"
                                TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{x:Bind Album}"/>
                 </Button>
-                <TextBlock Grid.Column="5"
+                <TextBlock x:Name="YearText"
+                           Grid.Column="5"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
-                <TextBlock Grid.Column="6"
+                <TextBlock x:Name="DurationText"
+                           Grid.Column="6"
                            Margin="0,0,10,0" HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind DurationStr}"
                            TextTrimming="CharacterEllipsis"/>
             </Grid>
@@ -161,9 +161,11 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <ListView x:Name="SongListView"
+                  helper:CurrentSongHighlightExtensions.NotPlayingBrush="{ThemeResource TextFillColorPrimaryBrush}"
+                  helper:CurrentSongHighlightExtensions.PlayingBrush="{ThemeResource AccentTextFillColorTertiaryBrush}"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
-                  ui:ListViewExtensions.AlternateColor="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                  ui:ListViewExtensions.AlternateColor="{ThemeResource AlternateBackgroundBrush}"
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongsSongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"

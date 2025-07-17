@@ -84,27 +84,6 @@ public partial interface IBriefSongInfoBase : ICloneable
     /// <param name="currentSong"></param>
     /// <param name="isDarkTheme"></param>
     /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    SolidColorBrush GetTextForeground(IDetailedSongInfoBase? currentSong, bool isDarkTheme)
-    {
-        var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
-        var highlightColor = isDarkTheme
-            ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
-            : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
-
-        if (
-            currentSong is not null
-            && (
-                currentSong.IsOnline
-                    ? ((IBriefOnlineSongInfo)this).ID == ((IDetailedOnlineSongInfo)currentSong).ID
-                    : Path == currentSong.Path
-            )
-        )
-        {
-            return new SolidColorBrush(highlightColor);
-        }
-        return new SolidColorBrush(defaultColor);
-    }
-
     SolidColorBrush GetTextForeground(
         IDetailedSongInfoBase? currentSong,
         bool isDarkTheme,

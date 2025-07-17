@@ -262,14 +262,8 @@ public sealed partial class AlbumDetailPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Visible;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Visible;
-        }
+        checkBox?.Visibility = Visibility.Visible;
+        playButton?.Visibility = Visibility.Visible;
     }
 
     private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -277,14 +271,8 @@ public sealed partial class AlbumDetailPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Collapsed;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Collapsed;
-        }
+        checkBox?.Visibility = Visibility.Collapsed;
+        playButton?.Visibility = Visibility.Collapsed;
     }
 
     /// <summary>

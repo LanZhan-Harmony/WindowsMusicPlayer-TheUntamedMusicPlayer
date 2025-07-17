@@ -23,18 +23,9 @@ public sealed partial class LocalAlbumsPage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Visible;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Visible;
-        }
-        if (menuButton is not null)
-        {
-            menuButton.Visibility = Visibility.Visible;
-        }
+        checkBox?.Visibility = Visibility.Visible;
+        playButton?.Visibility = Visibility.Visible;
+        menuButton?.Visibility = Visibility.Visible;
     }
 
     private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -43,18 +34,9 @@ public sealed partial class LocalAlbumsPage : Page
         var checkBox = grid!.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid!.FindName("PlayButton") as Button;
         var menuButton = grid!.FindName("MenuButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Collapsed;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Collapsed;
-        }
-        if (menuButton is not null)
-        {
-            menuButton.Visibility = Visibility.Collapsed;
-        }
+        checkBox?.Visibility = Visibility.Collapsed;
+        playButton?.Visibility = Visibility.Collapsed;
+        menuButton?.Visibility = Visibility.Collapsed;
     }
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
