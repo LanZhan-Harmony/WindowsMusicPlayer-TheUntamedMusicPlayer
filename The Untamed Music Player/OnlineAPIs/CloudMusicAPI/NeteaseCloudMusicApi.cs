@@ -209,7 +209,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
 
             json = new JsonObject { { "code", 200 } };
             var profileJson = JsonNode.Parse(s[(index + GUSER.Length)..]);
-            if (profileJson != null)
+            if (profileJson is not null)
             {
                 json.Add("profile", profileJson.AsObject());
             }
@@ -221,7 +221,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
             }
 
             var bindingsJson = JsonNode.Parse(s[(index + GBINDS.Length)..]);
-            if (bindingsJson != null)
+            if (bindingsJson is not null)
             {
                 json.Add("bindings", bindingsJson.AsArray());
             }

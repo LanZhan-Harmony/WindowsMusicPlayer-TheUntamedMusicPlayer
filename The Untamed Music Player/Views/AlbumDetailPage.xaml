@@ -98,43 +98,43 @@
                               Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                               Glyph="&#xE768;"/>
                 </Button>
-                <TextBlock Grid.Column="2"
+                <TextBlock x:Name="TitleText"
+                           Grid.Column="2"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind Title}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
                         Background="Transparent" BorderBrush="Transparent"
                         Click="ShowArtistButton_Click">
-                    <TextBlock FontSize="12"
-                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                    <TextBlock x:Name="ArtistText"
+                               FontSize="12"
                                Text="{x:Bind ArtistsStr}"
                                TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
-                <TextBlock Grid.Column="4"
+                <TextBlock x:Name="YearText"
+                           Grid.Column="4"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
-                <TextBlock Grid.Column="5"
+                <TextBlock x:Name="GenreText"
+                           Grid.Column="5"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind GenreStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind GenreStr}"/>
-                <TextBlock Grid.Column="6"
+                <TextBlock x:Name="DurationText"
+                           Grid.Column="6"
                            Margin="0,0,10,0" HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind DurationStr}"
                            TextTrimming="CharacterEllipsis"/>
             </Grid>
@@ -372,9 +372,11 @@
 
         <ListView x:Name="SongListView"
                   Grid.Row="1"
+                  helper:CurrentSongHighlightExtensions.NotPlayingBrush="{ThemeResource TextFillColorPrimaryBrush}"
+                  helper:CurrentSongHighlightExtensions.PlayingBrush="{ThemeResource AccentTextFillColorTertiaryBrush}"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
-                  ui:ListViewExtensions.AlternateColor="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                  ui:ListViewExtensions.AlternateColor="{ThemeResource AlternateBackgroundBrush}"
                   ui:ListViewExtensions.ItemContainerStretchDirection="Horizontal"
                   ui:ScrollViewerExtensions.VerticalScrollBarMargin="0,-150,0,0"
                   IsItemClickEnabled="True"
