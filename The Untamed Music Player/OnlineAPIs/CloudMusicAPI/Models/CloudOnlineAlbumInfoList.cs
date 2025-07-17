@@ -2,7 +2,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
-public class CloudOnlineAlbumInfoList : IOnlineAlbumInfoList
+public partial class CloudOnlineAlbumInfoList : IOnlineAlbumInfoList
 {
     public const byte Limit = 30;
     public ushort Page { get; set; } = 0;
@@ -12,7 +12,7 @@ public class CloudOnlineAlbumInfoList : IOnlineAlbumInfoList
 
     public CloudOnlineAlbumInfoList() { }
 
-    public new void Add(IOnlineAlbumInfo? info)
+    public new void Add(IBriefOnlineAlbumInfo? info)
     {
         ListCount++;
         if (info is not null && SearchedAlbumIDs.Add(info.ID))
