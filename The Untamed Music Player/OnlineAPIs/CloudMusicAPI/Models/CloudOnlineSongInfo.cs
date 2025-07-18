@@ -119,7 +119,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
             DurationStr = info.DurationStr,
             YearStr = info.YearStr,
         };
-        var api = App.GetService<NeteaseCloudMusicApi>();
+        var api = NeteaseCloudMusicApi.Instance;
         var songUrlTask = api.RequestAsync(
             CloudMusicApiProviders.SongUrl,
             new Dictionary<string, string> { { "id", $"{info.ID}" } }
