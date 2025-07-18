@@ -136,7 +136,6 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
         var (_, songUrlResult) = songUrlTask.Result;
         var (_, albumResult) = albumTask.Result;
         var (_, lyricResult) = lyricTask.Result;
-        api.Dispose();
         try
         {
             detailedInfo.Path = (string)songUrlResult["data"]![0]!["url"]!; // 临时链接可能过期, 所以重新获取
