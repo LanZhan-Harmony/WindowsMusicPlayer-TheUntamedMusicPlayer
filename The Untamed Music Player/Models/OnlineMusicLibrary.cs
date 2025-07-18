@@ -36,10 +36,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     public byte MusicLibraryIndex { get; set; }
 
     public string SuggestKeyWords { get; set; } = null!;
-    public string SearchKeyWords { get; set; } = null!;
 
     [ObservableProperty]
-    public partial string KeyWordsText { get; set; } = null!;
+    public partial string SearchKeyWords { get; set; } = null!;
 
     [ObservableProperty]
     public partial Visibility KeyWordsTextBlockVisibility { get; set; } = Visibility.Collapsed;
@@ -135,7 +134,6 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                 }
             }
 
-            KeyWordsText = SearchKeyWords;
             KeyWordsTextBlockVisibility = Visibility.Visible;
             ListViewOpacity = 1;
         }

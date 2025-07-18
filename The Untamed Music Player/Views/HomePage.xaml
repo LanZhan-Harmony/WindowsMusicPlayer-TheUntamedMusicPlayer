@@ -154,7 +154,7 @@
                    TextTrimming="WordEllipsis"
                    Visibility="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsTextBlockVisibility, Mode=OneWay}">
             <Run FontSize="30" FontWeight="Bold"
-                 Text="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsText, Mode=OneWay}"/>
+                 Text="{x:Bind model:Data.OnlineMusicLibrary.SearchKeyWords, Mode=OneWay}"/>
             <Run x:Uid="Home_SearchResult" FontSize="20"/>
         </TextBlock>
         <ProgressRing Grid.Row="2" Grid.RowSpan="2"
