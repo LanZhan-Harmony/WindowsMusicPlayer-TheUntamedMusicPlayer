@@ -10,6 +10,9 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public partial class HomeViewModel : ObservableRecipient
 {
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
+
     /// <summary>
     /// 页面索引, 0为歌曲, 1为专辑, 2为艺术家, 3为歌单
     /// </summary>
@@ -30,10 +33,12 @@ public partial class HomeViewModel : ObservableRecipient
     {
         Data.OnlineMusicLibrary.MusicLibraryIndex = value;
         SaveMusicLibraryIndex();
+        // 音乐库索引改变时强制重新搜索
+        if (!string.IsNullOrWhiteSpace(Data.OnlineMusicLibrary.SearchKeyWords))
+        {
+            _ = Data.OnlineMusicLibrary.ForceSearch();
+        }
     }
-
-    private readonly ILocalSettingsService _localSettingsService =
-        App.GetService<ILocalSettingsService>();
 
     public HomeViewModel()
     {
@@ -77,13 +82,15 @@ public partial class HomeViewModel : ObservableRecipient
             };
             Data.OnlineMusicLibrary.SearchKeyWords = keyWords;
             Navigate(currentSelectedIndex);
-            await Data.OnlineMusicLibrary.Search();
+            // 搜索关键词改变时强制重新搜索
+            await Data.OnlineMusicLibrary.ForceSearch();
         }
         else
         {
             Data.OnlineMusicLibrary.SearchKeyWords = args.QueryText;
             Data.OnlineMusicLibrary.ClearSuggestResult();
-            await Data.OnlineMusicLibrary.Search();
+            // 搜索关键词改变时强制重新搜索
+            await Data.OnlineMusicLibrary.ForceSearch();
         }
     }
 
