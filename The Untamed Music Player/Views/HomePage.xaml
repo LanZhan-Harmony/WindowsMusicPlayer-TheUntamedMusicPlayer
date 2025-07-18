@@ -10,7 +10,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="SearchResultTemplate" x:DataType="model:SearchResult">
+        <DataTemplate x:Key="SuggestResultTemplate" x:DataType="model:SuggestResult">
             <Grid AutomationProperties.Name="{x:Bind Label}" ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="20"/>
@@ -113,8 +113,8 @@
                             Grid.Column="2"
                             Width="400" Height="32"
                             Margin="0,7,0,0" VerticalAlignment="Center"
-                            ItemTemplate="{StaticResource SearchResultTemplate}"
-                            ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.SearchResultList, Mode=OneWay}"
+                            ItemTemplate="{StaticResource SuggestResultTemplate}"
+                            ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.SuggestResultList, Mode=OneWay}"
                             Loaded="{x:Bind model:Data.OnlineMusicLibrary.AutoSuggestBox_Loaded}"
                             QueryIcon="Find"
                             QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted}"

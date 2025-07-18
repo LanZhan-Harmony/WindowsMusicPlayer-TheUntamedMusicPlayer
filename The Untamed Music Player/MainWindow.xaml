@@ -6,6 +6,7 @@
                    xmlns:local="using:The_Untamed_Music_Player"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:model="using:The_Untamed_Music_Player.Models"
+                   xmlns:view="using:The_Untamed_Music_Player.Views"
                    xmlns:windowex="using:WinUIEx"
                    MinWidth="500" MinHeight="500"
                    PersistenceId="MainWindow"
@@ -19,9 +20,8 @@
         <Frame x:Name="ShellFrame"
                Grid.Row="0"
                Width="auto" Height="auto"/>
-        <Frame x:Name="RootPlayBarFrame"
-               Grid.Row="1"
-               Width="auto" Height="auto"/>
+        <view:RootPlayBarView Grid.Row="1"
+                              Width="auto" Height="auto"/>
     </Grid>
 
 </windowex:WindowEx>

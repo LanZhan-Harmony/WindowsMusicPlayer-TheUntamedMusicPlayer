@@ -11,9 +11,8 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class OnlineSongsPage : Page
 {
-    private ScrollViewer? _scrollViewer;
-
     public OnlineSongsViewModel ViewModel { get; set; }
+    private ScrollViewer? _scrollViewer;
 
     public OnlineSongsPage()
     {

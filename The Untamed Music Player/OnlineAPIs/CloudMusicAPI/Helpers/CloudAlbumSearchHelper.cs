@@ -8,7 +8,7 @@ public class CloudAlbumSearchHelper
 {
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
 
-    private static readonly NeteaseCloudMusicApi _api = App.GetService<NeteaseCloudMusicApi>();
+    private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
     public static async Task SearchAlbumsAsync(string keyWords, CloudOnlineAlbumInfoList list)
     {
@@ -85,6 +85,7 @@ public class CloudAlbumSearchHelper
                 new Dictionary<string, string>
                 {
                     { "keywords", list.KeyWords },
+                    { "type", "10" },
                     { "limit", CloudOnlineAlbumInfoList.Limit.ToString() },
                     { "offset", (list.Page * 30).ToString() },
                 }
