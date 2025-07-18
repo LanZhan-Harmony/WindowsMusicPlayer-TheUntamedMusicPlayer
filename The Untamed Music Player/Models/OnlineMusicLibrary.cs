@@ -25,6 +25,10 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
     private bool _isSearchingMore = false;
 
+    // 缓存上次搜索的参数，用于避免重复搜索
+    private string? _lastSearchKeyWords = null;
+    private byte? _lastMusicLibraryIndex = null;
+
     /// <summary>
     /// 页面索引, 0为歌曲, 1为专辑, 2为艺术家, 3为歌单
     /// </summary>
@@ -90,6 +94,15 @@ public partial class OnlineMusicLibrary : ObservableRecipient
             return;
         }
 
+        // 检查是否需要重新搜索
+        if (ShouldSkipSearch())
+        {
+            // 直接显示现有结果
+            KeyWordsTextBlockVisibility = Visibility.Visible;
+            ListViewOpacity = 1;
+            return;
+        }
+
         IsSearchProgressRingActive = true;
         try
         {
@@ -133,6 +146,27 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                         break;
                 }
             }
+            else if (PageIndex == 2)
+            {
+                switch (MusicLibraryIndex)
+                {
+                    case 0:
+                        // TODO: Artist search implementation when available
+                        break;
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            // 更新缓存的搜索参数
+            _lastSearchKeyWords = SearchKeyWords;
+            _lastMusicLibraryIndex = MusicLibraryIndex;
 
             KeyWordsTextBlockVisibility = Visibility.Visible;
             ListViewOpacity = 1;
@@ -145,6 +179,41 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         {
             IsSearchProgressRingActive = false;
         }
+    }
+
+    /// <summary>
+    /// 检查是否应该跳过搜索（如果搜索参数相同且已有缓存结果）
+    /// </summary>
+    /// <returns>如果应该跳过搜索则返回true</returns>
+    private bool ShouldSkipSearch()
+    {
+        // 如果搜索参数没有变化
+        if (_lastSearchKeyWords == SearchKeyWords && _lastMusicLibraryIndex == MusicLibraryIndex)
+        {
+            // 检查当前页面类型对应的列表是否有数据
+            return PageIndex switch
+            {
+                0 => OnlineSongInfoList?.Count > 0 && 
+                     string.Equals(OnlineSongInfoList.KeyWords, SearchKeyWords, StringComparison.Ordinal),
+                1 => OnlineAlbumInfoList?.Count > 0 && 
+                     string.Equals(OnlineAlbumInfoList.KeyWords, SearchKeyWords, StringComparison.Ordinal),
+                2 => OnlineArtistInfoList?.Count > 0 && 
+                     string.Equals(OnlineArtistInfoList.KeyWords, SearchKeyWords, StringComparison.Ordinal),
+                3 => false, // TODO: Playlist implementation
+                _ => false
+            };
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 强制重新搜索，忽略缓存
+    /// </summary>
+    public async Task ForceSearch()
+    {
+        _lastSearchKeyWords = null;
+        _lastMusicLibraryIndex = null;
+        await Search();
     }
 
     public async Task SearchMore()
@@ -470,7 +539,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
     public async void RetryButton_Click(object sender, RoutedEventArgs e)
     {
-        await Search();
+        await ForceSearch();
     }
 
     public static async Task<bool> IsInternetAvailableAsync()
