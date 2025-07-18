@@ -37,9 +37,25 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
             using var stream = new InMemoryRandomAccessStream();
             await stream.WriteAsync(coverBytes.AsBuffer());
             stream.Seek(0);
-            var bitmap = new BitmapImage { DecodePixelWidth = 160 };
-            await bitmap.SetSourceAsync(stream);
-            info.Cover = bitmap;
+
+            var tcs = new TaskCompletionSource<bool>();
+            App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
+            {
+                try
+                {
+                    var bitmap = new BitmapImage { DecodePixelWidth = 160 };
+                    await bitmap.SetSourceAsync(stream);
+                    info.Cover = bitmap;
+                    tcs.SetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+
+            // 等待 UI 线程操作完成再释放资源
+            await tcs.Task;
             return info;
         }
         catch

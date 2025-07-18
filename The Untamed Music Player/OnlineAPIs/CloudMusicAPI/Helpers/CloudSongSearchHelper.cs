@@ -7,7 +7,7 @@ public class CloudSongSearchHelper
 {
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
 
-    private static readonly NeteaseCloudMusicApi _api = App.GetService<NeteaseCloudMusicApi>();
+    private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
     public static async Task SearchSongsAsync(string keyWords, CloudBriefOnlineSongInfoList list)
     {

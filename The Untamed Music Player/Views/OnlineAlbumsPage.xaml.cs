@@ -1,6 +1,8 @@
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
@@ -8,11 +10,32 @@ namespace The_Untamed_Music_Player.Views;
 public sealed partial class OnlineAlbumsPage : Page
 {
     public OnlineAlbumsViewModel ViewModel { get; set; }
+    private ScrollViewer? _scrollViewer;
 
     public OnlineAlbumsPage()
     {
         ViewModel = App.GetService<OnlineAlbumsViewModel>();
         InitializeComponent();
+    }
+
+    private void OnlineAlbumsPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        _scrollViewer =
+            AlbumGridView.FindDescendant<ScrollViewer>()
+            ?? throw new Exception("Cannot find ScrollViewer in GridView");
+
+        _scrollViewer.ViewChanged += async (s, e) =>
+        {
+            if (
+                !Data.OnlineMusicLibrary.OnlineAlbumInfoList.HasAllLoaded
+                && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
+                    >= _scrollViewer.ExtentHeight - 50
+            )
+            {
+                await Data.OnlineMusicLibrary.SearchMore();
+                await Task.Delay(3000);
+            }
+        };
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)

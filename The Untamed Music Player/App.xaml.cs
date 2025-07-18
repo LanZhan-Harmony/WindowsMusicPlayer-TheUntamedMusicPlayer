@@ -93,9 +93,6 @@ public partial class App : Application
                     services.AddTransient<OnlinePlayListsViewModel>();
                     services.AddTransient<DesktopLyricViewModel>();
 
-                    // Apis
-                    services.AddSingleton<NeteaseCloudMusicApi>();
-
                     // Configuration
                     services
                         .AddOptions<LocalSettingsOptions>()

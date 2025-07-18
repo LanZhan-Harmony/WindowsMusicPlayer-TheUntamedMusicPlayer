@@ -10,6 +10,9 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public partial class HomeViewModel : ObservableRecipient
 {
+    /// <summary>
+    /// 页面索引, 0为歌曲, 1为专辑, 2为艺术家, 3为歌单
+    /// </summary>
     public byte PageIndex
     {
         get;
@@ -50,8 +53,8 @@ public partial class HomeViewModel : ObservableRecipient
     {
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
-            Data.OnlineMusicLibrary.KeyWords = sender.Text;
-            await Data.OnlineMusicLibrary.UpdateSearchResult();
+            Data.OnlineMusicLibrary.SuggestKeyWords = sender.Text;
+            await Data.OnlineMusicLibrary.UpdateSuggestResult();
         }
     }
 
@@ -60,10 +63,10 @@ public partial class HomeViewModel : ObservableRecipient
         AutoSuggestBoxQuerySubmittedEventArgs args
     )
     {
-        if (args.ChosenSuggestion is SearchResult result)
+        if (args.ChosenSuggestion is SuggestResult result)
         {
             var keyWords = result.Label;
-            Data.OnlineMusicLibrary.ClearSearchResult();
+            Data.OnlineMusicLibrary.ClearSuggestResult();
             var currentSelectedIndex = result.Icon switch
             {
                 "\uE8D6" => 0,
@@ -72,14 +75,14 @@ public partial class HomeViewModel : ObservableRecipient
                 "\uE728" => 3,
                 _ => 0,
             };
-            Data.OnlineMusicLibrary.KeyWords = keyWords;
+            Data.OnlineMusicLibrary.SearchKeyWords = keyWords;
             Navigate(currentSelectedIndex);
             await Data.OnlineMusicLibrary.Search();
         }
         else
         {
-            Data.OnlineMusicLibrary.KeyWords = args.QueryText;
-            Data.OnlineMusicLibrary.ClearSearchResult();
+            Data.OnlineMusicLibrary.SearchKeyWords = args.QueryText;
+            Data.OnlineMusicLibrary.ClearSuggestResult();
             await Data.OnlineMusicLibrary.Search();
         }
     }
@@ -123,6 +126,7 @@ public partial class HomeViewModel : ObservableRecipient
                 ? SlideNavigationTransitionEffect.FromRight
                 : SlideNavigationTransitionEffect.FromLeft;
         PageIndex = (byte)currentSelectedIndex;
+        _ = Data.OnlineMusicLibrary.Search();
         Data.HomePage.GetFrame()
             .Navigate(
                 page,

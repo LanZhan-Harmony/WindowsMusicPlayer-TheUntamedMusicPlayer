@@ -6,11 +6,11 @@ namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 
 public class CloudSuggestSearchHelper
 {
-    private static readonly NeteaseCloudMusicApi _api = App.GetService<NeteaseCloudMusicApi>();
+    private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
-    public static async Task<List<SearchResult>> GetSearchSuggestAsync(string keyWords)
+    public static async Task<List<SuggestResult>> GetSuggestAsync(string keyWords)
     {
-        var list = new List<SearchResult>();
+        var list = new List<SuggestResult>();
         await Task.Run(async () =>
         {
             try
@@ -44,7 +44,7 @@ public class CloudSuggestSearchHelper
         string propertyName,
         int limit,
         string icon,
-        List<SearchResult> list
+        List<SuggestResult> list
     )
     {
         if (!element.TryGetProperty(propertyName, out var arrayElement))
@@ -60,7 +60,7 @@ public class CloudSuggestSearchHelper
 
         foreach (var name in names)
         {
-            list.Add(new SearchResult { Icon = icon, Label = name });
+            list.Add(new SuggestResult { Icon = icon, Label = name });
         }
     }
 }

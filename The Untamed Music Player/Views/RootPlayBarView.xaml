@@ -1,12 +1,11 @@
-<Page x:Class="The_Untamed_Music_Player.Views.RootPlayBarView"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:ic="using:FluentIcons.WinUI"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:model="using:The_Untamed_Music_Player.Models"
-      NavigationCacheMode="Enabled"
-      mc:Ignorable="d">
+<UserControl x:Class="The_Untamed_Music_Player.Views.RootPlayBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ic="using:FluentIcons.WinUI"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:model="using:The_Untamed_Music_Player.Models"
+             mc:Ignorable="d">
 
     <Grid Width="Auto" Height="Auto"
           HorizontalAlignment="Stretch"
@@ -558,4 +557,4 @@
             </Button>
         </StackPanel>
     </Grid>
-</Page>
+</UserControl>

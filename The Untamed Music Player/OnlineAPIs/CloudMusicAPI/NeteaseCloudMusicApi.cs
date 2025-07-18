@@ -18,6 +18,16 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     private readonly HttpClientHandler _clientHandler;
     private bool _isDisposed;
 
+    // 单例相关字段
+    private static readonly Lazy<NeteaseCloudMusicApi> _instance = new(() =>
+        new NeteaseCloudMusicApi()
+    );
+
+    /// <summary>
+    /// 获取单例实例
+    /// </summary>
+    public static NeteaseCloudMusicApi Instance => _instance.Value;
+
     private static readonly Dictionary<string, string> _emptyQueries = [];
 
     /// <summary />
@@ -43,7 +53,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     /// <summary>
     /// 构造器
     /// </summary>
-    public NeteaseCloudMusicApi()
+    private NeteaseCloudMusicApi()
     {
         _clientHandler = new HttpClientHandler
         {
