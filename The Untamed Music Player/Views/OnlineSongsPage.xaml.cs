@@ -86,10 +86,7 @@ public sealed partial class OnlineSongsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-                info,
-                (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1)
-            );
+            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
             var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }

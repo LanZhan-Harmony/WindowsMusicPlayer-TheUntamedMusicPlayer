@@ -84,10 +84,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-                info,
-                Data.MusicPlayer.SourceMode
-            );
+            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
             var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }

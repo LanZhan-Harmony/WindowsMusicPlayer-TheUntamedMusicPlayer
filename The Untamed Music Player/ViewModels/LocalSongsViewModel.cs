@@ -523,9 +523,13 @@ public partial class LocalSongsViewModel : ObservableRecipient
         var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info.Album);
         if (localAlbumInfo is not null)
         {
-            Data.SelectedAlbum = localAlbumInfo;
+            Data.SelectedLocalAlbum = localAlbumInfo;
             Data.ShellPage!.GetFrame()
-                .Navigate(typeof(LocalAlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+                .Navigate(
+                    typeof(LocalAlbumDetailPage),
+                    null,
+                    new SuppressNavigationTransitionInfo()
+                );
         }
     }
 
@@ -534,9 +538,13 @@ public partial class LocalSongsViewModel : ObservableRecipient
         var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(info.Artists[0]);
         if (localArtistInfo is not null)
         {
-            Data.SelectedArtist = localArtistInfo;
+            Data.SelectedLocalArtist = localArtistInfo;
             Data.ShellPage!.GetFrame()
-                .Navigate(typeof(LocalArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+                .Navigate(
+                    typeof(LocalArtistDetailPage),
+                    null,
+                    new SuppressNavigationTransitionInfo()
+                );
         }
     }
 

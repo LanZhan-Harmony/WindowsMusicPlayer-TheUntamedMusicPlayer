@@ -253,7 +253,7 @@ public partial class MusicPlayer : ObservableRecipient
     {
         Stop();
         _currentBriefSong = info;
-        CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info, SourceMode);
+        CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
         PlayQueueIndex = info.PlayQueueIndex;
         if (CurrentSong!.IsPlayAvailable)
         {
@@ -279,10 +279,7 @@ public partial class MusicPlayer : ObservableRecipient
         Stop();
         var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
         _currentBriefSong = songToPlay;
-        CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-            songToPlay,
-            SourceMode
-        );
+        CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(songToPlay);
         PlayQueueIndex = isLast ? 0 : index;
         if (CurrentSong!.IsPlayAvailable)
         {
@@ -354,10 +351,7 @@ public partial class MusicPlayer : ObservableRecipient
             newIndex = PlayQueueIndex < _playQueueLength - 1 ? PlayQueueIndex + 1 : 0;
             var songToPlay = ShuffleMode ? ShuffledPlayQueue[newIndex] : PlayQueue[newIndex];
             _currentBriefSong = songToPlay;
-            CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-                songToPlay,
-                SourceMode
-            );
+            CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(songToPlay);
             PlayQueueIndex = newIndex == 0 ? 0 : newIndex - 1;
             if (PlayState != 0)
             {

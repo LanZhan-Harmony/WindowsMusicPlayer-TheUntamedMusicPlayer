@@ -2,6 +2,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
@@ -56,5 +57,36 @@ public class DetailedCloudOnlineArtistInfo : BriefCloudOnlineArtistInfo, IDetail
     public int TotalAlbumNum { get; set; }
     public int TotalSongNum { get; set; }
     public TimeSpan TotalDuration { get; set; }
-    public string? Description { get; set; }
+    public string? Introduction { get; set; }
+
+    public string GetCountStr()
+    {
+        var albumStr =
+            TotalAlbumNum > 1
+                ? "ArtistInfo_Albums".GetLocalized()
+                : "ArtistInfo_Album".GetLocalized();
+        var songStr =
+            TotalSongNum > 1 ? "AlbumInfo_Songs".GetLocalized() : "AlbumInfo_Song".GetLocalized();
+        return $"{TotalAlbumNum} {albumStr} • {TotalSongNum} {songStr} •";
+    }
+
+    public string GetDurationStr()
+    {
+        var hourStr =
+            TotalDuration.Hours > 1
+                ? "ArtistInfo_Hours".GetLocalized()
+                : "ArtistInfo_Hour".GetLocalized();
+        var minuteStr =
+            TotalDuration.Minutes > 1
+                ? "ArtistInfo_Mins".GetLocalized()
+                : "ArtistInfo_Min".GetLocalized();
+        var secondStr =
+            TotalDuration.Seconds > 1
+                ? "ArtistInfo_Secs".GetLocalized()
+                : "ArtistInfo_Sec".GetLocalized();
+
+        return TotalDuration.Hours > 0
+            ? $"{TotalDuration.Hours} {hourStr} {TotalDuration.Minutes} {minuteStr} {TotalDuration.Seconds} {secondStr}"
+            : $"{TotalDuration.Minutes} {minuteStr} {TotalDuration.Seconds} {secondStr}";
+    }
 }

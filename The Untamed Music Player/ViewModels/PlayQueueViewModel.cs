@@ -54,7 +54,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
             );
             if (localAlbumInfo is not null)
             {
-                Data.SelectedAlbum = localAlbumInfo;
+                Data.SelectedLocalAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(LocalAlbumDetailPage),
@@ -74,7 +74,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
             );
             if (localArtistInfo is not null)
             {
-                Data.SelectedArtist = localArtistInfo;
+                Data.SelectedLocalArtist = localArtistInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(LocalArtistDetailPage),

@@ -51,7 +51,7 @@ public sealed partial class LocalAlbumsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedAlbum = info;
+            Data.SelectedLocalAlbum = info;
             Data.NavigatePage = "LocalAlbumsPage";
             Data.ShellPage!.GetFrame()
                 .Navigate(
@@ -64,9 +64,9 @@ public sealed partial class LocalAlbumsPage : Page
 
     private async void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedAlbum is not null && sender is GridView gridView)
+        if (Data.SelectedLocalAlbum is not null && sender is GridView gridView)
         {
-            gridView.ScrollIntoView(Data.SelectedAlbum, ScrollIntoViewAlignment.Leading);
+            gridView.ScrollIntoView(Data.SelectedLocalAlbum, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -76,7 +76,7 @@ public sealed partial class LocalAlbumsPage : Page
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(
                     animation,
-                    Data.SelectedAlbum,
+                    Data.SelectedLocalAlbum,
                     "CoverBorder"
                 );
             }
@@ -112,7 +112,7 @@ public sealed partial class LocalAlbumsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedAlbum = info;
+            Data.SelectedLocalAlbum = info;
             Data.NavigatePage = "LocalAlbumsPage";
             Data.ShellPage!.GetFrame()
                 .Navigate(

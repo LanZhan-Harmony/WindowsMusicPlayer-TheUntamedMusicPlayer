@@ -51,7 +51,7 @@ public sealed partial class LocalArtistsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedArtist = localArtistInfo;
+            Data.SelectedLocalArtist = localArtistInfo;
             Data.NavigatePage = "LocalArtistsPage";
             Data.ShellPage!.GetFrame()
                 .Navigate(
@@ -64,9 +64,9 @@ public sealed partial class LocalArtistsPage : Page
 
     private async void ArtistGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedArtist is not null && sender is GridView gridView)
+        if (Data.SelectedLocalArtist is not null && sender is GridView gridView)
         {
-            gridView.ScrollIntoView(Data.SelectedArtist, ScrollIntoViewAlignment.Leading);
+            gridView.ScrollIntoView(Data.SelectedLocalArtist, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -76,7 +76,7 @@ public sealed partial class LocalArtistsPage : Page
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(
                     animation,
-                    Data.SelectedArtist,
+                    Data.SelectedLocalArtist,
                     "CoverBorder"
                 );
             }
