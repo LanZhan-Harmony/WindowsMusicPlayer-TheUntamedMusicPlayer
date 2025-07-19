@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml;
 using The_Untamed_Music_Player.Activation;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Models;
-using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -85,12 +84,15 @@ public partial class App : Application
                     services.AddTransient<LocalSongsViewModel>();
                     services.AddSingleton<LocalAlbumsViewModel>();
                     services.AddSingleton<LocalArtistsViewModel>();
-                    services.AddTransient<AlbumDetailViewModel>();
-                    services.AddTransient<ArtistDetailViewModel>();
+                    services.AddTransient<LocalAlbumDetailViewModel>();
+                    services.AddTransient<LocalArtistDetailViewModel>();
                     services.AddTransient<OnlineSongsViewModel>();
                     services.AddTransient<OnlineAlbumsViewModel>();
                     services.AddTransient<OnlineArtistsViewModel>();
                     services.AddTransient<OnlinePlayListsViewModel>();
+                    services.AddTransient<OnlineAlbumDetailViewModel>();
+                    services.AddTransient<OnlineArtistDetailViewModel>();
+                    services.AddTransient<OnlinePlayListDetailViewModel>();
                     services.AddTransient<DesktopLyricViewModel>();
 
                     // Configuration
@@ -113,7 +115,7 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
-    protected override async void OnLaunched(LaunchActivatedEventArgs args)
+    protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
         MainWindow = new MainWindow();

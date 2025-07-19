@@ -79,7 +79,7 @@ internal class TitleComparer : IComparer<string>
     {
         if (IsChinese(firstChar))
         {
-            var prefix = "LocalSongs_Pinyin".GetLocalized();
+            var prefix = "Songs_Pinyin".GetLocalized();
             var pinyin = GetPinyinFirstLetter(firstChar);
             if (prefix == "拼音")
             {

@@ -20,7 +20,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
 
     private List<LocalAlbumInfo> _albumList = [.. Data.MusicLibrary.Albums.Values];
 
-    public List<string> SortBy { get; set; } = [.. "LocalAlbums_SortBy".GetLocalized().Split(", ")];
+    public List<string> SortBy { get; set; } = [.. "Albums_SortBy".GetLocalized().Split(", ")];
 
     public List<GroupInfoList> GroupedAlbumList { get; set; } = [];
 
@@ -358,7 +358,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
         {
             Data.SelectedArtist = localArtistInfo;
             Data.ShellPage!.GetFrame()
-                .Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+                .Navigate(typeof(LocalArtistDetailPage), null, new SuppressNavigationTransitionInfo());
         }
     }
 
