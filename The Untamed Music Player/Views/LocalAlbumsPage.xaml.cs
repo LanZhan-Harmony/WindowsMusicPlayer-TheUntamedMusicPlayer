@@ -55,7 +55,7 @@ public sealed partial class LocalAlbumsPage : Page
             Data.NavigatePage = "LocalAlbumsPage";
             Data.ShellPage!.GetFrame()
                 .Navigate(
-                    typeof(AlbumDetailPage),
+                    typeof(LocalAlbumDetailPage),
                     "LocalAlbumsPage",
                     new SuppressNavigationTransitionInfo()
                 );
@@ -116,7 +116,7 @@ public sealed partial class LocalAlbumsPage : Page
             Data.NavigatePage = "LocalAlbumsPage";
             Data.ShellPage!.GetFrame()
                 .Navigate(
-                    typeof(AlbumDetailPage),
+                    typeof(LocalAlbumDetailPage),
                     "LocalAlbumsPage",
                     new SuppressNavigationTransitionInfo()
                 );

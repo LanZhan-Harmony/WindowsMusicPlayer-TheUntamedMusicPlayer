@@ -84,7 +84,7 @@
                 <ProgressRing Width="20" Height="20"
                               VerticalAlignment="Center"
                               IsActive="True"/>
-                <TextBlock x:Uid="LocalSongs_IndexingLibraries"
+                <TextBlock x:Uid="Songs_IndexingLibraries"
                            VerticalAlignment="Center"
                            FontWeight="SemiBold"/>
             </StackPanel>

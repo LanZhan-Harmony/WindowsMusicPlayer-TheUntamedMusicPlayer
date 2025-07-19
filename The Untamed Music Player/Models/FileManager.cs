@@ -64,8 +64,6 @@ public class FileManager
 
             // 保存流派列表
             await SaveObjectToFileAsync(libraryFolder, "Genres", genres.ToArray());
-
-            Debug.WriteLine("音乐库数据保存成功");
         }
         catch (Exception ex)
         {
@@ -92,7 +90,6 @@ public class FileManager
             "ShuffledPlayQueue",
             shuffledPlayQueue.ToArray()
         );
-        Debug.WriteLine("播放队列数据保存成功");
     }
 
     /// <summary>
@@ -191,7 +188,6 @@ public class FileManager
                 album.LoadCover();
             }
 
-            Debug.WriteLine("音乐库数据加载成功");
             return (false, data);
         }
         catch (Exception ex)

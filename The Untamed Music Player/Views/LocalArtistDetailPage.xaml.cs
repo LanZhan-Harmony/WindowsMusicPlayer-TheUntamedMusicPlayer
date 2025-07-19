@@ -18,9 +18,9 @@ using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class ArtistDetailPage : Page
+public sealed partial class LocalArtistDetailPage : Page
 {
-    public ArtistDetailViewModel ViewModel { get; }
+    public LocalArtistDetailViewModel ViewModel { get; }
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 80, 107);
@@ -54,9 +54,9 @@ public sealed partial class ArtistDetailPage : Page
         }
     } = 0;
 
-    public ArtistDetailPage()
+    public LocalArtistDetailPage()
     {
-        ViewModel = App.GetService<ArtistDetailViewModel>();
+        ViewModel = App.GetService<LocalArtistDetailViewModel>();
         _ = InitializeAsync();
         InitializeComponent();
     }
@@ -98,7 +98,7 @@ public sealed partial class ArtistDetailPage : Page
         }
     }
 
-    private async void ArtistDetailPage_Loaded(object sender, RoutedEventArgs e)
+    private async void LocalArtistDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
         var listScrollViewer = SharedScrollViewer;
 
@@ -440,8 +440,8 @@ public sealed partial class ArtistDetailPage : Page
                 Data.SelectedAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
-                        typeof(AlbumDetailPage),
-                        "ArtistDetailPage",
+                        typeof(LocalAlbumDetailPage),
+                        "LocalArtistDetailPage",
                         new SuppressNavigationTransitionInfo()
                     );
             }
@@ -474,8 +474,8 @@ public sealed partial class ArtistDetailPage : Page
                 Data.SelectedAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
-                        typeof(AlbumDetailPage),
-                        "ArtistDetailPage",
+                        typeof(LocalAlbumDetailPage),
+                        "LocalArtistDetailPage",
                         new SuppressNavigationTransitionInfo()
                     );
             }

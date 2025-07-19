@@ -37,7 +37,6 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
             using var stream = new InMemoryRandomAccessStream();
             await stream.WriteAsync(coverBytes.AsBuffer());
             stream.Seek(0);
-
             var tcs = new TaskCompletionSource<bool>();
             App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
             {
@@ -71,5 +70,4 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
     public TimeSpan TotalDuration { get; set; }
     public ushort Year { get; set; }
     public string? Description { get; set; }
-    public List<IBriefOnlineSongInfo> SongList { get; set; } = [];
 }

@@ -17,7 +17,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
     private List<LocalArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
 
     public List<string> SortBy { get; set; } =
-        [.. "LocalArtists_SortBy".GetLocalized().Split(", ")];
+        [.. "Artists_SortBy".GetLocalized().Split(", ")];
 
     public ObservableCollection<GroupInfoList> GroupedArtistList { get; set; } = [];
 

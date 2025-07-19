@@ -96,7 +96,8 @@
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Disabled"
                           VerticalScrollMode="Disabled">
-                <SelectorBar Grid.Column="1"
+                <SelectorBar x:Name="MainSelectorBar"
+                             Grid.Column="1"
                              Loaded="{x:Bind ViewModel.SelectorBar_Loaded}"
                              SelectionChanged="{x:Bind ViewModel.SelectorBar_SelectionChanged}">
                     <SelectorBarItem x:Name="SelectorBarItemPage1" x:Uid="HaveMusic_Songs"

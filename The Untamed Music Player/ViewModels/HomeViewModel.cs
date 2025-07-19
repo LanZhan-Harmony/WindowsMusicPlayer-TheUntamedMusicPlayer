@@ -13,6 +13,8 @@ public partial class HomeViewModel : ObservableRecipient
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
 
+    private SelectorBar? _selectorBar;
+
     /// <summary>
     /// 页面索引, 0为歌曲, 1为专辑, 2为艺术家, 3为歌单
     /// </summary>
@@ -23,6 +25,7 @@ public partial class HomeViewModel : ObservableRecipient
         {
             field = value;
             Data.OnlineMusicLibrary.PageIndex = value;
+            SavePageIndex();
         }
     }
 
@@ -98,6 +101,7 @@ public partial class HomeViewModel : ObservableRecipient
     {
         if (sender is SelectorBar selectorBar)
         {
+            _selectorBar = selectorBar;
             var selectedItem = selectorBar.Items[PageIndex];
             selectorBar.SelectedItem = selectedItem;
         }
@@ -133,6 +137,8 @@ public partial class HomeViewModel : ObservableRecipient
                 ? SlideNavigationTransitionEffect.FromRight
                 : SlideNavigationTransitionEffect.FromLeft;
         PageIndex = (byte)currentSelectedIndex;
+        _selectorBar?.SelectedItem = _selectorBar.Items[currentSelectedIndex];
+
         _ = Data.OnlineMusicLibrary.Search();
         Data.HomePage.GetFrame()
             .Navigate(

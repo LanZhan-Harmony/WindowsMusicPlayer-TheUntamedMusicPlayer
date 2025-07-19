@@ -8,13 +8,13 @@ using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class AlbumDetailViewModel : ObservableRecipient
+public partial class LocalAlbumDetailViewModel : ObservableRecipient
 {
     public LocalAlbumInfo Album { get; set; } = Data.SelectedAlbum!;
 
     public List<IBriefSongInfoBase> SongList { get; set; }
 
-    public AlbumDetailViewModel()
+    public LocalAlbumDetailViewModel()
     {
         var tempList = Data.MusicLibrary.GetSongsByAlbum(Album);
         SongList = [.. tempList];
@@ -65,7 +65,7 @@ public partial class AlbumDetailViewModel : ObservableRecipient
                 Data.SelectedArtist = localArtistInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
-                        typeof(ArtistDetailPage),
+                        typeof(LocalArtistDetailPage),
                         null,
                         new SuppressNavigationTransitionInfo()
                     );

@@ -7,7 +7,7 @@ using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class ArtistDetailViewModel
+public class LocalArtistDetailViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
@@ -16,7 +16,7 @@ public class ArtistDetailViewModel
 
     public List<BriefLocalAlbumInfo> AlbumList { get; set; }
 
-    public ArtistDetailViewModel()
+    public LocalArtistDetailViewModel()
     {
         AlbumList = Data.MusicLibrary.GetAlbumsByArtist(Artist);
     }
@@ -78,7 +78,7 @@ public class ArtistDetailViewModel
                 Data.SelectedAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
-                        typeof(AlbumDetailPage),
+                        typeof(LocalAlbumDetailPage),
                         null,
                         new SuppressNavigationTransitionInfo()
                     );
@@ -115,14 +115,14 @@ public class ArtistDetailViewModel
     public async Task<int> LoadSelectionBarSelectedIndex()
     {
         return await _localSettingsService.ReadSettingAsync<int>(
-            "ArtistDetailSelectionBarSelectedIndex"
+            "LocalArtistDetailSelectionBarSelectedIndex"
         );
     }
 
     public async void SaveSelectionBarSelectedIndex(int selectedIndex)
     {
         await _localSettingsService.SaveSettingAsync(
-            "ArtistDetailSelectionBarSelectedIndex",
+            "LocalArtistDetailSelectionBarSelectedIndex",
             selectedIndex
         );
     }

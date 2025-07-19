@@ -1,6 +1,4 @@
 using MemoryPack;
-using Microsoft.UI;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;

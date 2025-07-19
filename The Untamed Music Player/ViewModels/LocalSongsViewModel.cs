@@ -41,7 +41,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     /// <summary>
     /// 排序方式列表
     /// </summary>
-    public List<string> SortBy { get; set; } = [.. "LocalSongs_SortBy".GetLocalized().Split(", ")];
+    public List<string> SortBy { get; set; } = [.. "Songs_SortBy".GetLocalized().Split(", ")];
 
     /// <summary>
     /// 分组的歌曲列表
@@ -525,7 +525,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             Data.SelectedAlbum = localAlbumInfo;
             Data.ShellPage!.GetFrame()
-                .Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+                .Navigate(typeof(LocalAlbumDetailPage), null, new SuppressNavigationTransitionInfo());
         }
     }
 
@@ -536,7 +536,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             Data.SelectedArtist = localArtistInfo;
             Data.ShellPage!.GetFrame()
-                .Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+                .Navigate(typeof(LocalArtistDetailPage), null, new SuppressNavigationTransitionInfo());
         }
     }
 
