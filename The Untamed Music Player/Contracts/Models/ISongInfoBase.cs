@@ -114,20 +114,7 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
         return $"{artistsStr} • {album}";
     }
 
-    static async Task<IDetailedSongInfoBase> CreateDetailedSongInfoAsync(
-        IBriefSongInfoBase info,
-        byte sourceMode
-    )
-    {
-        return sourceMode switch
-        {
-            0 => new DetailedLocalSongInfo((BriefLocalSongInfo)info),
-            1 => await CloudDetailedOnlineSongInfo.CreateAsync((IBriefOnlineSongInfo)info),
-            _ => await CloudDetailedOnlineSongInfo.CreateAsync((IBriefOnlineSongInfo)info),
-        };
-    }
-
-    static async Task<IDetailedSongInfoBase?> CreateDetailedSongInfoAsync(IBriefSongInfoBase info)
+    static async Task<IDetailedSongInfoBase> CreateDetailedSongInfoAsync(IBriefSongInfoBase info)
     {
         if (info is BriefLocalSongInfo briefInfo)
         {
@@ -139,7 +126,7 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
         }
         else
         {
-            return null;
+            return await CloudDetailedOnlineSongInfo.CreateAsync((CloudBriefOnlineSongInfo)info);
         }
     }
 }
