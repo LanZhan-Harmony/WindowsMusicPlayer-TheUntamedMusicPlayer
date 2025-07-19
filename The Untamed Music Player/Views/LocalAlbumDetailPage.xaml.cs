@@ -19,9 +19,9 @@ using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class AlbumDetailPage : Page
+public sealed partial class LocalAlbumDetailPage : Page
 {
-    public AlbumDetailViewModel ViewModel { get; }
+    public LocalAlbumDetailViewModel ViewModel { get; }
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 80, 107);
@@ -42,16 +42,16 @@ public sealed partial class AlbumDetailPage : Page
     private Compositor? _compositor;
     private SpriteVisual? _backgroundVisual;
 
-    public AlbumDetailPage()
+    public LocalAlbumDetailPage()
     {
-        ViewModel = App.GetService<AlbumDetailViewModel>();
+        ViewModel = App.GetService<LocalAlbumDetailViewModel>();
         InitializeComponent();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.Parameter is string page && (page == "LocalAlbumsPage" || page == "ArtistDetailPage"))
+        if (e.Parameter is string page && (page == "LocalAlbumsPage" || page == "LocalArtistDetailPage"))
         {
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -72,7 +72,7 @@ public sealed partial class AlbumDetailPage : Page
         }
     }
 
-    private async void AlbumDetailsPage_OnLoaded(object sender, RoutedEventArgs e)
+    private async void LocalAlbumDetailPage_OnLoaded(object sender, RoutedEventArgs e)
     {
         var scrollViewer =
             SongListView.FindDescendant<ScrollViewer>()
