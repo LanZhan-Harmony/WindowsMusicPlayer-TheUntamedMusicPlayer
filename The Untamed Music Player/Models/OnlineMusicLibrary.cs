@@ -79,18 +79,19 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
     public async Task Search()
     {
-        KeyWordsTextBlockVisibility = Visibility.Collapsed;
-        NetworkErrorVisibility = Visibility.Collapsed;
-        ListViewOpacity = 0;
-
         if (string.IsNullOrWhiteSpace(SearchKeyWords))
         {
+            KeyWordsTextBlockVisibility = Visibility.Collapsed;
+            NetworkErrorVisibility = Visibility.Collapsed;
+            ListViewOpacity = 0;
             return;
         }
 
-        if (!await IsInternetAvailableAsync())
+        if (!await NetworkHelper.IsInternetAvailableAsync())
         {
+            KeyWordsTextBlockVisibility = Visibility.Collapsed;
             NetworkErrorVisibility = Visibility.Visible;
+            ListViewOpacity = 0;
             return;
         }
 
@@ -99,10 +100,14 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         {
             // 直接显示现有结果
             KeyWordsTextBlockVisibility = Visibility.Visible;
+            NetworkErrorVisibility = Visibility.Collapsed;
             ListViewOpacity = 1;
             return;
         }
 
+        KeyWordsTextBlockVisibility = Visibility.Collapsed;
+        NetworkErrorVisibility = Visibility.Collapsed;
+        ListViewOpacity = 0;
         IsSearchProgressRingActive = true;
         try
         {
@@ -151,7 +156,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                 switch (MusicLibraryIndex)
                 {
                     case 0:
-                        // TODO: Artist search implementation when available
+                        var cloudList = OnlineArtistInfoList as CloudOnlineArtistInfoList ?? [];
+                        OnlineArtistInfoList = cloudList;
+                        await CloudArtistSearchHelper.SearchArtistsAsync(SearchKeyWords, cloudList);
                         break;
                     case 1:
                     case 2:
@@ -190,17 +197,15 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         // 如果搜索参数没有变化
         if (_lastSearchKeyWords == SearchKeyWords && _lastMusicLibraryIndex == MusicLibraryIndex)
         {
-            // 检查当前页面类型对应的列表是否有数据
             return PageIndex switch
             {
-                0 => OnlineSongInfoList?.Count > 0 && 
-                     string.Equals(OnlineSongInfoList.KeyWords, SearchKeyWords, StringComparison.Ordinal),
-                1 => OnlineAlbumInfoList?.Count > 0 && 
-                     string.Equals(OnlineAlbumInfoList.KeyWords, SearchKeyWords, StringComparison.Ordinal),
-                2 => OnlineArtistInfoList?.Count > 0 && 
-                     string.Equals(OnlineArtistInfoList.KeyWords, SearchKeyWords, StringComparison.Ordinal),
-                3 => false, // TODO: Playlist implementation
-                _ => false
+                0 => OnlineSongInfoList?.Count > 0 && OnlineSongInfoList.KeyWords == SearchKeyWords,
+                1 => OnlineAlbumInfoList?.Count > 0
+                    && OnlineAlbumInfoList.KeyWords == SearchKeyWords,
+                2 => OnlineArtistInfoList?.Count > 0
+                    && OnlineArtistInfoList.KeyWords == SearchKeyWords,
+                3 => false, // TODO: 补充歌单逻辑
+                _ => false,
             };
         }
         return false;
@@ -221,7 +226,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         if (!_isSearchingMore && !OnlineSongInfoList.HasAllLoaded)
         {
             _isSearchingMore = true;
-            if (OnlineSongInfoList.HasAllLoaded || !await IsInternetAvailableAsync())
+            if (OnlineSongInfoList.HasAllLoaded || !await NetworkHelper.IsInternetAvailableAsync())
             {
                 return;
             }
@@ -258,6 +263,25 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                             var cloudList = OnlineAlbumInfoList as CloudOnlineAlbumInfoList ?? [];
                             OnlineAlbumInfoList = cloudList;
                             await CloudAlbumSearchHelper.SearchMoreAlbumsAsync(cloudList);
+                            break;
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else if (PageIndex == 2)
+                {
+                    switch (MusicLibraryIndex)
+                    {
+                        case 0:
+                            var cloudList = OnlineArtistInfoList as CloudOnlineArtistInfoList ?? [];
+                            OnlineArtistInfoList = cloudList;
+                            await CloudArtistSearchHelper.SearchMoreArtistsAsync(cloudList);
                             break;
                         case 1:
                         case 2:
@@ -537,24 +561,11 @@ public partial class OnlineMusicLibrary : ObservableRecipient
 
     public void OnlineAlbumsAlbumGridView_ItemClick(object sender, ItemClickEventArgs e) { }
 
+    public void OnlineArtistsArtistGridView_ItemClick(object sender, ItemClickEventArgs e) { }
+
     public async void RetryButton_Click(object sender, RoutedEventArgs e)
     {
         await ForceSearch();
-    }
-
-    public static async Task<bool> IsInternetAvailableAsync()
-    {
-        try
-        {
-            using var client = new HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(5);
-            var response = await client.GetAsync("https://www.baidu.com");
-            return response.IsSuccessStatusCode;
-        }
-        catch
-        {
-            return false;
-        }
     }
 
     private static string GetUniqueFilePath(string path)

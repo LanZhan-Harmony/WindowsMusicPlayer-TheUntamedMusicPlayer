@@ -55,7 +55,7 @@ public sealed partial class LocalArtistsPage : Page
             Data.NavigatePage = "LocalArtistsPage";
             Data.ShellPage!.GetFrame()
                 .Navigate(
-                    typeof(ArtistDetailPage),
+                    typeof(LocalArtistDetailPage),
                     "LocalArtistPage",
                     new SuppressNavigationTransitionInfo()
                 );

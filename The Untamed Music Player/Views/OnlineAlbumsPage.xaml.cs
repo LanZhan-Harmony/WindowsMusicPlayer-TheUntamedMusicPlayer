@@ -60,8 +60,6 @@ public sealed partial class OnlineAlbumsPage : Page
         menuButton?.Visibility = Visibility.Collapsed;
     }
 
-    private void AlbumGridView_Loaded(object sender, RoutedEventArgs e) { }
-
     private void PlayButton_Click(object sender, RoutedEventArgs e) { }
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e) { }
