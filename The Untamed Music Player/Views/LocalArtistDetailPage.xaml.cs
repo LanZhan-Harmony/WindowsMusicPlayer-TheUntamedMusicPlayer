@@ -393,9 +393,9 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private async void SongListViewPropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            var song = new DetailedLocalSongInfo(info);
             if (song is not null)
             {
                 var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
@@ -437,7 +437,7 @@ public sealed partial class LocalArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.SelectedAlbum = localAlbumInfo;
+                Data.SelectedLocalAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(LocalAlbumDetailPage),
@@ -471,7 +471,7 @@ public sealed partial class LocalArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.SelectedAlbum = localAlbumInfo;
+                Data.SelectedLocalAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(LocalAlbumDetailPage),

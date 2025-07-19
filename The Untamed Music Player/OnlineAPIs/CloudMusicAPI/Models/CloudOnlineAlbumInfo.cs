@@ -1,7 +1,9 @@
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using Microsoft.UI.Xaml.Media.Imaging;
+using TagLib;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
@@ -69,5 +71,52 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
     public int TotalNum { get; set; }
     public TimeSpan TotalDuration { get; set; }
     public ushort Year { get; set; }
-    public string? Description { get; set; }
+    public string? Introduction { get; set; }
+    public List<IBriefOnlineSongInfo> SongList { get; set; } = [];
+
+    public static async Task<DetailedCloudOnlineAlbumInfo> CreateAsync(IBriefOnlineAlbumInfo info)
+    {
+        var detailedInfo = new DetailedCloudOnlineAlbumInfo
+        {
+            ID = info.ID,
+            Name = info.Name,
+            Cover = info.Cover,
+            CoverPath = info.CoverPath,
+            ArtistsStr = info.ArtistsStr,
+        };
+        try
+        {
+            var api = NeteaseCloudMusicApi.Instance;
+            var (_, result) = await api.RequestAsync(
+                CloudMusicApiProviders.Album,
+                new Dictionary<string, string> { { "id", $"{info.ID}" } }
+            );
+            detailedInfo.TotalNum = result["songs"]!.AsArray().Count;
+        }
+        catch
+        {
+            return detailedInfo;
+        }
+        return detailedInfo;
+    }
+
+    public string GetDescriptionStr()
+    {
+        var parts = new List<string>();
+        if (Year != 0)
+        {
+            parts.Add(Year.ToString());
+        }
+        parts.Add(
+            TotalNum > 1
+                ? $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
+                : $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}"
+        );
+        parts.Add(
+            TotalDuration.Hours > 0
+                ? $"{TotalDuration:hh\\:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
+                : $"{TotalDuration:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
+        );
+        return string.Join(" • ", parts);
+    }
 }

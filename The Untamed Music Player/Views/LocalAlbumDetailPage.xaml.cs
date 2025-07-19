@@ -51,7 +51,10 @@ public sealed partial class LocalAlbumDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.Parameter is string page && (page == "LocalAlbumsPage" || page == "LocalArtistDetailPage"))
+        if (
+            e.Parameter is string page
+            && (page == "LocalAlbumsPage" || page == "LocalArtistDetailPage")
+        )
         {
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -319,9 +322,9 @@ public sealed partial class LocalAlbumDetailPage : Page
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            var song = new DetailedLocalSongInfo(info);
             if (song is not null)
             {
                 var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };

@@ -10,7 +10,7 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public partial class LocalAlbumDetailViewModel : ObservableRecipient
 {
-    public LocalAlbumInfo Album { get; set; } = Data.SelectedAlbum!;
+    public LocalAlbumInfo Album { get; set; } = Data.SelectedLocalAlbum!;
 
     public List<IBriefSongInfoBase> SongList { get; set; }
 
@@ -62,7 +62,7 @@ public partial class LocalAlbumDetailViewModel : ObservableRecipient
             var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(songInfo.Artists[0]);
             if (localArtistInfo is not null)
             {
-                Data.SelectedArtist = localArtistInfo;
+                Data.SelectedLocalArtist = localArtistInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(LocalArtistDetailPage),

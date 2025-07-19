@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml.Media;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.ViewModels;
 using The_Untamed_Music_Player.Views;
@@ -23,8 +24,10 @@ public static class Data
     public static bool IsMusicDownloading { get; set; } = false;
 
     public static string? NavigatePage { get; set; }
-    public static LocalAlbumInfo? SelectedAlbum { get; set; }
-    public static LocalArtistInfo? SelectedArtist { get; set; }
+    public static LocalAlbumInfo? SelectedLocalAlbum { get; set; }
+    public static LocalArtistInfo? SelectedLocalArtist { get; set; }
+    public static IBriefOnlineAlbumInfo? SelectedOnlineAlbum { get; set; }
+    public static IBriefOnlineArtistInfo? SelectedOnlineArtist { get; set; }
 
     /// <summary>
     /// 软件显示名称

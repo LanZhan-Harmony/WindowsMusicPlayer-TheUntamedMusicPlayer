@@ -13,5 +13,7 @@ public interface IDetailedOnlineAlbumInfo : IBriefOnlineAlbumInfo
     int TotalNum { get; set; }
     TimeSpan TotalDuration { get; set; }
     ushort Year { get; set; }
-    string? Description { get; set; }
+    string? Introduction { get; set; }
+    List<IBriefOnlineSongInfo> SongList { get; set; }
+    string GetDescriptionStr();
 }
