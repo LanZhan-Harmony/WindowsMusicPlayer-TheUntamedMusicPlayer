@@ -390,10 +390,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     {
         Data.IsMusicDownloading = true;
         var detailedInfo = (IDetailedOnlineSongInfo)
-            await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-                info,
-                (byte)(MusicLibraryIndex + 1)
-            );
+            await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
         var title = detailedInfo.Title;
         var itemType = detailedInfo.ItemType;
         var location = await LoadSongDownloadLocationAsync();

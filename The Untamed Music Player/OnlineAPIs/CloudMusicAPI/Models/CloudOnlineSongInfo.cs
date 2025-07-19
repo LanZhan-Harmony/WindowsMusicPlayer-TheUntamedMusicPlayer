@@ -108,7 +108,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
 
     public CloudDetailedOnlineSongInfo() { }
 
-    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(IBriefOnlineSongInfo info)
+    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(CloudBriefOnlineSongInfo info)
     {
         var detailedInfo = new CloudDetailedOnlineSongInfo
         {

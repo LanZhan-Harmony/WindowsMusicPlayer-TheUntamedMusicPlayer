@@ -12,7 +12,7 @@ public class LocalArtistDetailViewModel
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
 
-    public LocalArtistInfo Artist { get; set; } = Data.SelectedArtist!;
+    public LocalArtistInfo Artist { get; set; } = Data.SelectedLocalArtist!;
 
     public List<BriefLocalAlbumInfo> AlbumList { get; set; }
 
@@ -75,7 +75,7 @@ public class LocalArtistDetailViewModel
             var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(songInfo.Album);
             if (localAlbumInfo is not null)
             {
-                Data.SelectedAlbum = localAlbumInfo;
+                Data.SelectedLocalAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
                         typeof(LocalAlbumDetailPage),

@@ -127,7 +127,8 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
             {
                 var filteredItems = group
                     .Where(item =>
-                        item is LocalAlbumInfo localAlbumInfo && localAlbumInfo.GenreStr == genreToFilter
+                        item is LocalAlbumInfo localAlbumInfo
+                        && localAlbumInfo.GenreStr == genreToFilter
                     )
                     .ToList();
                 group.Clear();
@@ -356,9 +357,13 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
         var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(info.Artists[0]);
         if (localArtistInfo is not null)
         {
-            Data.SelectedArtist = localArtistInfo;
+            Data.SelectedLocalArtist = localArtistInfo;
             Data.ShellPage!.GetFrame()
-                .Navigate(typeof(LocalArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+                .Navigate(
+                    typeof(LocalArtistDetailPage),
+                    null,
+                    new SuppressNavigationTransitionInfo()
+                );
         }
     }
 
