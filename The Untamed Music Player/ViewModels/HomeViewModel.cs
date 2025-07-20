@@ -118,12 +118,8 @@ public partial class HomeViewModel : ObservableRecipient
         Navigate(currentSelectedIndex);
     }
 
-    public void Navigate(int currentSelectedIndex, bool isFirstLoaded = false)
+    public void Navigate(int currentSelectedIndex)
     {
-        if (!isFirstLoaded && PageIndex == currentSelectedIndex)
-        {
-            return;
-        }
         var page = currentSelectedIndex switch
         {
             0 => typeof(OnlineSongsPage),

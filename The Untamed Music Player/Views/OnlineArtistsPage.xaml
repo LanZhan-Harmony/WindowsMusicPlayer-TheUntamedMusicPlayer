@@ -186,7 +186,7 @@
         <GridView x:Name="ArtistGridView"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   IsItemClickEnabled="True"
-                  ItemClick="{x:Bind model:Data.OnlineMusicLibrary.OnlineArtistsArtistGridView_ItemClick}"
+                  ItemClick="ArtistGridView_ItemClick"
                   ItemTemplate="{StaticResource ArtistGridViewTemplate}"
                   ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineArtistInfoList, Mode=OneWay}"
                   Opacity="{x:Bind model:Data.OnlineMusicLibrary.ListViewOpacity, Mode=OneWay}"
