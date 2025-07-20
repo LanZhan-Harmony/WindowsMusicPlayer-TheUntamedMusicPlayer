@@ -15,7 +15,7 @@ public partial class CloudBriefOnlineSongInfoList : IBriefOnlineSongInfoList
     public new void Add(IBriefOnlineSongInfo? info)
     {
         ListCount++;
-        if (info is not null && info.IsPlayAvailable && SearchedSongIDs.Add(info.ID))
+        if (info!.IsPlayAvailable && SearchedSongIDs.Add(info.ID))
         {
             base.Add(info);
         }

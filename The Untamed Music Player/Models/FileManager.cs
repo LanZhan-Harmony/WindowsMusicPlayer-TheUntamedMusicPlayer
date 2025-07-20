@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using The_Untamed_Music_Player.Contracts.Models;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -63,8 +64,6 @@ public class FileManager
 
             // 保存流派列表
             await SaveObjectToFileAsync(libraryFolder, "Genres", genres.ToArray());
-
-            Debug.WriteLine("音乐库数据保存成功");
         }
         catch (Exception ex)
         {
@@ -91,7 +90,6 @@ public class FileManager
             "ShuffledPlayQueue",
             shuffledPlayQueue.ToArray()
         );
-        Debug.WriteLine("播放队列数据保存成功");
     }
 
     /// <summary>
@@ -125,7 +123,7 @@ public class FileManager
                 libraryFolder,
                 "FolderFingerprints"
             );
-            if (savedFingerprints == null)
+            if (savedFingerprints is null)
             {
                 return (true, data);
             }
@@ -150,12 +148,12 @@ public class FileManager
             }
 
             // 并行加载所有数据文件
-            var songsTask = LoadObjectFromFileAsync<BriefSongInfo[]>(libraryFolder, "Songs");
-            var albumsTask = LoadObjectFromFileAsync<Dictionary<string, AlbumInfo>>(
+            var songsTask = LoadObjectFromFileAsync<BriefLocalSongInfo[]>(libraryFolder, "Songs");
+            var albumsTask = LoadObjectFromFileAsync<Dictionary<string, LocalAlbumInfo>>(
                 libraryFolder,
                 "Albums"
             );
-            var artistsTask = LoadObjectFromFileAsync<Dictionary<string, ArtistInfo>>(
+            var artistsTask = LoadObjectFromFileAsync<Dictionary<string, LocalArtistInfo>>(
                 libraryFolder,
                 "Artists"
             );
@@ -169,10 +167,10 @@ public class FileManager
             var genresArray = genresTask.Result;
 
             if (
-                songsArray == null
-                || albumsDict == null
-                || artistsDict == null
-                || genresArray == null
+                songsArray is null
+                || albumsDict is null
+                || artistsDict is null
+                || genresArray is null
             )
             {
                 return (true, data);
@@ -180,17 +178,16 @@ public class FileManager
 
             // 填充数据结构
             data.Songs = [.. songsArray];
-            data.Albums = new ConcurrentDictionary<string, AlbumInfo>(albumsDict);
-            data.Artists = new ConcurrentDictionary<string, ArtistInfo>(artistsDict);
+            data.Albums = new ConcurrentDictionary<string, LocalAlbumInfo>(albumsDict);
+            data.Artists = new ConcurrentDictionary<string, LocalArtistInfo>(artistsDict);
             data.Genres = [.. genresArray];
 
-            // 并行加载所有专辑封面
+            // 加载所有专辑封面
             foreach (var album in albumsDict.Values)
             {
                 album.LoadCover();
             }
 
-            Debug.WriteLine("音乐库数据加载成功");
             return (false, data);
         }
         catch (Exception ex)
@@ -262,7 +259,9 @@ public class FileManager
     /// <summary>
     /// 从文件加载对象
     /// </summary>
-    public static async Task<T?> LoadObjectFromFileAsync<T>(StorageFolder folder, string fileName)
+    public static async Task<T?> LoadObjectFromFileAsync<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T
+    >(StorageFolder folder, string fileName)
     {
         try
         {
@@ -369,17 +368,17 @@ public class FileManager
 /// </summary>
 public class MusicLibraryData
 {
-    public ConcurrentBag<BriefSongInfo> Songs { get; set; } = null!;
-    public ConcurrentDictionary<string, AlbumInfo> Albums { get; set; } = null!;
-    public ConcurrentDictionary<string, ArtistInfo> Artists { get; set; } = null!;
+    public ConcurrentBag<BriefLocalSongInfo> Songs { get; set; } = null!;
+    public ConcurrentDictionary<string, LocalAlbumInfo> Albums { get; set; } = null!;
+    public ConcurrentDictionary<string, LocalArtistInfo> Artists { get; set; } = null!;
     public List<string> Genres { get; set; } = null!;
 
     public MusicLibraryData() { }
 
     public MusicLibraryData(
-        ConcurrentBag<BriefSongInfo> songs,
-        ConcurrentDictionary<string, AlbumInfo> albums,
-        ConcurrentDictionary<string, ArtistInfo> artists,
+        ConcurrentBag<BriefLocalSongInfo> songs,
+        ConcurrentDictionary<string, LocalAlbumInfo> albums,
+        ConcurrentDictionary<string, LocalArtistInfo> artists,
         List<string> genres
     )
     {

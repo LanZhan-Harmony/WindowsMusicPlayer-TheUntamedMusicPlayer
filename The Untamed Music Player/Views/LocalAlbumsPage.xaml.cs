@@ -23,18 +23,9 @@ public sealed partial class LocalAlbumsPage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Visible;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Visible;
-        }
-        if (menuButton is not null)
-        {
-            menuButton.Visibility = Visibility.Visible;
-        }
+        checkBox?.Visibility = Visibility.Visible;
+        playButton?.Visibility = Visibility.Visible;
+        menuButton?.Visibility = Visibility.Visible;
     }
 
     private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -43,23 +34,14 @@ public sealed partial class LocalAlbumsPage : Page
         var checkBox = grid!.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid!.FindName("PlayButton") as Button;
         var menuButton = grid!.FindName("MenuButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Collapsed;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Collapsed;
-        }
-        if (menuButton is not null)
-        {
-            menuButton.Visibility = Visibility.Collapsed;
-        }
+        checkBox?.Visibility = Visibility.Collapsed;
+        playButton?.Visibility = Visibility.Collapsed;
+        menuButton?.Visibility = Visibility.Collapsed;
     }
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is AlbumInfo info)
+        if (e.ClickedItem is LocalAlbumInfo info)
         {
             var grid = (Grid)
                 (
@@ -69,11 +51,11 @@ public sealed partial class LocalAlbumsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedAlbum = info;
+            Data.SelectedLocalAlbum = info;
             Data.NavigatePage = "LocalAlbumsPage";
             Data.ShellPage!.GetFrame()
                 .Navigate(
-                    typeof(AlbumDetailPage),
+                    typeof(LocalAlbumDetailPage),
                     "LocalAlbumsPage",
                     new SuppressNavigationTransitionInfo()
                 );
@@ -82,9 +64,9 @@ public sealed partial class LocalAlbumsPage : Page
 
     private async void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedAlbum is not null && sender is GridView gridView)
+        if (Data.SelectedLocalAlbum is not null && sender is GridView gridView)
         {
-            gridView.ScrollIntoView(Data.SelectedAlbum, ScrollIntoViewAlignment.Leading);
+            gridView.ScrollIntoView(Data.SelectedLocalAlbum, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -94,7 +76,7 @@ public sealed partial class LocalAlbumsPage : Page
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(
                     animation,
-                    Data.SelectedAlbum,
+                    Data.SelectedLocalAlbum,
                     "CoverBorder"
                 );
             }
@@ -104,7 +86,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
             ViewModel.PlayButton_Click(info);
         }
@@ -112,7 +94,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
             ViewModel.PlayNextButton_Click(info);
         }
@@ -122,7 +104,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
             var grid = (Grid)
                 ((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
@@ -130,11 +112,11 @@ public sealed partial class LocalAlbumsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedAlbum = info;
+            Data.SelectedLocalAlbum = info;
             Data.NavigatePage = "LocalAlbumsPage";
             Data.ShellPage!.GetFrame()
                 .Navigate(
-                    typeof(AlbumDetailPage),
+                    typeof(LocalAlbumDetailPage),
                     "LocalAlbumsPage",
                     new SuppressNavigationTransitionInfo()
                 );
@@ -143,7 +125,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: AlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
             ViewModel.ShowArtistButton_Click(info);
         }

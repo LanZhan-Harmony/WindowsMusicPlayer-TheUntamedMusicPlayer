@@ -172,7 +172,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private void Window_Closed(object sender, WindowEventArgs args)
     {
         Data.RootPlayBarViewModel?.IsDesktopLyricWindowStarted = false;
-        if (_updateTimer250ms != null)
+        if (_updateTimer250ms is not null)
         {
             _updateTimer250ms.Stop();
             _updateTimer250ms = null;

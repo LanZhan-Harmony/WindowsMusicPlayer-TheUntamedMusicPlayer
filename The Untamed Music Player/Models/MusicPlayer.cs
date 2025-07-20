@@ -253,7 +253,7 @@ public partial class MusicPlayer : ObservableRecipient
     {
         Stop();
         _currentBriefSong = info;
-        CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info, SourceMode);
+        CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
         PlayQueueIndex = info.PlayQueueIndex;
         if (CurrentSong!.IsPlayAvailable)
         {
@@ -279,10 +279,7 @@ public partial class MusicPlayer : ObservableRecipient
         Stop();
         var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
         _currentBriefSong = songToPlay;
-        CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-            songToPlay,
-            SourceMode
-        );
+        CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(songToPlay);
         PlayQueueIndex = isLast ? 0 : index;
         if (CurrentSong!.IsPlayAvailable)
         {
@@ -354,10 +351,7 @@ public partial class MusicPlayer : ObservableRecipient
             newIndex = PlayQueueIndex < _playQueueLength - 1 ? PlayQueueIndex + 1 : 0;
             var songToPlay = ShuffleMode ? ShuffledPlayQueue[newIndex] : PlayQueue[newIndex];
             _currentBriefSong = songToPlay;
-            CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-                songToPlay,
-                SourceMode
-            );
+            CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(songToPlay);
             PlayQueueIndex = newIndex == 0 ? 0 : newIndex - 1;
             if (PlayState != 0)
             {
@@ -495,7 +489,7 @@ public partial class MusicPlayer : ObservableRecipient
             {
                 try
                 {
-                    var info = (DetailedSongInfo)CurrentSong;
+                    var info = (DetailedLocalSongInfo)CurrentSong;
                     _currentCoverStream = new InMemoryRandomAccessStream();
                     using var writer = new DataWriter(_currentCoverStream.GetOutputStreamAt(0));
                     writer.WriteBytes(info.CoverBuffer);
@@ -518,7 +512,7 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     var info = (IDetailedOnlineSongInfo)CurrentSong;
                     _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
-                        new Uri(info.CoverUrl!)
+                        new Uri(info.CoverPath!)
                     );
                 }
                 catch { }
@@ -1294,7 +1288,7 @@ public partial class MusicPlayer : ObservableRecipient
             IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
             _currentBriefSong = SourceMode switch
             {
-                0 => await _localSettingsService.ReadSettingAsync<BriefSongInfo>(
+                0 => await _localSettingsService.ReadSettingAsync<BriefLocalSongInfo>(
                     "CurrentBriefSong"
                 ),
                 1 => await _localSettingsService.ReadSettingAsync<CloudBriefOnlineSongInfo>(

@@ -79,7 +79,7 @@ internal class TitleComparer : IComparer<string>
     {
         if (IsChinese(firstChar))
         {
-            var prefix = "LocalSongs_Pinyin".GetLocalized();
+            var prefix = "Songs_Pinyin".GetLocalized();
             var pinyin = GetPinyinFirstLetter(firstChar);
             if (prefix == "拼音")
             {
@@ -198,9 +198,9 @@ internal abstract class BaseArtistComparer<T> : IComparer<T>
 /// <summary>
 /// 艺术家比较器（用于歌曲:艺术家）
 /// </summary>
-internal class MusicArtistComparer : BaseArtistComparer<BriefSongInfo>
+internal class MusicArtistComparer : BaseArtistComparer<BriefLocalSongInfo>
 {
-    public override int Compare(BriefSongInfo? x, BriefSongInfo? y)
+    public override int Compare(BriefLocalSongInfo? x, BriefLocalSongInfo? y)
     {
         return CompareByProperty(x?.ArtistsStr, y?.ArtistsStr, x?.Title, y?.Title);
     }
@@ -209,9 +209,9 @@ internal class MusicArtistComparer : BaseArtistComparer<BriefSongInfo>
 /// <summary>
 /// 艺术家比较器(用于专辑:艺术家)
 /// </summary>
-internal class AlbumArtistComparer : BaseArtistComparer<AlbumInfo>
+internal class AlbumArtistComparer : BaseArtistComparer<LocalAlbumInfo>
 {
-    public override int Compare(AlbumInfo? x, AlbumInfo? y)
+    public override int Compare(LocalAlbumInfo? x, LocalAlbumInfo? y)
     {
         return CompareByProperty(x?.ArtistsStr, y?.ArtistsStr, x?.Name, y?.Name);
     }
@@ -287,9 +287,9 @@ internal class ArtistTitleComparer : IComparer<string>
 /// <summary>
 /// 专辑比较器(用于歌曲:专辑)
 /// </summary>
-internal class MusicAlbumComparer : IComparer<BriefSongInfo>
+internal class MusicAlbumComparer : IComparer<BriefLocalSongInfo>
 {
-    public int Compare(BriefSongInfo? x, BriefSongInfo? y)
+    public int Compare(BriefLocalSongInfo? x, BriefLocalSongInfo? y)
     {
         return CompareByProperty(x?.Album, y?.Album, x?.Title, y?.Title);
     }
@@ -434,9 +434,9 @@ internal class AlbumTitleComparer : IComparer<string>
 /// <summary>
 /// 文件夹比较器(用于歌曲:文件夹)
 /// </summary>
-internal class MusicFolderComparer : IComparer<BriefSongInfo>
+internal class MusicFolderComparer : IComparer<BriefLocalSongInfo>
 {
-    public int Compare(BriefSongInfo? x, BriefSongInfo? y)
+    public int Compare(BriefLocalSongInfo? x, BriefLocalSongInfo? y)
     {
         return CompareByProperty(x?.Folder, y?.Folder, x?.Title, y?.Title);
     }
@@ -541,9 +541,9 @@ internal class GenreComparer : IComparer<string>
     /// <summary>
     /// 专辑比较器(用于艺术家:详细)
     /// </summary>
-    internal class AlbumInfoTitleComparer : IComparer<AlbumInfo>
+    internal class AlbumInfoTitleComparer : IComparer<LocalAlbumInfo>
     {
-        public int Compare(AlbumInfo? x, AlbumInfo? y)
+        public int Compare(LocalAlbumInfo? x, LocalAlbumInfo? y)
         {
             return new TitleComparer().Compare(x?.Name, y?.Name);
         }

@@ -267,21 +267,6 @@
   <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
     <value>More options</value>
   </data>
-  <data name="PlayBar_More_1.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ctrl+Shift+J</value>
-  </data>
-  <data name="PlayBar_More_025.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ctrl+Shift+G</value>
-  </data>
-  <data name="PlayBar_More_05.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ctrl+Shift+H</value>
-  </data>
-  <data name="PlayBar_More_15.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ctrl+Shift+K</value>
-  </data>
-  <data name="PlayBar_More_2.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ctrl+Shift+L</value>
-  </data>
   <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
     <value>Previous (Ctrl+B)</value>
   </data>
@@ -348,10 +333,10 @@
   <data name="Settings_Materials" xml:space="preserve">
     <value>None, Mica, Mica Alt, Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
   </data>
-  <data name="LocalSongs_SortBy" xml:space="preserve">
+  <data name="Songs_SortBy" xml:space="preserve">
     <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Album (Asc), Album (Desc), Release year (Asc), Release year (Desc), Date added (Asc), Date added (Desc), Folder (Asc), Folder (Desc)</value>
   </data>
-  <data name="LocalAlbums_SortBy" xml:space="preserve">
+  <data name="Albums_SortBy" xml:space="preserve">
     <value>A - Z, Z - A, Release year (Asc), Release year (Desc), Artist (Asc), Artist (Desc), Date added (Asc), Date added (Desc)</value>
   </data>
   <data name="SongInfo_UnknownArtist" xml:space="preserve">
@@ -363,22 +348,22 @@
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
     <value>Unknown album</value>
   </data>
-  <data name="LocalSongs_SortByChosen.Text" xml:space="preserve">
+  <data name="Songs_SortByChosen.Text" xml:space="preserve">
     <value>Sort by: </value>
   </data>
   <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
     <value>Shuffle and play</value>
   </data>
-  <data name="LocalSongs_GenreChosen.Text" xml:space="preserve">
+  <data name="Songs_GenreChosen.Text" xml:space="preserve">
     <value>Genre: </value>
   </data>
   <data name="PlayQueue_Clear.Text" xml:space="preserve">
     <value>Clear</value>
   </data>
-  <data name="LocalSongs_AddTo_PlayQueue.Text" xml:space="preserve">
+  <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
     <value>Play queue</value>
   </data>
-  <data name="LocalSongs_AddTo_NewPlaylist.Text" xml:space="preserve">
+  <data name="Songs_AddTo_NewPlaylist.Text" xml:space="preserve">
     <value>New playlist</value>
   </data>
   <data name="PlayQueue_AddFiles.Text" xml:space="preserve">
@@ -402,28 +387,28 @@
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
     <value>Enter a URL, and add the media from that address to the play queue</value>
   </data>
-  <data name="LocalSongs_Play.Text" xml:space="preserve">
+  <data name="Songs_Play.Text" xml:space="preserve">
     <value>Play</value>
   </data>
-  <data name="LocalSongs_PlayNext.Text" xml:space="preserve">
+  <data name="Songs_PlayNext.Text" xml:space="preserve">
     <value>Play next</value>
   </data>
-  <data name="LocalSongs_AddTo.Text" xml:space="preserve">
+  <data name="Songs_AddTo.Text" xml:space="preserve">
     <value>Add to</value>
   </data>
-  <data name="LocalSongs_EditInfo.Text" xml:space="preserve">
+  <data name="Songs_EditInfo.Text" xml:space="preserve">
     <value>Edit info</value>
   </data>
-  <data name="LocalSongs_Properties.Text" xml:space="preserve">
+  <data name="Songs_Properties.Text" xml:space="preserve">
     <value>Properties</value>
   </data>
-  <data name="LocalSongs_ShowAlbum.Text" xml:space="preserve">
+  <data name="Songs_ShowAlbum.Text" xml:space="preserve">
     <value>Show album</value>
   </data>
-  <data name="LocalSongs_ShowArtist.Text" xml:space="preserve">
+  <data name="Songs_ShowArtist.Text" xml:space="preserve">
     <value>Show Artist</value>
   </data>
-  <data name="LocalSongs_Select.Text" xml:space="preserve">
+  <data name="Songs_Select.Text" xml:space="preserve">
     <value>Select</value>
   </data>
   <data name="PlayQueue_Remove.Text" xml:space="preserve">
@@ -435,7 +420,7 @@
   <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
     <value>Move down</value>
   </data>
-  <data name="LocalSongs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Play</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
@@ -456,7 +441,7 @@
   <data name="Settings_LyricBackgroundFollowsCover.Header" xml:space="preserve">
     <value>Lyric background follows cover</value>
   </data>
-  <data name="LocalSongs_Pinyin" xml:space="preserve">
+  <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="Data_Language" xml:space="preserve">
@@ -483,10 +468,10 @@
   <data name="SongInfo_AllGenres" xml:space="preserve">
     <value>All genres</value>
   </data>
-  <data name="LocalSongs_IndexingLibraries.Text" xml:space="preserve">
+  <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
     <value>Indexing libraries...</value>
   </data>
-  <data name="LocalArtists_SortBy" xml:space="preserve">
+  <data name="Artists_SortBy" xml:space="preserve">
     <value>A - Z, Z - A</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">

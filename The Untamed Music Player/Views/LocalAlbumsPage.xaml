@@ -40,59 +40,59 @@
                            TextAlignment="Center" TextTrimming="WordEllipsis"/>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:AlbumInfo">
+        <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:LocalAlbumInfo">
             <Grid Width="170" Height="226"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Play"
+                        <MenuFlyoutItem x:Uid="Songs_Play"
                                         Width="216"
                                         Click="PlayButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE768;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_PlayNext" Click="PlayNextButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_PlayNext" Click="PlayNextButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutSubItem x:Uid="LocalSongs_AddTo">
+                        <MenuFlyoutSubItem x:Uid="Songs_AddTo">
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xE710;"/>
                             </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue" Width="216">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue" Width="216">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE90B;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_NewPlaylist">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE710;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_EditInfo" Click="EditInfoButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_EditInfo" Click="EditInfoButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE70F;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_ShowAlbum" Click="ShowAlbumButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_ShowAlbum" Click="ShowAlbumButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE93C;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_ShowArtist" Click="ShowArtistButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_ShowArtist" Click="ShowArtistButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE77B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Select" Click="SelectButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_Select" Click="SelectButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE762;"/>
                             </MenuFlyoutItem.Icon>
@@ -127,52 +127,52 @@
                         <FontIcon FontSize="12" Glyph="&#xE712;"/>
                         <Button.Flyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem x:Uid="LocalSongs_Play"
+                                <MenuFlyoutItem x:Uid="Songs_Play"
                                                 Width="216"
                                                 Click="PlayButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE768;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Uid="LocalSongs_PlayNext" Click="PlayNextButton_Click">
+                                <MenuFlyoutItem x:Uid="Songs_PlayNext" Click="PlayNextButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xECC8;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutSeparator/>
-                                <MenuFlyoutSubItem x:Uid="LocalSongs_AddTo">
+                                <MenuFlyoutSubItem x:Uid="Songs_AddTo">
                                     <MenuFlyoutSubItem.Icon>
                                         <FontIcon Glyph="&#xE710;"/>
                                     </MenuFlyoutSubItem.Icon>
-                                    <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue" Width="216">
+                                    <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue" Width="216">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xE90B;"/>
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
                                     <MenuFlyoutSeparator/>
-                                    <MenuFlyoutItem x:Uid="LocalSongs_AddTo_NewPlaylist">
+                                    <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xE710;"/>
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
                                 </MenuFlyoutSubItem>
-                                <MenuFlyoutItem x:Uid="LocalSongs_EditInfo" Click="EditInfoButton_Click">
+                                <MenuFlyoutItem x:Uid="Songs_EditInfo" Click="EditInfoButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE70F;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Uid="LocalSongs_ShowAlbum" Click="ShowAlbumButton_Click">
+                                <MenuFlyoutItem x:Uid="Songs_ShowAlbum" Click="ShowAlbumButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE93C;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Uid="LocalSongs_ShowArtist" Click="ShowArtistButton_Click">
+                                <MenuFlyoutItem x:Uid="Songs_ShowArtist" Click="ShowArtistButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE77B;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutSeparator/>
-                                <MenuFlyoutItem x:Uid="LocalSongs_Select" Click="SelectButton_Click">
+                                <MenuFlyoutItem x:Uid="Songs_Select" Click="SelectButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE762;"/>
                                     </MenuFlyoutItem.Icon>
@@ -263,7 +263,7 @@
                         Orientation="Horizontal" Spacing="16">
                 <Button Background="Transparent" BorderBrush="Transparent">
                     <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock x:Uid="LocalSongs_SortByChosen"/>
+                        <TextBlock x:Uid="Songs_SortByChosen"/>
                         <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetSortByStr(ViewModel.SortMode), Mode=OneWay}"/>
                         <FontIcon Margin="8,0,0,0"
                                   FontSize="12" Glyph="&#xE70D;"/>
@@ -281,7 +281,7 @@
                 </Button>
                 <Button Background="Transparent" BorderBrush="Transparent">
                     <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock x:Uid="LocalSongs_GenreChosen"/>
+                        <TextBlock x:Uid="Songs_GenreChosen"/>
                         <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetGenreStr(ViewModel.GenreMode), Mode=OneWay}"/>
                         <FontIcon Margin="8,0,0,0"
                                   FontSize="12" Glyph="&#xE70D;"/>

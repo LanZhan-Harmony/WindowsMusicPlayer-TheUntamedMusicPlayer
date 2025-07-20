@@ -1900,7 +1900,7 @@ public static partial class CloudMusicApiProviders
         q => "https://music.163.com/api/song/enhance/player/url",
         [
             new("ids") { KeyForwarding = "id", Transformer = JsonArrayTransformer },
-            new("br", ParameterType.Optional, "999000"),
+            new("br", ParameterType.Optional, "1999000"),
         ],
         BuildOptions(
             "linuxapi",

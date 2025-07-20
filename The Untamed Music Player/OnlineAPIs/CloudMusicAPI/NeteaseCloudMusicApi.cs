@@ -18,6 +18,16 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     private readonly HttpClientHandler _clientHandler;
     private bool _isDisposed;
 
+    // 单例相关字段
+    private static readonly Lazy<NeteaseCloudMusicApi> _instance = new(() =>
+        new NeteaseCloudMusicApi()
+    );
+
+    /// <summary>
+    /// 获取单例实例
+    /// </summary>
+    public static NeteaseCloudMusicApi Instance => _instance.Value;
+
     private static readonly Dictionary<string, string> _emptyQueries = [];
 
     /// <summary />
@@ -43,7 +53,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     /// <summary>
     /// 构造器
     /// </summary>
-    public NeteaseCloudMusicApi()
+    private NeteaseCloudMusicApi()
     {
         _clientHandler = new HttpClientHandler
         {
@@ -209,7 +219,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
 
             json = new JsonObject { { "code", 200 } };
             var profileJson = JsonNode.Parse(s[(index + GUSER.Length)..]);
-            if (profileJson != null)
+            if (profileJson is not null)
             {
                 json.Add("profile", profileJson.AsObject());
             }
@@ -221,7 +231,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
             }
 
             var bindingsJson = JsonNode.Parse(s[(index + GBINDS.Length)..]);
-            if (bindingsJson != null)
+            if (bindingsJson is not null)
             {
                 json.Add("bindings", bindingsJson.AsArray());
             }
@@ -236,7 +246,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         {
             response?.Dispose();
         }
-        errorExit:
+    errorExit:
         return (false, new JsonObject { { "code", 301 } });
     }
 

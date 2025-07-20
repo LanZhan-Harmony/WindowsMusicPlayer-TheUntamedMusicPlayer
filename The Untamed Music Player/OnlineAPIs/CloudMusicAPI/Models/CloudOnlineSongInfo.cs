@@ -24,6 +24,7 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
     public virtual string Album { get; set; } = "";
     public long AlbumID { get; set; } = 0;
     public virtual string ArtistsStr { get; set; } = "";
+    public TimeSpan Duration { get; set; } = TimeSpan.Zero;
     public virtual string DurationStr { get; set; } = "";
     public string YearStr { get; set; } = "";
     public string GenreStr { get; set; } = "";
@@ -31,31 +32,21 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
     [MemoryPackConstructor]
     public CloudBriefOnlineSongInfo() { }
 
-    public static async Task<CloudBriefOnlineSongInfo> CreateAsync(
-        JsonElement jInfo,
-        NeteaseCloudMusicApi api
-    )
+    public CloudBriefOnlineSongInfo(JsonElement jInfo, bool isAvailable)
     {
-        var info = new CloudBriefOnlineSongInfo();
+        IsPlayAvailable = isAvailable;
+        if (!isAvailable)
+        {
+            return;
+        }
         try
         {
-            info.ID = jInfo.GetProperty("id").GetInt64();
-
-            var (_, songUrlResult) = await api.RequestAsync(
-                CloudMusicApiProviders.SongUrl,
-                new Dictionary<string, string> { { "id", $"{info.ID}" } }
-            );
-            if (songUrlResult["data"]![0]!["url"] is null)
-            {
-                info.IsPlayAvailable = false;
-                return info;
-            }
-
+            ID = jInfo.GetProperty("id").GetInt64();
             var albumElement = jInfo.GetProperty("album");
-            info.Title = jInfo.GetProperty("name").GetString()!;
+            Title = jInfo.GetProperty("name").GetString()!;
             var album = albumElement.GetProperty("name").GetString()!;
-            info.Album = string.IsNullOrWhiteSpace(album) ? _unknownAlbum : album;
-            info.AlbumID = albumElement.GetProperty("id").GetInt64();
+            Album = string.IsNullOrWhiteSpace(album) ? _unknownAlbum : album;
+            AlbumID = albumElement.GetProperty("id").GetInt64();
             var artistsElement = jInfo.GetProperty("artists");
             string[] artists =
             [
@@ -65,11 +56,10 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
                     .Distinct()
                     .DefaultIfEmpty(_unknownArtist),
             ];
-            info.ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
-            info.DurationStr = IBriefSongInfoBase.GetDurationStr(
-                TimeSpan.FromMilliseconds(jInfo.GetProperty("duration").GetInt64())
-            );
-            info.YearStr = IBriefSongInfoBase.GetYearStr(
+            ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
+            Duration = TimeSpan.FromMilliseconds(jInfo.GetProperty("duration").GetInt64());
+            DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
+            YearStr = IBriefSongInfoBase.GetYearStr(
                 (ushort)
                     DateTimeOffset
                         .FromUnixTimeMilliseconds(
@@ -77,15 +67,39 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
                         )
                         .Year
             );
-
-            info.IsPlayAvailable = true;
-            return info;
         }
         catch
         {
-            info.IsPlayAvailable = false;
-            return info;
+            IsPlayAvailable = false;
         }
+    }
+
+    public CloudBriefOnlineSongInfo(JsonElement jInfo, bool isAvailable, ushort year, long duration)
+    {
+        IsPlayAvailable = isAvailable;
+        if (!isAvailable)
+        {
+            return;
+        }
+        ID = jInfo.GetProperty("id").GetInt64();
+        Title = jInfo.GetProperty("name").GetString()!;
+        var albumElement = jInfo.GetProperty("al");
+        var album = albumElement.GetProperty("name").GetString()!;
+        Album = string.IsNullOrWhiteSpace(album) ? _unknownAlbum : album;
+        AlbumID = albumElement.GetProperty("id").GetInt64();
+        var artistsElement = jInfo.GetProperty("ar");
+        string[] artists =
+        [
+            .. artistsElement
+                .EnumerateArray()
+                .Select(t => t.GetProperty("name").GetString()!)
+                .Distinct()
+                .DefaultIfEmpty(_unknownArtist),
+        ];
+        ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
+        YearStr = IBriefSongInfoBase.GetYearStr(year);
+        Duration = TimeSpan.FromMilliseconds(duration);
+        DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
     }
 
     public object Clone()
@@ -100,7 +114,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
     public string AlbumArtistsStr { get; set; } = "";
     public string ArtistAndAlbumStr { get; set; } = "";
     public BitmapImage? Cover { get; set; }
-    public string? CoverUrl { get; set; }
+    public string? CoverPath { get; set; }
     public string ItemType { get; set; } = "";
     public string BitRate { get; set; } = "";
     public string Track { get; set; } = "";
@@ -108,7 +122,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
 
     public CloudDetailedOnlineSongInfo() { }
 
-    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(IBriefOnlineSongInfo info)
+    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(CloudBriefOnlineSongInfo info)
     {
         var detailedInfo = new CloudDetailedOnlineSongInfo
         {
@@ -119,7 +133,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
             DurationStr = info.DurationStr,
             YearStr = info.YearStr,
         };
-        var api = new NeteaseCloudMusicApi();
+        var api = NeteaseCloudMusicApi.Instance;
         var songUrlTask = api.RequestAsync(
             CloudMusicApiProviders.SongUrl,
             new Dictionary<string, string> { { "id", $"{info.ID}" } }
@@ -136,7 +150,6 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
         var (_, songUrlResult) = songUrlTask.Result;
         var (_, albumResult) = albumTask.Result;
         var (_, lyricResult) = lyricTask.Result;
-        api.Dispose();
         try
         {
             detailedInfo.Path = (string)songUrlResult["data"]![0]!["url"]!; // 临时链接可能过期, 所以重新获取
@@ -144,8 +157,8 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
             if (info.Album != _unknownAlbum)
             {
                 detailedInfo.Album = info.Album;
-                detailedInfo.CoverUrl = (string)albumResult["album"]!["picUrl"]!;
-                if (!string.IsNullOrEmpty(detailedInfo.CoverUrl))
+                detailedInfo.CoverPath = (string)albumResult["album"]!["picUrl"]!;
+                if (!string.IsNullOrEmpty(detailedInfo.CoverPath))
                 {
                     coverTask = LoadCoverAsync(detailedInfo);
                 }
@@ -191,26 +204,37 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
 
     private static async Task<bool> LoadCoverAsync(CloudDetailedOnlineSongInfo info)
     {
-        using var httpClient = new HttpClient();
-        var coverBuffer = await httpClient.GetByteArrayAsync(info.CoverUrl);
-        var tcs = new TaskCompletionSource<bool>();
-        App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
+        try
         {
-            try
+            using var httpClient = new HttpClient();
+            var coverBuffer = await httpClient.GetByteArrayAsync(info.CoverPath);
+            var stream = new InMemoryRandomAccessStream();
+            await stream.WriteAsync(coverBuffer.AsBuffer());
+            stream.Seek(0);
+            var tcs = new TaskCompletionSource<bool>();
+            App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
             {
-                using var stream = new InMemoryRandomAccessStream();
-                await stream.WriteAsync(coverBuffer.AsBuffer());
-                stream.Seek(0);
-                var bitmap = new BitmapImage { DecodePixelWidth = 400 };
-                await bitmap.SetSourceAsync(stream);
-                info.Cover = bitmap;
-                tcs.SetResult(true);
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
-        });
-        return await tcs.Task;
+                try
+                {
+                    var bitmap = new BitmapImage { DecodePixelWidth = 400 };
+                    await bitmap.SetSourceAsync(stream);
+                    info.Cover = bitmap;
+                    tcs.SetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+                finally
+                {
+                    stream.Dispose();
+                }
+            });
+            return await tcs.Task;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

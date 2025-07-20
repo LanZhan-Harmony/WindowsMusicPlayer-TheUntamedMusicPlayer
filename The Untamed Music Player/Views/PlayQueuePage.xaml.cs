@@ -24,18 +24,9 @@ public sealed partial class PlayQueuePage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var fontIcon = grid?.FindName("MusicFontIcon") as FontIcon;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Visible;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Visible;
-        }
-        if (fontIcon is not null)
-        {
-            fontIcon.Visibility = Visibility.Collapsed;
-        }
+        checkBox?.Visibility = Visibility.Visible;
+        playButton?.Visibility = Visibility.Visible;
+        fontIcon?.Visibility = Visibility.Collapsed;
     }
 
     private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -44,18 +35,9 @@ public sealed partial class PlayQueuePage : Page
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
         var fontIcon = grid?.FindName("MusicFontIcon") as FontIcon;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Collapsed;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Collapsed;
-        }
-        if (fontIcon is not null)
-        {
-            fontIcon.Visibility = Visibility.Visible;
-        }
+        checkBox?.Visibility = Visibility.Collapsed;
+        playButton?.Visibility = Visibility.Collapsed;
+        fontIcon?.Visibility = Visibility.Visible;
     }
 
     private void PlayButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -102,10 +84,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-                info,
-                Data.MusicPlayer.SourceMode
-            );
+            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
             var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }

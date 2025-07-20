@@ -8,6 +8,7 @@
       xmlns:local="using:The_Untamed_Music_Player.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
+      xmlns:ui="using:CommunityToolkit.WinUI"
       Loaded="OnlineSongsPage_Loaded"
       mc:Ignorable="d">
 
@@ -19,14 +20,14 @@
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Play"
+                        <MenuFlyoutItem x:Uid="Songs_Play"
                                         Width="216"
                                         Click="PlayButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE768;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_PlayNext" Click="PlayNextButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_PlayNext" Click="PlayNextButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
@@ -37,39 +38,39 @@
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutSubItem x:Uid="LocalSongs_AddTo">
+                        <MenuFlyoutSubItem x:Uid="Songs_AddTo">
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xE710;"/>
                             </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue" Width="216">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue" Width="216">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE90B;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_NewPlaylist">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE710;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Properties" Click="PropertiesButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_Properties" Click="PropertiesButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE946;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_ShowAlbum" Click="ShowAlbumButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_ShowAlbum" Click="ShowAlbumButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE93C;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_ShowArtist" Click="ShowArtistButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_ShowArtist" Click="ShowArtistButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE77B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Select" Click="SelectButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_Select" Click="SelectButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE762;"/>
                             </MenuFlyoutItem.Icon>
@@ -87,9 +88,8 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
-                          IsThreeState="False"
-                          Visibility="Collapsed"/>
-                <Button x:Name="PlayButton" x:Uid="LocalSongs_PlayButton"
+                          IsThreeState="False" Visibility="Collapsed"/>
+                <Button x:Name="PlayButton" x:Uid="Songs_PlayButton"
                         Grid.Column="1"
                         Click="PlayButton_Click"
                         Style="{StaticResource SmallPlayButtonStyle}"
@@ -98,45 +98,42 @@
                               Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                               Glyph="&#xE768;"/>
                 </Button>
-                <TextBlock Grid.Column="2"
+                <TextBlock x:Name="TitleText"
+                           Grid.Column="2"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind Title}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Title}"/>
                 <Button Grid.Column="3"
-                        Background="Transparent"
-                        BorderBrush="Transparent">
-                    <TextBlock FontSize="12"
-                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                        Background="Transparent" BorderBrush="Transparent">
+                    <TextBlock x:Name="ArtistText"
+                               FontSize="12"
                                Text="{x:Bind ArtistsStr}"
                                TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
                 </Button>
                 <Button Grid.Column="4"
-                        Background="Transparent"
-                        BorderBrush="Transparent">
-                    <TextBlock FontSize="12"
-                               Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
+                        Background="Transparent" BorderBrush="Transparent">
+                    <TextBlock x:Name="AlbumText"
+                               FontSize="12"
                                Text="{x:Bind Album}"
                                TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{x:Bind Album}"/>
                 </Button>
-                <TextBlock Grid.Column="5"
+                <TextBlock x:Name="YearText"
+                           Grid.Column="5"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind YearStr}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind YearStr}"/>
-                <TextBlock Grid.Column="6"
-                           Margin="0,0,10,0"
-                           HorizontalAlignment="Right"
+                <TextBlock x:Name="DurationText"
+                           Grid.Column="6"
+                           Margin="0,0,10,0" HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Foreground="{x:Bind GetTextForeground(model:Data.MusicPlayer.CurrentSong, model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"
                            Text="{x:Bind DurationStr}"
                            TextTrimming="CharacterEllipsis"/>
             </Grid>
@@ -164,10 +161,12 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <ListView x:Name="SongListView"
+                  helper:CurrentSongHighlightExtensions.NotPlayingBrush="{ThemeResource TextFillColorPrimaryBrush}"
+                  helper:CurrentSongHighlightExtensions.PlayingBrush="{ThemeResource AccentTextFillColorTertiaryBrush}"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
-                  CanDragItems="True"
-                  IsItemClickEnabled="True"
+                  ui:ListViewExtensions.AlternateColor="{ThemeResource AlternateBackgroundBrush}"
+                  CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongsSongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
@@ -178,9 +177,6 @@
                               Margin="0,5,0,5"
                               Visibility="{x:Bind model:Data.OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
             </ListView.Footer>
-            <interactivity:Interaction.Behaviors>
-                <helper:AlternatingListViewBehavior AlternateBackground="{x:Bind helper:AlternatingListViewBehavior.GetAlternateBackgroundBrush(model:Data.MainViewModel.IsDarkTheme), Mode=OneWay}"/>
-            </interactivity:Interaction.Behaviors>
         </ListView>
     </Grid>
 </Page>

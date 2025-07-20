@@ -7,16 +7,16 @@ using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class ArtistDetailViewModel
+public class LocalArtistDetailViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
 
-    public ArtistInfo Artist { get; set; } = Data.SelectedArtist!;
+    public LocalArtistInfo Artist { get; set; } = Data.SelectedLocalArtist!;
 
-    public List<BriefAlbumInfo> AlbumList { get; set; }
+    public List<BriefLocalAlbumInfo> AlbumList { get; set; }
 
-    public ArtistDetailViewModel()
+    public LocalArtistDetailViewModel()
     {
         AlbumList = Data.MusicLibrary.GetAlbumsByArtist(Artist);
     }
@@ -70,15 +70,15 @@ public class ArtistDetailViewModel
 
     public void SongListViewShowAlbumButton_Click(IBriefSongInfoBase info)
     {
-        if (info is BriefSongInfo SongInfo)
+        if (info is BriefLocalSongInfo songInfo)
         {
-            var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(SongInfo.Album);
-            if (albumInfo is not null)
+            var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(songInfo.Album);
+            if (localAlbumInfo is not null)
             {
-                Data.SelectedAlbum = albumInfo;
+                Data.SelectedLocalAlbum = localAlbumInfo;
                 Data.ShellPage!.GetFrame()
                     .Navigate(
-                        typeof(AlbumDetailPage),
+                        typeof(LocalAlbumDetailPage),
                         null,
                         new SuppressNavigationTransitionInfo()
                     );
@@ -86,14 +86,14 @@ public class ArtistDetailViewModel
         }
     }
 
-    public void AlbumGridViewPlayButton_Click(BriefAlbumInfo info)
+    public void AlbumGridViewPlayButton_Click(BriefLocalAlbumInfo info)
     {
         var songList = info.SongList;
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, 0);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
-    public void AlbumGridViewPlayNextButton_Click(BriefAlbumInfo info)
+    public void AlbumGridViewPlayNextButton_Click(BriefLocalAlbumInfo info)
     {
         var songList = info.SongList;
         if (Data.MusicPlayer.PlayQueue.Count == 0)
@@ -115,14 +115,14 @@ public class ArtistDetailViewModel
     public async Task<int> LoadSelectionBarSelectedIndex()
     {
         return await _localSettingsService.ReadSettingAsync<int>(
-            "ArtistDetailSelectionBarSelectedIndex"
+            "LocalArtistDetailSelectionBarSelectedIndex"
         );
     }
 
     public async void SaveSelectionBarSelectedIndex(int selectedIndex)
     {
         await _localSettingsService.SaveSettingAsync(
-            "ArtistDetailSelectionBarSelectedIndex",
+            "LocalArtistDetailSelectionBarSelectedIndex",
             selectedIndex
         );
     }
