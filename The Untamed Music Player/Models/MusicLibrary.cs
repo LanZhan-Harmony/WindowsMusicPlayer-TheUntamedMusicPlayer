@@ -150,7 +150,7 @@ public partial class MusicLibrary : ObservableRecipient
                 _musicGenres.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres);
                 await Task.Run(AddFolderWatcher);
-                _musicFolders.Clear();
+                _musicFolders.Clear(); // 注意，先添加文件夹监视器再清空音乐文件夹字典
                 FileManager.SaveLibraryDataAsync(Folders, data);
             }
             Data.HasMusicLibraryLoaded = true;
@@ -244,7 +244,10 @@ public partial class MusicLibrary : ObservableRecipient
 
             foreach (var file in supportedFiles)
             {
-                var briefLocalSongInfo = await BriefLocalSongInfo.CreateAsync(file.Path, foldername);
+                var briefLocalSongInfo = await BriefLocalSongInfo.CreateAsync(
+                    file.Path,
+                    foldername
+                );
                 Songs.Add(briefLocalSongInfo);
                 _musicGenres.TryAdd(briefLocalSongInfo.GenreStr, 0);
                 UpdateAlbumInfo(briefLocalSongInfo);
@@ -410,7 +413,9 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="localArtistInfo"></param>
     /// <returns></returns>
-    public ObservableCollection<BriefLocalSongInfo> GetSongsByArtist(LocalArtistInfo localArtistInfo) =>
+    public ObservableCollection<BriefLocalSongInfo> GetSongsByArtist(
+        LocalArtistInfo localArtistInfo
+    ) =>
         [
             .. localArtistInfo
                 .Albums.OrderBy(album => album, new AlbumTitleComparer())

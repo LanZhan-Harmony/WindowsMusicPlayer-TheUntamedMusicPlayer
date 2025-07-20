@@ -182,7 +182,7 @@ public class FileManager
             data.Artists = new ConcurrentDictionary<string, LocalArtistInfo>(artistsDict);
             data.Genres = [.. genresArray];
 
-            // 并行加载所有专辑封面
+            // 加载所有专辑封面
             foreach (var album in albumsDict.Values)
             {
                 album.LoadCover();

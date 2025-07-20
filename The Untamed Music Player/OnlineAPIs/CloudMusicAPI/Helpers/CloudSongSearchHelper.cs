@@ -121,29 +121,45 @@ public class CloudSongSearchHelper
     )
     {
         var actualCount = songsElement.GetArrayLength();
-        var infos = new CloudBriefOnlineSongInfo[actualCount];
+        if (actualCount == 0)
+        {
+            return;
+        }
 
-        // Parallel.ForEachAsync 默认使用核心数为CPU核心总数
-        await Parallel.ForEachAsync(
-            Enumerable.Range(0, actualCount),
-            new ParallelOptions(),
-            async (i, cancellationToken) =>
+        var songIds = Enumerable
+            .Range(0, actualCount)
+            .Select(i => songsElement[i].GetProperty("id").GetInt64())
+            .ToArray();
+
+        var (_, checkResult) = await _api.RequestAsync(
+            CloudMusicApiProviders.SongUrl,
+            new Dictionary<string, string> { { "id", string.Join(',', songIds) } }
+        );
+        var data = checkResult["data"]!;
+
+        // 建立ID到可用性的映射，解决顺序问题
+        var availabilityMap = data.AsArray()
+            .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item!["url"] is not null);
+
+        var infos = Enumerable
+            .Range(0, actualCount)
+            .Select(i =>
             {
                 try
                 {
-                    var info = await CloudBriefOnlineSongInfo.CreateAsync(songsElement[i]!, _api);
-                    infos[i] = info;
+                    var songId = songIds[i];
+                    var available = availabilityMap.GetValueOrDefault(songId, false);
+                    return new CloudBriefOnlineSongInfo(songsElement[i], available);
                 }
                 catch (Exception ex)
                 {
-                    lock (list)
-                    {
-                        list.ListCount++;
-                    }
+                    list.ListCount++;
                     Debug.WriteLine(ex.StackTrace);
+                    return null;
                 }
-            }
-        );
+            })
+            .Where(info => info is not null)
+            .ToArray();
 
         foreach (var info in infos)
         {
