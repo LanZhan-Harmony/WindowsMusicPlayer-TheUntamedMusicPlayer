@@ -12,19 +12,37 @@ public partial class OnlineAlbumDetailViewModel : ObservableRecipient
 
     [ObservableProperty]
     public partial IDetailedOnlineAlbumInfo Album { get; set; } =
-        (IDetailedOnlineAlbumInfo)Data.SelectedOnlineAlbum!;
+        IDetailedOnlineAlbumInfo.CreateFastOnlineAlbumInfoAsync(Data.SelectedOnlineAlbum!);
 
-    public OnlineAlbumDetailViewModel() { }
+    public OnlineAlbumDetailViewModel()
+    {
+        LoadAlbumAsync();
+    }
+
+    private async void LoadAlbumAsync()
+    {
+        Album = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(BriefAlbum);
+    }
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"OnlineSongs:Album:{Album.Name}", Album.SongList, 0, 0);
+        Data.MusicPlayer.SetPlayList(
+            $"OnlineSongs:Album:{Album.Name}",
+            Album.SongList,
+            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
+            0
+        );
         Data.MusicPlayer.PlaySongByInfo(Album.SongList[0]);
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"OnlineSongs:Album:{Album.Name}", Album.SongList, 0, 0);
+        Data.MusicPlayer.SetPlayList(
+            $"OnlineSongs:Album:{Album.Name}",
+            Album.SongList,
+            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
+            0
+        );
         if (e.ClickedItem is IBriefSongInfoBase info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);

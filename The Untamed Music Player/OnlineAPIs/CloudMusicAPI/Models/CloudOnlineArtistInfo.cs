@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
@@ -19,35 +20,63 @@ public class BriefCloudOnlineArtistInfo : IBriefOnlineArtistInfo
         var info = new BriefCloudOnlineArtistInfo();
         try
         {
+            Task? coverTask = null;
+            info.CoverPath = jInfo.GetProperty("picUrl").GetString();
+            if (!string.IsNullOrEmpty(info.CoverPath))
+            {
+                coverTask = LoadCoverAsync(info);
+            }
             info.ID = jInfo.GetProperty("id").GetInt64();
             info.Name = jInfo.GetProperty("name").GetString()!;
-            info.CoverPath = jInfo.GetProperty("picUrl").GetString();
+            if (coverTask is not null)
+            {
+                await coverTask;
+            }
+            return info;
+        }
+        catch
+        {
+            return info;
+        }
+    }
+
+    private static async Task<bool> LoadCoverAsync(BriefCloudOnlineArtistInfo info)
+    {
+        try
+        {
             using var httpClient = new HttpClient();
             var coverBytes = await httpClient.GetByteArrayAsync(info.CoverPath);
             using var stream = new InMemoryRandomAccessStream();
             await stream.WriteAsync(coverBytes.AsBuffer());
             stream.Seek(0);
             var tcs = new TaskCompletionSource<bool>();
-            App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
-            {
-                try
+            App.MainWindow?.DispatcherQueue.TryEnqueue(
+                DispatcherQueuePriority.Low,
+                async () =>
                 {
-                    var bitmap = new BitmapImage { DecodePixelWidth = 160 };
-                    await bitmap.SetSourceAsync(stream);
-                    info.Cover = bitmap;
-                    tcs.SetResult(true);
+                    try
+                    {
+                        var bitmap = new BitmapImage { DecodePixelWidth = 160 };
+                        await bitmap.SetSourceAsync(stream);
+                        info.Cover = bitmap;
+                        tcs.SetResult(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.SetException(ex);
+                    }
+                    finally
+                    {
+                        stream.Dispose();
+                    }
                 }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
-            return info;
+            );
+
+            return await tcs.Task;
         }
         catch
         {
-            return info;
+            return false;
         }
     }
 }

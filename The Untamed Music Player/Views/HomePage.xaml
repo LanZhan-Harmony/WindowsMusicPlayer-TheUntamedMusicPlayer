@@ -101,7 +101,7 @@
                              Loaded="{x:Bind ViewModel.SelectorBar_Loaded}"
                              SelectionChanged="{x:Bind ViewModel.SelectorBar_SelectionChanged}">
                     <SelectorBarItem x:Name="SelectorBarItemPage1" x:Uid="HaveMusic_Songs"
-                                     FontSize="18" IsSelected="True"/>
+                                     FontSize="18"/>
                     <SelectorBarItem x:Name="SelectorBarItemPage2" x:Uid="HaveMusic_Albums"
                                      FontSize="18"/>
                     <SelectorBarItem x:Name="SelectorBarItemPage3" x:Uid="HaveMusic_Artists"

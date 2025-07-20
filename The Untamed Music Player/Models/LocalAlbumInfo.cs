@@ -152,18 +152,22 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         return string.Join(" • ", parts);
     }
 
-    public void LoadCover()
+    public async void LoadCover()
     {
-        if (!string.IsNullOrEmpty(CoverPath))
+        if (string.IsNullOrEmpty(CoverPath))
+        {
+            return;
+        }
+        try
         {
             var coverBuffer = TagLib.File.Create(CoverPath).Tag.Pictures[0].Data.Data;
+            var stream = new InMemoryRandomAccessStream();
+            await stream.WriteAsync(coverBuffer.AsBuffer());
+            stream.Seek(0);
             App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
             {
                 try
                 {
-                    using var stream = new InMemoryRandomAccessStream();
-                    await stream.WriteAsync(coverBuffer.AsBuffer());
-                    stream.Seek(0);
                     var bitmap = new BitmapImage { DecodePixelWidth = 160 };
                     await bitmap.SetSourceAsync(stream);
                     Cover = bitmap;
@@ -172,7 +176,15 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
                 {
                     Debug.WriteLine($"专辑封面加载失败：{Name}");
                 }
+                finally
+                {
+                    stream.Dispose();
+                }
             });
+        }
+        catch
+        {
+            Debug.WriteLine($"专辑封面加载失败：{Name}");
         }
     }
 }

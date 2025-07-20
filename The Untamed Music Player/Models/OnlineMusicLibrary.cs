@@ -556,10 +556,6 @@ public partial class OnlineMusicLibrary : ObservableRecipient
         }
     }
 
-    public void OnlineAlbumsAlbumGridView_ItemClick(object sender, ItemClickEventArgs e) { }
-
-    public void OnlineArtistsArtistGridView_ItemClick(object sender, ItemClickEventArgs e) { }
-
     public async void RetryButton_Click(object sender, RoutedEventArgs e)
     {
         await ForceSearch();

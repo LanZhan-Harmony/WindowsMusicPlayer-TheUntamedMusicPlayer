@@ -148,13 +148,14 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="Header.Margin" Value="16,54,16,-80"/>
-                        <Setter Target="ButtonStackPanel.Margin" Value="0,13,0,0"/>
+                        <Setter Target="ButtonStackPanel.Margin" Value="0,4,0,0"/>
                         <Setter Target="CoverArt.Width" Value="136"/>
                         <Setter Target="CoverArt.Height" Value="136"/>
                         <Setter Target="TitleText.FontSize" Value="28"/>
                         <Setter Target="SubtitleText.FontSize" Value="14"/>
-                        <Setter Target="SubtitleText.Margin" Value="0,9,0,0"/>
-                        <Setter Target="CaptionText.Margin" Value="0,4,0,0"/>
+                        <Setter Target="SubtitleText.Margin" Value="0,1,0,0"/>
+                        <Setter Target="CaptionText.Margin" Value="0,1,0,0"/>
+                        <Setter Target="IntroductionText.Margin" Value="0,0,0,0"/>
                         <Setter Target="AddToButton.Visibility" Value="Collapsed"/>
                         <Setter Target="MoreButton.Visibility" Value="Visible"/>
                         <Setter Target="AddToFlyout.Visibility" Value="Visible"/>
@@ -169,13 +170,14 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="Header.Margin" Value="56,54,56,-80"/>
-                        <Setter Target="ButtonStackPanel.Margin" Value="0,25,0,0"/>
+                        <Setter Target="ButtonStackPanel.Margin" Value="0,12,0,0"/>
                         <Setter Target="CoverArt.Width" Value="162"/>
                         <Setter Target="CoverArt.Height" Value="162"/>
                         <Setter Target="TitleText.FontSize" Value="28"/>
                         <Setter Target="SubtitleText.FontSize" Value="20"/>
-                        <Setter Target="SubtitleText.Margin" Value="0,8,0,0"/>
-                        <Setter Target="CaptionText.Margin" Value="0,12,0,0"/>
+                        <Setter Target="SubtitleText.Margin" Value="0,5,0,0"/>
+                        <Setter Target="CaptionText.Margin" Value="0,5,0,0"/>
+                        <Setter Target="IntroductionText.Margin" Value="0,3,0,0"/>
                         <Setter Target="AddToButton.Visibility" Value="Visible"/>
                         <Setter Target="MoreButton.Visibility" Value="Visible"/>
                         <Setter Target="AddToFlyout.Visibility" Value="Collapsed"/>
@@ -197,6 +199,7 @@
                         <Setter Target="SubtitleText.FontSize" Value="20"/>
                         <Setter Target="SubtitleText.Margin" Value="0,8,0,0"/>
                         <Setter Target="CaptionText.Margin" Value="0,12,0,0"/>
+                        <Setter Target="IntroductionText.Margin" Value="0,8,0,0"/>
                         <Setter Target="AddToButton.Visibility" Value="Visible"/>
                         <Setter Target="MoreButton.Visibility" Value="Collapsed"/>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
@@ -242,7 +245,7 @@
                     </Border.Background>
                     <Border Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                             CornerRadius="{x:Bind CoverArt.CornerRadius, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.Album.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.Album.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="CoverArtIcon"
                                   FontSize="64"
                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -254,19 +257,26 @@
                             Grid.Column="1"
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
-                               Text="{x:Bind ViewModel.Album.Name}"
+                               Text="{x:Bind ViewModel.Album.Name, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
-                               ToolTipService.ToolTip="{x:Bind ViewModel.Album.Name}"/>
+                               ToolTipService.ToolTip="{x:Bind ViewModel.Album.Name, Mode=OneWay}"/>
                     <TextBlock x:Name="SubtitleText"
                                FontWeight="Normal"
-                               Text="{x:Bind ViewModel.Album.ArtistsStr}"
+                               Text="{x:Bind ViewModel.Album.ArtistsStr, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
-                               ToolTipService.ToolTip="{x:Bind ViewModel.Album.ArtistsStr}"/>
+                               ToolTipService.ToolTip="{x:Bind ViewModel.Album.ArtistsStr, Mode=OneWay}"/>
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind ViewModel.Album.GetDescriptionStr()}"
+                               Text="{x:Bind ViewModel.Album.GetDescriptionStr(), Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
+                    <TextBlock x:Name="IntroductionText"
+                               FontSize="14"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               MaxLines="1"
+                               Text="{x:Bind ViewModel.Album.Introduction, Mode=OneWay}"
+                               TextTrimming="WordEllipsis" TextWrapping="NoWrap"
+                               ToolTipService.ToolTip="{x:Bind ViewModel.Album.Introduction, Mode=OneWay}"/>
 
                     <Grid x:Name="ButtonPanel">
                         <StackPanel x:Name="ButtonStackPanel"
@@ -356,7 +366,7 @@
                   IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
-                  ItemsSource="{x:Bind ViewModel.Album.SongList}"
+                  ItemsSource="{x:Bind ViewModel.Album.SongList, Mode=OneWay}"
                   SelectionMode="None"
                   XYFocusUp="{x:Bind PlayButton}">
             <ListView.Header>

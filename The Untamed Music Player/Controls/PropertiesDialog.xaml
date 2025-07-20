@@ -106,7 +106,7 @@
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock IsTextSelectionEnabled="True"
                                    Text="{x:Bind Song.Path}"
-                                   TextWrapping="WrapWholeWords"/>
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>

@@ -24,7 +24,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
     public OnlineAlbumDetailViewModel ViewModel { get; }
 
     // 滚动进度的范围
-    private int ClampSize => GetValue(50, 80, 107);
+    private int ClampSize => GetValue(50, 82, 115);
 
     // 背景在滚动时的缩放比例
     private float BackgroundScaleFactor => GetValue(0.80f, 0.70f, 0.61f);
@@ -33,7 +33,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
     private float CoverScaleFactor => GetValue(0.632479f, 0.528571f, 0.488888f);
 
     // 按钮面板在滚动时的偏移量
-    private int ButtonPanelOffset => GetValue(50, 77, 79);
+    private int ButtonPanelOffset => GetValue(50, 76, 105);
 
     // 背景的高度
     private float BackgroundVisualHeight => (float)(Header.ActualHeight * 2.5);
@@ -46,6 +46,33 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         ViewModel = App.GetService<OnlineAlbumDetailViewModel>();
         InitializeComponent();
+    }
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        if (
+            e.Parameter is string page
+            && (page == "OnlineAlbumsPage" || page == "OnlineArtistDetailPage")
+        )
+        {
+            var animation = ConnectedAnimationService
+                .GetForCurrentView()
+                .GetAnimation("ForwardConnectedAnimation");
+            animation?.TryStart(CoverArt);
+        }
+    }
+
+    protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        base.OnNavigatingFrom(e);
+        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "OnlineAlbumsPage")
+        {
+            Data.NavigatePage = "";
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("BackConnectedAnimation", CoverArt);
+        }
     }
 
     private async void OnlineAlbumDetailPage_OnLoaded(object sender, RoutedEventArgs e)
@@ -73,7 +100,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
 
         CreateHeaderAnimation(_props, scrollingProperties.Translation.Y);
 
-        byte[]? coverBytes = null;
+        var coverBytes = await IDetailedOnlineAlbumInfo.GetCoverBytes(ViewModel.BriefAlbum);
         if (coverBytes.Length != 0)
         {
             await CreateImageBackgroundGradientVisual(
@@ -149,6 +176,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         // 获取附加文本块后备视觉效果，以便可以对其属性进行动画处理
         var subtitleVisual = ElementCompositionPreview.GetElementVisual(SubtitleText);
         var captionVisual = ElementCompositionPreview.GetElementVisual(CaptionText);
+        var introductionVisual = ElementCompositionPreview.GetElementVisual(IntroductionText);
 
         // 创建一个表达式动画，以开始使用附加文本块的阈值进行不透明度淡出动画
         var fadeThreshold = ExpressionValues.Constant.CreateConstantScalar("fadeThreshold", 0.6f);
@@ -159,6 +187,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         subtitleVisual.StartAnimation("Opacity", textFadeAnimation);
         textFadeAnimation.SetScalarParameter("fadeThreshold", 0.2f);
         captionVisual.StartAnimation("Opacity", textFadeAnimation);
+        introductionVisual.StartAnimation("Opacity", textFadeAnimation);
 
         // 获取按钮面板的后备视觉效果，以便可以对其属性进行动画处理
         var buttonVisual = ElementCompositionPreview.GetElementVisual(ButtonPanel);
@@ -266,8 +295,6 @@ public sealed partial class OnlineAlbumDetailPage : Page
     private void PlayButton_Click(object sender, RoutedEventArgs e) { }
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e) { }
-
-    private void EditInfoButton_Click(object sender, RoutedEventArgs e) { }
 
     private void PropertiesButton_Click(object sender, RoutedEventArgs e) { }
 

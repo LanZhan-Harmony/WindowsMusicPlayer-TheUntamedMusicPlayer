@@ -2,6 +2,8 @@ using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -58,6 +60,51 @@ public sealed partial class OnlineAlbumsPage : Page
         checkBox?.Visibility = Visibility.Collapsed;
         playButton?.Visibility = Visibility.Collapsed;
         menuButton?.Visibility = Visibility.Collapsed;
+    }
+
+    private async void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (Data.SelectedOnlineAlbum is not null && sender is GridView gridView)
+        {
+            gridView.ScrollIntoView(Data.SelectedOnlineAlbum, ScrollIntoViewAlignment.Leading);
+            gridView.UpdateLayout();
+            var animation = ConnectedAnimationService
+                .GetForCurrentView()
+                .GetAnimation("BackConnectedAnimation");
+            if (animation is not null)
+            {
+                animation.Configuration = new DirectConnectedAnimationConfiguration();
+                await gridView.TryStartConnectedAnimationAsync(
+                    animation,
+                    Data.SelectedOnlineAlbum,
+                    "CoverBorder"
+                );
+            }
+            gridView.Focus(FocusState.Programmatic);
+        }
+    }
+
+    private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is IBriefOnlineAlbumInfo info)
+        {
+            var grid = (Grid)
+                (
+                    (ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)
+                ).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedOnlineAlbum = info;
+            Data.NavigatePage = "OnlineAlbumsPage";
+            Data.ShellPage!.GetFrame()
+                .Navigate(
+                    typeof(OnlineAlbumDetailPage),
+                    "OnlineAlbumsPage",
+                    new SuppressNavigationTransitionInfo()
+                );
+        }
     }
 
     private void PlayButton_Click(object sender, RoutedEventArgs e) { }
