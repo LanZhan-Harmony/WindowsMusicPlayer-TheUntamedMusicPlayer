@@ -179,7 +179,7 @@
                         <Setter Target="CaptionText.Margin" Value="0,5,0,0"/>
                         <Setter Target="IntroductionText.Margin" Value="0,3,0,0"/>
                         <Setter Target="AddToButton.Visibility" Value="Visible"/>
-                        <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                        <Setter Target="MoreButton.Visibility" Value="Collapsed"/>
                         <Setter Target="AddToFlyout.Visibility" Value="Collapsed"/>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
                         <Setter Target="SongListView.Margin" Value="0,46,0,0"/>
