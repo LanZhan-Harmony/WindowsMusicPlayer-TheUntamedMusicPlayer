@@ -13,7 +13,6 @@ public sealed partial class HomePage : Page
         ViewModel = App.GetService<HomeViewModel>();
         InitializeComponent();
         Data.HomePage = this;
-        ViewModel.Navigate(ViewModel.PageIndex, true);
     }
 
     public Frame GetFrame()

@@ -202,9 +202,10 @@
         <GridView x:Name="AlbumGridView"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   IsItemClickEnabled="True"
-                  ItemClick="{x:Bind model:Data.OnlineMusicLibrary.OnlineAlbumsAlbumGridView_ItemClick}"
+                  ItemClick="AlbumGridView_ItemClick"
                   ItemTemplate="{StaticResource AlbumGridViewTemplate}"
                   ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineAlbumInfoList, Mode=OneWay}"
+                  Loaded="AlbumGridView_Loaded"
                   Opacity="{x:Bind model:Data.OnlineMusicLibrary.ListViewOpacity, Mode=OneWay}"
                   SelectionMode="None">
             <GridView.Footer>

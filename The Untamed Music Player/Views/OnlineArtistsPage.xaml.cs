@@ -67,4 +67,6 @@ public sealed partial class OnlineArtistsPage : Page
     private void ShowArtistButton_Click(object sender, RoutedEventArgs e) { }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
+
+    private void ArtistGridView_ItemClick(object sender, ItemClickEventArgs e) { }
 }
