@@ -8,20 +8,20 @@ using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
 
-public class BriefAlbumInfo(AlbumInfo albumInfo)
+public class BriefLocalAlbumInfo(LocalAlbumInfo localAlbumInfo)
 {
     protected static readonly string _unknownYear = "AlbumInfo_UnknownYear".GetLocalized();
 
-    public string Name { get; set; } = albumInfo.Name;
+    public string Name { get; set; } = localAlbumInfo.Name;
     public string YearStr { get; set; } =
-        albumInfo.Year == 0 ? _unknownYear : albumInfo.Year.ToString();
-    public BitmapImage? Cover { get; set; } = albumInfo.Cover;
+        localAlbumInfo.Year == 0 ? _unknownYear : localAlbumInfo.Year.ToString();
+    public BitmapImage? Cover { get; set; } = localAlbumInfo.Cover;
     public List<IBriefSongInfoBase> SongList { get; set; } =
-        [.. Data.MusicLibrary.GetSongsByAlbum(albumInfo)];
+        [.. Data.MusicLibrary.GetSongsByAlbum(localAlbumInfo)];
 }
 
 [MemoryPackable]
-public partial class AlbumInfo : IAlbumInfoBase
+public partial class LocalAlbumInfo : IAlbumInfoBase
 {
     /// <summary>
     /// 专辑名
@@ -75,38 +75,38 @@ public partial class AlbumInfo : IAlbumInfoBase
     public string GenreStr { get; set; } = null!;
 
     [MemoryPackConstructor]
-    public AlbumInfo() { }
+    public LocalAlbumInfo() { }
 
-    public AlbumInfo(BriefSongInfo briefSongInfo)
+    public LocalAlbumInfo(BriefLocalSongInfo briefLocalSongInfo)
     {
-        Name = briefSongInfo.Album;
-        Year = briefSongInfo.Year;
-        ModifiedDate = briefSongInfo.ModifiedDate;
-        if (briefSongInfo.Cover is not null)
+        Name = briefLocalSongInfo.Album;
+        Year = briefLocalSongInfo.Year;
+        ModifiedDate = briefLocalSongInfo.ModifiedDate;
+        if (briefLocalSongInfo.Cover is not null)
         {
-            Cover = briefSongInfo.Cover;
-            CoverPath = briefSongInfo.Path;
+            Cover = briefLocalSongInfo.Cover;
+            CoverPath = briefLocalSongInfo.Path;
         }
-        Artists = briefSongInfo.Artists;
-        ArtistsStr = briefSongInfo.ArtistsStr;
-        GenreStr = briefSongInfo.GenreStr;
-        TotalDuration = briefSongInfo.Duration;
+        Artists = briefLocalSongInfo.Artists;
+        ArtistsStr = briefLocalSongInfo.ArtistsStr;
+        GenreStr = briefLocalSongInfo.GenreStr;
+        TotalDuration = briefLocalSongInfo.Duration;
     }
 
     /// <summary>
     /// 扫描歌曲时更新专辑信息
     /// </summary>
-    /// <param name="briefSongInfo"></param>
-    public void Update(BriefSongInfo briefSongInfo)
+    /// <param name="briefLocalSongInfo"></param>
+    public void Update(BriefLocalSongInfo briefLocalSongInfo)
     {
         TotalNum++;
-        TotalDuration += briefSongInfo.Duration;
-        if (Cover is null && briefSongInfo.Cover is not null)
+        TotalDuration += briefLocalSongInfo.Duration;
+        if (Cover is null && briefLocalSongInfo.Cover is not null)
         {
-            Cover = briefSongInfo.Cover;
-            CoverPath = briefSongInfo.Path;
+            Cover = briefLocalSongInfo.Cover;
+            CoverPath = briefLocalSongInfo.Path;
         }
-        Artists = [.. Artists!.Concat(briefSongInfo.Artists).Distinct()];
+        Artists = [.. Artists!.Concat(briefLocalSongInfo.Artists).Distinct()];
         ArtistsStr = IAlbumInfoBase.GetArtistsStr(Artists);
     }
 
@@ -152,18 +152,22 @@ public partial class AlbumInfo : IAlbumInfoBase
         return string.Join(" • ", parts);
     }
 
-    public void LoadCover()
+    public async void LoadCover()
     {
-        if (!string.IsNullOrEmpty(CoverPath))
+        if (string.IsNullOrEmpty(CoverPath))
+        {
+            return;
+        }
+        try
         {
             var coverBuffer = TagLib.File.Create(CoverPath).Tag.Pictures[0].Data.Data;
+            var stream = new InMemoryRandomAccessStream();
+            await stream.WriteAsync(coverBuffer.AsBuffer());
+            stream.Seek(0);
             App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
             {
                 try
                 {
-                    using var stream = new InMemoryRandomAccessStream();
-                    await stream.WriteAsync(coverBuffer.AsBuffer());
-                    stream.Seek(0);
                     var bitmap = new BitmapImage { DecodePixelWidth = 160 };
                     await bitmap.SetSourceAsync(stream);
                     Cover = bitmap;
@@ -172,7 +176,15 @@ public partial class AlbumInfo : IAlbumInfoBase
                 {
                     Debug.WriteLine($"专辑封面加载失败：{Name}");
                 }
+                finally
+                {
+                    stream.Dispose();
+                }
             });
+        }
+        catch
+        {
+            Debug.WriteLine($"专辑封面加载失败：{Name}");
         }
     }
 }

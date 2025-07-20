@@ -14,10 +14,10 @@ public partial class LocalArtistsViewModel : ObservableRecipient
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
 
-    private List<ArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
+    private List<LocalArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
 
     public List<string> SortBy { get; set; } =
-        [.. "LocalArtists_SortBy".GetLocalized().Split(", ")];
+        [.. "Artists_SortBy".GetLocalized().Split(", ")];
 
     public ObservableCollection<GroupInfoList> GroupedArtistList { get; set; } = [];
 
@@ -81,11 +81,11 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 
     public void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: ArtistInfo artistInfo })
+        if (sender is FrameworkElement { DataContext: LocalArtistInfo localArtistInfo })
         {
-            var songList = Data.MusicLibrary.GetSongsByArtist(artistInfo);
+            var songList = Data.MusicLibrary.GetSongsByArtist(localArtistInfo);
             Data.MusicPlayer.SetPlayList(
-                $"LocalSongs:Artist:{artistInfo.Name}",
+                $"LocalSongs:Artist:{localArtistInfo.Name}",
                 songList,
                 0,
                 SortMode

@@ -2,8 +2,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json.Serialization;
 using MemoryPack;
-using Microsoft.UI;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
@@ -12,7 +10,7 @@ using Windows.Storage.Streams;
 namespace The_Untamed_Music_Player.Models;
 
 [MemoryPackable]
-public partial class BriefSongInfo : IBriefSongInfoBase
+public partial class BriefLocalSongInfo : IBriefSongInfoBase
 {
     /// <summary>
     /// 歌手分隔符
@@ -119,7 +117,7 @@ public partial class BriefSongInfo : IBriefSongInfoBase
     public long ModifiedDate { get; set; } = 0;
 
     [MemoryPackConstructor]
-    public BriefSongInfo() { }
+    public BriefLocalSongInfo() { }
 
     /// <summary>
     /// 异步工厂方法
@@ -127,9 +125,9 @@ public partial class BriefSongInfo : IBriefSongInfoBase
     /// <param name="path"></param>
     /// <param name="folder"></param>
     /// <returns></returns>
-    public static async Task<BriefSongInfo> CreateAsync(string path, string folder)
+    public static async Task<BriefLocalSongInfo> CreateAsync(string path, string folder)
     {
-        var info = new BriefSongInfo
+        var info = new BriefLocalSongInfo
         {
             Path = path,
             Folder = folder,
@@ -221,37 +219,13 @@ public partial class BriefSongInfo : IBriefSongInfoBase
     /// <returns></returns>
     protected static string GetGenreStr(string[] genre) => string.Join(", ", genre);
 
-    /// <summary>
-    /// 获取文本前景色
-    /// </summary>
-    /// <param name="currentSong"></param>
-    /// <param name="isDarkTheme"></param>
-    /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    public SolidColorBrush GetTextForeground(IDetailedSongInfoBase? currentSong, bool isDarkTheme)
-    {
-        var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
-
-        if (
-            currentSong is not null
-            && !currentSong.IsOnline
-            && Path == ((BriefSongInfo)currentSong).Path
-        )
-        {
-            var highlightColor = isDarkTheme
-                ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
-                : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
-            return new SolidColorBrush(highlightColor);
-        }
-        return new SolidColorBrush(defaultColor);
-    }
-
     public object Clone()
     {
         return MemberwiseClone();
     }
 }
 
-public class DetailedSongInfo : BriefSongInfo, IDetailedSongInfoBase
+public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
 {
     public bool IsOnline { get; set; } = false;
 
@@ -315,7 +289,7 @@ public class DetailedSongInfo : BriefSongInfo, IDetailedSongInfoBase
     /// </summary>
     public string Lyric { get; set; } = "";
 
-    public DetailedSongInfo(BriefSongInfo info)
+    public DetailedLocalSongInfo(BriefLocalSongInfo info)
     {
         try
         {

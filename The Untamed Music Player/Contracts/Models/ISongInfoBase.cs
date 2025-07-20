@@ -1,6 +1,4 @@
 using MemoryPack;
-using Microsoft.UI;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
@@ -8,7 +6,7 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 namespace The_Untamed_Music_Player.Contracts.Models;
 
 [MemoryPackable]
-[MemoryPackUnion(0, typeof(BriefSongInfo))]
+[MemoryPackUnion(0, typeof(BriefLocalSongInfo))]
 [MemoryPackUnion(1, typeof(CloudBriefOnlineSongInfo))]
 public partial interface IBriefSongInfoBase : ICloneable
 {
@@ -77,58 +75,6 @@ public partial interface IBriefSongInfoBase : ICloneable
     /// <param name="year"></param>
     /// <returns></returns>
     static string GetYearStr(ushort year) => year is 0 or 1970 ? "" : year.ToString();
-
-    /// <summary>
-    /// 获取文本前景色
-    /// </summary>
-    /// <param name="currentSong"></param>
-    /// <param name="isDarkTheme"></param>
-    /// <returns>如果是当前播放歌曲, 返回主题色, 如果不是, 根据当前主题返回黑色或白色</returns>
-    SolidColorBrush GetTextForeground(IDetailedSongInfoBase? currentSong, bool isDarkTheme)
-    {
-        var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
-        var highlightColor = isDarkTheme
-            ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
-            : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
-
-        if (
-            currentSong is not null
-            && (
-                currentSong.IsOnline
-                    ? ((IBriefOnlineSongInfo)this).ID == ((IDetailedOnlineSongInfo)currentSong).ID
-                    : Path == currentSong.Path
-            )
-        )
-        {
-            return new SolidColorBrush(highlightColor);
-        }
-        return new SolidColorBrush(defaultColor);
-    }
-
-    SolidColorBrush GetTextForeground(
-        IDetailedSongInfoBase? currentSong,
-        bool isDarkTheme,
-        int playQueueIndex
-    )
-    {
-        var defaultColor = isDarkTheme ? Colors.White : Colors.Black;
-        if (
-            currentSong is not null
-            && (
-                currentSong.IsOnline
-                    ? ((IBriefOnlineSongInfo)this).ID == ((IDetailedOnlineSongInfo)currentSong).ID
-                    : Path == currentSong.Path
-            )
-            && PlayQueueIndex == playQueueIndex
-        )
-        {
-            var highlightColor = isDarkTheme
-                ? ColorHelper.FromArgb(0xFF, 0x42, 0x9C, 0xE3)
-                : ColorHelper.FromArgb(0xFF, 0x00, 0x5A, 0x9E);
-            return new SolidColorBrush(highlightColor);
-        }
-        return new SolidColorBrush(defaultColor);
-    }
 }
 
 public interface IDetailedSongInfoBase : IBriefSongInfoBase
@@ -168,24 +114,11 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
         return $"{artistsStr} • {album}";
     }
 
-    static async Task<IDetailedSongInfoBase> CreateDetailedSongInfoAsync(
-        IBriefSongInfoBase info,
-        byte sourceMode
-    )
+    static async Task<IDetailedSongInfoBase> CreateDetailedSongInfoAsync(IBriefSongInfoBase info)
     {
-        return sourceMode switch
+        if (info is BriefLocalSongInfo briefInfo)
         {
-            0 => new DetailedSongInfo((BriefSongInfo)info),
-            1 => await CloudDetailedOnlineSongInfo.CreateAsync((IBriefOnlineSongInfo)info),
-            _ => await CloudDetailedOnlineSongInfo.CreateAsync((IBriefOnlineSongInfo)info),
-        };
-    }
-
-    static async Task<IDetailedSongInfoBase?> CreateDetailedSongInfoAsync(IBriefSongInfoBase info)
-    {
-        if (info is BriefSongInfo briefInfo)
-        {
-            return new DetailedSongInfo(briefInfo);
+            return new DetailedLocalSongInfo(briefInfo);
         }
         else if (info is CloudBriefOnlineSongInfo cloudInfo)
         {
@@ -193,7 +126,7 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
         }
         else
         {
-            return null;
+            return await CloudDetailedOnlineSongInfo.CreateAsync((CloudBriefOnlineSongInfo)info);
         }
     }
 }
