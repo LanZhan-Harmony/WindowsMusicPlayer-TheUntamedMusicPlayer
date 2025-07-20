@@ -1,4 +1,5 @@
 using System.Numerics;
+using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -18,24 +19,21 @@ using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class ArtistDetailPage : Page
+public sealed partial class LocalAlbumDetailPage : Page
 {
-    public ArtistDetailViewModel ViewModel { get; }
+    public LocalAlbumDetailViewModel ViewModel { get; }
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 80, 107);
 
     // 背景在滚动时的缩放比例
-    private float BackgroundScaleFactor => GetValue(0.80f, 0.68f, 0.61f);
+    private float BackgroundScaleFactor => GetValue(0.80f, 0.70f, 0.61f);
 
     // 封面在滚动时的缩放比例
     private float CoverScaleFactor => GetValue(0.632479f, 0.528571f, 0.488888f);
 
     // 按钮面板在滚动时的偏移量
     private int ButtonPanelOffset => GetValue(50, 77, 79);
-
-    // 偏移量
-    private int SelectorBarOffset => GetValue(50, 72, 79);
 
     // 背景的高度
     private float BackgroundVisualHeight => (float)(Header.ActualHeight * 2.5);
@@ -44,36 +42,19 @@ public sealed partial class ArtistDetailPage : Page
     private Compositor? _compositor;
     private SpriteVisual? _backgroundVisual;
 
-    private int SelectionBarSelectedIndex
+    public LocalAlbumDetailPage()
     {
-        get;
-        set
-        {
-            field = value;
-            ViewModel.SaveSelectionBarSelectedIndex(value);
-        }
-    } = 0;
-
-    public ArtistDetailPage()
-    {
-        ViewModel = App.GetService<ArtistDetailViewModel>();
-        _ = InitializeAsync();
+        ViewModel = App.GetService<LocalAlbumDetailViewModel>();
         InitializeComponent();
     }
 
-    private async Task InitializeAsync()
-    {
-        SelectionBarSelectedIndex = await ViewModel.LoadSelectionBarSelectedIndex();
-    }
-
-    /// <summary>
-    /// 当页面导航到此页时，将调用此方法。
-    /// </summary>
-    /// <param name="e"></param>
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.Parameter is string page && page == "LocalArtistPage")
+        if (
+            e.Parameter is string page
+            && (page == "LocalAlbumsPage" || page == "LocalArtistDetailPage")
+        )
         {
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -82,14 +63,10 @@ public sealed partial class ArtistDetailPage : Page
         }
     }
 
-    /// <summary>
-    /// 当页面从此页导航时，将调用此方法。
-    /// </summary>
-    /// <param name="e"></param>
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "LocalArtistsPage")
+        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "LocalAlbumsPage")
         {
             Data.NavigatePage = "";
             ConnectedAnimationService
@@ -98,13 +75,16 @@ public sealed partial class ArtistDetailPage : Page
         }
     }
 
-    private async void ArtistDetailPage_Loaded(object sender, RoutedEventArgs e)
+    private async void LocalAlbumDetailPage_OnLoaded(object sender, RoutedEventArgs e)
     {
-        var listScrollViewer = SharedScrollViewer;
+        var scrollViewer =
+            SongListView.FindDescendant<ScrollViewer>()
+            ?? throw new Exception("Cannot find ScrollViewer in ListView"); // 检索 ListView 内部使用的 ScrollViewer
 
-        var listScrollerPropertySet =
-            ElementCompositionPreview.GetScrollViewerManipulationPropertySet(listScrollViewer); // 获取 ScrollViewer 中包含滚动值的属性集
-        _compositor = listScrollerPropertySet.Compositor; // 获取与 ScrollViewer 关联的 Compositor, Compositor 用于创建动画
+        var scrollerPropertySet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(
+            scrollViewer
+        ); // 获取 ScrollViewer 中包含滚动值的属性集
+        _compositor = scrollerPropertySet.Compositor; // 获取与 ScrollViewer 关联的 Compositor, Compositor 用于创建动画
 
         // 创建一个属性集，其中包含下面的 ExpressionAnimations 中引用的值
         _props = _compositor.CreatePropertySet();
@@ -113,24 +93,24 @@ public sealed partial class ArtistDetailPage : Page
         _props.InsertScalar("backgroundScaleFactor", BackgroundScaleFactor);
         _props.InsertScalar("coverScaleFactor", CoverScaleFactor);
         _props.InsertScalar("buttonPanelOffset", ButtonPanelOffset);
-        _props.InsertScalar("selectorBarOffset", SelectorBarOffset);
         _props.InsertScalar("headerPadding", 12);
 
-        var listScrollingProperties =
-            listScrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>(); // 获取属性集的引用节点，以便在表达式动画中使用
+        var scrollingProperties =
+            scrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>(); // 获取属性集的引用节点，以便在表达式动画中使用
 
-        CreateHeaderAnimation(_props, listScrollingProperties.Translation.Y);
+        CreateHeaderAnimation(_props, scrollingProperties.Translation.Y);
 
-        if (ViewModel.AlbumList.Count != 0)
+        if (ViewModel.SongList.Count == 0)
         {
-            var coverBytes = ViewModel.Artist.GetCoverBytes();
-            if (coverBytes.Length != 0)
-            {
-                await CreateImageBackgroundGradientVisual(
-                    listScrollingProperties.Translation.Y,
-                    coverBytes
-                );
-            }
+            return;
+        }
+        var coverBytes = ViewModel.Album.GetCoverBytes();
+        if (coverBytes.Length != 0)
+        {
+            await CreateImageBackgroundGradientVisual(
+                scrollingProperties.Translation.Y,
+                coverBytes
+            );
         }
     }
 
@@ -151,7 +131,6 @@ public sealed partial class ArtistDetailPage : Page
         var coverScaleFactorNode = props.GetScalarProperty("coverScaleFactor");
         var buttonPanelOffsetNode = props.GetScalarProperty("buttonPanelOffset");
         var headerPaddingNode = props.GetScalarProperty("headerPadding");
-        var selectorBarOffsetNode = props.GetScalarProperty("selectorBarOffset");
 
         // 创建并启动一个表达式动画，以跟踪滚动进度
         ExpressionNode progressAnimation = EF.Clamp(-scrollVerticalOffset / clampSizeNode, 0, 1);
@@ -219,14 +198,6 @@ public sealed partial class ArtistDetailPage : Page
         // 创建并启动一个表达式动画，以滚动位置移动按钮面板
         ExpressionNode buttonTranslationAnimation = progressNode * (-buttonPanelOffsetNode);
         buttonVisual.StartAnimation("Translation.Y", buttonTranslationAnimation);
-
-        // 获取 SelectorBarPanel 的后备视觉效果
-        var selectorBarVisual = ElementCompositionPreview.GetElementVisual(SelectorBarPanel);
-        ElementCompositionPreview.SetIsTranslationEnabled(SelectorBarPanel, true);
-
-        // 创建并启动 SelectorBarPanel 的平移动画
-        ExpressionNode selectorBarTranslationAnimation = progressNode * (-selectorBarOffsetNode);
-        selectorBarVisual.StartAnimation("Translation.Y", selectorBarTranslationAnimation);
     }
 
     private async Task CreateImageBackgroundGradientVisual(
@@ -272,13 +243,12 @@ public sealed partial class ArtistDetailPage : Page
         ElementCompositionPreview.SetElementChildVisual(BackgroundHost, visual);
     }
 
-    private void CoverArt_OnSizeChanged(object sender, SizeChangedEventArgs e)
+    private void AlbumArt_OnSizeChanged(object sender, SizeChangedEventArgs e)
     {
         _props?.InsertScalar("clampSize", ClampSize);
         _props?.InsertScalar("backgroundScaleFactor", BackgroundScaleFactor);
         _props?.InsertScalar("coverScaleFactor", CoverScaleFactor);
         _props?.InsertScalar("buttonPanelOffset", ButtonPanelOffset);
-        _props?.InsertScalar("selectorBarOffset", SelectorBarOffset);
     }
 
     private void BackgroundHost_OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -295,19 +265,8 @@ public sealed partial class ArtistDetailPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Visible;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Visible;
-        }
-        if (menuButton is not null)
-        {
-            menuButton.Visibility = Visibility.Visible;
-        }
+        checkBox?.Visibility = Visibility.Visible;
+        playButton?.Visibility = Visibility.Visible;
     }
 
     private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -315,19 +274,8 @@ public sealed partial class ArtistDetailPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        var menuButton = grid?.FindName("MenuButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Collapsed;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Collapsed;
-        }
-        if (menuButton is not null)
-        {
-            menuButton.Visibility = Visibility.Collapsed;
-        }
+        checkBox?.Visibility = Visibility.Collapsed;
+        playButton?.Visibility = Visibility.Collapsed;
     }
 
     /// <summary>
@@ -354,66 +302,29 @@ public sealed partial class ArtistDetailPage : Page
         }
     }
 
-    private void SelectorBar_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is SelectorBar selectorBar)
-        {
-            var selectedItem = selectorBar.Items[SelectionBarSelectedIndex];
-            selectorBar.SelectedItem = selectedItem;
-        }
-    }
-
-    private void SelectorBar_SelectionChanged(
-        SelectorBar sender,
-        SelectorBarSelectionChangedEventArgs args
-    )
-    {
-        var selectedItem = sender.SelectedItem;
-        var currentSelectedIndex = sender.Items.IndexOf(selectedItem);
-        if (currentSelectedIndex == 0)
-        {
-            AlbumListView.Visibility = Visibility.Visible;
-            AlbumGridView.Visibility = Visibility.Collapsed;
-        }
-        else
-        {
-            AlbumListView.Visibility = Visibility.Collapsed;
-            AlbumGridView.Visibility = Visibility.Visible;
-        }
-        SelectionBarSelectedIndex = currentSelectedIndex;
-    }
-
-    private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-        if (e.ClickedItem is IBriefSongInfoBase info)
-        {
-            ViewModel.SongListView_ItemClick(info);
-        }
-    }
-
-    private void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
-            ViewModel.SongListViewPlayButton_Click(info);
+            ViewModel.PlayButton_Click(info);
         }
     }
 
-    private void SongListViewPlayNextButton_Click(object sender, RoutedEventArgs e)
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
-            ViewModel.SongListViewPlayNextButton_Click(info);
+            ViewModel.PlayNextButton_Click(info);
         }
     }
 
-    private void SongListViewEditInfoButton_Click(object sender, RoutedEventArgs e) { }
+    private void EditInfoButton_Click(object sender, RoutedEventArgs e) { }
 
-    private async void SongListViewPropertiesButton_Click(object sender, RoutedEventArgs e)
+    private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            var song = new DetailedLocalSongInfo(info);
             if (song is not null)
             {
                 var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
@@ -422,99 +333,13 @@ public sealed partial class ArtistDetailPage : Page
         }
     }
 
-    private void SongListViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
-            ViewModel.SongListViewShowAlbumButton_Click(info);
+            ViewModel.ShowArtistButton_Click(info);
         }
     }
 
-    private void SongListViewSelectButton_Click(object sender, RoutedEventArgs e) { }
-
-    private void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
-        {
-            ViewModel.AlbumGridViewPlayButton_Click(info);
-        }
-    }
-
-    private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-        if (e.ClickedItem is BriefAlbumInfo briefAlbumInfo)
-        {
-            var albumInfo = Data.MusicLibrary.Albums[briefAlbumInfo.Name];
-            if (albumInfo is not null)
-            {
-                var grid = (Grid)
-                    (
-                        (ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)
-                    ).ContentTemplateRoot;
-                var border = (Border)grid.Children[1];
-                ConnectedAnimationService
-                    .GetForCurrentView()
-                    .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.SelectedAlbum = albumInfo;
-                Data.ShellPage!.GetFrame()
-                    .Navigate(
-                        typeof(AlbumDetailPage),
-                        "ArtistDetailPage",
-                        new SuppressNavigationTransitionInfo()
-                    );
-            }
-        }
-    }
-
-    private void AlbumGridViewPlayNextButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
-        {
-            ViewModel.AlbumGridViewPlayNextButton_Click(info);
-        }
-    }
-
-    private void AlbumGridViewEditInfoButton_Click(object sender, RoutedEventArgs e) { }
-
-    private void AlbumGridViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: BriefAlbumInfo info })
-        {
-            var albumInfo = Data.MusicLibrary.Albums[info.Name];
-            if (albumInfo is not null)
-            {
-                var grid = (Grid)
-                    ((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
-                var border = (Border)grid.Children[1];
-                ConnectedAnimationService
-                    .GetForCurrentView()
-                    .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.SelectedAlbum = albumInfo;
-                Data.ShellPage!.GetFrame()
-                    .Navigate(
-                        typeof(AlbumDetailPage),
-                        "ArtistDetailPage",
-                        new SuppressNavigationTransitionInfo()
-                    );
-            }
-        }
-    }
-
-    private void AlbumGridViewSelectButton_Click(object sender, RoutedEventArgs e) { }
-
-    /*private void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (Data.SelectedBriefAlbum is not null && sender is GridView gridView)
-        {
-            gridView.ScrollIntoView(Data.SelectedBriefAlbum, ScrollIntoViewAlignment.Leading);
-            gridView.UpdateLayout();
-            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
-            if (animation is not null)
-            {
-                animation.Configuration = new DirectConnectedAnimationConfiguration();
-                await gridView.TryStartConnectedAnimationAsync(animation, Data.SelectedBriefAlbum, "CoverBorder");
-            }
-            gridView.Focus(FocusState.Programmatic);
-        }
-    }*/
+    private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }

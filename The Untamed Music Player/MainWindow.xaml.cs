@@ -7,14 +7,12 @@ using The_Untamed_Music_Player.Views;
 using Windows.UI.ViewManagement;
 
 namespace The_Untamed_Music_Player;
+
 public sealed partial class MainWindow : WindowEx
 {
     private readonly DispatcherQueue dispatcherQueue;
     private readonly UISettings settings;
-    public MainViewModel ViewModel
-    {
-        get;
-    }
+    public MainViewModel ViewModel { get; }
 
     public MainWindow()
     {
@@ -31,7 +29,6 @@ public sealed partial class MainWindow : WindowEx
         Data.MainWindow = this;
 
         ShellFrame.Navigate(typeof(ShellPage));
-        RootPlayBarFrame.Navigate(typeof(RootPlayBarView));
         ViewModel = App.GetService<MainViewModel>();
     }
 

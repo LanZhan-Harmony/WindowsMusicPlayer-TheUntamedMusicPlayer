@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Text.Json;
-using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 
@@ -8,9 +7,9 @@ public class CloudSongSearchHelper
 {
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
 
-    private static readonly NeteaseCloudMusicApi _api = new();
+    private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
-    public static async Task SearchAsync(string keyWords, CloudBriefOnlineSongInfoList list)
+    public static async Task SearchSongsAsync(string keyWords, CloudBriefOnlineSongInfoList list)
     {
         await _searchSemaphore.WaitAsync();
         list.Page = 0;
@@ -75,7 +74,7 @@ public class CloudSongSearchHelper
         }
     }
 
-    public static async Task SearchMoreAsync(CloudBriefOnlineSongInfoList list)
+    public static async Task SearchMoreSongsAsync(CloudBriefOnlineSongInfoList list)
     {
         await _searchSemaphore.WaitAsync();
         try
@@ -122,89 +121,49 @@ public class CloudSongSearchHelper
     )
     {
         var actualCount = songsElement.GetArrayLength();
-        var infos = new CloudBriefOnlineSongInfo[actualCount];
-
-        // Parallel.ForEachAsync 默认使用核心数为CPU核心总数
-        await Parallel.ForEachAsync(
-            Enumerable.Range(0, actualCount),
-            new ParallelOptions(),
-            async (i, cancellationToken) =>
-            {
-                try
-                {
-                    var info = await CloudBriefOnlineSongInfo.CreateAsync(songsElement[i]!, _api);
-                    infos[i] = info;
-                }
-                catch (Exception ex)
-                {
-                    lock (list)
-                    {
-                        list.ListCount++;
-                    }
-                    Debug.WriteLine(ex.StackTrace);
-                }
-            }
-        );
-
-        foreach (var info in infos)
-        {
-            list.Add(info);
-        }
-    }
-
-    public static async Task<List<SearchResult>> GetSearchSuggestAsync(string keyWords)
-    {
-        var list = new List<SearchResult>();
-        await Task.Run(async () =>
-        {
-            try
-            {
-                var (_, result) = await _api.RequestAsync(
-                    CloudMusicApiProviders.SearchSuggest,
-                    new Dictionary<string, string> { { "keywords", $"{keyWords}" } }
-                );
-
-                using var document = JsonDocument.Parse(result.ToJsonString());
-                var root = document.RootElement;
-
-                if (root.TryGetProperty("result", out var resultElement))
-                {
-                    AddResultsFromProperty(resultElement, "songs", 5, "\uE8D6", list);
-                    AddResultsFromProperty(resultElement, "albums", 3, "\uE93C", list);
-                    AddResultsFromProperty(resultElement, "artists", 3, "\uE77B", list);
-                    AddResultsFromProperty(resultElement, "playlists", 2, "\uE728", list);
-                }
-            }
-            catch
-            {
-                Debug.WriteLine("获取网易云音乐搜索建议失败");
-            }
-        });
-        return list;
-    }
-
-    private static void AddResultsFromProperty(
-        JsonElement element,
-        string propertyName,
-        int limit,
-        string icon,
-        List<SearchResult> list
-    )
-    {
-        if (!element.TryGetProperty(propertyName, out var arrayElement))
+        if (actualCount == 0)
         {
             return;
         }
 
-        var names = arrayElement
-            .EnumerateArray()
-            .Select(item => item.GetProperty("name").GetString()!)
-            .Distinct()
-            .Take(limit);
+        var songIds = Enumerable
+            .Range(0, actualCount)
+            .Select(i => songsElement[i].GetProperty("id").GetInt64())
+            .ToArray();
 
-        foreach (var name in names)
+        var (_, checkResult) = await _api.RequestAsync(
+            CloudMusicApiProviders.SongUrl,
+            new Dictionary<string, string> { { "id", string.Join(',', songIds) } }
+        );
+        var data = checkResult["data"]!;
+
+        // 建立ID到可用性的映射，解决顺序问题
+        var availabilityMap = data.AsArray()
+            .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item!["url"] is not null);
+
+        var infos = Enumerable
+            .Range(0, actualCount)
+            .Select(i =>
+            {
+                try
+                {
+                    var songId = songIds[i];
+                    var available = availabilityMap.GetValueOrDefault(songId, false);
+                    return new CloudBriefOnlineSongInfo(songsElement[i], available);
+                }
+                catch (Exception ex)
+                {
+                    list.ListCount++;
+                    Debug.WriteLine(ex.StackTrace);
+                    return null;
+                }
+            })
+            .Where(info => info is not null)
+            .ToArray();
+
+        foreach (var info in infos)
         {
-            list.Add(new SearchResult { Icon = icon, Label = name });
+            list.Add(info);
         }
     }
 }

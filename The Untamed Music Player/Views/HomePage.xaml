@@ -10,7 +10,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="SearchResultTemplate" x:DataType="model:SearchResult">
+        <DataTemplate x:Key="SuggestResultTemplate" x:DataType="model:SuggestResult">
             <Grid AutomationProperties.Name="{x:Bind Label}" ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="20"/>
@@ -96,11 +96,12 @@
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Disabled"
                           VerticalScrollMode="Disabled">
-                <SelectorBar Grid.Column="1"
+                <SelectorBar x:Name="MainSelectorBar"
+                             Grid.Column="1"
                              Loaded="{x:Bind ViewModel.SelectorBar_Loaded}"
                              SelectionChanged="{x:Bind ViewModel.SelectorBar_SelectionChanged}">
                     <SelectorBarItem x:Name="SelectorBarItemPage1" x:Uid="HaveMusic_Songs"
-                                     FontSize="18" IsSelected="True"/>
+                                     FontSize="18"/>
                     <SelectorBarItem x:Name="SelectorBarItemPage2" x:Uid="HaveMusic_Albums"
                                      FontSize="18"/>
                     <SelectorBarItem x:Name="SelectorBarItemPage3" x:Uid="HaveMusic_Artists"
@@ -113,8 +114,8 @@
                             Grid.Column="2"
                             Width="400" Height="32"
                             Margin="0,7,0,0" VerticalAlignment="Center"
-                            ItemTemplate="{StaticResource SearchResultTemplate}"
-                            ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.SearchResultList, Mode=OneWay}"
+                            ItemTemplate="{StaticResource SuggestResultTemplate}"
+                            ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.SuggestResultList, Mode=OneWay}"
                             Loaded="{x:Bind model:Data.OnlineMusicLibrary.AutoSuggestBox_Loaded}"
                             QueryIcon="Find"
                             QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted}"
@@ -154,7 +155,7 @@
                    TextTrimming="WordEllipsis"
                    Visibility="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsTextBlockVisibility, Mode=OneWay}">
             <Run FontSize="30" FontWeight="Bold"
-                 Text="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsText, Mode=OneWay}"/>
+                 Text="{x:Bind model:Data.OnlineMusicLibrary.SearchKeyWords, Mode=OneWay}"/>
             <Run x:Uid="Home_SearchResult" FontSize="20"/>
         </TextBlock>
         <ProgressRing Grid.Row="2" Grid.RowSpan="2"

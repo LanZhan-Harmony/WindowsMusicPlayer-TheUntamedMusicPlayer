@@ -36,12 +36,12 @@ public partial class LocalSongsViewModel : ObservableRecipient
     /// <summary>
     /// 备用歌曲列表
     /// </summary>
-    private readonly ConcurrentBag<BriefSongInfo> _songList = Data.MusicLibrary.Songs;
+    private readonly ConcurrentBag<BriefLocalSongInfo> _songList = Data.MusicLibrary.Songs;
 
     /// <summary>
     /// 排序方式列表
     /// </summary>
-    public List<string> SortBy { get; set; } = [.. "LocalSongs_SortBy".GetLocalized().Split(", ")];
+    public List<string> SortBy { get; set; } = [.. "Songs_SortBy".GetLocalized().Split(", ")];
 
     /// <summary>
     /// 分组的歌曲列表
@@ -51,7 +51,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     /// <summary>
     /// 未分组的歌曲列表
     /// </summary>
-    public List<BriefSongInfo> NotGroupedSongList { get; set; } = [];
+    public List<BriefLocalSongInfo> NotGroupedSongList { get; set; } = [];
 
     /// <summary>
     /// 流派列表
@@ -184,7 +184,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
             {
                 var filteredItems = group
                     .Where(item =>
-                        item is BriefSongInfo SongInfo && SongInfo.GenreStr == genreToFilter
+                        item is BriefLocalSongInfo songInfo && songInfo.GenreStr == genreToFilter
                     )
                     .ToList();
                 group.Clear();
@@ -198,7 +198,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             // 过滤NotGroupedSongList
             var filteredSongs = NotGroupedSongList
-                .Where(SongInfo => SongInfo.GenreStr == genreToFilter)
+                .Where(songInfo => songInfo.GenreStr == genreToFilter)
                 .ToList();
             NotGroupedSongList.Clear();
             foreach (var song in filteredSongs)
@@ -210,14 +210,17 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await SortSongs();
     }
 
-    private List<BriefSongInfo> ConvertGroupedToFlatList()
+    private List<BriefLocalSongInfo> ConvertGroupedToFlatList()
     {
         return _isGrouped
-            ? [.. GroupedSongList.SelectMany(group => group.OfType<BriefSongInfo>())]
+            ? [.. GroupedSongList.SelectMany(group => group.OfType<BriefLocalSongInfo>())]
             : NotGroupedSongList;
     }
 
-    public object GetSongListViewSource(ICollectionView grouped, List<BriefSongInfo> notgrouped)
+    public object GetSongListViewSource(
+        ICollectionView grouped,
+        List<BriefLocalSongInfo> notgrouped
+    )
     {
         return _isGrouped ? grouped : NotGroupedSongList;
     }
@@ -232,7 +235,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m.Title, new TitleComparer())
                 .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -251,7 +254,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m.Title, new TitleComparer())
                 .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -270,7 +273,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m, new MusicArtistComparer())
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -289,7 +292,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m, new MusicArtistComparer())
                 .GroupBy(m => m.ArtistsStr)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -308,7 +311,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m, new MusicAlbumComparer())
                 .GroupBy(m => m.Album)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -327,7 +330,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m, new MusicAlbumComparer())
                 .GroupBy(m => m.Album)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -346,7 +349,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m.Year)
                 .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -363,7 +366,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m.Year)
                 .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -408,7 +411,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m, new MusicFolderComparer())
                 .GroupBy(m => m.Folder)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -427,7 +430,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             var sortedGroups = GroupedSongList
                 .SelectMany(group => group)
-                .OfType<BriefSongInfo>()
+                .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m, new MusicFolderComparer())
                 .GroupBy(m => m.Folder)
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
@@ -489,23 +492,23 @@ public partial class LocalSongsViewModel : ObservableRecipient
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
-        if (e.ClickedItem is BriefSongInfo info)
+        if (e.ClickedItem is BriefLocalSongInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
         }
     }
 
-    public void PlayButton_Click(BriefSongInfo info)
+    public void PlayButton_Click(BriefLocalSongInfo info)
     {
         Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
-    public void PlayNextButton_Click(BriefSongInfo info)
+    public void PlayNextButton_Click(BriefLocalSongInfo info)
     {
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            var list = new List<BriefSongInfo> { info };
+            var list = new List<BriefLocalSongInfo> { info };
             Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
@@ -515,25 +518,33 @@ public partial class LocalSongsViewModel : ObservableRecipient
         }
     }
 
-    public void ShowAlbumButton_Click(BriefSongInfo info)
+    public void ShowAlbumButton_Click(BriefLocalSongInfo info)
     {
-        var albumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info.Album);
-        if (albumInfo is not null)
+        var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info.Album);
+        if (localAlbumInfo is not null)
         {
-            Data.SelectedAlbum = albumInfo;
+            Data.SelectedLocalAlbum = localAlbumInfo;
             Data.ShellPage!.GetFrame()
-                .Navigate(typeof(AlbumDetailPage), null, new SuppressNavigationTransitionInfo());
+                .Navigate(
+                    typeof(LocalAlbumDetailPage),
+                    null,
+                    new SuppressNavigationTransitionInfo()
+                );
         }
     }
 
-    public void ShowArtistButton_Click(BriefSongInfo info)
+    public void ShowArtistButton_Click(BriefLocalSongInfo info)
     {
-        var artistInfo = Data.MusicLibrary.GetArtistInfoBySong(info.Artists[0]);
-        if (artistInfo is not null)
+        var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(info.Artists[0]);
+        if (localArtistInfo is not null)
         {
-            Data.SelectedArtist = artistInfo;
+            Data.SelectedLocalArtist = localArtistInfo;
             Data.ShellPage!.GetFrame()
-                .Navigate(typeof(ArtistDetailPage), null, new SuppressNavigationTransitionInfo());
+                .Navigate(
+                    typeof(LocalArtistDetailPage),
+                    null,
+                    new SuppressNavigationTransitionInfo()
+                );
         }
     }
 

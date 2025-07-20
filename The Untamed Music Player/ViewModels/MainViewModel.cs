@@ -257,10 +257,7 @@ public partial class MainViewModel : ObservableRecipient
             var color = IsDarkTheme ? darkColor : lightColor;
             micaController.TintColor = color;
             TintColor = color;
-            if (Data.SettingsViewModel is not null)
-            {
-                Data.SettingsViewModel.TintColor = color;
-            }
+            Data.SettingsViewModel?.TintColor = color;
         }
         else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
         {
@@ -284,10 +281,7 @@ public partial class MainViewModel : ObservableRecipient
             var color = IsDarkTheme ? darkColor : lightColor;
             desktopAcrylicController.TintColor = color;
             TintColor = color;
-            if (Data.SettingsViewModel is not null)
-            {
-                Data.SettingsViewModel.TintColor = color;
-            }
+            Data.SettingsViewModel?.TintColor = color;
         }
     }
 

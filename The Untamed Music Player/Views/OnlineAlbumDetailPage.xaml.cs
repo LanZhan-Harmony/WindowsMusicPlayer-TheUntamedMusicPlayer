@@ -19,12 +19,12 @@ using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class AlbumDetailPage : Page
+public sealed partial class OnlineAlbumDetailPage : Page
 {
-    public AlbumDetailViewModel ViewModel { get; }
+    public OnlineAlbumDetailViewModel ViewModel { get; }
 
     // 滚动进度的范围
-    private int ClampSize => GetValue(50, 80, 107);
+    private int ClampSize => GetValue(50, 82, 115);
 
     // 背景在滚动时的缩放比例
     private float BackgroundScaleFactor => GetValue(0.80f, 0.70f, 0.61f);
@@ -33,7 +33,7 @@ public sealed partial class AlbumDetailPage : Page
     private float CoverScaleFactor => GetValue(0.632479f, 0.528571f, 0.488888f);
 
     // 按钮面板在滚动时的偏移量
-    private int ButtonPanelOffset => GetValue(50, 77, 79);
+    private int ButtonPanelOffset => GetValue(50, 76, 105);
 
     // 背景的高度
     private float BackgroundVisualHeight => (float)(Header.ActualHeight * 2.5);
@@ -42,16 +42,19 @@ public sealed partial class AlbumDetailPage : Page
     private Compositor? _compositor;
     private SpriteVisual? _backgroundVisual;
 
-    public AlbumDetailPage()
+    public OnlineAlbumDetailPage()
     {
-        ViewModel = App.GetService<AlbumDetailViewModel>();
+        ViewModel = App.GetService<OnlineAlbumDetailViewModel>();
         InitializeComponent();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.Parameter is string page && (page == "LocalAlbumsPage" || page == "ArtistDetailPage"))
+        if (
+            e.Parameter is string page
+            && (page == "OnlineAlbumsPage" || page == "OnlineArtistDetailPage")
+        )
         {
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -63,7 +66,7 @@ public sealed partial class AlbumDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "LocalAlbumsPage")
+        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "OnlineAlbumsPage")
         {
             Data.NavigatePage = "";
             ConnectedAnimationService
@@ -72,7 +75,7 @@ public sealed partial class AlbumDetailPage : Page
         }
     }
 
-    private async void AlbumDetailsPage_OnLoaded(object sender, RoutedEventArgs e)
+    private async void OnlineAlbumDetailPage_OnLoaded(object sender, RoutedEventArgs e)
     {
         var scrollViewer =
             SongListView.FindDescendant<ScrollViewer>()
@@ -97,11 +100,7 @@ public sealed partial class AlbumDetailPage : Page
 
         CreateHeaderAnimation(_props, scrollingProperties.Translation.Y);
 
-        if (ViewModel.SongList.Count == 0)
-        {
-            return;
-        }
-        var coverBytes = ViewModel.Album.GetCoverBytes();
+        var coverBytes = await IDetailedOnlineAlbumInfo.GetCoverBytes(ViewModel.BriefAlbum);
         if (coverBytes.Length != 0)
         {
             await CreateImageBackgroundGradientVisual(
@@ -177,6 +176,7 @@ public sealed partial class AlbumDetailPage : Page
         // 获取附加文本块后备视觉效果，以便可以对其属性进行动画处理
         var subtitleVisual = ElementCompositionPreview.GetElementVisual(SubtitleText);
         var captionVisual = ElementCompositionPreview.GetElementVisual(CaptionText);
+        var introductionVisual = ElementCompositionPreview.GetElementVisual(IntroductionText);
 
         // 创建一个表达式动画，以开始使用附加文本块的阈值进行不透明度淡出动画
         var fadeThreshold = ExpressionValues.Constant.CreateConstantScalar("fadeThreshold", 0.6f);
@@ -187,6 +187,7 @@ public sealed partial class AlbumDetailPage : Page
         subtitleVisual.StartAnimation("Opacity", textFadeAnimation);
         textFadeAnimation.SetScalarParameter("fadeThreshold", 0.2f);
         captionVisual.StartAnimation("Opacity", textFadeAnimation);
+        introductionVisual.StartAnimation("Opacity", textFadeAnimation);
 
         // 获取按钮面板的后备视觉效果，以便可以对其属性进行动画处理
         var buttonVisual = ElementCompositionPreview.GetElementVisual(ButtonPanel);
@@ -262,14 +263,8 @@ public sealed partial class AlbumDetailPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Visible;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Visible;
-        }
+        checkBox?.Visibility = Visibility.Visible;
+        playButton?.Visibility = Visibility.Visible;
     }
 
     private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -277,24 +272,10 @@ public sealed partial class AlbumDetailPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        if (checkBox is not null)
-        {
-            checkBox.Visibility = Visibility.Collapsed;
-        }
-        if (playButton is not null)
-        {
-            playButton.Visibility = Visibility.Collapsed;
-        }
+        checkBox?.Visibility = Visibility.Collapsed;
+        playButton?.Visibility = Visibility.Collapsed;
     }
 
-    /// <summary>
-    /// 辅助方法根据窗口宽度返回相应的值
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="small"></param>
-    /// <param name="medium"></param>
-    /// <param name="large"></param>
-    /// <returns></returns>
     private T GetValue<T>(T small, T medium, T large)
     {
         if (ActualWidth < 641)
@@ -311,44 +292,13 @@ public sealed partial class AlbumDetailPage : Page
         }
     }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
-        {
-            ViewModel.PlayButton_Click(info);
-        }
-    }
+    private void PlayButton_Click(object sender, RoutedEventArgs e) { }
 
-    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
-        {
-            ViewModel.PlayNextButton_Click(info);
-        }
-    }
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e) { }
 
-    private void EditInfoButton_Click(object sender, RoutedEventArgs e) { }
+    private void PropertiesButton_Click(object sender, RoutedEventArgs e) { }
 
-    private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
-        {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
-            if (song is not null)
-            {
-                var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
-                await dialog.ShowAsync();
-            }
-        }
-    }
-
-    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
-        {
-            ViewModel.ShowArtistButton_Click(info);
-        }
-    }
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e) { }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
