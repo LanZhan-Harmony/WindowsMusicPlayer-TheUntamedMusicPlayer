@@ -10,6 +10,14 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public partial class HomeViewModel : ObservableRecipient
 {
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
+
+    private SelectorBar? _selectorBar;
+
+    /// <summary>
+    /// 页面索引, 0为歌曲, 1为专辑, 2为艺术家, 3为歌单
+    /// </summary>
     public byte PageIndex
     {
         get;
@@ -17,6 +25,7 @@ public partial class HomeViewModel : ObservableRecipient
         {
             field = value;
             Data.OnlineMusicLibrary.PageIndex = value;
+            SavePageIndex();
         }
     }
 
@@ -27,10 +36,12 @@ public partial class HomeViewModel : ObservableRecipient
     {
         Data.OnlineMusicLibrary.MusicLibraryIndex = value;
         SaveMusicLibraryIndex();
+        // 音乐库索引改变时强制重新搜索
+        if (!string.IsNullOrWhiteSpace(Data.OnlineMusicLibrary.SearchKeyWords))
+        {
+            _ = Data.OnlineMusicLibrary.ForceSearch();
+        }
     }
-
-    private readonly ILocalSettingsService _localSettingsService =
-        App.GetService<ILocalSettingsService>();
 
     public HomeViewModel()
     {
@@ -50,8 +61,8 @@ public partial class HomeViewModel : ObservableRecipient
     {
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
-            Data.OnlineMusicLibrary.KeyWords = sender.Text;
-            await Data.OnlineMusicLibrary.UpdateSearchResult();
+            Data.OnlineMusicLibrary.SuggestKeyWords = sender.Text;
+            await Data.OnlineMusicLibrary.UpdateSuggestResult();
         }
     }
 
@@ -60,10 +71,10 @@ public partial class HomeViewModel : ObservableRecipient
         AutoSuggestBoxQuerySubmittedEventArgs args
     )
     {
-        if (args.ChosenSuggestion is SearchResult result)
+        if (args.ChosenSuggestion is SuggestResult result)
         {
             var keyWords = result.Label;
-            Data.OnlineMusicLibrary.ClearSearchResult();
+            Data.OnlineMusicLibrary.ClearSuggestResult();
             var currentSelectedIndex = result.Icon switch
             {
                 "\uE8D6" => 0,
@@ -72,15 +83,17 @@ public partial class HomeViewModel : ObservableRecipient
                 "\uE728" => 3,
                 _ => 0,
             };
-            Data.OnlineMusicLibrary.KeyWords = keyWords;
+            Data.OnlineMusicLibrary.SearchKeyWords = keyWords;
             Navigate(currentSelectedIndex);
-            await Data.OnlineMusicLibrary.Search();
+            // 搜索关键词改变时强制重新搜索
+            await Data.OnlineMusicLibrary.ForceSearch();
         }
         else
         {
-            Data.OnlineMusicLibrary.KeyWords = args.QueryText;
-            Data.OnlineMusicLibrary.ClearSearchResult();
-            await Data.OnlineMusicLibrary.Search();
+            Data.OnlineMusicLibrary.SearchKeyWords = args.QueryText;
+            Data.OnlineMusicLibrary.ClearSuggestResult();
+            // 搜索关键词改变时强制重新搜索
+            await Data.OnlineMusicLibrary.ForceSearch();
         }
     }
 
@@ -88,6 +101,7 @@ public partial class HomeViewModel : ObservableRecipient
     {
         if (sender is SelectorBar selectorBar)
         {
+            _selectorBar = selectorBar;
             var selectedItem = selectorBar.Items[PageIndex];
             selectorBar.SelectedItem = selectedItem;
         }
@@ -104,12 +118,8 @@ public partial class HomeViewModel : ObservableRecipient
         Navigate(currentSelectedIndex);
     }
 
-    public void Navigate(int currentSelectedIndex, bool isFirstLoaded = false)
+    public void Navigate(int currentSelectedIndex)
     {
-        if (!isFirstLoaded && PageIndex == currentSelectedIndex)
-        {
-            return;
-        }
         var page = currentSelectedIndex switch
         {
             0 => typeof(OnlineSongsPage),
@@ -123,6 +133,9 @@ public partial class HomeViewModel : ObservableRecipient
                 ? SlideNavigationTransitionEffect.FromRight
                 : SlideNavigationTransitionEffect.FromLeft;
         PageIndex = (byte)currentSelectedIndex;
+        _selectorBar?.SelectedItem = _selectorBar.Items[currentSelectedIndex];
+
+        _ = Data.OnlineMusicLibrary.Search();
         Data.HomePage.GetFrame()
             .Navigate(
                 page,

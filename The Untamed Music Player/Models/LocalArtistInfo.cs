@@ -6,7 +6,7 @@ using The_Untamed_Music_Player.Helpers;
 namespace The_Untamed_Music_Player.Models;
 
 [MemoryPackable]
-public partial class ArtistInfo : IArtistInfoBase
+public partial class LocalArtistInfo : IArtistInfoBase
 {
     public HashSet<string> Albums { get; set; } = [];
 
@@ -47,25 +47,25 @@ public partial class ArtistInfo : IArtistInfoBase
     public int TotalAlbumNum { get; set; } = 1;
 
     [MemoryPackConstructor]
-    public ArtistInfo() { }
+    public LocalArtistInfo() { }
 
-    public ArtistInfo(BriefSongInfo briefSongInfo, string name)
+    public LocalArtistInfo(BriefLocalSongInfo briefLocalSongInfo, string name)
     {
         Name = name;
-        TotalDuration = briefSongInfo.Duration;
-        GenreStr = briefSongInfo.GenreStr;
-        Albums.Add(briefSongInfo.Album);
+        TotalDuration = briefLocalSongInfo.Duration;
+        GenreStr = briefLocalSongInfo.GenreStr;
+        Albums.Add(briefLocalSongInfo.Album);
     }
 
     /// <summary>
     /// 扫描歌曲时更新艺术家信息
     /// </summary>
-    /// <param name="briefSongInfo"></param>
-    public void Update(BriefSongInfo briefSongInfo)
+    /// <param name="briefLocalSongInfo"></param>
+    public void Update(BriefLocalSongInfo briefLocalSongInfo)
     {
-        TotalDuration += briefSongInfo.Duration;
+        TotalDuration += briefLocalSongInfo.Duration;
         TotalSongNum++;
-        var album = briefSongInfo.Album;
+        var album = briefLocalSongInfo.Album;
 
         if (Albums.Add(album))
         {

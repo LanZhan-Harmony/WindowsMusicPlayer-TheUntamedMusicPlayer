@@ -8,7 +8,7 @@ using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class RootPlayBarView : Page
+public sealed partial class RootPlayBarView : UserControl
 {
     public RootPlayBarViewModel ViewModel { get; }
 
@@ -18,7 +18,6 @@ public sealed partial class RootPlayBarView : Page
         InitializeComponent();
         ViewModel = App.GetService<RootPlayBarViewModel>();
         Data.RootPlayBarView = this;
-        DataContext = ViewModel;
     }
 
     public string GetCurrent(TimeSpan current)
@@ -90,13 +89,13 @@ public sealed partial class RootPlayBarView : Page
         };
     }
 
-    public Visibility GetArtistAndAlbumStrVisibility(IDetailedSongInfoBase? detailedSongInfo)
+    public Visibility GetArtistAndAlbumStrVisibility(IDetailedSongInfoBase? detailedLocalSongInfo)
     {
-        if (detailedSongInfo is null)
+        if (detailedLocalSongInfo is null)
         {
             return Visibility.Collapsed;
         }
-        return detailedSongInfo.ArtistAndAlbumStr == ""
+        return detailedLocalSongInfo.ArtistAndAlbumStr == ""
             ? Visibility.Collapsed
             : Visibility.Visible;
     }

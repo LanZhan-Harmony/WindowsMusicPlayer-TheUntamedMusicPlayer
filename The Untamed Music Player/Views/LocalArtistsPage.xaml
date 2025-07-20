@@ -31,51 +31,50 @@
                            VerticalAlignment="Center"
                            Style="{StaticResource SubtitleTextBlockStyle}"
                            Text="{x:Bind ((helper:GroupInfoList)Group).Key}"
-                           TextAlignment="Center"
-                           TextTrimming="WordEllipsis"/>
+                           TextAlignment="Center" TextTrimming="WordEllipsis"/>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="ArtistGridViewTemplate" x:DataType="model:ArtistInfo">
+        <DataTemplate x:Key="ArtistGridViewTemplate" x:DataType="model:LocalArtistInfo">
             <Grid Width="170" Height="226"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Play" Width="216">
+                        <MenuFlyoutItem x:Uid="Songs_Play" Width="216">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE768;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_PlayNext">
+                        <MenuFlyoutItem x:Uid="Songs_PlayNext">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutSubItem x:Uid="LocalSongs_AddTo">
+                        <MenuFlyoutSubItem x:Uid="Songs_AddTo">
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xE710;"/>
                             </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue" Width="216">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue" Width="216">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE90B;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem x:Uid="LocalSongs_AddTo_NewPlaylist">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE710;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="LocalSongs_ShowArtist">
+                        <MenuFlyoutItem x:Uid="Songs_ShowArtist">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE77B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="LocalSongs_Select">
+                        <MenuFlyoutItem x:Uid="Songs_Select">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE762;"/>
                             </MenuFlyoutItem.Icon>
@@ -88,26 +87,21 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Canvas.ZIndex="2">
                     <CheckBox x:Name="ItemCheckBox"
-                              Margin="19,13,0,0"
-                              HorizontalAlignment="Left"
+                              Margin="19,13,0,0" HorizontalAlignment="Left"
                               VerticalAlignment="Top"
-                              Canvas.ZIndex="2"
-                              Visibility="Collapsed"/>
+                              Canvas.ZIndex="2" Visibility="Collapsed"/>
                     <Button x:Name="PlayButton"
                             Width="32" Height="32"
-                            Margin="13,0,0,8"
-                            HorizontalAlignment="Left"
+                            Margin="13,0,0,8" HorizontalAlignment="Left"
                             VerticalAlignment="Bottom"
-                            Canvas.ZIndex="2"
-                            Click="PlayButton_Click"
+                            Canvas.ZIndex="2" Click="PlayButton_Click"
                             Style="{StaticResource CircularButtonStyle}"
                             Visibility="Collapsed">
                         <FontIcon FontSize="12" Glyph="&#xE768;"/>
                     </Button>
                     <Button x:Name="MenuButton"
                             Width="32" Height="32"
-                            Margin="0,0,13,8"
-                            HorizontalAlignment="Right"
+                            Margin="0,0,13,8" HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
                             Canvas.ZIndex="2"
                             Style="{StaticResource CircularButtonStyle}"
@@ -115,40 +109,40 @@
                         <FontIcon FontSize="12" Glyph="&#xE712;"/>
                         <Button.Flyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem x:Uid="LocalSongs_Play" Width="216">
+                                <MenuFlyoutItem x:Uid="Songs_Play" Width="216">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE768;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Uid="LocalSongs_PlayNext">
+                                <MenuFlyoutItem x:Uid="Songs_PlayNext">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xECC8;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutSeparator/>
-                                <MenuFlyoutSubItem x:Uid="LocalSongs_AddTo">
+                                <MenuFlyoutSubItem x:Uid="Songs_AddTo">
                                     <MenuFlyoutSubItem.Icon>
                                         <FontIcon Glyph="&#xE710;"/>
                                     </MenuFlyoutSubItem.Icon>
-                                    <MenuFlyoutItem x:Uid="LocalSongs_AddTo_PlayQueue" Width="216">
+                                    <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue" Width="216">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xE90B;"/>
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
                                     <MenuFlyoutSeparator/>
-                                    <MenuFlyoutItem x:Uid="LocalSongs_AddTo_NewPlaylist">
+                                    <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xE710;"/>
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
                                 </MenuFlyoutSubItem>
-                                <MenuFlyoutItem x:Uid="LocalSongs_ShowArtist">
+                                <MenuFlyoutItem x:Uid="Songs_ShowArtist">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE77B;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutSeparator/>
-                                <MenuFlyoutItem x:Uid="LocalSongs_Select">
+                                <MenuFlyoutItem x:Uid="Songs_Select">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE762;"/>
                                     </MenuFlyoutItem.Icon>
@@ -160,8 +154,7 @@
                 <Border x:Name="CoverBorder"
                         Grid.Row="0"
                         Width="158" Height="158"
-                        Margin="0,6,0,2"
-                        Padding="0"
+                        Margin="0,6,0,2" Padding="0"
                         CornerRadius="100">
                     <Grid>
                         <Image x:Name="ControllerCover"
@@ -174,16 +167,14 @@
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
-                            <FontIcon Canvas.ZIndex="0"
-                                      FontSize="50"
+                            <FontIcon Canvas.ZIndex="0" FontSize="50"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xE77B;"/>
                         </Grid>
                     </Grid>
                 </Border>
                 <TextBlock Grid.Row="1"
-                           Margin="9,3,9,0"
-                           HorizontalAlignment="Center"
+                           Margin="9,3,9,0" HorizontalAlignment="Center"
                            FontWeight="SemiBold"
                            Text="{x:Bind Name}"
                            TextTrimming="CharacterEllipsis"
@@ -234,14 +225,12 @@
                 </StackPanel>
             </Button>
             <Button Grid.Column="2"
-                    Background="Transparent"
-                    BorderBrush="Transparent">
+                    Background="Transparent" BorderBrush="Transparent">
                 <StackPanel Orientation="Horizontal" Spacing="4">
-                    <TextBlock x:Uid="LocalSongs_SortByChosen"/>
+                    <TextBlock x:Uid="Songs_SortByChosen"/>
                     <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetSortByStr(ViewModel.SortMode), Mode=OneWay}"/>
                     <FontIcon Margin="8,0,0,0"
-                              FontSize="12"
-                              Glyph="&#xE70D;"/>
+                              FontSize="12" Glyph="&#xE70D;"/>
                 </StackPanel>
                 <Button.Flyout>
                     <Flyout Placement="Bottom">
@@ -286,8 +275,7 @@
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid x:Name="MaxItemsWrapGrid"
-                                           MaximumRowsOrColumns="8"
-                                           Orientation="Horizontal"/>
+                                           MaximumRowsOrColumns="8" Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
                 </GridView>
