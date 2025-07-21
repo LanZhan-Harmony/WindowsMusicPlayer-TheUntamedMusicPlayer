@@ -79,7 +79,6 @@ public static class Data
 
     public static MainViewModel? MainViewModel { get; set; }
     public static SettingsViewModel? SettingsViewModel { get; set; }
-    public static ShellViewModel? ShellViewModel { get; set; }
     public static RootPlayBarViewModel? RootPlayBarViewModel { get; set; }
     public static HaveMusicViewModel? HaveMusicViewModel { get; set; }
     public static LocalSongsViewModel? LocalSongsViewModel { get; set; }

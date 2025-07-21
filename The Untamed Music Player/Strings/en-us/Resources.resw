@@ -204,7 +204,7 @@
   <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
     <value>Music</value>
   </data>
-  <data name="Shell_Settings.Text" xml:space="preserve">
+  <data name="Shell_Settings1.Text" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
@@ -659,5 +659,11 @@
   </data>
   <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
     <value>Downloading song</value>
+  </data>
+  <data name="Shell_Settings.Content" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Settings (Ctrl+G)</value>
   </data>
 </root>

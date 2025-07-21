@@ -1,10 +1,8 @@
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
-using TagLib;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
