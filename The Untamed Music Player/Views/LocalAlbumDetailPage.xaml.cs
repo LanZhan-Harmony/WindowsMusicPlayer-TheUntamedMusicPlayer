@@ -52,8 +52,8 @@ public sealed partial class LocalAlbumDetailPage : Page
     {
         base.OnNavigatedTo(e);
         if (
-            e.Parameter is string page
-            && (page == "LocalAlbumsPage" || page == "LocalArtistDetailPage")
+            Data.ShellViewModel!.NavigatePage == nameof(LocalAlbumsPage)
+            || Data.ShellViewModel.NavigatePage == nameof(LocalArtistDetailPage)
         )
         {
             var animation = ConnectedAnimationService
@@ -66,9 +66,11 @@ public sealed partial class LocalAlbumDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "LocalAlbumsPage")
+        if (
+            e.NavigationMode == NavigationMode.Back
+            && Data.ShellViewModel!.NavigatePage == nameof(LocalAlbumsPage)
+        )
         {
-            Data.NavigatePage = "";
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("BackConnectedAnimation", CoverArt);

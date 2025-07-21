@@ -67,7 +67,7 @@ public partial class App : Application
                     services.AddTransient<PlayQueueViewModel>();
                     services.AddTransient<MusicLibraryViewModel>();
                     services.AddTransient<HomeViewModel>();
-                    services.AddTransient<ShellViewModel>();
+                    services.AddSingleton<ShellViewModel>();
                     services.AddTransient<RootPlayBarViewModel>();
                     services.AddTransient<LyricViewModel>();
                     services.AddTransient<NoMusicViewModel>();

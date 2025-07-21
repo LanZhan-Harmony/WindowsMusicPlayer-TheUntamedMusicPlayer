@@ -63,12 +63,11 @@ public partial class LocalAlbumDetailViewModel : ObservableRecipient
             if (localArtistInfo is not null)
             {
                 Data.SelectedLocalArtist = localArtistInfo;
-                Data.ShellPage!.GetFrame()
-                    .Navigate(
-                        typeof(LocalArtistDetailPage),
-                        null,
-                        new SuppressNavigationTransitionInfo()
-                    );
+                Data.ShellPage!.Navigate(
+                    nameof(LocalArtistDetailPage),
+                    "",
+                    new SuppressNavigationTransitionInfo()
+                );
             }
         }
     }
