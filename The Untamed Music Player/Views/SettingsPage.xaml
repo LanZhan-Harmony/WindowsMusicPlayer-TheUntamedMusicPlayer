@@ -57,14 +57,13 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="TitleGrid" Grid.Row="0">
-            <TextBlock x:Uid="Shell_Settings"
+            <TextBlock x:Uid="Shell_Settings1"
                        FontSize="40"
                        FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
         </Grid>
         <ScrollViewer Grid.Row="1" Padding="0,0,0,16">
             <StackPanel x:Name="ContentArea"
-                        Orientation="Vertical"
-                        Spacing="34">
+                        Orientation="Vertical" Spacing="34">
 
                 <!--  动画  -->
                 <StackPanel.ChildrenTransitions>
@@ -99,8 +98,7 @@
                         <toolkit:SettingsExpander.ItemsFooter>
                             <Grid Height="35" Visibility="{x:Bind ViewModel.EmptyFolderMessageVisibility, Mode=OneWay}">
                                 <toolkit:SettingsCard x:Name="emptyFolderMessage"
-                                                      Background="Transparent"
-                                                      BorderBrush="Transparent"
+                                                      Background="Transparent" BorderBrush="Transparent"
                                                       ContentAlignment="Left"
                                                       Visibility="{x:Bind ViewModel.EmptyFolderMessageVisibility, Mode=OneWay}">
                                     <TextBlock x:Uid="Settings_NoFolder" Margin="42,0,0,8"/>
@@ -164,8 +162,7 @@
                                 <StackPanel>
                                     <RadioButton x:Uid="Settings_Theme_Light"
                                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                                 FontSize="15"
-                                                 GroupName="AppTheme"
+                                                 FontSize="15" GroupName="AppTheme"
                                                  IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
                                         <RadioButton.CommandParameter>
                                             <xaml:ElementTheme>Light</xaml:ElementTheme>
@@ -173,8 +170,7 @@
                                     </RadioButton>
                                     <RadioButton x:Uid="Settings_Theme_Dark"
                                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                                 FontSize="15"
-                                                 GroupName="AppTheme"
+                                                 FontSize="15" GroupName="AppTheme"
                                                  IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
                                         <RadioButton.CommandParameter>
                                             <xaml:ElementTheme>Dark</xaml:ElementTheme>
@@ -182,8 +178,7 @@
                                     </RadioButton>
                                     <RadioButton x:Uid="Settings_Theme_Default"
                                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                                 FontSize="15"
-                                                 GroupName="AppTheme"
+                                                 FontSize="15" GroupName="AppTheme"
                                                  IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
                                         <RadioButton.CommandParameter>
                                             <xaml:ElementTheme>Default</xaml:ElementTheme>
@@ -217,8 +212,7 @@
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundColor">
                                 <ColorPicker ColorChanged="{x:Bind ViewModel.TintColorPicker_ColorChanged}"
-                                             ColorSpectrumShape="Ring"
-                                             IsAlphaEnabled="True"
+                                             ColorSpectrumShape="Ring" IsAlphaEnabled="True"
                                              IsAlphaSliderVisible="True"
                                              IsAlphaTextInputVisible="True"
                                              IsColorChannelTextInputVisible="True"

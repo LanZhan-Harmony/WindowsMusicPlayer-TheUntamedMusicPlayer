@@ -47,12 +47,6 @@ public partial class App : Application
             .ConfigureServices(
                 (context, services) => //注册服务信息
                 {
-                    // Default Activation Handler
-                    services.AddTransient<
-                        ActivationHandler<LaunchActivatedEventArgs>,
-                        DefaultActivationHandler
-                    >();
-
                     // Other Activation Handlers
                     services.AddTransient<IActivationHandler, AppNotificationActivationHandler>();
 
@@ -60,11 +54,8 @@ public partial class App : Application
                     services.AddSingleton<IAppNotificationService, AppNotificationService>();
                     services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
                     services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
-                    services.AddTransient<INavigationViewService, NavigationViewService>();
 
                     services.AddSingleton<IActivationService, ActivationService>();
-                    services.AddSingleton<IPageService, PageService>();
-                    services.AddSingleton<INavigationService, NavigationService>();
 
                     // Core Services
                     services.AddSingleton<IFileService, FileService>();
@@ -115,7 +106,7 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
-    protected async override void OnLaunched(LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
         MainWindow = new MainWindow();
