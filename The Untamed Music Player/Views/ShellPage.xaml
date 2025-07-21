@@ -37,7 +37,8 @@
                             IsSettingsVisible="False"
                             ItemInvoked="NavigationViewControl_ItemInvoked"
                             Loaded="NavigationViewControl_Loaded"
-                            PaneDisplayMode="Auto">
+                            PaneDisplayMode="Auto"
+                            SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
                 <NavigationView.AutoSuggestBox>
                     <AutoSuggestBox x:Uid="Shell_Search"
                                     AccessKey="NE" AutomationProperties.Name="Search"
@@ -99,7 +100,7 @@
                         </NavigationViewItem.KeyboardAccelerators>
                     </NavigationViewItem>
                 </NavigationView.FooterMenuItems>
-                <Frame x:Name="NavigationFrame" Navigating="NavigationFrame_Navigating"/>
+                <Frame x:Name="NavigationFrame" Navigating="{x:Bind ViewModel.NavigationFrame_Navigating}"/>
             </NavigationView>
             <InfoBar Title="无法打开，因为当前无法访问你的存储。请稍等片刻，然后再试。"
                      Margin="20" HorizontalAlignment="Right"

@@ -52,13 +52,11 @@ public sealed partial class LocalArtistsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             Data.SelectedLocalArtist = localArtistInfo;
-            Data.NavigatePage = "LocalArtistsPage";
-            Data.ShellPage!.GetFrame()
-                .Navigate(
-                    typeof(LocalArtistDetailPage),
-                    "LocalArtistPage",
-                    new SuppressNavigationTransitionInfo()
-                );
+            Data.ShellPage!.Navigate(
+                nameof(LocalArtistDetailPage),
+                nameof(LocalArtistsPage),
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 

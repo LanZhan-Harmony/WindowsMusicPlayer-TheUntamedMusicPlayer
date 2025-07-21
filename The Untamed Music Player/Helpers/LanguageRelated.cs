@@ -15,4 +15,14 @@ public class LanguageRelated
             _ => FontWeights.SemiLight,
         };
     }
+
+    public static string GetSimpleLanguage()
+    {
+        return Data.Language switch
+        {
+            "简体中文" => "zh-cn",
+            "English" => "en-us",
+            _ => "en-us",
+        };
+    }
 }
