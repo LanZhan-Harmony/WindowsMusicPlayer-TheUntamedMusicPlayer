@@ -73,7 +73,7 @@ public sealed partial class LocalArtistDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.Parameter is string page && page == "LocalArtistPage")
+        if (Data.ShellViewModel!.NavigatePage == nameof(LocalArtistsPage))
         {
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -89,9 +89,11 @@ public sealed partial class LocalArtistDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "LocalArtistsPage")
+        if (
+            e.NavigationMode == NavigationMode.Back
+            && Data.ShellViewModel!.NavigatePage == nameof(LocalArtistsPage)
+        )
         {
-            Data.NavigatePage = "";
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("BackConnectedAnimation", CoverArt);
@@ -438,12 +440,11 @@ public sealed partial class LocalArtistDetailPage : Page
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
                 Data.SelectedLocalAlbum = localAlbumInfo;
-                Data.ShellPage!.GetFrame()
-                    .Navigate(
-                        typeof(LocalAlbumDetailPage),
-                        "LocalArtistDetailPage",
-                        new SuppressNavigationTransitionInfo()
-                    );
+                Data.ShellPage!.Navigate(
+                    nameof(LocalAlbumDetailPage),
+                    nameof(LocalArtistDetailPage),
+                    new SuppressNavigationTransitionInfo()
+                );
             }
         }
     }
@@ -472,12 +473,11 @@ public sealed partial class LocalArtistDetailPage : Page
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
                 Data.SelectedLocalAlbum = localAlbumInfo;
-                Data.ShellPage!.GetFrame()
-                    .Navigate(
-                        typeof(LocalAlbumDetailPage),
-                        "LocalArtistDetailPage",
-                        new SuppressNavigationTransitionInfo()
-                    );
+                Data.ShellPage!.Navigate(
+                    nameof(LocalAlbumDetailPage),
+                    nameof(LocalArtistDetailPage),
+                    new SuppressNavigationTransitionInfo()
+                );
             }
         }
     }

@@ -28,6 +28,9 @@
                 </Button>
             </toolkit:SettingsCard>
         </DataTemplate>
+        <DataTemplate x:Key="FontComboboxTemplate" x:DataType="model:FontInfo">
+            <TextBlock FontFamily="{x:Bind FontFamily}" Text="{x:Bind DisplayName}"/>
+        </DataTemplate>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -238,6 +241,7 @@
                             <FontIcon Glyph="&#xE8D2;"/>
                         </toolkit:SettingsCard.HeaderIcon>
                         <ComboBox x:Name="FontComboBox" x:Uid="Settings_ChooseAFontFamily"
+                                  ItemTemplate="{StaticResource FontComboboxTemplate}"
                                   ItemsSource="{x:Bind ViewModel.Fonts}"
                                   Loaded="{x:Bind ViewModel.FontComboBox_Loaded}"
                                   SelectionChanged="{x:Bind ViewModel.FontComboBox_SelectionChanged}"/>

@@ -524,12 +524,11 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (localAlbumInfo is not null)
         {
             Data.SelectedLocalAlbum = localAlbumInfo;
-            Data.ShellPage!.GetFrame()
-                .Navigate(
-                    typeof(LocalAlbumDetailPage),
-                    null,
-                    new SuppressNavigationTransitionInfo()
-                );
+            Data.ShellPage!.Navigate(
+                nameof(LocalAlbumDetailPage),
+                "",
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 
@@ -539,12 +538,11 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (localArtistInfo is not null)
         {
             Data.SelectedLocalArtist = localArtistInfo;
-            Data.ShellPage!.GetFrame()
-                .Navigate(
-                    typeof(LocalArtistDetailPage),
-                    null,
-                    new SuppressNavigationTransitionInfo()
-                );
+            Data.ShellPage!.Navigate(
+                nameof(LocalArtistDetailPage),
+                "",
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 

@@ -76,12 +76,11 @@ public class LocalArtistDetailViewModel
             if (localAlbumInfo is not null)
             {
                 Data.SelectedLocalAlbum = localAlbumInfo;
-                Data.ShellPage!.GetFrame()
-                    .Navigate(
-                        typeof(LocalAlbumDetailPage),
-                        null,
-                        new SuppressNavigationTransitionInfo()
-                    );
+                Data.ShellPage!.Navigate(
+                    nameof(LocalAlbumDetailPage),
+                    "",
+                    new SuppressNavigationTransitionInfo()
+                );
             }
         }
     }

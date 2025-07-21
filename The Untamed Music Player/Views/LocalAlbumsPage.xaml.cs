@@ -52,13 +52,11 @@ public sealed partial class LocalAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             Data.SelectedLocalAlbum = info;
-            Data.NavigatePage = "LocalAlbumsPage";
-            Data.ShellPage!.GetFrame()
-                .Navigate(
-                    typeof(LocalAlbumDetailPage),
-                    "LocalAlbumsPage",
-                    new SuppressNavigationTransitionInfo()
-                );
+            Data.ShellPage!.Navigate(
+                nameof(LocalAlbumDetailPage),
+                nameof(LocalAlbumsPage),
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 
@@ -113,13 +111,11 @@ public sealed partial class LocalAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             Data.SelectedLocalAlbum = info;
-            Data.NavigatePage = "LocalAlbumsPage";
-            Data.ShellPage!.GetFrame()
-                .Navigate(
-                    typeof(LocalAlbumDetailPage),
-                    "LocalAlbumsPage",
-                    new SuppressNavigationTransitionInfo()
-                );
+            Data.ShellPage!.Navigate(
+                nameof(LocalAlbumDetailPage),
+                nameof(LocalAlbumsPage),
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 
