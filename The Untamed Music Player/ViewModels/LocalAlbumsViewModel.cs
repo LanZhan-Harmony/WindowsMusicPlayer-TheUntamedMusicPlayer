@@ -208,7 +208,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
                 .SelectMany(group => group)
                 .OfType<LocalAlbumInfo>()
                 .OrderBy(m => m.Year)
-                .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
+                .GroupBy(m => m.Year == 0 ? "..." : $"{m.Year}")
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
             GroupedAlbumList = [.. sortedGroups];
         });
@@ -222,7 +222,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
                 .SelectMany(group => group)
                 .OfType<LocalAlbumInfo>()
                 .OrderByDescending(m => m.Year)
-                .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
+                .GroupBy(m => m.Year == 0 ? "..." : $"{m.Year}")
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
             GroupedAlbumList = [.. sortedGroups];
@@ -358,12 +358,11 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
         if (localArtistInfo is not null)
         {
             Data.SelectedLocalArtist = localArtistInfo;
-            Data.ShellPage!.GetFrame()
-                .Navigate(
-                    typeof(LocalArtistDetailPage),
-                    null,
-                    new SuppressNavigationTransitionInfo()
-                );
+            Data.ShellPage!.Navigate(
+                nameof(LocalArtistDetailPage),
+                "",
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 

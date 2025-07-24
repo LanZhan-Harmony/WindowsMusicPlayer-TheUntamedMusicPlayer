@@ -277,7 +277,7 @@ public static partial class CloudMusicApiProviders
             new("categoryCode", ParameterType.Optional, "1001") { KeyForwarding = "cat" },
             new("initial", ParameterType.Optional, string.Empty)
             {
-                Transformer = t => ((int)t[0]).ToString(),
+                Transformer = t => $"{((int)t[0])}",
             },
             new("offset", ParameterType.Optional, "0"),
             new("limit", ParameterType.Optional, "30"),

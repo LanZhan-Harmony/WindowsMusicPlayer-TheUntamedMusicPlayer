@@ -9,6 +9,7 @@ namespace The_Untamed_Music_Player.Helpers;
 
 [JsonSerializable(typeof(bool))]
 [JsonSerializable(typeof(byte))]
+[JsonSerializable(typeof(short))]
 [JsonSerializable(typeof(int))]
 [JsonSerializable(typeof(double))]
 [JsonSerializable(typeof(string))]

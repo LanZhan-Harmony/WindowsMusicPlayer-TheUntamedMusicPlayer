@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -70,7 +71,7 @@ public partial class SettingsViewModel : ObservableRecipient
     /// <summary>
     /// 字体列表
     /// </summary>
-    public List<string> Fonts { get; set; } = [];
+    public List<FontInfo> Fonts { get; set; } = [];
 
     /// <summary>
     /// 窗口材质列表
@@ -259,9 +260,9 @@ public partial class SettingsViewModel : ObservableRecipient
 
     public void FontComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (e.AddedItems.Count > 0 && e.AddedItems[0] is string selectedFont)
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontInfo selectedFont)
         {
-            SelectedFont = new FontFamily(selectedFont);
+            SelectedFont = new FontFamily(selectedFont.Name);
         }
     }
 
@@ -275,8 +276,22 @@ public partial class SettingsViewModel : ObservableRecipient
 
     public void LoadFonts()
     {
-        var fontFamilies = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
-        Fonts = [.. fontFamilies.OrderBy(f => f)];
+        var language = new string[] { LanguageRelated.GetSimpleLanguage() };
+        var names = CanvasTextFormat.GetSystemFontFamilies();
+        var displayNames = CanvasTextFormat.GetSystemFontFamilies(language);
+        var list = new List<FontInfo>();
+        for (var i = 0; i < names.Length; i++)
+        {
+            list.Add(
+                new FontInfo
+                {
+                    Name = names[i],
+                    DisplayName = displayNames[i],
+                    FontFamily = new FontFamily(names[i]),
+                }
+            );
+        }
+        Fonts = [.. list.OrderBy(f => f.Name)];
     }
 
     public void FontComboBox_Loaded(object sender, RoutedEventArgs e)
@@ -284,7 +299,7 @@ public partial class SettingsViewModel : ObservableRecipient
         if (sender is ComboBox comboBox)
         {
             var selectedFontName = SelectedFont.Source;
-            var index = Fonts.IndexOf(selectedFontName);
+            var index = Fonts.FindIndex(f => f.Name == selectedFontName);
             if (index >= 0)
             {
                 comboBox.SelectedIndex = index;

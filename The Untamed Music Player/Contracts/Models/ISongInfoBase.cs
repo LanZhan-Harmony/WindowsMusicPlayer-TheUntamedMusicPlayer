@@ -1,5 +1,6 @@
 using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
@@ -10,6 +11,9 @@ namespace The_Untamed_Music_Player.Contracts.Models;
 [MemoryPackUnion(1, typeof(CloudBriefOnlineSongInfo))]
 public partial interface IBriefSongInfoBase : ICloneable
 {
+    protected static readonly string _unknownAlbum = "SongInfo_UnknownAlbum".GetLocalized();
+    protected static readonly string _unknownArtist = "SongInfo_UnknownArtist".GetLocalized();
+
     /// <summary>
     /// 是否可以播放
     /// </summary>
@@ -74,7 +78,7 @@ public partial interface IBriefSongInfoBase : ICloneable
     /// </summary>
     /// <param name="year"></param>
     /// <returns></returns>
-    static string GetYearStr(ushort year) => year is 0 or 1970 ? "" : year.ToString();
+    static string GetYearStr(ushort year) => year is 0 or 1970 ? "" : $"{year}";
 }
 
 public interface IDetailedSongInfoBase : IBriefSongInfoBase

@@ -92,7 +92,7 @@ internal class TitleComparer : IComparer<string>
         }
         else if (char.IsLetter(firstChar))
         {
-            return char.ToUpper(firstChar).ToString();
+            return $"{char.ToUpper(firstChar)}";
         }
         else if (char.IsDigit(firstChar))
         {

@@ -2,6 +2,8 @@ using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -68,5 +70,46 @@ public sealed partial class OnlineArtistsPage : Page
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 
-    private void ArtistGridView_ItemClick(object sender, ItemClickEventArgs e) { }
+    private void ArtistGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is IBriefOnlineArtistInfo info)
+        {
+            var grid = (Grid)
+                (
+                    (ContentControl)ArtistGridView.ContainerFromItem(e.ClickedItem)
+                ).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedOnlineArtist = info;
+            Data.ShellPage!.Navigate(
+                nameof(OnlineArtistDetailPage),
+                nameof(OnlineArtistsPage),
+                new SuppressNavigationTransitionInfo()
+            );
+        }
+    }
+
+    private async void ArtistGridView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (Data.SelectedOnlineArtist is not null && sender is GridView gridView)
+        {
+            gridView.ScrollIntoView(Data.SelectedOnlineArtist, ScrollIntoViewAlignment.Leading);
+            gridView.UpdateLayout();
+            var animation = ConnectedAnimationService
+                .GetForCurrentView()
+                .GetAnimation("BackConnectedAnimation");
+            if (animation is not null)
+            {
+                animation.Configuration = new DirectConnectedAnimationConfiguration();
+                await gridView.TryStartConnectedAnimationAsync(
+                    animation,
+                    Data.SelectedOnlineArtist,
+                    "CoverBorder"
+                );
+            }
+            gridView.Focus(FocusState.Programmatic);
+        }
+    }
 }
