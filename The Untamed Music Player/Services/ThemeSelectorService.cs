@@ -53,6 +53,6 @@ public class ThemeSelectorService(ILocalSettingsService localSettingsService)
 
     private async Task SaveThemeInSettingsAsync(ElementTheme theme)
     {
-        await _localSettingsService.SaveSettingAsync(SettingsKey, theme.ToString());
+        await _localSettingsService.SaveSettingAsync(SettingsKey, $"{theme}");
     }
 }

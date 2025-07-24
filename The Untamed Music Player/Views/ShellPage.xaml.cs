@@ -92,7 +92,7 @@ public sealed partial class ShellPage : Page
     {
         if (args.InvokedItemContainer is NavigationViewItem invokedItem)
         {
-            Navigate(invokedItem.Tag.ToString()!);
+            Navigate($"{invokedItem.Tag}");
         }
     }
 

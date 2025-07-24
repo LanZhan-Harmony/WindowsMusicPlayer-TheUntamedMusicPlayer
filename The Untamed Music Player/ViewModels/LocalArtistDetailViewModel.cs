@@ -14,7 +14,7 @@ public class LocalArtistDetailViewModel
 
     public LocalArtistInfo Artist { get; set; } = Data.SelectedLocalArtist!;
 
-    public List<BriefLocalAlbumInfo> AlbumList { get; set; }
+    public List<LocalArtistAlbumInfo> AlbumList { get; set; }
 
     public LocalArtistDetailViewModel()
     {
@@ -85,14 +85,14 @@ public class LocalArtistDetailViewModel
         }
     }
 
-    public void AlbumGridViewPlayButton_Click(BriefLocalAlbumInfo info)
+    public void AlbumGridViewPlayButton_Click(LocalArtistAlbumInfo info)
     {
         var songList = info.SongList;
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, 0);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
-    public void AlbumGridViewPlayNextButton_Click(BriefLocalAlbumInfo info)
+    public void AlbumGridViewPlayNextButton_Click(LocalArtistAlbumInfo info)
     {
         var songList = info.SongList;
         if (Data.MusicPlayer.PlayQueue.Count == 0)

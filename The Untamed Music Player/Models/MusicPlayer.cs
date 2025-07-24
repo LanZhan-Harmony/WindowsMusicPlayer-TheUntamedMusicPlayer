@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -28,7 +30,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 用于SMTC显示封面图片的流
     /// </summary>
-    private static InMemoryRandomAccessStream _currentCoverStream = null!;
+    private static InMemoryRandomAccessStream? _currentCoverStream = null!;
 
     /// <summary>
     /// 线程锁, 用于限制对Player的访问
@@ -490,10 +492,9 @@ public partial class MusicPlayer : ObservableRecipient
                 try
                 {
                     var info = (DetailedLocalSongInfo)CurrentSong;
+                    _currentCoverStream?.Dispose();
                     _currentCoverStream = new InMemoryRandomAccessStream();
-                    using var writer = new DataWriter(_currentCoverStream.GetOutputStreamAt(0));
-                    writer.WriteBytes(info.CoverBuffer);
-                    await writer.StoreAsync();
+                    await _currentCoverStream.WriteAsync(info.CoverBuffer.AsBuffer());
                     _currentCoverStream.Seek(0);
                     _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromStream(
                         _currentCoverStream

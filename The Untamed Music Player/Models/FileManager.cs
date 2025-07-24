@@ -22,6 +22,7 @@ public class FileManager
         var albums = data.Albums;
         var artists = data.Artists;
         var genres = data.Genres;
+        var musicFolders = data.MusicFolders;
 
         if (songs.IsEmpty)
         {
@@ -64,6 +65,13 @@ public class FileManager
 
             // 保存流派列表
             await SaveObjectToFileAsync(libraryFolder, "Genres", genres.ToArray());
+
+            // 保存音乐文件夹列表
+            await SaveObjectToFileAsync(
+                libraryFolder,
+                "MusicFolders",
+                musicFolders.ToDictionary(kv => kv.Key, kv => kv.Value)
+            );
         }
         catch (Exception ex)
         {
@@ -158,19 +166,25 @@ public class FileManager
                 "Artists"
             );
             var genresTask = LoadObjectFromFileAsync<string[]>(libraryFolder, "Genres");
+            var musicFoldersTask = LoadObjectFromFileAsync<Dictionary<string, byte>>(
+                libraryFolder,
+                "MusicFolders"
+            );
 
-            await Task.WhenAll(songsTask, albumsTask, artistsTask, genresTask);
+            await Task.WhenAll(songsTask, albumsTask, artistsTask, genresTask, musicFoldersTask);
 
             var songsArray = songsTask.Result;
             var albumsDict = albumsTask.Result;
             var artistsDict = artistsTask.Result;
             var genresArray = genresTask.Result;
+            var musicFoldersDict = musicFoldersTask.Result;
 
             if (
                 songsArray is null
                 || albumsDict is null
                 || artistsDict is null
                 || genresArray is null
+                || musicFoldersDict is null
             )
             {
                 return (true, data);
@@ -181,6 +195,7 @@ public class FileManager
             data.Albums = new ConcurrentDictionary<string, LocalAlbumInfo>(albumsDict);
             data.Artists = new ConcurrentDictionary<string, LocalArtistInfo>(artistsDict);
             data.Genres = [.. genresArray];
+            data.MusicFolders = new ConcurrentDictionary<string, byte>(musicFoldersDict);
 
             // 加载所有专辑封面
             foreach (var album in albumsDict.Values)
@@ -341,7 +356,7 @@ public class FileManager
         catch (Exception ex)
         {
             Debug.WriteLine($"计算文件夹指纹错误: {ex.Message}");
-            return Guid.NewGuid().ToString();
+            return $"{Guid.NewGuid()}";
         }
     }
 
@@ -372,6 +387,7 @@ public class MusicLibraryData
     public ConcurrentDictionary<string, LocalAlbumInfo> Albums { get; set; } = null!;
     public ConcurrentDictionary<string, LocalArtistInfo> Artists { get; set; } = null!;
     public List<string> Genres { get; set; } = null!;
+    public ConcurrentDictionary<string, byte> MusicFolders { get; set; } = null!;
 
     public MusicLibraryData() { }
 
@@ -379,12 +395,14 @@ public class MusicLibraryData
         ConcurrentBag<BriefLocalSongInfo> songs,
         ConcurrentDictionary<string, LocalAlbumInfo> albums,
         ConcurrentDictionary<string, LocalArtistInfo> artists,
-        List<string> genres
+        List<string> genres,
+        ConcurrentDictionary<string, byte> musicFolders
     )
     {
         Songs = songs;
         Albums = albums;
         Artists = artists;
         Genres = genres;
+        MusicFolders = musicFolders;
     }
 }
