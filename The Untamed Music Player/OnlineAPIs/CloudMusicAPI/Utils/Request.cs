@@ -135,17 +135,14 @@ internal static partial class Request
                     { "appver", cookie["appver"]?.Value ?? "6.1.1" }, // app版本
                     { "versioncode", cookie["versioncode"]?.Value ?? "140" }, // 版本号
                     { "mobilename", cookie["mobilename"]?.Value ?? string.Empty }, // 设备model
-                    {
-                        "buildver",
-                        cookie["buildver"]?.Value ?? GetCurrentTotalSeconds().ToString()
-                    },
+                    { "buildver", cookie["buildver"]?.Value ?? $"{GetCurrentTotalSeconds()}" },
                     { "resolution", cookie["resolution"]?.Value ?? "1920x1080" }, // 设备分辨率
                     { "__csrf", csrfToken },
                     { "os", cookie["os"]?.Value ?? "android" },
                     { "channel", cookie["channel"]?.Value ?? string.Empty },
                     {
                         "requestId",
-                        $"{GetCurrentTotalMilliseconds()}_{Math.Floor(new Random().NextDouble() * 1000).ToString().PadLeft(4, '0')}"
+                        $"{GetCurrentTotalMilliseconds()}_{$"{Math.Floor(new Random().NextDouble() * 1000)}".PadLeft(4, '0')}"
                     },
                 };
                 if (cookie["MUSIC_U"] is not null)

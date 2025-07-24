@@ -351,7 +351,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m.Year)
-                .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
+                .GroupBy(m => m.Year == 0 ? "..." : $"{m.Year}")
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
             GroupedSongList = [.. sortedGroups];
         });
@@ -368,7 +368,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m.Year)
-                .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
+                .GroupBy(m => m.Year == 0 ? "..." : $"{m.Year}")
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
             GroupedSongList = [.. sortedGroups];

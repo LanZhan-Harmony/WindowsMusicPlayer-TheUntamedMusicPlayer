@@ -16,11 +16,6 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     /// 歌手分隔符
     /// </summary>
     protected static readonly char[] _delimiters = ['、', ',', '，', '|', '/'];
-
-    protected static readonly string _unknownAlbum = "SongInfo_UnknownAlbum".GetLocalized();
-
-    protected static readonly string _unknownArtist = "SongInfo_UnknownArtist".GetLocalized();
-
     protected static readonly string _unknownGenre = "SongInfo_UnknownGenre".GetLocalized();
 
     /// <summary>
@@ -95,13 +90,6 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     public string YearStr { get; set; } = null!;
 
     /// <summary>
-    /// 封面(可能为空)
-    /// </summary>
-    [MemoryPackIgnore]
-    [JsonIgnore]
-    public virtual BitmapImage? Cover { get; set; }
-
-    /// <summary>
     /// 流派数组
     /// </summary>
     public string[] Genre { get; set; } = null!;
@@ -116,6 +104,11 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     /// </summary>
     public long ModifiedDate { get; set; } = 0;
 
+    /// <summary>
+    /// 是否有封面
+    /// </summary>
+    public bool HasCover { get; set; } = false;
+
     [MemoryPackConstructor]
     public BriefLocalSongInfo() { }
 
@@ -125,7 +118,7 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     /// <param name="path"></param>
     /// <param name="folder"></param>
     /// <returns></returns>
-    public static async Task<BriefLocalSongInfo> CreateAsync(string path, string folder)
+    public static BriefLocalSongInfo Create(string path, string folder)
     {
         var info = new BriefLocalSongInfo
         {
@@ -134,21 +127,16 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds(),
         };
 
-        Task? coverTask = null;
         try
         {
             var musicFile = TagLib.File.Create(path);
-            if (musicFile.Tag.Pictures.Length != 0)
-            {
-                var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
-                coverTask = info.LoadCoverAsync(coverBuffer);
-            }
-            info.Album = musicFile.Tag.Album ?? _unknownAlbum;
+            info.Album = musicFile.Tag.Album ?? IBriefSongInfoBase._unknownAlbum;
             info.Title = string.IsNullOrEmpty(musicFile.Tag.Title)
                 ? System.IO.Path.GetFileNameWithoutExtension(path)
                 : musicFile.Tag.Title;
             string[] combinedArtists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
-            info.Artists = combinedArtists.Length != 0 ? combinedArtists : [_unknownArtist];
+            info.Artists =
+                combinedArtists.Length != 0 ? combinedArtists : [IBriefSongInfoBase._unknownArtist];
             info.ArtistsStr = IBriefSongInfoBase.GetArtistsStr(info.Artists);
             info.Year = (ushort)musicFile.Tag.Year;
             info.YearStr = IBriefSongInfoBase.GetYearStr(info.Year);
@@ -157,20 +145,15 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             info.GenreStr = GetGenreStr(info.Genre);
             info.Duration = musicFile.Properties.Duration;
             info.DurationStr = IBriefSongInfoBase.GetDurationStr(info.Duration);
-
-            // 等待 LoadCoverAsync 任务完成
-            if (coverTask is not null)
-            {
-                await coverTask;
-            }
+            info.HasCover = musicFile.Tag.Pictures.Length != 0;
         }
         catch (Exception ex)
             when (ex is TagLib.CorruptFileException or TagLib.UnsupportedFormatException)
         {
             // 设置默认值
             info.Title = System.IO.Path.GetFileNameWithoutExtension(path);
-            info.Album = _unknownAlbum;
-            info.Artists = [_unknownArtist];
+            info.Album = IBriefSongInfoBase._unknownAlbum;
+            info.Artists = [IBriefSongInfoBase._unknownArtist];
             info.ArtistsStr = IBriefSongInfoBase.GetArtistsStr(info.Artists);
             info.YearStr = "";
             info.Genre = [_unknownGenre];
@@ -183,34 +166,6 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             Debug.WriteLine(ex.StackTrace);
         }
         return info;
-    }
-
-    /// <summary>
-    /// 异步加载封面方法
-    /// </summary>
-    /// <param name="coverBuffer"></param>
-    /// <returns></returns>
-    private Task<bool> LoadCoverAsync(byte[] coverBuffer)
-    {
-        var tcs = new TaskCompletionSource<bool>();
-        App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
-        {
-            try
-            {
-                using var stream = new InMemoryRandomAccessStream();
-                await stream.WriteAsync(coverBuffer.AsBuffer());
-                stream.Seek(0);
-                var bitmap = new BitmapImage { DecodePixelWidth = 160 };
-                await bitmap.SetSourceAsync(stream);
-                Cover = bitmap;
-                tcs.SetResult(true);
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
-        });
-        return tcs.Task;
     }
 
     /// <summary>
@@ -267,7 +222,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
     /// <summary>
     /// 清晰封面(可能为空)
     /// </summary>
-    public override BitmapImage? Cover { get; set; }
+    public BitmapImage? Cover { get; set; }
 
     /// <summary>
     /// 封面缓冲数据
@@ -317,7 +272,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
             GenreStr = GetGenreStr(Genre);
             Duration = info.Duration;
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
-            Track = musicFile.Tag.Track == 0 ? "" : musicFile.Tag.Track.ToString();
+            Track = musicFile.Tag.Track == 0 ? "" : $"{musicFile.Tag.Track}";
             Lyric = musicFile.Tag.Lyrics ?? "";
             BitRate = $"{musicFile.Properties.AudioBitrate} kbps";
             ModifiedDate = info.ModifiedDate;
@@ -327,7 +282,6 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
                 var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
                 CoverBuffer = coverBuffer;
                 using var stream = new MemoryStream(coverBuffer);
-                stream.Seek(0, SeekOrigin.Begin);
                 Cover = new BitmapImage { DecodePixelWidth = 400 };
                 Cover.SetSource(stream.AsRandomAccessStream());
             }

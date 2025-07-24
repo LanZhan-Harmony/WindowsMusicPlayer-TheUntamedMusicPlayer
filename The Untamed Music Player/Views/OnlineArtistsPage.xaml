@@ -189,6 +189,7 @@
                   ItemClick="ArtistGridView_ItemClick"
                   ItemTemplate="{StaticResource ArtistGridViewTemplate}"
                   ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineArtistInfoList, Mode=OneWay}"
+                  Loaded="ArtistGridView_Loaded"
                   Opacity="{x:Bind model:Data.OnlineMusicLibrary.ListViewOpacity, Mode=OneWay}"
                   SelectionMode="None">
             <GridView.Footer>
