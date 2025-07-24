@@ -58,3 +58,8 @@ public interface IDetailedOnlineAlbumInfo : IBriefOnlineAlbumInfo
         }
     }
 }
+
+public interface IOnlineArtistAlbumInfo : IArtistAlbumInfoBase
+{
+    long ID { get; set; }
+}

@@ -5,7 +5,6 @@ using System.Text.Json.Nodes;
 using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
-using The_Untamed_Music_Player.Helpers;
 using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
@@ -13,9 +12,6 @@ namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 [MemoryPackable]
 public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
 {
-    protected static readonly string _unknownAlbum = "SongInfo_UnknownAlbum".GetLocalized();
-    protected static readonly string _unknownArtist = "SongInfo_UnknownArtist".GetLocalized();
-
     public int PlayQueueIndex { get; set; } = -1;
     public bool IsPlayAvailable { get; set; } = false;
     public string Path { get; set; } = null!;
@@ -45,7 +41,7 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
             var albumElement = jInfo.GetProperty("album");
             Title = jInfo.GetProperty("name").GetString()!;
             var album = albumElement.GetProperty("name").GetString()!;
-            Album = string.IsNullOrWhiteSpace(album) ? _unknownAlbum : album;
+            Album = string.IsNullOrWhiteSpace(album) ? IBriefSongInfoBase._unknownAlbum : album;
             AlbumID = albumElement.GetProperty("id").GetInt64();
             var artistsElement = jInfo.GetProperty("artists");
             string[] artists =
@@ -54,7 +50,7 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
                     .EnumerateArray()
                     .Select(t => t.GetProperty("name").GetString()!)
                     .Distinct()
-                    .DefaultIfEmpty(_unknownArtist),
+                    .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
             ];
             ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
             Duration = TimeSpan.FromMilliseconds(jInfo.GetProperty("duration").GetInt64());
@@ -85,7 +81,7 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
         Title = jInfo.GetProperty("name").GetString()!;
         var albumElement = jInfo.GetProperty("al");
         var album = albumElement.GetProperty("name").GetString()!;
-        Album = string.IsNullOrWhiteSpace(album) ? _unknownAlbum : album;
+        Album = string.IsNullOrWhiteSpace(album) ? IBriefSongInfoBase._unknownAlbum : album;
         AlbumID = albumElement.GetProperty("id").GetInt64();
         var artistsElement = jInfo.GetProperty("ar");
         string[] artists =
@@ -94,7 +90,7 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
                 .EnumerateArray()
                 .Select(t => t.GetProperty("name").GetString()!)
                 .Distinct()
-                .DefaultIfEmpty(_unknownArtist),
+                .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
         ];
         ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
         YearStr = IBriefSongInfoBase.GetYearStr(year);
@@ -154,7 +150,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
         {
             detailedInfo.Path = (string)songUrlResult["data"]![0]!["url"]!; // 临时链接可能过期, 所以重新获取
             Task? coverTask = null;
-            if (info.Album != _unknownAlbum)
+            if (info.Album != IBriefSongInfoBase._unknownAlbum)
             {
                 detailedInfo.Album = info.Album;
                 detailedInfo.CoverPath = (string)albumResult["album"]!["picUrl"]!;
@@ -172,7 +168,8 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
                     albumArtists
                 );
             }
-            detailedInfo.ArtistsStr = info.ArtistsStr == _unknownArtist ? "" : info.ArtistsStr;
+            detailedInfo.ArtistsStr =
+                info.ArtistsStr == IBriefSongInfoBase._unknownArtist ? "" : info.ArtistsStr;
             detailedInfo.ArtistAndAlbumStr = IDetailedSongInfoBase.GetArtistAndAlbumStr(
                 detailedInfo.Album,
                 detailedInfo.ArtistsStr
@@ -208,16 +205,14 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
         {
             using var httpClient = new HttpClient();
             var coverBuffer = await httpClient.GetByteArrayAsync(info.CoverPath);
-            var stream = new InMemoryRandomAccessStream();
-            await stream.WriteAsync(coverBuffer.AsBuffer());
-            stream.Seek(0);
+            var stream = new MemoryStream(coverBuffer);
             var tcs = new TaskCompletionSource<bool>();
             App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
             {
                 try
                 {
                     var bitmap = new BitmapImage { DecodePixelWidth = 400 };
-                    await bitmap.SetSourceAsync(stream);
+                    await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
                     info.Cover = bitmap;
                     tcs.SetResult(true);
                 }

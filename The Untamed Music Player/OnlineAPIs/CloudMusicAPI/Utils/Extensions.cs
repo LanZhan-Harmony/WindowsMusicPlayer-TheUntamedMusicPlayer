@@ -13,22 +13,12 @@ internal static class Extensions
 
     public static string ToHexStringLower(this byte[] value)
     {
-        var sb = new StringBuilder();
-        for (var i = 0; i < value.Length; i++)
-        {
-            sb.Append(value[i].ToString("x2"));
-        }
-        return sb.ToString();
+        return Convert.ToHexString(value).ToLowerInvariant();
     }
 
     public static string ToHexStringUpper(this byte[] value)
     {
-        var sb = new StringBuilder();
-        for (var i = 0; i < value.Length; i++)
-        {
-            sb.Append(value[i].ToString("X2"));
-        }
-        return sb.ToString();
+        return Convert.ToHexString(value);
     }
 
     public static string ToBase64String(this byte[] value) => Convert.ToBase64String(value);
