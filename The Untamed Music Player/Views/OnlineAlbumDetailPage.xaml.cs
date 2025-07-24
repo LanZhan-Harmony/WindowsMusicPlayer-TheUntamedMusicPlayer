@@ -11,7 +11,6 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using The_Untamed_Music_Player.Contracts.Models;
-using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage.Streams;
@@ -52,8 +51,8 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         base.OnNavigatedTo(e);
         if (
-            e.Parameter is string page
-            && (page == "OnlineAlbumsPage" || page == "OnlineArtistDetailPage")
+            Data.ShellViewModel!.NavigatePage == nameof(OnlineAlbumsPage)
+            || Data.ShellViewModel.NavigatePage == nameof(OnlineArtistDetailPage)
         )
         {
             var animation = ConnectedAnimationService
@@ -66,9 +65,11 @@ public sealed partial class OnlineAlbumDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "OnlineAlbumsPage")
+        if (
+            e.NavigationMode == NavigationMode.Back
+            && Data.ShellViewModel!.NavigatePage == nameof(OnlineAlbumsPage)
+        )
         {
-            Data.NavigatePage = "";
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("BackConnectedAnimation", CoverArt);
@@ -103,10 +104,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         var coverBytes = await IDetailedOnlineAlbumInfo.GetCoverBytes(ViewModel.BriefAlbum);
         if (coverBytes.Length != 0)
         {
-            await CreateImageBackgroundGradientVisual(
-                scrollingProperties.Translation.Y,
-                coverBytes
-            );
+            CreateImageBackgroundGradientVisual(scrollingProperties.Translation.Y, coverBytes);
         }
     }
 
@@ -198,7 +196,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         buttonVisual.StartAnimation("Translation.Y", buttonTranslationAnimation);
     }
 
-    private async Task CreateImageBackgroundGradientVisual(
+    private void CreateImageBackgroundGradientVisual(
         ScalarNode scrollVerticalOffset,
         byte[] imageBytes
     )
@@ -207,14 +205,8 @@ public sealed partial class OnlineAlbumDetailPage : Page
         {
             return;
         }
-        var memoryStream = new InMemoryRandomAccessStream();
-        using (var writer = new DataWriter(memoryStream.GetOutputStreamAt(0)))
-        {
-            writer.WriteBytes(imageBytes);
-            await writer.StoreAsync();
-        }
-        memoryStream.Seek(0);
-        var imageSurface = LoadedImageSurface.StartLoadFromStream(memoryStream);
+        using var stream = new MemoryStream(imageBytes);
+        var imageSurface = LoadedImageSurface.StartLoadFromStream(stream.AsRandomAccessStream());
         var imageBrush = _compositor.CreateSurfaceBrush(imageSurface);
         imageBrush.HorizontalAlignmentRatio = 0.5f;
         imageBrush.VerticalAlignmentRatio = 0.25f;

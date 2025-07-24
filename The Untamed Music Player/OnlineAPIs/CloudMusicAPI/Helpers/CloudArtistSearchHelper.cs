@@ -28,7 +28,7 @@ public class CloudArtistSearchHelper
                 {
                     { "keywords", keyWords },
                     { "type", "100" },
-                    { "limit", CloudOnlineArtistInfoList.Limit.ToString() },
+                    { "limit", $"{CloudOnlineArtistInfoList.Limit}" },
                     { "offset", "0" },
                 }
             );
@@ -86,8 +86,8 @@ public class CloudArtistSearchHelper
                 {
                     { "keywords", list.KeyWords },
                     { "type", "100" },
-                    { "limit", CloudOnlineArtistInfoList.Limit.ToString() },
-                    { "offset", (list.Page * 30).ToString() },
+                    { "limit", $"{CloudOnlineArtistInfoList.Limit}" },
+                    { "offset", $"{list.Page * 30}" },
                 }
             );
             using var document = JsonDocument.Parse(result.ToJsonString());
@@ -124,14 +124,19 @@ public class CloudArtistSearchHelper
     {
         var actualCount = artistsElement.GetArrayLength();
         var infos = new BriefCloudOnlineArtistInfo[actualCount];
-
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
         await Parallel.ForEachAsync(
             Enumerable.Range(0, actualCount),
-            new ParallelOptions(),
+            new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount / 2,
+                CancellationToken = cts.Token,
+            },
             async (i, cancellationToken) =>
             {
                 try
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     var info = await BriefCloudOnlineArtistInfo.CreateAsync(artistsElement[i]!);
                     infos[i] = info;
                 }
