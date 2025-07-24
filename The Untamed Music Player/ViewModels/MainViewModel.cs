@@ -342,6 +342,11 @@ public partial class MainViewModel : ObservableRecipient
     /// <returns></returns>
     private async Task LoadSettingsAsync()
     {
+        var fontName = await _localSettingsService.ReadSettingAsync<string>("SelectedFont");
+        if (!string.IsNullOrEmpty(fontName))
+        {
+            Data.SelectedFont = new FontFamily(fontName);
+        }
         Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
         if (Data.NotFirstUsed)
         {
@@ -356,11 +361,6 @@ public partial class MainViewModel : ObservableRecipient
                 "LuminosityOpacity"
             );
             TintColor = await _localSettingsService.ReadSettingAsync<Color>("TintColor");
-            var fontName = await _localSettingsService.ReadSettingAsync<string>("SelectedFont");
-            if (!string.IsNullOrEmpty(fontName))
-            {
-                Data.SelectedFont = new FontFamily(fontName);
-            }
             Data.IsLyricBackgroundVisible = await _localSettingsService.ReadSettingAsync<bool>(
                 "IsLyricBackgroundVisible"
             );

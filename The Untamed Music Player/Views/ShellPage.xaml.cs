@@ -1,11 +1,10 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using The_Untamed_Music_Player.Contracts.Services;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
-using Windows.System;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -13,30 +12,14 @@ public sealed partial class ShellPage : Page
 {
     public ShellViewModel ViewModel { get; }
 
+    private readonly string _appTitleBarText = "AppDisplayName".GetLocalized();
+
     public ShellPage() //注意修改, 不能有参数
     {
-        ViewModel = App.GetService<ShellViewModel>();
         InitializeComponent();
-
-        ViewModel.NavigationService.Frame = NavigationFrame;
-        ViewModel.NavigationViewService.Initialize(NavigationViewControl);
-        Data.MainWindow!.SetTitleBar(AppTitleBar);
-        Data.MainWindow!.Activated += MainWindow_Activated;
-        AppTitleBarText.Text = "AppDisplayName".GetLocalized();
         Data.ShellPage = this;
-    }
-
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        TitleBarHelper.UpdateTitleBar(RequestedTheme);
-
-        //KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
-        //KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
-    }
-
-    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-    {
-        App.AppTitlebar = AppTitleBarText as UIElement;
+        ViewModel = App.GetService<ShellViewModel>();
+        Data.MainWindow!.SetTitleBar(AppTitleBar);
     }
 
     public void NavigationViewControl_DisplayModeChanged(
@@ -60,32 +43,101 @@ public sealed partial class ShellPage : Page
         return NavigationFrame;
     }
 
-    private static KeyboardAccelerator BuildKeyboardAccelerator(
-        VirtualKey key,
-        VirtualKeyModifiers? modifiers = null
-    )
+    public NavigationView GetNavigationView()
     {
-        var keyboardAccelerator = new KeyboardAccelerator() { Key = key };
-
-        if (modifiers.HasValue)
-        {
-            keyboardAccelerator.Modifiers = modifiers.Value;
-        }
-
-        keyboardAccelerator.Invoked += OnKeyboardAcceleratorInvoked;
-
-        return keyboardAccelerator;
+        return NavigationViewControl;
     }
 
-    private static void OnKeyboardAcceleratorInvoked(
-        KeyboardAccelerator sender,
-        KeyboardAcceleratorInvokedEventArgs args
+    private void NavigationViewControl_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.IsFirstLoaded)
+        {
+            var pageToNavigate = ViewModel.CurrentPage switch
+            {
+                nameof(HomePage) => nameof(HomePage),
+                nameof(MusicLibraryPage) => nameof(MusicLibraryPage),
+                nameof(PlayQueuePage) => nameof(PlayQueuePage),
+                nameof(PlayListsPage) => nameof(PlayListsPage),
+                nameof(SettingsPage) => nameof(SettingsPage),
+                _ => nameof(HomePage),
+            };
+            Navigate(pageToNavigate, "", new SuppressNavigationTransitionInfo());
+            ViewModel.IsFirstLoaded = false;
+        }
+        /*else
+        {
+            Navigate(
+                ViewModel.CurrentPage,
+                ViewModel.NavigatePage,
+                new SuppressNavigationTransitionInfo()
+            );
+        }*/
+    }
+
+    private void NavigationViewControl_BackRequested(
+        NavigationView sender,
+        NavigationViewBackRequestedEventArgs args
     )
     {
-        var navigationService = App.GetService<INavigationService>();
+        if (NavigationFrame.CanGoBack)
+        {
+            NavigationFrame.GoBack();
+        }
+    }
 
-        var result = navigationService.GoBack();
+    private void NavigationViewControl_ItemInvoked(
+        NavigationView sender,
+        NavigationViewItemInvokedEventArgs args
+    )
+    {
+        if (args.InvokedItemContainer is NavigationViewItem invokedItem)
+        {
+            Navigate($"{invokedItem.Tag}");
+        }
+    }
 
-        args.Handled = result;
+    public void Navigate(string tag)
+    {
+        switch (tag)
+        {
+            case "Home":
+                NavigationFrame.Navigate(typeof(HomePage));
+                break;
+            case "MusicLibrary":
+                NavigationFrame.Navigate(typeof(MusicLibraryPage));
+                break;
+            case "PlayQueue":
+                NavigationFrame.Navigate(typeof(PlayQueuePage));
+                break;
+            case "PlayLists":
+                NavigationFrame.Navigate(typeof(PlayListsPage));
+                break;
+            case "Settings":
+                NavigationFrame.Navigate(typeof(SettingsPage));
+                break;
+        }
+    }
+
+    public void Navigate(
+        string destPage,
+        string parameter,
+        NavigationTransitionInfo? infoOverride = null
+    )
+    {
+        ViewModel.NavigatePage = parameter;
+        var pageToNavigate = destPage switch
+        {
+            nameof(HomePage) => typeof(HomePage),
+            nameof(MusicLibraryPage) => typeof(MusicLibraryPage),
+            nameof(PlayQueuePage) => typeof(PlayQueuePage),
+            nameof(PlayListsPage) => typeof(PlayListsPage),
+            nameof(SettingsPage) => typeof(SettingsPage),
+            nameof(LocalAlbumDetailPage) => typeof(LocalAlbumDetailPage),
+            nameof(LocalArtistDetailPage) => typeof(LocalArtistDetailPage),
+            nameof(OnlineAlbumDetailPage) => typeof(OnlineAlbumDetailPage),
+            nameof(OnlineArtistDetailPage) => typeof(OnlineArtistDetailPage),
+            _ => typeof(HomePage),
+        };
+        NavigationFrame.Navigate(pageToNavigate, null, infoOverride);
     }
 }

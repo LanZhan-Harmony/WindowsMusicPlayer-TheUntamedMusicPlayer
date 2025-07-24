@@ -97,13 +97,11 @@ public sealed partial class OnlineAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             Data.SelectedOnlineAlbum = info;
-            Data.NavigatePage = "OnlineAlbumsPage";
-            Data.ShellPage!.GetFrame()
-                .Navigate(
-                    typeof(OnlineAlbumDetailPage),
-                    "OnlineAlbumsPage",
-                    new SuppressNavigationTransitionInfo()
-                );
+            Data.ShellPage!.Navigate(
+                nameof(OnlineAlbumDetailPage),
+                nameof(OnlineAlbumsPage),
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 

@@ -73,7 +73,7 @@ public sealed partial class LocalArtistDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.Parameter is string page && page == "LocalArtistPage")
+        if (Data.ShellViewModel!.NavigatePage == nameof(LocalArtistsPage))
         {
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -89,16 +89,18 @@ public sealed partial class LocalArtistDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.NavigationMode == NavigationMode.Back && Data.NavigatePage == "LocalArtistsPage")
+        if (
+            e.NavigationMode == NavigationMode.Back
+            && Data.ShellViewModel!.NavigatePage == nameof(LocalArtistsPage)
+        )
         {
-            Data.NavigatePage = "";
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("BackConnectedAnimation", CoverArt);
         }
     }
 
-    private async void LocalArtistDetailPage_Loaded(object sender, RoutedEventArgs e)
+    private void LocalArtistDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
         var listScrollViewer = SharedScrollViewer;
 
@@ -126,7 +128,7 @@ public sealed partial class LocalArtistDetailPage : Page
             var coverBytes = ViewModel.Artist.GetCoverBytes();
             if (coverBytes.Length != 0)
             {
-                await CreateImageBackgroundGradientVisual(
+                CreateImageBackgroundGradientVisual(
                     listScrollingProperties.Translation.Y,
                     coverBytes
                 );
@@ -229,7 +231,7 @@ public sealed partial class LocalArtistDetailPage : Page
         selectorBarVisual.StartAnimation("Translation.Y", selectorBarTranslationAnimation);
     }
 
-    private async Task CreateImageBackgroundGradientVisual(
+    private void CreateImageBackgroundGradientVisual(
         ScalarNode scrollVerticalOffset,
         byte[] imageBytes
     )
@@ -238,14 +240,8 @@ public sealed partial class LocalArtistDetailPage : Page
         {
             return;
         }
-        var memoryStream = new InMemoryRandomAccessStream();
-        using (var writer = new DataWriter(memoryStream.GetOutputStreamAt(0)))
-        {
-            writer.WriteBytes(imageBytes);
-            await writer.StoreAsync();
-        }
-        memoryStream.Seek(0);
-        var imageSurface = LoadedImageSurface.StartLoadFromStream(memoryStream);
+        using var stream = new MemoryStream(imageBytes);
+        var imageSurface = LoadedImageSurface.StartLoadFromStream(stream.AsRandomAccessStream());
         var imageBrush = _compositor.CreateSurfaceBrush(imageSurface);
         imageBrush.HorizontalAlignmentRatio = 0.5f;
         imageBrush.VerticalAlignmentRatio = 0.25f;
@@ -312,14 +308,6 @@ public sealed partial class LocalArtistDetailPage : Page
         menuButton?.Visibility = Visibility.Collapsed;
     }
 
-    /// <summary>
-    /// 辅助方法根据窗口宽度返回相应的值
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="small"></param>
-    /// <param name="medium"></param>
-    /// <param name="large"></param>
-    /// <returns></returns>
     private T GetValue<T>(T small, T medium, T large)
     {
         if (ActualWidth < 641)
@@ -416,7 +404,7 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefLocalAlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalArtistAlbumInfo info })
         {
             ViewModel.AlbumGridViewPlayButton_Click(info);
         }
@@ -424,9 +412,9 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is BriefLocalAlbumInfo briefLocalAlbumInfo)
+        if (e.ClickedItem is LocalArtistAlbumInfo info)
         {
-            var localAlbumInfo = Data.MusicLibrary.Albums[briefLocalAlbumInfo.Name];
+            var localAlbumInfo = Data.MusicLibrary.Albums[info.Name];
             if (localAlbumInfo is not null)
             {
                 var grid = (Grid)
@@ -438,19 +426,18 @@ public sealed partial class LocalArtistDetailPage : Page
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
                 Data.SelectedLocalAlbum = localAlbumInfo;
-                Data.ShellPage!.GetFrame()
-                    .Navigate(
-                        typeof(LocalAlbumDetailPage),
-                        "LocalArtistDetailPage",
-                        new SuppressNavigationTransitionInfo()
-                    );
+                Data.ShellPage!.Navigate(
+                    nameof(LocalAlbumDetailPage),
+                    nameof(LocalArtistDetailPage),
+                    new SuppressNavigationTransitionInfo()
+                );
             }
         }
     }
 
     private void AlbumGridViewPlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefLocalAlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalArtistAlbumInfo info })
         {
             ViewModel.AlbumGridViewPlayNextButton_Click(info);
         }
@@ -460,7 +447,7 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private void AlbumGridViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: BriefLocalAlbumInfo info })
+        if (sender is FrameworkElement { DataContext: LocalArtistAlbumInfo info })
         {
             var localAlbumInfo = Data.MusicLibrary.Albums[info.Name];
             if (localAlbumInfo is not null)
@@ -472,12 +459,11 @@ public sealed partial class LocalArtistDetailPage : Page
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
                 Data.SelectedLocalAlbum = localAlbumInfo;
-                Data.ShellPage!.GetFrame()
-                    .Navigate(
-                        typeof(LocalAlbumDetailPage),
-                        "LocalArtistDetailPage",
-                        new SuppressNavigationTransitionInfo()
-                    );
+                Data.ShellPage!.Navigate(
+                    nameof(LocalAlbumDetailPage),
+                    nameof(LocalArtistDetailPage),
+                    new SuppressNavigationTransitionInfo()
+                );
             }
         }
     }
