@@ -351,7 +351,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m.Year)
-                .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
+                .GroupBy(m => m.Year == 0 ? "..." : $"{m.Year}")
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
             GroupedSongList = [.. sortedGroups];
         });
@@ -368,7 +368,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m.Year)
-                .GroupBy(m => m.Year == 0 ? "..." : m.Year.ToString())
+                .GroupBy(m => m.Year == 0 ? "..." : $"{m.Year}")
                 .Select(g => new GroupInfoList(g) { Key = g.Key });
 
             GroupedSongList = [.. sortedGroups];
@@ -524,12 +524,11 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (localAlbumInfo is not null)
         {
             Data.SelectedLocalAlbum = localAlbumInfo;
-            Data.ShellPage!.GetFrame()
-                .Navigate(
-                    typeof(LocalAlbumDetailPage),
-                    null,
-                    new SuppressNavigationTransitionInfo()
-                );
+            Data.ShellPage!.Navigate(
+                nameof(LocalAlbumDetailPage),
+                "",
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 
@@ -539,12 +538,11 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (localArtistInfo is not null)
         {
             Data.SelectedLocalArtist = localArtistInfo;
-            Data.ShellPage!.GetFrame()
-                .Navigate(
-                    typeof(LocalArtistDetailPage),
-                    null,
-                    new SuppressNavigationTransitionInfo()
-                );
+            Data.ShellPage!.Navigate(
+                nameof(LocalArtistDetailPage),
+                "",
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 

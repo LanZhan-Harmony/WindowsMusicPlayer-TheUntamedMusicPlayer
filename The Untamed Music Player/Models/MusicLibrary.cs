@@ -27,9 +27,9 @@ public partial class MusicLibrary : ObservableRecipient
     private bool _isHandlingChange = false;
 
     /// <summary>
-    /// 音乐文件夹及其子文件夹(临时)
+    /// 音乐文件夹及其子文件夹(临时), 注意不要用HashSet, 因为并行
     /// </summary>
-    private readonly ConcurrentDictionary<string, byte> _musicFolders = [];
+    private ConcurrentDictionary<string, byte> _musicFolders = [];
 
     /// <summary>
     /// 音乐流派(临时)
@@ -123,6 +123,7 @@ public partial class MusicLibrary : ObservableRecipient
                 Albums = libraryData.Albums;
                 Artists = libraryData.Artists;
                 Genres = libraryData.Genres;
+                _musicFolders = libraryData.MusicFolders;
                 await Task.Run(AddFolderWatcher);
             }
             else
@@ -137,6 +138,10 @@ public partial class MusicLibrary : ObservableRecipient
                     }
                 }
                 await Task.WhenAll(loadMusicTasks);
+                foreach (var album in Albums.Values)
+                {
+                    album.LoadCover();
+                }
                 await EnqueueAndWaitAsync(() =>
                 {
                     OnPropertyChanged(nameof(HasMusics));
@@ -148,9 +153,8 @@ public partial class MusicLibrary : ObservableRecipient
                         .OrderBy(x => x, new GenreComparer()),
                 ];
                 _musicGenres.Clear();
-                var data = new MusicLibraryData(Songs, Albums, Artists, Genres);
+                var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
                 await Task.Run(AddFolderWatcher);
-                _musicFolders.Clear(); // 注意，先添加文件夹监视器再清空音乐文件夹字典
                 FileManager.SaveLibraryDataAsync(Folders, data);
             }
             Data.HasMusicLibraryLoaded = true;
@@ -178,6 +182,7 @@ public partial class MusicLibrary : ObservableRecipient
             Songs.Clear();
             Artists.Clear();
             Albums.Clear();
+            _musicFolders.Clear();
             var loadMusicTasks = new List<Task>();
             if (Folders.Any())
             {
@@ -188,6 +193,10 @@ public partial class MusicLibrary : ObservableRecipient
                 }
             }
             await Task.WhenAll(loadMusicTasks);
+            foreach (var album in Albums.Values)
+            {
+                album.LoadCover();
+            }
             await EnqueueAndWaitAsync(() =>
             {
                 OnPropertyChanged(nameof(HasMusics));
@@ -200,9 +209,8 @@ public partial class MusicLibrary : ObservableRecipient
             ];
             _musicGenres.Clear();
             FolderWatchers.Clear();
-            var data = new MusicLibraryData(Songs, Albums, Artists, Genres);
+            var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
             await Task.Run(AddFolderWatcher);
-            _musicFolders.Clear();
             FileManager.SaveLibraryDataAsync(Folders, data);
         }
         catch (Exception ex)
@@ -244,15 +252,11 @@ public partial class MusicLibrary : ObservableRecipient
 
             foreach (var file in supportedFiles)
             {
-                var briefLocalSongInfo = await BriefLocalSongInfo.CreateAsync(
-                    file.Path,
-                    foldername
-                );
+                var briefLocalSongInfo = BriefLocalSongInfo.Create(file.Path, foldername);
                 Songs.Add(briefLocalSongInfo);
                 _musicGenres.TryAdd(briefLocalSongInfo.GenreStr, 0);
                 UpdateAlbumInfo(briefLocalSongInfo);
                 UpdateArtistInfo(briefLocalSongInfo);
-                briefLocalSongInfo.Cover = null;
             }
 
             // 等待所有子文件夹的扫描任务完成
@@ -401,10 +405,10 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="localArtistInfo"></param>
     /// <returns></returns>
-    public List<BriefLocalAlbumInfo> GetAlbumsByArtist(LocalArtistInfo localArtistInfo) =>
+    public List<LocalArtistAlbumInfo> GetAlbumsByArtist(LocalArtistInfo localArtistInfo) =>
         [
             .. localArtistInfo
-                .Albums.Select(album => new BriefLocalAlbumInfo(Albums[album]))
+                .Albums.Select(album => new LocalArtistAlbumInfo(Albums[album]))
                 .OrderBy(m => m.Name, new AlbumTitleComparer()),
         ];
 

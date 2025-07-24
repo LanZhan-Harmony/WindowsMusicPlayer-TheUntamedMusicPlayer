@@ -23,7 +23,6 @@ public static class Data
     /// </summary>
     public static bool IsMusicDownloading { get; set; } = false;
 
-    public static string? NavigatePage { get; set; }
     public static LocalAlbumInfo? SelectedLocalAlbum { get; set; }
     public static LocalArtistInfo? SelectedLocalArtist { get; set; }
     public static IBriefOnlineAlbumInfo? SelectedOnlineAlbum { get; set; }

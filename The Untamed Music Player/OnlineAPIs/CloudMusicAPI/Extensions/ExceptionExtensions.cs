@@ -45,7 +45,7 @@ internal static class ExceptionExtensions
         sb.AppendLine("Message: " + Environment.NewLine + exception.Message);
         sb.AppendLine("Source: " + Environment.NewLine + exception.Source);
         sb.AppendLine("StackTrace: " + Environment.NewLine + exception.StackTrace);
-        sb.AppendLine("TargetSite: " + Environment.NewLine + exception.TargetSite.ToString());
+        sb.AppendLine("TargetSite: " + Environment.NewLine + $"{exception.TargetSite}");
         sb.AppendLine("----------------------------------------");
         if (exception.InnerException is not null)
         {
