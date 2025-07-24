@@ -28,7 +28,7 @@ public class CloudAlbumSearchHelper
                 {
                     { "keywords", keyWords },
                     { "type", "10" },
-                    { "limit", CloudOnlineAlbumInfoList.Limit.ToString() },
+                    { "limit", $"{CloudOnlineAlbumInfoList.Limit}" },
                     { "offset", "0" },
                 }
             );
@@ -86,8 +86,8 @@ public class CloudAlbumSearchHelper
                 {
                     { "keywords", list.KeyWords },
                     { "type", "10" },
-                    { "limit", CloudOnlineAlbumInfoList.Limit.ToString() },
-                    { "offset", (list.Page * 30).ToString() },
+                    { "limit", $"{CloudOnlineAlbumInfoList.Limit}" },
+                    { "offset", $"{list.Page * 30}" },
                 }
             );
             using var document = JsonDocument.Parse(result.ToJsonString());
@@ -124,14 +124,19 @@ public class CloudAlbumSearchHelper
     {
         var actualCount = albumsElement.GetArrayLength();
         var infos = new BriefCloudOnlineAlbumInfo[actualCount];
-
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
         await Parallel.ForEachAsync(
             Enumerable.Range(0, actualCount),
-            new ParallelOptions(),
+            new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount / 2,
+                CancellationToken = cts.Token,
+            },
             async (i, cancellationToken) =>
             {
                 try
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     var info = await BriefCloudOnlineAlbumInfo.CreateAsync(albumsElement[i]!);
                     infos[i] = info;
                 }

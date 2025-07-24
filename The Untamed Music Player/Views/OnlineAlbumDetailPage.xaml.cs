@@ -104,10 +104,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         var coverBytes = await IDetailedOnlineAlbumInfo.GetCoverBytes(ViewModel.BriefAlbum);
         if (coverBytes.Length != 0)
         {
-            await CreateImageBackgroundGradientVisual(
-                scrollingProperties.Translation.Y,
-                coverBytes
-            );
+            CreateImageBackgroundGradientVisual(scrollingProperties.Translation.Y, coverBytes);
         }
     }
 
@@ -199,7 +196,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         buttonVisual.StartAnimation("Translation.Y", buttonTranslationAnimation);
     }
 
-    private async Task CreateImageBackgroundGradientVisual(
+    private void CreateImageBackgroundGradientVisual(
         ScalarNode scrollVerticalOffset,
         byte[] imageBytes
     )
@@ -208,14 +205,8 @@ public sealed partial class OnlineAlbumDetailPage : Page
         {
             return;
         }
-        var memoryStream = new InMemoryRandomAccessStream();
-        using (var writer = new DataWriter(memoryStream.GetOutputStreamAt(0)))
-        {
-            writer.WriteBytes(imageBytes);
-            await writer.StoreAsync();
-        }
-        memoryStream.Seek(0);
-        var imageSurface = LoadedImageSurface.StartLoadFromStream(memoryStream);
+        using var stream = new MemoryStream(imageBytes);
+        var imageSurface = LoadedImageSurface.StartLoadFromStream(stream.AsRandomAccessStream());
         var imageBrush = _compositor.CreateSurfaceBrush(imageSurface);
         imageBrush.HorizontalAlignmentRatio = 0.5f;
         imageBrush.VerticalAlignmentRatio = 0.25f;

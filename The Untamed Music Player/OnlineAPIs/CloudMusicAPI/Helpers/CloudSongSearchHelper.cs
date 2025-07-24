@@ -27,7 +27,7 @@ public class CloudSongSearchHelper
                 {
                     { "keywords", keyWords },
                     { "type", "1" },
-                    { "limit", CloudBriefOnlineSongInfoList.Limit.ToString() },
+                    { "limit", $"{CloudBriefOnlineSongInfoList.Limit}" },
                     { "offset", "0" },
                 }
             );
@@ -84,8 +84,8 @@ public class CloudSongSearchHelper
                 new Dictionary<string, string>
                 {
                     { "keywords", list.KeyWords },
-                    { "limit", CloudBriefOnlineSongInfoList.Limit.ToString() },
-                    { "offset", (list.Page * 30).ToString() },
+                    { "limit", $"{CloudBriefOnlineSongInfoList.Limit}" },
+                    { "offset", $"{list.Page * 30}" },
                 }
             );
             using var document = JsonDocument.Parse(result.ToJsonString());

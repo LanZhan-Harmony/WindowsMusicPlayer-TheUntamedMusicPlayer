@@ -93,9 +93,9 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0"
                        Margin="16,0,0,0" HorizontalAlignment="Left"
@@ -104,7 +104,8 @@
                        Text="{x:Bind GetCurrent(model:Data.MusicPlayer.CurrentPlayingTime), Mode=OneWay}"/>
             <Slider x:Name="ProgressSlider" x:Uid="PlayBar_Seek"
                     Grid.Row="0" Grid.Column="1"
-                    Margin="23,0,23,0" VerticalAlignment="Center"
+                    Margin="27,0,27,0" Padding="-4"
+                    VerticalAlignment="Center"
                     AccessKey="S"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     IsThumbToolTipEnabled="False" Maximum="100"

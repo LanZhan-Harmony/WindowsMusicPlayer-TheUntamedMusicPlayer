@@ -8,18 +8,6 @@ using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
 
-public class BriefLocalAlbumInfo(LocalAlbumInfo localAlbumInfo)
-{
-    protected static readonly string _unknownYear = "AlbumInfo_UnknownYear".GetLocalized();
-
-    public string Name { get; set; } = localAlbumInfo.Name;
-    public string YearStr { get; set; } =
-        localAlbumInfo.Year == 0 ? _unknownYear : localAlbumInfo.Year.ToString();
-    public BitmapImage? Cover { get; set; } = localAlbumInfo.Cover;
-    public List<IBriefSongInfoBase> SongList { get; set; } =
-        [.. Data.MusicLibrary.GetSongsByAlbum(localAlbumInfo)];
-}
-
 [MemoryPackable]
 public partial class LocalAlbumInfo : IAlbumInfoBase
 {
@@ -82,9 +70,8 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         Name = briefLocalSongInfo.Album;
         Year = briefLocalSongInfo.Year;
         ModifiedDate = briefLocalSongInfo.ModifiedDate;
-        if (briefLocalSongInfo.Cover is not null)
+        if (briefLocalSongInfo.HasCover)
         {
-            Cover = briefLocalSongInfo.Cover;
             CoverPath = briefLocalSongInfo.Path;
         }
         Artists = briefLocalSongInfo.Artists;
@@ -101,9 +88,8 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
     {
         TotalNum++;
         TotalDuration += briefLocalSongInfo.Duration;
-        if (Cover is null && briefLocalSongInfo.Cover is not null)
+        if (CoverPath is null && briefLocalSongInfo.HasCover)
         {
-            Cover = briefLocalSongInfo.Cover;
             CoverPath = briefLocalSongInfo.Path;
         }
         Artists = [.. Artists!.Concat(briefLocalSongInfo.Artists).Distinct()];
@@ -133,7 +119,7 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         var parts = new List<string>();
         if (Year != 0)
         {
-            parts.Add(Year.ToString());
+            parts.Add($"{Year}");
         }
         if (GenreStr != "")
         {
@@ -152,7 +138,7 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         return string.Join(" • ", parts);
     }
 
-    public async void LoadCover()
+    public void LoadCover()
     {
         if (string.IsNullOrEmpty(CoverPath))
         {
@@ -161,15 +147,13 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         try
         {
             var coverBuffer = TagLib.File.Create(CoverPath).Tag.Pictures[0].Data.Data;
-            var stream = new InMemoryRandomAccessStream();
-            await stream.WriteAsync(coverBuffer.AsBuffer());
-            stream.Seek(0);
+            var stream = new MemoryStream(coverBuffer);
             App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
             {
                 try
                 {
                     var bitmap = new BitmapImage { DecodePixelWidth = 160 };
-                    await bitmap.SetSourceAsync(stream);
+                    await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
                     Cover = bitmap;
                 }
                 catch
@@ -187,4 +171,13 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
             Debug.WriteLine($"专辑封面加载失败：{Name}");
         }
     }
+}
+
+public class LocalArtistAlbumInfo(LocalAlbumInfo localAlbumInfo) : IArtistAlbumInfoBase
+{
+    public string Name { get; set; } = localAlbumInfo.Name;
+    public string YearStr { get; set; } = IArtistAlbumInfoBase.GetYearStr(localAlbumInfo.Year);
+    public BitmapImage? Cover { get; set; } = localAlbumInfo.Cover;
+    public List<IBriefSongInfoBase> SongList { get; set; } =
+        [.. Data.MusicLibrary.GetSongsByAlbum(localAlbumInfo)];
 }
