@@ -4,8 +4,6 @@ using System.Text.Json;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
-using The_Untamed_Music_Player.Helpers;
-using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
@@ -52,6 +50,28 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
         }
     }
 
+    public static async Task<IBriefOnlineAlbumInfo> CreateFromSongInfoAsync(
+        CloudBriefOnlineSongInfo briefInfo
+    )
+    {
+        var api = NeteaseCloudMusicApi.Instance;
+        var (_, result) = await api.RequestAsync(
+            CloudMusicApiProviders.SongDetail,
+            new Dictionary<string, string> { { "ids", $"{briefInfo.ID}" } }
+        );
+        var info = new BriefCloudOnlineAlbumInfo
+        {
+            ID = briefInfo.AlbumID,
+            Name = briefInfo.Album,
+            CoverPath = (string)result["songs"]![0]!["al"]!["picUrl"]!,
+        };
+        if (!string.IsNullOrEmpty(info.CoverPath))
+        {
+            await LoadCoverAsync(info);
+        }
+        return info;
+    }
+
     private static async Task<bool> LoadCoverAsync(BriefCloudOnlineAlbumInfo info)
     {
         try
@@ -96,6 +116,7 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
     public int TotalNum { get; set; } = 0;
     public TimeSpan TotalDuration { get; set; } = TimeSpan.Zero;
     public ushort Year { get; set; } = 0;
+    public string DescriptionStr { get; set; } = null!;
     public string? Introduction { get; set; }
     public List<IBriefOnlineSongInfo> SongList { get; set; } = [];
 
@@ -109,7 +130,6 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
             Name = briefInfo.Name,
             Cover = briefInfo.Cover,
             CoverPath = briefInfo.CoverPath,
-            ArtistsStr = briefInfo.ArtistsStr,
         };
         try
         {
@@ -127,33 +147,28 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
                 DateTimeOffset
                     .FromUnixTimeMilliseconds(albumElement.GetProperty("publishTime").GetInt64())
                     .Year;
+            var artistsElement = albumElement.GetProperty("artists");
+            string[] artists =
+            [
+                .. artistsElement
+                    .EnumerateArray()
+                    .Select(t => t.GetProperty("name").GetString()!)
+                    .Distinct()
+                    .DefaultIfEmpty(IBriefOnlineAlbumInfo._unknownArtist),
+            ];
+            info.ArtistsStr = IAlbumInfoBase.GetArtistsStr(artists);
             await ProcessSongsAsync(songsElement, info, api);
+            info.DescriptionStr = IDetailedOnlineAlbumInfo.GetDescriptionStr(
+                info.Year,
+                info.TotalNum,
+                info.TotalDuration
+            );
             return info;
         }
         catch
         {
             return info;
         }
-    }
-
-    public string GetDescriptionStr()
-    {
-        var parts = new List<string>();
-        if (Year is not (0 or 1970))
-        {
-            parts.Add($"{Year}");
-        }
-        parts.Add(
-            TotalNum > 1
-                ? $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
-                : $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}"
-        );
-        parts.Add(
-            TotalDuration.Hours > 0
-                ? $"{TotalDuration:hh\\:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
-                : $"{TotalDuration:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
-        );
-        return string.Join(" • ", parts);
     }
 
     private static async Task ProcessSongsAsync(
@@ -215,27 +230,29 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
     }
 }
 
-public class CloudArtistAlbumInfo : IOnlineArtistAlbumInfo
+public class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
 {
+    public bool IsAvailable { get; set; } = false;
     public long ID { get; set; }
     public string Name { get; set; } = null!;
     public BitmapImage? Cover { get; set; }
+    public string? CoverPath { get; set; }
     public string YearStr { get; set; } = null!;
     public List<IBriefSongInfoBase> SongList { get; set; } = [];
 
-    public static async Task<CloudArtistAlbumInfo> CreateAsync(
+    public static async Task<CloudOnlineArtistAlbumInfo> CreateAsync(
         JsonElement jInfo,
         NeteaseCloudMusicApi api
     )
     {
-        var info = new CloudArtistAlbumInfo();
+        var info = new CloudOnlineArtistAlbumInfo();
         try
         {
             Task? coverTask = null;
-            var coverPath = jInfo.GetProperty("picUrl").GetString();
-            if (!string.IsNullOrEmpty(coverPath))
+            info.CoverPath = jInfo.GetProperty("picUrl").GetString();
+            if (!string.IsNullOrEmpty(info.CoverPath))
             {
-                coverTask = LoadCoverAsync(info, coverPath);
+                coverTask = LoadCoverAsync(info);
             }
             info.ID = jInfo.GetProperty("id").GetInt64();
             info.Name = jInfo.GetProperty("name").GetString()!;
@@ -252,6 +269,11 @@ public class CloudArtistAlbumInfo : IOnlineArtistAlbumInfo
             var root = document.RootElement;
             var songsElement = root.GetProperty("songs");
             await ProcessSongsAsync(songsElement, info, year, api);
+            info.IsAvailable = info.SongList.Count > 0;
+            if (!info.IsAvailable)
+            {
+                return info;
+            }
             if (coverTask is not null)
             {
                 await coverTask;
@@ -260,13 +282,14 @@ public class CloudArtistAlbumInfo : IOnlineArtistAlbumInfo
         }
         catch
         {
+            info.IsAvailable = false;
             return info;
         }
     }
 
     private static async Task ProcessSongsAsync(
         JsonElement songsElement,
-        CloudArtistAlbumInfo info,
+        CloudOnlineArtistAlbumInfo info,
         ushort year,
         NeteaseCloudMusicApi api
     )
@@ -320,12 +343,12 @@ public class CloudArtistAlbumInfo : IOnlineArtistAlbumInfo
         }
     }
 
-    private static async Task<bool> LoadCoverAsync(CloudArtistAlbumInfo info, string coverPath)
+    private static async Task<bool> LoadCoverAsync(CloudOnlineArtistAlbumInfo info)
     {
         try
         {
             using var httpClient = new HttpClient();
-            var coverBytes = await httpClient.GetByteArrayAsync(coverPath);
+            var coverBytes = await httpClient.GetByteArrayAsync(info.CoverPath);
             var stream = new MemoryStream(coverBytes);
             var tcs = new TaskCompletionSource<bool>();
             App.MainWindow?.DispatcherQueue.TryEnqueue(

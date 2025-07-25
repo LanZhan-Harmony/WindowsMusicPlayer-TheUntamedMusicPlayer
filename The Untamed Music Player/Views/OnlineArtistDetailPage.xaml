@@ -544,15 +544,13 @@
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
                                ToolTipService.ToolTip="{x:Bind ViewModel.Artist.Name}"/>
                     <TextBlock x:Name="SubtitleText"
-                               FontWeight="Normal" TextTrimming="WordEllipsis"
-                               TextWrapping="NoWrap">
-                        <Run Text="{x:Bind ViewModel.Artist.GetCountStr(), Mode=OneWay}"/>
-                        <Run Foreground="{ThemeResource TextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.Artist.GetDurationStr(), Mode=OneWay}"/>
-                    </TextBlock>
+                               FontWeight="Normal"
+                               Text="{x:Bind ViewModel.Artist.CountStr, Mode=OneWay}"
+                               TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind ViewModel.Artist.GetDescriptionStr(), Mode=OneWay}"
+                               Text="{x:Bind ViewModel.Artist.DescriptionStr, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
                     <TextBlock x:Name="IntroductionText"
                                FontSize="14"
@@ -664,7 +662,11 @@
                 </SelectorBar>
             </Grid>
         </Grid>
-
+        <ProgressRing Grid.Row="1"
+                      Width="50" Height="50"
+                      Margin="0,60,0,0"
+                      Canvas.ZIndex="1"
+                      IsActive="{x:Bind ViewModel.IsSearchProgressRingActive, Mode=OneWay}"/>
         <Grid x:Name="AlbumView" Grid.Row="1">
             <ScrollViewer x:Name="SharedScrollViewer">
                 <Grid>
@@ -673,11 +675,17 @@
                               IsItemClickEnabled="False"
                               ItemTemplate="{StaticResource AlbumListViewTemplate}"
                               ItemsSource="{x:Bind ViewModel.Artist.AlbumList, Mode=OneWay}"
+                              Opacity="{x:Bind ViewModel.ListViewOpacity, Mode=OneWay}"
                               SelectionMode="None"
                               XYFocusUp="{x:Bind PlayButton}">
                         <ListView.Header>
                             <Border x:Name="AlbumListHeaderPadding"/>
                         </ListView.Header>
+                        <ListView.Footer>
+                            <ProgressRing Width="25" Height="25"
+                                          Margin="0,5,0,5"
+                                          Visibility="{x:Bind ViewModel.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
+                        </ListView.Footer>
                     </ListView>
                     <GridView x:Name="AlbumGridView"
                               helper:ListViewExtensions.ItemCornerRadius="8"
@@ -685,10 +693,16 @@
                               ItemClick="AlbumGridView_ItemClick"
                               ItemTemplate="{StaticResource AlbumGridViewTemplate}"
                               ItemsSource="{x:Bind ViewModel.Artist.AlbumList, Mode=OneWay}"
+                              Opacity="{x:Bind ViewModel.ListViewOpacity, Mode=OneWay}"
                               SelectionMode="None">
                         <GridView.Header>
                             <Border x:Name="AlbumGridHeaderPadding"/>
                         </GridView.Header>
+                        <GridView.Footer>
+                            <ProgressRing Width="25" Height="25"
+                                          Margin="0,5,0,5"
+                                          Visibility="{x:Bind ViewModel.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
+                        </GridView.Footer>
                     </GridView>
                 </Grid>
             </ScrollViewer>
