@@ -417,9 +417,7 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="localArtistInfo"></param>
     /// <returns></returns>
-    public ObservableCollection<BriefLocalSongInfo> GetSongsByArtist(
-        LocalArtistInfo localArtistInfo
-    ) =>
+    public IEnumerable<BriefLocalSongInfo> GetSongsByArtist(LocalArtistInfo localArtistInfo) =>
         [
             .. localArtistInfo
                 .Albums.OrderBy(album => album, new AlbumTitleComparer())

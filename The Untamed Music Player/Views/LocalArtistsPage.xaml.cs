@@ -39,27 +39,6 @@ public sealed partial class LocalArtistsPage : Page
         menuButton?.Visibility = Visibility.Collapsed;
     }
 
-    private void ArtistGridView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-        if (e.ClickedItem is LocalArtistInfo localArtistInfo)
-        {
-            var grid = (Grid)
-                (
-                    (ContentControl)ArtistGridView.ContainerFromItem(e.ClickedItem)
-                ).ContentTemplateRoot;
-            var border = (Border)grid.Children[1];
-            ConnectedAnimationService
-                .GetForCurrentView()
-                .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedLocalArtist = localArtistInfo;
-            Data.ShellPage!.Navigate(
-                nameof(LocalArtistDetailPage),
-                nameof(LocalArtistsPage),
-                new SuppressNavigationTransitionInfo()
-            );
-        }
-    }
-
     private async void ArtistGridView_Loaded(object sender, RoutedEventArgs e)
     {
         if (Data.SelectedLocalArtist is not null && sender is GridView gridView)
@@ -82,8 +61,61 @@ public sealed partial class LocalArtistsPage : Page
         }
     }
 
+    private void ArtistGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is LocalArtistInfo localArtistInfo)
+        {
+            var grid = (Grid)
+                (
+                    (ContentControl)ArtistGridView.ContainerFromItem(e.ClickedItem)
+                ).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedLocalArtist = localArtistInfo;
+            Data.ShellPage!.Navigate(
+                nameof(LocalArtistDetailPage),
+                nameof(LocalArtistsPage),
+                new SuppressNavigationTransitionInfo()
+            );
+        }
+    }
+
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.PlayButton_Click(sender, e);
+        if (sender is FrameworkElement { DataContext: LocalArtistInfo info })
+        {
+            ViewModel.PlayButton_Click(info);
+        }
     }
+
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LocalArtistInfo info })
+        {
+            ViewModel.PlayNextButton_Click(info);
+        }
+    }
+
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LocalArtistInfo info })
+        {
+            var grid = (Grid)
+                ((ContentControl)ArtistGridView.ContainerFromItem(info)).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedLocalArtist = info;
+            Data.ShellPage!.Navigate(
+                nameof(LocalArtistDetailPage),
+                nameof(LocalArtistsPage),
+                new SuppressNavigationTransitionInfo()
+            );
+        }
+    }
+
+    private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }

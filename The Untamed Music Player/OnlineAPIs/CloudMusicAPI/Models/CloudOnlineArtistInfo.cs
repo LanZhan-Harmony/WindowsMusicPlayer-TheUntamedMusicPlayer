@@ -40,23 +40,35 @@ public class BriefCloudOnlineArtistInfo : IBriefOnlineArtistInfo
         }
     }
 
-    public static async Task<IBriefOnlineArtistInfo> CreateFromSongInfoAsync(
-        CloudBriefOnlineSongInfo briefInfo
+    public static async Task<BriefCloudOnlineArtistInfo> CreateFromSongInfoAsync(
+        BriefCloudOnlineSongInfo briefInfo
     )
+    {
+        return await CreateFromIDAsync(briefInfo.ArtistID);
+    }
+
+    public static async Task<BriefCloudOnlineArtistInfo> CreateFromAlbumInfoAsync(
+        BriefCloudOnlineAlbumInfo briefInfo
+    )
+    {
+        return await CreateFromIDAsync(briefInfo.ArtistID);
+    }
+
+    public static async Task<BriefCloudOnlineArtistInfo> CreateFromIDAsync(long artistID)
     {
         var api = NeteaseCloudMusicApi.Instance;
         var (_, result) = await api.RequestAsync(
             CloudMusicApiProviders.ArtistAlbum,
             new Dictionary<string, string>
             {
-                { "id", $"{briefInfo.ArtistID}" },
+                { "id", $"{artistID}" },
                 { "limit", "0" },
                 { "offset", "0" },
             }
         );
         var info = new BriefCloudOnlineArtistInfo
         {
-            ID = briefInfo.ArtistID,
+            ID = artistID,
             Name = (string)result["artist"]!["name"]!,
             CoverPath = (string)result["artist"]!["picUrl"]!,
         };
