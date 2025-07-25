@@ -62,7 +62,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfo(onlineInfo);
+            var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(onlineInfo);
             if (onlineAlbumInfo is not null)
             {
                 Data.SelectedOnlineAlbum = onlineAlbumInfo;
@@ -92,7 +92,7 @@ public partial class PlayQueueViewModel : ObservableRecipient
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfo(onlineInfo);
+            var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(onlineInfo);
             if (onlineArtistInfo is not null)
             {
                 Data.SelectedOnlineArtist = onlineArtistInfo;

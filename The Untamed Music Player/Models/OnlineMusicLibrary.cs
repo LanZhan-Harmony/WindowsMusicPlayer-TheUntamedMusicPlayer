@@ -75,6 +75,9 @@ public partial class OnlineMusicLibrary : ObservableRecipient
     public partial IOnlineArtistInfoList OnlineArtistInfoList { get; set; } = null!;
 
     [ObservableProperty]
+    public partial IOnlinePlaylistInfoList OnlinePlaylistInfoList { get; set; } = null!;
+
+    [ObservableProperty]
     public partial List<SuggestResult> SuggestResultList { get; set; } = [];
 
     public async Task Search()
@@ -116,7 +119,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                 switch (MusicLibraryIndex)
                 {
                     case 0:
-                        var cloudList = OnlineSongInfoList as CloudBriefOnlineSongInfoList ?? [];
+                        var cloudList = OnlineSongInfoList as CloudOnlineSongInfoList ?? [];
                         OnlineSongInfoList = cloudList;
                         await CloudSongSearchHelper.SearchSongsAsync(SearchKeyWords, cloudList);
                         break;
@@ -169,6 +172,10 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                     default:
                         break;
                 }
+            }
+            else
+            {
+                // TODO: 补充歌单逻辑
             }
 
             // 更新缓存的搜索参数
@@ -238,8 +245,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                     switch (MusicLibraryIndex)
                     {
                         case 0:
-                            var cloudList =
-                                OnlineSongInfoList as CloudBriefOnlineSongInfoList ?? [];
+                            var cloudList = OnlineSongInfoList as CloudOnlineSongInfoList ?? [];
                             OnlineSongInfoList = cloudList;
                             await CloudSongSearchHelper.SearchMoreSongsAsync(cloudList);
                             break;
@@ -293,6 +299,10 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                             break;
                     }
                 }
+                else
+                {
+                    // TODO: 补充歌单逻辑
+                }
             }
             catch (Exception ex)
             {
@@ -320,7 +330,7 @@ public partial class OnlineMusicLibrary : ObservableRecipient
                 case 5:
                 default:
                     // TODO: 其它 MusicLibraryIndex 分支实现
-                    var cloudList = OnlineSongInfoList as CloudBriefOnlineSongInfoList ?? [];
+                    var cloudList = OnlineSongInfoList as CloudOnlineSongInfoList ?? [];
                     OnlineSongInfoList = cloudList;
                     SuggestResultList = await CloudSuggestSearchHelper.GetSuggestAsync(
                         SuggestKeyWords

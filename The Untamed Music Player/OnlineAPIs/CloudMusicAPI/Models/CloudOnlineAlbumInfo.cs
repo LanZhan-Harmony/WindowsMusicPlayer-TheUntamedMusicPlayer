@@ -13,6 +13,7 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
     public string Name { get; set; } = null!;
     public BitmapImage? Cover { get; set; }
     public string? CoverPath { get; set; }
+    public long ArtistID { get; set; }
     public string ArtistsStr { get; set; } = null!;
 
     public static async Task<BriefCloudOnlineAlbumInfo> CreateAsync(JsonElement jInfo)
@@ -29,6 +30,10 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
             info.ID = jInfo.GetProperty("id").GetInt64();
             info.Name = jInfo.GetProperty("name").GetString()!;
             var artistsElement = jInfo.GetProperty("artists");
+            if (artistsElement.GetArrayLength() > 0)
+            {
+                info.ArtistID = artistsElement[0].GetProperty("id").GetInt64();
+            }
             string[] artists =
             [
                 .. artistsElement
@@ -50,8 +55,8 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
         }
     }
 
-    public static async Task<IBriefOnlineAlbumInfo> CreateFromSongInfoAsync(
-        CloudBriefOnlineSongInfo briefInfo
+    public static async Task<BriefCloudOnlineAlbumInfo> CreateFromSongInfoAsync(
+        BriefCloudOnlineSongInfo briefInfo
     )
     {
         var api = NeteaseCloudMusicApi.Instance;
@@ -121,7 +126,7 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
     public List<IBriefOnlineSongInfo> SongList { get; set; } = [];
 
     public static async Task<DetailedCloudOnlineAlbumInfo> CreateAsync(
-        IBriefOnlineAlbumInfo briefInfo
+        BriefCloudOnlineAlbumInfo briefInfo
     )
     {
         var info = new DetailedCloudOnlineAlbumInfo
@@ -130,6 +135,7 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
             Name = briefInfo.Name,
             Cover = briefInfo.Cover,
             CoverPath = briefInfo.CoverPath,
+            ArtistID = briefInfo.ArtistID,
         };
         try
         {
@@ -212,7 +218,7 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
 
             try
             {
-                var songInfo = new CloudBriefOnlineSongInfo(
+                var songInfo = new BriefCloudOnlineSongInfo(
                     songsElement[i],
                     meta.available,
                     info.Year,
@@ -328,7 +334,7 @@ public class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
 
             try
             {
-                var songInfo = new CloudBriefOnlineSongInfo(
+                var songInfo = new BriefCloudOnlineSongInfo(
                     songsElement[i],
                     meta.available,
                     year,

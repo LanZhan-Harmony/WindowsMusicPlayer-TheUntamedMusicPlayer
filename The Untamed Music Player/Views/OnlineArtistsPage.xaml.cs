@@ -62,13 +62,27 @@ public sealed partial class OnlineArtistsPage : Page
         menuButton?.Visibility = Visibility.Collapsed;
     }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e) { }
-
-    private void PlayNextButton_Click(object sender, RoutedEventArgs e) { }
-
-    private void ShowArtistButton_Click(object sender, RoutedEventArgs e) { }
-
-    private void SelectButton_Click(object sender, RoutedEventArgs e) { }
+    private async void ArtistGridView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (Data.SelectedOnlineArtist is not null && sender is GridView gridView)
+        {
+            gridView.ScrollIntoView(Data.SelectedOnlineArtist, ScrollIntoViewAlignment.Leading);
+            gridView.UpdateLayout();
+            var animation = ConnectedAnimationService
+                .GetForCurrentView()
+                .GetAnimation("BackConnectedAnimation");
+            if (animation is not null)
+            {
+                animation.Configuration = new DirectConnectedAnimationConfiguration();
+                await gridView.TryStartConnectedAnimationAsync(
+                    animation,
+                    Data.SelectedOnlineArtist,
+                    "CoverBorder"
+                );
+            }
+            gridView.Focus(FocusState.Programmatic);
+        }
+    }
 
     private void ArtistGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
@@ -91,25 +105,40 @@ public sealed partial class OnlineArtistsPage : Page
         }
     }
 
-    private async void ArtistGridView_Loaded(object sender, RoutedEventArgs e)
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedOnlineArtist is not null && sender is GridView gridView)
+        if (sender is FrameworkElement { DataContext: IBriefOnlineArtistInfo info })
         {
-            gridView.ScrollIntoView(Data.SelectedOnlineArtist, ScrollIntoViewAlignment.Leading);
-            gridView.UpdateLayout();
-            var animation = ConnectedAnimationService
-                .GetForCurrentView()
-                .GetAnimation("BackConnectedAnimation");
-            if (animation is not null)
-            {
-                animation.Configuration = new DirectConnectedAnimationConfiguration();
-                await gridView.TryStartConnectedAnimationAsync(
-                    animation,
-                    Data.SelectedOnlineArtist,
-                    "CoverBorder"
-                );
-            }
-            gridView.Focus(FocusState.Programmatic);
+            ViewModel.PlayButton_Click(info);
         }
     }
+
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineArtistInfo info })
+        {
+            ViewModel.PlayNextButton_Click(info);
+        }
+    }
+
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineArtistInfo info })
+        {
+            var grid = (Grid)
+                ((ContentControl)ArtistGridView.ContainerFromItem(info)).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedOnlineArtist = info;
+            Data.ShellPage!.Navigate(
+                nameof(OnlineArtistDetailPage),
+                nameof(OnlineArtistsPage),
+                new SuppressNavigationTransitionInfo()
+            );
+        }
+    }
+
+    private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }

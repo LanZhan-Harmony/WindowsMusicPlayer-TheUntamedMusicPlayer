@@ -16,8 +16,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 
     private List<LocalArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
 
-    public List<string> SortBy { get; set; } =
-        [.. "Artists_SortBy".GetLocalized().Split(", ")];
+    public List<string> SortBy { get; set; } = [.. "Artists_SortBy".GetLocalized().Split(", ")];
 
     public ObservableCollection<GroupInfoList> GroupedArtistList { get; set; } = [];
 
@@ -79,21 +78,6 @@ public partial class LocalArtistsViewModel : ObservableRecipient
         }
     }
 
-    public void PlayButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: LocalArtistInfo localArtistInfo })
-        {
-            var songList = Data.MusicLibrary.GetSongsByArtist(localArtistInfo);
-            Data.MusicPlayer.SetPlayList(
-                $"LocalSongs:Artist:{localArtistInfo.Name}",
-                songList,
-                0,
-                SortMode
-            );
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
-        }
-    }
-
     public async Task SortArtists()
     {
         var sortTask = SortMode switch
@@ -138,6 +122,29 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 
             GroupedArtistList = [.. sortedGroups];
         });
+    }
+
+    public void PlayButton_Click(LocalArtistInfo info)
+    {
+        var tempList = Data.MusicLibrary.GetSongsByArtist(info);
+        var songList = tempList.ToList();
+        Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{info.Name}", songList, 0, SortMode);
+        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+    }
+
+    public void PlayNextButton_Click(LocalArtistInfo info)
+    {
+        var tempList = Data.MusicLibrary.GetSongsByArtist(info);
+        var songList = tempList.ToList();
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            Data.MusicPlayer.SetPlayList($"LocalSongs:Artist:{info.Name}", songList, 0, SortMode);
+            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongsToNextPlay(songList);
+        }
     }
 
     public async Task LoadSortModeAsync()

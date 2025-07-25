@@ -357,7 +357,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (e.ClickedItem is IOnlineArtistAlbumInfo info)
         {
-            var onlineAlbumInfo = IBriefOnlineAlbumInfo.CreateFromArtistAlbum(info);
+            var onlineAlbumInfo = IBriefOnlineAlbumInfo.CreateFromArtistAlbumAsync(info);
             if (onlineAlbumInfo is not null)
             {
                 var grid = (Grid)
@@ -398,7 +398,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IOnlineArtistAlbumInfo info })
         {
-            var onlineAlbumInfo = IBriefOnlineAlbumInfo.CreateFromArtistAlbum(info);
+            var onlineAlbumInfo = IBriefOnlineAlbumInfo.CreateFromArtistAlbumAsync(info);
             if (onlineAlbumInfo is not null)
             {
                 var grid = (Grid)

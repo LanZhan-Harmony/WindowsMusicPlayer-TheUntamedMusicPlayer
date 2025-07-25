@@ -8,7 +8,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
 [MemoryPackable]
-public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
+public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
 {
     public int PlayQueueIndex { get; set; } = -1;
     public bool IsPlayAvailable { get; set; } = false;
@@ -25,9 +25,9 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
     public string GenreStr { get; set; } = "";
 
     [MemoryPackConstructor]
-    public CloudBriefOnlineSongInfo() { }
+    public BriefCloudOnlineSongInfo() { }
 
-    public CloudBriefOnlineSongInfo(JsonElement jInfo, bool isAvailable)
+    public BriefCloudOnlineSongInfo(JsonElement jInfo, bool isAvailable)
     {
         IsPlayAvailable = isAvailable;
         if (!isAvailable)
@@ -80,7 +80,7 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
     /// <param name="isAvailable"></param>
     /// <param name="year"></param>
     /// <param name="duration"></param>
-    public CloudBriefOnlineSongInfo(JsonElement jInfo, bool isAvailable, ushort year, long duration)
+    public BriefCloudOnlineSongInfo(JsonElement jInfo, bool isAvailable, ushort year, long duration)
     {
         IsPlayAvailable = isAvailable;
         if (!isAvailable)
@@ -118,7 +118,7 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
     }
 }
 
-public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOnlineSongInfo
+public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOnlineSongInfo
 {
     public bool IsOnline { get; set; } = true;
     public string AlbumArtistsStr { get; set; } = "";
@@ -132,7 +132,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
 
     public CloudDetailedOnlineSongInfo() { }
 
-    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(CloudBriefOnlineSongInfo info)
+    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(BriefCloudOnlineSongInfo info)
     {
         var detailedInfo = new CloudDetailedOnlineSongInfo
         {
@@ -140,6 +140,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
             ID = info.ID,
             Title = info.Title,
             AlbumID = info.AlbumID,
+            ArtistID = info.ArtistID,
             DurationStr = info.DurationStr,
             YearStr = info.YearStr,
         };
