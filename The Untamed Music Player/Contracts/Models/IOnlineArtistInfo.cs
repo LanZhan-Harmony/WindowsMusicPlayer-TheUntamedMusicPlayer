@@ -1,5 +1,6 @@
-using TagLib;
+using System.Collections.ObjectModel;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
@@ -7,19 +8,6 @@ namespace The_Untamed_Music_Player.Contracts.Models;
 public interface IBriefOnlineArtistInfo : IArtistInfoBase
 {
     long ID { get; set; }
-}
-
-public interface IDetailedOnlineArtistInfo : IBriefOnlineArtistInfo
-{
-    int TotalAlbumNum { get; set; }
-    int TotalSongNum { get; set; }
-    TimeSpan TotalDuration { get; set; }
-    string? Introduction { get; set; }
-    List<IOnlineArtistAlbumInfo> AlbumList { get; set; }
-
-    string GetCountStr();
-    string GetDurationStr();
-    string GetDescriptionStr() => $"{"ArtistInfo_Artist".GetLocalized()} ";
 
     static async Task<byte[]> GetCoverBytes(IBriefOnlineArtistInfo info)
     {
@@ -35,31 +23,58 @@ public interface IDetailedOnlineArtistInfo : IBriefOnlineArtistInfo
         return [];
     }
 
+    static async Task<IBriefOnlineArtistInfo> CreateFromSongInfo(IBriefOnlineSongInfo info)
+    {
+        if (info is CloudBriefOnlineSongInfo briefInfo)
+        {
+            return await BriefCloudOnlineArtistInfo.CreateFromSongInfoAsync(briefInfo);
+        }
+        else
+        {
+            return await BriefCloudOnlineArtistInfo.CreateFromSongInfoAsync(
+                (CloudBriefOnlineSongInfo)info
+            );
+        }
+    }
+}
+
+public interface IDetailedOnlineArtistInfo : IBriefOnlineArtistInfo
+{
+    bool HasAllLoaded { get; set; }
+    int TotalAlbumNum { get; set; }
+    int TotalSongNum { get; set; }
+    TimeSpan TotalDuration { get; set; }
+    string CountStr { get; set; }
+    string DescriptionStr { get; set; }
+    string? Introduction { get; set; }
+    ObservableCollection<IOnlineArtistAlbumInfo> AlbumList { get; set; }
+
+    void Add(IOnlineArtistAlbumInfo? info);
+
+    static string GetCountStr(int totalAlbumNum, int totalSongNum)
+    {
+        var albumStr =
+            totalAlbumNum > 1
+                ? "ArtistInfo_Albums".GetLocalized()
+                : "ArtistInfo_Album".GetLocalized();
+        var songStr =
+            totalSongNum > 1 ? "AlbumInfo_Songs".GetLocalized() : "AlbumInfo_Song".GetLocalized();
+        return $"{totalAlbumNum} {albumStr} • {totalSongNum} {songStr}";
+    }
+
     static IDetailedOnlineArtistInfo CreateFastOnlineArtistInfoAsync(IBriefOnlineArtistInfo info)
     {
         if (info is BriefCloudOnlineArtistInfo briefInfo)
         {
-            return new DetailedCloudOnlineArtistInfo { Cover = briefInfo.Cover };
+            return new DetailedCloudOnlineArtistInfo
+            {
+                Name = briefInfo.Name,
+                Cover = briefInfo.Cover,
+            };
         }
         else
         {
-            return new DetailedCloudOnlineArtistInfo { Cover = info.Cover };
-        }
-    }
-
-    static async Task<IDetailedOnlineArtistInfo> CreateDetailedOnlineArtistInfoAsync(
-        IBriefOnlineArtistInfo info
-    )
-    {
-        if (info is BriefCloudOnlineArtistInfo briefInfo)
-        {
-            return await DetailedCloudOnlineArtistInfo.CreateAsync(briefInfo);
-        }
-        else
-        {
-            return await DetailedCloudOnlineArtistInfo.CreateAsync(
-                (BriefCloudOnlineArtistInfo)info
-            );
+            return new DetailedCloudOnlineArtistInfo { Name = info.Name, Cover = info.Cover };
         }
     }
 }

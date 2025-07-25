@@ -1,10 +1,8 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
-using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
 

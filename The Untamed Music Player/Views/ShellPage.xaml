@@ -51,7 +51,7 @@
                 <NavigationView.MenuItems>
                     <NavigationViewItem x:Uid="Shell_Home"
                                         AccessKey="NO" Icon="Home"
-                                        Tag="Home">
+                                        Tag="HomePage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="F" Modifiers="Control,Shift"/>
                         </NavigationViewItem.KeyboardAccelerators>
@@ -59,7 +59,7 @@
                     <NavigationViewItem x:Uid="Shell_MusicLibrary"
                                         AccessKey="NS"
                                         Icon="{ui:FontIcon Glyph=&#xE8D6;}"
-                                        Tag="MusicLibrary">
+                                        Tag="MusicLibraryPage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="R" Modifiers="Control"/>
                         </NavigationViewItem.KeyboardAccelerators>
@@ -68,7 +68,7 @@
                     <NavigationViewItem x:Uid="Shell_PlayQueue"
                                         AccessKey="NQ"
                                         Icon="{ui:FontIcon Glyph=&#xE90B;}"
-                                        Tag="PlayQueue">
+                                        Tag="PlayQueuePage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Q" Modifiers="Control"/>
                         </NavigationViewItem.KeyboardAccelerators>
@@ -76,7 +76,7 @@
                     <NavigationViewItem x:Uid="Shell_PlayLists"
                                         AccessKey="NP"
                                         Icon="{ui:FontIcon Glyph=&#xE93C;}"
-                                        Tag="PlayLists">
+                                        Tag="PlayListsPage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Y" Modifiers="Control"/>
                         </NavigationViewItem.KeyboardAccelerators>
@@ -84,7 +84,7 @@
                 </NavigationView.MenuItems>
                 <NavigationView.FooterMenuItems>
                     <NavigationViewItem x:Uid="Shell_Settings"
-                                        AccessKey="NG" Tag="Settings">
+                                        AccessKey="NG" Tag="SettingsPage">
                         <NavigationViewItem.Icon>
                             <AnimatedIcon x:Name="AnimatedIcon">
                                 <AnimatedIcon.Source>

@@ -32,7 +32,7 @@ public class LocalArtistDetailViewModel
         Data.MusicPlayer.PlaySongByInfo(AlbumList[0].SongList[0]);
     }
 
-    public void SongListView_ItemClick(IBriefSongInfoBase info)
+    public void SongListView_ItemClick(BriefLocalSongInfo info)
     {
         Data.MusicPlayer.SetPlayList(
             $"LocalSongs:Artist:{Artist.Name}",
@@ -43,7 +43,7 @@ public class LocalArtistDetailViewModel
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
-    public void SongListViewPlayButton_Click(IBriefSongInfoBase info)
+    public void SongListViewPlayButton_Click(BriefLocalSongInfo info)
     {
         Data.MusicPlayer.SetPlayList(
             $"LocalSongs:Artist:{Artist.Name}",
@@ -54,11 +54,11 @@ public class LocalArtistDetailViewModel
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
-    public void SongListViewPlayNextButton_Click(IBriefSongInfoBase info)
+    public void SongListViewPlayNextButton_Click(BriefLocalSongInfo info)
     {
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            var list = new List<IBriefSongInfoBase> { info };
+            var list = new List<BriefLocalSongInfo> { info };
             Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
@@ -68,20 +68,17 @@ public class LocalArtistDetailViewModel
         }
     }
 
-    public void SongListViewShowAlbumButton_Click(IBriefSongInfoBase info)
+    public void SongListViewShowAlbumButton_Click(BriefLocalSongInfo info)
     {
-        if (info is BriefLocalSongInfo songInfo)
+        var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info.Album);
+        if (localAlbumInfo is not null)
         {
-            var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(songInfo.Album);
-            if (localAlbumInfo is not null)
-            {
-                Data.SelectedLocalAlbum = localAlbumInfo;
-                Data.ShellPage!.Navigate(
-                    nameof(LocalAlbumDetailPage),
-                    "",
-                    new SuppressNavigationTransitionInfo()
-                );
-            }
+            Data.SelectedLocalAlbum = localAlbumInfo;
+            Data.ShellPage!.Navigate(
+                nameof(LocalAlbumDetailPage),
+                "",
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 

@@ -268,7 +268,7 @@
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind ViewModel.Album.GetDescriptionStr(), Mode=OneWay}"
+                               Text="{x:Bind ViewModel.Album.DescriptionStr, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
                     <TextBlock x:Name="IntroductionText"
                                FontSize="14"
@@ -353,7 +353,11 @@
                 </StackPanel>
             </Grid>
         </Grid>
-
+        <ProgressRing Grid.Row="1"
+                      Width="50" Height="50"
+                      Margin="0,60,0,0"
+                      Canvas.ZIndex="1"
+                      IsActive="{x:Bind ViewModel.IsSearchProgressRingActive, Mode=OneWay}"/>
         <ListView x:Name="SongListView"
                   Grid.Row="1"
                   helper:CurrentSongHighlightExtensions.NotPlayingBrush="{ThemeResource TextFillColorPrimaryBrush}"
