@@ -1,11 +1,9 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
-using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
@@ -20,6 +18,7 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
     public virtual string Album { get; set; } = "";
     public long AlbumID { get; set; } = 0;
     public virtual string ArtistsStr { get; set; } = "";
+    public long ArtistID { get; set; } = 0;
     public TimeSpan Duration { get; set; } = TimeSpan.Zero;
     public virtual string DurationStr { get; set; } = "";
     public string YearStr { get; set; } = "";
@@ -44,6 +43,10 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
             Album = string.IsNullOrWhiteSpace(album) ? IBriefSongInfoBase._unknownAlbum : album;
             AlbumID = albumElement.GetProperty("id").GetInt64();
             var artistsElement = jInfo.GetProperty("artists");
+            if (artistsElement.GetArrayLength() > 0)
+            {
+                ArtistID = artistsElement[0].GetProperty("id").GetInt64();
+            }
             string[] artists =
             [
                 .. artistsElement
@@ -70,6 +73,13 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
         }
     }
 
+    /// <summary>
+    /// 从OnlineAlbumInfo创建的构造函数
+    /// </summary>
+    /// <param name="jInfo"></param>
+    /// <param name="isAvailable"></param>
+    /// <param name="year"></param>
+    /// <param name="duration"></param>
     public CloudBriefOnlineSongInfo(JsonElement jInfo, bool isAvailable, ushort year, long duration)
     {
         IsPlayAvailable = isAvailable;
@@ -84,6 +94,10 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
         Album = string.IsNullOrWhiteSpace(album) ? IBriefSongInfoBase._unknownAlbum : album;
         AlbumID = albumElement.GetProperty("id").GetInt64();
         var artistsElement = jInfo.GetProperty("ar");
+        if (artistsElement.GetArrayLength() > 0)
+        {
+            ArtistID = artistsElement[0].GetProperty("id").GetInt64();
+        }
         string[] artists =
         [
             .. artistsElement

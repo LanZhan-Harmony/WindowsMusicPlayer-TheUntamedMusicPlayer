@@ -12,15 +12,15 @@
     <PublishProfile>Properties\PublishProfiles\win-$(Platform).pubxml</PublishProfile>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UseWinUI>true</UseWinUI>
-    <EnableMsixTooling>true</EnableMsixTooling>
+    <UseWinUI>True</UseWinUI>
+    <EnableMsixTooling>True</EnableMsixTooling>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <PackageCertificateKeyFile>The Untamed Music Player_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PublishSelfContained>true</PublishSelfContained>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <PublishSelfContained>True</PublishSelfContained>
+    <WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
@@ -32,8 +32,8 @@
     <PublishAot>True</PublishAot>
     <PublishTrimmed>True</PublishTrimmed>
     <IsAotCompatible>True</IsAotCompatible>
-    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
-    <CsWinRTAotOptimizerEnabled>true</CsWinRTAotOptimizerEnabled>
+    <JsonSerializerIsReflectionEnabledByDefault>True</JsonSerializerIsReflectionEnabledByDefault>
+    <CsWinRTAotOptimizerEnabled>True</CsWinRTAotOptimizerEnabled>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\**\*" />
@@ -42,10 +42,16 @@
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Labs.WinUI.MarqueeText" Version="0.1.250206-build.2040" />
+    <PackageReference
+      Include="CommunityToolkit.Labs.WinUI.MarqueeText"
+      Version="0.1.250206-build.2040"
+    />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.250402" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
+    <PackageReference
+      Include="CommunityToolkit.WinUI.Controls.SettingsControls"
+      Version="8.2.250402"
+    />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
     <PackageReference Include="FluentIcons.WinUI" Version="1.1.303" />
@@ -93,8 +99,5 @@
     <PRIResource Update="Strings\zh-cn\Resources.resw">
       <Generator>ResXFileCodeGenerator</Generator>
     </PRIResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Contracts\ViewModels\" />
   </ItemGroup>
 </Project>

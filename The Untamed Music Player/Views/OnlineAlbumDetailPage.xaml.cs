@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
@@ -11,9 +12,9 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
-using Windows.Storage.Streams;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
@@ -101,7 +102,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
 
         CreateHeaderAnimation(_props, scrollingProperties.Translation.Y);
 
-        var coverBytes = await IDetailedOnlineAlbumInfo.GetCoverBytes(ViewModel.BriefAlbum);
+        var coverBytes = await IBriefOnlineAlbumInfo.GetCoverBytes(ViewModel.BriefAlbum);
         if (coverBytes.Length != 0)
         {
             CreateImageBackgroundGradientVisual(scrollingProperties.Translation.Y, coverBytes);
@@ -284,13 +285,42 @@ public sealed partial class OnlineAlbumDetailPage : Page
         }
     }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e) { }
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.PlayButton_Click(info);
+        }
+    }
 
-    private void PlayNextButton_Click(object sender, RoutedEventArgs e) { }
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.PlayNextButton_Click(info);
+        }
+    }
 
-    private void PropertiesButton_Click(object sender, RoutedEventArgs e) { }
+    private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            if (song is not null)
+            {
+                var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
+                await dialog.ShowAsync();
+            }
+        }
+    }
 
-    private void ShowArtistButton_Click(object sender, RoutedEventArgs e) { }
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.ShowArtistButton_Click(info);
+        }
+    }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
