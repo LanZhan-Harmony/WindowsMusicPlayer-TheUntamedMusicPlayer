@@ -87,7 +87,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableRecipient
 
     public async void ShowArtistButton_Click(IBriefOnlineSongInfo info)
     {
-        var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfo(info);
+        var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(info);
         if (onlineArtistInfo is not null)
         {
             Data.SelectedOnlineArtist = onlineArtistInfo;

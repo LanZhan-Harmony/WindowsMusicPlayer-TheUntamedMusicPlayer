@@ -8,7 +8,7 @@ namespace The_Untamed_Music_Player.Contracts.Models;
 
 [MemoryPackable]
 [MemoryPackUnion(0, typeof(BriefLocalSongInfo))]
-[MemoryPackUnion(1, typeof(CloudBriefOnlineSongInfo))]
+[MemoryPackUnion(1, typeof(BriefCloudOnlineSongInfo))]
 public partial interface IBriefSongInfoBase : ICloneable
 {
     protected static readonly string _unknownAlbum = "SongInfo_UnknownAlbum".GetLocalized();
@@ -124,13 +124,13 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
         {
             return new DetailedLocalSongInfo(briefInfo);
         }
-        else if (info is CloudBriefOnlineSongInfo cloudInfo)
+        else if (info is BriefCloudOnlineSongInfo cloudInfo)
         {
             return await CloudDetailedOnlineSongInfo.CreateAsync(cloudInfo);
         }
         else
         {
-            return await CloudDetailedOnlineSongInfo.CreateAsync((CloudBriefOnlineSongInfo)info);
+            return await CloudDetailedOnlineSongInfo.CreateAsync((BriefCloudOnlineSongInfo)info);
         }
     }
 }

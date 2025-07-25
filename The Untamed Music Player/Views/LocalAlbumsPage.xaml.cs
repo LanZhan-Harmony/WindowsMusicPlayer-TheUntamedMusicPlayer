@@ -39,27 +39,6 @@ public sealed partial class LocalAlbumsPage : Page
         menuButton?.Visibility = Visibility.Collapsed;
     }
 
-    private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-        if (e.ClickedItem is LocalAlbumInfo info)
-        {
-            var grid = (Grid)
-                (
-                    (ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)
-                ).ContentTemplateRoot;
-            var border = (Border)grid.Children[1];
-            ConnectedAnimationService
-                .GetForCurrentView()
-                .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedLocalAlbum = info;
-            Data.ShellPage!.Navigate(
-                nameof(LocalAlbumDetailPage),
-                nameof(LocalAlbumsPage),
-                new SuppressNavigationTransitionInfo()
-            );
-        }
-    }
-
     private async void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
     {
         if (Data.SelectedLocalAlbum is not null && sender is GridView gridView)
@@ -79,6 +58,27 @@ public sealed partial class LocalAlbumsPage : Page
                 );
             }
             gridView.Focus(FocusState.Programmatic);
+        }
+    }
+
+    private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is LocalAlbumInfo info)
+        {
+            var grid = (Grid)
+                (
+                    (ContentControl)AlbumGridView.ContainerFromItem(e.ClickedItem)
+                ).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedLocalAlbum = info;
+            Data.ShellPage!.Navigate(
+                nameof(LocalAlbumDetailPage),
+                nameof(LocalAlbumsPage),
+                new SuppressNavigationTransitionInfo()
+            );
         }
     }
 
