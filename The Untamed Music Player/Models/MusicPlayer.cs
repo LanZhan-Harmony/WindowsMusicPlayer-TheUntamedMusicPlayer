@@ -1291,7 +1291,7 @@ public partial class MusicPlayer : ObservableRecipient
                 0 => await _localSettingsService.ReadSettingAsync<BriefLocalSongInfo>(
                     "CurrentBriefSong"
                 ),
-                1 => await _localSettingsService.ReadSettingAsync<CloudBriefOnlineSongInfo>(
+                1 => await _localSettingsService.ReadSettingAsync<BriefCloudOnlineSongInfo>(
                     "CurrentBriefSong"
                 ),
                 _ => null,

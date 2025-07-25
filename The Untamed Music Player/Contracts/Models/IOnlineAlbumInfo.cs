@@ -23,21 +23,21 @@ public interface IBriefOnlineAlbumInfo : IAlbumInfoBase
         return [];
     }
 
-    static async Task<IBriefOnlineAlbumInfo> CreateFromSongInfo(IBriefOnlineSongInfo info)
+    static async Task<IBriefOnlineAlbumInfo> CreateFromSongInfoAsync(IBriefOnlineSongInfo info)
     {
-        if (info is CloudBriefOnlineSongInfo briefInfo)
+        if (info is BriefCloudOnlineSongInfo briefInfo)
         {
             return await BriefCloudOnlineAlbumInfo.CreateFromSongInfoAsync(briefInfo);
         }
         else
         {
             return await BriefCloudOnlineAlbumInfo.CreateFromSongInfoAsync(
-                (CloudBriefOnlineSongInfo)info
+                (BriefCloudOnlineSongInfo)info
             );
         }
     }
 
-    static IBriefOnlineAlbumInfo CreateFromArtistAlbum(IOnlineArtistAlbumInfo info)
+    static IBriefOnlineAlbumInfo CreateFromArtistAlbumAsync(IOnlineArtistAlbumInfo info)
     {
         if (info is CloudOnlineArtistAlbumInfo albumInfo)
         {

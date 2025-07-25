@@ -9,7 +9,7 @@ public class CloudSongSearchHelper
 
     private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
-    public static async Task SearchSongsAsync(string keyWords, CloudBriefOnlineSongInfoList list)
+    public static async Task SearchSongsAsync(string keyWords, CloudOnlineSongInfoList list)
     {
         await _searchSemaphore.WaitAsync();
         list.Page = 0;
@@ -27,7 +27,7 @@ public class CloudSongSearchHelper
                 {
                     { "keywords", keyWords },
                     { "type", "1" },
-                    { "limit", $"{CloudBriefOnlineSongInfoList.Limit}" },
+                    { "limit", $"{CloudOnlineSongInfoList.Limit}" },
                     { "offset", "0" },
                 }
             );
@@ -74,7 +74,7 @@ public class CloudSongSearchHelper
         }
     }
 
-    public static async Task SearchMoreSongsAsync(CloudBriefOnlineSongInfoList list)
+    public static async Task SearchMoreSongsAsync(CloudOnlineSongInfoList list)
     {
         await _searchSemaphore.WaitAsync();
         try
@@ -85,8 +85,8 @@ public class CloudSongSearchHelper
                 {
                     { "keywords", list.KeyWords },
                     { "type", "1" },
-                    { "limit", $"{CloudBriefOnlineSongInfoList.Limit}" },
-                    { "offset", $"{list.Page * CloudBriefOnlineSongInfoList.Limit}" },
+                    { "limit", $"{CloudOnlineSongInfoList.Limit}" },
+                    { "offset", $"{list.Page * CloudOnlineSongInfoList.Limit}" },
                 }
             );
             using var document = JsonDocument.Parse(result.ToJsonString());
@@ -118,7 +118,7 @@ public class CloudSongSearchHelper
 
     private static async Task ProcessSongsAsync(
         JsonElement songsElement,
-        CloudBriefOnlineSongInfoList list
+        CloudOnlineSongInfoList list
     )
     {
         var actualCount = songsElement.GetArrayLength();
@@ -150,7 +150,7 @@ public class CloudSongSearchHelper
                 {
                     var songId = songIds[i];
                     var available = availabilityMap.GetValueOrDefault(songId, false);
-                    return new CloudBriefOnlineSongInfo(songsElement[i], available);
+                    return new BriefCloudOnlineSongInfo(songsElement[i], available);
                 }
                 catch (Exception ex)
                 {
