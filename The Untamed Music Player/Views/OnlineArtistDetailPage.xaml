@@ -131,7 +131,7 @@
                 </Grid>
             </UserControl>
         </DataTemplate>
-        <DataTemplate x:Key="SongListViewTemplate" x:DataType="contract:IBriefOnlineSongInfo">
+        <DataTemplate x:Key="SongListViewTemplate" x:DataType="contract:IBriefSongInfoBase">
             <Grid Height="52"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -575,7 +575,7 @@
                                 </StackPanel>
                             </Button>
                             <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
-                                    Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
+                                    Click="{x:Bind ViewModel.ShuffledPlayAllButton_Click}"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontSize="16" Glyph="&#xE8B1;"/>

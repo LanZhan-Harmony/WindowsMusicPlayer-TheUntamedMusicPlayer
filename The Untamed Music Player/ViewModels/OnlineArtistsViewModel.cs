@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Threading.Tasks;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
@@ -12,8 +13,11 @@ public class OnlineArtistsViewModel
 
     public async void PlayButton_Click(IBriefOnlineArtistInfo info)
     {
-        var detailedInfo = await IDetailedOnlineArtistInfo.SearchArtistDetailAsync(info);
-        var songList = detailedInfo.AlbumList.SelectMany(album => album.SongList).ToList();
+        var songList = await IBriefOnlineArtistInfo.GetSongsByArtistAsync(info);
+        if (songList.Count == 0)
+        {
+            return;
+        }
         Data.MusicPlayer.SetPlayList(
             $"OnlineSongs:Artist:{info.Name}",
             songList,
@@ -25,8 +29,11 @@ public class OnlineArtistsViewModel
 
     public async void PlayNextButton_Click(IBriefOnlineArtistInfo info)
     {
-        var detailedInfo = await IDetailedOnlineArtistInfo.SearchArtistDetailAsync(info);
-        var songList = detailedInfo.AlbumList.SelectMany(album => album.SongList).ToList();
+        var songList = await IBriefOnlineArtistInfo.GetSongsByArtistAsync(info);
+        if (songList.Count == 0)
+        {
+            return;
+        }
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             Data.MusicPlayer.SetPlayList(

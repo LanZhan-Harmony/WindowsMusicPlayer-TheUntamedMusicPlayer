@@ -32,6 +32,17 @@ public class LocalArtistDetailViewModel
         Data.MusicPlayer.PlaySongByInfo(AlbumList[0].SongList[0]);
     }
 
+    public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
+    {
+        Data.MusicPlayer.SetShuffledPlayList(
+            $"ShuffledLocalSongs:Artist:{Artist.Name}",
+            ConvertAllSongsToFlatList(),
+            0,
+            0
+        );
+        Data.MusicPlayer.PlaySongByInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+    }
+
     public void SongListView_ItemClick(BriefLocalSongInfo info)
     {
         Data.MusicPlayer.SetPlayList(
