@@ -18,6 +18,9 @@ public partial class OnlineAlbumDetailViewModel : ObservableRecipient
     public partial IDetailedOnlineAlbumInfo Album { get; set; } = null!;
 
     [ObservableProperty]
+    public partial bool IsPlayAllButtonEnabled { get; set; } = false;
+
+    [ObservableProperty]
     public partial double ListViewOpacity { get; set; } = 0;
 
     [ObservableProperty]
@@ -35,12 +38,17 @@ public partial class OnlineAlbumDetailViewModel : ObservableRecipient
             return;
         }
         Album = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(BriefAlbum);
+        IsPlayAllButtonEnabled = Album.SongList.Count > 0;
         ListViewOpacity = 1;
         IsSearchProgressRingActive = false;
     }
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
     {
+        if (Album.SongList.Count == 0)
+        {
+            return;
+        }
         Data.MusicPlayer.SetPlayList(
             $"OnlineSongs:Album:{Album.Name}",
             Album.SongList,
@@ -48,6 +56,21 @@ public partial class OnlineAlbumDetailViewModel : ObservableRecipient
             0
         );
         Data.MusicPlayer.PlaySongByInfo(Album.SongList[0]);
+    }
+
+    public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (Album.SongList.Count == 0)
+        {
+            return;
+        }
+        Data.MusicPlayer.SetShuffledPlayList(
+            $"ShuffledOnlineSongs:Album:{Album.Name}",
+            Album.SongList,
+            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
+            0
+        );
+        Data.MusicPlayer.PlaySongByInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)

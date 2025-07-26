@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
@@ -54,6 +55,23 @@ public interface IBriefOnlineArtistInfo : IArtistInfoBase
                 await BriefCloudOnlineArtistInfo.CreateFromAlbumInfoAsync(cloudInfo),
             _ => await BriefCloudOnlineArtistInfo.CreateFromAlbumInfoAsync(
                 (BriefCloudOnlineAlbumInfo)info
+            ),
+        };
+    }
+
+    /// <summary>
+    /// 根据简要艺术家信息获取该艺术家的歌曲
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
+    static async Task<List<IBriefSongInfoBase>> GetSongsByArtistAsync(IBriefOnlineArtistInfo info)
+    {
+        return info switch
+        {
+            BriefCloudOnlineArtistInfo cloudInfo =>
+                await CloudArtistDetailSearchHelper.GetSongsByArtistAsync(cloudInfo),
+            _ => await CloudArtistDetailSearchHelper.GetSongsByArtistAsync(
+                (BriefCloudOnlineArtistInfo)info
             ),
         };
     }

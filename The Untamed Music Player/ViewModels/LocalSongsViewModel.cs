@@ -489,6 +489,17 @@ public partial class LocalSongsViewModel : ObservableRecipient
         }
     }
 
+    public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
+    {
+        Data.MusicPlayer.SetShuffledPlayList(
+            "ShuffledLocalSongs:All",
+            ConvertGroupedToFlatList(),
+            0,
+            SortMode
+        );
+        Data.MusicPlayer.PlaySongByInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+    }
+
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);

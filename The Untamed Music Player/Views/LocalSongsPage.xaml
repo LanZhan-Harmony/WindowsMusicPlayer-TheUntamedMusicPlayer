@@ -214,7 +214,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
+                    Click="{x:Bind ViewModel.ShuffledPlayAllButton_Click}"
                     Style="{StaticResource AccentButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <FontIcon FontSize="12" Glyph="&#xE8B1;"/>

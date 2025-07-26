@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.Json;
 using The_Untamed_Music_Player.Contracts.Models;
@@ -92,6 +93,10 @@ public class CloudArtistDetailSearchHelper
             await ProcessArtistDetailAsync(albumsElement, info);
             info.Page++;
         }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
         finally
         {
             _searchSemaphore.Release();
@@ -120,7 +125,8 @@ public class CloudArtistDetailSearchHelper
                     cancellationToken.ThrowIfCancellationRequested();
                     var albumInfo = await CloudOnlineArtistAlbumInfo.CreateAsync(
                         albumsElement[i]!,
-                        _api
+                        _api,
+                        true
                     );
                     albumInfos[i] = albumInfo;
                 }
@@ -139,5 +145,68 @@ public class CloudArtistDetailSearchHelper
         {
             info.Add(albumInfo);
         }
+    }
+
+    public static async Task<List<IBriefSongInfoBase>> GetSongsByArtistAsync(
+        BriefCloudOnlineArtistInfo info
+    )
+    {
+        var songs = new List<IBriefSongInfoBase>();
+        try
+        {
+            var (_, result) = await _api.RequestAsync(
+                CloudMusicApiProviders.ArtistAlbum,
+                new Dictionary<string, string>
+                {
+                    { "id", $"{info.ID}" },
+                    { "limit", $"{DetailedCloudOnlineArtistInfo.Limit}" },
+                    { "offset", $"0" },
+                }
+            );
+            using var document = JsonDocument.Parse(result.ToJsonString());
+            var root = document.RootElement;
+            var albumsElement = root.GetProperty("hotAlbums");
+            var actualCount = albumsElement.GetArrayLength();
+            var albumInfos = new CloudOnlineArtistAlbumInfo[actualCount];
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
+            await Parallel.ForEachAsync(
+                Enumerable.Range(0, actualCount),
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = Environment.ProcessorCount / 2,
+                    CancellationToken = cts.Token,
+                },
+                async (i, cancellationToken) =>
+                {
+                    try
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        var albumInfo = await CloudOnlineArtistAlbumInfo.CreateAsync(
+                            albumsElement[i]!,
+                            _api,
+                            false
+                        );
+                        albumInfos[i] = albumInfo;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.StackTrace);
+                    }
+                }
+            );
+            foreach (var album in albumInfos)
+            {
+                if (album is not null && album.IsAvailable)
+                {
+                    songs.AddRange(album.SongList);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
+
+        return songs;
     }
 }

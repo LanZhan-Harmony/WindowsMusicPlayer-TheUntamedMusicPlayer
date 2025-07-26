@@ -26,6 +26,17 @@ public partial class LocalAlbumDetailViewModel : ObservableRecipient
         Data.MusicPlayer.PlaySongByInfo(SongList[0]);
     }
 
+    public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
+    {
+        Data.MusicPlayer.SetShuffledPlayList(
+            $"ShuffledLocalSongs:Album:{Album.Name}",
+            SongList,
+            0,
+            0
+        );
+        Data.MusicPlayer.PlaySongByInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+    }
+
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);

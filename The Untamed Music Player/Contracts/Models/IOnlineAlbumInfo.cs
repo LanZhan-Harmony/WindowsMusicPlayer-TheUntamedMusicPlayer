@@ -28,7 +28,7 @@ public interface IBriefOnlineAlbumInfo : IAlbumInfoBase
     /// </summary>
     /// <param name="info"></param>
     /// <returns></returns>
-    static async Task<IBriefOnlineAlbumInfo> CreateFromSongInfoAsync(IBriefOnlineSongInfo info)
+    static async Task<IBriefOnlineAlbumInfo> CreateFromSongInfoAsync(IBriefSongInfoBase info)
     {
         return info switch
         {
