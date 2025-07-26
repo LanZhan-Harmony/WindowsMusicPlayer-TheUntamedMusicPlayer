@@ -524,11 +524,11 @@
                         SizeChanged="CoverArt_OnSizeChanged"
                         Translation="0,0,16">
                     <Border.Background>
-                        <ImageBrush ImageSource="{x:Bind ViewModel.Artist.Cover}" Stretch="UniformToFill"/>
+                        <ImageBrush ImageSource="{x:Bind ViewModel.BriefArtist.Cover}" Stretch="UniformToFill"/>
                     </Border.Background>
                     <Border Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                             CornerRadius="100"
-                            Visibility="{x:Bind ViewModel.Artist.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.BriefArtist.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="CoverArtIcon"
                                   FontSize="64"
                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -540,9 +540,9 @@
                             Grid.Column="1"
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
-                               Text="{x:Bind ViewModel.Artist.Name, Mode=OneWay}"
+                               Text="{x:Bind ViewModel.BriefArtist.Name}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
-                               ToolTipService.ToolTip="{x:Bind ViewModel.Artist.Name}"/>
+                               ToolTipService.ToolTip="{x:Bind ViewModel.BriefArtist.Name}"/>
                     <TextBlock x:Name="SubtitleText"
                                FontWeight="Normal"
                                Text="{x:Bind ViewModel.Artist.CountStr, Mode=OneWay}"

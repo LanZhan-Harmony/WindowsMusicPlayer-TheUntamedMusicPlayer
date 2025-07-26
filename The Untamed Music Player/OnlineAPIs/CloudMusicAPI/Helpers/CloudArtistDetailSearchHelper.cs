@@ -11,16 +11,18 @@ public class CloudArtistDetailSearchHelper
 
     private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
-    public static async Task SearchArtistDetailAsync(
-        BriefCloudOnlineArtistInfo briefInfo,
-        DetailedCloudOnlineArtistInfo info
+    public static async Task<DetailedCloudOnlineArtistInfo> SearchArtistDetailAsync(
+        BriefCloudOnlineArtistInfo briefInfo
     )
     {
         await _searchSemaphore.WaitAsync();
-        info.ID = briefInfo.ID;
-        info.Name = briefInfo.Name;
-        info.Cover = briefInfo.Cover;
-        info.CoverPath = briefInfo.CoverPath;
+        var info = new DetailedCloudOnlineArtistInfo
+        {
+            ID = briefInfo.ID,
+            Name = briefInfo.Name,
+            Cover = briefInfo.Cover,
+            CoverPath = briefInfo.CoverPath,
+        };
         try
         {
             var albumTask = _api.RequestAsync(
@@ -54,16 +56,20 @@ public class CloudArtistDetailSearchHelper
             if (info.TotalAlbumNum == 0)
             {
                 info.HasAllLoaded = true;
-                return;
+                return info;
             }
-
             await ProcessArtistDetailAsync(albumsElement, info);
             info.Page = 1;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
         }
         finally
         {
             _searchSemaphore.Release();
         }
+        return info;
     }
 
     public static async Task SearchMoreArtistDetailAsync(DetailedCloudOnlineArtistInfo info)
@@ -112,7 +118,10 @@ public class CloudArtistDetailSearchHelper
                 try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var albumInfo = await CloudOnlineArtistAlbumInfo.CreateAsync(albumsElement[i]!, _api);
+                    var albumInfo = await CloudOnlineArtistAlbumInfo.CreateAsync(
+                        albumsElement[i]!,
+                        _api
+                    );
                     albumInfos[i] = albumInfo;
                 }
                 catch (Exception ex)

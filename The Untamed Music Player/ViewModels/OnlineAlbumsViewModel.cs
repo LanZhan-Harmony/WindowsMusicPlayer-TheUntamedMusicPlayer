@@ -8,6 +8,8 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public class OnlineAlbumsViewModel
 {
+    public OnlineAlbumsViewModel() { }
+
     public async void PlayButton_Click(IBriefOnlineAlbumInfo info)
     {
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);

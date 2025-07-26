@@ -23,42 +23,47 @@ public interface IBriefOnlineAlbumInfo : IAlbumInfoBase
         return [];
     }
 
+    /// <summary>
+    /// 根据歌曲信息获取简要专辑信息
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
     static async Task<IBriefOnlineAlbumInfo> CreateFromSongInfoAsync(IBriefOnlineSongInfo info)
     {
-        if (info is BriefCloudOnlineSongInfo briefInfo)
+        return info switch
         {
-            return await BriefCloudOnlineAlbumInfo.CreateFromSongInfoAsync(briefInfo);
-        }
-        else
-        {
-            return await BriefCloudOnlineAlbumInfo.CreateFromSongInfoAsync(
+            BriefCloudOnlineSongInfo cloudInfo =>
+                await BriefCloudOnlineAlbumInfo.CreateFromSongInfoAsync(cloudInfo),
+            _ => await BriefCloudOnlineAlbumInfo.CreateFromSongInfoAsync(
                 (BriefCloudOnlineSongInfo)info
-            );
-        }
+            ),
+        };
     }
 
+    /// <summary>
+    /// 根据艺术家专辑信息获取简要专辑信息
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
     static IBriefOnlineAlbumInfo CreateFromArtistAlbumAsync(IOnlineArtistAlbumInfo info)
     {
-        if (info is CloudOnlineArtistAlbumInfo albumInfo)
+        return info switch
         {
-            return new BriefCloudOnlineAlbumInfo
+            CloudOnlineArtistAlbumInfo cloudInfo => new BriefCloudOnlineAlbumInfo
             {
-                ID = albumInfo.ID,
-                Name = albumInfo.Name,
-                CoverPath = albumInfo.CoverPath,
-                Cover = albumInfo.Cover,
-            };
-        }
-        else
-        {
-            return new BriefCloudOnlineAlbumInfo
+                ID = cloudInfo.ID,
+                Name = cloudInfo.Name,
+                CoverPath = cloudInfo.CoverPath,
+                Cover = cloudInfo.Cover,
+            },
+            _ => new BriefCloudOnlineAlbumInfo
             {
                 ID = info.ID,
                 Name = info.Name,
                 CoverPath = info.CoverPath,
                 Cover = info.Cover,
-            };
-        }
+            },
+        };
     }
 }
 
@@ -91,40 +96,22 @@ public interface IDetailedOnlineAlbumInfo : IBriefOnlineAlbumInfo
         return string.Join(" • ", parts);
     }
 
-    static IDetailedOnlineAlbumInfo CreateFastOnlineAlbumInfoAsync(IBriefOnlineAlbumInfo info)
-    {
-        if (info is BriefCloudOnlineAlbumInfo briefInfo)
-        {
-            return new DetailedCloudOnlineAlbumInfo
-            {
-                Name = briefInfo.Name,
-                Cover = briefInfo.Cover,
-                ArtistsStr = briefInfo.ArtistsStr,
-            };
-        }
-        else
-        {
-            return new DetailedCloudOnlineAlbumInfo
-            {
-                Name = info.Name,
-                ArtistsStr = info.ArtistsStr,
-                Cover = info.Cover,
-            };
-        }
-    }
-
+    /// <summary>
+    /// 根据简要专辑信息获取详细专辑信息
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
     static async Task<IDetailedOnlineAlbumInfo> CreateDetailedOnlineAlbumInfoAsync(
         IBriefOnlineAlbumInfo info
     )
     {
-        if (info is BriefCloudOnlineAlbumInfo briefInfo)
+        return info switch
         {
-            return await DetailedCloudOnlineAlbumInfo.CreateAsync(briefInfo);
-        }
-        else
-        {
-            return await DetailedCloudOnlineAlbumInfo.CreateAsync((BriefCloudOnlineAlbumInfo)info);
-        }
+            BriefCloudOnlineAlbumInfo cloudInfo => await DetailedCloudOnlineAlbumInfo.CreateAsync(
+                cloudInfo
+            ),
+            _ => await DetailedCloudOnlineAlbumInfo.CreateAsync((BriefCloudOnlineAlbumInfo)info),
+        };
     }
 }
 

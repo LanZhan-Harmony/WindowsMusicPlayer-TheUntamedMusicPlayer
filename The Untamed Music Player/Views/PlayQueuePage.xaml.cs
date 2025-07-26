@@ -1,8 +1,10 @@
+using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
@@ -15,6 +17,32 @@ public sealed partial class PlayQueuePage : Page
     {
         ViewModel = App.GetService<PlayQueueViewModel>();
         InitializeComponent();
+
+        Data.MusicPlayer.PropertyChanged += MusicPlayer_PropertyChanged;
+    }
+
+    private void PlayQueuePage_Loaded(object sender, RoutedEventArgs e)
+    {
+        UpdatePlayQueueSource();
+    }
+
+    private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (
+            e.PropertyName == nameof(Data.MusicPlayer.ShuffleMode)
+            || e.PropertyName == nameof(Data.MusicPlayer.PlayQueue)
+            || e.PropertyName == nameof(Data.MusicPlayer.ShuffledPlayQueue)
+        )
+        {
+            UpdatePlayQueueSource();
+        }
+    }
+
+    private void UpdatePlayQueueSource()
+    {
+        PlayqueueListView.ItemsSource = Data.MusicPlayer.ShuffleMode
+            ? Data.MusicPlayer.ShuffledPlayQueue
+            : Data.MusicPlayer.PlayQueue;
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
