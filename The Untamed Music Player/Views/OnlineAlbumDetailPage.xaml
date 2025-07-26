@@ -241,11 +241,11 @@
                         SizeChanged="AlbumArt_OnSizeChanged"
                         Translation="0,0,16">
                     <Border.Background>
-                        <ImageBrush ImageSource="{x:Bind ViewModel.Album.Cover}" Stretch="UniformToFill"/>
+                        <ImageBrush ImageSource="{x:Bind ViewModel.BriefAlbum.Cover}" Stretch="UniformToFill"/>
                     </Border.Background>
                     <Border Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                             CornerRadius="{x:Bind CoverArt.CornerRadius, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.Album.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.BriefAlbum.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="CoverArtIcon"
                                   FontSize="64"
                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -257,9 +257,9 @@
                             Grid.Column="1"
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
-                               Text="{x:Bind ViewModel.Album.Name, Mode=OneWay}"
+                               Text="{x:Bind ViewModel.BriefAlbum.Name}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
-                               ToolTipService.ToolTip="{x:Bind ViewModel.Album.Name, Mode=OneWay}"/>
+                               ToolTipService.ToolTip="{x:Bind ViewModel.BriefAlbum.Name}"/>
                     <TextBlock x:Name="SubtitleText"
                                FontWeight="Normal"
                                Text="{x:Bind ViewModel.Album.ArtistsStr, Mode=OneWay}"

@@ -15,8 +15,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableRecipient
     public IBriefOnlineAlbumInfo BriefAlbum { get; set; } = Data.SelectedOnlineAlbum!;
 
     [ObservableProperty]
-    public partial IDetailedOnlineAlbumInfo Album { get; set; } =
-        IDetailedOnlineAlbumInfo.CreateFastOnlineAlbumInfoAsync(Data.SelectedOnlineAlbum!);
+    public partial IDetailedOnlineAlbumInfo Album { get; set; } = null!;
 
     [ObservableProperty]
     public partial double ListViewOpacity { get; set; } = 0;

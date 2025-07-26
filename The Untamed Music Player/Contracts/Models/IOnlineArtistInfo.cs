@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
@@ -23,32 +24,38 @@ public interface IBriefOnlineArtistInfo : IArtistInfoBase
         return [];
     }
 
+    /// <summary>
+    /// 根据歌曲信息获取简要艺术家信息
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
     static async Task<IBriefOnlineArtistInfo> CreateFromSongInfoAsync(IBriefOnlineSongInfo info)
     {
-        if (info is BriefCloudOnlineSongInfo briefInfo)
+        return info switch
         {
-            return await BriefCloudOnlineArtistInfo.CreateFromSongInfoAsync(briefInfo);
-        }
-        else
-        {
-            return await BriefCloudOnlineArtistInfo.CreateFromSongInfoAsync(
+            BriefCloudOnlineSongInfo cloudInfo =>
+                await BriefCloudOnlineArtistInfo.CreateFromSongInfoAsync(cloudInfo),
+            _ => await BriefCloudOnlineArtistInfo.CreateFromSongInfoAsync(
                 (BriefCloudOnlineSongInfo)info
-            );
-        }
+            ),
+        };
     }
 
+    /// <summary>
+    /// 根据专辑信息获取简要艺术家信息
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
     static async Task<IBriefOnlineArtistInfo> CreateFromAlbumInfoAsync(IBriefOnlineAlbumInfo info)
     {
-        if (info is BriefCloudOnlineAlbumInfo briefInfo)
+        return info switch
         {
-            return await BriefCloudOnlineArtistInfo.CreateFromAlbumInfoAsync(briefInfo);
-        }
-        else
-        {
-            return await BriefCloudOnlineArtistInfo.CreateFromAlbumInfoAsync(
+            BriefCloudOnlineAlbumInfo cloudInfo =>
+                await BriefCloudOnlineArtistInfo.CreateFromAlbumInfoAsync(cloudInfo),
+            _ => await BriefCloudOnlineArtistInfo.CreateFromAlbumInfoAsync(
                 (BriefCloudOnlineAlbumInfo)info
-            );
-        }
+            ),
+        };
     }
 }
 
@@ -76,19 +83,40 @@ public interface IDetailedOnlineArtistInfo : IBriefOnlineArtistInfo
         return $"{totalAlbumNum} {albumStr} • {totalSongNum} {songStr}";
     }
 
-    static IDetailedOnlineArtistInfo CreateFastOnlineArtistInfoAsync(IBriefOnlineArtistInfo info)
+    /// <summary>
+    /// 根据简要艺术家信息获取详细艺术家信息
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
+    static async Task<IDetailedOnlineArtistInfo> SearchArtistDetailAsync(
+        IBriefOnlineArtistInfo info
+    )
     {
-        if (info is BriefCloudOnlineArtistInfo briefInfo)
+        return info switch
         {
-            return new DetailedCloudOnlineArtistInfo
-            {
-                Name = briefInfo.Name,
-                Cover = briefInfo.Cover,
-            };
-        }
-        else
+            BriefCloudOnlineArtistInfo cloudInfo =>
+                await CloudArtistDetailSearchHelper.SearchArtistDetailAsync(cloudInfo),
+            _ => await CloudArtistDetailSearchHelper.SearchArtistDetailAsync(
+                (BriefCloudOnlineArtistInfo)info
+            ),
+        };
+    }
+
+    /// <summary>
+    /// 为详细艺术家补充更多信息
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
+    static async Task SearchMoreArtistDetailAsync(IDetailedOnlineArtistInfo info)
+    {
+        var task = info switch
         {
-            return new DetailedCloudOnlineArtistInfo { Name = info.Name, Cover = info.Cover };
-        }
+            DetailedCloudOnlineArtistInfo cloudInfo =>
+                CloudArtistDetailSearchHelper.SearchMoreArtistDetailAsync(cloudInfo),
+            _ => CloudArtistDetailSearchHelper.SearchMoreArtistDetailAsync(
+                (DetailedCloudOnlineArtistInfo)info
+            ),
+        };
+        await task;
     }
 }
