@@ -98,12 +98,14 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 播放队列集合
     /// </summary>
-    public ObservableCollection<IBriefSongInfoBase> PlayQueue { get; set; } = [];
+    [ObservableProperty]
+    public partial ObservableCollection<IBriefSongInfoBase> PlayQueue { get; set; } = [];
 
     /// <summary>
     /// 随机播放队列集合
     /// </summary>
-    public ObservableCollection<IBriefSongInfoBase> ShuffledPlayQueue { get; set; } = [];
+    [ObservableProperty]
+    public partial ObservableCollection<IBriefSongInfoBase> ShuffledPlayQueue { get; set; } = [];
 
     /// <summary>
     /// 音乐播放器
@@ -1247,17 +1249,6 @@ public partial class MusicPlayer : ObservableRecipient
             ? _highlightedOpacity
             : _defaultOpacity;
     }
-
-    /// <summary>
-    /// 获取播放队列
-    /// </summary>
-    /// <param name="PlayQueueName"></param>
-    /// <param name="ShuffleMode"></param>
-    /// <returns></returns>
-    public ObservableCollection<IBriefSongInfoBase> GetPlayQueue(
-        string PlayQueueName,
-        bool ShuffleMode
-    ) => ShuffleMode ? ShuffledPlayQueue : PlayQueue;
 
     /// <summary>
     /// 保存当前播放状态至设置存储

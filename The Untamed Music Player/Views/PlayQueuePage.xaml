@@ -8,6 +8,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
       xmlns:ui="using:CommunityToolkit.WinUI"
+      Loaded="PlayQueuePage_Loaded"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -337,7 +338,6 @@
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.PlayQueueListView_ItemClick}"
                   ItemTemplate="{StaticResource PlayQueueListViewTemplate}"
-                  ItemsSource="{x:Bind model:Data.MusicPlayer.GetPlayQueue(model:Data.MusicPlayer.PlayQueueName, model:Data.MusicPlayer.ShuffleMode), Mode=OneWay}"
                   SelectionMode="None"/>
     </Grid>
 </Page>
