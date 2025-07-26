@@ -14,6 +14,10 @@ public class OnlineAlbumsViewModel
     {
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
+        if (songList.Count == 0)
+        {
+            return;
+        }
         Data.MusicPlayer.SetPlayList(
             $"OnlineSongs:Album:{info.Name}",
             songList,
@@ -27,6 +31,10 @@ public class OnlineAlbumsViewModel
     {
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
+        if (songList.Count == 0)
+        {
+            return;
+        }
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             Data.MusicPlayer.SetPlayList(

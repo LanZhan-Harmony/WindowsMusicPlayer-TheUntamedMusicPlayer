@@ -248,25 +248,29 @@ public class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
 
     public static async Task<CloudOnlineArtistAlbumInfo> CreateAsync(
         JsonElement jInfo,
-        NeteaseCloudMusicApi api
+        NeteaseCloudMusicApi api,
+        bool isDetailed = true
     )
     {
         var info = new CloudOnlineArtistAlbumInfo();
         try
         {
-            Task? coverTask = null;
-            info.CoverPath = jInfo.GetProperty("picUrl").GetString();
-            if (!string.IsNullOrEmpty(info.CoverPath))
-            {
-                coverTask = LoadCoverAsync(info);
-            }
             info.ID = jInfo.GetProperty("id").GetInt64();
-            info.Name = jInfo.GetProperty("name").GetString()!;
             var year = (ushort)
                 DateTimeOffset
                     .FromUnixTimeMilliseconds(jInfo.GetProperty("publishTime").GetInt64())
                     .Year;
-            info.YearStr = IArtistAlbumInfoBase.GetYearStr(year);
+            Task? coverTask = null;
+            if (isDetailed)
+            {
+                info.CoverPath = jInfo.GetProperty("picUrl").GetString();
+                if (!string.IsNullOrEmpty(info.CoverPath))
+                {
+                    coverTask = LoadCoverAsync(info);
+                }
+                info.Name = jInfo.GetProperty("name").GetString()!;
+                info.YearStr = IArtistAlbumInfoBase.GetYearStr(year);
+            }
             var (_, result) = await api.RequestAsync(
                 CloudMusicApiProviders.Album,
                 new Dictionary<string, string> { { "id", $"{info.ID}" } }
@@ -280,7 +284,7 @@ public class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
             {
                 return info;
             }
-            if (coverTask is not null)
+            if (isDetailed && coverTask is not null)
             {
                 await coverTask;
             }
