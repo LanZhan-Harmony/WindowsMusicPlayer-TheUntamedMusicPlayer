@@ -22,8 +22,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
     public IBriefOnlineArtistInfo BriefArtist { get; set; } = Data.SelectedOnlineArtist!;
 
     [ObservableProperty]
-    public partial IDetailedOnlineArtistInfo Artist { get; set; } =
-        IDetailedOnlineArtistInfo.CreateFastOnlineArtistInfoAsync(Data.SelectedOnlineArtist!);
+    public partial IDetailedOnlineArtistInfo Artist { get; set; } = null!;
 
     [ObservableProperty]
     public partial double ListViewOpacity { get; set; } = 0;
@@ -47,16 +46,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
         }
         try
         {
-            switch (Data.OnlineMusicLibrary.MusicLibraryIndex)
-            {
-                case 0:
-                    await CloudArtistDetailSearchHelper.SearchArtistDetailAsync(
-                        (BriefCloudOnlineArtistInfo)BriefArtist,
-                        (DetailedCloudOnlineArtistInfo)Artist
-                    );
-                    break;
-            }
-            OnPropertyChanged(nameof(Artist));
+            Artist = await IDetailedOnlineArtistInfo.SearchArtistDetailAsync(BriefArtist);
             ListViewOpacity = 1;
         }
         catch (Exception ex)
@@ -81,14 +71,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
             IsSearchMoreProgressRingActive = true;
             try
             {
-                switch (Data.OnlineMusicLibrary.MusicLibraryIndex)
-                {
-                    case 0:
-                        await CloudArtistDetailSearchHelper.SearchMoreArtistDetailAsync(
-                            (DetailedCloudOnlineArtistInfo)Artist
-                        );
-                        break;
-                }
+                await IDetailedOnlineArtistInfo.SearchMoreArtistDetailAsync(Artist);
             }
             catch (Exception ex)
             {
