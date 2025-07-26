@@ -121,7 +121,8 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 随机播放模式, true为开启, false为关闭.
     /// </summary>
-    public bool ShuffleMode { get; set; } = false;
+    [ObservableProperty]
+    public partial bool ShuffleMode { get; set; } = false;
 
     /// <summary>
     /// 播放队列名
@@ -575,6 +576,37 @@ public partial class MusicPlayer : ObservableRecipient
         }
     }
 
+    public void SetShuffledPlayList(
+        string name,
+        IEnumerable<IBriefSongInfoBase> list,
+        byte sourceMode = 0,
+        byte sortMode = 0
+    )
+    {
+        if (
+            ShuffleMode == false
+            || PlayQueue.Count != list.Count()
+            || PlayQueueName != name
+            || _sortMode != sortMode
+            || SourceMode != sourceMode
+        )
+        {
+            _sortMode = sortMode;
+            SourceMode = sourceMode;
+            ShuffleMode = true;
+            PlayQueueName = name;
+            PlayQueue = [.. list];
+            _playQueueLength = list.Count();
+
+            UpdateShufflePlayQueue();
+            for (var i = 0; i < ShuffledPlayQueue.Count; i++)
+            {
+                ShuffledPlayQueue[i].PlayQueueIndex = i;
+            }
+        }
+        FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
+    }
+
     /// <summary>
     /// 计时器更新事件
     /// </summary>
@@ -999,7 +1031,6 @@ public partial class MusicPlayer : ObservableRecipient
                         ?.PlayQueueIndex ?? 0;
             }
         }
-        OnPropertyChanged(nameof(ShuffleMode));
         FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
     }
 

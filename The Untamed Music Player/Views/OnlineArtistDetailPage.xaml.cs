@@ -308,7 +308,7 @@ public sealed partial class OnlineArtistDetailPage : Page
 
     private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is IBriefOnlineSongInfo info)
+        if (e.ClickedItem is IBriefSongInfoBase info)
         {
             ViewModel.SongListView_ItemClick(info);
         }
@@ -316,7 +316,7 @@ public sealed partial class OnlineArtistDetailPage : Page
 
     private void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.SongListViewPlayButton_Click(info);
         }
@@ -324,7 +324,7 @@ public sealed partial class OnlineArtistDetailPage : Page
 
     private void SongListViewPlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.SongListViewPlayNextButton_Click(info);
         }
@@ -332,7 +332,7 @@ public sealed partial class OnlineArtistDetailPage : Page
 
     private async void SongListViewPropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
             if (song is not null)
@@ -345,7 +345,7 @@ public sealed partial class OnlineArtistDetailPage : Page
 
     private void SongListViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
             ViewModel.SongListViewShowAlbumButton_Click(info);
         }
