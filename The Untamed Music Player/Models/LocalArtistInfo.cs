@@ -77,7 +77,7 @@ public partial class LocalArtistInfo : IArtistInfoBase
     {
         if (Cover is not null)
         {
-            var musicFile = TagLib.File.Create(CoverPath);
+            using var musicFile = TagLib.File.Create(CoverPath);
             return musicFile.Tag.Pictures[0].Data.Data;
         }
         return [];

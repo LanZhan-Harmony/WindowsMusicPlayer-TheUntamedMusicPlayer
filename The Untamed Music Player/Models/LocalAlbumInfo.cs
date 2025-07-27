@@ -100,7 +100,7 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         {
             try
             {
-                var musicFile = TagLib.File.Create(CoverPath);
+                using var musicFile = TagLib.File.Create(CoverPath);
                 return musicFile.Tag.Pictures[0].Data.Data;
             }
             catch { }
@@ -144,7 +144,8 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         }
         try
         {
-            var coverBuffer = TagLib.File.Create(CoverPath).Tag.Pictures[0].Data.Data;
+            using var musicFile = TagLib.File.Create(CoverPath);
+            var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
             var stream = new MemoryStream(coverBuffer);
             App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
             {

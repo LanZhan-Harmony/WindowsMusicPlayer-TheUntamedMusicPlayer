@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -32,12 +31,9 @@ public class BriefCloudOnlineArtistInfo : IBriefOnlineArtistInfo
             {
                 await coverTask;
             }
-            return info;
         }
-        catch
-        {
-            return info;
-        }
+        catch { }
+        return info;
     }
 
     public static async Task<BriefCloudOnlineArtistInfo> CreateFromSongInfoAsync(

@@ -167,7 +167,7 @@
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
                   ui:ListViewExtensions.AlternateColor="{ThemeResource AlternateBackgroundBrush}"
                   CanDragItems="True" IsItemClickEnabled="True"
-                  ItemClick="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongsSongListView_ItemClick}"
+                  ItemClick="{x:Bind ViewModel.OnlineSongsSongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
                   Opacity="{x:Bind model:Data.OnlineMusicLibrary.ListViewOpacity, Mode=OneWay}"

@@ -47,12 +47,9 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
             {
                 await coverTask;
             }
-            return info;
         }
-        catch
-        {
-            return info;
-        }
+        catch { }
+        return info;
     }
 
     public static async Task<BriefCloudOnlineAlbumInfo> CreateFromSongInfoAsync(

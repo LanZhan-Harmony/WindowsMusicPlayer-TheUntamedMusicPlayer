@@ -36,6 +36,11 @@
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="OnlineSongs_Download" Click="DownloadButton_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE896;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
                         <MenuFlyoutSubItem x:Uid="Songs_AddTo">
                             <MenuFlyoutSubItem.Icon>
