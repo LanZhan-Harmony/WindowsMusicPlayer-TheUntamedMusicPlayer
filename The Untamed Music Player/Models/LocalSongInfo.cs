@@ -117,7 +117,7 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
 
         try
         {
-            var musicFile = TagLib.File.Create(path);
+            using var musicFile = TagLib.File.Create(path);
             Album = musicFile.Tag.Album ?? IBriefSongInfoBase._unknownAlbum;
             Title = string.IsNullOrEmpty(musicFile.Tag.Title)
                 ? System.IO.Path.GetFileNameWithoutExtension(path)
@@ -233,13 +233,13 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
 
     public DetailedLocalSongInfo(BriefLocalSongInfo info)
     {
+        IsPlayAvailable = info.IsPlayAvailable;
+        Path = info.Path;
+        Folder = info.Folder;
+        Title = info.Title;
         try
         {
-            IsPlayAvailable = info.IsPlayAvailable;
-            Path = info.Path;
-            Folder = info.Folder;
-            Title = info.Title;
-            var musicFile = TagLib.File.Create(Path);
+            using var musicFile = TagLib.File.Create(Path);
             Album = musicFile.Tag.Album ?? "";
             Artists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
             ArtistsStr = IBriefSongInfoBase.GetArtistsStr(Artists);

@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
@@ -298,6 +299,14 @@ public sealed partial class OnlineAlbumDetailPage : Page
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
             ViewModel.PlayNextButton_Click(info);
+        }
+    }
+
+    private async void DownloadButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            await DownloadHelper.DownloadOnlineSongAsync(info);
         }
     }
 

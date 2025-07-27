@@ -2,7 +2,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
-public partial class CloudOnlineSongInfoList : IBriefOnlineSongInfoList
+public partial class CloudOnlineSongInfoList : IOnlineSongInfoList
 {
     public const byte Limit = 30;
     public ushort Page { get; set; } = 0;

@@ -27,6 +27,7 @@ public static class Data
     public static LocalArtistInfo? SelectedLocalArtist { get; set; }
     public static IBriefOnlineAlbumInfo? SelectedOnlineAlbum { get; set; }
     public static IBriefOnlineArtistInfo? SelectedOnlineArtist { get; set; }
+    public static IBriefOnlinePlaylistInfo? SelectedOnlinePlaylist { get; set; }
 
     /// <summary>
     /// 软件显示名称

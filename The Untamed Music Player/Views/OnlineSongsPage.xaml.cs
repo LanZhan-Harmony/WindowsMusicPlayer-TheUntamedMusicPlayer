@@ -1,9 +1,11 @@
+using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -62,7 +64,7 @@ public sealed partial class OnlineSongsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            Data.OnlineMusicLibrary.OnlineSongsPlayButton_Click(info);
+            ViewModel.OnlineSongsPlayButton_Click(info);
         }
     }
 
@@ -70,15 +72,15 @@ public sealed partial class OnlineSongsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            Data.OnlineMusicLibrary.OnlineSongsPlayNextButton_Click(info);
+            ViewModel.OnlineSongsPlayNextButton_Click(info);
         }
     }
 
-    private void DownloadButton_Click(object sender, RoutedEventArgs e)
+    private async void DownloadButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            Data.OnlineMusicLibrary.OnlineSongsDownloadButton_Click(info);
+            await DownloadHelper.DownloadOnlineSongAsync(info);
         }
     }
 
@@ -92,9 +94,21 @@ public sealed partial class OnlineSongsPage : Page
         }
     }
 
-    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e) { }
+    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.ShowAlbumButton_Click(info);
+        }
+    }
 
-    private void ShowArtistButton_Click(object sender, RoutedEventArgs e) { }
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.ShowArtistButton_Click(info);
+        }
+    }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
