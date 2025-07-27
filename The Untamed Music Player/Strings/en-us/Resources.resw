@@ -648,11 +648,17 @@
   <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
     <value>Downloading...</value>
   </data>
+  <data name="OnlineMusicLibrary_Processing" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
   <data name="OnlineMusicLibrary_OpenFolder" xml:space="preserve">
     <value>Open folder</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
     <value>Download completed</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadCancelled" xml:space="preserve">
+    <value>Download cancelled</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadFailed" xml:space="preserve">
     <value>Download failed</value>
@@ -665,5 +671,17 @@
   </data>
   <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
     <value>Settings (Ctrl+G)</value>
+  </data>
+  <data name="PlaylistInfo_Item" xml:space="preserve">
+    <value>item</value>
+  </data>
+  <data name="PlaylistInfo_Items" xml:space="preserve">
+    <value>items</value>
+  </data>
+  <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
+    <value>Show playlist</value>
+  </data>
+  <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
+    <value>Show playlist</value>
   </data>
 </root>
