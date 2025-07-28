@@ -123,6 +123,7 @@ public sealed partial class ShellPage : Page
             nameof(LocalArtistDetailPage) => typeof(LocalArtistDetailPage),
             nameof(OnlineAlbumDetailPage) => typeof(OnlineAlbumDetailPage),
             nameof(OnlineArtistDetailPage) => typeof(OnlineArtistDetailPage),
+            nameof(OnlinePlayListDetailPage) => typeof(OnlinePlayListDetailPage),
             _ => typeof(HomePage),
         };
         NavigationFrame.Navigate(pageToNavigate, null, infoOverride);

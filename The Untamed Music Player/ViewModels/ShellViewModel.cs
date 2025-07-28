@@ -29,16 +29,13 @@ public partial class ShellViewModel : ObservableRecipient
     public void NavigationFrame_Navigating(object sender, NavigatingCancelEventArgs e)
     {
         CurrentPage = e.SourcePageType.Name;
-        if (e.NavigationMode == NavigationMode.Back)
-        {
-            NavigatePage = "";
-        }
         var navView = Data.ShellPage!.GetNavigationView();
         if (
             CurrentPage
             is nameof(HomePage)
                 or nameof(OnlineAlbumDetailPage)
                 or nameof(OnlineArtistDetailPage)
+                or nameof(OnlinePlayListDetailPage)
         )
         {
             SelectedItem = navView.MenuItems[0];

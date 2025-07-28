@@ -22,6 +22,8 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
     [ObservableProperty]
     public partial IDetailedOnlineArtistInfo Artist { get; set; } = null!;
 
+    public bool IsPlayAllButtonEnabled => Artist is not null && Artist.AlbumList.Count > 0;
+
     [ObservableProperty]
     public partial double ListViewOpacity { get; set; } = 0;
 
@@ -54,6 +56,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
         finally
         {
             IsSearchProgressRingActive = false;
+            OnPropertyChanged(nameof(IsPlayAllButtonEnabled));
         }
     }
 
@@ -79,6 +82,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
             {
                 _isSearchingMore = false;
                 IsSearchMoreProgressRingActive = false;
+                OnPropertyChanged(nameof(IsPlayAllButtonEnabled));
             }
         }
     }

@@ -80,36 +80,70 @@ public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
     /// <param name="isAvailable"></param>
     /// <param name="year"></param>
     /// <param name="duration"></param>
-    public BriefCloudOnlineSongInfo(JsonElement jInfo, bool isAvailable, ushort year, long duration)
+    public BriefCloudOnlineSongInfo(JsonElement jInfo, ushort year)
     {
-        IsPlayAvailable = isAvailable;
-        if (!isAvailable)
+        try
         {
-            return;
+            ID = jInfo.GetProperty("id").GetInt64();
+            Title = jInfo.GetProperty("name").GetString()!;
+            var albumElement = jInfo.GetProperty("al");
+            var album = albumElement.GetProperty("name").GetString()!;
+            Album = string.IsNullOrWhiteSpace(album) ? IBriefSongInfoBase._unknownAlbum : album;
+            AlbumID = albumElement.GetProperty("id").GetInt64();
+            var artistsElement = jInfo.GetProperty("ar");
+            if (artistsElement.GetArrayLength() > 0)
+            {
+                ArtistID = artistsElement[0].GetProperty("id").GetInt64();
+            }
+            string[] artists =
+            [
+                .. artistsElement
+                    .EnumerateArray()
+                    .Select(t => t.GetProperty("name").GetString()!)
+                    .Distinct()
+                    .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
+            ];
+            ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
+            Duration = TimeSpan.FromMilliseconds(jInfo.GetProperty("dt").GetInt64());
+            DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
+            YearStr = IBriefSongInfoBase.GetYearStr(year);
+            IsPlayAvailable = true;
         }
-        ID = jInfo.GetProperty("id").GetInt64();
-        Title = jInfo.GetProperty("name").GetString()!;
-        var albumElement = jInfo.GetProperty("al");
-        var album = albumElement.GetProperty("name").GetString()!;
-        Album = string.IsNullOrWhiteSpace(album) ? IBriefSongInfoBase._unknownAlbum : album;
-        AlbumID = albumElement.GetProperty("id").GetInt64();
-        var artistsElement = jInfo.GetProperty("ar");
-        if (artistsElement.GetArrayLength() > 0)
+        catch
         {
-            ArtistID = artistsElement[0].GetProperty("id").GetInt64();
+            IsPlayAvailable = false;
         }
-        string[] artists =
-        [
-            .. artistsElement
-                .EnumerateArray()
-                .Select(t => t.GetProperty("name").GetString()!)
-                .Distinct()
-                .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
-        ];
-        ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
-        YearStr = IBriefSongInfoBase.GetYearStr(year);
-        Duration = TimeSpan.FromMilliseconds(duration);
-        DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
+    }
+
+    public BriefCloudOnlineSongInfo(JsonNode jInfo)
+    {
+        try
+        {
+            ID = (long)jInfo["id"]!;
+            Title = (string)jInfo["name"]!;
+            Album = (string)jInfo["al"]!["name"]!;
+            AlbumID = (long)jInfo["al"]!["id"]!;
+            ArtistID = (long)jInfo["ar"]![0]!["id"]!;
+            ArtistsStr = IBriefSongInfoBase.GetArtistsStr(
+                [
+                    .. jInfo["ar"]!
+                        .AsArray()
+                        .Select(t => (string)t!["name"]!)
+                        .Distinct()
+                        .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
+                ]
+            );
+            Duration = TimeSpan.FromMilliseconds((long)jInfo["dt"]!);
+            DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
+            YearStr = IBriefSongInfoBase.GetYearStr(
+                (ushort)DateTimeOffset.FromUnixTimeMilliseconds((long)jInfo["publishTime"]!).Year
+            );
+            IsPlayAvailable = true;
+        }
+        catch
+        {
+            IsPlayAvailable = false;
+        }
     }
 
     public object Clone()
