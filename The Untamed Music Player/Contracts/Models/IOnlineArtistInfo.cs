@@ -92,11 +92,11 @@ public interface IDetailedOnlineArtistInfo : IBriefOnlineArtistInfo
     static string GetCountStr(int totalAlbumNum, int totalSongNum)
     {
         var albumStr =
-            totalAlbumNum > 1
-                ? "ArtistInfo_Albums".GetLocalized()
-                : "ArtistInfo_Album".GetLocalized();
+            totalAlbumNum == 1
+                ? "ArtistInfo_Album".GetLocalized()
+                : "ArtistInfo_Albums".GetLocalized();
         var songStr =
-            totalSongNum > 1 ? "AlbumInfo_Songs".GetLocalized() : "AlbumInfo_Song".GetLocalized();
+            totalSongNum == 1 ? "AlbumInfo_Song".GetLocalized() : "AlbumInfo_Songs".GetLocalized();
         return $"{totalAlbumNum} {albumStr} • {totalSongNum} {songStr}";
     }
 

@@ -84,9 +84,9 @@ public interface IDetailedOnlineAlbumInfo : IBriefOnlineAlbumInfo
             parts.Add($"{year}");
         }
         parts.Add(
-            totalNum > 1
-                ? $"{totalNum} {"AlbumInfo_Songs".GetLocalized()}"
-                : $"{totalNum} {"AlbumInfo_Song".GetLocalized()}"
+            totalNum == 1
+                ? $"{totalNum} {"AlbumInfo_Song".GetLocalized()}"
+                : $"{totalNum} {"AlbumInfo_Songs".GetLocalized()}"
         );
         parts.Add(
             totalDuration.Hours > 0
