@@ -84,7 +84,26 @@ public sealed partial class OnlinePlayListsPage : Page
         }
     }
 
-    private void PlaylistGridView_ItemClick(object sender, ItemClickEventArgs e) { }
+    private void PlaylistGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is IBriefOnlinePlaylistInfo info)
+        {
+            var grid = (Grid)
+                (
+                    (ContentControl)PlaylistGridView.ContainerFromItem(e.ClickedItem)
+                ).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedOnlinePlaylist = info;
+            Data.ShellPage!.Navigate(
+                nameof(OnlinePlayListDetailPage),
+                "",
+                new SuppressNavigationTransitionInfo()
+            );
+        }
+    }
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
@@ -102,7 +121,24 @@ public sealed partial class OnlinePlayListsPage : Page
         }
     }
 
-    private void ShowPlaylistButton_Click(object sender, RoutedEventArgs e) { }
+    private void ShowPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlinePlaylistInfo info })
+        {
+            var grid = (Grid)
+                ((ContentControl)PlaylistGridView.ContainerFromItem(info)).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedOnlinePlaylist = info;
+            Data.ShellPage!.Navigate(
+                nameof(OnlinePlayListDetailPage),
+                "",
+                new SuppressNavigationTransitionInfo()
+            );
+        }
+    }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
