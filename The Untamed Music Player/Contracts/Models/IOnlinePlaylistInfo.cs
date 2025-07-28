@@ -27,7 +27,7 @@ public interface IBriefOnlinePlaylistInfo
 
     static string GetTotalSongNumStr(int totalSongNum)
     {
-        return totalSongNum > 1
+        return totalSongNum == 1
             ? $"{totalSongNum} {"PlaylistInfo_Item".GetLocalized()}"
             : $"{totalSongNum} {"PlaylistInfo_Items".GetLocalized()}";
     }
