@@ -198,29 +198,21 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
         var data = checkResult["data"]!;
 
         // 合并可用性和时长映射，减少一次遍历
-        var songMetaMap = data.AsArray()
-            .ToDictionary(
-                item => item!["id"]!.GetValue<long>(),
-                item =>
-                    (available: item!["url"] is not null, duration: item!["time"]!.GetValue<long>())
-            );
+        var availabilityMap = data.AsArray()
+            .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item!["url"] is not null);
 
         for (var i = 0; i < actualCount; i++)
         {
             var songId = songIds[i];
-            if (!songMetaMap.TryGetValue(songId, out var meta) || !meta.available)
+            var available = availabilityMap.GetValueOrDefault(songId, false);
+            if (!available)
             {
                 continue;
             }
 
             try
             {
-                var songInfo = new BriefCloudOnlineSongInfo(
-                    songsElement[i],
-                    meta.available,
-                    info.Year,
-                    meta.duration
-                );
+                var songInfo = new BriefCloudOnlineSongInfo(songsElement[i], info.Year);
                 info.SongList.Add(songInfo);
                 info.TotalNum++;
                 info.TotalDuration += songInfo.Duration;
@@ -318,29 +310,21 @@ public class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
         );
         var data = checkResult["data"]!;
 
-        var songMetaMap = data.AsArray()
-            .ToDictionary(
-                item => item!["id"]!.GetValue<long>(),
-                item =>
-                    (available: item!["url"] is not null, duration: item!["time"]!.GetValue<long>())
-            );
+        var availabilityMap = data.AsArray()
+            .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item!["url"] is not null);
 
         for (var i = 0; i < actualCount; i++)
         {
             var songId = songIds[i];
-            if (!songMetaMap.TryGetValue(songId, out var meta) || !meta.available)
+            var available = availabilityMap.GetValueOrDefault(songId, false);
+            if (!available)
             {
                 continue;
             }
 
             try
             {
-                var songInfo = new BriefCloudOnlineSongInfo(
-                    songsElement[i],
-                    meta.available,
-                    year,
-                    meta.duration
-                );
+                var songInfo = new BriefCloudOnlineSongInfo(songsElement[i], year);
                 info.SongList.Add(songInfo);
             }
             catch (Exception ex)

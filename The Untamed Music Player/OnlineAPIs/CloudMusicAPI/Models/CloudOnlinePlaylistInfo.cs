@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -102,6 +103,60 @@ public class DetailedCloudOnlinePlaylistInfo
                 CloudMusicApiProviders.PlaylistDetail,
                 new Dictionary<string, string> { { "id", $"{briefInfo.ID}" } }
             );
+            using var document = JsonDocument.Parse(result.ToJsonString());
+            var root = document.RootElement;
+            var playlistElement = root.GetProperty("playlist");
+            info.Introduction = playlistElement.GetProperty("description").GetString();
+            var tracksElement = playlistElement.GetProperty("trackIds");
+            var actualCount = tracksElement.GetArrayLength();
+            if (actualCount == 0)
+            {
+                return info;
+            }
+            var trackIds = tracksElement
+                .EnumerateArray()
+                .Select(t => t.GetProperty("id").GetInt64())
+                .ToArray();
+
+            var (_, checkResult) = await api.RequestAsync(
+                CloudMusicApiProviders.SongUrl,
+                new Dictionary<string, string> { { "id", string.Join(',', trackIds) } }
+            );
+            var (_, detailsResult) = await api.RequestAsync(
+                CloudMusicApiProviders.SongDetail,
+                new Dictionary<string, string> { { "ids", string.Join(',', trackIds) } }
+            );
+            var data = checkResult["data"]!;
+            var availabilityMap = data.AsArray()
+                .ToDictionary(
+                    item => item!["id"]!.GetValue<long>(),
+                    item => item!["url"] is not null
+                );
+            var detailsMap = detailsResult["songs"]!
+                .AsArray()
+                .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item);
+
+            for (var i = 0; i < actualCount; i++)
+            {
+                var songId = trackIds[i];
+                var available = availabilityMap.GetValueOrDefault(songId, false);
+                if (!available)
+                {
+                    continue;
+                }
+
+                var trackElement = detailsMap.GetValueOrDefault(songId)!;
+
+                try
+                {
+                    var songInfo = new BriefCloudOnlineSongInfo(trackElement);
+                    info.SongList.Add(songInfo);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.StackTrace);
+                }
+            }
         }
         catch { }
         return info;

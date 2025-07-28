@@ -159,8 +159,7 @@ public class CloudSongSearchHelper
                     return null;
                 }
             })
-            .Where(info => info is not null)
-            .ToArray();
+            .Where(info => info is not null);
 
         foreach (var info in infos)
         {

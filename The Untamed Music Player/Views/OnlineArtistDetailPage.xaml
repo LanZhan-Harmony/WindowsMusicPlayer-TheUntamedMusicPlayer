@@ -569,9 +569,10 @@
                         <StackPanel x:Name="ButtonStackPanel"
                                     Padding="0" HorizontalAlignment="Left"
                                     Orientation="Horizontal" Spacing="16">
-                            <Button x:Name="PlayButton"
+                            <Button x:Name="PlayAllButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     Click="{x:Bind ViewModel.PlayAllButton_Click}"
+                                    IsEnabled="{x:Bind ViewModel.IsPlayAllButtonEnabled, Mode=OneWay}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -581,6 +582,7 @@
                             </Button>
                             <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     Click="{x:Bind ViewModel.ShuffledPlayAllButton_Click}"
+                                    IsEnabled="{x:Bind ViewModel.IsPlayAllButtonEnabled, Mode=OneWay}"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
@@ -682,7 +684,7 @@
                               ItemsSource="{x:Bind ViewModel.Artist.AlbumList, Mode=OneWay}"
                               Opacity="{x:Bind ViewModel.ListViewOpacity, Mode=OneWay}"
                               SelectionMode="None"
-                              XYFocusUp="{x:Bind PlayButton}">
+                              XYFocusUp="{x:Bind PlayAllButton}">
                         <ListView.Header>
                             <Border x:Name="AlbumListHeaderPadding"/>
                         </ListView.Header>
