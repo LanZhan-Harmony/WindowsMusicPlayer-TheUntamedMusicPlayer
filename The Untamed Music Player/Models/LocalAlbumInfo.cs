@@ -124,9 +124,9 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
             parts.Add(GenreStr);
         }
         parts.Add(
-            TotalNum > 1
-                ? $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
-                : $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}"
+            TotalNum == 1
+                ? $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}"
+                : $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
         );
         parts.Add(
             TotalDuration.Hours > 0
