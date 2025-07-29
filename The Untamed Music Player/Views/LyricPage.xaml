@@ -30,7 +30,7 @@
                             </VisualState>
                             <VisualState x:Name="Normal">
                                 <VisualState.StateTriggers>
-                                    <AdaptiveTrigger MinWindowWidth="980"/>
+                                    <AdaptiveTrigger MinWindowWidth="820"/>
                                 </VisualState.StateTriggers>
                                 <VisualState.Setters>
                                     <Setter Target="LyricTextBlock.TextAlignment" Value="Left"/>
@@ -79,25 +79,7 @@
                 </VisualState>
                 <VisualState x:Name="Normal">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="780"/>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ReferenceGrid.(Grid.RowSpan)" Value="2"/>
-                        <Setter Target="ReferenceGrid.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="CoverBorder.(Grid.RowSpan)" Value="2"/>
-                        <Setter Target="CoverBorder.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="ControllerCoverFontIcon.FontSize" Value="100"/>
-                        <Setter Target="DropShadow.Offset" Value="20,20"/>
-                        <Setter Target="LyricViewer.(Grid.Row)" Value="0"/>
-                        <Setter Target="LyricViewer.(Grid.RowSpan)" Value="2"/>
-                        <Setter Target="LyricViewer.(Grid.Column)" Value="1"/>
-                        <Setter Target="LyricViewer.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="LyricViewer.Margin" Value="20,20,50,20"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="Wide">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1400"/>
+                        <AdaptiveTrigger MinWindowWidth="820"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="ReferenceGrid.(Grid.RowSpan)" Value="2"/>
