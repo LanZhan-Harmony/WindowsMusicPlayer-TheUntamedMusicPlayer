@@ -53,8 +53,9 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         base.OnNavigatedTo(e);
         if (
-            Data.ShellViewModel!.NavigatePage == nameof(OnlineAlbumsPage)
-            || Data.ShellViewModel.NavigatePage == nameof(OnlineArtistDetailPage)
+            Data.ShellViewModel!.NavigatePage
+            is nameof(OnlineAlbumsPage)
+                or nameof(OnlineArtistDetailPage)
         )
         {
             var animation = ConnectedAnimationService

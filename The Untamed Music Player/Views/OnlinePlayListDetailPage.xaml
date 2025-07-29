@@ -273,7 +273,7 @@
                     <TextBlock x:Name="IntroductionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               MaxLines="2"
+                               MaxLines="1"
                                Text="{x:Bind ViewModel.Playlist.Introduction, Mode=OneWay}"
                                TextTrimming="WordEllipsis"
                                TextWrapping="WrapWholeWords"
