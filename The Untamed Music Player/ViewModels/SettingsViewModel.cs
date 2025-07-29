@@ -95,12 +95,24 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 选中的字体
     /// </summary>
     [ObservableProperty]
-    public partial FontFamily SelectedFont { get; set; } = Data.SelectedFont;
+    public partial FontFamily SelectedFontFamily { get; set; } = Data.SelectedFontFamily;
 
-    partial void OnSelectedFontChanged(FontFamily value)
+    partial void OnSelectedFontFamilyChanged(FontFamily value)
     {
-        Data.SelectedFont = value;
-        SaveSelectedFontAsync(value.Source);
+        Data.SelectedFontFamily = value;
+        SaveSelectedFontFamilyAsync(value.Source);
+    }
+
+    /// <summary>
+    /// 选中的字号
+    /// </summary>
+    [ObservableProperty]
+    public partial double SelectedFontSize { get; set; } = Data.SelectedFontSize;
+
+    partial void OnSelectedFontSizeChanged(double value)
+    {
+        Data.SelectedFontSize = value;
+        SaveSelectedFontSizeAsync(value);
     }
 
     /// <summary>
@@ -262,7 +274,7 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontInfo selectedFont)
         {
-            SelectedFont = new FontFamily(selectedFont.Name);
+            SelectedFontFamily = new FontFamily(selectedFont.Name);
         }
     }
 
@@ -298,7 +310,7 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         if (sender is ComboBox comboBox)
         {
-            var selectedFontName = SelectedFont.Source;
+            var selectedFontName = SelectedFontFamily.Source;
             var index = Fonts.FindIndex(f => f.Name == selectedFontName);
             if (index >= 0)
             {
@@ -362,9 +374,14 @@ public partial class SettingsViewModel : ObservableRecipient
         await _localSettingsService.SaveSettingAsync("SongDownloadLocation", songDownloadLocation);
     }
 
-    private async void SaveSelectedFontAsync(string fontName)
+    private async void SaveSelectedFontFamilyAsync(string fontName)
     {
-        await _localSettingsService.SaveSettingAsync("SelectedFont", fontName);
+        await _localSettingsService.SaveSettingAsync("SelectedFontFamily", fontName);
+    }
+
+    private async void SaveSelectedFontSizeAsync(double fontSize)
+    {
+        await _localSettingsService.SaveSettingAsync("SelectedFontSize", fontSize);
     }
 
     private async void SaveSelectedMaterialAsync(byte material)

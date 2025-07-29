@@ -104,6 +104,78 @@ public static class CurrentSongHighlightExtensions
         UpdateAllVisibleItems(listView);
     }
 
+    /// <summary>
+    /// 手动重新激活指定页面中的 ListView 的高亮功能
+    /// </summary>
+    /// <param name="page">需要重新激活的页面</param>
+    public static void ReactivateHighlightForPage(Page? page)
+    {
+        if (page is null)
+        {
+            return;
+        }
+
+        // 查找页面中所有具有高亮属性的 ListView
+        var listViews = FindAllListViewsWithHighlight(page);
+
+        foreach (var listView in listViews)
+        {
+            // 如果 ListView 有高亮属性但未注册，则重新注册
+            if (
+                GetPlayingBrush(listView) is not null
+                && GetNotPlayingBrush(listView) is not null
+                && !_registeredListViews.ContainsKey(listView)
+            )
+            {
+                RegisterListView(listView);
+            }
+            else if (_registeredListViews.ContainsKey(listView))
+            {
+                // 如果已经注册，立即更新显示
+                UpdateAllVisibleItems(listView);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 递归查找页面中所有具有高亮属性的 ListView
+    /// </summary>
+    /// <param name="parent">父级容器</param>
+    /// <returns>具有高亮属性的 ListView 列表</returns>
+    private static List<ListViewBase> FindAllListViewsWithHighlight(DependencyObject? parent)
+    {
+        var result = new List<ListViewBase>();
+
+        if (parent is null)
+        {
+            return result;
+        }
+
+        var childCount = VisualTreeHelper.GetChildrenCount(parent);
+
+        for (var i = 0; i < childCount; i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+
+            if (child is ListViewBase listView)
+            {
+                // 检查是否设置了高亮属性
+                if (
+                    GetPlayingBrush(listView) is not null
+                    || GetNotPlayingBrush(listView) is not null
+                )
+                {
+                    result.Add(listView);
+                }
+            }
+
+            // 递归查找子元素
+            result.AddRange(FindAllListViewsWithHighlight(child));
+        }
+
+        return result;
+    }
+
     private static void UnregisterListView(ListViewBase listView)
     {
         if (!_registeredListViews.ContainsKey(listView))

@@ -29,7 +29,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private readonly TextBlock _measureTextBlock = new()
     {
         FontSize = 32,
-        FontFamily = Data.SelectedFont,
+        FontFamily = Data.SelectedFontFamily,
     };
 
     public DesktopLyricViewModel ViewModel { get; }
@@ -223,7 +223,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         {
             Text = "TEST测试",
             FontSize = 32,
-            FontFamily = Data.SelectedFont,
+            FontFamily = Data.SelectedFontFamily,
         };
         textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         (sender as MarqueeText)!.Height = textBlock.DesiredSize.Height;

@@ -99,7 +99,7 @@ public sealed partial class OnlinePlayListsPage : Page
             Data.SelectedOnlinePlaylist = info;
             Data.ShellPage!.Navigate(
                 nameof(OnlinePlayListDetailPage),
-                "",
+                nameof(OnlinePlayListsPage),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -134,7 +134,7 @@ public sealed partial class OnlinePlayListsPage : Page
             Data.SelectedOnlinePlaylist = info;
             Data.ShellPage!.Navigate(
                 nameof(OnlinePlayListDetailPage),
-                "",
+                nameof(OnlinePlayListsPage),
                 new SuppressNavigationTransitionInfo()
             );
         }

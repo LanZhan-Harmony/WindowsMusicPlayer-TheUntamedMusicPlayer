@@ -33,7 +33,7 @@ public sealed partial class OnlinePlayListDetailPage : Page
     private float CoverScaleFactor => GetValue(0.632479f, 0.528571f, 0.488888f);
 
     // 按钮面板在滚动时的偏移量
-    private int ButtonPanelOffset => GetValue(50, 75, 85);
+    private int ButtonPanelOffset => GetValue(32, 56, 67);
 
     // 背景的高度
     private float BackgroundVisualHeight => (float)(Header.ActualHeight * 2.5);
@@ -51,18 +51,27 @@ public sealed partial class OnlinePlayListDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        var animation = ConnectedAnimationService
-            .GetForCurrentView()
-            .GetAnimation("ForwardConnectedAnimation");
-        animation?.TryStart(CoverArt);
+        if (Data.ShellViewModel!.NavigatePage == nameof(OnlinePlayListsPage))
+        {
+            var animation = ConnectedAnimationService
+                .GetForCurrentView()
+                .GetAnimation("ForwardConnectedAnimation");
+            animation?.TryStart(CoverArt);
+        }
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        ConnectedAnimationService
-            .GetForCurrentView()
-            .PrepareToAnimate("BackConnectedAnimation", CoverArt);
+        if (
+            e.NavigationMode == NavigationMode.Back
+            && Data.ShellViewModel!.NavigatePage == nameof(OnlinePlayListsPage)
+        )
+        {
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("BackConnectedAnimation", CoverArt);
+        }
     }
 
     private async void OnlinePlaylistDetailPage_OnLoaded(object sender, RoutedEventArgs e)

@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Helpers;
@@ -179,11 +180,6 @@ public sealed partial class RootPlayBarView : UserControl
         return isFullscreen ? "\uE73F" : "\uE740";
     }
 
-    public Slider GetProgressSlider()
-    {
-        return ProgressSlider;
-    }
-
     private void SpeedListView_Loaded(object sender, RoutedEventArgs e)
     {
         Data.MusicPlayer.SpeedListView_Loaded(sender, e);
@@ -198,5 +194,24 @@ public sealed partial class RootPlayBarView : UserControl
     {
         var dialog = new PropertiesDialog(Data.MusicPlayer.CurrentSong!) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
+    }
+
+    private void RootPlayBarView_Loaded(object sender, RoutedEventArgs e)
+    {
+        ProgressSlider.AddHandler(
+            PointerPressedEvent,
+            new PointerEventHandler(Data.MusicPlayer.ProgressLock),
+            true
+        );
+        ProgressSlider.AddHandler(
+            PointerMovedEvent,
+            new PointerEventHandler(Data.MusicPlayer.SliderUpdate),
+            true
+        );
+        ProgressSlider.AddHandler(
+            PointerReleasedEvent,
+            new PointerEventHandler(Data.MusicPlayer.ProgressUpdate),
+            true
+        );
     }
 }
