@@ -342,11 +342,17 @@ public partial class MainViewModel : ObservableRecipient
     /// <returns></returns>
     private async Task LoadSettingsAsync()
     {
-        var fontName = await _localSettingsService.ReadSettingAsync<string>("SelectedFont");
+        var fontName = await _localSettingsService.ReadSettingAsync<string>("SelectedFontFamily");
+        var fontSize = await _localSettingsService.ReadSettingAsync<double>("SelectedFontSize");
         if (!string.IsNullOrEmpty(fontName))
         {
-            Data.SelectedFont = new FontFamily(fontName);
+            Data.SelectedFontFamily = new FontFamily(fontName);
         }
+        if (fontSize != 0.0)
+        {
+            Data.SelectedFontSize = fontSize;
+        }
+
         Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
         if (Data.NotFirstUsed)
         {

@@ -1248,8 +1248,8 @@ public partial class MusicPlayer : ObservableRecipient
     /// <returns></returns>
     public double GetLyricFont(double itemTime, int currentLyricIndex, double mainWindowWidth)
     {
-        var defaultFontSize = mainWindowWidth <= 1000 ? 16.0 : 20.0;
-        var highlightedFontSize = mainWindowWidth <= 1000 ? 24.0 : 50.0;
+        var defaultFontSize = 20.0;
+        var highlightedFontSize = 50.0;
         return itemTime == CurrentLyric[currentLyricIndex].Time
             ? highlightedFontSize
             : defaultFontSize;
