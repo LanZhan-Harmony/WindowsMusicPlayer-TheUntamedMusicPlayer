@@ -58,7 +58,12 @@ public static class Data
     /// <summary>
     /// 歌词字体
     /// </summary>
-    public static FontFamily SelectedFont { get; set; } = new("Microsoft YaHei");
+    public static FontFamily SelectedFontFamily { get; set; } = new("Microsoft YaHei");
+
+    /// <summary>
+    /// 歌词字号
+    /// </summary>
+    public static double SelectedFontSize { get; set; } = 50;
 
     /// <summary>
     /// 是否显示歌词背景
