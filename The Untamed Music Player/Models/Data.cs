@@ -63,7 +63,7 @@ public static class Data
     /// <summary>
     /// 歌词字号
     /// </summary>
-    public static double SelectedFontSize { get; set; } = 50;
+    public static double SelectedFontSize { get; set; } = 50.0;
 
     /// <summary>
     /// 是否显示歌词背景
