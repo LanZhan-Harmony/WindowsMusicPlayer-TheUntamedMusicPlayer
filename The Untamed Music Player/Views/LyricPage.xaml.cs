@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -94,31 +95,9 @@ public sealed partial class LyricPage : Page, IDisposable
                 null,
                 targetPosition.Y - LyricViewer.ActualHeight / 2 + 40,
                 null,
-                disableAnimation: false
+                false
             );
         }
-    }
-
-    private void LyricPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        var currentIndex = Data.MusicPlayer.CurrentLyricIndex;
-        var textblock = LyricView.ContainerFromIndex(currentIndex).FindDescendant<TextBlock>();
-        if (textblock is null)
-        {
-            return;
-        }
-        var currentScrollPosition = LyricViewer.VerticalOffset;
-        var point = new Point(0, currentScrollPosition);
-
-        // 计算出目标位置并滚动
-        var targetPosition = textblock.TransformToVisual(LyricViewer).TransformPoint(point);
-
-        LyricViewer.ChangeView(
-            null,
-            targetPosition.Y - LyricViewer.ActualHeight / 2 + 40,
-            null,
-            disableAnimation: false
-        );
     }
 
     public void Dispose()
