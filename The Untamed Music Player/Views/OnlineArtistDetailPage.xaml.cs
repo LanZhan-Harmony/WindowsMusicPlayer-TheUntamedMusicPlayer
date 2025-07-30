@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Threading.Tasks;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
 using Microsoft.UI.Composition;

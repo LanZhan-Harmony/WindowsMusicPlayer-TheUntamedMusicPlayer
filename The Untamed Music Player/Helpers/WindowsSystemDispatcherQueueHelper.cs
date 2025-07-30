@@ -37,7 +37,7 @@ public class WindowsSystemDispatcherQueueHelper
 
             if (m_dispatcherQueueController is not null)
             {
-                _ = CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
+                _ = CreateDispatcherQueueController(options, ref m_dispatcherQueueController); // AOT危险
             }
         }
     }

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -121,15 +122,11 @@ public static class CurrentSongHighlightExtensions
         foreach (var listView in listViews)
         {
             // 如果 ListView 有高亮属性但未注册，则重新注册
-            if (
-                GetPlayingBrush(listView) is not null
-                && GetNotPlayingBrush(listView) is not null
-                && !_registeredListViews.ContainsKey(listView)
-            )
+            if (!_registeredListViews.ContainsKey(listView))
             {
                 RegisterListView(listView);
             }
-            else if (_registeredListViews.ContainsKey(listView))
+            else
             {
                 // 如果已经注册，立即更新显示
                 UpdateAllVisibleItems(listView);
@@ -142,38 +139,19 @@ public static class CurrentSongHighlightExtensions
     /// </summary>
     /// <param name="parent">父级容器</param>
     /// <returns>具有高亮属性的 ListView 列表</returns>
-    private static List<ListViewBase> FindAllListViewsWithHighlight(DependencyObject? parent)
+    private static IEnumerable<ListViewBase> FindAllListViewsWithHighlight(DependencyObject? parent)
     {
-        var result = new List<ListViewBase>();
-
         if (parent is null)
         {
-            return result;
+            return [];
         }
 
-        var childCount = VisualTreeHelper.GetChildrenCount(parent);
-
-        for (var i = 0; i < childCount; i++)
-        {
-            var child = VisualTreeHelper.GetChild(parent, i);
-
-            if (child is ListViewBase listView)
-            {
-                // 检查是否设置了高亮属性
-                if (
-                    GetPlayingBrush(listView) is not null
-                    || GetNotPlayingBrush(listView) is not null
-                )
-                {
-                    result.Add(listView);
-                }
-            }
-
-            // 递归查找子元素
-            result.AddRange(FindAllListViewsWithHighlight(child));
-        }
-
-        return result;
+        return parent
+            .FindDescendants()
+            .OfType<ListViewBase>()
+            .Where(listView =>
+                GetPlayingBrush(listView) is not null && GetNotPlayingBrush(listView) is not null
+            );
     }
 
     private static void UnregisterListView(ListViewBase listView)
