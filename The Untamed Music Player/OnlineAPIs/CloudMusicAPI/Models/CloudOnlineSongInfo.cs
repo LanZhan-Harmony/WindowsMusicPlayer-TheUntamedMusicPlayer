@@ -260,7 +260,7 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
             {
                 try
                 {
-                    var bitmap = new BitmapImage { DecodePixelWidth = 1600 };
+                    var bitmap = new BitmapImage();
                     await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
                     info.Cover = bitmap;
                     tcs.SetResult(true);

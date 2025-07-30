@@ -625,38 +625,32 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     return;
                 }
-                App.MainWindow?.DispatcherQueue.TryEnqueue(
-                    DispatcherQueuePriority.Low,
-                    () =>
+                App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
+                {
+                    CurrentPlayingTime = Player.PlaybackSession.Position;
+                    TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
+                    if (TotalPlayingTime.TotalMilliseconds > 0)
                     {
-                        CurrentPlayingTime = Player.PlaybackSession.Position;
-                        TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
-                        if (TotalPlayingTime.TotalMilliseconds > 0)
-                        {
-                            CurrentPosition =
-                                100
-                                * (
-                                    CurrentPlayingTime.TotalMilliseconds
-                                    / TotalPlayingTime.TotalMilliseconds
-                                );
-                        }
+                        CurrentPosition =
+                            100
+                            * (
+                                CurrentPlayingTime.TotalMilliseconds
+                                / TotalPlayingTime.TotalMilliseconds
+                            );
                     }
-                );
+                });
 
                 var dispatcherQueue =
                     Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
                 if (CurrentLyric.Count > 0)
                 {
-                    dispatcherQueue?.TryEnqueue(
-                        DispatcherQueuePriority.Low,
-                        () =>
-                        {
-                            CurrentLyricIndex = GetCurrentLyricIndex(
-                                Player.PlaybackSession.Position.TotalMilliseconds
-                            );
-                            CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
-                        }
-                    );
+                    dispatcherQueue?.TryEnqueue(() =>
+                    {
+                        CurrentLyricIndex = GetCurrentLyricIndex(
+                            Player.PlaybackSession.Position.TotalMilliseconds
+                        );
+                        CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
+                    });
                 }
                 else
                 {
@@ -1246,10 +1240,10 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="itemTime"></param>
     /// <param name="currentLyricIndex"></param>
     /// <returns></returns>
-    public double GetLyricFont(double itemTime, int currentLyricIndex, double mainWindowWidth)
+    public double GetLyricFont(double itemTime, int currentLyricIndex)
     {
-        var defaultFontSize = 20.0;
-        var highlightedFontSize = 50.0;
+        var defaultFontSize = Data.SelectedFontSize * 0.4;
+        var highlightedFontSize = Data.SelectedFontSize;
         return itemTime == CurrentLyric[currentLyricIndex].Time
             ? highlightedFontSize
             : defaultFontSize;
