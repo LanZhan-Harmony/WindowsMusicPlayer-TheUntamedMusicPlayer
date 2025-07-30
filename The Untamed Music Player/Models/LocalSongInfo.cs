@@ -269,7 +269,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
                 var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
                 CoverBuffer = coverBuffer;
                 using var stream = new MemoryStream(coverBuffer);
-                Cover = new BitmapImage { DecodePixelWidth = 1600 };
+                Cover = new BitmapImage();
                 Cover.SetSource(stream.AsRandomAccessStream());
             }
         }
