@@ -71,6 +71,7 @@ public class CloudSongSearchHelper
         finally
         {
             _searchSemaphore.Release();
+            GC.Collect();
         }
     }
 
@@ -113,6 +114,7 @@ public class CloudSongSearchHelper
         finally
         {
             _searchSemaphore.Release();
+            GC.Collect();
         }
     }
 

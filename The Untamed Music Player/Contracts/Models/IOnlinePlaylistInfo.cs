@@ -12,20 +12,6 @@ public interface IBriefOnlinePlaylistInfo
     BitmapImage? Cover { get; set; }
     string? CoverPath { get; set; }
 
-    static async Task<byte[]> GetCoverBytes(IBriefOnlinePlaylistInfo info)
-    {
-        if (info.Cover is not null)
-        {
-            try
-            {
-                using var httpClient = new HttpClient();
-                return await httpClient.GetByteArrayAsync(info.CoverPath);
-            }
-            catch { }
-        }
-        return [];
-    }
-
     static string GetTotalSongNumStr(int totalSongNum)
     {
         return totalSongNum == 1
