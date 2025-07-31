@@ -318,9 +318,7 @@ public partial class MainViewModel : ObservableRecipient
     {
         Data.MusicPlayer.Stop();
         Data.MusicPlayer.PositionUpdateTimer250ms?.Cancel();
-        Data.MusicPlayer.PositionUpdateTimer2000ms?.Cancel();
         Data.MusicPlayer.PositionUpdateTimer250ms = null;
-        Data.MusicPlayer.PositionUpdateTimer2000ms = null;
         _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
@@ -352,7 +350,9 @@ public partial class MainViewModel : ObservableRecipient
         {
             Data.SelectedFontSize = fontSize;
         }
-
+        Data.IsLyricBackgroundVisible = await _localSettingsService.ReadSettingAsync<bool>(
+            "IsLyricBackgroundVisible"
+        );
         Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
         if (Data.NotFirstUsed)
         {
@@ -367,9 +367,6 @@ public partial class MainViewModel : ObservableRecipient
                 "LuminosityOpacity"
             );
             TintColor = await _localSettingsService.ReadSettingAsync<Color>("TintColor");
-            Data.IsLyricBackgroundVisible = await _localSettingsService.ReadSettingAsync<bool>(
-                "IsLyricBackgroundVisible"
-            );
         }
         else
         {
