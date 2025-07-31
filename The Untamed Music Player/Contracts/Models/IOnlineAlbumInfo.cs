@@ -9,20 +9,6 @@ public interface IBriefOnlineAlbumInfo : IAlbumInfoBase
     static readonly string _unknownArtist = "SongInfo_UnknownArtist".GetLocalized();
     long ID { get; set; }
 
-    static async Task<byte[]> GetCoverBytes(IBriefOnlineAlbumInfo info)
-    {
-        if (info.Cover is not null)
-        {
-            try
-            {
-                using var httpClient = new HttpClient();
-                return await httpClient.GetByteArrayAsync(info.CoverPath);
-            }
-            catch { }
-        }
-        return [];
-    }
-
     /// <summary>
     /// 根据歌曲信息获取简要专辑信息
     /// </summary>
