@@ -138,14 +138,14 @@ public partial class MusicLibrary : ObservableRecipient
                     }
                 }
                 await Task.WhenAll(loadMusicTasks);
-                foreach (var album in Albums.Values)
-                {
-                    album.LoadCover();
-                }
                 await EnqueueAndWaitAsync(() =>
                 {
                     OnPropertyChanged(nameof(HasMusics));
                 });
+                foreach (var album in Albums.Values)
+                {
+                    album.LoadCover();
+                }
                 Genres =
                 [
                     .. _musicGenres
@@ -193,14 +193,14 @@ public partial class MusicLibrary : ObservableRecipient
                 }
             }
             await Task.WhenAll(loadMusicTasks);
-            foreach (var album in Albums.Values)
-            {
-                album.LoadCover();
-            }
             await EnqueueAndWaitAsync(() =>
             {
                 OnPropertyChanged(nameof(HasMusics));
             });
+            foreach (var album in Albums.Values)
+            {
+                album.LoadCover();
+            }
             Genres =
             [
                 .. _musicGenres

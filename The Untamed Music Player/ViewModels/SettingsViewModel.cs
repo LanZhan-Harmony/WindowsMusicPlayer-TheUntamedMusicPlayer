@@ -57,15 +57,15 @@ public partial class SettingsViewModel : ObservableRecipient
     /// <summary>
     /// 是否显示歌词背景
     /// </summary>
-    public bool IsLyricBackgroundVisible
+    [ObservableProperty]
+    public partial bool IsLyricBackgroundVisible { get; set; } = Data.IsLyricBackgroundVisible;
+
+    partial void OnIsLyricBackgroundVisibleChanged(bool value)
     {
-        get;
-        set
-        {
-            field = value;
-            Data.IsLyricBackgroundVisible = value;
-            SaveLyricBackgroundVisibilityAsync(value);
-        }
+        var dynamicBackgroundService = App.GetService<IDynamicBackgroundService>();
+        dynamicBackgroundService.IsEnabled = value;
+        Data.IsLyricBackgroundVisible = value;
+        SaveLyricBackgroundVisibilityAsync(value);
     }
 
     /// <summary>
