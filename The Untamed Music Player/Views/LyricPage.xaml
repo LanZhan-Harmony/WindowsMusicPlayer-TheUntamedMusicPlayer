@@ -42,10 +42,10 @@
                     </VisualStateManager.VisualStateGroups>
 
                     <TextBlock x:Name="LyricTextBlock"
-                               Margin="{x:Bind model:Data.MusicPlayer.GetLyricMargin(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
+                               Margin="{x:Bind Margin, Mode=OneWay}"
                                FontFamily="{x:Bind model:Data.SelectedFontFamily}"
-                               FontSize="{x:Bind model:Data.MusicPlayer.GetLyricFont(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
-                               Opacity="{x:Bind model:Data.MusicPlayer.GetLyricOpacity(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
+                               FontSize="{x:Bind FontSize, Mode=OneWay}"
+                               Opacity="{x:Bind Opacity, Mode=OneWay}"
                                SizeChanged="TextBlock_SizeChanged"
                                Text="{x:Bind Content}"
                                TextWrapping="WrapWholeWords"/>
@@ -147,7 +147,6 @@
                            Canvas.ZIndex="1"
                            Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"/>
                     <Grid x:Name="ControllerCoverGrid"
-                          Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                           Canvas.ZIndex="0"
                           Visibility="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="ControllerCoverFontIcon"

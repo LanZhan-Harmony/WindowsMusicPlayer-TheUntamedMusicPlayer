@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using Windows.Media;
 using Windows.Media.Core;
@@ -20,10 +21,6 @@ namespace The_Untamed_Music_Player.Models;
 
 public partial class MusicPlayer : ObservableRecipient
 {
-    private readonly Thickness _defaultMargin = new(0, 20, 0, 20);
-    private readonly Thickness _highlightedMargin = new(0, 40, 0, 40);
-    private const double _defaultOpacity = 0.5;
-    private const double _highlightedOpacity = 1.0;
     private readonly ILocalSettingsService _localSettingsService;
 
     /// <summary>
@@ -77,6 +74,11 @@ public partial class MusicPlayer : ObservableRecipient
     private int _playQueueLength = 0;
 
     /// <summary>
+    /// 当前歌词切片在集合中的索引
+    /// </summary>
+    private int _currentLyricIndex = 0;
+
+    /// <summary>
     /// 播放速度
     /// </summary>
     private double PlaySpeed
@@ -93,7 +95,6 @@ public partial class MusicPlayer : ObservableRecipient
     /// 线程计时器
     /// </summary>
     public ThreadPoolTimer? PositionUpdateTimer250ms { get; set; }
-    public ThreadPoolTimer? PositionUpdateTimer2000ms { get; set; }
 
     /// <summary>
     /// 播放队列集合
@@ -214,12 +215,6 @@ public partial class MusicPlayer : ObservableRecipient
     }
 
     /// <summary>
-    /// 当前歌词切片在集合中的索引
-    /// </summary>
-    [ObservableProperty]
-    public partial int CurrentLyricIndex { get; set; } = 0;
-
-    /// <summary>
     /// 当前歌词内容
     /// </summary>
     [ObservableProperty]
@@ -261,7 +256,7 @@ public partial class MusicPlayer : ObservableRecipient
         PlayQueueIndex = info.PlayQueueIndex;
         if (CurrentSong!.IsPlayAvailable)
         {
-            SetSource(CurrentSong!.Path);
+            await SetSource(CurrentSong!.Path);
             _ = UpdateLyric(CurrentSong!.Lyric);
             _systemControls.IsPlayEnabled = true;
             _systemControls.IsPauseEnabled = true;
@@ -287,7 +282,7 @@ public partial class MusicPlayer : ObservableRecipient
         PlayQueueIndex = isLast ? 0 : index;
         if (CurrentSong!.IsPlayAvailable)
         {
-            SetSource(CurrentSong!.Path);
+            await SetSource(CurrentSong!.Path);
             _ = UpdateLyric(CurrentSong!.Lyric);
             _systemControls.IsPlayEnabled = true;
             _systemControls.IsPauseEnabled = true;
@@ -361,7 +356,7 @@ public partial class MusicPlayer : ObservableRecipient
             {
                 if (CurrentSong!.IsPlayAvailable)
                 {
-                    SetSource(CurrentSong!.Path);
+                    await SetSource(CurrentSong!.Path);
                     _ = UpdateLyric(CurrentSong!.Lyric);
                     _systemControls.IsPauseEnabled = true;
                     _systemControls.IsPlayEnabled = true;
@@ -437,7 +432,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// 为播放器设置音乐源
     /// </summary>
     /// <param name="path"></param>
-    private async void SetSource(string path)
+    private async Task SetSource(string path)
     {
         try
         {
@@ -457,17 +452,16 @@ public partial class MusicPlayer : ObservableRecipient
             TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
             _displayUpdater.MusicProperties.Title = CurrentSong!.Title;
             _displayUpdater.MusicProperties.Artist =
-                CurrentSong.ArtistsStr == "未知艺术家" ? "" : CurrentSong.ArtistsStr;
+                CurrentSong.ArtistsStr == "SongInfo_UnknownArtist".GetLocalized()
+                    ? ""
+                    : CurrentSong.ArtistsStr;
             _timelineProperties.MaxSeekTime = Player.PlaybackSession.NaturalDuration;
             _timelineProperties.EndTime = Player.PlaybackSession.NaturalDuration;
             PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(
                 UpdateTimerHandler250ms,
                 TimeSpan.FromMilliseconds(250)
             );
-            PositionUpdateTimer2000ms = ThreadPoolTimer.CreatePeriodicTimer(
-                UpdateTimerHandler2000ms,
-                TimeSpan.FromMilliseconds(2000)
-            );
+
             if (ShuffleMode)
             {
                 // 更新当前歌曲在随机播放队列中的索引
@@ -625,6 +619,7 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     return;
                 }
+
                 App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
                 {
                     CurrentPlayingTime = Player.PlaybackSession.Position;
@@ -646,45 +641,10 @@ public partial class MusicPlayer : ObservableRecipient
                 {
                     dispatcherQueue?.TryEnqueue(() =>
                     {
-                        CurrentLyricIndex = GetCurrentLyricIndex(
-                            Player.PlaybackSession.Position.TotalMilliseconds
-                        );
-                        CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
+                        UpdateCurrentLyricIndex(Player.PlaybackSession.Position.TotalMilliseconds);
                     });
                 }
-                else
-                {
-                    dispatcherQueue?.TryEnqueue(
-                        DispatcherQueuePriority.Low,
-                        () =>
-                        {
-                            CurrentLyricIndex = 0;
-                            CurrentLyricContent = "";
-                        }
-                    );
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.StackTrace);
-            }
-        }
-    }
 
-    private void UpdateTimerHandler2000ms(ThreadPoolTimer timer)
-    {
-        lock (_mediaLock)
-        {
-            try
-            {
-                if (
-                    Player.PlaybackSession is null
-                    || _lockable
-                    || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing
-                )
-                {
-                    return;
-                }
                 _timelineProperties.Position = Player.PlaybackSession.Position;
                 _systemControls.UpdateTimelineProperties(_timelineProperties);
             }
@@ -710,6 +670,38 @@ public partial class MusicPlayer : ObservableRecipient
             }
         }
         return CurrentLyric.Count - 1;
+    }
+
+    /// <summary>
+    /// 更新当前歌词索引和状态
+    /// </summary>
+    /// <param name="currentTime">当前播放时间（毫秒）</param>
+    private void UpdateCurrentLyricIndex(double currentTime)
+    {
+        if (CurrentLyric.Count == 0)
+        {
+            return;
+        }
+
+        var newIndex = GetCurrentLyricIndex(currentTime);
+
+        if (newIndex != _currentLyricIndex)
+        {
+            // 更新旧歌词状态
+            if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyric.Count)
+            {
+                CurrentLyric[_currentLyricIndex].IsCurrent = false;
+            }
+
+            _currentLyricIndex = newIndex;
+
+            // 更新新歌词状态
+            if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyric.Count)
+            {
+                CurrentLyric[_currentLyricIndex].IsCurrent = true;
+                CurrentLyricContent = CurrentLyric[_currentLyricIndex].Content;
+            }
+        }
     }
 
     /// <summary>
@@ -741,9 +733,9 @@ public partial class MusicPlayer : ObservableRecipient
                         () =>
                         {
                             PlayState = 1;
-                            _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                         }
                     );
+                    _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                     break;
                 case MediaPlaybackState.Paused:
                     Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
@@ -751,9 +743,9 @@ public partial class MusicPlayer : ObservableRecipient
                         () =>
                         {
                             PlayState = 0;
-                            _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
                         }
                     );
+                    _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
                     break;
                 default:
                     break;
@@ -910,12 +902,10 @@ public partial class MusicPlayer : ObservableRecipient
         Player?.Pause();
         CurrentPlayingTime = TimeSpan.Zero;
         CurrentPosition = 0;
-        CurrentLyricIndex = 0;
+        _currentLyricIndex = 0;
         CurrentLyricContent = "";
         PositionUpdateTimer250ms?.Cancel();
-        PositionUpdateTimer2000ms?.Cancel();
         PositionUpdateTimer250ms = null;
-        PositionUpdateTimer2000ms = null;
     }
 
     /// <summary>
@@ -1095,7 +1085,7 @@ public partial class MusicPlayer : ObservableRecipient
         CurrentPlayingTime = TimeSpan.FromMilliseconds(
             ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100
         );
-        CurrentLyricIndex = GetCurrentLyricIndex(CurrentPlayingTime.TotalMilliseconds);
+        UpdateCurrentLyricIndex(CurrentPlayingTime.TotalMilliseconds);
     }
 
     /// <summary>
@@ -1115,7 +1105,7 @@ public partial class MusicPlayer : ObservableRecipient
             CurrentPosition =
                 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex(
+        UpdateCurrentLyricIndex(
             (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
         );
         _lockable = false;
@@ -1136,7 +1126,7 @@ public partial class MusicPlayer : ObservableRecipient
             CurrentPosition =
                 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex(
+        UpdateCurrentLyricIndex(
             (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
         );
         _lockable = false;
@@ -1162,7 +1152,7 @@ public partial class MusicPlayer : ObservableRecipient
             CurrentPosition =
                 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex(
+        UpdateCurrentLyricIndex(
             (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
         );
         _lockable = false;
@@ -1191,7 +1181,7 @@ public partial class MusicPlayer : ObservableRecipient
             CurrentPosition =
                 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex(
+        UpdateCurrentLyricIndex(
             (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
         );
         _lockable = false;
@@ -1232,47 +1222,14 @@ public partial class MusicPlayer : ObservableRecipient
     public async Task UpdateLyric(string lyric)
     {
         CurrentLyric = await LyricSlice.GetLyricSlices(lyric);
-    }
+        _currentLyricIndex = 0;
+        CurrentLyricContent = "";
 
-    /// <summary>
-    /// 获取歌词字体大小
-    /// </summary>
-    /// <param name="itemTime"></param>
-    /// <param name="currentLyricIndex"></param>
-    /// <returns></returns>
-    public double GetLyricFont(double itemTime, int currentLyricIndex)
-    {
-        var defaultFontSize = Data.SelectedFontSize * 0.4;
-        var highlightedFontSize = Data.SelectedFontSize;
-        return itemTime == CurrentLyric[currentLyricIndex].Time
-            ? highlightedFontSize
-            : defaultFontSize;
-    }
-
-    /// <summary>
-    /// 获取歌词边距
-    /// </summary>
-    /// <param name="itemTime"></param>
-    /// <param name="currentLyricIndex"></param>
-    /// <returns></returns>
-    public Thickness GetLyricMargin(double itemTime, int currentLyricIndex)
-    {
-        return itemTime == CurrentLyric[currentLyricIndex].Time
-            ? _highlightedMargin
-            : _defaultMargin;
-    }
-
-    /// <summary>
-    /// 获取歌词透明度
-    /// </summary>
-    /// <param name="itemTime"></param>
-    /// <param name="currentLyricIndex"></param>
-    /// <returns></returns>
-    public double GetLyricOpacity(double itemTime, int currentLyricIndex)
-    {
-        return itemTime == CurrentLyric[currentLyricIndex].Time
-            ? _highlightedOpacity
-            : _defaultOpacity;
+        if (CurrentLyric.Count > 0)
+        {
+            CurrentLyric[0].IsCurrent = true;
+            CurrentLyricContent = CurrentLyric[0].Content;
+        }
     }
 
     /// <summary>
@@ -1319,7 +1276,7 @@ public partial class MusicPlayer : ObservableRecipient
                 CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
                     _currentBriefSong
                 );
-                SetSource(CurrentSong!.Path);
+                await SetSource(CurrentSong!.Path);
                 _ = UpdateLyric(CurrentSong!.Lyric);
                 _systemControls.IsPlayEnabled = true;
                 _systemControls.IsPauseEnabled = true;

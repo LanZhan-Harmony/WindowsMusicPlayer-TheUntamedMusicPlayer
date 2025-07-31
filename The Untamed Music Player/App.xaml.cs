@@ -54,6 +54,8 @@ public partial class App : Application
                     services.AddSingleton<IAppNotificationService, AppNotificationService>();
                     services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
                     services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
+                    services.AddSingleton<IColorExtractionService, ColorExtractionService>();
+                    services.AddSingleton<IDynamicBackgroundService, DynamicBackgroundService>();
 
                     services.AddSingleton<IActivationService, ActivationService>();
 
