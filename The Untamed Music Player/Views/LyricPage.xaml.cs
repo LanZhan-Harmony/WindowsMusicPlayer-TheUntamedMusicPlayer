@@ -13,9 +13,6 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class LyricPage : Page, IDisposable
 {
-    private readonly double _currentFontSize = Data.SelectedFontSize;
-    private readonly double _defaultFontSize = Data.SelectedFontSize * 0.4;
-
     public LyricViewModel ViewModel { get; }
 
     public LyricPage()
@@ -82,8 +79,8 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private void TextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        var textblock = (TextBlock)sender;
-        if (textblock.FontSize == Data.SelectedFontSize)
+        var textblock = sender as TextBlock;
+        if (textblock!.FontSize == Data.SelectedFontSize)
         {
             var currentScrollPosition = LyricViewer.VerticalOffset;
             var point = new Point(0, currentScrollPosition);
