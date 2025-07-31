@@ -93,7 +93,7 @@ public sealed partial class OnlineArtistDetailPage : Page
         }
     }
 
-    private async void OnlineArtistDetailPage_Loaded(object sender, RoutedEventArgs e)
+    private void OnlineArtistDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
         _scrollViewer = SharedScrollViewer;
         var listScrollerPropertySet =
@@ -110,11 +110,11 @@ public sealed partial class OnlineArtistDetailPage : Page
         var listScrollingProperties =
             listScrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>();
         CreateHeaderAnimation(_props, listScrollingProperties.Translation.Y);
-        var coverBytes = await IBriefOnlineArtistInfo.GetCoverBytes(ViewModel.BriefArtist);
-        if (coverBytes.Length != 0)
-        {
-            CreateImageBackgroundGradientVisual(listScrollingProperties.Translation.Y, coverBytes);
-        }
+
+        CreateImageBackgroundGradientVisual(
+            listScrollingProperties.Translation.Y,
+            ViewModel.BriefArtist.CoverPath
+        );
 
         _scrollViewer.ViewChanged += async (s, e) =>
         {
@@ -192,15 +192,14 @@ public sealed partial class OnlineArtistDetailPage : Page
 
     private void CreateImageBackgroundGradientVisual(
         ScalarNode scrollVerticalOffset,
-        byte[] imageBytes
+        string? coverPath
     )
     {
-        if (_compositor is null)
+        if (_compositor is null || string.IsNullOrEmpty(coverPath))
         {
             return;
         }
-        using var stream = new MemoryStream(imageBytes);
-        var imageSurface = LoadedImageSurface.StartLoadFromStream(stream.AsRandomAccessStream());
+        var imageSurface = LoadedImageSurface.StartLoadFromUri(new Uri(coverPath));
         var imageBrush = _compositor.CreateSurfaceBrush(imageSurface);
         imageBrush.HorizontalAlignmentRatio = 0.5f;
         imageBrush.VerticalAlignmentRatio = 0.25f;

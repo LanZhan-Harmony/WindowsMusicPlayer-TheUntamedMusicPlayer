@@ -79,28 +79,20 @@ public class BriefCloudOnlineArtistInfo : IBriefOnlineArtistInfo
     {
         try
         {
-            using var httpClient = new HttpClient();
-            var coverBytes = await httpClient.GetByteArrayAsync(info.CoverPath);
-            var stream = new MemoryStream(coverBytes);
             var tcs = new TaskCompletionSource<bool>();
             App.MainWindow?.DispatcherQueue.TryEnqueue(
                 DispatcherQueuePriority.Low,
-                async () =>
+                () =>
                 {
                     try
                     {
-                        var bitmap = new BitmapImage { DecodePixelWidth = 160 };
-                        await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
+                        var bitmap = new BitmapImage(new Uri(info.CoverPath!));
                         info.Cover = bitmap;
                         tcs.SetResult(true);
                     }
                     catch (Exception ex)
                     {
                         tcs.SetException(ex);
-                    }
-                    finally
-                    {
-                        stream.Dispose();
                     }
                 }
             );
