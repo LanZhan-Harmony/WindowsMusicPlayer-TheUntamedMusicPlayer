@@ -252,26 +252,18 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
     {
         try
         {
-            using var httpClient = new HttpClient();
-            var coverBuffer = await httpClient.GetByteArrayAsync(info.CoverPath);
-            var stream = new MemoryStream(coverBuffer);
             var tcs = new TaskCompletionSource<bool>();
-            App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
+            App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
             {
                 try
                 {
-                    var bitmap = new BitmapImage();
-                    await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
+                    var bitmap = new BitmapImage(new Uri(info.CoverPath!));
                     info.Cover = bitmap;
                     tcs.SetResult(true);
                 }
                 catch (Exception ex)
                 {
                     tcs.SetException(ex);
-                }
-                finally
-                {
-                    stream.Dispose();
                 }
             });
             return await tcs.Task;
