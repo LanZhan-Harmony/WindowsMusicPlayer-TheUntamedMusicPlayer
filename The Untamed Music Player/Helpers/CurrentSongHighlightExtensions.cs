@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -102,6 +103,55 @@ public static class CurrentSongHighlightExtensions
 
         // 立即更新当前显示的项目
         UpdateAllVisibleItems(listView);
+    }
+
+    /// <summary>
+    /// 手动重新激活指定页面中的 ListView 的高亮功能
+    /// </summary>
+    /// <param name="page">需要重新激活的页面</param>
+    public static void ReactivateHighlightForPage(Page? page)
+    {
+        if (page is null)
+        {
+            return;
+        }
+
+        // 查找页面中所有具有高亮属性的 ListView
+        var listViews = FindAllListViewsWithHighlight(page);
+
+        foreach (var listView in listViews)
+        {
+            // 如果 ListView 有高亮属性但未注册，则重新注册
+            if (!_registeredListViews.ContainsKey(listView))
+            {
+                RegisterListView(listView);
+            }
+            else
+            {
+                // 如果已经注册，立即更新显示
+                UpdateAllVisibleItems(listView);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 递归查找页面中所有具有高亮属性的 ListView
+    /// </summary>
+    /// <param name="parent">父级容器</param>
+    /// <returns>具有高亮属性的 ListView 列表</returns>
+    private static IEnumerable<ListViewBase> FindAllListViewsWithHighlight(DependencyObject? parent)
+    {
+        if (parent is null)
+        {
+            return [];
+        }
+
+        return parent
+            .FindDescendants()
+            .OfType<ListViewBase>()
+            .Where(listView =>
+                GetPlayingBrush(listView) is not null && GetNotPlayingBrush(listView) is not null
+            );
     }
 
     private static void UnregisterListView(ListViewBase listView)

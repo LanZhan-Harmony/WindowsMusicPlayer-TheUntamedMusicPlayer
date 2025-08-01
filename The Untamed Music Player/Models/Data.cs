@@ -27,6 +27,7 @@ public static class Data
     public static LocalArtistInfo? SelectedLocalArtist { get; set; }
     public static IBriefOnlineAlbumInfo? SelectedOnlineAlbum { get; set; }
     public static IBriefOnlineArtistInfo? SelectedOnlineArtist { get; set; }
+    public static IBriefOnlinePlaylistInfo? SelectedOnlinePlaylist { get; set; }
 
     /// <summary>
     /// 软件显示名称
@@ -43,21 +44,36 @@ public static class Data
     /// </summary>
     public static readonly string[] SupportedAudioTypes =
     [
-        ".flac",
-        ".wav",
-        ".m4a",
-        ".aac",
         ".mp3",
+        ".wav",
         ".wma",
+        ".aac",
+        ".mid",
+        ".midi",
+        ".mpa",
         ".ogg",
         ".oga",
         ".opus",
+        ".weba",
+        ".flac",
+        ".m4a",
+        ".m4b",
+        ".wv",
+        ".wvc",
+        ".aiff",
+        ".aif",
+        ".aifc",
     ];
 
     /// <summary>
     /// 歌词字体
     /// </summary>
-    public static FontFamily SelectedFont { get; set; } = new("Microsoft YaHei");
+    public static FontFamily SelectedFontFamily { get; set; } = new("Microsoft YaHei");
+
+    /// <summary>
+    /// 歌词字号
+    /// </summary>
+    public static double SelectedFontSize { get; set; } = 50.0;
 
     /// <summary>
     /// 是否显示歌词背景

@@ -1,7 +1,6 @@
-using Microsoft.UI;
+using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
@@ -17,47 +16,67 @@ public sealed partial class LyricPage : Page, IDisposable
         ViewModel = App.GetService<LyricViewModel>();
         InitializeComponent();
 
-        // 设置 ContentGridBackground 的绑定
-        /*var contentGridBinding = new Binding
-        {
-            Path = new PropertyPath("CurrentSong.Cover"),
-            Source = Data.MusicPlayer,
-            Mode = BindingMode.OneWay
-        };
-        BindingOperations.SetBinding(ContentGridBackground, ImageBrush.ImageSourceProperty, contentGridBinding);*/
+        Data.MusicPlayer.PropertyChanged += MusicPlayer_PropertyChanged;
+    }
 
-        var isLyricBackgroundVisible = Data.IsLyricBackgroundVisible;
-        if (!isLyricBackgroundVisible)
+    private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Data.MusicPlayer.CurrentSong))
         {
-            ContentGridBackground.Opacity = 0;
-        }
-        else
-        {
-            var acrylicBrush = new AcrylicBrush { TintOpacity = 0.8 };
-
-            var isDarkTheme =
-                ((FrameworkElement)App.MainWindow!.Content).ActualTheme == ElementTheme.Dark
-                || (
-                    ((FrameworkElement)App.MainWindow.Content).ActualTheme == ElementTheme.Default
-                    && App.Current.RequestedTheme == ApplicationTheme.Dark
-                );
-
-            if (isDarkTheme)
+            if (ReferenceGrid.ActualWidth > 0 && ReferenceGrid.ActualHeight > 0)
             {
-                acrylicBrush.TintColor = Colors.Black;
+                ChangeCoverSize(ReferenceGrid.ActualWidth, ReferenceGrid.ActualHeight);
             }
-            else
-            {
-                acrylicBrush.TintColor = Colors.White;
-            }
-            SecondaryContentGrid.Background = acrylicBrush;
         }
+    }
+
+    private void ReferenceGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        ChangeCoverSize(e.NewSize.Width, e.NewSize.Height);
+    }
+
+    private void ChangeCoverSize(double width, double height)
+    {
+        if (width <= 0 || height <= 0)
+        {
+            return;
+        }
+
+        // 计算可用空间
+        var baseNum = Math.Min(width, height);
+        var scalingMargin = baseNum < 300 ? 50 : baseNum * 0.4;
+        var availableWidth = Math.Max(0, width - scalingMargin);
+        var availableHeight = Math.Max(0, height - scalingMargin);
+
+        var currentCover = Data.MusicPlayer.CurrentSong?.Cover;
+        double coverWidth,
+            coverHeight;
+
+        if (currentCover?.PixelWidth > 0 && currentCover?.PixelHeight > 0)
+        {
+            var aspectRatio = (double)currentCover.PixelWidth / currentCover.PixelHeight;
+
+            var widthBasedHeight = availableWidth / aspectRatio;
+            var heightBasedWidth = availableHeight * aspectRatio;
+
+            (coverWidth, coverHeight) =
+                widthBasedHeight <= availableHeight
+                    ? (availableWidth, widthBasedHeight)
+                    : (heightBasedWidth, availableHeight);
+        }
+        else // 默认正方形
+        {
+            coverWidth = coverHeight = Math.Min(availableWidth, availableHeight);
+        }
+
+        CoverBorder.Width = coverWidth;
+        CoverBorder.Height = coverHeight;
     }
 
     private void TextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        var textblock = (TextBlock)sender;
-        if (textblock.FontSize == 50 || textblock.FontSize == 24)
+        var textblock = sender as TextBlock;
+        if (textblock!.FontSize == Data.SelectedFontSize)
         {
             var currentScrollPosition = LyricViewer.VerticalOffset;
             var point = new Point(0, currentScrollPosition);
@@ -69,10 +88,13 @@ public sealed partial class LyricPage : Page, IDisposable
                 null,
                 targetPosition.Y - LyricViewer.ActualHeight / 2 + 40,
                 null,
-                disableAnimation: false
+                false
             );
         }
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        Data.MusicPlayer.PropertyChanged -= MusicPlayer_PropertyChanged;
+    }
 }

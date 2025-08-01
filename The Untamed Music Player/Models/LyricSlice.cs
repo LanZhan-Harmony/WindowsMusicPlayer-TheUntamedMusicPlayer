@@ -1,12 +1,35 @@
 using System.Text.RegularExpressions;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
 
 namespace The_Untamed_Music_Player.Models;
 
-public partial class LyricSlice(double time, string content)
+public partial class LyricSlice(double time, string content) : ObservableRecipient
 {
     public string Content { get; set; } = content;
-
     public double Time { get; set; } = time;
+
+    /// <summary>
+    /// 是否为当前播放的歌词
+    /// </summary>
+    public bool IsCurrent
+    {
+        get;
+        set
+        {
+            field = value;
+            UpdateStyle(value);
+        }
+    } = false;
+
+    [ObservableProperty]
+    public partial double FontSize { get; set; } = Data.SelectedFontSize * 0.4;
+
+    [ObservableProperty]
+    public partial Thickness Margin { get; set; } = new(0, 20, 0, 20);
+
+    [ObservableProperty]
+    public partial double Opacity { get; set; } = 0.5;
 
     [GeneratedRegex(@".*\](.*)")]
     private static partial Regex RegexWord();
@@ -16,6 +39,13 @@ public partial class LyricSlice(double time, string content)
 
     [GeneratedRegex(@"\[offset:\s*([+-]?\d+)\]", RegexOptions.Compiled)]
     private static partial Regex RegexOffset();
+
+    private void UpdateStyle(bool isCurrent)
+    {
+        FontSize = isCurrent ? Data.SelectedFontSize : Data.SelectedFontSize * 0.4;
+        Margin = isCurrent ? new Thickness(0, 40, 0, 40) : new Thickness(0, 20, 0, 20);
+        Opacity = isCurrent ? 1.0 : 0.5;
+    }
 
     public static async Task<List<LyricSlice>> GetLyricSlices(string lyric)
     {

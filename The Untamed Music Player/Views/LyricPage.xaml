@@ -3,22 +3,54 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
+      xmlns:local="using:The_Untamed_Music_Player.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:media="using:CommunityToolkit.WinUI.Media"
       xmlns:model="using:The_Untamed_Music_Player.Models"
+      xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
       xmlns:ui="using:CommunityToolkit.WinUI"
       mc:Ignorable="d">
 
     <Page.Resources>
         <media:AttachedCardShadow x:Key="CommonShadow" Offset="4"/>
+        <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
+                                                        EmptyValue="Visible" NotEmptyValue="Collapsed"/>
+        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
         <DataTemplate x:Key="LyricViewTemplate" x:DataType="model:LyricSlice">
-            <TextBlock Margin="{x:Bind model:Data.MusicPlayer.GetLyricMargin(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
-                       FontFamily="{x:Bind model:Data.SelectedFont}"
-                       FontSize="{x:Bind model:Data.MusicPlayer.GetLyricFont(Time, model:Data.MusicPlayer.CurrentLyricIndex, model:Data.MainViewModel.MainWindowWidth), Mode=OneWay}"
-                       Opacity="{x:Bind model:Data.MusicPlayer.GetLyricOpacity(Time, model:Data.MusicPlayer.CurrentLyricIndex), Mode=OneWay}"
-                       SizeChanged="TextBlock_SizeChanged"
-                       Text="{x:Bind Content}"
-                       TextWrapping="WrapWholeWords"/>
+            <UserControl>
+                <Grid>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup>
+                            <VisualState x:Name="Narrow">
+                                <VisualState.StateTriggers>
+                                    <AdaptiveTrigger MinWindowWidth="0"/>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="LyricTextBlock.TextAlignment" Value="Center"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Normal">
+                                <VisualState.StateTriggers>
+                                    <AdaptiveTrigger MinWindowWidth="820"/>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="LyricTextBlock.TextAlignment" Value="Left"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+
+                    <TextBlock x:Name="LyricTextBlock"
+                               Margin="{x:Bind Margin, Mode=OneWay}"
+                               FontFamily="{x:Bind model:Data.SelectedFontFamily}"
+                               FontSize="{x:Bind FontSize, Mode=OneWay}"
+                               Opacity="{x:Bind Opacity, Mode=OneWay}"
+                               SizeChanged="TextBlock_SizeChanged"
+                               Text="{x:Bind Content}"
+                               TextWrapping="WrapWholeWords"/>
+                </Grid>
+            </UserControl>
         </DataTemplate>
     </Page.Resources>
 
@@ -34,30 +66,34 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="CoverBorder.Width" Value="150"/>
-                        <Setter Target="CoverBorder.Height" Value="150"/>
-                        <Setter Target="ControllerCover.Width" Value="150"/>
-                        <Setter Target="ControllerCover.Height" Value="150"/>
-                        <Setter Target="ControllerCoverGrid.Width" Value="150"/>
-                        <Setter Target="ControllerCoverGrid.Height" Value="150"/>
-                        <Setter Target="ControllerCoverFontIcon.FontSize" Value="50"/>
+                        <Setter Target="ReferenceGrid.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="ReferenceGrid.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="CoverBorder.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="CoverBorder.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="ControllerCoverFontIcon.FontSize" Value="100"/>
                         <Setter Target="DropShadow.Offset" Value="10,10"/>
-                        <Setter Target="LyricViewer.Margin" Value="10,20,20,20"/>
+                        <Setter Target="LyricViewer.(Grid.Row)" Value="1"/>
+                        <Setter Target="LyricViewer.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="LyricViewer.(Grid.Column)" Value="0"/>
+                        <Setter Target="LyricViewer.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="LyricViewer.Margin" Value="30,0,30,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowHeight="645" MinWindowWidth="980"/>
+                        <AdaptiveTrigger MinWindowWidth="820"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="CoverBorder.Width" Value="400"/>
-                        <Setter Target="CoverBorder.Height" Value="400"/>
-                        <Setter Target="ControllerCover.Width" Value="400"/>
-                        <Setter Target="ControllerCover.Height" Value="400"/>
-                        <Setter Target="ControllerCoverGrid.Width" Value="400"/>
-                        <Setter Target="ControllerCoverGrid.Height" Value="400"/>
+                        <Setter Target="ReferenceGrid.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="ReferenceGrid.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="CoverBorder.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="CoverBorder.(Grid.ColumnSpan)" Value="1"/>
                         <Setter Target="ControllerCoverFontIcon.FontSize" Value="100"/>
                         <Setter Target="DropShadow.Offset" Value="20,20"/>
+                        <Setter Target="LyricViewer.(Grid.Row)" Value="0"/>
+                        <Setter Target="LyricViewer.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="LyricViewer.(Grid.Column)" Value="1"/>
+                        <Setter Target="LyricViewer.(Grid.ColumnSpan)" Value="1"/>
                         <Setter Target="LyricViewer.Margin" Value="20,20,50,20"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -86,61 +122,60 @@
         </Grid>
         <Grid x:Name="ContentGrid"
               Grid.Row="1" Grid.ColumnSpan="2">
-            <Grid.Background>
-                <ImageBrush x:Name="ContentGridBackground"
-                            ImageSource="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"
-                            Stretch="UniformToFill"/>
-            </Grid.Background>
-            <Grid x:Name="SecondaryContentGrid">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="1.2*"/>
-                </Grid.ColumnDefinitions>
-                <Border x:Name="ShadowTarget"/>
-                <Border x:Name="CoverBorder"
-                        Grid.Column="0"
-                        Margin="0,0,0,0" Padding="0"
-                        CornerRadius="10">
-                    <Canvas>
-                        <Image x:Name="ControllerCover"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Center"
-                               Canvas.ZIndex="1"
-                               Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"/>
-                        <Grid x:Name="ControllerCoverGrid"
-                              Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
-                              Canvas.ZIndex="0">
-                            <FontIcon x:Name="ControllerCoverFontIcon"
-                                      Canvas.ZIndex="0" FontSize="100"
-                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                      Glyph="&#xE8D6;"/>
-                        </Grid>
-                    </Canvas>
-                    <ui:Effects.Shadow>
-                        <ui:AttachedDropShadow x:Name="DropShadow"
-                                               BlurRadius="15"
-                                               CastTo="{x:Bind ShadowTarget}"
-                                               CornerRadius="10" Opacity="0.2"
-                                               Offset="20,20"/>
-                    </ui:Effects.Shadow>
-                </Border>
-                <ScrollViewer x:Name="LyricViewer"
-                              Grid.Column="1"
-                              Margin="20,20,50,20"
-                              VerticalScrollBarVisibility="Hidden">
-                    <StackPanel>
-                        <StackPanel Height="600"/>
-                        <ListView x:Name="LyricView"
-                                  helper:ListViewExtensions.ItemCornerRadius="15"
-                                  IsItemClickEnabled="True"
-                                  ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
-                                  ItemTemplate="{StaticResource LyricViewTemplate}"
-                                  ItemsSource="{x:Bind model:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
-                                  SelectionMode="None"/>
-                        <StackPanel Height="600"/>
-                    </StackPanel>
-                </ScrollViewer>
-            </Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.7*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1.2*"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="ShadowTarget"/>
+            <Grid x:Name="ReferenceGrid"
+                  Grid.Row="0" Grid.Column="0"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  SizeChanged="ReferenceGrid_SizeChanged"/>
+            <Border x:Name="CoverBorder"
+                    Grid.Row="0" Grid.Column="0"
+                    Margin="0,0,0,0" Padding="0"
+                    CornerRadius="10">
+                <Grid>
+                    <Image x:Name="ControllerCover"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Canvas.ZIndex="1"
+                           Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"/>
+                    <Grid x:Name="ControllerCoverGrid"
+                          Canvas.ZIndex="0"
+                          Visibility="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                        <FontIcon x:Name="ControllerCoverFontIcon"
+                                  Canvas.ZIndex="0"
+                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                  Glyph="&#xE8D6;"/>
+                    </Grid>
+                </Grid>
+                <ui:Effects.Shadow>
+                    <ui:AttachedDropShadow x:Name="DropShadow"
+                                           BlurRadius="15"
+                                           CastTo="{x:Bind ShadowTarget}"
+                                           CornerRadius="10" Opacity="0.2"
+                                           Offset="20,20"/>
+                </ui:Effects.Shadow>
+            </Border>
+            <ScrollViewer x:Name="LyricViewer" VerticalScrollBarVisibility="Hidden">
+                <StackPanel>
+                    <StackPanel Height="600"/>
+                    <ListView x:Name="LyricView"
+                              helper:ListViewExtensions.ItemCornerRadius="15"
+                              IsItemClickEnabled="True"
+                              ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
+                              ItemTemplate="{StaticResource LyricViewTemplate}"
+                              ItemsSource="{x:Bind model:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
+                              SelectionMode="None"/>
+                    <StackPanel Height="600"/>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

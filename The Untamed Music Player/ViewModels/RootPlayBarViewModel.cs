@@ -1,8 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
@@ -29,28 +29,6 @@ public partial class RootPlayBarViewModel : ObservableRecipient
     public RootPlayBarViewModel()
     {
         Data.RootPlayBarViewModel = this;
-
-        RootPlayBarView
-            ?.GetProgressSlider()
-            .AddHandler(
-                UIElement.PointerPressedEvent,
-                new PointerEventHandler(Data.MusicPlayer.ProgressLock),
-                true
-            );
-        RootPlayBarView
-            ?.GetProgressSlider()
-            .AddHandler(
-                UIElement.PointerMovedEvent,
-                new PointerEventHandler(Data.MusicPlayer.SliderUpdate),
-                true
-            );
-        RootPlayBarView
-            ?.GetProgressSlider()
-            .AddHandler(
-                UIElement.PointerReleasedEvent,
-                new PointerEventHandler(Data.MusicPlayer.ProgressUpdate),
-                true
-            );
     }
 
     public void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
@@ -86,7 +64,7 @@ public partial class RootPlayBarViewModel : ObservableRecipient
             Storyboard.SetTargetProperty(fadeInAnimation, "Opacity");
 
             // 动画完成后设置新内容
-            fadeOutAnimation.Completed += (s, a) =>
+            fadeOutAnimation.Completed += (_, _) =>
             {
                 fadeInStoryboard.Begin();
                 frame.Content = Data.LyricPage;
@@ -127,10 +105,12 @@ public partial class RootPlayBarViewModel : ObservableRecipient
             Storyboard.SetTargetProperty(fadeInAnimation, "Opacity");
 
             // 动画完成后设置新内容
-            fadeOutAnimation.Completed += (s, a) =>
+            fadeOutAnimation.Completed += (_, _) =>
             {
                 fadeInStoryboard.Begin();
                 frame.Content = mainPage;
+
+                CurrentSongHighlightExtensions.ReactivateHighlightForPage(mainPage);
             };
 
             fadeOutStoryboard.Begin();

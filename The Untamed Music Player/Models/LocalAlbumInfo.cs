@@ -1,10 +1,8 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
-using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -102,7 +100,7 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         {
             try
             {
-                var musicFile = TagLib.File.Create(CoverPath);
+                using var musicFile = TagLib.File.Create(CoverPath);
                 return musicFile.Tag.Pictures[0].Data.Data;
             }
             catch { }
@@ -126,9 +124,9 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
             parts.Add(GenreStr);
         }
         parts.Add(
-            TotalNum > 1
-                ? $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
-                : $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}"
+            TotalNum == 1
+                ? $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}"
+                : $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
         );
         parts.Add(
             TotalDuration.Hours > 0
@@ -146,7 +144,8 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         }
         try
         {
-            var coverBuffer = TagLib.File.Create(CoverPath).Tag.Pictures[0].Data.Data;
+            using var musicFile = TagLib.File.Create(CoverPath);
+            var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
             var stream = new MemoryStream(coverBuffer);
             App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
             {

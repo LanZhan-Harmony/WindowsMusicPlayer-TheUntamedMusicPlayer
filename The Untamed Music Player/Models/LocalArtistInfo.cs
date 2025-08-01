@@ -77,7 +77,7 @@ public partial class LocalArtistInfo : IArtistInfoBase
     {
         if (Cover is not null)
         {
-            var musicFile = TagLib.File.Create(CoverPath);
+            using var musicFile = TagLib.File.Create(CoverPath);
             return musicFile.Tag.Pictures[0].Data.Data;
         }
         return [];
@@ -90,11 +90,11 @@ public partial class LocalArtistInfo : IArtistInfoBase
     public string GetCountStr()
     {
         var albumStr =
-            TotalAlbumNum > 1
-                ? "ArtistInfo_Albums".GetLocalized()
-                : "ArtistInfo_Album".GetLocalized();
+            TotalAlbumNum == 1
+                ? "ArtistInfo_Album".GetLocalized()
+                : "ArtistInfo_Albums".GetLocalized();
         var songStr =
-            TotalSongNum > 1 ? "AlbumInfo_Songs".GetLocalized() : "AlbumInfo_Song".GetLocalized();
+            TotalSongNum == 1 ? "AlbumInfo_Song".GetLocalized() : "AlbumInfo_Songs".GetLocalized();
         return $"{TotalAlbumNum} {albumStr} • {TotalSongNum} {songStr} •";
     }
 
