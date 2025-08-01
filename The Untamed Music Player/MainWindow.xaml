@@ -17,11 +17,18 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="117"/>
         </Grid.RowDefinitions>
+        <Grid x:Name="BackgroundGrid"
+              Grid.Row="0" Grid.RowSpan="2"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Canvas.ZIndex="0"/>
         <Frame x:Name="ShellFrame"
                Grid.Row="0"
-               Width="auto" Height="auto"/>
+               Width="auto" Height="auto"
+               Canvas.ZIndex="1"/>
         <view:RootPlayBarView Grid.Row="1"
-                              Width="auto" Height="auto"/>
+                              Width="auto" Height="auto"
+                              Canvas.ZIndex="1"/>
     </Grid>
 
 </windowex:WindowEx>

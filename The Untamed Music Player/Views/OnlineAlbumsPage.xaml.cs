@@ -105,13 +105,48 @@ public sealed partial class OnlineAlbumsPage : Page
         }
     }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e) { }
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineAlbumInfo info })
+        {
+            ViewModel.PlayButton_Click(info);
+        }
+    }
 
-    private void PlayNextButton_Click(object sender, RoutedEventArgs e) { }
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineAlbumInfo info })
+        {
+            ViewModel.PlayNextButton_Click(info);
+        }
+    }
 
-    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e) { }
+    private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineAlbumInfo info })
+        {
+            var grid = (Grid)
+                ((ContentControl)AlbumGridView.ContainerFromItem(info)).ContentTemplateRoot;
+            var border = (Border)grid.Children[1];
+            ConnectedAnimationService
+                .GetForCurrentView()
+                .PrepareToAnimate("ForwardConnectedAnimation", border);
+            Data.SelectedOnlineAlbum = info;
+            Data.ShellPage!.Navigate(
+                nameof(OnlineAlbumDetailPage),
+                nameof(OnlineAlbumsPage),
+                new SuppressNavigationTransitionInfo()
+            );
+        }
+    }
 
-    private void ShowArtistButton_Click(object sender, RoutedEventArgs e) { }
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineAlbumInfo info })
+        {
+            ViewModel.ShowArtistButton_Click(info);
+        }
+    }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }

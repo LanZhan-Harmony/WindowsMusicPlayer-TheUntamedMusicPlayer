@@ -12,6 +12,7 @@ public sealed partial class MainWindow : WindowEx
 {
     private readonly DispatcherQueue dispatcherQueue;
     private readonly UISettings settings;
+
     public MainViewModel ViewModel { get; }
 
     public MainWindow()
@@ -39,6 +40,11 @@ public sealed partial class MainWindow : WindowEx
     public Frame GetShellFrame()
     {
         return ShellFrame;
+    }
+
+    public Grid GetBackgroundGrid()
+    {
+        return BackgroundGrid;
     }
 
     /// <summary>

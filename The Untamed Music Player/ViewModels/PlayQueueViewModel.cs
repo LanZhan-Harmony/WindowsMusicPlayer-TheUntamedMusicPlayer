@@ -45,13 +45,11 @@ public partial class PlayQueueViewModel : ObservableRecipient
         Data.MusicPlayer.MoveDownSong(info);
     }
 
-    public void ShowAlbumButton_Click(IBriefSongInfoBase info)
+    public async void ShowAlbumButton_Click(IBriefSongInfoBase info)
     {
-        if (Data.MusicPlayer.SourceMode == 0)
+        if (info is BriefLocalSongInfo localInfo)
         {
-            var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(
-                ((BriefLocalSongInfo)info).Album
-            );
+            var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(localInfo.Album);
             if (localAlbumInfo is not null)
             {
                 Data.SelectedLocalAlbum = localAlbumInfo;
@@ -62,20 +60,44 @@ public partial class PlayQueueViewModel : ObservableRecipient
                 );
             }
         }
+        else if (info is IBriefOnlineSongInfo onlineInfo)
+        {
+            var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(onlineInfo);
+            if (onlineAlbumInfo is not null)
+            {
+                Data.SelectedOnlineAlbum = onlineAlbumInfo;
+                Data.ShellPage!.Navigate(
+                    nameof(OnlineAlbumDetailPage),
+                    "",
+                    new SuppressNavigationTransitionInfo()
+                );
+            }
+        }
     }
 
-    public void ShowArtistButton_Click(IBriefSongInfoBase info)
+    public async void ShowArtistButton_Click(IBriefSongInfoBase info)
     {
-        if (Data.MusicPlayer.SourceMode == 0)
+        if (info is BriefLocalSongInfo localInfo)
         {
-            var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(
-                ((BriefLocalSongInfo)info).Artists[0]
-            );
+            var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(localInfo.Artists[0]);
             if (localArtistInfo is not null)
             {
                 Data.SelectedLocalArtist = localArtistInfo;
                 Data.ShellPage!.Navigate(
                     nameof(LocalArtistDetailPage),
+                    "",
+                    new SuppressNavigationTransitionInfo()
+                );
+            }
+        }
+        else if (info is IBriefOnlineSongInfo onlineInfo)
+        {
+            var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(onlineInfo);
+            if (onlineArtistInfo is not null)
+            {
+                Data.SelectedOnlineArtist = onlineArtistInfo;
+                Data.ShellPage!.Navigate(
+                    nameof(OnlineArtistDetailPage),
                     "",
                     new SuppressNavigationTransitionInfo()
                 );

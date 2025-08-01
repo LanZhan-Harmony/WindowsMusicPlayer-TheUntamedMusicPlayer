@@ -36,6 +36,11 @@
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="OnlineSongs_Download" Click="DownloadButton_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE896;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
                         <MenuFlyoutSubItem x:Uid="Songs_AddTo">
                             <MenuFlyoutSubItem.Icon>
@@ -241,11 +246,11 @@
                         SizeChanged="AlbumArt_OnSizeChanged"
                         Translation="0,0,16">
                     <Border.Background>
-                        <ImageBrush ImageSource="{x:Bind ViewModel.Album.Cover}" Stretch="UniformToFill"/>
+                        <ImageBrush ImageSource="{x:Bind ViewModel.BriefAlbum.Cover}" Stretch="UniformToFill"/>
                     </Border.Background>
                     <Border Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                             CornerRadius="{x:Bind CoverArt.CornerRadius, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.Album.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.BriefAlbum.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="CoverArtIcon"
                                   FontSize="64"
                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -257,9 +262,9 @@
                             Grid.Column="1"
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
-                               Text="{x:Bind ViewModel.Album.Name, Mode=OneWay}"
+                               Text="{x:Bind ViewModel.BriefAlbum.Name}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
-                               ToolTipService.ToolTip="{x:Bind ViewModel.Album.Name, Mode=OneWay}"/>
+                               ToolTipService.ToolTip="{x:Bind ViewModel.BriefAlbum.Name}"/>
                     <TextBlock x:Name="SubtitleText"
                                FontWeight="Normal"
                                Text="{x:Bind ViewModel.Album.ArtistsStr, Mode=OneWay}"
@@ -268,7 +273,7 @@
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind ViewModel.Album.GetDescriptionStr(), Mode=OneWay}"
+                               Text="{x:Bind ViewModel.Album.DescriptionStr, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
                     <TextBlock x:Name="IntroductionText"
                                FontSize="14"
@@ -282,9 +287,10 @@
                         <StackPanel x:Name="ButtonStackPanel"
                                     Padding="0" HorizontalAlignment="Left"
                                     Orientation="Horizontal" Spacing="16">
-                            <Button x:Name="PlayButton"
+                            <Button x:Name="PlayAllButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     Click="{x:Bind ViewModel.PlayAllButton_Click}"
+                                    IsEnabled="{x:Bind ViewModel.IsPlayAllButtonEnabled, Mode=OneWay}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -293,7 +299,8 @@
                                 </StackPanel>
                             </Button>
                             <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
-                                    Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
+                                    Click="{x:Bind ViewModel.ShuffledPlayAllButton_Click}"
+                                    IsEnabled="{x:Bind ViewModel.IsPlayAllButtonEnabled, Mode=OneWay}"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
@@ -353,7 +360,11 @@
                 </StackPanel>
             </Grid>
         </Grid>
-
+        <ProgressRing Grid.Row="1"
+                      Width="50" Height="50"
+                      Margin="0,60,0,0"
+                      Canvas.ZIndex="1"
+                      IsActive="{x:Bind ViewModel.IsSearchProgressRingActive, Mode=OneWay}"/>
         <ListView x:Name="SongListView"
                   Grid.Row="1"
                   helper:CurrentSongHighlightExtensions.NotPlayingBrush="{ThemeResource TextFillColorPrimaryBrush}"
@@ -368,7 +379,7 @@
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind ViewModel.Album.SongList, Mode=OneWay}"
                   SelectionMode="None"
-                  XYFocusUp="{x:Bind PlayButton}">
+                  XYFocusUp="{x:Bind PlayAllButton}">
             <ListView.Header>
                 <Border x:Name="ListHeaderPadding"/>
             </ListView.Header>
