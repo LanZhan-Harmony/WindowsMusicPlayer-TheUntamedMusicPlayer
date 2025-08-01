@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Graphics.Canvas;
-using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Services;
 using Windows.Graphics;
 using Windows.Storage.Streams;
@@ -71,40 +70,6 @@ public class ColorExtractionService : IColorExtractionService
         catch (Exception ex)
         {
             Debug.WriteLine($"从URL提取颜色失败: {ex.Message}");
-            return [];
-        }
-    }
-
-    /// <summary>
-    /// 从BitmapImage中提取主色调
-    /// </summary>
-    /// <param name="bitmapImage">BitmapImage对象</param>
-    /// <param name="maxColors">最大颜色数量</param>
-    /// <returns>主色调列表</returns>
-    public async Task<List<Color>> ExtractColorsAsync(BitmapImage bitmapImage, int maxColors = 8)
-    {
-        try
-        {
-            var device = CanvasDevice.GetSharedDevice();
-            using var bitmap = await CanvasBitmap.LoadAsync(device, bitmapImage.UriSource);
-
-            var scaledSize = GetScaledSize(
-                new SizeInt32
-                {
-                    Width = (int)bitmap.SizeInPixels.Width,
-                    Height = (int)bitmap.SizeInPixels.Height,
-                },
-                100
-            );
-            using var scaledBitmap = ResizeBitmap(device, bitmap, scaledSize);
-
-            var pixels = scaledBitmap.GetPixelColors();
-
-            return ExtractColorsUsingOctree(pixels, maxColors);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"从BitmapImage提取颜色失败: {ex.Message}");
             return [];
         }
     }
@@ -255,7 +220,7 @@ public class ColorExtractionService : IColorExtractionService
 
         foreach (var child in node.Children)
         {
-            if (child != null)
+            if (child is not null)
             {
                 node.Red += child.Red;
                 node.Green += child.Green;
@@ -286,7 +251,7 @@ public class ColorExtractionService : IColorExtractionService
 
         foreach (var child in node.Children)
         {
-            child?.let(c => CollectColors(c, colorStats));
+            child?.Let(c => CollectColors(c, colorStats));
         }
     }
 
@@ -392,5 +357,5 @@ public record GradientConfig(List<Color> Colors, double Angle);
 /// </summary>
 internal static class Extensions
 {
-    public static void let<T>(this T obj, Action<T> action) => action(obj);
+    public static void Let<T>(this T obj, Action<T> action) => action(obj);
 }

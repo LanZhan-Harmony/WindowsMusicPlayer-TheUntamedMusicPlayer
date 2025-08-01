@@ -1,6 +1,5 @@
-using Windows.UI;
-using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Services;
+using Windows.UI;
 
 namespace The_Untamed_Music_Player.Contracts.Services;
 
@@ -24,14 +23,6 @@ public interface IColorExtractionService
     /// <param name="maxColors">最大颜色数量</param>
     /// <returns>主色调列表</returns>
     Task<List<Color>> ExtractColorsAsync(string imageUrl, int maxColors = 8);
-
-    /// <summary>
-    /// 从BitmapImage中提取主色调
-    /// </summary>
-    /// <param name="bitmapImage">BitmapImage对象</param>
-    /// <param name="maxColors">最大颜色数量</param>
-    /// <returns>主色调列表</returns>
-    Task<List<Color>> ExtractColorsAsync(BitmapImage bitmapImage, int maxColors = 8);
 
     /// <summary>
     /// 生成渐变色配置

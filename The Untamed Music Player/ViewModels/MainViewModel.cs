@@ -16,6 +16,8 @@ public partial class MainViewModel : ObservableRecipient
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private IDynamicBackgroundService _dynamicBackgroundService = null!;
+
     private readonly MainWindow _mainMindow;
     private readonly ICompositionSupportsSystemBackdrop? _backdropTarget;
     private readonly SystemBackdropConfiguration _configurationSource = new()
@@ -61,6 +63,17 @@ public partial class MainViewModel : ObservableRecipient
         await LoadSettingsAsync();
         ChangeMaterial(SelectedMaterial);
         SaveIsDarkThemeAsync();
+        InitializeDynamicBackgroundAsync();
+    }
+
+    public void InitializeDynamicBackgroundAsync()
+    {
+        _dynamicBackgroundService = App.GetService<IDynamicBackgroundService>();
+        // 初始化动态背景服务，使用根网格作为目标元素
+        _dynamicBackgroundService.Initialize(_mainMindow.GetBackgroundGrid());
+
+        // 如果当前已有正在播放的歌曲，立即更新背景
+        _ = _dynamicBackgroundService.UpdateBackgroundAsync();
     }
 
     public async void ChangeMaterial(byte material)
@@ -322,6 +335,7 @@ public partial class MainViewModel : ObservableRecipient
         _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
+        _dynamicBackgroundService.Dispose();
         _mainMindow.Activated -= MainWindow_Activated;
         Data.DesktopLyricWindow?.Close();
         Data.DesktopLyricWindow?.Dispose();
