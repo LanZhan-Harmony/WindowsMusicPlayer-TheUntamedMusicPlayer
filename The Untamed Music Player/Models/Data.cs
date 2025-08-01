@@ -44,15 +44,25 @@ public static class Data
     /// </summary>
     public static readonly string[] SupportedAudioTypes =
     [
-        ".flac",
-        ".wav",
-        ".m4a",
-        ".aac",
         ".mp3",
+        ".wav",
         ".wma",
+        ".aac",
+        ".mid",
+        ".midi",
+        ".mpa",
         ".ogg",
         ".oga",
         ".opus",
+        ".weba",
+        ".flac",
+        ".m4a",
+        ".m4b",
+        ".wv",
+        ".wvc",
+        ".aiff",
+        ".aif",
+        ".aifc",
     ];
 
     /// <summary>

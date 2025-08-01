@@ -138,10 +138,6 @@ public partial class MusicLibrary : ObservableRecipient
                     }
                 }
                 await Task.WhenAll(loadMusicTasks);
-                await EnqueueAndWaitAsync(() =>
-                {
-                    OnPropertyChanged(nameof(HasMusics));
-                });
                 foreach (var album in Albums.Values)
                 {
                     album.LoadCover();
@@ -152,6 +148,10 @@ public partial class MusicLibrary : ObservableRecipient
                         .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                         .OrderBy(x => x, new GenreComparer()),
                 ];
+                await EnqueueAndWaitAsync(() =>
+                {
+                    OnPropertyChanged(nameof(HasMusics));
+                });
                 _musicGenres.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
                 await Task.Run(AddFolderWatcher);
@@ -193,10 +193,6 @@ public partial class MusicLibrary : ObservableRecipient
                 }
             }
             await Task.WhenAll(loadMusicTasks);
-            await EnqueueAndWaitAsync(() =>
-            {
-                OnPropertyChanged(nameof(HasMusics));
-            });
             foreach (var album in Albums.Values)
             {
                 album.LoadCover();
@@ -207,6 +203,10 @@ public partial class MusicLibrary : ObservableRecipient
                     .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                     .OrderBy(x => x, new GenreComparer()),
             ];
+            await EnqueueAndWaitAsync(() => // 注意一定要在 Genres 赋值后再调用
+            {
+                OnPropertyChanged(nameof(HasMusics));
+            });
             _musicGenres.Clear();
             FolderWatchers.Clear();
             var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
