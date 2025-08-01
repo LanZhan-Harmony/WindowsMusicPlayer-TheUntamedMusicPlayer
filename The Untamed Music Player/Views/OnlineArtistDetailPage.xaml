@@ -131,7 +131,7 @@
                 </Grid>
             </UserControl>
         </DataTemplate>
-        <DataTemplate x:Key="SongListViewTemplate" x:DataType="contract:IBriefOnlineSongInfo">
+        <DataTemplate x:Key="SongListViewTemplate" x:DataType="contract:IBriefSongInfoBase">
             <Grid Height="52"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -148,6 +148,11 @@
                         <MenuFlyoutItem x:Uid="Songs_PlayNext" Click="SongListViewPlayNextButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xECC8;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="OnlineSongs_Download" Click="SongListViewDownloadButton_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE896;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
@@ -524,11 +529,11 @@
                         SizeChanged="CoverArt_OnSizeChanged"
                         Translation="0,0,16">
                     <Border.Background>
-                        <ImageBrush ImageSource="{x:Bind ViewModel.Artist.Cover}" Stretch="UniformToFill"/>
+                        <ImageBrush ImageSource="{x:Bind ViewModel.BriefArtist.Cover}" Stretch="UniformToFill"/>
                     </Border.Background>
                     <Border Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                             CornerRadius="100"
-                            Visibility="{x:Bind ViewModel.Artist.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.BriefArtist.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="CoverArtIcon"
                                   FontSize="64"
                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -540,19 +545,17 @@
                             Grid.Column="1"
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
-                               Text="{x:Bind ViewModel.Artist.Name, Mode=OneWay}"
+                               Text="{x:Bind ViewModel.BriefArtist.Name}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
-                               ToolTipService.ToolTip="{x:Bind ViewModel.Artist.Name}"/>
+                               ToolTipService.ToolTip="{x:Bind ViewModel.BriefArtist.Name}"/>
                     <TextBlock x:Name="SubtitleText"
-                               FontWeight="Normal" TextTrimming="WordEllipsis"
-                               TextWrapping="NoWrap">
-                        <Run Text="{x:Bind ViewModel.Artist.GetCountStr(), Mode=OneWay}"/>
-                        <Run Foreground="{ThemeResource TextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.Artist.GetDurationStr(), Mode=OneWay}"/>
-                    </TextBlock>
+                               FontWeight="Normal"
+                               Text="{x:Bind ViewModel.Artist.CountStr, Mode=OneWay}"
+                               TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind ViewModel.Artist.GetDescriptionStr(), Mode=OneWay}"
+                               Text="{x:Bind ViewModel.Artist.DescriptionStr, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
                     <TextBlock x:Name="IntroductionText"
                                FontSize="14"
@@ -566,9 +569,10 @@
                         <StackPanel x:Name="ButtonStackPanel"
                                     Padding="0" HorizontalAlignment="Left"
                                     Orientation="Horizontal" Spacing="16">
-                            <Button x:Name="PlayButton"
+                            <Button x:Name="PlayAllButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     Click="{x:Bind ViewModel.PlayAllButton_Click}"
+                                    IsEnabled="{x:Bind ViewModel.IsPlayAllButtonEnabled, Mode=OneWay}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -577,7 +581,8 @@
                                 </StackPanel>
                             </Button>
                             <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
-                                    Click="{x:Bind model:Data.MusicPlayer.ShuffleModeUpdate}"
+                                    Click="{x:Bind ViewModel.ShuffledPlayAllButton_Click}"
+                                    IsEnabled="{x:Bind ViewModel.IsPlayAllButtonEnabled, Mode=OneWay}"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontSize="16" Glyph="&#xE8B1;"/>
@@ -664,7 +669,11 @@
                 </SelectorBar>
             </Grid>
         </Grid>
-
+        <ProgressRing Grid.Row="1"
+                      Width="50" Height="50"
+                      Margin="0,60,0,0"
+                      Canvas.ZIndex="1"
+                      IsActive="{x:Bind ViewModel.IsSearchProgressRingActive, Mode=OneWay}"/>
         <Grid x:Name="AlbumView" Grid.Row="1">
             <ScrollViewer x:Name="SharedScrollViewer">
                 <Grid>
@@ -673,11 +682,17 @@
                               IsItemClickEnabled="False"
                               ItemTemplate="{StaticResource AlbumListViewTemplate}"
                               ItemsSource="{x:Bind ViewModel.Artist.AlbumList, Mode=OneWay}"
+                              Opacity="{x:Bind ViewModel.ListViewOpacity, Mode=OneWay}"
                               SelectionMode="None"
-                              XYFocusUp="{x:Bind PlayButton}">
+                              XYFocusUp="{x:Bind PlayAllButton}">
                         <ListView.Header>
                             <Border x:Name="AlbumListHeaderPadding"/>
                         </ListView.Header>
+                        <ListView.Footer>
+                            <ProgressRing Width="25" Height="25"
+                                          Margin="0,5,0,5"
+                                          Visibility="{x:Bind ViewModel.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
+                        </ListView.Footer>
                     </ListView>
                     <GridView x:Name="AlbumGridView"
                               helper:ListViewExtensions.ItemCornerRadius="8"
@@ -685,10 +700,16 @@
                               ItemClick="AlbumGridView_ItemClick"
                               ItemTemplate="{StaticResource AlbumGridViewTemplate}"
                               ItemsSource="{x:Bind ViewModel.Artist.AlbumList, Mode=OneWay}"
+                              Opacity="{x:Bind ViewModel.ListViewOpacity, Mode=OneWay}"
                               SelectionMode="None">
                         <GridView.Header>
                             <Border x:Name="AlbumGridHeaderPadding"/>
                         </GridView.Header>
+                        <GridView.Footer>
+                            <ProgressRing Width="25" Height="25"
+                                          Margin="0,5,0,5"
+                                          Visibility="{x:Bind ViewModel.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
+                        </GridView.Footer>
                     </GridView>
                 </Grid>
             </ScrollViewer>

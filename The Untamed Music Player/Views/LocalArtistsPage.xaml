@@ -41,12 +41,14 @@
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="Songs_Play" Width="216">
+                        <MenuFlyoutItem x:Uid="Songs_Play"
+                                        Width="216"
+                                        Click="PlayButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE768;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="Songs_PlayNext">
+                        <MenuFlyoutItem x:Uid="Songs_PlayNext" Click="PlayNextButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xECC8;"/>
                             </MenuFlyoutItem.Icon>
@@ -68,13 +70,13 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="Songs_ShowArtist">
+                        <MenuFlyoutItem x:Uid="Songs_ShowArtist" Click="ShowArtistButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE77B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="Songs_Select">
+                        <MenuFlyoutItem x:Uid="Songs_Select" Click="SelectButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE762;"/>
                             </MenuFlyoutItem.Icon>
@@ -109,12 +111,14 @@
                         <FontIcon FontSize="12" Glyph="&#xE712;"/>
                         <Button.Flyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem x:Uid="Songs_Play" Width="216">
+                                <MenuFlyoutItem x:Uid="Songs_Play"
+                                                Width="216"
+                                                Click="PlayButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE768;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Uid="Songs_PlayNext">
+                                <MenuFlyoutItem x:Uid="Songs_PlayNext" Click="PlayNextButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xECC8;"/>
                                     </MenuFlyoutItem.Icon>
@@ -136,13 +140,13 @@
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
                                 </MenuFlyoutSubItem>
-                                <MenuFlyoutItem x:Uid="Songs_ShowArtist">
+                                <MenuFlyoutItem x:Uid="Songs_ShowArtist" Click="ShowArtistButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE77B;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutSeparator/>
-                                <MenuFlyoutItem x:Uid="Songs_Select">
+                                <MenuFlyoutItem x:Uid="Songs_Select" Click="SelectButton_Click">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE762;"/>
                                     </MenuFlyoutItem.Icon>

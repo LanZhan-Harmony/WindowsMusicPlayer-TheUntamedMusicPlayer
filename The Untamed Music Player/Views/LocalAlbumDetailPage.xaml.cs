@@ -10,11 +10,9 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
-using Windows.Storage.Streams;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
@@ -298,7 +296,7 @@ public sealed partial class LocalAlbumDetailPage : Page
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.PlayButton_Click(info);
         }
@@ -306,7 +304,7 @@ public sealed partial class LocalAlbumDetailPage : Page
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.PlayNextButton_Click(info);
         }
@@ -329,7 +327,7 @@ public sealed partial class LocalAlbumDetailPage : Page
 
     private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.ShowArtistButton_Click(info);
         }

@@ -1,11 +1,9 @@
-using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Collections.ObjectModel;
 using System.Text.Json;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
-using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
@@ -33,40 +31,68 @@ public class BriefCloudOnlineArtistInfo : IBriefOnlineArtistInfo
             {
                 await coverTask;
             }
-            return info;
         }
-        catch
+        catch { }
+        return info;
+    }
+
+    public static async Task<BriefCloudOnlineArtistInfo> CreateFromSongInfoAsync(
+        BriefCloudOnlineSongInfo briefInfo
+    )
+    {
+        return await CreateFromIDAsync(briefInfo.ArtistID);
+    }
+
+    public static async Task<BriefCloudOnlineArtistInfo> CreateFromAlbumInfoAsync(
+        BriefCloudOnlineAlbumInfo briefInfo
+    )
+    {
+        return await CreateFromIDAsync(briefInfo.ArtistID);
+    }
+
+    public static async Task<BriefCloudOnlineArtistInfo> CreateFromIDAsync(long artistID)
+    {
+        var api = NeteaseCloudMusicApi.Instance;
+        var (_, result) = await api.RequestAsync(
+            CloudMusicApiProviders.ArtistAlbum,
+            new Dictionary<string, string>
+            {
+                { "id", $"{artistID}" },
+                { "limit", "0" },
+                { "offset", "0" },
+            }
+        );
+        var info = new BriefCloudOnlineArtistInfo
         {
-            return info;
+            ID = artistID,
+            Name = (string)result["artist"]!["name"]!,
+            CoverPath = (string)result["artist"]!["picUrl"]!,
+        };
+        if (!string.IsNullOrEmpty(info.CoverPath))
+        {
+            await LoadCoverAsync(info);
         }
+        return info;
     }
 
     private static async Task<bool> LoadCoverAsync(BriefCloudOnlineArtistInfo info)
     {
         try
         {
-            using var httpClient = new HttpClient();
-            var coverBytes = await httpClient.GetByteArrayAsync(info.CoverPath);
-            var stream = new MemoryStream(coverBytes);
             var tcs = new TaskCompletionSource<bool>();
             App.MainWindow?.DispatcherQueue.TryEnqueue(
                 DispatcherQueuePriority.Low,
-                async () =>
+                () =>
                 {
                     try
                     {
-                        var bitmap = new BitmapImage { DecodePixelWidth = 160 };
-                        await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
+                        var bitmap = new BitmapImage(new Uri(info.CoverPath!));
                         info.Cover = bitmap;
                         tcs.SetResult(true);
                     }
                     catch (Exception ex)
                     {
                         tcs.SetException(ex);
-                    }
-                    finally
-                    {
-                        stream.Dispose();
                     }
                 }
             );
@@ -82,116 +108,29 @@ public class BriefCloudOnlineArtistInfo : IBriefOnlineArtistInfo
 
 public class DetailedCloudOnlineArtistInfo : BriefCloudOnlineArtistInfo, IDetailedOnlineArtistInfo
 {
-    private const byte _limit = 10;
-
+    private readonly HashSet<long> ArtistAlbumIDs = [];
+    public const byte Limit = 10;
+    public ushort Page { get; set; } = 0;
+    public int CurrentAlbumNum { get; set; } = 0;
+    public bool HasAllLoaded { get; set; } = false;
     public int TotalAlbumNum { get; set; }
     public int TotalSongNum { get; set; }
     public TimeSpan TotalDuration { get; set; }
+    public string CountStr { get; set; } = null!;
+    public string DescriptionStr { get; set; } = $"{"ArtistInfo_Artist".GetLocalized()} ";
     public string? Introduction { get; set; }
-    public List<IOnlineArtistAlbumInfo> AlbumList { get; set; } = [];
+    public ObservableCollection<IOnlineArtistAlbumInfo> AlbumList { get; set; } = [];
 
-    public static async Task<DetailedCloudOnlineArtistInfo> CreateAsync(
-        BriefCloudOnlineArtistInfo briefInfo
-    )
+    public void Add(IOnlineArtistAlbumInfo? info)
     {
-        var info = new DetailedCloudOnlineArtistInfo
+        CurrentAlbumNum++;
+        if (info is not null && info.IsAvailable && ArtistAlbumIDs.Add(info.ID))
         {
-            ID = briefInfo.ID,
-            Name = briefInfo.Name,
-            Cover = briefInfo.Cover,
-            CoverPath = briefInfo.CoverPath,
-        };
-        try
-        {
-            var api = NeteaseCloudMusicApi.Instance;
-            var albumTask = api.RequestAsync(
-                CloudMusicApiProviders.ArtistAlbum,
-                new Dictionary<string, string>
-                {
-                    { "id", $"{briefInfo.ID}" },
-                    { "limit", $"{_limit}" },
-                    { "offset", "0" },
-                }
-            );
-            var artistTask = api.RequestAsync(
-                CloudMusicApiProviders.ArtistDesc,
-                new Dictionary<string, string> { { "id", $"{briefInfo.ID}" } }
-            );
-            await Task.WhenAll(albumTask, artistTask);
-            var (_, albumResult) = albumTask.Result;
-            var (_, artistResult) = artistTask.Result;
-
-            info.Introduction = artistResult["briefDesc"]?.ToString();
-
-            using var document = JsonDocument.Parse(albumResult.ToJsonString());
-            var root = document.RootElement;
-            var artistElement = root.GetProperty("artist");
-            info.TotalAlbumNum = artistElement.GetProperty("albumSize").GetInt32();
-            info.TotalSongNum = artistElement.GetProperty("musicSize").GetInt32();
-            var albumsElement = root.GetProperty("hotAlbums");
-            var actualCount = albumsElement.GetArrayLength();
-
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
-            await Parallel.ForEachAsync(
-                Enumerable.Range(0, actualCount),
-                new ParallelOptions
-                {
-                    MaxDegreeOfParallelism = Environment.ProcessorCount / 2,
-                    CancellationToken = cts.Token,
-                },
-                async (i, cancellationToken) =>
-                {
-                    try
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        var albumInfo = await CloudArtistAlbumInfo.CreateAsync(
-                            albumsElement[i]!,
-                            api
-                        );
-                        info.AlbumList.Add(albumInfo);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.StackTrace);
-                    }
-                }
-            );
-            return info;
+            AlbumList.Add(info);
         }
-        catch
+        if (TotalAlbumNum == CurrentAlbumNum)
         {
-            return info;
+            HasAllLoaded = true;
         }
-    }
-
-    public string GetCountStr()
-    {
-        var albumStr =
-            TotalAlbumNum > 1
-                ? "ArtistInfo_Albums".GetLocalized()
-                : "ArtistInfo_Album".GetLocalized();
-        var songStr =
-            TotalSongNum > 1 ? "AlbumInfo_Songs".GetLocalized() : "AlbumInfo_Song".GetLocalized();
-        return $"{TotalAlbumNum} {albumStr} • {TotalSongNum} {songStr} •";
-    }
-
-    public string GetDurationStr()
-    {
-        var hourStr =
-            TotalDuration.Hours > 1
-                ? "ArtistInfo_Hours".GetLocalized()
-                : "ArtistInfo_Hour".GetLocalized();
-        var minuteStr =
-            TotalDuration.Minutes > 1
-                ? "ArtistInfo_Mins".GetLocalized()
-                : "ArtistInfo_Min".GetLocalized();
-        var secondStr =
-            TotalDuration.Seconds > 1
-                ? "ArtistInfo_Secs".GetLocalized()
-                : "ArtistInfo_Sec".GetLocalized();
-
-        return TotalDuration.Hours > 0
-            ? $"{TotalDuration.Hours} {hourStr} {TotalDuration.Minutes} {minuteStr} {TotalDuration.Seconds} {secondStr}"
-            : $"{TotalDuration.Minutes} {minuteStr} {TotalDuration.Seconds} {secondStr}";
     }
 }

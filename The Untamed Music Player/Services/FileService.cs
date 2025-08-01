@@ -12,7 +12,7 @@ public class FileService : IFileService
         if (File.Exists(path))
         {
             var json = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<T>(json)!;
+            return JsonSerializer.Deserialize<T>(json)!; // AOT危险
         }
 
         return default!;
@@ -25,7 +25,7 @@ public class FileService : IFileService
             Directory.CreateDirectory(folderPath);
         }
 
-        var fileContent = JsonSerializer.Serialize(content);
+        var fileContent = JsonSerializer.Serialize(content); // AOT危险
         File.WriteAllText(Path.Combine(folderPath, fileName), fileContent, Encoding.UTF8);
     }
 

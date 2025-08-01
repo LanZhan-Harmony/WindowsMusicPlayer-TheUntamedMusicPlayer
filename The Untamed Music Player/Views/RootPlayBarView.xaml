@@ -5,6 +5,7 @@
              xmlns:ic="using:FluentIcons.WinUI"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:model="using:The_Untamed_Music_Player.Models"
+             Loaded="RootPlayBarView_Loaded"
              mc:Ignorable="d">
 
     <Grid Width="Auto" Height="Auto"

@@ -72,6 +72,7 @@ public class CloudAlbumSearchHelper
         finally
         {
             _searchSemaphore.Release();
+            GC.Collect();
         }
     }
 
@@ -87,7 +88,7 @@ public class CloudAlbumSearchHelper
                     { "keywords", list.KeyWords },
                     { "type", "10" },
                     { "limit", $"{CloudOnlineAlbumInfoList.Limit}" },
-                    { "offset", $"{list.Page * 30}" },
+                    { "offset", $"{list.Page * CloudOnlineAlbumInfoList.Limit}" },
                 }
             );
             using var document = JsonDocument.Parse(result.ToJsonString());
@@ -114,6 +115,7 @@ public class CloudAlbumSearchHelper
         finally
         {
             _searchSemaphore.Release();
+            GC.Collect();
         }
     }
 

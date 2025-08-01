@@ -1,6 +1,5 @@
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Helpers;
-using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.Contracts.Models;
 

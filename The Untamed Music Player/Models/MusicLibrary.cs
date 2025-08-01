@@ -142,16 +142,16 @@ public partial class MusicLibrary : ObservableRecipient
                 {
                     album.LoadCover();
                 }
-                await EnqueueAndWaitAsync(() =>
-                {
-                    OnPropertyChanged(nameof(HasMusics));
-                });
                 Genres =
                 [
                     .. _musicGenres
                         .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                         .OrderBy(x => x, new GenreComparer()),
                 ];
+                await EnqueueAndWaitAsync(() =>
+                {
+                    OnPropertyChanged(nameof(HasMusics));
+                });
                 _musicGenres.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
                 await Task.Run(AddFolderWatcher);
@@ -197,16 +197,16 @@ public partial class MusicLibrary : ObservableRecipient
             {
                 album.LoadCover();
             }
-            await EnqueueAndWaitAsync(() =>
-            {
-                OnPropertyChanged(nameof(HasMusics));
-            });
             Genres =
             [
                 .. _musicGenres
                     .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                     .OrderBy(x => x, new GenreComparer()),
             ];
+            await EnqueueAndWaitAsync(() => // 注意一定要在 Genres 赋值后再调用
+            {
+                OnPropertyChanged(nameof(HasMusics));
+            });
             _musicGenres.Clear();
             FolderWatchers.Clear();
             var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
@@ -252,7 +252,7 @@ public partial class MusicLibrary : ObservableRecipient
 
             foreach (var file in supportedFiles)
             {
-                var briefLocalSongInfo = BriefLocalSongInfo.Create(file.Path, foldername);
+                var briefLocalSongInfo = new BriefLocalSongInfo(file.Path, foldername);
                 Songs.Add(briefLocalSongInfo);
                 _musicGenres.TryAdd(briefLocalSongInfo.GenreStr, 0);
                 UpdateAlbumInfo(briefLocalSongInfo);
@@ -417,9 +417,7 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="localArtistInfo"></param>
     /// <returns></returns>
-    public ObservableCollection<BriefLocalSongInfo> GetSongsByArtist(
-        LocalArtistInfo localArtistInfo
-    ) =>
+    public IEnumerable<BriefLocalSongInfo> GetSongsByArtist(LocalArtistInfo localArtistInfo) =>
         [
             .. localArtistInfo
                 .Albums.OrderBy(album => album, new AlbumTitleComparer())

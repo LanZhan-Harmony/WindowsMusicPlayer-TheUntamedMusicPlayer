@@ -1,11 +1,8 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.Json.Serialization;
 using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
-using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -112,60 +109,50 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     [MemoryPackConstructor]
     public BriefLocalSongInfo() { }
 
-    /// <summary>
-    /// 异步工厂方法
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="folder"></param>
-    /// <returns></returns>
-    public static BriefLocalSongInfo Create(string path, string folder)
+    public BriefLocalSongInfo(string path, string folder)
     {
-        var info = new BriefLocalSongInfo
-        {
-            Path = path,
-            Folder = folder,
-            ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds(),
-        };
+        Path = path;
+        Folder = folder;
+        ModifiedDate = new DateTimeOffset(new FileInfo(path).LastWriteTime).ToUnixTimeSeconds();
 
         try
         {
-            var musicFile = TagLib.File.Create(path);
-            info.Album = musicFile.Tag.Album ?? IBriefSongInfoBase._unknownAlbum;
-            info.Title = string.IsNullOrEmpty(musicFile.Tag.Title)
+            using var musicFile = TagLib.File.Create(path);
+            Album = musicFile.Tag.Album ?? IBriefSongInfoBase._unknownAlbum;
+            Title = string.IsNullOrEmpty(musicFile.Tag.Title)
                 ? System.IO.Path.GetFileNameWithoutExtension(path)
                 : musicFile.Tag.Title;
             string[] combinedArtists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
-            info.Artists =
+            Artists =
                 combinedArtists.Length != 0 ? combinedArtists : [IBriefSongInfoBase._unknownArtist];
-            info.ArtistsStr = IBriefSongInfoBase.GetArtistsStr(info.Artists);
-            info.Year = (ushort)musicFile.Tag.Year;
-            info.YearStr = IBriefSongInfoBase.GetYearStr(info.Year);
+            ArtistsStr = IBriefSongInfoBase.GetArtistsStr(Artists);
+            Year = (ushort)musicFile.Tag.Year;
+            YearStr = IBriefSongInfoBase.GetYearStr(Year);
             var genres = musicFile.Tag.Genres;
-            info.Genre = genres.Length != 0 ? genres : [_unknownGenre];
-            info.GenreStr = GetGenreStr(info.Genre);
-            info.Duration = musicFile.Properties.Duration;
-            info.DurationStr = IBriefSongInfoBase.GetDurationStr(info.Duration);
-            info.HasCover = musicFile.Tag.Pictures.Length != 0;
+            Genre = genres.Length != 0 ? genres : [_unknownGenre];
+            GenreStr = GetGenreStr(Genre);
+            Duration = musicFile.Properties.Duration;
+            DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
+            HasCover = musicFile.Tag.Pictures.Length != 0;
         }
         catch (Exception ex)
             when (ex is TagLib.CorruptFileException or TagLib.UnsupportedFormatException)
         {
             // 设置默认值
-            info.Title = System.IO.Path.GetFileNameWithoutExtension(path);
-            info.Album = IBriefSongInfoBase._unknownAlbum;
-            info.Artists = [IBriefSongInfoBase._unknownArtist];
-            info.ArtistsStr = IBriefSongInfoBase.GetArtistsStr(info.Artists);
-            info.YearStr = "";
-            info.Genre = [_unknownGenre];
-            info.GenreStr = GetGenreStr(info.Genre);
-            info.DurationStr = IBriefSongInfoBase.GetDurationStr(info.Duration);
+            Title = System.IO.Path.GetFileNameWithoutExtension(path);
+            Album = IBriefSongInfoBase._unknownAlbum;
+            Artists = [IBriefSongInfoBase._unknownArtist];
+            ArtistsStr = IBriefSongInfoBase.GetArtistsStr(Artists);
+            YearStr = "";
+            Genre = [_unknownGenre];
+            GenreStr = GetGenreStr(Genre);
+            DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
         }
         catch (Exception ex)
         {
-            info.IsPlayAvailable = false;
+            IsPlayAvailable = false;
             Debug.WriteLine(ex.StackTrace);
         }
-        return info;
     }
 
     /// <summary>
@@ -246,13 +233,13 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
 
     public DetailedLocalSongInfo(BriefLocalSongInfo info)
     {
+        IsPlayAvailable = info.IsPlayAvailable;
+        Path = info.Path;
+        Folder = info.Folder;
+        Title = info.Title;
         try
         {
-            IsPlayAvailable = info.IsPlayAvailable;
-            Path = info.Path;
-            Folder = info.Folder;
-            Title = info.Title;
-            var musicFile = TagLib.File.Create(Path);
+            using var musicFile = TagLib.File.Create(Path);
             Album = musicFile.Tag.Album ?? "";
             Artists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
             ArtistsStr = IBriefSongInfoBase.GetArtistsStr(Artists);
@@ -282,7 +269,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
                 var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
                 CoverBuffer = coverBuffer;
                 using var stream = new MemoryStream(coverBuffer);
-                Cover = new BitmapImage { DecodePixelWidth = 400 };
+                Cover = new BitmapImage();
                 Cover.SetSource(stream.AsRandomAccessStream());
             }
         }

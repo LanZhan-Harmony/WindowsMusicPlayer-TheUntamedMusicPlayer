@@ -29,28 +29,35 @@ public partial class ShellViewModel : ObservableRecipient
     public void NavigationFrame_Navigating(object sender, NavigatingCancelEventArgs e)
     {
         CurrentPage = e.SourcePageType.Name;
-        if (e.NavigationMode == NavigationMode.Back)
-        {
-            NavigatePage = "";
-        }
         var navView = Data.ShellPage!.GetNavigationView();
-        if (CurrentPage == nameof(HomePage))
+        if (
+            CurrentPage
+            is nameof(HomePage)
+                or nameof(OnlineAlbumDetailPage)
+                or nameof(OnlineArtistDetailPage)
+                or nameof(OnlinePlayListDetailPage)
+        )
         {
             SelectedItem = navView.MenuItems[0];
         }
-        else if (CurrentPage == nameof(MusicLibraryPage))
+        else if (
+            CurrentPage
+            is nameof(MusicLibraryPage)
+                or nameof(LocalAlbumDetailPage)
+                or nameof(LocalArtistDetailPage)
+        )
         {
             SelectedItem = navView.MenuItems[1];
         }
-        else if (CurrentPage == nameof(PlayQueuePage))
+        else if (CurrentPage is nameof(PlayQueuePage))
         {
             SelectedItem = navView.MenuItems[3];
         }
-        else if (CurrentPage == nameof(PlayListsPage))
+        else if (CurrentPage is nameof(PlayListsPage))
         {
             SelectedItem = navView.MenuItems[4];
         }
-        else if (CurrentPage == nameof(SettingsPage))
+        else if (CurrentPage is nameof(SettingsPage))
         {
             SelectedItem = navView.FooterMenuItems[0];
         }

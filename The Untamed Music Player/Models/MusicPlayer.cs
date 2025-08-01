@@ -1,41 +1,35 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibVLCSharp.Shared;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using Windows.Media;
-using Windows.Media.Core;
-using Windows.Media.Playback;
-using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
 
 namespace The_Untamed_Music_Player.Models;
 
-public partial class MusicPlayer : ObservableRecipient
+public partial class MusicPlayer : ObservableRecipient, IDisposable
 {
-    private readonly Thickness _defaultMargin = new(0, 20, 0, 20);
-    private readonly Thickness _highlightedMargin = new(0, 40, 0, 40);
-    private const double _defaultOpacity = 0.5;
-    private const double _highlightedOpacity = 1.0;
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
+    private readonly LibVLC _libVlc;
+    private readonly MediaPlayer _vlcPlayer;
+    private Media? _currentMedia;
+    private readonly Windows.Media.Playback.MediaPlayer? _windowsMediaPlayer = new();
 
     /// <summary>
     /// 用于SMTC显示封面图片的流
     /// </summary>
     private static InMemoryRandomAccessStream? _currentCoverStream = null!;
-
-    /// <summary>
-    /// 线程锁, 用于限制对Player的访问
-    /// </summary>
-    private readonly Lock _mediaLock = new();
 
     /// <summary>
     /// 当前播放的歌曲简要版
@@ -78,6 +72,11 @@ public partial class MusicPlayer : ObservableRecipient
     private int _playQueueLength = 0;
 
     /// <summary>
+    /// 当前歌词切片在集合中的索引
+    /// </summary>
+    private int _currentLyricIndex = 0;
+
+    /// <summary>
     /// 播放速度
     /// </summary>
     private double PlaySpeed
@@ -86,7 +85,7 @@ public partial class MusicPlayer : ObservableRecipient
         set
         {
             field = value;
-            Player.PlaybackSession.PlaybackRate = value;
+            _vlcPlayer.SetRate((float)value);
         }
     } = 1;
 
@@ -94,23 +93,18 @@ public partial class MusicPlayer : ObservableRecipient
     /// 线程计时器
     /// </summary>
     public ThreadPoolTimer? PositionUpdateTimer250ms { get; set; }
-    public ThreadPoolTimer? PositionUpdateTimer2000ms { get; set; }
 
     /// <summary>
     /// 播放队列集合
     /// </summary>
-    public ObservableCollection<IBriefSongInfoBase> PlayQueue { get; set; } = [];
+    [ObservableProperty]
+    public partial ObservableCollection<IBriefSongInfoBase> PlayQueue { get; set; } = [];
 
     /// <summary>
     /// 随机播放队列集合
     /// </summary>
-    public ObservableCollection<IBriefSongInfoBase> ShuffledPlayQueue { get; set; } = [];
-
-    /// <summary>
-    /// 音乐播放器
-    /// </summary>
-    public MediaPlayer Player { get; set; } =
-        new() { AudioCategory = MediaPlayerAudioCategory.Media };
+    [ObservableProperty]
+    public partial ObservableCollection<IBriefSongInfoBase> ShuffledPlayQueue { get; set; } = [];
 
     /// <summary>
     /// 歌曲来源模式, 0为本地, 1为网易
@@ -120,7 +114,8 @@ public partial class MusicPlayer : ObservableRecipient
     /// <summary>
     /// 随机播放模式, true为开启, false为关闭.
     /// </summary>
-    public bool ShuffleMode { get; set; } = false;
+    [ObservableProperty]
+    public partial bool ShuffleMode { get; set; } = false;
 
     /// <summary>
     /// 播放队列名
@@ -184,19 +179,19 @@ public partial class MusicPlayer : ObservableRecipient
     /// 当前播放进度(百分比)
     /// </summary>
     [ObservableProperty]
-    public partial double CurrentPosition { get; set; } = 0;
+    public partial double CurrentPosition { get; set; } = 0.0;
 
     /// <summary>
     /// 当前音量
     /// </summary>
     [ObservableProperty]
-    public partial double CurrentVolume { get; set; } = 100;
+    public partial double CurrentVolume { get; set; } = 100.0;
 
     partial void OnCurrentVolumeChanged(double value)
     {
         if (!IsMute)
         {
-            Player.Volume = value / 100;
+            _vlcPlayer.Volume = (int)value;
         }
     }
 
@@ -208,14 +203,8 @@ public partial class MusicPlayer : ObservableRecipient
 
     partial void OnIsMuteChanged(bool value)
     {
-        Player.IsMuted = value;
+        _vlcPlayer.Mute = value;
     }
-
-    /// <summary>
-    /// 当前歌词切片在集合中的索引
-    /// </summary>
-    [ObservableProperty]
-    public partial int CurrentLyricIndex { get; set; } = 0;
 
     /// <summary>
     /// 当前歌词内容
@@ -231,20 +220,182 @@ public partial class MusicPlayer : ObservableRecipient
 
     public MusicPlayer()
     {
-        _localSettingsService = App.GetService<ILocalSettingsService>();
-        Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
-        Player.MediaEnded += OnPlaybackStopped;
-        Player.MediaFailed += OnPlaybackFailed;
-        Player.Volume = CurrentVolume / 100;
-        Player.CommandManager.IsEnabled = false;
-        _systemControls = Player.SystemMediaTransportControls;
+        // 初始化 LibVLC
+        Core.Initialize();
+        _libVlc = new LibVLC();
+        _vlcPlayer = new MediaPlayer(_libVlc);
+
+        // 创建 LibVLC 事件处理器
+        _vlcPlayer.Playing += OnVlcPlaying;
+        _vlcPlayer.Paused += OnVlcPaused;
+        _vlcPlayer.Stopped += OnVlcStopped;
+        _vlcPlayer.EndReached += OnVlcEndReached;
+        _vlcPlayer.EncounteredError += OnVlcError;
+        _vlcPlayer.TimeChanged += OnVlcTimeChanged;
+        _vlcPlayer.LengthChanged += OnVlcLengthChanged;
+        _vlcPlayer.Opening += OnVlcOpening;
+        _vlcPlayer.Buffering += OnVlcBuffering;
+
+        _vlcPlayer.Volume = (int)CurrentVolume;
+        _vlcPlayer.Mute = IsMute;
+
+        _systemControls = _windowsMediaPlayer.SystemMediaTransportControls;
         _displayUpdater = _systemControls.DisplayUpdater;
         _displayUpdater.Type = MediaPlaybackType.Music;
         _systemControls.IsEnabled = true;
         _systemControls.ButtonPressed += SystemControls_ButtonPressed;
         _timelineProperties.StartTime = TimeSpan.Zero;
         _timelineProperties.MinSeekTime = TimeSpan.Zero;
+
         LoadCurrentStateAsync();
+    }
+
+    // LibVLC 事件处理函数
+    private void OnVlcOpening(object? sender, EventArgs e)
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () => PlayState = 2
+        );
+    }
+
+    private void OnVlcBuffering(object? sender, MediaPlayerBufferingEventArgs e)
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () =>
+            {
+                PlayState = 2;
+                var bufferingProgress = e.Cache / 100d;
+                if (bufferingProgress == 1.0)
+                {
+                    PlayState = 1;
+                }
+            }
+        );
+    }
+
+    private void OnVlcPlaying(object? sender, EventArgs e)
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () =>
+            {
+                PlayState = 1;
+                _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
+            }
+        );
+    }
+
+    private void OnVlcPaused(object? sender, EventArgs e)
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () =>
+            {
+                PlayState = 0;
+                _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
+            }
+        );
+    }
+
+    private void OnVlcStopped(object? sender, EventArgs e)
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () =>
+            {
+                PlayState = 0;
+                _systemControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
+            }
+        );
+    }
+
+    private void OnVlcEndReached(object? sender, EventArgs e)
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (!_lockable)
+            {
+                if (RepeatMode == 2)
+                {
+                    PlaySongByInfo(_currentBriefSong!);
+                }
+                else
+                {
+                    PlayNextSong();
+                }
+            }
+        });
+    }
+
+    private void OnVlcError(object? sender, EventArgs e)
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (RepeatMode == 2 || SourceMode != 0)
+            {
+                Stop();
+            }
+            else
+            {
+                _currentBriefSong!.IsPlayAvailable = false;
+                _failedCount++;
+                if (_failedCount > 2)
+                {
+                    _failedCount = 0;
+                    Stop();
+                }
+                else
+                {
+                    PlayNextSong();
+                }
+            }
+        });
+    }
+
+    private void OnVlcTimeChanged(object? sender, MediaPlayerTimeChangedEventArgs e)
+    {
+        if (_lockable)
+        {
+            return;
+        }
+
+        var newTime = TimeSpan.FromMilliseconds(e.Time);
+        App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
+        {
+            CurrentPlayingTime = newTime;
+            if (TotalPlayingTime.TotalMilliseconds > 0)
+            {
+                CurrentPosition =
+                    100
+                    * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
+            }
+        });
+
+        var dispatcherQueue =
+            Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
+        if (CurrentLyric.Count > 0)
+        {
+            dispatcherQueue?.TryEnqueue(() =>
+            {
+                UpdateCurrentLyricIndex(e.Time);
+            });
+        }
+
+        _timelineProperties.Position = newTime;
+        _systemControls.UpdateTimelineProperties(_timelineProperties);
+    }
+
+    private void OnVlcLengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e)
+    {
+        var duration = TimeSpan.FromMilliseconds(e.Length);
+        App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
+        {
+            TotalPlayingTime = duration;
+            _timelineProperties.MaxSeekTime = duration;
+            _timelineProperties.EndTime = duration;
+        });
     }
 
     /// <summary>
@@ -259,7 +410,7 @@ public partial class MusicPlayer : ObservableRecipient
         PlayQueueIndex = info.PlayQueueIndex;
         if (CurrentSong!.IsPlayAvailable)
         {
-            SetSource(CurrentSong!.Path);
+            await SetSource(CurrentSong!.Path);
             _ = UpdateLyric(CurrentSong!.Lyric);
             _systemControls.IsPlayEnabled = true;
             _systemControls.IsPauseEnabled = true;
@@ -285,7 +436,7 @@ public partial class MusicPlayer : ObservableRecipient
         PlayQueueIndex = isLast ? 0 : index;
         if (CurrentSong!.IsPlayAvailable)
         {
-            SetSource(CurrentSong!.Path);
+            await SetSource(CurrentSong!.Path);
             _ = UpdateLyric(CurrentSong!.Lyric);
             _systemControls.IsPlayEnabled = true;
             _systemControls.IsPauseEnabled = true;
@@ -359,7 +510,7 @@ public partial class MusicPlayer : ObservableRecipient
             {
                 if (CurrentSong!.IsPlayAvailable)
                 {
-                    SetSource(CurrentSong!.Path);
+                    await SetSource(CurrentSong!.Path);
                     _ = UpdateLyric(CurrentSong!.Lyric);
                     _systemControls.IsPauseEnabled = true;
                     _systemControls.IsPlayEnabled = true;
@@ -435,37 +586,38 @@ public partial class MusicPlayer : ObservableRecipient
     /// 为播放器设置音乐源
     /// </summary>
     /// <param name="path"></param>
-    private async void SetSource(string path)
+    private async Task SetSource(string path)
     {
         try
         {
-            Data.RootPlayBarViewModel!.ButtonVisibility = Visibility.Visible;
-            Data.RootPlayBarViewModel!.Availability = true;
-            Player.Source = null;
+            Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Visible;
+            Data.RootPlayBarViewModel?.Availability = true;
+
+            _currentMedia?.Dispose();
+
             if (SourceMode == 0)
             {
-                var mediaFile = await StorageFile.GetFileFromPathAsync(path);
-                Player.Source = MediaSource.CreateFromStorageFile(mediaFile);
+                _currentMedia = new Media(_libVlc, path, FromType.FromPath);
             }
             else
             {
-                Player.Source = MediaSource.CreateFromUri(new Uri(path));
+                _currentMedia = new Media(_libVlc, path, FromType.FromLocation);
             }
-            Player.PlaybackSession.PlaybackRate = PlaySpeed;
-            TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
+
+            _vlcPlayer.Media = _currentMedia;
+            _vlcPlayer.SetRate((float)PlaySpeed);
+
             _displayUpdater.MusicProperties.Title = CurrentSong!.Title;
             _displayUpdater.MusicProperties.Artist =
-                CurrentSong.ArtistsStr == "未知艺术家" ? "" : CurrentSong.ArtistsStr;
-            _timelineProperties.MaxSeekTime = Player.PlaybackSession.NaturalDuration;
-            _timelineProperties.EndTime = Player.PlaybackSession.NaturalDuration;
+                CurrentSong.ArtistsStr == "SongInfo_UnknownArtist".GetLocalized()
+                    ? ""
+                    : CurrentSong.ArtistsStr;
+
             PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(
                 UpdateTimerHandler250ms,
                 TimeSpan.FromMilliseconds(250)
             );
-            PositionUpdateTimer2000ms = ThreadPoolTimer.CreatePeriodicTimer(
-                UpdateTimerHandler2000ms,
-                TimeSpan.FromMilliseconds(2000)
-            );
+
             if (ShuffleMode)
             {
                 // 更新当前歌曲在随机播放队列中的索引
@@ -574,97 +726,84 @@ public partial class MusicPlayer : ObservableRecipient
         }
     }
 
+    public void SetShuffledPlayList(
+        string name,
+        IEnumerable<IBriefSongInfoBase> list,
+        byte sourceMode = 0,
+        byte sortMode = 0
+    )
+    {
+        if (
+            ShuffleMode == false
+            || PlayQueue.Count != list.Count()
+            || PlayQueueName != name
+            || _sortMode != sortMode
+            || SourceMode != sourceMode
+        )
+        {
+            _sortMode = sortMode;
+            SourceMode = sourceMode;
+            ShuffleMode = true;
+            PlayQueueName = name;
+            PlayQueue = [.. list];
+            _playQueueLength = list.Count();
+
+            UpdateShufflePlayQueue();
+            for (var i = 0; i < ShuffledPlayQueue.Count; i++)
+            {
+                ShuffledPlayQueue[i].PlayQueueIndex = i;
+            }
+        }
+        FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
+    }
+
     /// <summary>
     /// 计时器更新事件
     /// </summary>
     /// <param name="timer"></param>
     private void UpdateTimerHandler250ms(ThreadPoolTimer timer)
     {
-        lock (_mediaLock)
+        try
         {
-            try
+            if (_vlcPlayer is null || _lockable || _vlcPlayer.State != VLCState.Playing)
             {
-                if (
-                    Player.PlaybackSession is null
-                    || _lockable
-                    || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing
-                )
-                {
-                    return;
-                }
-                App.MainWindow?.DispatcherQueue.TryEnqueue(
-                    DispatcherQueuePriority.Low,
-                    () =>
-                    {
-                        CurrentPlayingTime = Player.PlaybackSession.Position;
-                        TotalPlayingTime = Player.PlaybackSession.NaturalDuration;
-                        if (TotalPlayingTime.TotalMilliseconds > 0)
-                        {
-                            CurrentPosition =
-                                100
-                                * (
-                                    CurrentPlayingTime.TotalMilliseconds
-                                    / TotalPlayingTime.TotalMilliseconds
-                                );
-                        }
-                    }
-                );
+                return;
+            }
 
-                var dispatcherQueue =
-                    Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
-                if (CurrentLyric.Count > 0)
-                {
-                    dispatcherQueue?.TryEnqueue(
-                        DispatcherQueuePriority.Low,
-                        () =>
-                        {
-                            CurrentLyricIndex = GetCurrentLyricIndex(
-                                Player.PlaybackSession.Position.TotalMilliseconds
-                            );
-                            CurrentLyricContent = CurrentLyric[CurrentLyricIndex].Content;
-                        }
-                    );
-                }
-                else
-                {
-                    dispatcherQueue?.TryEnqueue(
-                        DispatcherQueuePriority.Low,
-                        () =>
-                        {
-                            CurrentLyricIndex = 0;
-                            CurrentLyricContent = "";
-                        }
-                    );
-                }
-            }
-            catch (Exception ex)
+            var currentTime = _vlcPlayer.Time;
+            var totalTime = _vlcPlayer.Length;
+
+            App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
             {
-                Debug.WriteLine(ex.StackTrace);
+                CurrentPlayingTime = TimeSpan.FromMilliseconds(currentTime);
+                TotalPlayingTime = TimeSpan.FromMilliseconds(totalTime);
+                if (TotalPlayingTime.TotalMilliseconds > 0)
+                {
+                    CurrentPosition =
+                        100
+                        * (
+                            CurrentPlayingTime.TotalMilliseconds
+                            / TotalPlayingTime.TotalMilliseconds
+                        );
+                }
+            });
+
+            var dispatcherQueue =
+                Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
+            if (CurrentLyric.Count > 0)
+            {
+                dispatcherQueue?.TryEnqueue(() =>
+                {
+                    UpdateCurrentLyricIndex(currentTime);
+                });
             }
+
+            _timelineProperties.Position = TimeSpan.FromMilliseconds(currentTime);
+            _systemControls.UpdateTimelineProperties(_timelineProperties);
         }
-    }
-
-    private void UpdateTimerHandler2000ms(ThreadPoolTimer timer)
-    {
-        lock (_mediaLock)
+        catch (Exception ex)
         {
-            try
-            {
-                if (
-                    Player.PlaybackSession is null
-                    || _lockable
-                    || Player.PlaybackSession.PlaybackState != MediaPlaybackState.Playing
-                )
-                {
-                    return;
-                }
-                _timelineProperties.Position = Player.PlaybackSession.Position;
-                _systemControls.UpdateTimelineProperties(_timelineProperties);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.StackTrace);
-            }
+            Debug.WriteLine(ex.StackTrace);
         }
     }
 
@@ -686,109 +825,35 @@ public partial class MusicPlayer : ObservableRecipient
     }
 
     /// <summary>
-    /// 播放状态改变事件
+    /// 更新当前歌词索引和状态
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
-    public void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
+    /// <param name="currentTime">当前播放时间（毫秒）</param>
+    private void UpdateCurrentLyricIndex(double currentTime)
     {
-        try
+        if (CurrentLyric.Count == 0)
         {
-            switch (sender.PlaybackState)
+            return;
+        }
+
+        var newIndex = GetCurrentLyricIndex(currentTime);
+
+        if (newIndex != _currentLyricIndex)
+        {
+            // 更新旧歌词状态
+            if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyric.Count)
             {
-                case MediaPlaybackState.None:
-                    break;
-                case MediaPlaybackState.Opening:
-                case MediaPlaybackState.Buffering:
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
-                        DispatcherQueuePriority.Low,
-                        () =>
-                        {
-                            PlayState = 2;
-                        }
-                    );
-                    break;
-                case MediaPlaybackState.Playing:
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
-                        DispatcherQueuePriority.Low,
-                        () =>
-                        {
-                            PlayState = 1;
-                            _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
-                        }
-                    );
-                    break;
-                case MediaPlaybackState.Paused:
-                    Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
-                        DispatcherQueuePriority.Low,
-                        () =>
-                        {
-                            PlayState = 0;
-                            _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
-                        }
-                    );
-                    break;
-                default:
-                    break;
+                CurrentLyric[_currentLyricIndex].IsCurrent = false;
+            }
+
+            _currentLyricIndex = newIndex;
+
+            // 更新新歌词状态
+            if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyric.Count)
+            {
+                CurrentLyric[_currentLyricIndex].IsCurrent = true;
+                CurrentLyricContent = CurrentLyric[_currentLyricIndex].Content;
             }
         }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex.StackTrace);
-        }
-    }
-
-    /// <summary>
-    /// 播放结束事件
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
-    private void OnPlaybackStopped(MediaPlayer sender, object args)
-    {
-        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
-        {
-            if (sender.PlaybackSession.PlaybackState == MediaPlaybackState.Paused && !_lockable)
-            {
-                if (RepeatMode == 2)
-                {
-                    PlaySongByInfo(CurrentSong!);
-                }
-                else
-                {
-                    PlayNextSong();
-                }
-            }
-        });
-    }
-
-    /// <summary>
-    /// 播放失败事件
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
-    private void OnPlaybackFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
-    {
-        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
-        {
-            if (RepeatMode == 2 || SourceMode != 0)
-            {
-                Stop();
-            }
-            else
-            {
-                _currentBriefSong!.IsPlayAvailable = false;
-                _failedCount++;
-                if (_failedCount > 2)
-                {
-                    _failedCount = 0;
-                    Stop();
-                }
-                else
-                {
-                    PlayNextSong();
-                }
-            }
-        });
     }
 
     private void HandleSongNotAvailable()
@@ -864,7 +929,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     public void Play()
     {
-        Player?.Play();
+        _vlcPlayer?.Play();
     }
 
     /// <summary>
@@ -872,7 +937,7 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     public void Pause()
     {
-        Player?.Pause();
+        _vlcPlayer?.Pause();
     }
 
     /// <summary>
@@ -880,15 +945,13 @@ public partial class MusicPlayer : ObservableRecipient
     /// </summary>
     public void Stop()
     {
-        Player?.Pause();
+        _vlcPlayer?.Stop();
         CurrentPlayingTime = TimeSpan.Zero;
         CurrentPosition = 0;
-        CurrentLyricIndex = 0;
+        _currentLyricIndex = 0;
         CurrentLyricContent = "";
         PositionUpdateTimer250ms?.Cancel();
-        PositionUpdateTimer2000ms?.Cancel();
         PositionUpdateTimer250ms = null;
-        PositionUpdateTimer2000ms = null;
     }
 
     /// <summary>
@@ -998,7 +1061,6 @@ public partial class MusicPlayer : ObservableRecipient
                         ?.PlayQueueIndex ?? 0;
             }
         }
-        OnPropertyChanged(nameof(ShuffleMode));
         FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
     }
 
@@ -1037,8 +1099,8 @@ public partial class MusicPlayer : ObservableRecipient
         PlayQueueName = "";
         PlayQueueIndex = 0;
         _playQueueLength = 0;
-        Data.RootPlayBarViewModel!.ButtonVisibility = Visibility.Collapsed;
-        Data.RootPlayBarViewModel!.Availability = false;
+        Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Collapsed;
+        Data.RootPlayBarViewModel?.Availability = false;
         _systemControls.IsPlayEnabled = false;
         _systemControls.IsPauseEnabled = false;
         _systemControls.IsPreviousEnabled = false;
@@ -1069,7 +1131,7 @@ public partial class MusicPlayer : ObservableRecipient
         CurrentPlayingTime = TimeSpan.FromMilliseconds(
             ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100
         );
-        CurrentLyricIndex = GetCurrentLyricIndex(CurrentPlayingTime.TotalMilliseconds);
+        UpdateCurrentLyricIndex(CurrentPlayingTime.TotalMilliseconds);
     }
 
     /// <summary>
@@ -1079,19 +1141,15 @@ public partial class MusicPlayer : ObservableRecipient
     /// <param name="e"></param>
     public void ProgressUpdate(object sender, PointerRoutedEventArgs e)
     {
-        Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(
-            ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100
-        );
-        CurrentPlayingTime = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
-        TotalPlayingTime = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
+        var newPosition = ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100;
+        _vlcPlayer.Time = (long)newPosition;
+        CurrentPlayingTime = TimeSpan.FromMilliseconds(newPosition);
         if (TotalPlayingTime.TotalMilliseconds > 0)
         {
             CurrentPosition =
                 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex(
-            (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
-        );
+        UpdateCurrentLyricIndex(newPosition);
         _lockable = false;
     }
 
@@ -1102,72 +1160,47 @@ public partial class MusicPlayer : ObservableRecipient
     public void LyricProgressUpdate(double time)
     {
         _lockable = true;
-        Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(time);
-        CurrentPlayingTime = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
-        TotalPlayingTime = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
+        _vlcPlayer.Time = (long)time;
+        CurrentPlayingTime = TimeSpan.FromMilliseconds(time);
         if (TotalPlayingTime.TotalMilliseconds > 0)
         {
             CurrentPosition =
                 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex(
-            (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
-        );
+        UpdateCurrentLyricIndex(time);
         _lockable = false;
     }
 
     public void SkipBack10sButton_Click(object sender, RoutedEventArgs e)
     {
         _lockable = true;
-        if (Player.PlaybackSession.Position.TotalMilliseconds - 10000 < 0)
-        {
-            Player.PlaybackSession.Position = TimeSpan.Zero;
-        }
-        else
-        {
-            Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(
-                Player.PlaybackSession.Position.TotalMilliseconds - 10000
-            );
-        }
-        CurrentPlayingTime = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
-        TotalPlayingTime = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
+        var currentTime = _vlcPlayer.Time;
+        var newTime = Math.Max(0, currentTime - 10000);
+        _vlcPlayer.Time = newTime;
+        CurrentPlayingTime = TimeSpan.FromMilliseconds(newTime);
         if (TotalPlayingTime.TotalMilliseconds > 0)
         {
             CurrentPosition =
                 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex(
-            (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
-        );
+        UpdateCurrentLyricIndex(newTime);
         _lockable = false;
     }
 
     public void SkipForw30sButton_Click(object sender, RoutedEventArgs e)
     {
         _lockable = true;
-        if (
-            Player.PlaybackSession.Position.TotalMilliseconds + 30000
-            > TotalPlayingTime.TotalMilliseconds
-        )
-        {
-            Player.PlaybackSession.Position = TotalPlayingTime;
-        }
-        else
-        {
-            Player.PlaybackSession.Position = TimeSpan.FromMilliseconds(
-                Player.PlaybackSession.Position.TotalMilliseconds + 30000
-            );
-        }
-        CurrentPlayingTime = Player.PlaybackSession?.Position ?? TimeSpan.Zero;
-        TotalPlayingTime = Player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
+        var currentTime = _vlcPlayer.Time;
+        var totalTime = _vlcPlayer.Length;
+        var newTime = Math.Min(totalTime, currentTime + 30000);
+        _vlcPlayer.Time = newTime;
+        CurrentPlayingTime = TimeSpan.FromMilliseconds(newTime);
         if (TotalPlayingTime.TotalMilliseconds > 0)
         {
             CurrentPosition =
                 100 * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
         }
-        CurrentLyricIndex = GetCurrentLyricIndex(
-            (Player.PlaybackSession?.Position ?? TimeSpan.Zero).TotalMilliseconds
-        );
+        UpdateCurrentLyricIndex(newTime);
         _lockable = false;
     }
 
@@ -1206,59 +1239,15 @@ public partial class MusicPlayer : ObservableRecipient
     public async Task UpdateLyric(string lyric)
     {
         CurrentLyric = await LyricSlice.GetLyricSlices(lyric);
-    }
+        _currentLyricIndex = 0;
+        CurrentLyricContent = "";
 
-    /// <summary>
-    /// 获取歌词字体大小
-    /// </summary>
-    /// <param name="itemTime"></param>
-    /// <param name="currentLyricIndex"></param>
-    /// <returns></returns>
-    public double GetLyricFont(double itemTime, int currentLyricIndex, double mainWindowWidth)
-    {
-        var defaultFontSize = mainWindowWidth <= 1000 ? 16.0 : 20.0;
-        var highlightedFontSize = mainWindowWidth <= 1000 ? 24.0 : 50.0;
-        return itemTime == CurrentLyric[currentLyricIndex].Time
-            ? highlightedFontSize
-            : defaultFontSize;
+        if (CurrentLyric.Count > 0)
+        {
+            CurrentLyric[0].IsCurrent = true;
+            CurrentLyricContent = CurrentLyric[0].Content;
+        }
     }
-
-    /// <summary>
-    /// 获取歌词边距
-    /// </summary>
-    /// <param name="itemTime"></param>
-    /// <param name="currentLyricIndex"></param>
-    /// <returns></returns>
-    public Thickness GetLyricMargin(double itemTime, int currentLyricIndex)
-    {
-        return itemTime == CurrentLyric[currentLyricIndex].Time
-            ? _highlightedMargin
-            : _defaultMargin;
-    }
-
-    /// <summary>
-    /// 获取歌词透明度
-    /// </summary>
-    /// <param name="itemTime"></param>
-    /// <param name="currentLyricIndex"></param>
-    /// <returns></returns>
-    public double GetLyricOpacity(double itemTime, int currentLyricIndex)
-    {
-        return itemTime == CurrentLyric[currentLyricIndex].Time
-            ? _highlightedOpacity
-            : _defaultOpacity;
-    }
-
-    /// <summary>
-    /// 获取播放队列
-    /// </summary>
-    /// <param name="PlayQueueName"></param>
-    /// <param name="ShuffleMode"></param>
-    /// <returns></returns>
-    public ObservableCollection<IBriefSongInfoBase> GetPlayQueue(
-        string PlayQueueName,
-        bool ShuffleMode
-    ) => ShuffleMode ? ShuffledPlayQueue : PlayQueue;
 
     /// <summary>
     /// 保存当前播放状态至设置存储
@@ -1292,7 +1281,7 @@ public partial class MusicPlayer : ObservableRecipient
                 0 => await _localSettingsService.ReadSettingAsync<BriefLocalSongInfo>(
                     "CurrentBriefSong"
                 ),
-                1 => await _localSettingsService.ReadSettingAsync<CloudBriefOnlineSongInfo>(
+                1 => await _localSettingsService.ReadSettingAsync<BriefCloudOnlineSongInfo>(
                     "CurrentBriefSong"
                 ),
                 _ => null,
@@ -1304,7 +1293,7 @@ public partial class MusicPlayer : ObservableRecipient
                 CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
                     _currentBriefSong
                 );
-                SetSource(CurrentSong!.Path);
+                await SetSource(CurrentSong!.Path);
                 _ = UpdateLyric(CurrentSong!.Lyric);
                 _systemControls.IsPlayEnabled = true;
                 _systemControls.IsPauseEnabled = true;
@@ -1337,5 +1326,15 @@ public partial class MusicPlayer : ObservableRecipient
             Data.RootPlayBarViewModel?.Availability = false;
             Debug.WriteLine(ex.StackTrace);
         }
+    }
+
+    public void Dispose()
+    {
+        PositionUpdateTimer250ms?.Cancel();
+        _currentMedia?.Dispose();
+        _vlcPlayer?.Dispose();
+        _libVlc?.Dispose();
+        _currentCoverStream?.Dispose();
+        _windowsMediaPlayer?.Dispose();
     }
 }
