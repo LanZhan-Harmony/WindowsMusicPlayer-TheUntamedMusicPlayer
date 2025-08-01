@@ -17,6 +17,8 @@ namespace The_Untamed_Music_Player.Helpers;
 [JsonSerializable(typeof(List<string>))]
 [JsonSerializable(typeof(BriefLocalSongInfo))]
 [JsonSerializable(typeof(BriefCloudOnlineSongInfo))]
+[JsonSerializable(typeof(IDictionary<string, object>))]
+[JsonSerializable(typeof(Dictionary<string, object>))]
 public partial class JsonContext : JsonSerializerContext { }
 
 public static class Json
