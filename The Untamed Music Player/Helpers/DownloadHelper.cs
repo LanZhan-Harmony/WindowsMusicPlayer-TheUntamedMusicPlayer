@@ -252,7 +252,7 @@ public static class DownloadHelper
     /// </summary>
     public static async Task CancelCurrentDownloadAsync()
     {
-        if (_currentDownloadCts == null || _currentDownloadCts.Token.IsCancellationRequested)
+        if (_currentDownloadCts is null || _currentDownloadCts.Token.IsCancellationRequested)
         {
             return;
         }

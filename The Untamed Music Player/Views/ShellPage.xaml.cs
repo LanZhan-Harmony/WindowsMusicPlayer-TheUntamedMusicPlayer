@@ -21,6 +21,11 @@ public sealed partial class ShellPage : Page
         Data.MainWindow!.SetTitleBar(AppTitleBar);
     }
 
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        TitleBarHelper.UpdateTitleBar(RequestedTheme);
+    }
+
     public void NavigationViewControl_DisplayModeChanged(
         NavigationView sender,
         NavigationViewDisplayModeChangedEventArgs args

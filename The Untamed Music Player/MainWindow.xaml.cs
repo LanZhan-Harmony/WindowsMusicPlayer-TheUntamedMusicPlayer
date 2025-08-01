@@ -1,8 +1,5 @@
-using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
@@ -15,7 +12,6 @@ public sealed partial class MainWindow : WindowEx
 {
     private readonly DispatcherQueue dispatcherQueue;
     private readonly UISettings settings;
-    private readonly IDynamicBackgroundService _dynamicBackgroundService;
 
     public MainViewModel ViewModel { get; }
 
@@ -35,13 +31,6 @@ public sealed partial class MainWindow : WindowEx
 
         ShellFrame.Navigate(typeof(ShellPage));
         ViewModel = App.GetService<MainViewModel>();
-
-        // 初始化动态背景服务
-        _dynamicBackgroundService = App.GetService<IDynamicBackgroundService>();
-
-        // 在窗口加载完成后初始化动态背景
-        MainWindow_Loaded();
-        Closed += MainWindow_Closed;
     }
 
     /// <summary>
@@ -53,6 +42,11 @@ public sealed partial class MainWindow : WindowEx
         return ShellFrame;
     }
 
+    public Grid GetBackgroundGrid()
+    {
+        return BackgroundGrid;
+    }
+
     /// <summary>
     /// 处理在应用程序打开时主题改变时正确更新标题按钮颜色
     /// </summary>
@@ -62,20 +56,5 @@ public sealed partial class MainWindow : WindowEx
     {
         // 这个调用来自线程外，因此我们需要将其调度到当前应用程序的线程
         dispatcherQueue.TryEnqueue(TitleBarHelper.ApplySystemThemeToCaptionButtons);
-    }
-
-    private void MainWindow_Loaded()
-    {
-        // 初始化动态背景服务，使用根网格作为目标元素
-        _dynamicBackgroundService.Initialize(BackgroundGrid);
-
-        // 如果当前已有正在播放的歌曲，立即更新背景
-        _ = _dynamicBackgroundService.UpdateBackgroundAsync();
-    }
-
-    private void MainWindow_Closed(object sender, WindowEventArgs args)
-    {
-        // 清理动态背景服务
-        _dynamicBackgroundService.Dispose();
     }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Numerics;
 using Microsoft.UI.Composition;
@@ -20,20 +21,20 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
     private SpriteVisual? _backgroundVisual;
     private FrameworkElement? _targetElement;
     private CompositionLinearGradientBrush? _currentGradientBrush;
-    private bool _isEnabled = true;
 
     public bool IsEnabled
     {
-        get => _isEnabled;
+        get;
         set
         {
-            _isEnabled = value;
+            field = value;
+            _ = UpdateBackgroundAsync();
             if (!value)
             {
                 ClearBackground();
             }
         }
-    }
+    } = Data.IsLyricBackgroundVisible;
 
     /// <summary>
     /// 背景更新事件
@@ -50,10 +51,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
         _compositor = ElementCompositionPreview.GetElementVisual(targetElement).Compositor;
 
         // 监听当前歌曲变化
-        if (Data.MusicPlayer != null)
-        {
-            Data.MusicPlayer.PropertyChanged += OnMusicPlayerPropertyChanged;
-        }
+        Data.MusicPlayer.PropertyChanged += OnMusicPlayerPropertyChanged;
     }
 
     /// <summary>
@@ -61,19 +59,13 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
     /// </summary>
     public void Dispose()
     {
-        if (Data.MusicPlayer != null)
-        {
-            Data.MusicPlayer.PropertyChanged -= OnMusicPlayerPropertyChanged;
-        }
+        Data.MusicPlayer.PropertyChanged -= OnMusicPlayerPropertyChanged;
 
         // ClearBackground();
         _backgroundVisual?.Dispose();
         _currentGradientBrush?.Dispose();
 
-        if (_targetElement != null)
-        {
-            _targetElement.SizeChanged -= OnTargetElementSizeChanged;
-        }
+        _targetElement?.SizeChanged -= OnTargetElementSizeChanged;
     }
 
     /// <summary>
@@ -81,7 +73,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
     /// </summary>
     public async Task UpdateBackgroundAsync()
     {
-        if (!_isEnabled || Data.MusicPlayer?.CurrentSong == null)
+        if (!IsEnabled || Data.MusicPlayer?.CurrentSong is null)
         {
             return;
         }
@@ -95,7 +87,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
     /// <param name="song">歌曲信息</param>
     public async Task UpdateBackgroundFromSongAsync(IDetailedSongInfoBase song)
     {
-        if (!_isEnabled || _compositor == null || _targetElement == null)
+        if (!IsEnabled || _compositor is null || _targetElement is null)
         {
             return;
         }
@@ -105,21 +97,16 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
             List<Color> colors = [];
 
             // 根据歌曲类型提取颜色
-            if (song is DetailedLocalSongInfo localSong && localSong.CoverBuffer != null)
+            if (song is DetailedLocalSongInfo localSong && localSong.CoverBuffer is not null)
             {
                 colors = await colorExtractionService.ExtractColorsAsync(localSong.CoverBuffer);
             }
             else if (
-                song.IsOnline
-                && song is IDetailedOnlineSongInfo onlineSong
+                song is IDetailedOnlineSongInfo onlineSong
                 && !string.IsNullOrEmpty(onlineSong.CoverPath)
             )
             {
                 colors = await colorExtractionService.ExtractColorsAsync(onlineSong.CoverPath);
-            }
-            else if (song.Cover != null)
-            {
-                colors = await colorExtractionService.ExtractColorsAsync(song.Cover);
             }
 
             if (colors.Count > 0)
@@ -148,7 +135,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
     /// <param name="colors">颜色列表</param>
     private void ApplyGradientBackground(List<Color> colors)
     {
-        if (_compositor == null || _targetElement == null)
+        if (_compositor is null || _targetElement is null)
         {
             return;
         }
@@ -182,7 +169,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
             }
 
             // 创建或更新背景视觉元素
-            if (_backgroundVisual == null)
+            if (_backgroundVisual is null)
             {
                 _backgroundVisual = _compositor.CreateSpriteVisual();
                 ElementCompositionPreview.SetElementChildVisual(_targetElement, _backgroundVisual);
@@ -193,7 +180,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
                 (float)_targetElement.ActualWidth,
                 (float)_targetElement.ActualHeight
             );
-            _backgroundVisual.Opacity = 0.5f; // 提高到25%透明度，增强视觉效果
+            _backgroundVisual.Opacity = 0.5f; // 提高到50%透明度，增强视觉效果
 
             // 添加淡入动画
             var fadeInAnimation = _compositor.CreateScalarKeyFrameAnimation();
@@ -224,7 +211,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
         // 调整颜色参数，保持更多的饱和度和亮度
         var hsv = ColorToHsv(color);
         hsv.Saturation *= 1f; // 保留100%的饱和度
-        hsv.Value = Math.Max(0.5f, Math.Min(0.9f, hsv.Value * 0.8f)); // 亮度范围20%-70%（原来是10%-35%）
+        hsv.Value = Math.Max(0.5f, Math.Min(0.9f, hsv.Value * 0.8f)); // 亮度范围50%-90%
 
         return HsvToColor(hsv);
     }
@@ -234,10 +221,10 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
     /// </summary>
     private void ClearBackground()
     {
-        if (_backgroundVisual != null)
+        if (_backgroundVisual is not null)
         {
             var fadeOutAnimation = _compositor?.CreateScalarKeyFrameAnimation();
-            if (fadeOutAnimation != null)
+            if (fadeOutAnimation is not null)
             {
                 fadeOutAnimation.InsertKeyFrame(0f, _backgroundVisual.Opacity);
                 fadeOutAnimation.InsertKeyFrame(1f, 0f);
@@ -262,10 +249,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
         _currentGradientBrush = null;
     }
 
-    private void OnMusicPlayerPropertyChanged(
-        object? sender,
-        System.ComponentModel.PropertyChangedEventArgs e
-    )
+    private void OnMusicPlayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(MusicPlayer.CurrentSong))
         {
@@ -293,7 +277,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
         {
             if (max == r)
             {
-                hue = ((g - b) / delta) % 6;
+                hue = (g - b) / delta % 6;
             }
             else if (max == g)
             {

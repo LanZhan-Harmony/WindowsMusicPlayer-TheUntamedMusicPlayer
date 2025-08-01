@@ -19,11 +19,12 @@ namespace The_Untamed_Music_Player.Models;
 
 public partial class MusicPlayer : ObservableRecipient, IDisposable
 {
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
     private readonly LibVLC _libVlc;
     private readonly MediaPlayer _vlcPlayer;
     private Media? _currentMedia;
-    private readonly Windows.Media.Playback.MediaPlayer? _windowsMediaPlayer;
+    private readonly Windows.Media.Playback.MediaPlayer? _windowsMediaPlayer = new();
 
     /// <summary>
     /// 用于SMTC显示封面图片的流
@@ -219,12 +220,10 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
 
     public MusicPlayer()
     {
-        _localSettingsService = App.GetService<ILocalSettingsService>();
-
         // 初始化 LibVLC
         Core.Initialize();
         _libVlc = new LibVLC();
-        _vlcPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVlc);
+        _vlcPlayer = new MediaPlayer(_libVlc);
 
         // 创建 LibVLC 事件处理器
         _vlcPlayer.Playing += OnVlcPlaying;
@@ -240,7 +239,6 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         _vlcPlayer.Volume = (int)CurrentVolume;
         _vlcPlayer.Mute = IsMute;
 
-        _windowsMediaPlayer = new();
         _systemControls = _windowsMediaPlayer.SystemMediaTransportControls;
         _displayUpdater = _systemControls.DisplayUpdater;
         _displayUpdater.Type = MediaPlaybackType.Music;
@@ -767,7 +765,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     {
         try
         {
-            if (_vlcPlayer == null || _lockable || _vlcPlayer.State != VLCState.Playing)
+            if (_vlcPlayer is null || _lockable || _vlcPlayer.State != VLCState.Playing)
             {
                 return;
             }
