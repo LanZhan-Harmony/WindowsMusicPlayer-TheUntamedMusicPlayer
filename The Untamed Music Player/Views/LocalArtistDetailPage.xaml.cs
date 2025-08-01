@@ -9,11 +9,9 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
-using Windows.Storage.Streams;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
@@ -180,11 +178,11 @@ public sealed partial class LocalArtistDetailPage : Page
         ExpressionNode contentTranslationAnimation = progressNode * headerPaddingNode;
         contentVisual.StartAnimation("Translation.Y", contentTranslationAnimation);
 
-        // 获取封面艺术视觉的后备视觉效果，以便可以对其属性进行动画处理
+        // 获取封面的后备视觉效果，以便可以对其属性进行动画处理
         var coverArtVisual = ElementCompositionPreview.GetElementVisual(CoverArt);
         ElementCompositionPreview.SetIsTranslationEnabled(CoverArt, true);
 
-        // 创建并启动一个表达式动画，以滚动位置缩放和移动封面艺术
+        // 创建并启动一个表达式动画，以滚动位置缩放和移动封面
         ExpressionNode coverArtScaleAnimation = EF.Lerp(1, coverScaleFactorNode, progressNode);
         ExpressionNode coverArtTranslationAnimation = progressNode * headerPaddingNode;
         coverArtVisual.StartAnimation("Scale.X", coverArtScaleAnimation);
@@ -355,7 +353,7 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is IBriefSongInfoBase info)
+        if (e.ClickedItem is BriefLocalSongInfo info)
         {
             ViewModel.SongListView_ItemClick(info);
         }
@@ -363,7 +361,7 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private void SongListViewPlayButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.SongListViewPlayButton_Click(info);
         }
@@ -371,7 +369,7 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private void SongListViewPlayNextButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.SongListViewPlayNextButton_Click(info);
         }
@@ -394,21 +392,13 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private void SongListViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.SongListViewShowAlbumButton_Click(info);
         }
     }
 
     private void SongListViewSelectButton_Click(object sender, RoutedEventArgs e) { }
-
-    private void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: LocalArtistAlbumInfo info })
-        {
-            ViewModel.AlbumGridViewPlayButton_Click(info);
-        }
-    }
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
@@ -432,6 +422,14 @@ public sealed partial class LocalArtistDetailPage : Page
                     new SuppressNavigationTransitionInfo()
                 );
             }
+        }
+    }
+
+    private void AlbumGridViewPlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LocalArtistAlbumInfo info })
+        {
+            ViewModel.AlbumGridViewPlayButton_Click(info);
         }
     }
 

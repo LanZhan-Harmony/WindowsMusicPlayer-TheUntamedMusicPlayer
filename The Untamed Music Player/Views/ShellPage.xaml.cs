@@ -1,7 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Navigation;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
@@ -20,6 +19,11 @@ public sealed partial class ShellPage : Page
         Data.ShellPage = this;
         ViewModel = App.GetService<ShellViewModel>();
         Data.MainWindow!.SetTitleBar(AppTitleBar);
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        TitleBarHelper.UpdateTitleBar(RequestedTheme);
     }
 
     public void NavigationViewControl_DisplayModeChanged(
@@ -64,14 +68,6 @@ public sealed partial class ShellPage : Page
             Navigate(pageToNavigate, "", new SuppressNavigationTransitionInfo());
             ViewModel.IsFirstLoaded = false;
         }
-        /*else
-        {
-            Navigate(
-                ViewModel.CurrentPage,
-                ViewModel.NavigatePage,
-                new SuppressNavigationTransitionInfo()
-            );
-        }*/
     }
 
     private void NavigationViewControl_BackRequested(
@@ -98,24 +94,20 @@ public sealed partial class ShellPage : Page
 
     public void Navigate(string tag)
     {
-        switch (tag)
+        if (ViewModel.CurrentPage == tag)
         {
-            case "Home":
-                NavigationFrame.Navigate(typeof(HomePage));
-                break;
-            case "MusicLibrary":
-                NavigationFrame.Navigate(typeof(MusicLibraryPage));
-                break;
-            case "PlayQueue":
-                NavigationFrame.Navigate(typeof(PlayQueuePage));
-                break;
-            case "PlayLists":
-                NavigationFrame.Navigate(typeof(PlayListsPage));
-                break;
-            case "Settings":
-                NavigationFrame.Navigate(typeof(SettingsPage));
-                break;
+            return;
         }
+        var pageToNavigate = tag switch
+        {
+            nameof(HomePage) => typeof(HomePage),
+            nameof(MusicLibraryPage) => typeof(MusicLibraryPage),
+            nameof(PlayQueuePage) => typeof(PlayQueuePage),
+            nameof(PlayListsPage) => typeof(PlayListsPage),
+            nameof(SettingsPage) => typeof(SettingsPage),
+            _ => typeof(HomePage),
+        };
+        NavigationFrame.Navigate(pageToNavigate);
     }
 
     public void Navigate(
@@ -136,6 +128,7 @@ public sealed partial class ShellPage : Page
             nameof(LocalArtistDetailPage) => typeof(LocalArtistDetailPage),
             nameof(OnlineAlbumDetailPage) => typeof(OnlineAlbumDetailPage),
             nameof(OnlineArtistDetailPage) => typeof(OnlineArtistDetailPage),
+            nameof(OnlinePlayListDetailPage) => typeof(OnlinePlayListDetailPage),
             _ => typeof(HomePage),
         };
         NavigationFrame.Navigate(pageToNavigate, null, infoOverride);

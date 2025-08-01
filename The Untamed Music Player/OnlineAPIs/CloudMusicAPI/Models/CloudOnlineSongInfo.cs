@@ -1,16 +1,14 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
-using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
 [MemoryPackable]
-public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
+public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
 {
     public int PlayQueueIndex { get; set; } = -1;
     public bool IsPlayAvailable { get; set; } = false;
@@ -20,15 +18,16 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
     public virtual string Album { get; set; } = "";
     public long AlbumID { get; set; } = 0;
     public virtual string ArtistsStr { get; set; } = "";
+    public long ArtistID { get; set; } = 0;
     public TimeSpan Duration { get; set; } = TimeSpan.Zero;
     public virtual string DurationStr { get; set; } = "";
     public string YearStr { get; set; } = "";
     public string GenreStr { get; set; } = "";
 
     [MemoryPackConstructor]
-    public CloudBriefOnlineSongInfo() { }
+    public BriefCloudOnlineSongInfo() { }
 
-    public CloudBriefOnlineSongInfo(JsonElement jInfo, bool isAvailable)
+    public BriefCloudOnlineSongInfo(JsonElement jInfo, bool isAvailable)
     {
         IsPlayAvailable = isAvailable;
         if (!isAvailable)
@@ -44,6 +43,10 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
             Album = string.IsNullOrWhiteSpace(album) ? IBriefSongInfoBase._unknownAlbum : album;
             AlbumID = albumElement.GetProperty("id").GetInt64();
             var artistsElement = jInfo.GetProperty("artists");
+            if (artistsElement.GetArrayLength() > 0)
+            {
+                ArtistID = artistsElement[0].GetProperty("id").GetInt64();
+            }
             string[] artists =
             [
                 .. artistsElement
@@ -70,32 +73,77 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
         }
     }
 
-    public CloudBriefOnlineSongInfo(JsonElement jInfo, bool isAvailable, ushort year, long duration)
+    /// <summary>
+    /// 从OnlineAlbumInfo创建的构造函数
+    /// </summary>
+    /// <param name="jInfo"></param>
+    /// <param name="isAvailable"></param>
+    /// <param name="year"></param>
+    /// <param name="duration"></param>
+    public BriefCloudOnlineSongInfo(JsonElement jInfo, ushort year)
     {
-        IsPlayAvailable = isAvailable;
-        if (!isAvailable)
+        try
         {
-            return;
+            ID = jInfo.GetProperty("id").GetInt64();
+            Title = jInfo.GetProperty("name").GetString()!;
+            var albumElement = jInfo.GetProperty("al");
+            var album = albumElement.GetProperty("name").GetString()!;
+            Album = string.IsNullOrWhiteSpace(album) ? IBriefSongInfoBase._unknownAlbum : album;
+            AlbumID = albumElement.GetProperty("id").GetInt64();
+            var artistsElement = jInfo.GetProperty("ar");
+            if (artistsElement.GetArrayLength() > 0)
+            {
+                ArtistID = artistsElement[0].GetProperty("id").GetInt64();
+            }
+            string[] artists =
+            [
+                .. artistsElement
+                    .EnumerateArray()
+                    .Select(t => t.GetProperty("name").GetString()!)
+                    .Distinct()
+                    .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
+            ];
+            ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
+            Duration = TimeSpan.FromMilliseconds(jInfo.GetProperty("dt").GetInt64());
+            DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
+            YearStr = IBriefSongInfoBase.GetYearStr(year);
+            IsPlayAvailable = true;
         }
-        ID = jInfo.GetProperty("id").GetInt64();
-        Title = jInfo.GetProperty("name").GetString()!;
-        var albumElement = jInfo.GetProperty("al");
-        var album = albumElement.GetProperty("name").GetString()!;
-        Album = string.IsNullOrWhiteSpace(album) ? IBriefSongInfoBase._unknownAlbum : album;
-        AlbumID = albumElement.GetProperty("id").GetInt64();
-        var artistsElement = jInfo.GetProperty("ar");
-        string[] artists =
-        [
-            .. artistsElement
-                .EnumerateArray()
-                .Select(t => t.GetProperty("name").GetString()!)
-                .Distinct()
-                .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
-        ];
-        ArtistsStr = IBriefSongInfoBase.GetArtistsStr(artists);
-        YearStr = IBriefSongInfoBase.GetYearStr(year);
-        Duration = TimeSpan.FromMilliseconds(duration);
-        DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
+        catch
+        {
+            IsPlayAvailable = false;
+        }
+    }
+
+    public BriefCloudOnlineSongInfo(JsonNode jInfo)
+    {
+        try
+        {
+            ID = (long)jInfo["id"]!;
+            Title = (string)jInfo["name"]!;
+            Album = (string)jInfo["al"]!["name"]!;
+            AlbumID = (long)jInfo["al"]!["id"]!;
+            ArtistID = (long)jInfo["ar"]![0]!["id"]!;
+            ArtistsStr = IBriefSongInfoBase.GetArtistsStr(
+                [
+                    .. jInfo["ar"]!
+                        .AsArray()
+                        .Select(t => (string)t!["name"]!)
+                        .Distinct()
+                        .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
+                ]
+            );
+            Duration = TimeSpan.FromMilliseconds((long)jInfo["dt"]!);
+            DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
+            YearStr = IBriefSongInfoBase.GetYearStr(
+                (ushort)DateTimeOffset.FromUnixTimeMilliseconds((long)jInfo["publishTime"]!).Year
+            );
+            IsPlayAvailable = true;
+        }
+        catch
+        {
+            IsPlayAvailable = false;
+        }
     }
 
     public object Clone()
@@ -104,7 +152,7 @@ public partial class CloudBriefOnlineSongInfo : IBriefOnlineSongInfo
     }
 }
 
-public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOnlineSongInfo
+public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOnlineSongInfo
 {
     public bool IsOnline { get; set; } = true;
     public string AlbumArtistsStr { get; set; } = "";
@@ -118,7 +166,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
 
     public CloudDetailedOnlineSongInfo() { }
 
-    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(CloudBriefOnlineSongInfo info)
+    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(BriefCloudOnlineSongInfo info)
     {
         var detailedInfo = new CloudDetailedOnlineSongInfo
         {
@@ -126,6 +174,7 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
             ID = info.ID,
             Title = info.Title,
             AlbumID = info.AlbumID,
+            ArtistID = info.ArtistID,
             DurationStr = info.DurationStr,
             YearStr = info.YearStr,
         };
@@ -203,26 +252,18 @@ public class CloudDetailedOnlineSongInfo : CloudBriefOnlineSongInfo, IDetailedOn
     {
         try
         {
-            using var httpClient = new HttpClient();
-            var coverBuffer = await httpClient.GetByteArrayAsync(info.CoverPath);
-            var stream = new MemoryStream(coverBuffer);
             var tcs = new TaskCompletionSource<bool>();
-            App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
+            App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
             {
                 try
                 {
-                    var bitmap = new BitmapImage { DecodePixelWidth = 400 };
-                    await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
+                    var bitmap = new BitmapImage(new Uri(info.CoverPath!));
                     info.Cover = bitmap;
                     tcs.SetResult(true);
                 }
                 catch (Exception ex)
                 {
                     tcs.SetException(ex);
-                }
-                finally
-                {
-                    stream.Dispose();
                 }
             });
             return await tcs.Task;

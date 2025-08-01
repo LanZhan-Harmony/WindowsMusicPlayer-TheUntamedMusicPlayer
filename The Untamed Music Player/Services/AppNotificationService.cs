@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Web;
 using Microsoft.Windows.AppNotifications;
 using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Services;
 
@@ -42,6 +43,12 @@ public class AppNotificationService : IAppNotificationService
                 UseShellExecute = true,
             };
             Process.Start(startInfo);
+        }
+
+        if (arguments.TryGetValue("CancelAction", out var cancelValue) && cancelValue == "Cancel")
+        {
+            // 处理下载取消
+            DownloadHelper.CancelCurrentDownload();
         }
     }
 

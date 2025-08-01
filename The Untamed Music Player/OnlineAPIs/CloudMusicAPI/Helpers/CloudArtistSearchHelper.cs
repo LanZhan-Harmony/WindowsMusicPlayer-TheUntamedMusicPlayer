@@ -72,6 +72,7 @@ public class CloudArtistSearchHelper
         finally
         {
             _searchSemaphore.Release();
+            GC.Collect();
         }
     }
 
@@ -87,7 +88,7 @@ public class CloudArtistSearchHelper
                     { "keywords", list.KeyWords },
                     { "type", "100" },
                     { "limit", $"{CloudOnlineArtistInfoList.Limit}" },
-                    { "offset", $"{list.Page * 30}" },
+                    { "offset", $"{list.Page * CloudOnlineArtistInfoList.Limit}" },
                 }
             );
             using var document = JsonDocument.Parse(result.ToJsonString());
@@ -114,6 +115,7 @@ public class CloudArtistSearchHelper
         finally
         {
             _searchSemaphore.Release();
+            GC.Collect();
         }
     }
 

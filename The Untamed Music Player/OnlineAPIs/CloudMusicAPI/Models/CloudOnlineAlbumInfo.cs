@@ -4,8 +4,6 @@ using System.Text.Json;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
-using The_Untamed_Music_Player.Helpers;
-using Windows.Storage.Streams;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
@@ -15,6 +13,7 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
     public string Name { get; set; } = null!;
     public BitmapImage? Cover { get; set; }
     public string? CoverPath { get; set; }
+    public long ArtistID { get; set; }
     public string ArtistsStr { get; set; } = null!;
 
     public static async Task<BriefCloudOnlineAlbumInfo> CreateAsync(JsonElement jInfo)
@@ -31,6 +30,10 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
             info.ID = jInfo.GetProperty("id").GetInt64();
             info.Name = jInfo.GetProperty("name").GetString()!;
             var artistsElement = jInfo.GetProperty("artists");
+            if (artistsElement.GetArrayLength() > 0)
+            {
+                info.ArtistID = artistsElement[0].GetProperty("id").GetInt64();
+            }
             string[] artists =
             [
                 .. artistsElement
@@ -44,40 +47,51 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
             {
                 await coverTask;
             }
-            return info;
         }
-        catch
+        catch { }
+        return info;
+    }
+
+    public static async Task<BriefCloudOnlineAlbumInfo> CreateFromSongInfoAsync(
+        BriefCloudOnlineSongInfo briefInfo
+    )
+    {
+        var api = NeteaseCloudMusicApi.Instance;
+        var (_, result) = await api.RequestAsync(
+            CloudMusicApiProviders.SongDetail,
+            new Dictionary<string, string> { { "ids", $"{briefInfo.ID}" } }
+        );
+        var info = new BriefCloudOnlineAlbumInfo
         {
-            return info;
+            ID = briefInfo.AlbumID,
+            Name = briefInfo.Album,
+            CoverPath = (string)result["songs"]![0]!["al"]!["picUrl"]!,
+        };
+        if (!string.IsNullOrEmpty(info.CoverPath))
+        {
+            await LoadCoverAsync(info);
         }
+        return info;
     }
 
     private static async Task<bool> LoadCoverAsync(BriefCloudOnlineAlbumInfo info)
     {
         try
         {
-            using var httpClient = new HttpClient();
-            var coverBytes = await httpClient.GetByteArrayAsync(info.CoverPath);
-            var stream = new MemoryStream(coverBytes);
             var tcs = new TaskCompletionSource<bool>();
             App.MainWindow?.DispatcherQueue.TryEnqueue(
                 DispatcherQueuePriority.Low,
-                async () =>
+                () =>
                 {
                     try
                     {
-                        var bitmap = new BitmapImage { DecodePixelWidth = 160 };
-                        await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
+                        var bitmap = new BitmapImage(new Uri(info.CoverPath!));
                         info.Cover = bitmap;
                         tcs.SetResult(true);
                     }
                     catch (Exception ex)
                     {
                         tcs.SetException(ex);
-                    }
-                    finally
-                    {
-                        stream.Dispose();
                     }
                 }
             );
@@ -96,11 +110,12 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
     public int TotalNum { get; set; } = 0;
     public TimeSpan TotalDuration { get; set; } = TimeSpan.Zero;
     public ushort Year { get; set; } = 0;
+    public string DescriptionStr { get; set; } = null!;
     public string? Introduction { get; set; }
     public List<IBriefOnlineSongInfo> SongList { get; set; } = [];
 
     public static async Task<DetailedCloudOnlineAlbumInfo> CreateAsync(
-        IBriefOnlineAlbumInfo briefInfo
+        BriefCloudOnlineAlbumInfo briefInfo
     )
     {
         var info = new DetailedCloudOnlineAlbumInfo
@@ -109,7 +124,7 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
             Name = briefInfo.Name,
             Cover = briefInfo.Cover,
             CoverPath = briefInfo.CoverPath,
-            ArtistsStr = briefInfo.ArtistsStr,
+            ArtistID = briefInfo.ArtistID,
         };
         try
         {
@@ -127,33 +142,28 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
                 DateTimeOffset
                     .FromUnixTimeMilliseconds(albumElement.GetProperty("publishTime").GetInt64())
                     .Year;
+            var artistsElement = albumElement.GetProperty("artists");
+            string[] artists =
+            [
+                .. artistsElement
+                    .EnumerateArray()
+                    .Select(t => t.GetProperty("name").GetString()!)
+                    .Distinct()
+                    .DefaultIfEmpty(IBriefOnlineAlbumInfo._unknownArtist),
+            ];
+            info.ArtistsStr = IAlbumInfoBase.GetArtistsStr(artists);
             await ProcessSongsAsync(songsElement, info, api);
+            info.DescriptionStr = IDetailedOnlineAlbumInfo.GetDescriptionStr(
+                info.Year,
+                info.TotalNum,
+                info.TotalDuration
+            );
             return info;
         }
         catch
         {
             return info;
         }
-    }
-
-    public string GetDescriptionStr()
-    {
-        var parts = new List<string>();
-        if (Year is not (0 or 1970))
-        {
-            parts.Add($"{Year}");
-        }
-        parts.Add(
-            TotalNum > 1
-                ? $"{TotalNum} {"AlbumInfo_Songs".GetLocalized()}"
-                : $"{TotalNum} {"AlbumInfo_Song".GetLocalized()}"
-        );
-        parts.Add(
-            TotalDuration.Hours > 0
-                ? $"{TotalDuration:hh\\:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
-                : $"{TotalDuration:mm\\:ss} {"AlbumInfo_RunTime".GetLocalized()}"
-        );
-        return string.Join(" • ", parts);
     }
 
     private static async Task ProcessSongsAsync(
@@ -180,29 +190,21 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
         var data = checkResult["data"]!;
 
         // 合并可用性和时长映射，减少一次遍历
-        var songMetaMap = data.AsArray()
-            .ToDictionary(
-                item => item!["id"]!.GetValue<long>(),
-                item =>
-                    (available: item!["url"] is not null, duration: item!["time"]!.GetValue<long>())
-            );
+        var availabilityMap = data.AsArray()
+            .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item!["url"] is not null);
 
         for (var i = 0; i < actualCount; i++)
         {
             var songId = songIds[i];
-            if (!songMetaMap.TryGetValue(songId, out var meta) || !meta.available)
+            var available = availabilityMap.GetValueOrDefault(songId, false);
+            if (!available)
             {
                 continue;
             }
 
             try
             {
-                var songInfo = new CloudBriefOnlineSongInfo(
-                    songsElement[i],
-                    meta.available,
-                    info.Year,
-                    meta.duration
-                );
+                var songInfo = new BriefCloudOnlineSongInfo(songsElement[i], info.Year);
                 info.SongList.Add(songInfo);
                 info.TotalNum++;
                 info.TotalDuration += songInfo.Duration;
@@ -215,35 +217,41 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
     }
 }
 
-public class CloudArtistAlbumInfo : IOnlineArtistAlbumInfo
+public class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
 {
+    public bool IsAvailable { get; set; } = false;
     public long ID { get; set; }
     public string Name { get; set; } = null!;
     public BitmapImage? Cover { get; set; }
+    public string? CoverPath { get; set; }
     public string YearStr { get; set; } = null!;
     public List<IBriefSongInfoBase> SongList { get; set; } = [];
 
-    public static async Task<CloudArtistAlbumInfo> CreateAsync(
+    public static async Task<CloudOnlineArtistAlbumInfo> CreateAsync(
         JsonElement jInfo,
-        NeteaseCloudMusicApi api
+        NeteaseCloudMusicApi api,
+        bool isDetailed = true
     )
     {
-        var info = new CloudArtistAlbumInfo();
+        var info = new CloudOnlineArtistAlbumInfo();
         try
         {
-            Task? coverTask = null;
-            var coverPath = jInfo.GetProperty("picUrl").GetString();
-            if (!string.IsNullOrEmpty(coverPath))
-            {
-                coverTask = LoadCoverAsync(info, coverPath);
-            }
             info.ID = jInfo.GetProperty("id").GetInt64();
-            info.Name = jInfo.GetProperty("name").GetString()!;
             var year = (ushort)
                 DateTimeOffset
                     .FromUnixTimeMilliseconds(jInfo.GetProperty("publishTime").GetInt64())
                     .Year;
-            info.YearStr = IArtistAlbumInfoBase.GetYearStr(year);
+            Task? coverTask = null;
+            if (isDetailed)
+            {
+                info.CoverPath = jInfo.GetProperty("picUrl").GetString();
+                if (!string.IsNullOrEmpty(info.CoverPath))
+                {
+                    coverTask = LoadCoverAsync(info);
+                }
+                info.Name = jInfo.GetProperty("name").GetString()!;
+                info.YearStr = IArtistAlbumInfoBase.GetYearStr(year);
+            }
             var (_, result) = await api.RequestAsync(
                 CloudMusicApiProviders.Album,
                 new Dictionary<string, string> { { "id", $"{info.ID}" } }
@@ -252,7 +260,12 @@ public class CloudArtistAlbumInfo : IOnlineArtistAlbumInfo
             var root = document.RootElement;
             var songsElement = root.GetProperty("songs");
             await ProcessSongsAsync(songsElement, info, year, api);
-            if (coverTask is not null)
+            info.IsAvailable = info.SongList.Count > 0;
+            if (!info.IsAvailable)
+            {
+                return info;
+            }
+            if (isDetailed && coverTask is not null)
             {
                 await coverTask;
             }
@@ -260,13 +273,14 @@ public class CloudArtistAlbumInfo : IOnlineArtistAlbumInfo
         }
         catch
         {
+            info.IsAvailable = false;
             return info;
         }
     }
 
     private static async Task ProcessSongsAsync(
         JsonElement songsElement,
-        CloudArtistAlbumInfo info,
+        CloudOnlineArtistAlbumInfo info,
         ushort year,
         NeteaseCloudMusicApi api
     )
@@ -288,29 +302,21 @@ public class CloudArtistAlbumInfo : IOnlineArtistAlbumInfo
         );
         var data = checkResult["data"]!;
 
-        var songMetaMap = data.AsArray()
-            .ToDictionary(
-                item => item!["id"]!.GetValue<long>(),
-                item =>
-                    (available: item!["url"] is not null, duration: item!["time"]!.GetValue<long>())
-            );
+        var availabilityMap = data.AsArray()
+            .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item!["url"] is not null);
 
         for (var i = 0; i < actualCount; i++)
         {
             var songId = songIds[i];
-            if (!songMetaMap.TryGetValue(songId, out var meta) || !meta.available)
+            var available = availabilityMap.GetValueOrDefault(songId, false);
+            if (!available)
             {
                 continue;
             }
 
             try
             {
-                var songInfo = new CloudBriefOnlineSongInfo(
-                    songsElement[i],
-                    meta.available,
-                    year,
-                    meta.duration
-                );
+                var songInfo = new BriefCloudOnlineSongInfo(songsElement[i], year);
                 info.SongList.Add(songInfo);
             }
             catch (Exception ex)
@@ -320,32 +326,24 @@ public class CloudArtistAlbumInfo : IOnlineArtistAlbumInfo
         }
     }
 
-    private static async Task<bool> LoadCoverAsync(CloudArtistAlbumInfo info, string coverPath)
+    private static async Task<bool> LoadCoverAsync(CloudOnlineArtistAlbumInfo info)
     {
         try
         {
-            using var httpClient = new HttpClient();
-            var coverBytes = await httpClient.GetByteArrayAsync(coverPath);
-            var stream = new MemoryStream(coverBytes);
             var tcs = new TaskCompletionSource<bool>();
             App.MainWindow?.DispatcherQueue.TryEnqueue(
                 DispatcherQueuePriority.Low,
-                async () =>
+                () =>
                 {
                     try
                     {
-                        var bitmap = new BitmapImage { DecodePixelWidth = 160 };
-                        await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
+                        var bitmap = new BitmapImage(new Uri(info.CoverPath!));
                         info.Cover = bitmap;
                         tcs.SetResult(true);
                     }
                     catch (Exception ex)
                     {
                         tcs.SetException(ex);
-                    }
-                    finally
-                    {
-                        stream.Dispose();
                     }
                 }
             );

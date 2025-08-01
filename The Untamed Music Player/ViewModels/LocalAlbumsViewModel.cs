@@ -332,7 +332,7 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
     public void PlayButton_Click(LocalAlbumInfo info)
     {
         var tempList = Data.MusicLibrary.GetSongsByAlbum(info);
-        var songList = new List<BriefLocalSongInfo>(tempList);
+        var songList = tempList.ToList();
         Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, SortMode);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
@@ -340,10 +340,10 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
     public void PlayNextButton_Click(LocalAlbumInfo info)
     {
         var tempList = Data.MusicLibrary.GetSongsByAlbum(info);
-        var songList = new List<BriefLocalSongInfo>(tempList);
+        var songList = tempList.ToList();
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, 0);
+            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, SortMode);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else

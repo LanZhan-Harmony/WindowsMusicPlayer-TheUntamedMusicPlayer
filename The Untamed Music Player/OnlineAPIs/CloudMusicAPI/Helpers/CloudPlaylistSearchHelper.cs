@@ -4,20 +4,20 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 
-public class CloudAlbumSearchHelper
+public class CloudPlaylistSearchHelper
 {
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
 
     private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
-    public static async Task SearchAlbumsAsync(string keyWords, CloudOnlineAlbumInfoList list)
+    public static async Task SearchPlaylistsAsync(string keyWords, CloudOnlinePlaylistInfoList list)
     {
         await _searchSemaphore.WaitAsync();
         list.Page = 0;
         list.ListCount = 0;
         list.HasAllLoaded = false;
         list.Clear();
-        list.SearchedAlbumIDs.Clear();
+        list.SearchedPlaylistIDs.Clear();
         list.KeyWords = keyWords;
 
         try
@@ -27,42 +27,42 @@ public class CloudAlbumSearchHelper
                 new Dictionary<string, string>
                 {
                     { "keywords", keyWords },
-                    { "type", "10" },
-                    { "limit", $"{CloudOnlineAlbumInfoList.Limit}" },
+                    { "type", "1000" },
+                    { "limit", $"{CloudOnlinePlaylistInfoList.Limit}" },
                     { "offset", "0" },
                 }
             );
             using var document = JsonDocument.Parse(result.ToJsonString());
             var root = document.RootElement;
 
-            // 获取albumCount
+            // 获取PlaylistCount
             if (
                 root.TryGetProperty("result", out var resultElement)
-                && resultElement.TryGetProperty("albumCount", out var albumCountElement)
+                && resultElement.TryGetProperty("playlistCount", out var playlistCountElement)
             )
             {
-                list.AlbumCount = albumCountElement.GetInt32();
+                list.PlaylistCount = playlistCountElement.GetInt32();
 
-                if (list.AlbumCount == 0)
+                if (list.PlaylistCount == 0)
                 {
                     list.HasAllLoaded = true;
                     return;
                 }
 
-                // 获取albums数组
-                if (resultElement.TryGetProperty("albums", out var albumsElement))
+                // 获取Playlists数组
+                if (resultElement.TryGetProperty("playlists", out var playlistsElement))
                 {
-                    await ProcessAlbumsAsync(albumsElement, list);
+                    await ProcessPlaylistsAsync(playlistsElement, list);
                     list.Page = 1;
                 }
                 else
                 {
-                    throw new Exception("获取专辑列表失败");
+                    throw new Exception("获取歌单列表失败");
                 }
             }
             else
             {
-                throw new Exception("获取专辑数量失败");
+                throw new Exception("获取歌单数量失败");
             }
         }
         catch
@@ -76,7 +76,7 @@ public class CloudAlbumSearchHelper
         }
     }
 
-    public static async Task SearchMoreAlbumsAsync(CloudOnlineAlbumInfoList list)
+    public static async Task SearchMorePlaylistsAsync(CloudOnlinePlaylistInfoList list)
     {
         await _searchSemaphore.WaitAsync();
         try
@@ -86,26 +86,26 @@ public class CloudAlbumSearchHelper
                 new Dictionary<string, string>
                 {
                     { "keywords", list.KeyWords },
-                    { "type", "10" },
-                    { "limit", $"{CloudOnlineAlbumInfoList.Limit}" },
-                    { "offset", $"{list.Page * CloudOnlineAlbumInfoList.Limit}" },
+                    { "type", "1000" },
+                    { "limit", $"{CloudOnlinePlaylistInfoList.Limit}" },
+                    { "offset", $"{list.Page * CloudOnlinePlaylistInfoList.Limit}" },
                 }
             );
             using var document = JsonDocument.Parse(result.ToJsonString());
             var root = document.RootElement;
 
-            // 获取albums数组
+            // 获取Playlists数组
             if (
                 root.TryGetProperty("result", out var resultElement)
-                && resultElement.TryGetProperty("albums", out var albumsElement)
+                && resultElement.TryGetProperty("playlists", out var playlistsElement)
             )
             {
-                await ProcessAlbumsAsync(albumsElement, list);
+                await ProcessPlaylistsAsync(playlistsElement, list);
                 list.Page++;
             }
             else
             {
-                throw new Exception("获取专辑列表失败");
+                throw new Exception("获取歌单列表失败");
             }
         }
         catch
@@ -119,13 +119,13 @@ public class CloudAlbumSearchHelper
         }
     }
 
-    private static async Task ProcessAlbumsAsync(
-        JsonElement albumsElement,
-        CloudOnlineAlbumInfoList list
+    private static async Task ProcessPlaylistsAsync(
+        JsonElement playlistsElement,
+        CloudOnlinePlaylistInfoList list
     )
     {
-        var actualCount = albumsElement.GetArrayLength();
-        var infos = new BriefCloudOnlineAlbumInfo[actualCount];
+        var actualCount = playlistsElement.GetArrayLength();
+        var infos = new BriefCloudOnlinePlaylistInfo[actualCount];
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
         await Parallel.ForEachAsync(
             Enumerable.Range(0, actualCount),
@@ -139,7 +139,7 @@ public class CloudAlbumSearchHelper
                 try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var info = await BriefCloudOnlineAlbumInfo.CreateAsync(albumsElement[i]!);
+                    var info = await BriefCloudOnlinePlaylistInfo.CreateAsync(playlistsElement[i]!);
                     infos[i] = info;
                 }
                 catch (Exception ex)

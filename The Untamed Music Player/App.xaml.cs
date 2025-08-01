@@ -54,6 +54,8 @@ public partial class App : Application
                     services.AddSingleton<IAppNotificationService, AppNotificationService>();
                     services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
                     services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
+                    services.AddSingleton<IColorExtractionService, ColorExtractionService>();
+                    services.AddSingleton<IDynamicBackgroundService, DynamicBackgroundService>();
 
                     services.AddSingleton<IActivationService, ActivationService>();
 
@@ -106,7 +108,7 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
-    protected override async void OnLaunched(LaunchActivatedEventArgs args)
+    protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
         MainWindow = new MainWindow();

@@ -11,9 +11,10 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Controls;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
-using Windows.Storage.Streams;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace The_Untamed_Music_Player.Views;
@@ -51,8 +52,9 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         base.OnNavigatedTo(e);
         if (
-            Data.ShellViewModel!.NavigatePage == nameof(OnlineAlbumsPage)
-            || Data.ShellViewModel.NavigatePage == nameof(OnlineArtistDetailPage)
+            Data.ShellViewModel!.NavigatePage
+            is nameof(OnlineAlbumsPage)
+                or nameof(OnlineArtistDetailPage)
         )
         {
             var animation = ConnectedAnimationService
@@ -76,7 +78,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         }
     }
 
-    private async void OnlineAlbumDetailPage_OnLoaded(object sender, RoutedEventArgs e)
+    private void OnlineAlbumDetailPage_OnLoaded(object sender, RoutedEventArgs e)
     {
         var scrollViewer =
             SongListView.FindDescendant<ScrollViewer>()
@@ -101,11 +103,10 @@ public sealed partial class OnlineAlbumDetailPage : Page
 
         CreateHeaderAnimation(_props, scrollingProperties.Translation.Y);
 
-        var coverBytes = await IDetailedOnlineAlbumInfo.GetCoverBytes(ViewModel.BriefAlbum);
-        if (coverBytes.Length != 0)
-        {
-            CreateImageBackgroundGradientVisual(scrollingProperties.Translation.Y, coverBytes);
-        }
+        CreateImageBackgroundGradientVisual(
+            scrollingProperties.Translation.Y,
+            ViewModel.BriefAlbum.CoverPath
+        );
     }
 
     /// <summary>
@@ -198,15 +199,14 @@ public sealed partial class OnlineAlbumDetailPage : Page
 
     private void CreateImageBackgroundGradientVisual(
         ScalarNode scrollVerticalOffset,
-        byte[] imageBytes
+        string? coverPath
     )
     {
-        if (_compositor is null)
+        if (_compositor is null || string.IsNullOrEmpty(coverPath))
         {
             return;
         }
-        using var stream = new MemoryStream(imageBytes);
-        var imageSurface = LoadedImageSurface.StartLoadFromStream(stream.AsRandomAccessStream());
+        var imageSurface = LoadedImageSurface.StartLoadFromUri(new Uri(coverPath));
         var imageBrush = _compositor.CreateSurfaceBrush(imageSurface);
         imageBrush.HorizontalAlignmentRatio = 0.5f;
         imageBrush.VerticalAlignmentRatio = 0.25f;
@@ -284,13 +284,50 @@ public sealed partial class OnlineAlbumDetailPage : Page
         }
     }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e) { }
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.PlayButton_Click(info);
+        }
+    }
 
-    private void PlayNextButton_Click(object sender, RoutedEventArgs e) { }
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.PlayNextButton_Click(info);
+        }
+    }
 
-    private void PropertiesButton_Click(object sender, RoutedEventArgs e) { }
+    private async void DownloadButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            await DownloadHelper.DownloadOnlineSongAsync(info);
+        }
+    }
 
-    private void ShowArtistButton_Click(object sender, RoutedEventArgs e) { }
+    private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            if (song is not null)
+            {
+                var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
+                await dialog.ShowAsync();
+            }
+        }
+    }
+
+    private void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.ShowArtistButton_Click(info);
+        }
+    }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
