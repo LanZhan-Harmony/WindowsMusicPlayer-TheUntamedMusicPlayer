@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
@@ -27,13 +27,12 @@
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Auto</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
     <LangVersion>preview</LangVersion>
-    <PublishAot>True</PublishAot>
+    <!--<PublishAot>True</PublishAot>
     <PublishTrimmed>True</PublishTrimmed>
     <IsAotCompatible>True</IsAotCompatible>
-    <JsonSerializerIsReflectionEnabledByDefault>True</JsonSerializerIsReflectionEnabledByDefault>
-    <CsWinRTAotOptimizerEnabled>True</CsWinRTAotOptimizerEnabled>
+    <JsonSerializerIsReflectionEnabledByDefault>True</JsonSerializerIsReflectionEnabledByDefault>-->
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\**\*" />
@@ -71,6 +70,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <DefaultLanguage>en-us</DefaultLanguage>
+    <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <AppxPackageDir>D:\下载\Browser\AppPackages\</AppxPackageDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
