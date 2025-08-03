@@ -439,7 +439,7 @@
     <value>Choose a font-family</value>
   </data>
   <data name="Settings_LyricBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>Lyric background follows cover</value>
+    <value>Lyric background follows cover theme color</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>

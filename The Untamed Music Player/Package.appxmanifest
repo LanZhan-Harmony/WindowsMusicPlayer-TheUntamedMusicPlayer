@@ -10,15 +10,15 @@
   IgnorableNamespaces="uap rescap genTemplate">
 
 	<Identity
-	  Name="d3ac1dea-8f94-48ad-a56e-768e396dd9dd"
-	  Publisher="CN=Admin"
-	  Version="0.3.3.0" />
+	  Name="C19A3696.28439CB846862"
+	  Publisher="CN=D8BFD4E9-94E2-482B-A987-F96C72D65FDF"
+	  Version="0.4.0.0" />
 
-	<mp:PhoneIdentity PhoneProductId="d3ac1dea-8f94-48ad-a56e-768e396dd9dd" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+	<mp:PhoneIdentity PhoneProductId="2a062caa-220c-45c3-bcb4-240bfacb929d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
 	<Properties>
-		<DisplayName>The Untamed Music Player</DisplayName>
-		<PublisherDisplayName>Admin</PublisherDisplayName>
+		<DisplayName>无羁 音乐播放器</DisplayName>
+		<PublisherDisplayName>蓝忘机</PublisherDisplayName>
 		<Logo>Assets\AppIcon\StoreLogo.png</Logo>
 	</Properties>
 
