@@ -339,7 +339,7 @@ public partial class MainViewModel : ObservableRecipient
         _mainMindow.Activated -= MainWindow_Activated;
         Data.DesktopLyricWindow?.Close();
         Data.DesktopLyricWindow?.Dispose();
-        Data.MusicPlayer.Dispose();
+        Data.MusicPlayer.Player.Dispose();
         Data.MusicPlayer.SaveCurrentStateAsync();
     }
 
