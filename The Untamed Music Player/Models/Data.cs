@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
@@ -45,24 +46,35 @@ public static class Data
     public static readonly string[] SupportedAudioTypes =
     [
         ".mp3",
-        ".wav",
-        ".wma",
-        ".aac",
-        ".mid",
-        ".midi",
-        ".mpa",
-        ".ogg",
-        ".oga",
-        ".opus",
-        ".weba",
         ".flac",
-        ".m4a",
-        ".m4b",
-        ".wv",
-        ".wvc",
-        ".aiff",
+        ".ogg",
+        ".wav",
+        ".mp2",
+        ".mp1",
         ".aif",
-        ".aifc",
+        ".aiff",
+        ".m4a",
+        ".m2a",
+        ".m1a",
+        ".mpa",
+        ".mpg",
+        ".mpeg",
+        ".mp3pro",
+        ".bwf",
+        ".mus",
+        ".mod",
+        ".mid",
+        ".mo3",
+        ".s3m",
+        ".xm",
+        ".it",
+        ".mtm",
+        ".umx",
+        ".mdz",
+        ".s3z",
+        ".itz",
+        ".x",
+        ".mz",
     ];
 
     /// <summary>
