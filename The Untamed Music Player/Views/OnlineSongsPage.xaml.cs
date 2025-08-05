@@ -57,6 +57,14 @@ public sealed partial class OnlineSongsPage : Page
                 await Task.Delay(3000);
             }
         };
+
+        if (Data.MusicPlayer.CurrentBriefSong is not null)
+        {
+            SongListView.ScrollIntoView(
+                Data.MusicPlayer.CurrentBriefSong,
+                ScrollIntoViewAlignment.Leading
+            );
+        }
     }
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)

@@ -9,7 +9,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
       xmlns:ui="using:CommunityToolkit.WinUI"
-      Loaded="OnlineSongsPage_Loaded"
       mc:Ignorable="d">
 
     <Page.Resources>

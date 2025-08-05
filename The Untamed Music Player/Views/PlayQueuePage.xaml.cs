@@ -24,6 +24,13 @@ public sealed partial class PlayQueuePage : Page
     private void PlayQueuePage_Loaded(object sender, RoutedEventArgs e)
     {
         UpdatePlayQueueSource();
+        if (Data.MusicPlayer.CurrentBriefSong is not null)
+        {
+            PlayqueueListView.ScrollIntoView(
+                Data.MusicPlayer.CurrentBriefSong,
+                ScrollIntoViewAlignment.Leading
+            );
+        }
     }
 
     private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -67,7 +74,7 @@ public sealed partial class PlayQueuePage : Page
         fontIcon?.Visibility = Visibility.Visible;
     }
 
-    private void PlayButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {
