@@ -278,7 +278,6 @@
                           ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                           ItemTemplate="{StaticResource SongListViewTemplate}"
                           ItemsSource="{x:Bind ViewModel.GetSongListViewSource(GroupedSongList.View, ViewModel.NotGroupedSongList), Mode=OneWay}"
-                          Loaded="SongListView_Loaded"
                           Opacity="{x:Bind ViewModel.GetSongListViewOpacity(ViewModel.IsProgressRingActive), Mode=OneWay}"
                           SelectionMode="None">
                     <ListView.ItemsPanel>
