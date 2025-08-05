@@ -16,7 +16,7 @@ public class OnlineSongsViewModel
 
     public void OnlineSongsSongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Part:{Data.OnlineMusicLibrary.SearchKeyWords}",
             Data.OnlineMusicLibrary.OnlineSongInfoList,
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -30,7 +30,7 @@ public class OnlineSongsViewModel
 
     public void OnlineSongsPlayButton_Click(IBriefOnlineSongInfo info)
     {
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Part:{Data.OnlineMusicLibrary.SearchKeyWords}",
             Data.OnlineMusicLibrary.OnlineSongInfoList,
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -44,7 +44,7 @@ public class OnlineSongsViewModel
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
+            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else

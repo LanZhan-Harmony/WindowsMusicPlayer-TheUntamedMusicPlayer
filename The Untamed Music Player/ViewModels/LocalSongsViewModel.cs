@@ -91,8 +91,10 @@ public partial class LocalSongsViewModel : ObservableRecipient
     {
         LoadScrollViewerVerticalOffsetAsync();
         LoadModeAndSongList();
-        Data.LocalSongsViewModel = this;
         Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
+
+        // 注册消息发送器
+        IsActive = true;
     }
 
     public async void LoadModeAndSongList()
@@ -105,6 +107,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
             OnPropertyChanged(nameof(GroupedSongList));
             OnPropertyChanged(nameof(NotGroupedSongList));
             OnPropertyChanged(nameof(Genres));
+            // Messenger.Send(new ScrollToSongMessage());
         }
         catch (Exception ex)
         {
@@ -491,7 +494,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetShuffledPlayList(
+        Data.MusicPlayer.SetShuffledPlayQueue(
             "ShuffledLocalSongs:All",
             ConvertGroupedToFlatList(),
             0,
@@ -502,7 +505,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
+        Data.MusicPlayer.SetPlayQueue("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
         if (e.ClickedItem is BriefLocalSongInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
@@ -511,7 +514,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void PlayButton_Click(BriefLocalSongInfo info)
     {
-        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
+        Data.MusicPlayer.SetPlayQueue("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
@@ -520,7 +523,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
+            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else

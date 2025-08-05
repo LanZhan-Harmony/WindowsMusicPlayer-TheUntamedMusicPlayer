@@ -4,7 +4,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ManagedBass;
 using ManagedBass.Fx;
-using ManagedBass.Wasapi;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -21,19 +20,18 @@ namespace The_Untamed_Music_Player.Models;
 
 public partial class MusicPlayer : ObservableRecipient, IDisposable
 {
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
 
+    /// <summary>
+    /// 用于获取SMTC的临时播放器
+    /// </summary>
     private readonly Windows.Media.Playback.MediaPlayer _tempPlayer = new();
 
     /// <summary>
     /// 用于SMTC显示封面图片的流
     /// </summary>
     private static InMemoryRandomAccessStream? _currentCoverStream = null!;
-
-    /// <summary>
-    /// 当前播放的歌曲简要版
-    /// </summary>
-    private IBriefSongInfoBase? _currentBriefSong;
 
     /// <summary>
     /// SMTC控件
@@ -86,24 +84,14 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     private int _tempoStream = 0;
 
     /// <summary>
-    /// 原始音频流的频率
-    /// </summary>
-    private double _originalFrequency = 44100;
-
-    /// <summary>
-    /// 播放状态同步事件回调
+    /// 播放结束事件回调
     /// </summary>
     private SyncProcedure? _syncEndCallback;
 
     /// <summary>
-    /// Bass下载流同步事件回调
+    /// 播放失败事件回调
     /// </summary>
-    private readonly DownloadProcedure? _downloadCallback = null;
-
-    /// <summary>
-    /// 是否已释放资源
-    /// </summary>
-    private bool _disposed = false;
+    private SyncProcedure? _syncFailCallback;
 
     /// <summary>
     /// 播放速度
@@ -187,6 +175,11 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     public partial byte PlayState { get; set; } = 0;
 
     /// <summary>
+    /// 当前播放的歌曲简要版
+    /// </summary>
+    public IBriefSongInfoBase? CurrentBriefSong { get; set; }
+
+    /// <summary>
     /// 当前播放歌曲
     /// </summary>
     [ObservableProperty]
@@ -218,9 +211,9 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
 
     partial void OnCurrentVolumeChanged(double value)
     {
-        if (!IsMute && _currentStream != 0)
+        if (!IsMute && _tempoStream != 0)
         {
-            Bass.ChannelSetAttribute(_currentStream, ChannelAttribute.Volume, value / 100.0);
+            Bass.ChannelSetAttribute(_tempoStream, ChannelAttribute.Volume, value / 100.0);
         }
     }
 
@@ -232,10 +225,10 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
 
     partial void OnIsMuteChanged(bool value)
     {
-        if (_currentStream != 0)
+        if (_tempoStream != 0)
         {
             Bass.ChannelSetAttribute(
-                _currentStream,
+                _tempoStream,
                 ChannelAttribute.Volume,
                 value ? 0 : CurrentVolume / 100.0
             );
@@ -256,14 +249,8 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
 
     public MusicPlayer()
     {
-        _localSettingsService = App.GetService<ILocalSettingsService>();
-
-        // 初始化Bass音频库
         InitializeBass();
-
-        // 初始化SMTC
         InitializeSystemMediaTransportControls();
-
         LoadCurrentStateAsync();
     }
 
@@ -272,25 +259,19 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// </summary>
     private void InitializeBass()
     {
-        try
+        // 初始化Bass - 使用默认设备
+        if (!Bass.Init())
         {
-            // 初始化Bass - 使用默认设备
-            if (!Bass.Init(-1, 44100, DeviceInitFlags.Default, IntPtr.Zero))
-            {
-                Debug.WriteLine($"Bass初始化失败: {Bass.LastError}");
-                return;
-            }
-
-            // 加载Bass插件
-            LoadBassPlugins();
-
-            // 设置同步回调
-            _syncEndCallback = OnSyncEnd;
+            Debug.WriteLine($"Bass初始化失败: {Bass.LastError}");
+            return;
         }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Bass初始化异常: {ex.Message}");
-        }
+
+        // 加载Bass插件
+        LoadBassPlugins();
+
+        // 设置同步回调
+        _syncEndCallback = OnPlayBackEnded;
+        _syncFailCallback = OnPlaybackFailed;
     }
 
     /// <summary>
@@ -298,38 +279,24 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// </summary>
     private static void LoadBassPlugins()
     {
-        try
+        var appPath = AppContext.BaseDirectory;
+        var pluginPaths = new[]
         {
-            var appPath = AppContext.BaseDirectory;
-            var pluginPaths = new[]
-            {
-                "bassape.dll",
-                "basscd.dll",
-                "bassdsd.dll",
-                "bassflac.dll",
-                "basshls.dll",
-                "bassmidi.dll",
-                "bassopus.dll",
-                "basswebm.dll",
-                "basswv.dll",
-            };
+            "bassape.dll",
+            "basscd.dll",
+            "bassdsd.dll",
+            "bassflac.dll",
+            "basshls.dll",
+            "bassmidi.dll",
+            "bassopus.dll",
+            "basswebm.dll",
+            "basswv.dll",
+        };
 
-            foreach (var pluginPath in pluginPaths)
-            {
-                var fullPath = Path.Combine(appPath, pluginPath);
-                if (File.Exists(fullPath))
-                {
-                    var plugin = Bass.PluginLoad(fullPath);
-                    if (plugin == 0)
-                    {
-                        Debug.WriteLine($"加载Bass插件失败: {pluginPath} - {Bass.LastError}");
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
+        foreach (var pluginPath in pluginPaths)
         {
-            Debug.WriteLine($"加载Bass插件时发生异常: {ex.Message}");
+            var fullPath = Path.Combine(appPath, pluginPath);
+            Bass.PluginLoad(fullPath);
         }
     }
 
@@ -341,6 +308,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         _systemControls = _tempPlayer.SystemMediaTransportControls;
         _displayUpdater = _systemControls.DisplayUpdater;
         _displayUpdater.Type = MediaPlaybackType.Music;
+        _displayUpdater.AppMediaId = "AppDisplayName".GetLocalized();
         _systemControls.IsEnabled = true;
         _systemControls.ButtonPressed += SystemControls_ButtonPressed;
         _timelineProperties.StartTime = TimeSpan.Zero;
@@ -350,7 +318,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// <summary>
     /// Bass同步回调 - 播放结束
     /// </summary>
-    private void OnSyncEnd(int handle, int channel, int data, IntPtr user)
+    private void OnPlayBackEnded(int handle, int channel, int data, IntPtr user)
     {
         Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
         {
@@ -358,7 +326,35 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
             {
                 if (RepeatMode == 2)
                 {
-                    PlaySongByInfo(_currentBriefSong!);
+                    PlaySongByInfo(CurrentBriefSong!);
+                }
+                else
+                {
+                    PlayNextSong();
+                }
+            }
+        });
+    }
+
+    /// <summary>
+    /// Bass同步回调 - 播放失败
+    /// </summary>
+    private void OnPlaybackFailed(int handle, int channel, int data, IntPtr user)
+    {
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (RepeatMode == 2 || SourceMode != 0)
+            {
+                Stop();
+            }
+            else
+            {
+                CurrentBriefSong!.IsPlayAvailable = false;
+                _failedCount++;
+                if (_failedCount > 2)
+                {
+                    _failedCount = 0;
+                    Stop();
                 }
                 else
                 {
@@ -375,8 +371,8 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     public async void PlaySongByInfo(IBriefSongInfoBase info)
     {
         Stop();
-        PlayState = 2; // 设置为加载中状态
-        _currentBriefSong = info;
+        PlayState = 2;
+        CurrentBriefSong = info;
         CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
         PlayQueueIndex = info.PlayQueueIndex;
         if (CurrentSong!.IsPlayAvailable)
@@ -403,7 +399,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         Stop();
         PlayState = 2;
         var songToPlay = ShuffleMode ? ShuffledPlayQueue[index] : PlayQueue[index];
-        _currentBriefSong = songToPlay;
+        CurrentBriefSong = songToPlay;
         CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(songToPlay);
         PlayQueueIndex = isLast ? 0 : index;
         if (CurrentSong!.IsPlayAvailable)
@@ -475,7 +471,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
             Stop();
             newIndex = PlayQueueIndex < _playQueueLength - 1 ? PlayQueueIndex + 1 : 0;
             var songToPlay = ShuffleMode ? ShuffledPlayQueue[newIndex] : PlayQueue[newIndex];
-            _currentBriefSong = songToPlay;
+            CurrentBriefSong = songToPlay;
             CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(songToPlay);
             PlayQueueIndex = newIndex == 0 ? 0 : newIndex - 1;
             if (PlayState != 0)
@@ -566,7 +562,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
             Data.RootPlayBarViewModel!.Availability = true;
 
             // 释放之前的流
-            if (_tempoStream != 0 && _tempoStream != _currentStream)
+            if (_tempoStream != 0)
             {
                 Bass.StreamFree(_tempoStream);
                 _tempoStream = 0;
@@ -577,69 +573,42 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
                 _currentStream = 0;
             }
 
-            // 根据来源模式创建Bass流
             if (SourceMode == 0) // 本地文件
             {
                 _currentStream = Bass.CreateStream(path, 0, 0, BassFlags.Decode);
             }
             else // 在线流
             {
-                _currentStream = Bass.CreateStream(
-                    path,
-                    0,
-                    BassFlags.Decode,
-                    _downloadCallback,
-                    IntPtr.Zero
-                );
+                _currentStream = Bass.CreateStream(path, 0, BassFlags.Decode, null);
             }
             if (_currentStream == 0)
             {
                 Debug.WriteLine($"创建Bass流失败: {Bass.LastError}");
-                PlayState = 0; // 恢复为暂停状态
                 return;
             }
 
-            // 获取原始频率
-            var info = new ChannelInfo();
-            Bass.ChannelGetInfo(_currentStream, out info);
-            _originalFrequency = info.Frequency;
-            Debug.WriteLine($"原始流频率: {_originalFrequency} Hz");
-
             // 使用BassFx创建Tempo流用于变速不变调
             _tempoStream = BassFx.TempoCreate(_currentStream, BassFlags.FxFreeSource);
-            if (_tempoStream != 0)
+            if (_tempoStream == 0)
             {
-                Debug.WriteLine($"成功创建Tempo流: {_tempoStream}");
-
-                // 设置初始播放速度
-                var tempoPercent = (PlaySpeed - 1.0) * 100.0;
-                var result = Bass.ChannelSetAttribute(
-                    _tempoStream,
-                    ChannelAttribute.Tempo,
-                    (float)tempoPercent
-                );
-                Debug.WriteLine($"设置Tempo属性: {tempoPercent}%, 结果: {result}");
-                if (!result)
-                {
-                    Debug.WriteLine($"设置Tempo失败: {Bass.LastError}");
-                }
-
-                // 设置播放结束回调
-                Bass.ChannelSetSync(_tempoStream, SyncFlags.End, 0, _syncEndCallback, IntPtr.Zero);
+                Debug.WriteLine($"创建Tempo流失败: {Bass.LastError}");
+                return;
             }
-            else
+
+            // 设置初始播放速度
+            var tempoPercent = (PlaySpeed - 1.0) * 100.0;
+            var result = Bass.ChannelSetAttribute(
+                _tempoStream,
+                ChannelAttribute.Tempo,
+                (float)tempoPercent
+            );
+            if (!result)
             {
-                Debug.WriteLine($"创建Tempo流失败: {Bass.LastError}，使用原始流");
-                // 如果创建Tempo流失败，则使用原始流
-                _tempoStream = _currentStream;
-                Bass.ChannelSetSync(
-                    _currentStream,
-                    SyncFlags.End,
-                    0,
-                    _syncEndCallback,
-                    IntPtr.Zero
-                );
+                Debug.WriteLine($"设置Tempo失败: {Bass.LastError}");
             }
+
+            Bass.ChannelSetSync(_tempoStream, SyncFlags.End, 0, _syncEndCallback); // 设置播放结束回调
+            Bass.ChannelSetSync(_tempoStream, SyncFlags.Stalled, 0, _syncFailCallback); // 设置播放失败回调
 
             // 设置音量
             Bass.ChannelSetAttribute(
@@ -649,8 +618,8 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
             );
 
             // 获取歌曲时长
-            var lengthBytes = Bass.ChannelGetLength(_currentStream);
-            var lengthSeconds = Bass.ChannelBytes2Seconds(_currentStream, lengthBytes);
+            var lengthBytes = Bass.ChannelGetLength(_tempoStream);
+            var lengthSeconds = Bass.ChannelBytes2Seconds(_tempoStream, lengthBytes);
             TotalPlayingTime = TimeSpan.FromSeconds(lengthSeconds);
 
             _displayUpdater.MusicProperties.Title = CurrentSong!.Title;
@@ -682,8 +651,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.StackTrace);
-            PlayState = 0; // 恢复为暂停状态
+            Debug.WriteLine($"SetSource异常: {ex.Message}");
         }
 
         // 设置封面图片
@@ -743,7 +711,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// </summary>
     /// <param name="name"></param>
     /// <param name="list"></param>
-    public void SetPlayList(
+    public void SetPlayQueue(
         string name,
         IEnumerable<IBriefSongInfoBase> list,
         byte sourceMode = 0,
@@ -784,7 +752,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         }
     }
 
-    public void SetShuffledPlayList(
+    public void SetShuffledPlayQueue(
         string name,
         IEnumerable<IBriefSongInfoBase> list,
         byte sourceMode = 0,
@@ -823,25 +791,22 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     {
         try
         {
-            if (_currentStream == 0 || _lockable || PlayState != 1)
+            if (_tempoStream == 0 || _lockable || PlayState != 1)
             {
                 return;
             }
 
+            var positionBytes = Bass.ChannelGetPosition(_tempoStream);
+            var positionSeconds = Bass.ChannelBytes2Seconds(_tempoStream, positionBytes);
+            var playingTime = TimeSpan.FromSeconds(positionSeconds);
+
             App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
             {
-                var positionBytes = Bass.ChannelGetPosition(_currentStream);
-                var positionSeconds = Bass.ChannelBytes2Seconds(_currentStream, positionBytes);
-                CurrentPlayingTime = TimeSpan.FromSeconds(positionSeconds);
-
+                CurrentPlayingTime = playingTime;
                 if (TotalPlayingTime.TotalMilliseconds > 0)
                 {
                     CurrentPosition =
-                        100
-                        * (
-                            CurrentPlayingTime.TotalMilliseconds
-                            / TotalPlayingTime.TotalMilliseconds
-                        );
+                        100 * (playingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
                 }
             });
 
@@ -849,12 +814,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
                 Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
             if (CurrentLyric.Count > 0)
             {
-                dispatcherQueue?.TryEnqueue(() =>
-                {
-                    var positionBytes = Bass.ChannelGetPosition(_currentStream);
-                    var positionSeconds = Bass.ChannelBytes2Seconds(_currentStream, positionBytes);
-                    UpdateCurrentLyricIndex(positionSeconds * 1000);
-                });
+                dispatcherQueue?.TryEnqueue(() => UpdateCurrentLyricIndex(positionSeconds * 1000));
             }
 
             _timelineProperties.Position = CurrentPlayingTime;
@@ -862,7 +822,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.StackTrace);
+            Debug.WriteLine($"计时器更新异常: {ex.Message}");
         }
     }
 
@@ -994,13 +954,12 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// </summary>
     public void Play()
     {
-        var streamToPlay = _tempoStream != 0 ? _tempoStream : _currentStream;
-        if (streamToPlay != 0)
+        if (_tempoStream != 0)
         {
-            Bass.ChannelPlay(streamToPlay, false);
-            PlayState = 1;
-            _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
+            Bass.ChannelPlay(_tempoStream, false);
         }
+        PlayState = 1;
+        _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
     }
 
     /// <summary>
@@ -1008,13 +967,12 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// </summary>
     public void Pause()
     {
-        var streamToPlay = _tempoStream != 0 ? _tempoStream : _currentStream;
-        if (streamToPlay != 0)
+        if (_tempoStream != 0)
         {
-            Bass.ChannelPause(streamToPlay);
-            PlayState = 0;
-            _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
+            Bass.ChannelPause(_tempoStream);
         }
+        PlayState = 0;
+        _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
     }
 
     /// <summary>
@@ -1022,10 +980,9 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// </summary>
     public void Stop()
     {
-        var streamToPlay = _tempoStream != 0 ? _tempoStream : _currentStream;
-        if (streamToPlay != 0)
+        if (_tempoStream != 0)
         {
-            Bass.ChannelStop(streamToPlay);
+            Bass.ChannelStop(_tempoStream);
         }
         PlayState = 0;
         CurrentPlayingTime = TimeSpan.Zero;
@@ -1087,13 +1044,13 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// </summary>
     public void PlayPauseUpdate()
     {
-        if (PlayState == 1 || PlayState == 2)
+        if (PlayState == 0)
         {
-            Pause();
+            Play();
         }
         else
         {
-            Play();
+            Pause();
         }
     }
 
@@ -1155,6 +1112,20 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     }
 
     /// <summary>
+    /// 设置播放速度
+    /// </summary>
+    /// <param name="speed"></param>
+    private void SetPlaybackSpeed(double speed)
+    {
+        if (_tempoStream != 0)
+        {
+            // 使用Tempo属性来改变播放速度而不改变音调, Tempo属性的值以百分比表示: 0=正常速度, 100=2倍速度, -50=0.5倍速度
+            var tempoPercent = (speed - 1.0) * 100.0;
+            Bass.ChannelSetAttribute(_tempoStream, ChannelAttribute.Tempo, (float)tempoPercent);
+        }
+    }
+
+    /// <summary>
     /// 随机播放队列更新
     /// </summary>
     /// <returns></returns>
@@ -1171,7 +1142,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     public void ClearPlayQueue()
     {
         Stop();
-        _currentBriefSong = null;
+        CurrentBriefSong = null;
         CurrentSong = null;
         CurrentPlayingTime = TimeSpan.Zero;
         TotalPlayingTime = TimeSpan.Zero;
@@ -1223,11 +1194,17 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// <param name="e"></param>
     public void ProgressUpdate(object sender, PointerRoutedEventArgs e)
     {
-        if (_currentStream != 0)
+        if (_tempoStream != 0) // 使用_tempoStream而不是_currentStream
         {
             var targetTimeSeconds = ((Slider)sender).Value * TotalPlayingTime.TotalSeconds / 100;
-            var targetBytes = Bass.ChannelSeconds2Bytes(_currentStream, targetTimeSeconds);
-            Bass.ChannelSetPosition(_currentStream, targetBytes);
+            var targetBytes = Bass.ChannelSeconds2Bytes(_tempoStream, targetTimeSeconds);
+
+            // 对原始流设置位置，tempo流会自动跟随
+            var result = Bass.ChannelSetPosition(_tempoStream, targetBytes);
+            if (!result)
+            {
+                Debug.WriteLine($"设置播放位置失败: {Bass.LastError}");
+            }
 
             CurrentPlayingTime = TimeSpan.FromSeconds(targetTimeSeconds);
             if (TotalPlayingTime.TotalMilliseconds > 0)
@@ -1248,11 +1225,17 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     public void LyricProgressUpdate(double time)
     {
         _lockable = true;
-        if (_currentStream != 0)
+        if (_tempoStream != 0) // 使用_tempoStream而不是_currentStream
         {
             var targetTimeSeconds = time / 1000.0;
-            var targetBytes = Bass.ChannelSeconds2Bytes(_currentStream, targetTimeSeconds);
-            Bass.ChannelSetPosition(_currentStream, targetBytes);
+            var targetBytes = Bass.ChannelSeconds2Bytes(_tempoStream, targetTimeSeconds);
+
+            // 对原始流设置位置，tempo流会自动跟随
+            var result = Bass.ChannelSetPosition(_tempoStream, targetBytes);
+            if (!result)
+            {
+                Debug.WriteLine($"设置播放位置失败: {Bass.LastError}");
+            }
 
             CurrentPlayingTime = TimeSpan.FromMilliseconds(time);
             if (TotalPlayingTime.TotalMilliseconds > 0)
@@ -1269,17 +1252,22 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     public void SkipBack10sButton_Click(object sender, RoutedEventArgs e)
     {
         _lockable = true;
-        if (_currentStream != 0)
+        if (_tempoStream != 0) // 使用_tempoStream而不是_currentStream
         {
-            var currentPositionBytes = Bass.ChannelGetPosition(_currentStream);
+            var currentPositionBytes = Bass.ChannelGetPosition(_tempoStream);
             var currentPositionSeconds = Bass.ChannelBytes2Seconds(
-                _currentStream,
+                _tempoStream,
                 currentPositionBytes
             );
             var newPositionSeconds = Math.Max(0, currentPositionSeconds - 10);
-            var newPositionBytes = Bass.ChannelSeconds2Bytes(_currentStream, newPositionSeconds);
+            var newPositionBytes = Bass.ChannelSeconds2Bytes(_tempoStream, newPositionSeconds);
 
-            Bass.ChannelSetPosition(_currentStream, newPositionBytes);
+            var result = Bass.ChannelSetPosition(_tempoStream, newPositionBytes);
+            if (!result)
+            {
+                Debug.WriteLine($"设置播放位置失败: {Bass.LastError}");
+            }
+
             CurrentPlayingTime = TimeSpan.FromSeconds(newPositionSeconds);
 
             if (TotalPlayingTime.TotalMilliseconds > 0)
@@ -1296,20 +1284,25 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     public void SkipForw30sButton_Click(object sender, RoutedEventArgs e)
     {
         _lockable = true;
-        if (_currentStream != 0)
+        if (_tempoStream != 0) // 使用_tempoStream而不是_currentStream
         {
-            var currentPositionBytes = Bass.ChannelGetPosition(_currentStream);
+            var currentPositionBytes = Bass.ChannelGetPosition(_tempoStream);
             var currentPositionSeconds = Bass.ChannelBytes2Seconds(
-                _currentStream,
+                _tempoStream,
                 currentPositionBytes
             );
             var newPositionSeconds = Math.Min(
                 TotalPlayingTime.TotalSeconds,
                 currentPositionSeconds + 30
             );
-            var newPositionBytes = Bass.ChannelSeconds2Bytes(_currentStream, newPositionSeconds);
+            var newPositionBytes = Bass.ChannelSeconds2Bytes(_tempoStream, newPositionSeconds);
 
-            Bass.ChannelSetPosition(_currentStream, newPositionBytes);
+            var result = Bass.ChannelSetPosition(_tempoStream, newPositionBytes);
+            if (!result)
+            {
+                Debug.WriteLine($"设置播放位置失败: {Bass.LastError}");
+            }
+
             CurrentPlayingTime = TimeSpan.FromSeconds(newPositionSeconds);
 
             if (TotalPlayingTime.TotalMilliseconds > 0)
@@ -1380,7 +1373,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         await _localSettingsService.SaveSettingAsync("IsMute", IsMute);
         await _localSettingsService.SaveSettingAsync("CurrentVolume", CurrentVolume);
         await _localSettingsService.SaveSettingAsync("PlaySpeed", PlaySpeed);
-        await _localSettingsService.SaveSettingAsync("CurrentBriefSong", _currentBriefSong);
+        await _localSettingsService.SaveSettingAsync("CurrentBriefSong", CurrentBriefSong);
     }
 
     /// <summary>
@@ -1395,7 +1388,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
             ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
             RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
             IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
-            _currentBriefSong = SourceMode switch
+            CurrentBriefSong = SourceMode switch
             {
                 0 => await _localSettingsService.ReadSettingAsync<BriefLocalSongInfo>(
                     "CurrentBriefSong"
@@ -1407,10 +1400,10 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
             };
             (PlayQueue, ShuffledPlayQueue) = await FileManager.LoadPlayQueueDataAsync();
             _playQueueLength = PlayQueue.Count;
-            if (_currentBriefSong is not null)
+            if (CurrentBriefSong is not null)
             {
                 CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-                    _currentBriefSong
+                    CurrentBriefSong
                 );
                 await SetSource(CurrentSong!.Path);
                 _ = UpdateLyric(CurrentSong!.Lyric);
@@ -1437,7 +1430,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         }
         catch (Exception ex)
         {
-            _currentBriefSong = null;
+            CurrentBriefSong = null;
             CurrentSong = null;
             PlayQueue = [];
             ShuffledPlayQueue = [];
@@ -1447,118 +1440,21 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         }
     }
 
-    /// <summary>
-    /// 释放资源
-    /// </summary>
     public void Dispose()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    /// <summary>
-    /// 释放资源的具体实现
-    /// </summary>
-    /// <param name="disposing"></param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed)
+        Stop();
+        if (_tempoStream != 0)
         {
-            if (disposing)
-            {
-                try
-                {
-                    PositionUpdateTimer250ms?.Cancel();
-                    PositionUpdateTimer250ms = null;
-
-                    if (_tempoStream != 0 && _tempoStream != _currentStream)
-                    {
-                        Bass.StreamFree(_tempoStream);
-                        _tempoStream = 0;
-                    }
-
-                    if (_currentStream != 0)
-                    {
-                        Bass.StreamFree(_currentStream);
-                        _currentStream = 0;
-                    }
-
-                    Bass.Free();
-                    _currentCoverStream?.Dispose();
-                    _tempPlayer?.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"释放Bass资源时出错: {ex.Message}");
-                }
-            }
-            _disposed = true;
+            Bass.StreamFree(_tempoStream);
+            _tempoStream = 0;
         }
-    }
-
-    /// <summary>
-    /// 设置播放速度
-    /// </summary>
-    /// <param name="speed"></param>
-    private void SetPlaybackSpeed(double speed)
-    {
-        Debug.WriteLine($"设置播放速度: {speed}");
-
-        if (_tempoStream != 0 && _tempoStream != _currentStream)
+        if (_currentStream != 0)
         {
-            try
-            {
-                // 使用Tempo属性来改变播放速度而不改变音调
-                // Tempo属性的值以百分比表示: 0=正常速度, 100=2倍速度, -50=0.5倍速度
-                var tempoPercent = (speed - 1.0) * 100.0;
-                Debug.WriteLine($"计算的Tempo百分比: {tempoPercent}%");
-
-                var result = Bass.ChannelSetAttribute(
-                    _tempoStream,
-                    ChannelAttribute.Tempo,
-                    (float)tempoPercent
-                );
-                Debug.WriteLine($"设置Tempo结果: {result}");
-
-                if (!result)
-                {
-                    Debug.WriteLine($"设置Tempo失败: {Bass.LastError}");
-                    // 作为备选方案，尝试设置频率
-                    Bass.ChannelSetAttribute(
-                        _currentStream,
-                        ChannelAttribute.Frequency,
-                        (float)(_originalFrequency * speed)
-                    );
-                }
-                else
-                {
-                    Debug.WriteLine($"成功设置Tempo: {tempoPercent}%");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"设置Tempo流速度异常: {ex.Message}");
-                // 回退方案：使用频率调节
-                Bass.ChannelSetAttribute(
-                    _currentStream,
-                    ChannelAttribute.Frequency,
-                    (float)(_originalFrequency * speed)
-                );
-            }
+            Bass.StreamFree(_currentStream);
+            _currentStream = 0;
         }
-        else if (_currentStream != 0)
-        {
-            Debug.WriteLine("使用频率调节播放速度（回退方案）");
-            // 回退方案：如果没有tempo流，使用频率调节（但会改变音调）
-            Bass.ChannelSetAttribute(
-                _currentStream,
-                ChannelAttribute.Frequency,
-                (float)(_originalFrequency * speed)
-            );
-        }
-        else
-        {
-            Debug.WriteLine("没有可用的音频流");
-        }
+        Bass.Free();
+        _currentCoverStream?.Dispose();
+        _tempPlayer?.Dispose();
     }
 }

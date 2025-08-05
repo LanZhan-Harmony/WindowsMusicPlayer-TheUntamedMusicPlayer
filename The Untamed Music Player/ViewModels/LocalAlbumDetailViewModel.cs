@@ -22,13 +22,13 @@ public partial class LocalAlbumDetailViewModel : ObservableRecipient
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
         Data.MusicPlayer.PlaySongByInfo(SongList[0]);
     }
 
     public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetShuffledPlayList(
+        Data.MusicPlayer.SetShuffledPlayQueue(
             $"ShuffledLocalSongs:Album:{Album.Name}",
             SongList,
             0,
@@ -39,7 +39,7 @@ public partial class LocalAlbumDetailViewModel : ObservableRecipient
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
         if (e.ClickedItem is BriefLocalSongInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
@@ -48,7 +48,7 @@ public partial class LocalAlbumDetailViewModel : ObservableRecipient
 
     public void PlayButton_Click(BriefLocalSongInfo info)
     {
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
@@ -57,7 +57,7 @@ public partial class LocalAlbumDetailViewModel : ObservableRecipient
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayList($"LocalSongs:Part", list, 0, 0);
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else

@@ -1,23 +1,32 @@
-using CommunityToolkit.WinUI;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Controls;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class LocalSongsPage : Page
+public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessage>
 {
     public LocalSongsViewModel ViewModel { get; }
-
-    private ScrollViewer? _scrollViewer;
 
     public LocalSongsPage()
     {
         ViewModel = App.GetService<LocalSongsViewModel>();
         InitializeComponent();
+
+        WeakReferenceMessenger.Default.Register(this);
+    }
+
+    public void Receive(ScrollToSongMessage message)
+    {
+        if (message.Song is not null)
+        {
+            SongListView.ScrollIntoView(message.Song, message.Alignment);
+        }
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -36,16 +45,6 @@ public sealed partial class LocalSongsPage : Page
         var playButton = grid?.FindName("PlayButton") as Button;
         checkBox?.Visibility = Visibility.Collapsed;
         playButton?.Visibility = Visibility.Collapsed;
-    }
-
-    private void SongListView_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is ListView listView)
-        {
-            _scrollViewer =
-                listView.FindDescendant<ScrollViewer>()
-                ?? throw new Exception("未找到ScrollViewer");
-        }
     }
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)

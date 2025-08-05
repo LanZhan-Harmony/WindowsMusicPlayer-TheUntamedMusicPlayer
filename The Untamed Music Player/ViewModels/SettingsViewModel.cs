@@ -58,13 +58,14 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 是否显示歌词背景
     /// </summary>
     [ObservableProperty]
-    public partial bool IsLyricBackgroundVisible { get; set; } = Data.IsLyricBackgroundVisible;
+    public partial bool IsWindowBackgroundFollowsCover { get; set; } =
+        Data.IsWindowBackgroundFollowsCover;
 
-    partial void OnIsLyricBackgroundVisibleChanged(bool value)
+    partial void OnIsWindowBackgroundFollowsCoverChanged(bool value)
     {
         var dynamicBackgroundService = App.GetService<IDynamicBackgroundService>();
         dynamicBackgroundService.IsEnabled = value;
-        Data.IsLyricBackgroundVisible = value;
+        Data.IsWindowBackgroundFollowsCover = value;
         SaveLyricBackgroundVisibilityAsync(value);
     }
 
@@ -404,11 +405,11 @@ public partial class SettingsViewModel : ObservableRecipient
         await _localSettingsService.SaveSettingAsync("TintColor", tintColor);
     }
 
-    private async void SaveLyricBackgroundVisibilityAsync(bool isLyricBackgroundVisible)
+    private async void SaveLyricBackgroundVisibilityAsync(bool isWindowBackgroundFollowsCover)
     {
         await _localSettingsService.SaveSettingAsync(
-            "IsLyricBackgroundVisible",
-            isLyricBackgroundVisible
+            "IsWindowBackgroundFollowsCover",
+            isWindowBackgroundFollowsCover
         );
     }
 }

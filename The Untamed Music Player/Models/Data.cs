@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
@@ -90,7 +89,7 @@ public static class Data
     /// <summary>
     /// 是否显示歌词背景
     /// </summary>
-    public static bool IsLyricBackgroundVisible { get; set; } = false;
+    public static bool IsWindowBackgroundFollowsCover { get; set; } = false;
 
     public static OnlineMusicLibrary OnlineMusicLibrary { get; set; } = new();
     public static MusicLibrary MusicLibrary { get; set; } = new();
@@ -103,7 +102,6 @@ public static class Data
     public static LyricPage? LyricPage { get; set; }
     public static RootPlayBarView? RootPlayBarView { get; set; }
     public static DesktopLyricWindow? DesktopLyricWindow { get; set; }
-
     public static MainViewModel? MainViewModel { get; set; }
     public static SettingsViewModel? SettingsViewModel { get; set; }
     public static ShellViewModel? ShellViewModel { get; set; }

@@ -329,9 +329,8 @@ public partial class MainViewModel : ObservableRecipient
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
-        Data.MusicPlayer.Stop();
-        Data.MusicPlayer.PositionUpdateTimer250ms?.Cancel();
-        Data.MusicPlayer.PositionUpdateTimer250ms = null;
+        Data.MusicPlayer.SaveCurrentStateAsync();
+        Data.MusicPlayer.Dispose();
         _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
@@ -339,8 +338,6 @@ public partial class MainViewModel : ObservableRecipient
         _mainMindow.Activated -= MainWindow_Activated;
         Data.DesktopLyricWindow?.Close();
         Data.DesktopLyricWindow?.Dispose();
-        Data.MusicPlayer.Dispose();
-        Data.MusicPlayer.SaveCurrentStateAsync();
     }
 
     private void MainMindow_SizeChanged(object sender, WindowSizeChangedEventArgs args)
@@ -364,8 +361,8 @@ public partial class MainViewModel : ObservableRecipient
         {
             Data.SelectedFontSize = fontSize;
         }
-        Data.IsLyricBackgroundVisible = await _localSettingsService.ReadSettingAsync<bool>(
-            "IsLyricBackgroundVisible"
+        Data.IsWindowBackgroundFollowsCover = await _localSettingsService.ReadSettingAsync<bool>(
+            "IsWindowBackgroundFollowsCover"
         );
         Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
         if (Data.NotFirstUsed)
