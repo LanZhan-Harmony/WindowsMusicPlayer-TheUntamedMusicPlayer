@@ -93,7 +93,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
         {
             return;
         }
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList(),
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -108,7 +108,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
         {
             return;
         }
-        Data.MusicPlayer.SetShuffledPlayList(
+        Data.MusicPlayer.SetShuffledPlayQueue(
             $"ShuffledOnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList(),
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -119,7 +119,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
 
     public void SongListView_ItemClick(IBriefSongInfoBase info)
     {
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList(),
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -130,7 +130,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
 
     public void SongListViewPlayButton_Click(IBriefSongInfoBase info)
     {
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList(),
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -144,7 +144,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<IBriefSongInfoBase> { info };
-            Data.MusicPlayer.SetPlayList(
+            Data.MusicPlayer.SetPlayQueue(
                 "OnlineSongs:Part",
                 list,
                 (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -175,7 +175,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
     public void AlbumGridViewPlayButton_Click(IOnlineArtistAlbumInfo info)
     {
         var songList = info.SongList;
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Album:{info.Name}",
             songList,
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -189,7 +189,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
         var songList = info.SongList;
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayList(
+            Data.MusicPlayer.SetPlayQueue(
                 $"OnlineSongs:Album:{info.Name}",
                 songList,
                 (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),

@@ -50,7 +50,7 @@ public partial class OnlinePlayListDetailViewModel : ObservableRecipient
         {
             return;
         }
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Playlist:{Playlist.Name}",
             Playlist.SongList,
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -61,7 +61,7 @@ public partial class OnlinePlayListDetailViewModel : ObservableRecipient
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Playlist:{Playlist.Name}",
             Playlist.SongList,
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -75,7 +75,7 @@ public partial class OnlinePlayListDetailViewModel : ObservableRecipient
 
     public void PlayButton_Click(IBriefOnlineSongInfo info)
     {
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Playlist:{Playlist.Name}",
             Playlist.SongList,
             0,
@@ -89,7 +89,7 @@ public partial class OnlinePlayListDetailViewModel : ObservableRecipient
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.MusicPlayer.SetPlayList($"OnlineSongs:Part", list, 0, 0);
+            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else

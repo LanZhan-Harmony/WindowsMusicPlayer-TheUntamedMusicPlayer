@@ -17,7 +17,7 @@ public class OnlinePlayListsViewModel
         {
             return;
         }
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Playlist:{info.Name}",
             songList,
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -38,7 +38,7 @@ public class OnlinePlayListsViewModel
         }
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayList(
+            Data.MusicPlayer.SetPlayQueue(
                 $"OnlineSongs:Playlist:{info.Name}",
                 songList,
                 (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),

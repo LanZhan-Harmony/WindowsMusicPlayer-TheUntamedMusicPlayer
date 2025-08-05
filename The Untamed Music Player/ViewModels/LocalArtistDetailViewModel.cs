@@ -23,7 +23,7 @@ public class LocalArtistDetailViewModel
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList(),
             0,
@@ -34,7 +34,7 @@ public class LocalArtistDetailViewModel
 
     public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetShuffledPlayList(
+        Data.MusicPlayer.SetShuffledPlayQueue(
             $"ShuffledLocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList(),
             0,
@@ -45,7 +45,7 @@ public class LocalArtistDetailViewModel
 
     public void SongListView_ItemClick(BriefLocalSongInfo info)
     {
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList(),
             0,
@@ -56,7 +56,7 @@ public class LocalArtistDetailViewModel
 
     public void SongListViewPlayButton_Click(BriefLocalSongInfo info)
     {
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList(),
             0,
@@ -70,7 +70,7 @@ public class LocalArtistDetailViewModel
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
+            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
@@ -96,7 +96,7 @@ public class LocalArtistDetailViewModel
     public void AlbumGridViewPlayButton_Click(LocalArtistAlbumInfo info)
     {
         var songList = info.SongList;
-        Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{info.Name}", songList, 0, 0);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -105,7 +105,7 @@ public class LocalArtistDetailViewModel
         var songList = info.SongList;
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayList($"LocalSongs:Album:{info.Name}", songList, 0, 0);
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{info.Name}", songList, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else

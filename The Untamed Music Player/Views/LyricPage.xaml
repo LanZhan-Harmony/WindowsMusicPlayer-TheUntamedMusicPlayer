@@ -147,6 +147,7 @@
                            Canvas.ZIndex="1"
                            Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"/>
                     <Grid x:Name="ControllerCoverGrid"
+                          Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                           Canvas.ZIndex="0"
                           Visibility="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="ControllerCoverFontIcon"

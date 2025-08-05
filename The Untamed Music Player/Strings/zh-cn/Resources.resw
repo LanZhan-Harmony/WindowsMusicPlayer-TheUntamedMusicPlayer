@@ -438,8 +438,8 @@
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>选择一种字体</value>
   </data>
-  <data name="Settings_LyricBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>歌词背景跟随封面主题色</value>
+  <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
+    <value>窗口背景跟随封面主题色</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>拼音</value>
