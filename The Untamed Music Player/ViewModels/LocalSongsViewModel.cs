@@ -94,6 +94,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     {
         LoadScrollViewerVerticalOffsetAsync();
         LoadModeAndSongList();
+        Data.LocalSongsViewModel = this;
         Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
     }
 

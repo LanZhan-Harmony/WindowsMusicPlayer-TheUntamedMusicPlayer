@@ -11,8 +11,8 @@
 
 	<Identity
 	  Name="C19A3696.28439CB846862"
-	  Publisher="CN=D8BFD4E9-94E2-482B-A987-F96C72D65FDF"
-	  Version="0.4.0.0" />
+	  Publisher="CN=Admin"
+	  Version="0.4.1.0" />
 
 	<mp:PhoneIdentity PhoneProductId="2a062caa-220c-45c3-bcb4-240bfacb929d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
