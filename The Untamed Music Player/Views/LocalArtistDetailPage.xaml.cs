@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Threading.Tasks;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -375,7 +376,15 @@ public sealed partial class LocalArtistDetailPage : Page
         }
     }
 
-    private void SongListViewEditInfoButton_Click(object sender, RoutedEventArgs e) { }
+    private async void SongListViewEditInfoButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
+        {
+            var song = new DetailedLocalSongInfo(info);
+            var dialog = new EditSongInfoDialog(song) { XamlRoot = XamlRoot };
+            await dialog.ShowAsync();
+        }
+    }
 
     private async void SongListViewPropertiesButton_Click(object sender, RoutedEventArgs e)
     {
@@ -441,7 +450,15 @@ public sealed partial class LocalArtistDetailPage : Page
         }
     }
 
-    private void AlbumGridViewEditInfoButton_Click(object sender, RoutedEventArgs e) { }
+    private async void AlbumGridViewEditInfoButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LocalArtistAlbumInfo info })
+        {
+            var localAlbumInfo = Data.MusicLibrary.Albums[info.Name];
+            var dialog = new EditAlbumInfoDialog(localAlbumInfo) { XamlRoot = XamlRoot };
+            await dialog.ShowAsync();
+        }
+    }
 
     private void AlbumGridViewShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {

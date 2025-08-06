@@ -2,12 +2,14 @@ using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
@@ -88,13 +90,11 @@ public partial class LocalSongsViewModel : ObservableRecipient
     }
 
     public LocalSongsViewModel()
+        : base(StrongReferenceMessenger.Default)
     {
         LoadScrollViewerVerticalOffsetAsync();
         LoadModeAndSongList();
         Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
-
-        // 注册消息发送器
-        IsActive = true;
     }
 
     public async void LoadModeAndSongList()
@@ -107,7 +107,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
             OnPropertyChanged(nameof(GroupedSongList));
             OnPropertyChanged(nameof(NotGroupedSongList));
             OnPropertyChanged(nameof(Genres));
-            // Messenger.Send(new ScrollToSongMessage());
+            Messenger.Send(new ScrollToSongMessage());
         }
         catch (Exception ex)
         {
@@ -454,6 +454,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
                 await SortSongs();
                 OnPropertyChanged(nameof(GroupedSongList));
                 OnPropertyChanged(nameof(NotGroupedSongList));
+                Messenger.Send(new ScrollToSongMessage());
                 IsProgressRingActive = false;
             }
         }
@@ -479,6 +480,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
                 await FilterSongs();
                 OnPropertyChanged(nameof(GroupedSongList));
                 OnPropertyChanged(nameof(NotGroupedSongList));
+                Messenger.Send(new ScrollToSongMessage());
                 IsProgressRingActive = false;
             }
         }

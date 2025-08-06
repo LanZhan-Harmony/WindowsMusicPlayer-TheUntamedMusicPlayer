@@ -3,7 +3,6 @@
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Extensions;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Utils;
 using static The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.NeteaseCloudMusicApiProvider;
 

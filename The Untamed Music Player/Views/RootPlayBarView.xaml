@@ -8,11 +8,7 @@
              Loaded="RootPlayBarView_Loaded"
              mc:Ignorable="d">
 
-    <Grid Width="Auto" Height="Auto"
-          HorizontalAlignment="Stretch"
-          VerticalAlignment="Center"
-          KeyTipPlacementMode="Top">
-
+    <Grid KeyTipPlacementMode="Top">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
@@ -373,7 +369,7 @@
 
                         <!--  均衡器  -->
                         <MenuFlyoutItem x:Uid="PlayBar_Equalizer"
-                                        AccessKey="E"
+                                        AccessKey="E" Click="EqualizerButton_Click"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                                         KeyTipPlacementMode="Left">
                             <MenuFlyoutItem.Icon>
