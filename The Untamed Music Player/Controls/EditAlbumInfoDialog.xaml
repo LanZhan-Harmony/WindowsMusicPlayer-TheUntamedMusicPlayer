@@ -1,0 +1,31 @@
+<ContentDialog x:Uid="EditAlbumInfoDialog"
+               x:Class="The_Untamed_Music_Player.Controls.EditAlbumInfoDialog"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+               xmlns:local="using:The_Untamed_Music_Player.Controls"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               DefaultButton="Primary"
+               Style="{StaticResource DefaultContentDialogStyle}"
+               mc:Ignorable="d">
+    <ContentDialog.Resources>
+        <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
+    </ContentDialog.Resources>
+    <ScrollViewer Margin="-24,0,-24,0">
+        <StackPanel>
+            <Grid Width="625">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="Column0" Width="50"/>
+                    <ColumnDefinition x:Name="Column1" Width="17"/>
+                    <ColumnDefinition x:Name="Column2" Width="*"/>
+                    <ColumnDefinition x:Name="Column3" Width="17"/>
+                    <ColumnDefinition x:Name="Column4" Width="*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>

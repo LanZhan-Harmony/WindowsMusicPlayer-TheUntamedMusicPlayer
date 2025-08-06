@@ -51,7 +51,12 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="Songs_EditInfo" Click="EditInfoButton_Click">
+                        <MenuFlyoutItem x:Uid="Songs_ShowArtist" Click="ShowArtistButton_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE77B;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="Songs_EditInfo" Click="EditSongInfoButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE70F;"/>
                             </MenuFlyoutItem.Icon>
@@ -59,11 +64,6 @@
                         <MenuFlyoutItem x:Uid="Songs_Properties" Click="PropertiesButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE946;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="Songs_ShowArtist" Click="ShowArtistButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE77B;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
@@ -323,6 +323,7 @@
                             </Button>
                             <Button x:Name="EditInfoButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    Click="EditAlbumInfoButton_Click"
                                     XYFocusDown="{x:Bind SongListView}"
                                     XYFocusLeft="{x:Bind PlayAllButton}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
