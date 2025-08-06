@@ -58,12 +58,13 @@ public sealed partial class OnlineSongsPage : Page
             }
         };
 
-        if (Data.MusicPlayer.CurrentBriefSong is not null)
+        if (
+            Data.MusicPlayer.CurrentBriefSong is IBriefOnlineSongInfo currentSong
+            && SongListView.ItemsSource is IEnumerable<IBriefOnlineSongInfo> songs
+        )
         {
-            SongListView.ScrollIntoView(
-                Data.MusicPlayer.CurrentBriefSong,
-                ScrollIntoViewAlignment.Leading
-            );
+            var targetSong = songs.FirstOrDefault(song => song.ID == currentSong.ID);
+            SongListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
         }
     }
 
