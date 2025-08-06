@@ -537,8 +537,32 @@
   <data name="PropertiesDialog.Title" xml:space="preserve">
     <value>属性</value>
   </data>
+  <data name="EqualizerDialog.Title" xml:space="preserve">
+    <value>均衡器</value>
+  </data>
+  <data name="EditSongInfoDialog.Title" xml:space="preserve">
+    <value>编辑歌曲信息</value>
+  </data>
+  <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
+    <value>编辑专辑信息</value>
+  </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
     <value>关闭</value>
+  </data>
+  <data name="EqualizerDialog.CloseButtonText" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
     <value>桌面歌词</value>

@@ -9,6 +9,8 @@
       xmlns:model="using:The_Untamed_Music_Player.Models"
       xmlns:ui="using:CommunityToolkit.WinUI"
       xmlns:viewmodel="using:The_Untamed_Music_Player.ViewModels"
+      Loaded="LocalSongsPage_Loaded"
+      Unloaded="LocalSongsPage_UnLoaded"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -78,16 +80,6 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="Songs_EditInfo" Click="EditInfoButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE70F;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="Songs_Properties" Click="PropertiesButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE946;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
                         <MenuFlyoutItem x:Uid="Songs_ShowAlbum" Click="ShowAlbumButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE93C;"/>
@@ -96,6 +88,16 @@
                         <MenuFlyoutItem x:Uid="Songs_ShowArtist" Click="ShowArtistButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE77B;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="Songs_EditInfo" Click="EditInfoButton_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE70F;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="Songs_Properties" Click="PropertiesButton_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE946;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>

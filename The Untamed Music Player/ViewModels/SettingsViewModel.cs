@@ -23,8 +23,6 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILocalSettingsService _localSettingsService;
 
-    public ICommand SwitchThemeCommand { get; }
-
     /// <summary>
     /// 是否显示文件夹为空信息
     /// </summary>
@@ -151,23 +149,22 @@ public partial class SettingsViewModel : ObservableRecipient
         SaveTintColorAsync(value);
     }
 
+    [RelayCommand]
+    public async Task SwitchThemeAsync(ElementTheme theme)
+    {
+        if (ElementTheme != theme)
+        {
+            ElementTheme = theme;
+            await _themeSelectorService.SetThemeAsync(theme);
+        }
+    }
+
     public SettingsViewModel()
     {
         _themeSelectorService = App.GetService<IThemeSelectorService>();
         _localSettingsService = App.GetService<ILocalSettingsService>();
         ElementTheme = _themeSelectorService.Theme;
         VersionDescription = GetVersionDescription();
-
-        SwitchThemeCommand = new RelayCommand<ElementTheme>(
-            async (param) =>
-            {
-                if (ElementTheme != param)
-                {
-                    ElementTheme = param;
-                    await _themeSelectorService.SetThemeAsync(param);
-                }
-            }
-        );
 
         LoadSongDownloadLocationAsync();
         LoadFonts();
