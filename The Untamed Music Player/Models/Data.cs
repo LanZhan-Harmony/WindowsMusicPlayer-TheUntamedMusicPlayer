@@ -35,11 +35,6 @@ public static class Data
     public static readonly string AppDisplayName = "AppDisplayName".GetLocalized();
 
     /// <summary>
-    /// 软件语言
-    /// </summary>
-    public static readonly string Language = "Data_Language".GetLocalized();
-
-    /// <summary>
     /// 播放器支持的音频文件类型
     /// </summary>
     public static readonly string[] SupportedAudioTypes =
