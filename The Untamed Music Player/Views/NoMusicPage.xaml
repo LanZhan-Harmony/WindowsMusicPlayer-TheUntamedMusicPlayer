@@ -57,11 +57,10 @@
                             Orientation="Vertical" Spacing="8">
                     <TextBlock x:Uid="NoMusic_MusicNotFound" FontSize="29"/>
                     <TextBlock x:Uid="NoMusic_NoMusicContent" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <Button x:Name="addMusicFolder"
-                            Click="{x:Bind SettingsViewModel.PickMusicFolderButton_Click}"
-                            Style="{StaticResource AccentButtonStyle}">
+                    <Button Click="{x:Bind SettingsViewModel.PickMusicFolderButton_Click}" Style="{StaticResource AccentButtonStyle}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon FontSize="12" Glyph="&#xE8F4;"/>
+                            <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                      FontSize="12" Glyph="&#xE8F4;"/>
                             <TextBlock x:Uid="Settings_AddFolder"/>
                         </StackPanel>
                     </Button>

@@ -248,10 +248,12 @@ public static class CurrentSongHighlightExtensions
         var isCurrentlyPlaying = IsCurrentlyPlaying(currentSong, songInfo, isPlayQueue);
 
         // 获取对应的画刷
-        var brush = isCurrentlyPlaying ? GetPlayingBrush(listView) : GetNotPlayingBrush(listView);
+        var (brush, visibility) = isCurrentlyPlaying
+            ? (GetPlayingBrush(listView), Visibility.Visible)
+            : (GetNotPlayingBrush(listView), Visibility.Collapsed);
 
         // 查找并更新所有文本块的前景色
-        UpdateTextBlocksForeground(grid, brush);
+        UpdateTextBlocksForeground(grid, brush, visibility);
     }
 
     private static bool IsCurrentlyPlaying(
@@ -290,7 +292,7 @@ public static class CurrentSongHighlightExtensions
         return isSameSong;
     }
 
-    private static void UpdateTextBlocksForeground(Grid grid, Brush brush)
+    private static void UpdateTextBlocksForeground(Grid grid, Brush brush, Visibility visibility)
     {
         // 常见的文本块名称
         var textBlockNames = new[]
@@ -312,14 +314,13 @@ public static class CurrentSongHighlightExtensions
         }
 
         // 支持 FontIcon (如播放队列中的音乐图标)
-        var fontIconNames = new[] { "MusicFontIcon" };
-
-        foreach (var name in fontIconNames)
+        if (
+            grid.FindName("MusicFontIcon") is FontIcon musicFontIcon
+            && grid.FindName("PlayingFontIcon") is FontIcon playingFontIcon
+        )
         {
-            if (grid.FindName(name) is FontIcon fontIcon)
-            {
-                fontIcon.Foreground = brush;
-            }
+            musicFontIcon.Foreground = brush;
+            playingFontIcon.Visibility = visibility;
         }
     }
 }
