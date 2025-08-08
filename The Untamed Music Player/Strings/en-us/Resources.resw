@@ -438,8 +438,8 @@
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>Choose a font-family</value>
   </data>
-  <data name="Settings_LyricBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>Lyric background follows cover</value>
+  <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
+    <value>Window background follows cover theme color</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
@@ -537,8 +537,32 @@
   <data name="PropertiesDialog.Title" xml:space="preserve">
     <value>Properties</value>
   </data>
+  <data name="EqualizerDialog.Title" xml:space="preserve">
+    <value>Equalizer</value>
+  </data>
+  <data name="EditSongInfoDialog.Title" xml:space="preserve">
+    <value>Edit song info</value>
+  </data>
+  <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
+    <value>Edit album info</value>
+  </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
     <value>Close</value>
+  </data>
+  <data name="EqualizerDialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
     <value>Desktop lyric</value>

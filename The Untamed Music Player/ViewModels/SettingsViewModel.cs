@@ -23,8 +23,6 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILocalSettingsService _localSettingsService;
 
-    public ICommand SwitchThemeCommand { get; }
-
     /// <summary>
     /// 是否显示文件夹为空信息
     /// </summary>
@@ -58,13 +56,14 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 是否显示歌词背景
     /// </summary>
     [ObservableProperty]
-    public partial bool IsLyricBackgroundVisible { get; set; } = Data.IsLyricBackgroundVisible;
+    public partial bool IsWindowBackgroundFollowsCover { get; set; } =
+        Data.IsWindowBackgroundFollowsCover;
 
-    partial void OnIsLyricBackgroundVisibleChanged(bool value)
+    partial void OnIsWindowBackgroundFollowsCoverChanged(bool value)
     {
         var dynamicBackgroundService = App.GetService<IDynamicBackgroundService>();
         dynamicBackgroundService.IsEnabled = value;
-        Data.IsLyricBackgroundVisible = value;
+        Data.IsWindowBackgroundFollowsCover = value;
         SaveLyricBackgroundVisibilityAsync(value);
     }
 
@@ -150,23 +149,22 @@ public partial class SettingsViewModel : ObservableRecipient
         SaveTintColorAsync(value);
     }
 
+    [RelayCommand]
+    public async Task SwitchThemeAsync(ElementTheme theme)
+    {
+        if (ElementTheme != theme)
+        {
+            ElementTheme = theme;
+            await _themeSelectorService.SetThemeAsync(theme);
+        }
+    }
+
     public SettingsViewModel()
     {
         _themeSelectorService = App.GetService<IThemeSelectorService>();
         _localSettingsService = App.GetService<ILocalSettingsService>();
         ElementTheme = _themeSelectorService.Theme;
         VersionDescription = GetVersionDescription();
-
-        SwitchThemeCommand = new RelayCommand<ElementTheme>(
-            async (param) =>
-            {
-                if (ElementTheme != param)
-                {
-                    ElementTheme = param;
-                    await _themeSelectorService.SetThemeAsync(param);
-                }
-            }
-        );
 
         LoadSongDownloadLocationAsync();
         LoadFonts();
@@ -404,11 +402,11 @@ public partial class SettingsViewModel : ObservableRecipient
         await _localSettingsService.SaveSettingAsync("TintColor", tintColor);
     }
 
-    private async void SaveLyricBackgroundVisibilityAsync(bool isLyricBackgroundVisible)
+    private async void SaveLyricBackgroundVisibilityAsync(bool isWindowBackgroundFollowsCover)
     {
         await _localSettingsService.SaveSettingAsync(
-            "IsLyricBackgroundVisible",
-            isLyricBackgroundVisible
+            "IsWindowBackgroundFollowsCover",
+            isWindowBackgroundFollowsCover
         );
     }
 }
