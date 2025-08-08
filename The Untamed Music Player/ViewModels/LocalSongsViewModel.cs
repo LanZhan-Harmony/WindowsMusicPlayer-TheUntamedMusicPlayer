@@ -2,12 +2,14 @@ using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
@@ -88,6 +90,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     }
 
     public LocalSongsViewModel()
+        : base(StrongReferenceMessenger.Default)
     {
         LoadScrollViewerVerticalOffsetAsync();
         LoadModeAndSongList();
@@ -105,6 +108,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
             OnPropertyChanged(nameof(GroupedSongList));
             OnPropertyChanged(nameof(NotGroupedSongList));
             OnPropertyChanged(nameof(Genres));
+            Messenger.Send(new ScrollToSongMessage());
         }
         catch (Exception ex)
         {
@@ -451,6 +455,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
                 await SortSongs();
                 OnPropertyChanged(nameof(GroupedSongList));
                 OnPropertyChanged(nameof(NotGroupedSongList));
+                Messenger.Send(new ScrollToSongMessage());
                 IsProgressRingActive = false;
             }
         }
@@ -476,6 +481,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
                 await FilterSongs();
                 OnPropertyChanged(nameof(GroupedSongList));
                 OnPropertyChanged(nameof(NotGroupedSongList));
+                Messenger.Send(new ScrollToSongMessage());
                 IsProgressRingActive = false;
             }
         }
@@ -491,7 +497,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetShuffledPlayList(
+        Data.MusicPlayer.SetShuffledPlayQueue(
             "ShuffledLocalSongs:All",
             ConvertGroupedToFlatList(),
             0,
@@ -502,7 +508,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
+        Data.MusicPlayer.SetPlayQueue("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
         if (e.ClickedItem is BriefLocalSongInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
@@ -511,7 +517,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void PlayButton_Click(BriefLocalSongInfo info)
     {
-        Data.MusicPlayer.SetPlayList("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
+        Data.MusicPlayer.SetPlayQueue("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
@@ -520,7 +526,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayList("LocalSongs:Part", list, 0, 0);
+            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else

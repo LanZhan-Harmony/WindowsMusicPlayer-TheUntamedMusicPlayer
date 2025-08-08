@@ -57,6 +57,15 @@ public sealed partial class OnlineSongsPage : Page
                 await Task.Delay(3000);
             }
         };
+
+        if (
+            Data.MusicPlayer.CurrentBriefSong is IBriefOnlineSongInfo currentSong
+            && SongListView.ItemsSource is IEnumerable<IBriefOnlineSongInfo> songs
+        )
+        {
+            var targetSong = songs.FirstOrDefault(song => song.ID == currentSong.ID);
+            SongListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
+        }
     }
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)

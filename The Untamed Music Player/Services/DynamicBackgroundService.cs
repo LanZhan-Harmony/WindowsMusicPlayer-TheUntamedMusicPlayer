@@ -34,7 +34,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
                 ClearBackground();
             }
         }
-    } = Data.IsLyricBackgroundVisible;
+    } = Data.IsWindowBackgroundFollowsCover;
 
     /// <summary>
     /// 背景更新事件

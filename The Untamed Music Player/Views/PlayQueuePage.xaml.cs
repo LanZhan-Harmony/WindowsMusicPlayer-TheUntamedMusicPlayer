@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -6,6 +7,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
+using WinUIEx.Messaging;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -24,6 +26,29 @@ public sealed partial class PlayQueuePage : Page
     private void PlayQueuePage_Loaded(object sender, RoutedEventArgs e)
     {
         UpdatePlayQueueSource();
+        var currentSong = Data.MusicPlayer.CurrentBriefSong;
+        if (currentSong is null)
+        {
+            return;
+        }
+        var listViewSource = PlayqueueListView.ItemsSource;
+        if (listViewSource is IEnumerable<IBriefSongInfoBase> songs)
+        {
+            var targetSong = currentSong switch
+            {
+                BriefLocalSongInfo localSong => songs.FirstOrDefault(song =>
+                    song.Path == localSong.Path
+                ),
+                IBriefOnlineSongInfo onlineSong => songs
+                    .OfType<IBriefOnlineSongInfo>()
+                    .FirstOrDefault(song => song.ID == onlineSong.ID),
+                _ => null,
+            };
+            if (targetSong is not null)
+            {
+                PlayqueueListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
+            }
+        }
     }
 
     private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -67,7 +92,7 @@ public sealed partial class PlayQueuePage : Page
         fontIcon?.Visibility = Visibility.Visible;
     }
 
-    private void PlayButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: IBriefSongInfoBase info })
         {

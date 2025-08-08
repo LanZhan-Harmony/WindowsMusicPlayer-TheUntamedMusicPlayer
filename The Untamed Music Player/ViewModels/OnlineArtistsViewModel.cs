@@ -14,7 +14,7 @@ public class OnlineArtistsViewModel
         {
             return;
         }
-        Data.MusicPlayer.SetPlayList(
+        Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Artist:{info.Name}",
             songList,
             (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
@@ -32,7 +32,7 @@ public class OnlineArtistsViewModel
         }
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayList(
+            Data.MusicPlayer.SetPlayQueue(
                 $"OnlineSongs:Artist:{info.Name}",
                 songList,
                 (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
