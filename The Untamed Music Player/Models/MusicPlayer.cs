@@ -630,11 +630,6 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
             _timelineProperties.MaxSeekTime = TotalPlayingTime;
             _timelineProperties.EndTime = TotalPlayingTime;
 
-            PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(
-                UpdateTimerHandler250ms,
-                TimeSpan.FromMilliseconds(250)
-            );
-
             if (ShuffleMode)
             {
                 // 更新当前歌曲在随机播放队列中的索引
@@ -954,6 +949,10 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// </summary>
     public void Play()
     {
+        PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(
+            UpdateTimerHandler250ms,
+            TimeSpan.FromMilliseconds(250)
+        );
         if (_tempoStream != 0)
         {
             Bass.ChannelPlay(_tempoStream, false);
@@ -973,6 +972,8 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         }
         PlayState = 0;
         _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
+        PositionUpdateTimer250ms?.Cancel();
+        PositionUpdateTimer250ms = null;
     }
 
     /// <summary>
