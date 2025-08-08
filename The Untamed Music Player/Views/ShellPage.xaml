@@ -54,7 +54,9 @@
                 </NavigationView.AutoSuggestBox>
                 <NavigationView.MenuItems>
                     <NavigationViewItem x:Uid="Shell_Home"
-                                        AccessKey="NO" Icon="Home"
+                                        AccessKey="NO"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE80F;}"
                                         Tag="HomePage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="F" Modifiers="Control,Shift"/>
@@ -62,7 +64,8 @@
                     </NavigationViewItem>
                     <NavigationViewItem x:Uid="Shell_MusicLibrary"
                                         AccessKey="NS"
-                                        Icon="{ui:FontIcon Glyph=&#xE8D6;}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE940;}"
                                         Tag="MusicLibraryPage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="R" Modifiers="Control"/>
@@ -71,7 +74,8 @@
                     <NavigationViewItemSeparator/>
                     <NavigationViewItem x:Uid="Shell_PlayQueue"
                                         AccessKey="NQ"
-                                        Icon="{ui:FontIcon Glyph=&#xE90B;}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE93F;}"
                                         Tag="PlayQueuePage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Q" Modifiers="Control"/>
@@ -79,7 +83,8 @@
                     </NavigationViewItem>
                     <NavigationViewItem x:Uid="Shell_PlayLists"
                                         AccessKey="NP"
-                                        Icon="{ui:FontIcon Glyph=&#xE93C;}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xED3B;}"
                                         Tag="PlayListsPage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Y" Modifiers="Control"/>

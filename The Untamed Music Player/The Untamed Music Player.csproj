@@ -36,6 +36,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\**\*" />
+    <Content Update="Assets\Fonts\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -68,7 +71,6 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
-    <PackageReference Include="FluentIcons.WinUI" Version="1.1.303" />
     <PackageReference Include="hyjiacan.pinyin4net" Version="4.1.1" />
     <PackageReference Include="ManagedBass" Version="3.1.1" />
     <PackageReference Include="ManagedBass.Fx" Version="3.1.1" />

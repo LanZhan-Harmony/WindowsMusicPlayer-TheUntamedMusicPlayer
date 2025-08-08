@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -286,7 +287,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
     public void LoadFonts()
     {
-        var language = new string[] { LanguageRelated.GetSimpleLanguage() };
+        var language = new string[] { CultureInfo.CurrentUICulture.Name.ToLowerInvariant() };
         var names = CanvasTextFormat.GetSystemFontFamilies();
         var displayNames = CanvasTextFormat.GetSystemFontFamilies(language);
         var list = new List<FontInfo>();
