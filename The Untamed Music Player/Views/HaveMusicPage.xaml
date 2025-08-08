@@ -58,13 +58,14 @@
                 <SelectorBarItem x:Name="SelectorBarItemPage3" x:Uid="HaveMusic_Artists"
                                  FontSize="18"/>
             </SelectorBar>
-            <Button x:Name="addMusicFolder" x:Uid="HaveMusic_AddFolder"
+            <Button x:Uid="HaveMusic_AddFolder"
                     Grid.Column="2"
                     HorizontalAlignment="Right"
                     AccessKey="CA"
                     Click="{x:Bind model:Data.SettingsViewModel.PickMusicFolderButton_Click}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon FontSize="16" Glyph="&#xE8F4;"/>
+                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                              FontSize="16" Glyph="&#xE8F4;"/>
                     <TextBlock x:Name="AddTextBlock" x:Uid="Settings_AddFolder"/>
                 </StackPanel>
             </Button>

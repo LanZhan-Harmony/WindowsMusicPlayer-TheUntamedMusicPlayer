@@ -18,6 +18,7 @@
                 </Grid.ColumnDefinitions>
                 <FontIcon Grid.RowSpan="2"
                           VerticalAlignment="Center"
+                          FontFamily="{StaticResource UntamedFontFamily}"
                           FontSize="14"
                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                           Glyph="{x:Bind Icon}"/>
@@ -168,12 +169,15 @@
                     VerticalAlignment="Center"
                     Canvas.ZIndex="1" Orientation="Horizontal"
                     Visibility="{x:Bind model:Data.OnlineMusicLibrary.NetworkErrorVisibility, Mode=OneWay}">
-            <FontIcon x:Name="NetworkErrorFontIcon" Glyph="&#xEB56;"/>
+            <FontIcon x:Name="NetworkErrorFontIcon"
+                      FontFamily="{StaticResource UntamedFontFamily}"
+                      Glyph="&#xEB56;"/>
             <StackPanel VerticalAlignment="Center" Spacing="8">
                 <TextBlock x:Uid="Home_NetworkError" FontSize="29"/>
                 <Button Click="{x:Bind model:Data.OnlineMusicLibrary.RetryButton_Click}" Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="12" Glyph="&#xE72C;"/>
+                        <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                  FontSize="12" Glyph="&#xE72C;"/>
                         <TextBlock x:Uid="Home_Retry"/>
                     </StackPanel>
                 </Button>
