@@ -226,6 +226,13 @@
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
+
+                    <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundFollowsCover">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xE7C4;"/>
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsWindowBackgroundFollowsCover, Mode=TwoWay}"/>
+                    </toolkit:SettingsCard>
                 </StackPanel>
 
                 <StackPanel Spacing="2">
@@ -245,13 +252,6 @@
                                   ItemsSource="{x:Bind ViewModel.Fonts}"
                                   Loaded="{x:Bind ViewModel.FontComboBox_Loaded}"
                                   SelectionChanged="{x:Bind ViewModel.FontComboBox_SelectionChanged}"/>
-                    </toolkit:SettingsCard>
-
-                    <toolkit:SettingsCard x:Uid="Settings_LyricBackgroundFollowsCover">
-                        <toolkit:SettingsCard.HeaderIcon>
-                            <FontIcon Glyph="&#xE7C4;"/>
-                        </toolkit:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="LyricBackgroundSwitch" IsOn="{x:Bind ViewModel.IsLyricBackgroundVisible, Mode=TwoWay}"/>
                     </toolkit:SettingsCard>
                 </StackPanel>
 

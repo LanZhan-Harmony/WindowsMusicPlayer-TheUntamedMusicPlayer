@@ -2,10 +2,8 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                   xmlns:helpers="using:The_Untamed_Music_Player.Helpers"
                    xmlns:local="using:The_Untamed_Music_Player"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                   xmlns:model="using:The_Untamed_Music_Player.Models"
                    xmlns:view="using:The_Untamed_Music_Player.Views"
                    xmlns:windowex="using:WinUIEx"
                    MinWidth="500" MinHeight="500"
@@ -19,16 +17,10 @@
         </Grid.RowDefinitions>
         <Grid x:Name="BackgroundGrid"
               Grid.Row="0" Grid.RowSpan="2"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch"
               Canvas.ZIndex="0"/>
         <Frame x:Name="ShellFrame"
                Grid.Row="0"
-               Width="auto" Height="auto"
                Canvas.ZIndex="1"/>
-        <view:RootPlayBarView Grid.Row="1"
-                              Width="auto" Height="auto"
-                              Canvas.ZIndex="1"/>
+        <view:RootPlayBarView Grid.Row="1" Canvas.ZIndex="1"/>
     </Grid>
-
 </windowex:WindowEx>

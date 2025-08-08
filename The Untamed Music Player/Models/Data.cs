@@ -45,24 +45,35 @@ public static class Data
     public static readonly string[] SupportedAudioTypes =
     [
         ".mp3",
-        ".wav",
-        ".wma",
-        ".aac",
-        ".mid",
-        ".midi",
-        ".mpa",
-        ".ogg",
-        ".oga",
-        ".opus",
-        ".weba",
         ".flac",
-        ".m4a",
-        ".m4b",
-        ".wv",
-        ".wvc",
-        ".aiff",
+        ".ogg",
+        ".wav",
+        ".mp2",
+        ".mp1",
         ".aif",
-        ".aifc",
+        ".aiff",
+        ".m4a",
+        ".m2a",
+        ".m1a",
+        ".mpa",
+        ".mpg",
+        ".mpeg",
+        ".mp3pro",
+        ".bwf",
+        ".mus",
+        ".mod",
+        ".mid",
+        ".mo3",
+        ".s3m",
+        ".xm",
+        ".it",
+        ".mtm",
+        ".umx",
+        ".mdz",
+        ".s3z",
+        ".itz",
+        ".x",
+        ".mz",
     ];
 
     /// <summary>
@@ -78,7 +89,7 @@ public static class Data
     /// <summary>
     /// 是否显示歌词背景
     /// </summary>
-    public static bool IsLyricBackgroundVisible { get; set; } = false;
+    public static bool IsWindowBackgroundFollowsCover { get; set; } = false;
 
     public static OnlineMusicLibrary OnlineMusicLibrary { get; set; } = new();
     public static MusicLibrary MusicLibrary { get; set; } = new();
@@ -91,7 +102,6 @@ public static class Data
     public static LyricPage? LyricPage { get; set; }
     public static RootPlayBarView? RootPlayBarView { get; set; }
     public static DesktopLyricWindow? DesktopLyricWindow { get; set; }
-
     public static MainViewModel? MainViewModel { get; set; }
     public static SettingsViewModel? SettingsViewModel { get; set; }
     public static ShellViewModel? ShellViewModel { get; set; }

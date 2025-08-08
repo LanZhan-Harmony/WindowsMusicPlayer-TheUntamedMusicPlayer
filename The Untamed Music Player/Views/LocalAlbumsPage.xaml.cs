@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -98,7 +99,14 @@ public sealed partial class LocalAlbumsPage : Page
         }
     }
 
-    private void EditInfoButton_Click(object sender, RoutedEventArgs e) { }
+    private async void EditInfoButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
+        {
+            var dialog = new EditAlbumInfoDialog(info) { XamlRoot = XamlRoot };
+            await dialog.ShowAsync();
+        }
+    }
 
     private void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
     {
