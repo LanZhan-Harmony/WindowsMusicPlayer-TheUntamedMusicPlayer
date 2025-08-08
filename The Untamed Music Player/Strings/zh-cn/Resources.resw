@@ -444,9 +444,6 @@
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>拼音</value>
   </data>
-  <data name="Data_Language" xml:space="preserve">
-    <value>简体中文</value>
-  </data>
   <data name="Settings_Version" xml:space="preserve">
     <value>版本</value>
   </data>

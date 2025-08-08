@@ -40,17 +40,18 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="TitleGrid" Grid.Row="0">
-            <TextBlock x:Uid="Shell_MusicLibrary1"
-                       FontSize="40"
-                       FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
+            <TextBlock x:Uid="Shell_MusicLibrary1" Style="{StaticResource TitleLargeTextBlockStyle}"/>
         </Grid>
         <Grid Grid.Row="1"
-              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
             <StackPanel x:Name="StackPanel"
-                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         Orientation="Horizontal">
                 <Image x:Name="Image"
-                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
                        Source="ms-appx:///Assets/MusicGradient.svg"/>
                 <StackPanel VerticalAlignment="Center"
                             Orientation="Vertical" Spacing="8">

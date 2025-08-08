@@ -33,9 +33,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="TitleGrid" Grid.Row="0">
-            <TextBlock x:Uid="Shell_PlayLists1"
-                       FontSize="40"
-                       FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
+            <TextBlock x:Uid="Shell_PlayLists1" Style="{StaticResource TitleLargeTextBlockStyle}"/>
         </Grid>
         <ScrollViewer Grid.Row="1" Padding="0,0,0,16"/>
     </Grid>
