@@ -20,15 +20,18 @@
         </Grid.RowDefinitions>
 
         <Grid>
-            <TitleBar x:Name="AppTitleBar"
-                      Title="{x:Bind _appTitleBarText}"
-                      Height="48"
-                      VerticalAlignment="Top"
-                      Canvas.ZIndex="1" IsTabStop="False">
-                <TitleBar.IconSource>
-                    <ImageIconSource AutomationProperties.AccessibilityView="Raw" ImageSource="ms-appx:///Assets/AppIcon/WindowIcon.ico"/>
-                </TitleBar.IconSource>
-            </TitleBar>
+            <Grid x:Name="AppTitleBar"
+                  Height="48"
+                  VerticalAlignment="Top"
+                  Canvas.ZIndex="1">
+                <Image Width="16" Height="16"
+                       Margin="12,0,0,0" HorizontalAlignment="Left"
+                       Source="/Assets/AppIcon/WindowIcon.ico"/>
+                <TextBlock Margin="40,0,0,0" VerticalAlignment="Center"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Text="{x:Bind _appTitleBarText}"
+                           TextWrapping="NoWrap"/>
+            </Grid>
             <NavigationView x:Name="NavigationViewControl"
                             BackRequested="NavigationViewControl_BackRequested"
                             Canvas.ZIndex="1"

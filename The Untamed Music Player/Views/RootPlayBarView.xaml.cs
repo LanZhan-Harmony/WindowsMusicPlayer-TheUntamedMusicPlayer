@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -213,5 +214,11 @@ public sealed partial class RootPlayBarView : UserControl
             new PointerEventHandler(Data.MusicPlayer.ProgressUpdate),
             true
         );
+    }
+
+    private async void EqualizerButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new EqualizerDialog { XamlRoot = XamlRoot };
+        await dialog.ShowAsync();
     }
 }

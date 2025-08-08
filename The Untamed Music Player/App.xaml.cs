@@ -56,11 +56,7 @@ public partial class App : Application
                     services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
                     services.AddSingleton<IColorExtractionService, ColorExtractionService>();
                     services.AddSingleton<IDynamicBackgroundService, DynamicBackgroundService>();
-
                     services.AddSingleton<IActivationService, ActivationService>();
-
-                    // Core Services
-                    services.AddSingleton<IFileService, FileService>();
 
                     // Views and ViewModels
                     services.AddTransient<MainViewModel>();
