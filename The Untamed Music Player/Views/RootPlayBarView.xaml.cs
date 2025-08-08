@@ -52,7 +52,7 @@ public sealed partial class RootPlayBarView : UserControl
         return playstate switch
         {
             0 => "\uF5B0",
-            1 => "\uF8AE",
+            1 => "\uE62E",
             2 => "\uF5B0",
             _ => "\uF5B0",
         };
@@ -114,11 +114,9 @@ public sealed partial class RootPlayBarView : UserControl
             : "PlayBar_ShuffleOff".GetLocalized();
     }
 
-    public FluentIcons.Common.Symbol GetShuffleModeIcon(bool shufflemode)
+    public string GetShuffleModeIcon(bool shufflemode)
     {
-        return shufflemode
-            ? FluentIcons.Common.Symbol.ArrowShuffle
-            : FluentIcons.Common.Symbol.ArrowShuffleOff;
+        return shufflemode ? "\uE8B1" : "\uE30D";
     }
 
     public string GetRepeatModeIcon(byte repeatmode)

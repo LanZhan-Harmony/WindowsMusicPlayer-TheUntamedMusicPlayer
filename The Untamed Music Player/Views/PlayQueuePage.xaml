@@ -214,8 +214,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock x:Uid="Shell_PlayQueue1"
                        Grid.Column="0"
-                       FontSize="40"
-                       FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
+                       Style="{StaticResource TitleLargeTextBlockStyle}"/>
             <SplitButton x:Uid="PlayQueue_AddFilesButton"
                          Grid.Column="2"
                          Height="30">

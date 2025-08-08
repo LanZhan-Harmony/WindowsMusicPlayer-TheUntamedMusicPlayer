@@ -444,9 +444,6 @@
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
   </data>
-  <data name="Data_Language" xml:space="preserve">
-    <value>English</value>
-  </data>
   <data name="Settings_Version" xml:space="preserve">
     <value>Version</value>
   </data>
