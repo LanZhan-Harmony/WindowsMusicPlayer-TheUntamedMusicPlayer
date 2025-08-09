@@ -26,7 +26,7 @@ public partial class MainViewModel : ObservableRecipient
     };
     private ISystemBackdropControllerWithTargets? _currentBackdropController;
     private bool _previousIsDarkTheme = false;
-    private bool _isDarkTheme;
+    public bool IsDarkTheme { get; set; }
 
     public bool FirstStart { get; set; } = true;
     public byte SelectedMaterial { get; set; } = 3;
@@ -38,7 +38,7 @@ public partial class MainViewModel : ObservableRecipient
     {
         _mainMindow = Data.MainWindow ?? new();
         _backdropTarget = _mainMindow.As<ICompositionSupportsSystemBackdrop>();
-        _isDarkTheme =
+        IsDarkTheme =
             ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark
             || (
                 ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default
@@ -103,7 +103,7 @@ public partial class MainViewModel : ObservableRecipient
             };
         }
 
-        if (FirstStart && _isDarkTheme == _previousIsDarkTheme)
+        if (FirstStart && IsDarkTheme == _previousIsDarkTheme)
         {
             ChangeLuminosityOpacity(LuminosityOpacity);
             ChangeTintColor(TintColor);
@@ -230,7 +230,7 @@ public partial class MainViewModel : ObservableRecipient
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
         SetConfigurationSourceTheme();
-        _isDarkTheme =
+        IsDarkTheme =
             ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark
             || (
                 ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default
@@ -260,7 +260,7 @@ public partial class MainViewModel : ObservableRecipient
                 default:
                     return;
             }
-            var color = _isDarkTheme ? darkColor : lightColor;
+            var color = IsDarkTheme ? darkColor : lightColor;
             micaController.TintColor = color;
             TintColor = color;
             Data.SettingsViewModel?.TintColor = color;
@@ -284,7 +284,7 @@ public partial class MainViewModel : ObservableRecipient
                 default:
                     return;
             }
-            var color = _isDarkTheme ? darkColor : lightColor;
+            var color = IsDarkTheme ? darkColor : lightColor;
             desktopAcrylicController.TintColor = color;
             TintColor = color;
             Data.SettingsViewModel?.TintColor = color;
@@ -371,7 +371,7 @@ public partial class MainViewModel : ObservableRecipient
         {
             var darkColor = Color.FromArgb(255, 44, 44, 44);
             var lightColor = Color.FromArgb(255, 252, 252, 252);
-            TintColor = _isDarkTheme ? darkColor : lightColor;
+            TintColor = IsDarkTheme ? darkColor : lightColor;
             await _localSettingsService.SaveSettingAsync("NotFirstUsed", true);
             await _localSettingsService.SaveSettingAsync("SelectedMaterial", SelectedMaterial);
             await _localSettingsService.SaveSettingAsync("IsFallBack", IsFallBack);
@@ -382,6 +382,6 @@ public partial class MainViewModel : ObservableRecipient
 
     private async void SaveIsDarkThemeAsync()
     {
-        await _localSettingsService.SaveSettingAsync("IsDarkTheme", _isDarkTheme);
+        await _localSettingsService.SaveSettingAsync("IsDarkTheme", IsDarkTheme);
     }
 }
