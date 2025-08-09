@@ -88,7 +88,8 @@
                                               ItemsSource="{x:Bind model:Data.MusicLibrary.Folders, Mode=OneWay}">
                         <Button x:Name="addMusicFolder" Click="{x:Bind ViewModel.PickMusicFolderButton_Click}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon FontSize="16" Glyph="&#xE8F4;"/>
+                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                          FontSize="16" Glyph="&#xE8F4;"/>
                                 <TextBlock x:Uid="Settings_AddFolder"/>
                             </StackPanel>
                         </Button>
