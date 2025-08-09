@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage;
 using Windows.System;
@@ -35,6 +36,9 @@ public sealed partial class SettingsPage : Page
         {
             XamlRoot = XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            RequestedTheme = Data.MainViewModel!.IsDarkTheme
+                ? ElementTheme.Dark
+                : ElementTheme.Light,
             Title = titleTextBlock,
             Content =
                 "Settings_Dialog1Content1".GetLocalized()
@@ -64,6 +68,9 @@ public sealed partial class SettingsPage : Page
         {
             XamlRoot = XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            RequestedTheme = Data.MainViewModel!.IsDarkTheme
+                ? ElementTheme.Dark
+                : ElementTheme.Light,
             Title = titleTextBlock,
             Content = "Settings_Dialog2Content".GetLocalized(),
             PrimaryButtonText = "Settings_Dialog2Primary".GetLocalized(),
