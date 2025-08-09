@@ -100,7 +100,7 @@
                                     <animatedvisuals:AnimatedSettingsVisualSource/>
                                 </AnimatedIcon.Source>
                                 <AnimatedIcon.FallbackIconSource>
-                                    <FontIconSource Glyph="&#xE713;"/>
+                                    <FontIconSource FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE713;"/>
                                 </AnimatedIcon.FallbackIconSource>
                             </AnimatedIcon>
                         </NavigationViewItem.Icon>
