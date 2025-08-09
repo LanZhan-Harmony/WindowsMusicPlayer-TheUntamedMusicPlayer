@@ -152,8 +152,9 @@
                           Visibility="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="ControllerCoverFontIcon"
                                   Canvas.ZIndex="0"
+                                  FontFamily="{StaticResource UntamedFontFamily}"
                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                  Glyph="&#xE8D6;"/>
+                                  Glyph="&#xE940;"/>
                     </Grid>
                 </Grid>
                 <ui:Effects.Shadow>
