@@ -14,6 +14,7 @@ public sealed partial class EditSongInfoDialog : ContentDialog
     public EditSongInfoDialog(DetailedLocalSongInfo song)
     {
         Song = song;
+        RequestedTheme = Data.MainViewModel!.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
     }
 

@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Models;
 
@@ -10,6 +11,7 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog
     public EditAlbumInfoDialog(LocalAlbumInfo album)
     {
         Album = album;
+        RequestedTheme = Data.MainViewModel!.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
     }
 }
