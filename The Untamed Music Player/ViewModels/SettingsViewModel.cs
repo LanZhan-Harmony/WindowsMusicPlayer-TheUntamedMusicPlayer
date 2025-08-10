@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Graphics.Canvas.Text;
@@ -16,6 +15,7 @@ using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
+using WinRT.Interop;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -176,14 +176,14 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         var senderButton = sender as Button;
         senderButton!.IsEnabled = false;
-        var openPicker = new FolderPicker();
-        var window = App.MainWindow;
-        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-
-        WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
-
-        openPicker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
+        var openPicker = new FolderPicker
+        {
+            SuggestedStartLocation = PickerLocationId.MusicLibrary,
+        };
         openPicker.FileTypeFilter.Add("*");
+        var window = App.MainWindow;
+        var hWnd = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(openPicker, hWnd);
 
         var folder = await openPicker.PickSingleFolderAsync();
         if (folder is not null && !Data.MusicLibrary.Folders.Any(f => f.Path == folder.Path))
