@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Threading.Tasks;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -380,8 +379,7 @@ public sealed partial class LocalArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            var song = new DetailedLocalSongInfo(info);
-            var dialog = new EditSongInfoDialog(song) { XamlRoot = XamlRoot };
+            var dialog = new EditSongInfoDialog(info) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }

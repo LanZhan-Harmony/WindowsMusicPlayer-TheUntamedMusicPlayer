@@ -19,9 +19,9 @@ public static class Data
     public static bool HasMusicLibraryLoaded { get; set; } = false;
 
     /// <summary>
-    /// 是否正在下载音乐
+    /// 是否正在下载或更改音乐
     /// </summary>
-    public static bool IsMusicDownloading { get; set; } = false;
+    public static bool IsMusicProcessing { get; set; } = false;
 
     public static LocalAlbumInfo? SelectedLocalAlbum { get; set; }
     public static LocalArtistInfo? SelectedLocalArtist { get; set; }
@@ -42,17 +42,15 @@ public static class Data
         ".mp3",
         ".flac",
         ".ogg",
+        ".m4a",
         ".wav",
+        ".midi",
         ".mp2",
         ".mp1",
         ".aif",
         ".aiff",
-        ".m4a",
         ".m2a",
         ".m1a",
-        ".mpa",
-        ".mpg",
-        ".mpeg",
         ".mp3pro",
         ".bwf",
         ".mus",
@@ -64,11 +62,6 @@ public static class Data
         ".it",
         ".mtm",
         ".umx",
-        ".mdz",
-        ".s3z",
-        ".itz",
-        ".x",
-        ".mz",
     ];
 
     /// <summary>
