@@ -176,7 +176,6 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
             AlbumID = info.AlbumID,
             ArtistID = info.ArtistID,
             DurationStr = info.DurationStr,
-            YearStr = info.YearStr,
         };
         var api = NeteaseCloudMusicApi.Instance;
         var songUrlTask = api.RequestAsync(
@@ -215,6 +214,12 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
                 ];
                 detailedInfo.AlbumArtistsStr = IDetailedSongInfoBase.GetAlbumArtistsStr(
                     albumArtists
+                );
+                detailedInfo.YearStr = IBriefSongInfoBase.GetYearStr(
+                    (ushort)
+                        DateTimeOffset
+                            .FromUnixTimeMilliseconds((long)albumResult["album"]!["publishTime"]!)
+                            .Year
                 );
             }
             detailedInfo.ArtistsStr =
