@@ -9,11 +9,12 @@ namespace The_Untamed_Music_Player.Models;
 [MemoryPackable]
 public partial class BriefLocalSongInfo : IBriefSongInfoBase
 {
+    protected static readonly string _unknownGenre = "SongInfo_UnknownGenre".GetLocalized();
+
     /// <summary>
     /// 歌手分隔符
     /// </summary>
-    protected static readonly char[] _delimiters = ['、', ',', '，', '|', '/'];
-    protected static readonly string _unknownGenre = "SongInfo_UnknownGenre".GetLocalized();
+    public static char[] Delimiters { get; } = ['、', ',', '，', '|', '/'];
 
     /// <summary>
     /// 是否可以播放
@@ -55,7 +56,7 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             field = [
                 .. value
                     .SelectMany(artist =>
-                        artist.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries)
+                        artist.Split(Delimiters, StringSplitOptions.RemoveEmptyEntries)
                     )
                     .Distinct(),
             ];
@@ -247,7 +248,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
                 [
                     .. musicFile
                         .Tag.AlbumArtists.SelectMany(artist =>
-                            artist.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries)
+                            artist.Split(Delimiters, StringSplitOptions.RemoveEmptyEntries)
                         )
                         .Distinct(),
                 ]

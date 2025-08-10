@@ -540,6 +540,9 @@
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
     <value>Edit song info</value>
   </data>
+  <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
+    <value>Lyric</value>
+  </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
     <value>Edit album info</value>
   </data>
