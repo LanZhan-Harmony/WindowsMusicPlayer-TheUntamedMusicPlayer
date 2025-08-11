@@ -102,6 +102,11 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     public virtual string GenreStr { get; set; } = null!;
 
     /// <summary>
+    /// 曲目字符串, 为0时返回""
+    /// </summary>
+    public string TrackStr { get; set; } = null!;
+
+    /// <summary>
     /// 修改日期
     /// </summary>
     public long ModifiedDate { get; set; } = 0;
@@ -136,6 +141,7 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             var genres = musicFile.Tag.Genres;
             Genre = genres.Length != 0 ? genres : [_unknownGenre];
             GenreStr = GetGenreStr(Genre);
+            TrackStr = musicFile.Tag.Track == 0 ? "" : $"{musicFile.Tag.Track}";
             Duration = musicFile.Properties.Duration;
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
             HasCover = musicFile.Tag.Pictures.Length != 0;
@@ -226,11 +232,6 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
     public string BitRate { get; set; } = "";
 
     /// <summary>
-    /// 曲目, 为空时返回""
-    /// </summary>
-    public string Track { get; set; } = "";
-
-    /// <summary>
     /// 歌词, 为空时返回""
     /// </summary>
     public string Lyric { get; set; } = "";
@@ -241,6 +242,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
         Path = info.Path;
         Folder = info.Folder;
         Title = info.Title;
+        TrackStr = info.TrackStr;
         try
         {
             using var musicFile = TagLib.File.Create(Path);
@@ -267,7 +269,6 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
             GenreStr = GetGenreStr(Genre);
             Duration = info.Duration;
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
-            Track = musicFile.Tag.Track == 0 ? "" : $"{musicFile.Tag.Track}";
             Lyric = musicFile.Tag.Lyrics ?? "";
             BitRate = $"{musicFile.Properties.AudioBitrate} kbps";
             ModifiedDate = info.ModifiedDate;

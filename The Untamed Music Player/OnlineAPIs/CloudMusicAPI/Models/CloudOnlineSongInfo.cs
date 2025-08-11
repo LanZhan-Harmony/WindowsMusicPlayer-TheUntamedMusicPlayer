@@ -152,7 +152,7 @@ public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
     }
 }
 
-public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOnlineSongInfo
+public class DetailedCloudOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOnlineSongInfo
 {
     public bool IsOnline { get; set; } = true;
     public string AlbumArtistsStr { get; set; } = "";
@@ -161,14 +161,14 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
     public string? CoverPath { get; set; }
     public string ItemType { get; set; } = "";
     public string BitRate { get; set; } = "";
-    public string Track { get; set; } = "";
+    public string TrackStr { get; set; } = "";
     public string Lyric { get; set; } = "";
 
-    public CloudDetailedOnlineSongInfo() { }
+    public DetailedCloudOnlineSongInfo() { }
 
-    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(BriefCloudOnlineSongInfo info)
+    public static async Task<DetailedCloudOnlineSongInfo> CreateAsync(BriefCloudOnlineSongInfo info)
     {
-        var detailedInfo = new CloudDetailedOnlineSongInfo
+        var detailedInfo = new DetailedCloudOnlineSongInfo
         {
             IsPlayAvailable = info.IsPlayAvailable,
             ID = info.ID,
@@ -253,7 +253,7 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
         }
     }
 
-    private static async Task<bool> LoadCoverAsync(CloudDetailedOnlineSongInfo info)
+    private static async Task<bool> LoadCoverAsync(DetailedCloudOnlineSongInfo info)
     {
         try
         {

@@ -89,7 +89,7 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
     string ArtistAndAlbumStr { get; set; }
     BitmapImage? Cover { get; set; }
     string BitRate { get; set; }
-    string Track { get; set; }
+    string TrackStr { get; set; }
     string Lyric { get; set; }
 
     /// <summary>
@@ -128,10 +128,10 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
         return info switch
         {
             BriefLocalSongInfo localInfo => new DetailedLocalSongInfo(localInfo),
-            BriefCloudOnlineSongInfo cloudInfo => await CloudDetailedOnlineSongInfo.CreateAsync(
+            BriefCloudOnlineSongInfo cloudInfo => await DetailedCloudOnlineSongInfo.CreateAsync(
                 cloudInfo
             ),
-            _ => await CloudDetailedOnlineSongInfo.CreateAsync((BriefCloudOnlineSongInfo)info),
+            _ => await DetailedCloudOnlineSongInfo.CreateAsync((BriefCloudOnlineSongInfo)info),
         };
     }
 }
