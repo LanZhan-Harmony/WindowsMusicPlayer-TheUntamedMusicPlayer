@@ -58,8 +58,15 @@ public sealed partial class ShellPage : Page
         {
             var pageToNavigate = ViewModel.CurrentPage switch
             {
-                nameof(HomePage) => nameof(HomePage),
-                nameof(MusicLibraryPage) => nameof(MusicLibraryPage),
+                nameof(HomePage)
+                or nameof(OnlineAlbumDetailPage)
+                or nameof(OnlineArtistDetailPage)
+                or nameof(OnlinePlayListDetailPage) => nameof(HomePage),
+
+                nameof(MusicLibraryPage)
+                or nameof(LocalAlbumDetailPage)
+                or nameof(LocalArtistDetailPage) => nameof(MusicLibraryPage),
+
                 nameof(PlayQueuePage) => nameof(PlayQueuePage),
                 nameof(PlayListsPage) => nameof(PlayListsPage),
                 nameof(SettingsPage) => nameof(SettingsPage),
