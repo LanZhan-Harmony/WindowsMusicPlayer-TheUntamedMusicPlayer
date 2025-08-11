@@ -44,7 +44,7 @@
                         <TextBlock x:Uid="PropertiesDialog_Track"
                                    FontSize="12"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind _song.Track}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind _song.TrackStr}"/>
                     </StackPanel>
                     <StackPanel Margin="0,18,0,0">
                         <TextBlock x:Uid="PropertiesDialog_Genre"
