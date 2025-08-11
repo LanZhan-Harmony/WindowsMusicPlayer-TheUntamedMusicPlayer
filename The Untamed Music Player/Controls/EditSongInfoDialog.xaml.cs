@@ -17,6 +17,7 @@ namespace The_Untamed_Music_Player.Controls;
 public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyChanged
 {
     private static readonly string[] _supportedEditTypes = [".mp3", ".flac"];
+    private readonly DetailedLocalSongInfo _song;
     private string _title;
     private string _contributingArtists;
     private string _album;
@@ -57,9 +58,12 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         }
     } = false;
 
-    private readonly DetailedLocalSongInfo _song;
-
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 
     public EditSongInfoDialog(BriefLocalSongInfo info)
     {
@@ -69,7 +73,7 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         _contributingArtists = detailedInfo.ArtistsStr;
         _album = detailedInfo.Album;
         _albumArtist = detailedInfo.AlbumArtistsStr;
-        _track = detailedInfo.Track;
+        _track = detailedInfo.TrackStr;
         _genre = detailedInfo.GenreStr;
         _year = detailedInfo.YearStr;
         _lyric = detailedInfo.Lyric;
@@ -115,7 +119,7 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
             {
                 musicProperties.TrackNumber = track;
             }
-            else if (_song.Track != "")
+            else if (_song.TrackStr != "")
             {
                 musicProperties.TrackNumber = 0;
             }
@@ -183,11 +187,6 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
             UseShellExecute = true,
         };
         Process.Start(startInfo);
-    }
-
-    private void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     private async void ChangeCoverButton_Click(object sender, RoutedEventArgs e)
