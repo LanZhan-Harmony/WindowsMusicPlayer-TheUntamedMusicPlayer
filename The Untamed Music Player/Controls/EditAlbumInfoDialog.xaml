@@ -5,26 +5,95 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                xmlns:local="using:The_Untamed_Music_Player.Controls"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
                DefaultButton="Primary"
+               PrimaryButtonClick="SaveButtonClick"
                Style="{StaticResource DefaultContentDialogStyle}"
                mc:Ignorable="d">
+
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
+        <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
+                                                        EmptyValue="Visible" NotEmptyValue="Collapsed"/>
     </ContentDialog.Resources>
     <ScrollViewer Margin="-24,0,-24,0">
         <StackPanel>
             <Grid Width="625">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="Column0" Width="50"/>
+                    <ColumnDefinition x:Name="Column0" Width="*"/>
                     <ColumnDefinition x:Name="Column1" Width="17"/>
-                    <ColumnDefinition x:Name="Column2" Width="*"/>
-                    <ColumnDefinition x:Name="Column3" Width="17"/>
-                    <ColumnDefinition x:Name="Column4" Width="*"/>
+                    <ColumnDefinition x:Name="Column2" Width="280"/>
                 </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0"
+                            Padding="24,0,0,0"
+                            Spacing="12">
+                    <TextBox Text="{x:Bind _name, Mode=TwoWay}">
+                        <TextBox.Header>
+                            <TextBlock x:Uid="PropertiesDialog_Album"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </TextBox.Header>
+                    </TextBox>
+                    <TextBox Text="{x:Bind _albumArtist, Mode=TwoWay}">
+                        <TextBox.Header>
+                            <TextBlock x:Uid="PropertiesDialog_AlbumArtist"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </TextBox.Header>
+                    </TextBox>
+                    <TextBox Text="{x:Bind _genre, Mode=TwoWay}">
+                        <TextBox.Header>
+                            <TextBlock x:Uid="PropertiesDialog_Genre"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </TextBox.Header>
+                    </TextBox>
+                    <TextBox Text="{x:Bind _year, Mode=TwoWay}">
+                        <TextBox.Header>
+                            <TextBlock x:Uid="PropertiesDialog_Year"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </TextBox.Header>
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="2"
+                            Padding="0,0,24,0" VerticalAlignment="Bottom">
+                    <Border Width="256" Height="256"
+                            Margin="0,4,0,0" Padding="0"
+                            BorderBrush="{ThemeResource SolidBackgroundFillColorBaseAltBrush}"
+                            BorderThickness="1" Canvas.ZIndex="0"
+                            CornerRadius="5">
+                        <Grid>
+                            <Button x:Name="SaveCoverButton"
+                                    Margin="2,0,0,2" HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"
+                                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                    Canvas.ZIndex="2" Click="SaveCoverButton_Click"
+                                    IsEnabled="{x:Bind IsSaveCoverButtonEnabled, Mode=OneWay}"
+                                    Style="{StaticResource MenuButtonStyle}">
+                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE74E;"/>
+                            </Button>
+                            <Image Canvas.ZIndex="1" Source="{x:Bind Cover, Mode=OneWay}"/>
+                            <Grid Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
+                                  Canvas.ZIndex="0"
+                                  Visibility="{x:Bind Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                                <FontIcon Canvas.ZIndex="0"
+                                          FontFamily="{StaticResource UntamedFontFamily}"
+                                          FontSize="85"
+                                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                          Glyph="&#xE93C;"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+                <ItemsView Grid.Row="2" Grid.Column="0"
+                           Grid.ColumnSpan="3"
+                           Margin="0,12,0,0" Padding="24,0,24,0"/>
             </Grid>
         </StackPanel>
     </ScrollViewer>
