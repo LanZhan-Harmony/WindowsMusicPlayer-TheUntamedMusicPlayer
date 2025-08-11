@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
+using TagLib;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 
@@ -56,7 +57,10 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             field = [
                 .. value
                     .SelectMany(artist =>
-                        artist.Split(Delimiters, StringSplitOptions.RemoveEmptyEntries)
+                        artist.Split(
+                            Delimiters,
+                            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+                        )
                     )
                     .Distinct(),
             ];
@@ -136,8 +140,7 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
             HasCover = musicFile.Tag.Pictures.Length != 0;
         }
-        catch (Exception ex)
-            when (ex is TagLib.CorruptFileException or TagLib.UnsupportedFormatException)
+        catch (Exception ex) when (ex is CorruptFileException or UnsupportedFormatException)
         {
             // 设置默认值
             Title = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -248,7 +251,11 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
                 [
                     .. musicFile
                         .Tag.AlbumArtists.SelectMany(artist =>
-                            artist.Split(Delimiters, StringSplitOptions.RemoveEmptyEntries)
+                            artist.Split(
+                                Delimiters,
+                                StringSplitOptions.RemoveEmptyEntries
+                                    | StringSplitOptions.TrimEntries
+                            )
                         )
                         .Distinct(),
                 ]
@@ -274,8 +281,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
                 Cover.SetSource(stream.AsRandomAccessStream());
             }
         }
-        catch (Exception ex)
-            when (ex is TagLib.CorruptFileException or TagLib.UnsupportedFormatException) { }
+        catch (Exception ex) when (ex is CorruptFileException or UnsupportedFormatException) { }
         catch (Exception ex) when (ex is FileNotFoundException)
         {
             IsPlayAvailable = false;

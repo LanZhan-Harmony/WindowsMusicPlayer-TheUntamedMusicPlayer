@@ -5,19 +5,26 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                xmlns:local="using:The_Untamed_Music_Player.Controls"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
                DefaultButton="Primary"
                PrimaryButtonClick="SaveButtonClick"
                Style="{StaticResource DefaultContentDialogStyle}"
                mc:Ignorable="d">
+
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
+        <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
+                                                        EmptyValue="Visible" NotEmptyValue="Collapsed"/>
     </ContentDialog.Resources>
+
     <ScrollViewer Margin="-24,0,-24,0">
         <StackPanel>
             <Grid Width="625">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="9"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -27,39 +34,92 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0"
                             Padding="24,0,0,0"
-                            Spacing="9">
+                            Spacing="12">
                     <TextBox Text="{x:Bind _title, Mode=TwoWay}">
                         <TextBox.Header>
-                            <TextBlock Margin="0,0,0,-1"><Run x:Uid="PropertiesDialog_Title"
-                                     FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><Run Foreground="{ThemeResource RequiredBrush}">*</Run></TextBlock>
+                            <TextBlock x:Uid="PropertiesDialog_Title"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </TextBox.Header>
                     </TextBox>
                     <TextBox Text="{x:Bind _contributingArtists, Mode=TwoWay}">
                         <TextBox.Header>
-                            <TextBlock Margin="0,0,0,-1"><Run x:Uid="PropertiesDialog_ContributingArtists"
-                                     FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><Run Foreground="{ThemeResource RequiredBrush}">*</Run></TextBlock>
+                            <TextBlock x:Uid="PropertiesDialog_ContributingArtists"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </TextBox.Header>
                     </TextBox>
                     <TextBox Text="{x:Bind _album, Mode=TwoWay}">
                         <TextBox.Header>
-                            <TextBlock Margin="0,0,0,-1"><Run x:Uid="PropertiesDialog_Album"
-                                     FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><Run Foreground="{ThemeResource RequiredBrush}">*</Run></TextBlock>
+                            <TextBlock x:Uid="PropertiesDialog_Album"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </TextBox.Header>
                     </TextBox>
                     <TextBox Text="{x:Bind _albumArtist, Mode=TwoWay}">
                         <TextBox.Header>
-                            <TextBlock Margin="0,0,0,-1"><Run x:Uid="PropertiesDialog_AlbumArtist"
-                                     FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><Run Foreground="{ThemeResource RequiredBrush}">*</Run></TextBlock>
+                            <TextBlock x:Uid="PropertiesDialog_AlbumArtist"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </TextBox.Header>
                     </TextBox>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="2"
+                            Padding="0,0,24,0" VerticalAlignment="Bottom">
+                    <Border Width="256" Height="256"
+                            Margin="0,4,0,0" Padding="0"
+                            BorderBrush="{ThemeResource SolidBackgroundFillColorBaseAltBrush}"
+                            BorderThickness="1" Canvas.ZIndex="0"
+                            CornerRadius="5">
+                        <Grid>
+                            <StackPanel Margin="2,0,0,2" VerticalAlignment="Bottom"
+                                        Canvas.ZIndex="2" Orientation="Horizontal"
+                                        Spacing="2">
+                                <Button Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                        Click="ChangeCoverButton_Click"
+                                        Style="{StaticResource MenuButtonStyle}">
+                                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE70F;"/>
+                                </Button>
+                                <Button Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                        Click="DeleteCoverButton_Click"
+                                        IsEnabled="{x:Bind IsSaveCoverButtonEnabled, Mode=OneWay}"
+                                        Style="{StaticResource MenuButtonStyle}">
+                                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE74D;"/>
+                                </Button>
+                            </StackPanel>
+                            <Button x:Name="SaveCoverButton"
+                                    Margin="0,0,2,2" HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                    Canvas.ZIndex="2" Click="SaveCoverButton_Click"
+                                    IsEnabled="{x:Bind IsSaveCoverButtonEnabled, Mode=OneWay}"
+                                    Style="{StaticResource MenuButtonStyle}">
+                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE74E;"/>
+                            </Button>
+                            <ProgressRing Width="48" Height="48"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Canvas.ZIndex="2"
+                                          IsActive="{x:Bind IsChangingCoverProgressRingActive, Mode=OneWay}"/>
+                            <Image Canvas.ZIndex="1" Source="{x:Bind Cover, Mode=OneWay}"/>
+                            <Grid Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
+                                  Canvas.ZIndex="0"
+                                  Visibility="{x:Bind Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                                <FontIcon Canvas.ZIndex="0"
+                                          FontFamily="{StaticResource UntamedFontFamily}"
+                                          FontSize="85"
+                                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                          Glyph="&#xE940;"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="0"
+                            Padding="24,0,0,0"
+                            Spacing="12">
                     <TextBox Text="{x:Bind _track, Mode=TwoWay}">
                         <TextBox.Header>
                             <TextBlock x:Uid="PropertiesDialog_Track"
-                                       Margin="0,2,0,0"
                                        FontSize="12"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </TextBox.Header>
@@ -72,35 +132,8 @@
                         </TextBox.Header>
                     </TextBox>
                 </StackPanel>
-                <StackPanel Grid.Row="0" Grid.Column="2"
-                            Padding="0,0,24,0"
-                            Spacing="10">
-                    <Border Width="256" Height="256"
-                            Margin="0,4,0,0" Padding="0"
-                            BorderBrush="{ThemeResource SolidBackgroundFillColorBaseAltBrush}"
-                            BorderThickness="1" Canvas.ZIndex="0"
-                            CornerRadius="5">
-                        <Grid>
-                            <Button Margin="2,0,0,2" HorizontalAlignment="Left"
-                                    VerticalAlignment="Bottom"
-                                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                                    Canvas.ZIndex="2" Click="ChangeCoverButton_Click"
-                                    Style="{StaticResource MenuButtonStyle}">
-                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE70F;"/>
-                            </Button>
-                            <ProgressRing HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"
-                                          IsEnabled="True"/>
-                            <Image Canvas.ZIndex="1" Source="{x:Bind Cover, Mode=OneWay}"/>
-                            <Grid Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}" Canvas.ZIndex="0">
-                                <FontIcon Canvas.ZIndex="0"
-                                          FontFamily="{StaticResource UntamedFontFamily}"
-                                          FontSize="80"
-                                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                          Glyph="&#xE940;"/>
-                            </Grid>
-                        </Grid>
-                    </Border>
+                <StackPanel Grid.Row="2" Grid.Column="2"
+                            Padding="0,0,24,0">
                     <TextBox Text="{x:Bind _genre, Mode=TwoWay}">
                         <TextBox.Header>
                             <TextBlock x:Uid="PropertiesDialog_Genre"
@@ -109,10 +142,12 @@
                         </TextBox.Header>
                     </TextBox>
                 </StackPanel>
-                <StackPanel Grid.Row="2" Grid.Column="0"
+                <StackPanel Grid.Row="4" Grid.Column="0"
                             Grid.ColumnSpan="3"
                             Padding="24,0,24,0">
-                    <RichEditBox x:Name="LyricEditor">
+                    <RichEditBox x:Name="LyricEditor"
+                                 ClipboardCopyFormat="PlainText"
+                                 IsSpellCheckEnabled="False">
                         <RichEditBox.Header>
                             <TextBlock x:Uid="EditSongInfoDialog_Lyric"
                                        FontSize="12"
