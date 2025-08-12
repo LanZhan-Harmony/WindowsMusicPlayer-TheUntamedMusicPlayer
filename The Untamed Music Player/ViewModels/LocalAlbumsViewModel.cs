@@ -1,5 +1,5 @@
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -36,27 +36,44 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
 
     partial void OnSortModeChanged(byte value)
     {
+        SortByStr = SortBy[value];
         SetGroupMode();
         SaveSortModeAsync();
     }
+
+    [ObservableProperty]
+    public partial string SortByStr { get; set; } = "";
 
     [ObservableProperty]
     public partial int GenreMode { get; set; } = 0;
 
     partial void OnGenreModeChanged(int value)
     {
+        if (Genres.Count > 0 && value < Genres.Count)
+        {
+            GenreStr = Genres[value];
+        }
         SaveGenreModeAsync();
     }
 
+    [ObservableProperty]
+    public partial string GenreStr { get; set; } = "";
+
     public LocalAlbumsViewModel()
+        : base(StrongReferenceMessenger.Default)
     {
         LoadModeAndAlbumList();
         Data.LocalAlbumsViewModel = this;
-        Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
     }
 
     public async void LoadModeAndAlbumList()
     {
+        _albumList = [.. Data.MusicLibrary.Albums.Values];
+        if (_albumList.Count == 0)
+        {
+            return;
+        }
+        Genres = Data.MusicLibrary.Genres;
         await LoadSortModeAsync();
         await LoadGenreModeAsync();
         await FilterAlbums();
@@ -64,15 +81,6 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
         OnPropertyChanged(nameof(NotGroupedAlbumList));
         OnPropertyChanged(nameof(Genres));
         IsProgressRingActive = false;
-    }
-
-    private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == "LibraryReloaded")
-        {
-            _albumList = [.. Data.MusicLibrary.Albums.Values];
-            LoadModeAndAlbumList();
-        }
     }
 
     public async Task SortAlbums()
@@ -369,11 +377,16 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
     public async Task LoadSortModeAsync()
     {
         SortMode = await _localSettingsService.ReadSettingAsync<byte>("AlbumSortMode");
+        SortByStr = SortBy[SortMode];
     }
 
     public async Task LoadGenreModeAsync()
     {
         GenreMode = await _localSettingsService.ReadSettingAsync<int>("AlbumGenreMode");
+        if (Genres.Count > 0 && GenreMode < Genres.Count)
+        {
+            GenreStr = Genres[GenreMode];
+        }
     }
 
     public async void SaveSortModeAsync()
@@ -384,16 +397,6 @@ public partial class LocalAlbumsViewModel : ObservableRecipient
     public async void SaveGenreModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("AlbumGenreMode", GenreMode);
-    }
-
-    public string GetSortByStr(byte SortMode)
-    {
-        return SortBy[SortMode];
-    }
-
-    public string GetGenreStr(int GenreMode)
-    {
-        return Genres[GenreMode];
     }
 
     public double GetAlbumGridViewOpacity(bool isActive)

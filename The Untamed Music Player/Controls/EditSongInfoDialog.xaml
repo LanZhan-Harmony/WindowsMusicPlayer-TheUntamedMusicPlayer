@@ -117,14 +117,14 @@
                 <StackPanel Grid.Row="2" Grid.Column="0"
                             Padding="24,0,0,0"
                             Spacing="12">
-                    <TextBox Text="{x:Bind _track, Mode=TwoWay}">
+                    <TextBox LostFocus="TextBox_LostFocus" Text="{x:Bind _track, Mode=TwoWay}">
                         <TextBox.Header>
                             <TextBlock x:Uid="PropertiesDialog_Track"
                                        FontSize="12"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </TextBox.Header>
                     </TextBox>
-                    <TextBox Text="{x:Bind _year, Mode=TwoWay}">
+                    <TextBox LostFocus="TextBox_LostFocus" Text="{x:Bind _year, Mode=TwoWay}">
                         <TextBox.Header>
                             <TextBlock x:Uid="PropertiesDialog_Year"
                                        FontSize="12"

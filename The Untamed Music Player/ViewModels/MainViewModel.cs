@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using Windows.UI;
 using WinRT;
 
@@ -331,6 +332,7 @@ public partial class MainViewModel : ObservableRecipient
         _mainMindow.Activated -= MainWindow_Activated;
         Data.DesktopLyricWindow?.Close();
         Data.DesktopLyricWindow?.Dispose();
+        LoggingService.Shutdown();
     }
 
     /// <summary>

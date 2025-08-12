@@ -1,6 +1,5 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Services;
@@ -18,7 +17,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 
     public List<string> SortBy { get; set; } = [.. "Artists_SortBy".GetLocalized().Split(", ")];
 
-    public ObservableCollection<GroupInfoList> GroupedArtistList { get; set; } = [];
+    public List<GroupInfoList> GroupedArtistList { get; set; } = [];
 
     [ObservableProperty]
     public partial bool IsProgressRingActive { get; set; } = true;
@@ -28,30 +27,30 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 
     partial void OnSortModeChanged(byte value)
     {
+        SortByStr = SortBy[value];
         SaveSortModeAsync();
     }
 
+    [ObservableProperty]
+    public partial string SortByStr { get; set; } = "";
+
     public LocalArtistsViewModel()
+        : base(StrongReferenceMessenger.Default)
     {
         LoadModeAndArtistList();
-        Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
     }
 
     public async void LoadModeAndArtistList()
     {
+        _artistList = [.. Data.MusicLibrary.Artists.Values];
+        if (_artistList.Count == 0)
+        {
+            return;
+        }
         await LoadSortModeAsync();
         await SortArtists();
         OnPropertyChanged(nameof(GroupedArtistList));
         IsProgressRingActive = false;
-    }
-
-    private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == "LibraryReloaded")
-        {
-            _artistList = [.. Data.MusicLibrary.Artists.Values];
-            LoadModeAndArtistList();
-        }
     }
 
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -150,16 +149,12 @@ public partial class LocalArtistsViewModel : ObservableRecipient
     public async Task LoadSortModeAsync()
     {
         SortMode = await _localSettingsService.ReadSettingAsync<byte>("ArtistSortMode");
+        SortByStr = SortBy[SortMode];
     }
 
     public async void SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("ArtistSortMode", SortMode);
-    }
-
-    public string GetSortByStr(byte SortMode)
-    {
-        return SortBy[SortMode];
     }
 
     public double GetArtistGridViewOpacity(bool isActive)

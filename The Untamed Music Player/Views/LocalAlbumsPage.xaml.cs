@@ -1,21 +1,34 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Controls;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class LocalAlbumsPage : Page
+public sealed partial class LocalAlbumsPage : Page, IRecipient<HaveMusicMessage>
 {
     public LocalAlbumsViewModel ViewModel { get; }
 
     public LocalAlbumsPage()
     {
         ViewModel = App.GetService<LocalAlbumsViewModel>();
+        StrongReferenceMessenger.Default.Register(this);
         InitializeComponent();
+    }
+
+    private void LocalAlbumsPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        StrongReferenceMessenger.Default.Unregister<HaveMusicMessage>(this);
+    }
+
+    public void Receive(HaveMusicMessage message)
+    {
+        DispatcherQueue.TryEnqueue(ViewModel.LoadModeAndAlbumList);
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
