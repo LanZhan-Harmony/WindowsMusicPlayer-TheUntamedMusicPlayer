@@ -51,6 +51,8 @@ public sealed partial class OnlineAlbumDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+        ViewModel.CheckAndLoadAlbumAsync();
+
         if (
             Data.ShellViewModel!.NavigatePage
             is nameof(OnlineAlbumsPage)

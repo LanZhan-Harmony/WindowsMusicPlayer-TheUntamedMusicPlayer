@@ -2,8 +2,10 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage;
 
@@ -35,11 +37,6 @@ public partial class MusicLibrary : ObservableRecipient
     /// 音乐流派(临时)
     /// </summary>
     private readonly ConcurrentDictionary<string, byte> _musicGenres = [];
-
-    /// <summary>
-    /// 是否有音乐
-    /// </summary>
-    public bool HasMusics => !Songs.IsEmpty;
 
     /// <summary>
     /// 文件夹监视器
@@ -80,6 +77,7 @@ public partial class MusicLibrary : ObservableRecipient
     public partial List<string> Genres { get; set; } = [];
 
     public MusicLibrary()
+        : base(StrongReferenceMessenger.Default)
     {
         LoadFoldersAsync();
     }
@@ -88,7 +86,7 @@ public partial class MusicLibrary : ObservableRecipient
     {
         var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>(
             "MusicFolders"
-        ); //ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。ReadAsync<List<string>>("MusicFolders")：调用 SettingsStorageExtensions 类中的扩展方法 ReadAsync，从名为 "MusicFolders" 的文件中读取数据，并将其反序列化为 List<string> 类型。
+        ); //ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。ReadAsync<List<string>>("MusicFolders")：调用 SettingsStorageExtensions 类中的扩展方法 ReadAsync，从名为 "MusicFolders" 的文件中读取数据，然后将其反序列化为 List<string> 类型。
         if (folderPaths is not null)
         {
             foreach (var path in folderPaths)
@@ -124,6 +122,7 @@ public partial class MusicLibrary : ObservableRecipient
                 Artists = libraryData.Artists;
                 Genres = libraryData.Genres;
                 _musicFolders = libraryData.MusicFolders;
+                Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty));
                 await Task.Run(AddFolderWatcher);
             }
             else
@@ -148,10 +147,7 @@ public partial class MusicLibrary : ObservableRecipient
                         .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                         .OrderBy(x => x, new GenreComparer()),
                 ];
-                await EnqueueAndWaitAsync(() =>
-                {
-                    OnPropertyChanged(nameof(HasMusics));
-                });
+                Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty));
                 _musicGenres.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
                 await Task.Run(AddFolderWatcher);
@@ -203,10 +199,7 @@ public partial class MusicLibrary : ObservableRecipient
                     .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                     .OrderBy(x => x, new GenreComparer()),
             ];
-            await EnqueueAndWaitAsync(() => // 注意一定要在 Genres 赋值后再调用
-            {
-                OnPropertyChanged(nameof(HasMusics));
-            });
+            Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty));
             _musicGenres.Clear();
             FolderWatchers.Clear();
             var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
@@ -431,28 +424,4 @@ public partial class MusicLibrary : ObservableRecipient
     /// <returns></returns>
     public LocalArtistInfo? GetArtistInfoBySong(string artist) =>
         Artists.TryGetValue(artist, out var localArtistInfo) ? localArtistInfo : null;
-
-    private async Task EnqueueAndWaitAsync(Action action)
-    {
-        var tcs = new TaskCompletionSource<bool>();
-
-        _dispatcherQueue.TryEnqueue(() =>
-        {
-            try
-            {
-                // 执行原始操作
-                action();
-                // 标记任务完成
-                tcs.SetResult(true);
-            }
-            catch (Exception ex)
-            {
-                // 如果发生异常，设置为异常状态
-                tcs.SetException(ex);
-            }
-        });
-
-        // 等待操作完成
-        await tcs.Task;
-    }
 }

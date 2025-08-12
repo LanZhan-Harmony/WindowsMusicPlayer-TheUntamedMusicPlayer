@@ -70,6 +70,10 @@ public sealed partial class OnlineArtistDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+
+        // 检查并加载艺术家数据
+        ViewModel.CheckAndLoadArtistAsync();
+
         if (Data.ShellViewModel!.NavigatePage == nameof(OnlineArtistsPage))
         {
             var animation = ConnectedAnimationService

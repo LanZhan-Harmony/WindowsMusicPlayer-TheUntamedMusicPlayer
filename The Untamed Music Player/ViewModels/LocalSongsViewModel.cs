@@ -1,5 +1,3 @@
-using System.Collections.Concurrent;
-using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -20,16 +18,6 @@ public partial class LocalSongsViewModel : ObservableRecipient
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
 
-    public double ScrollViewerVerticalOffset
-    {
-        get;
-        set
-        {
-            field = value;
-            SaveScrollViewerVerticalOffsetAsync();
-        }
-    } = 0;
-
     /// <summary>
     /// 是否分组
     /// </summary>
@@ -38,7 +26,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     /// <summary>
     /// 备用歌曲列表
     /// </summary>
-    private readonly ConcurrentBag<BriefLocalSongInfo> _songList = Data.MusicLibrary.Songs;
+    private List<BriefLocalSongInfo> _songList = null!;
 
     /// <summary>
     /// 排序方式列表
@@ -58,7 +46,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     /// <summary>
     /// 流派列表
     /// </summary>
-    public List<string> Genres { get; set; } = Data.MusicLibrary.Genres;
+    public List<string> Genres { get; set; } = null!;
 
     /// <summary>
     /// 是否显示加载进度环
@@ -74,9 +62,16 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     partial void OnSortModeChanged(byte value)
     {
+        SortByStr = SortBy[value];
         SetGroupMode();
         SaveSortModeAsync();
     }
+
+    /// <summary>
+    /// 当前选择的排序方式字符串
+    /// </summary>
+    [ObservableProperty]
+    public partial string SortByStr { get; set; } = "";
 
     /// <summary>
     /// 流派筛选方式
@@ -86,20 +81,34 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     partial void OnGenreModeChanged(int value)
     {
+        if (Genres.Count > 0 && value < Genres.Count)
+        {
+            GenreStr = Genres[value];
+        }
         SaveGenreModeAsync();
     }
+
+    /// <summary>
+    /// 当前选择的流派字符串
+    /// </summary>
+    [ObservableProperty]
+    public partial string GenreStr { get; set; } = "";
 
     public LocalSongsViewModel()
         : base(StrongReferenceMessenger.Default)
     {
-        LoadScrollViewerVerticalOffsetAsync();
         LoadModeAndSongList();
         Data.LocalSongsViewModel = this;
-        Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
     }
 
     public async void LoadModeAndSongList()
     {
+        _songList = [.. Data.MusicLibrary.Songs];
+        if (_songList.Count == 0)
+        {
+            return;
+        }
+        Genres = [.. Data.MusicLibrary.Genres];
         await LoadSortModeAsync();
         await LoadGenreModeAsync();
         try
@@ -117,14 +126,6 @@ public partial class LocalSongsViewModel : ObservableRecipient
         finally
         {
             IsProgressRingActive = false;
-        }
-    }
-
-    private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == "LibraryReloaded")
-        {
-            LoadModeAndSongList();
         }
     }
 
@@ -563,29 +564,19 @@ public partial class LocalSongsViewModel : ObservableRecipient
         }
     }
 
-    public async void LoadScrollViewerVerticalOffsetAsync()
-    {
-        ScrollViewerVerticalOffset = await _localSettingsService.ReadSettingAsync<double>(
-            "LocalSongsScrollViewerVerticalOffset"
-        );
-    }
-
     public async Task LoadSortModeAsync()
     {
         SortMode = await _localSettingsService.ReadSettingAsync<byte>("SortMode");
+        SortByStr = SortBy[SortMode];
     }
 
     public async Task LoadGenreModeAsync()
     {
         GenreMode = await _localSettingsService.ReadSettingAsync<int>("GenreMode");
-    }
-
-    public async void SaveScrollViewerVerticalOffsetAsync()
-    {
-        await _localSettingsService.SaveSettingAsync(
-            "LocalSongsScrollViewerVerticalOffset",
-            ScrollViewerVerticalOffset
-        );
+        if (Genres.Count > 0 && GenreMode < Genres.Count)
+        {
+            GenreStr = Genres[GenreMode];
+        }
     }
 
     public async void SaveSortModeAsync()
@@ -596,16 +587,6 @@ public partial class LocalSongsViewModel : ObservableRecipient
     public async void SaveGenreModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("GenreMode", GenreMode);
-    }
-
-    public string GetSortByStr(byte SortMode)
-    {
-        return SortBy[SortMode];
-    }
-
-    public string GetGenreStr(int GenreMode)
-    {
-        return Genres[GenreMode];
     }
 
     public double GetSongListViewOpacity(bool isActive)

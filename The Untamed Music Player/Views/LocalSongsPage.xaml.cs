@@ -11,24 +11,25 @@ using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessage>
+public sealed partial class LocalSongsPage
+    : Page,
+        IRecipient<ScrollToSongMessage>,
+        IRecipient<HaveMusicMessage>
 {
     public LocalSongsViewModel ViewModel { get; }
 
     public LocalSongsPage()
     {
         ViewModel = App.GetService<LocalSongsViewModel>();
+        StrongReferenceMessenger.Default.Register<ScrollToSongMessage>(this);
+        StrongReferenceMessenger.Default.Register<HaveMusicMessage>(this);
         InitializeComponent();
     }
 
-    private void LocalSongsPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        StrongReferenceMessenger.Default.Register(this);
-    }
-
-    private void LocalSongsPage_UnLoaded(object sender, RoutedEventArgs e)
+    private void LocalSongsPage_Unloaded(object sender, RoutedEventArgs e)
     {
         StrongReferenceMessenger.Default.Unregister<ScrollToSongMessage>(this);
+        StrongReferenceMessenger.Default.Unregister<HaveMusicMessage>(this);
     }
 
     public void Receive(ScrollToSongMessage message)
@@ -54,6 +55,11 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         {
             SongListView.ScrollIntoView(targetSong, message.Alignment);
         }
+    }
+
+    public void Receive(HaveMusicMessage message)
+    {
+        DispatcherQueue.TryEnqueue(ViewModel.LoadModeAndSongList);
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)

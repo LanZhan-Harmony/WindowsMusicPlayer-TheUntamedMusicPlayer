@@ -53,7 +53,7 @@
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </TextBox.Header>
                     </TextBox>
-                    <TextBox Text="{x:Bind _year, Mode=TwoWay}">
+                    <TextBox LostFocus="TextBox_LostFocus" Text="{x:Bind _year, Mode=TwoWay}">
                         <TextBox.Header>
                             <TextBlock x:Uid="PropertiesDialog_Year"
                                        FontSize="12"

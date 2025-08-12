@@ -111,11 +111,6 @@
                 </NavigationView.FooterMenuItems>
                 <Frame x:Name="NavigationFrame" Navigating="{x:Bind ViewModel.NavigationFrame_Navigating}"/>
             </NavigationView>
-            <InfoBar Title="无法打开，因为当前无法访问你的存储。请稍等片刻，然后再试。"
-                     Margin="20" HorizontalAlignment="Right"
-                     VerticalAlignment="Bottom"
-                     Canvas.ZIndex="1" IsClosable="True"
-                     IsIconVisible="False" IsOpen="False"/>
         </Grid>
     </Grid>
 </Page>

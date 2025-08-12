@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -8,9 +7,9 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using TagLib;
 using The_Untamed_Music_Player.Models;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using TextBox = Microsoft.UI.Xaml.Controls.TextBox;
 
 namespace The_Untamed_Music_Player.Controls;
 
@@ -82,6 +81,14 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         RequestedTheme = Data.MainViewModel!.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
         LyricEditor.Document.SetText(TextSetOptions.None, _lyric);
+    }
+
+    private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (!uint.TryParse((sender as TextBox)!.Text, out var _))
+        {
+            (sender as TextBox)!.Text = "";
+        }
     }
 
     private async void SaveButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
