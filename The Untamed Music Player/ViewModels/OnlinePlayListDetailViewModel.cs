@@ -11,6 +11,7 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public partial class OnlinePlayListDetailViewModel : ObservableRecipient
 {
+    private IBriefOnlinePlaylistInfo? _cachedBriefPlaylist = null;
     public IBriefOnlinePlaylistInfo BriefPlaylist { get; set; } = Data.SelectedOnlinePlaylist!;
 
     [ObservableProperty]
@@ -25,17 +26,48 @@ public partial class OnlinePlayListDetailViewModel : ObservableRecipient
     [ObservableProperty]
     public partial bool IsSearchProgressRingActive { get; set; } = true;
 
-    public OnlinePlayListDetailViewModel()
+    public OnlinePlayListDetailViewModel() { }
+
+    public async void CheckAndLoadPlaylistAsync()
     {
-        LoadPlaylistAsync();
+        BriefPlaylist = Data.SelectedOnlinePlaylist!;
+        if (ShouldReloadPlaylist())
+        {
+            await LoadPlaylistAsync();
+            _cachedBriefPlaylist = BriefPlaylist;
+        }
+        else
+        {
+            ListViewOpacity = 1;
+            IsSearchProgressRingActive = false;
+        }
     }
 
-    private async void LoadPlaylistAsync()
+    private bool ShouldReloadPlaylist()
     {
+        if (_cachedBriefPlaylist is null || Playlist is null)
+        {
+            return true;
+        }
+        if (_cachedBriefPlaylist.ID != BriefPlaylist.ID)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private async Task LoadPlaylistAsync()
+    {
+        Playlist = null!;
+        ListViewOpacity = 0;
+        IsSearchProgressRingActive = true;
+
         if (!await NetworkHelper.IsInternetAvailableAsync())
         {
+            IsSearchProgressRingActive = false;
             return;
         }
+
         Playlist = await IDetailedOnlinePlaylistInfo.CreateDetailedOnlinePlaylistInfoAsync(
             BriefPlaylist
         );

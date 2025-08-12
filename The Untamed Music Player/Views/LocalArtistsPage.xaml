@@ -8,6 +8,7 @@
       xmlns:model="using:The_Untamed_Music_Player.Models"
       xmlns:ui="using:CommunityToolkit.WinUI"
       NavigationCacheMode="Enabled"
+      Unloaded="LocalArtistsPage_Unloaded"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -212,7 +213,7 @@
                     Background="Transparent" BorderBrush="Transparent">
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <TextBlock x:Uid="Songs_SortByChosen"/>
-                    <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.GetSortByStr(ViewModel.SortMode), Mode=OneWay}"/>
+                    <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.SortByStr, Mode=OneWay}"/>
                     <FontIcon Margin="8,0,0,0"
                               FontFamily="{StaticResource UntamedFontFamily}"
                               FontSize="12" Glyph="&#xE70D;"/>

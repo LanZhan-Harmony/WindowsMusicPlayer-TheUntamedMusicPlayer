@@ -8,6 +8,7 @@
                    xmlns:windowex="using:WinUIEx"
                    MinWidth="500" MinHeight="500"
                    PersistenceId="MainWindow"
+                   Closed="MainWindow_Closed"
                    mc:Ignorable="d">
 
     <Grid x:Name="RootGrid">
@@ -21,6 +22,12 @@
         <Frame x:Name="ShellFrame"
                Grid.Row="0"
                Canvas.ZIndex="1"/>
+        <InfoBar x:Name="ErrorInfoBar"
+                 Grid.Row="0"
+                 Margin="20" HorizontalAlignment="Right"
+                 VerticalAlignment="Bottom"
+                 Canvas.ZIndex="2" IsClosable="True"
+                 IsIconVisible="False" IsOpen="False"/>
         <view:RootPlayBarView Grid.Row="1" Canvas.ZIndex="1"/>
     </Grid>
 </windowex:WindowEx>

@@ -57,6 +57,14 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
         InitializeComponent();
     }
 
+    private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (!uint.TryParse((sender as TextBox)!.Text, out var _))
+        {
+            (sender as TextBox)!.Text = "";
+        }
+    }
+
     private void SaveButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args) { }
 
     private void SaveCoverButton_Click(object sender, RoutedEventArgs e) { }

@@ -11,6 +11,7 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public partial class OnlineAlbumDetailViewModel : ObservableRecipient
 {
+    private IBriefOnlineAlbumInfo? _cachedBriefAlbum = null;
     public IBriefOnlineAlbumInfo BriefAlbum { get; set; } = Data.SelectedOnlineAlbum!;
 
     [ObservableProperty]
@@ -25,17 +26,48 @@ public partial class OnlineAlbumDetailViewModel : ObservableRecipient
     [ObservableProperty]
     public partial bool IsSearchProgressRingActive { get; set; } = true;
 
-    public OnlineAlbumDetailViewModel()
+    public OnlineAlbumDetailViewModel() { }
+
+    public async void CheckAndLoadAlbumAsync()
     {
-        LoadAlbumAsync();
+        BriefAlbum = Data.SelectedOnlineAlbum!;
+        if (ShouldReloadAlbum())
+        {
+            await LoadAlbumAsync();
+            _cachedBriefAlbum = BriefAlbum;
+        }
+        else
+        {
+            ListViewOpacity = 1;
+            IsSearchProgressRingActive = false;
+        }
     }
 
-    private async void LoadAlbumAsync()
+    private bool ShouldReloadAlbum()
     {
+        if (_cachedBriefAlbum is null || Album is null)
+        {
+            return true;
+        }
+        if (_cachedBriefAlbum.ID != BriefAlbum.ID)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private async Task LoadAlbumAsync()
+    {
+        Album = null!;
+        ListViewOpacity = 0;
+        IsSearchProgressRingActive = true;
+
         if (!await NetworkHelper.IsInternetAvailableAsync())
         {
+            IsSearchProgressRingActive = false;
             return;
         }
+
         Album = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(BriefAlbum);
         IsPlayAllButtonEnabled = Album.SongList.Count > 0;
         ListViewOpacity = 1;

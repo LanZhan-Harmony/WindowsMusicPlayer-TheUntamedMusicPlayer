@@ -16,6 +16,7 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
         App.GetService<ILocalSettingsService>();
 
     private bool _isSearchingMore = false;
+    private IBriefOnlineArtistInfo? _cachedBriefArtist = null;
 
     public IBriefOnlineArtistInfo BriefArtist { get; set; } = Data.SelectedOnlineArtist!;
 
@@ -33,17 +34,62 @@ public partial class OnlineArtistDetailViewModel : ObservableRecipient
     [ObservableProperty]
     public partial bool IsSearchMoreProgressRingActive { get; set; } = false;
 
-    public OnlineArtistDetailViewModel()
+    public OnlineArtistDetailViewModel() { }
+
+    /// <summary>
+    /// 检查并加载艺术家数据，只在艺术家变化时重新搜索
+    /// </summary>
+    public async void CheckAndLoadArtistAsync()
     {
-        LoadArtistAsync();
+        // 更新当前选中的艺术家
+        BriefArtist = Data.SelectedOnlineArtist!;
+
+        // 检查是否需要重新加载
+        if (ShouldReloadArtist())
+        {
+            await LoadArtistAsync();
+            _cachedBriefArtist = BriefArtist;
+        }
+        else
+        {
+            ListViewOpacity = 1;
+            IsSearchProgressRingActive = false;
+        }
     }
 
-    private async void LoadArtistAsync()
+    /// <summary>
+    /// 判断是否需要重新加载艺术家数据
+    /// </summary>
+    /// <returns>如果需要重新加载返回true</returns>
+    private bool ShouldReloadArtist()
     {
+        // 如果没有缓存的艺术家或当前艺术家为空，需要加载
+        if (_cachedBriefArtist is null || Artist is null)
+        {
+            return true;
+        }
+
+        // 如果艺术家ID变化了，需要重新加载
+        if (_cachedBriefArtist.ID != BriefArtist.ID)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private async Task LoadArtistAsync()
+    {
+        Artist = null!;
+        ListViewOpacity = 0;
+        IsSearchProgressRingActive = true;
+
         if (!await NetworkHelper.IsInternetAvailableAsync())
         {
+            IsSearchProgressRingActive = false;
             return;
         }
+
         try
         {
             Artist = await IDetailedOnlineArtistInfo.SearchArtistDetailAsync(BriefArtist);
