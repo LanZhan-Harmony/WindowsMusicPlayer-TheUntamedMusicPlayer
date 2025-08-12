@@ -8,9 +8,15 @@ using Windows.UI;
 namespace The_Untamed_Music_Player.Helpers;
 
 [JsonSerializable(typeof(bool))]
+[JsonSerializable(typeof(char))]
 [JsonSerializable(typeof(byte))]
 [JsonSerializable(typeof(short))]
+[JsonSerializable(typeof(ushort))]
 [JsonSerializable(typeof(int))]
+[JsonSerializable(typeof(uint))]
+[JsonSerializable(typeof(long))]
+[JsonSerializable(typeof(ulong))]
+[JsonSerializable(typeof(float))]
 [JsonSerializable(typeof(double))]
 [JsonSerializable(typeof(string))]
 [JsonSerializable(typeof(Color))]

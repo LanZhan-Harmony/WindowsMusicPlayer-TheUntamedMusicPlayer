@@ -51,6 +51,8 @@ public sealed partial class OnlinePlayListDetailPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+        ViewModel.CheckAndLoadPlaylistAsync();
+
         if (Data.ShellViewModel!.NavigatePage == nameof(OnlinePlayListsPage))
         {
             var animation = ConnectedAnimationService

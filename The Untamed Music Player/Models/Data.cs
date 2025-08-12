@@ -86,7 +86,6 @@ public static class Data
     public static MainWindow? MainWindow { get; set; }
     public static ShellPage? ShellPage { get; set; }
     public static HomePage HomePage { get; set; } = null!;
-    public static MusicLibraryPage? MusicLibraryPage { get; set; }
     public static LyricPage? LyricPage { get; set; }
     public static RootPlayBarView? RootPlayBarView { get; set; }
     public static DesktopLyricWindow? DesktopLyricWindow { get; set; }
@@ -94,7 +93,6 @@ public static class Data
     public static SettingsViewModel? SettingsViewModel { get; set; }
     public static ShellViewModel? ShellViewModel { get; set; }
     public static RootPlayBarViewModel? RootPlayBarViewModel { get; set; }
-    public static HaveMusicViewModel? HaveMusicViewModel { get; set; }
     public static LocalSongsViewModel? LocalSongsViewModel { get; set; }
     public static LocalAlbumsViewModel? LocalAlbumsViewModel { get; set; }
 }

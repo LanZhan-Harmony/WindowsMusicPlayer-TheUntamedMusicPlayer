@@ -174,8 +174,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
     public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
-        var senderButton = sender as Button;
-        senderButton!.IsEnabled = false;
+        (sender as Button)!.IsEnabled = false;
         var openPicker = new FolderPicker
         {
             SuggestedStartLocation = PickerLocationId.MusicLibrary,
@@ -193,7 +192,7 @@ public partial class SettingsViewModel : ObservableRecipient
             await SaveFoldersAsync();
             await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync); // 重新加载音乐库
         }
-        senderButton!.IsEnabled = true;
+        (sender as Button)!.IsEnabled = true;
     }
 
     public async void RemoveMusicFolder(StorageFolder folder)
@@ -362,7 +361,7 @@ public partial class SettingsViewModel : ObservableRecipient
         SongDownloadLocation = location;
     }
 
-    private static async Task SaveFoldersAsync()
+    public static async Task SaveFoldersAsync()
     {
         var folderPaths = Data.MusicLibrary.Folders?.Select(f => f.Path).ToList();
         await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths); //	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
