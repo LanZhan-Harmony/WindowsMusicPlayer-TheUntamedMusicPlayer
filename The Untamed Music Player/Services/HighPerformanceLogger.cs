@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Services;
 
@@ -83,11 +84,11 @@ public static class HighPerformanceLogger
             "开始播放歌曲: {Title} - {Artist}"
         );
 
-    private static readonly Action<ILogger, string, string, Exception?> _songPlaybackError =
-        LoggerMessage.Define<string, string>(
+    private static readonly Action<ILogger, string, Exception?> _songPlaybackError =
+        LoggerMessage.Define<string>(
             LogLevel.Error,
             new EventId(3001, nameof(SongPlaybackError)),
-            "播放歌曲失败: {Title}, 错误: {Error}"
+            "Error_SongPlayback".GetLocalized()
         );
 
     private static readonly Action<ILogger, string, long, Exception?> _songPlaybackPosition =
@@ -223,9 +224,8 @@ public static class HighPerformanceLogger
     public static void SongPlaybackError(
         this ILogger logger,
         string title,
-        string error,
         Exception? exception = null
-    ) => _songPlaybackError(logger, title, error, exception);
+    ) => _songPlaybackError(logger, title, exception);
 
     public static void SongPlaybackPosition(this ILogger logger, string title, long positionMs) =>
         _songPlaybackPosition(logger, title, positionMs, null);

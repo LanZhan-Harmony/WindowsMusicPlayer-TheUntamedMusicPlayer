@@ -1,8 +1,10 @@
+using System.Numerics;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
@@ -39,10 +41,16 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         ViewModel = App.GetService<MainViewModel>();
 
         // 初始化InfoBar管理器
-        _infoBarManager = new InfoBarManager(ErrorInfoBar);
+        _infoBarManager = new InfoBarManager(
+            ErrorInfoBar,
+            ShowInfoBarStoryboard,
+            HideInfoBarStoryboard
+        );
 
         // 注册日志消息接收
         StrongReferenceMessenger.Default.Register(this);
+
+        ErrorInfoBar.Translation += new Vector3(0, 0, 40);
     }
 
     /// <summary>
@@ -60,47 +68,8 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         // 确保在UI线程上执行
         dispatcherQueue.TryEnqueue(() =>
         {
-            _infoBarManager?.ShowMessage(message, 5);
+            _infoBarManager?.ShowMessage(message);
         });
-    }
-
-    /// <summary>
-    /// 手动关闭InfoBar
-    /// </summary>
-    public void CloseInfoBar()
-    {
-        _infoBarManager?.Close();
-    }
-
-    /// <summary>
-    /// 立即显示消息（用于重要通知）
-    /// </summary>
-    /// <param name="level">日志级别</param>
-    /// <param name="message">消息内容</param>
-    /// <param name="autoCloseSeconds">自动关闭时间</param>
-    public void ShowMessageImmediately(LogLevel level, string message, int autoCloseSeconds = 5)
-    {
-        var logMessage = new LogMessage(level, message);
-        dispatcherQueue.TryEnqueue(() =>
-        {
-            _infoBarManager?.ShowMessageImmediately(logMessage, autoCloseSeconds);
-        });
-    }
-
-    /// <summary>
-    /// 获取InfoBar队列中的消息数量
-    /// </summary>
-    public int GetInfoBarQueueCount()
-    {
-        return _infoBarManager?.QueueCount ?? 0;
-    }
-
-    /// <summary>
-    /// 清空InfoBar消息队列
-    /// </summary>
-    public void ClearInfoBarQueue()
-    {
-        _infoBarManager?.ClearQueue();
     }
 
     /// <summary>

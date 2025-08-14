@@ -4,6 +4,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ManagedBass;
 using ManagedBass.Fx;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -12,6 +13,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+using The_Untamed_Music_Player.Services;
 using Windows.Media;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
@@ -22,6 +24,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private static readonly ILogger _logger = LoggingService.CreateLogger<MusicPlayer>();
 
     /// <summary>
     /// 用于获取SMTC的临时播放器
@@ -341,6 +344,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// </summary>
     private void OnPlaybackFailed(int handle, int channel, int data, IntPtr user)
     {
+        _logger.SongPlaybackError(CurrentSong!.Title);
         Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
         {
             if (RepeatMode == 2 || SourceMode != 0)
@@ -350,6 +354,35 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
             else
             {
                 CurrentBriefSong!.IsPlayAvailable = false;
+                _failedCount++;
+                if (_failedCount > 2)
+                {
+                    _failedCount = 0;
+                    Stop();
+                }
+                else
+                {
+                    PlayNextSong();
+                }
+            }
+        });
+    }
+
+    private void HandleSongNotAvailable()
+    {
+        _logger.SongPlaybackError(CurrentSong!.Title);
+        if (PlayQueue.Count == 0)
+        {
+            return;
+        }
+        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (RepeatMode == 2 || SourceMode != 0)
+            {
+                Stop();
+            }
+            else
+            {
                 _failedCount++;
                 if (_failedCount > 2)
                 {
@@ -868,34 +901,6 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
                 CurrentLyricContent = CurrentLyric[_currentLyricIndex].Content;
             }
         }
-    }
-
-    private void HandleSongNotAvailable()
-    {
-        if (PlayQueue.Count == 0)
-        {
-            return;
-        }
-        Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
-        {
-            if (RepeatMode == 2 || SourceMode != 0)
-            {
-                Stop();
-            }
-            else
-            {
-                _failedCount++;
-                if (_failedCount > 2)
-                {
-                    _failedCount = 0;
-                    Stop();
-                }
-                else
-                {
-                    PlayNextSong();
-                }
-            }
-        });
     }
 
     private void SystemControls_ButtonPressed(
