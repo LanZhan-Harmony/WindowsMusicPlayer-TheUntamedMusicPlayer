@@ -708,4 +708,10 @@
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
     <value>显示歌单</value>
   </data>
+  <data name="Main_SendFeedback.Content" xml:space="preserve">
+    <value>发送反馈</value>
+  </data>
+  <data name="Error_SongPlayback" xml:space="preserve">
+    <value>我们无法打开 {Title}。这可能是因为文件类型不受支持、文件扩展名不正确或文件已损坏。</value>
+  </data>
 </root>

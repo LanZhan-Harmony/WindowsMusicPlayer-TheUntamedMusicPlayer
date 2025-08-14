@@ -708,4 +708,10 @@
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
     <value>Show playlist</value>
   </data>
+  <data name="Main_SendFeedback.Content" xml:space="preserve">
+    <value>Send feedback</value>
+  </data>
+  <data name="Error_SongPlayback" xml:space="preserve">
+    <value />
+  </data>
 </root>
