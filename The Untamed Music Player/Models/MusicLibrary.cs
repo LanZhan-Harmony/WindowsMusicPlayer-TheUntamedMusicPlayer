@@ -84,6 +84,7 @@ public partial class MusicLibrary : ObservableRecipient
 
     public async void LoadFoldersAsync()
     {
+        await _librarySemaphore.WaitAsync(); // 防止本函数未执行完就执行 LoadLibraryAsync
         var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>(
             "MusicFolders"
         ); //ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。ReadAsync<List<string>>("MusicFolders")：调用 SettingsStorageExtensions 类中的扩展方法 ReadAsync，从名为 "MusicFolders" 的文件中读取数据，然后将其反序列化为 List<string> 类型。
@@ -104,6 +105,7 @@ public partial class MusicLibrary : ObservableRecipient
             }
             OnPropertyChanged(nameof(SettingsViewModel.EmptyFolderMessageVisibility));
         }
+        _librarySemaphore.Release();
     }
 
     public async Task LoadLibraryAsync()
