@@ -712,6 +712,21 @@
     <value>Send feedback</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value />
+    <value>We can't open {Title}. This may be because the file type is unsupported, the file extension is incorrect, the file is corrupted, or the network is abnormal.</value>
+  </data>
+  <data name="Error_EditingSongInfoIO" xml:space="preserve">
+    <value>We can't edit {Title}. This may be because the current file is playing, being occupied by another process, or the file type is unsupported.</value>
+  </data>
+  <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
+    <value>Developer options</value>
+  </data>
+  <data name="Settings_Logging.Header" xml:space="preserve">
+    <value>Logging</value>
+  </data>
+  <data name="Settings_OpenFolder.Content" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="Error_EditingSongInfoOther" xml:space="preserve">
+    <value>We can't edit some of the properties of {Title}. This may be because the file type is unsupported, or the file is corrupted.</value>
   </data>
 </root>

@@ -72,7 +72,7 @@ public static class LoggingService
     private static ILoggerFactory CreateLoggerFactory()
     {
         var logFolder = GetLogFolderPath();
-        var logFilePath = Path.Combine(logFolder, "app-{Date}.log");
+        var logFilePath = Path.Combine(logFolder, "app-${shortdate}.log");
 
         // 确保日志文件夹存在
         Directory.CreateDirectory(logFolder);
@@ -87,7 +87,8 @@ public static class LoggingService
                 "${longdate} [${level:uppercase=true:padding=5}] ${logger:shortName=true} ${message} ${exception:format=tostring}",
             MaxArchiveFiles = 7, // 保留7天的日志
             ArchiveEvery = FileArchivePeriod.Day,
-            ArchiveSuffixFormat = "yyyyMMdd",
+            ArchiveFileName = Path.Combine(logFolder, "app-{#}.log"), // 归档模式
+            ArchiveSuffixFormat = "{0:yyyyMMdd}",
             KeepFileOpen = true,
             AutoFlush = false, // 提高性能
             OpenFileFlushTimeout = 5, // 5秒自动刷新
@@ -134,7 +135,7 @@ public static class LoggingService
     /// <summary>
     /// 获取日志文件夹路径
     /// </summary>
-    private static string GetLogFolderPath()
+    public static string GetLogFolderPath()
     {
         try
         {

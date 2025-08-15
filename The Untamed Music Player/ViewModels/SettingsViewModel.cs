@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -172,6 +173,14 @@ public partial class SettingsViewModel : ObservableRecipient
         Data.SettingsViewModel = this;
     }
 
+    /// <summary>
+    /// 通知 EmptyFolderMessageVisibility 属性发生了变化（供外部调用）
+    /// </summary>
+    public void NotifyEmptyFolderMessageVisibilityChanged()
+    {
+        OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
+    }
+
     public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
         (sender as Button)!.IsEnabled = false;
@@ -222,8 +231,8 @@ public partial class SettingsViewModel : ObservableRecipient
         senderButton!.IsEnabled = false;
         var openPicker = new FolderPicker();
         var window = App.MainWindow;
-        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-        WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
+        var hWnd = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(openPicker, hWnd);
         openPicker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
         openPicker.FileTypeFilter.Add("*");
         var folder = await openPicker.PickSingleFolderAsync();
@@ -315,6 +324,13 @@ public partial class SettingsViewModel : ObservableRecipient
                 comboBox.SelectedIndex = index;
             }
         }
+    }
+
+    public void OpenLoggingFolderButton_Click(object sender, RoutedEventArgs e)
+    {
+        var logFolder = LoggingService.GetLogFolderPath();
+        Directory.CreateDirectory(logFolder);
+        Process.Start("explorer.exe", logFolder);
     }
 
     private static string GetVersionDescription()
