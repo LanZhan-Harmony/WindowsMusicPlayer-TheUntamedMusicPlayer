@@ -76,6 +76,21 @@ public static class HighPerformanceLogger
             "正在扫描音乐库: 已处理 {ProcessedCount} 个文件, 进度: {ProgressPercent}%"
         );
 
+    // 编辑歌曲信息相关日志
+    private static readonly Action<ILogger, string, Exception?> _editingSongInfoIO =
+        LoggerMessage.Define<string>(
+            LogLevel.Error,
+            new EventId(2500, nameof(EditingSongInfoIO)),
+            "Error_EditingSongInfoIO".GetLocalized()
+        );
+
+    private static readonly Action<ILogger, string, Exception?> _editingSongInfoOther =
+        LoggerMessage.Define<string>(
+            LogLevel.Error,
+            new EventId(2501, nameof(EditingSongInfoOther)),
+            "Error_EditingSongInfoOther".GetLocalized()
+        );
+
     // 播放器相关日志
     private static readonly Action<ILogger, string, string, Exception?> _songStartedPlaying =
         LoggerMessage.Define<string, string>(
@@ -216,6 +231,19 @@ public static class HighPerformanceLogger
         int processedCount,
         double progressPercent
     ) => _libraryScanning(logger, processedCount, progressPercent, null);
+
+    // 编辑歌曲信息相关方法
+    public static void EditingSongInfoIO(
+        this ILogger logger,
+        string title,
+        Exception? exception = null
+    ) => _editingSongInfoIO(logger, title, exception);
+
+    public static void EditingSongInfoOther(
+        this ILogger logger,
+        string title,
+        Exception? exception = null
+    ) => _editingSongInfoOther(logger, title, exception);
 
     // 播放器相关方法
     public static void SongStartedPlaying(this ILogger logger, string title, string artist) =>

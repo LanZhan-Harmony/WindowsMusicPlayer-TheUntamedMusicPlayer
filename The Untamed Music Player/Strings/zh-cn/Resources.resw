@@ -712,6 +712,21 @@
     <value>发送反馈</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value>我们无法打开 {Title}。这可能是因为文件类型不受支持、文件扩展名不正确或文件已损坏。</value>
+    <value>我们无法打开 {Title}。这可能是因为文件类型不受支持、文件扩展名不正确、文件已损坏或网络异常。</value>
+  </data>
+  <data name="Error_EditingSongInfoIO" xml:space="preserve">
+    <value>我们无法编辑 {Title}。这可能是因为当前文件正在播放、被其他进程占用或文件类型不受支持。</value>
+  </data>
+  <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
+    <value>开发者选项</value>
+  </data>
+  <data name="Settings_Logging.Header" xml:space="preserve">
+    <value>日志记录</value>
+  </data>
+  <data name="Settings_OpenFolder.Content" xml:space="preserve">
+    <value>打开文件夹</value>
+  </data>
+  <data name="Error_EditingSongInfoOther" xml:space="preserve">
+    <value>我们无法编辑 {Title} 的部分属性。这可能是因为文件类型不受支持或文件已损坏。</value>
   </data>
 </root>
