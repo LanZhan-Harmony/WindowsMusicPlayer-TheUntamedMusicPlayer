@@ -1,11 +1,10 @@
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Messages;
 
-namespace The_Untamed_Music_Player.Services;
+namespace The_Untamed_Music_Player.Helpers;
 
 /// <summary>
 /// InfoBar管理器，提供高级的InfoBar显示功能
@@ -17,12 +16,8 @@ public partial class InfoBarManager : IDisposable
     private readonly Storyboard _hideInfoBarStoryboard;
     private readonly Queue<LogMessage> _messageQueue = [];
     private bool _isDisplaying = false;
-    private DispatcherTimer? _autoCloseTimer; // ✅ 添加计时器
+    private DispatcherTimer? _autoCloseTimer;
 
-    /// <summary>
-    /// 初始化InfoBar管理器
-    /// </summary>
-    /// <param name="infoBar">要管理的InfoBar控件</param>
     public InfoBarManager(
         InfoBar infoBar,
         Storyboard showInfoBarStoryboard,
@@ -52,11 +47,6 @@ public partial class InfoBarManager : IDisposable
         DisplayMessage(logMessage, autoCloseSeconds);
     }
 
-    /// <summary>
-    /// 显示消息的内部方法
-    /// </summary>
-    /// <param name="logMessage">日志消息</param>
-    /// <param name="autoCloseSeconds">自动关闭时间</param>
     private void DisplayMessage(LogMessage logMessage, int autoCloseSeconds)
     {
         try

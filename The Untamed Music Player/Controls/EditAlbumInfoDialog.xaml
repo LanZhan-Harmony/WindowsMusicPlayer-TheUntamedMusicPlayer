@@ -15,6 +15,24 @@
         <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
+        <StackLayout x:Key="VerticalStackLayout"
+                     Orientation="Vertical" Spacing="20"/>
+        <DataTemplate x:Key="SongItemsRepeaterDataTemplate" x:DataType="local:TempSongInfo">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="35"/>
+                    <ColumnDefinition Width="17"/>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="17"/>
+                    <ColumnDefinition Width="257"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0"
+                         LostFocus="TextBox_LostFocus"
+                         Text="{x:Bind TrackStr}"/>
+                <TextBox Grid.Column="2" Text="{x:Bind Title}"/>
+                <TextBox Grid.Column="4" Text="{x:Bind ArtistsStr}"/>
+            </Grid>
+        </DataTemplate>
     </ContentDialog.Resources>
     <ScrollViewer Margin="-24,0,-24,0">
         <StackPanel>
@@ -22,6 +40,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="4"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -91,9 +111,35 @@
                         </Grid>
                     </Border>
                 </StackPanel>
-                <ItemsView Grid.Row="2" Grid.Column="0"
-                           Grid.ColumnSpan="3"
-                           Margin="0,12,0,0" Padding="24,0,24,0"/>
+                <Grid Grid.Row="2" Grid.Column="0"
+                      Grid.ColumnSpan="3"
+                      Margin="24,0,24,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="17"/>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="17"/>
+                        <ColumnDefinition Width="280"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="PropertiesDialog_Track"
+                               Grid.Column="0"
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Uid="PropertiesDialog_Title"
+                               Grid.Column="2"
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Uid="PropertiesDialog_ContributingArtists"
+                               Grid.Column="4"
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                </Grid>
+                <ItemsRepeater Grid.Row="4" Grid.Column="0"
+                               Grid.ColumnSpan="3"
+                               Margin="24,4,24,0"
+                               ItemTemplate="{StaticResource SongItemsRepeaterDataTemplate}"
+                               ItemsSource="{x:Bind _tempSongs}"
+                               Layout="{StaticResource VerticalStackLayout}"/>
             </Grid>
         </StackPanel>
     </ScrollViewer>

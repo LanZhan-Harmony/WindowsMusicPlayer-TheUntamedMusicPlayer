@@ -61,7 +61,7 @@
         </Grid>
         <ScrollViewer Grid.Row="1" Padding="0,0,0,16">
             <StackPanel x:Name="ContentArea"
-                        Orientation="Vertical" Spacing="34">
+                        Orientation="Vertical" Spacing="18">
 
                 <!--  动画  -->
                 <StackPanel.ChildrenTransitions>
@@ -214,11 +214,8 @@
                     </toolkit:SettingsCard>
                 </StackPanel>
 
+                <!--  歌词设置  -->
                 <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_LyricSettings"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
@@ -231,6 +228,15 @@
                     </toolkit:SettingsCard>
                 </StackPanel>
 
+                <!--  开发者选项  -->
+                <StackPanel Spacing="2">
+                    <TextBlock x:Uid="Settings_DeveloperOptions"
+                               Margin="0,12,0,5"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <toolkit:SettingsCard x:Uid="Settings_Logging" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE9A4;}">
+                        <Button x:Uid="Settings_OpenFolder" Click="{x:Bind ViewModel.OpenLoggingFolderButton_Click}"/>
+                    </toolkit:SettingsCard>
+                </StackPanel>
 
                 <!--  关于  -->
                 <StackPanel Spacing="2">

@@ -103,7 +103,7 @@ public partial class MusicLibrary : ObservableRecipient
                 }
                 catch { }
             }
-            OnPropertyChanged(nameof(SettingsViewModel.EmptyFolderMessageVisibility));
+            Data.SettingsViewModel?.NotifyEmptyFolderMessageVisibilityChanged();
         }
         _librarySemaphore.Release();
     }
