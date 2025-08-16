@@ -471,6 +471,9 @@
   <data name="Artists_SortBy" xml:space="preserve">
     <value>A-Z, Z-A</value>
   </data>
+  <data name="Playlists_SortBy" xml:space="preserve">
+    <value>A-Z, Z-A, 修改日期 (升序), 修改日期 (降序)</value>
+  </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
     <value>窗口失去焦点后背景停止更新</value>
   </data>
@@ -712,10 +715,10 @@
     <value>发送反馈</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value>我们无法打开 {Title}。这可能是因为文件类型不受支持、文件扩展名不正确、文件已损坏或网络异常。</value>
+    <value>我们无法打开 {title}。这可能是因为文件类型不受支持、文件扩展名不正确、文件已损坏或网络异常。</value>
   </data>
   <data name="Error_EditingSongInfoIO" xml:space="preserve">
-    <value>我们无法编辑 {Title}。这可能是因为当前文件正在播放、被其他进程占用或文件类型不受支持。</value>
+    <value>我们无法编辑 {title}。这可能是因为当前文件正在播放、被其他进程占用或文件类型不受支持。</value>
   </data>
   <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
     <value>开发者选项</value>
@@ -727,6 +730,21 @@
     <value>打开文件夹</value>
   </data>
   <data name="Error_EditingSongInfoOther" xml:space="preserve">
-    <value>我们无法编辑 {Title} 的部分属性。这可能是因为文件类型不受支持或文件已损坏。</value>
+    <value>我们无法编辑 {title} 的部分属性。这可能是因为文件类型不受支持或文件已损坏。</value>
+  </data>
+  <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
+    <value>你没有任何播放列表</value>
+  </data>
+  <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
+    <value>创建一个新的播放列表</value>
+  </data>
+  <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
+    <value>新建播放列表</value>
+  </data>
+  <data name="PlayLists_CreatePlaylist.Content" xml:space="preserve">
+    <value>创建播放列表</value>
+  </data>
+  <data name="PlaylistInfo_UntitledPlaylist.SelectedText" xml:space="preserve">
+    <value>无标题播放列表</value>
   </data>
 </root>

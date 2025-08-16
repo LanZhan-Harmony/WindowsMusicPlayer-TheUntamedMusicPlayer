@@ -71,10 +71,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
 
     public void SortByListView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (sender is ListView listView)
-        {
-            listView.SelectedIndex = SortMode;
-        }
+        (sender as ListView)!.SelectedIndex = SortMode;
     }
 
     public async Task SortArtists()

@@ -206,7 +206,7 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="MenuGrid.Margin" Value="16,24,16,0"/>
+                        <Setter Target="MenuGrid.Margin" Value="16,23,16,0"/>
                         <Setter Target="AlbumGridView.Padding" Value="12,0,12,0"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -215,15 +215,13 @@
                         <AdaptiveTrigger MinWindowWidth="641"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="MenuGrid.Margin" Value="{StaticResource NavigationViewPageContentMargin}"/>
+                        <Setter Target="MenuGrid.Margin" Value="56,23,56,0"/>
                         <Setter Target="AlbumGridView.Padding" Value="52,0,52,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Grid x:Name="MenuGrid"
-              Grid.Row="0"
-              Margin="{StaticResource NavigationViewPageContentMargin}">
+        <Grid x:Name="MenuGrid" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
