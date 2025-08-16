@@ -7,6 +7,14 @@
       NavigationCacheMode="Enabled"
       mc:Ignorable="d">
 
+    <Page.Resources>
+        <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
+            <ListViewItem Margin="0,2,0,2">
+                <TextBlock Text="{x:Bind}"/>
+            </ListViewItem>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid x:Name="ContentArea">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,6 +28,11 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="TitleGrid.Margin" Value="16,36,16,0"/>
+                        <Setter Target="Image.Height" Value="90"/>
+                        <Setter Target="Image.Width" Value="90"/>
+                        <Setter Target="StackPanel.Spacing" Value="11"/>
+                        <Setter Target="MenuGrid.Margin" Value="16,23,16,0"/>
+                        <Setter Target="PlaylistGridView.Padding" Value="12,0,12,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
@@ -28,6 +41,11 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="TitleGrid.Margin" Value="56,36,56,0"/>
+                        <Setter Target="Image.Height" Value="150"/>
+                        <Setter Target="Image.Width" Value="150"/>
+                        <Setter Target="StackPanel.Spacing" Value="22"/>
+                        <Setter Target="MenuGrid.Margin" Value="56,23,56,0"/>
+                        <Setter Target="PlaylistGridView.Padding" Value="52,0,52,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -35,6 +53,108 @@
         <Grid x:Name="TitleGrid" Grid.Row="0">
             <TextBlock x:Uid="Shell_PlayLists1" Style="{StaticResource TitleLargeTextBlockStyle}"/>
         </Grid>
-        <ScrollViewer Grid.Row="1" Padding="0,0,0,16"/>
+
+        <Grid x:Name="NoPlaylistControl"
+              Grid.Row="1"
+              Visibility="Collapsed">
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <StackPanel x:Name="StackPanel"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <Image x:Name="Image"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Source="ms-appx:///Assets/PlaylistGradient.svg"/>
+                    <StackPanel VerticalAlignment="Center"
+                                Orientation="Vertical" Spacing="8">
+                        <TextBlock x:Uid="NoPlaylist_PlaylistDonotHave" FontSize="29"/>
+                        <Button Style="{StaticResource AccentButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                          FontSize="12" Glyph="&#xE710;"/>
+                                <TextBlock x:Uid="PlayLists_CreateNewPlaylist"/>
+                            </StackPanel>
+                            <Button.Flyout>
+                                <Flyout Placement="Bottom">
+                                    <StackPanel Spacing="16">
+                                        <TextBox x:Uid="PlaylistInfo_UntitledPlaylist"
+                                                 Width="280"
+                                                 HorizontalAlignment="Center"/>
+                                        <Button x:Uid="PlayLists_CreatePlaylist"
+                                                HorizontalAlignment="Center"
+                                                Style="{StaticResource AccentButtonStyle}"/>
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="HavePlaylistControl"
+              Grid.Row="1"
+              Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="MenuGrid"
+                  Grid.Row="0"
+                  Margin="56,23,56,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Style="{StaticResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                  FontSize="12" Glyph="&#xE710;"/>
+                        <TextBlock x:Uid="PlayLists_NewPlaylist"/>
+                    </StackPanel>
+                    <Button.Flyout>
+                        <Flyout Placement="Bottom">
+                            <StackPanel Spacing="16">
+                                <TextBox x:Uid="PlaylistInfo_UntitledPlaylist"
+                                         Width="280"
+                                         HorizontalAlignment="Center"/>
+                                <Button x:Uid="PlayLists_CreatePlaylist"
+                                        HorizontalAlignment="Center"
+                                        Style="{StaticResource AccentButtonStyle}"/>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button Grid.Column="2"
+                        Background="Transparent" BorderBrush="Transparent">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock x:Uid="Songs_SortByChosen"/>
+                        <TextBlock Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.SortByStr, Mode=OneWay}"/>
+                        <FontIcon Margin="8,0,0,0"
+                                  FontFamily="{StaticResource UntamedFontFamily}"
+                                  FontSize="12" Glyph="&#xE70D;"/>
+                    </StackPanel>
+                    <Button.Flyout>
+                        <Flyout Placement="Bottom">
+                            <ListView x:Name="SortByListView"
+                                      Margin="-12,-13,-12,-15"
+                                      ItemTemplate="{StaticResource SortByListViewItemTemplate}"
+                                      ItemsSource="{x:Bind ViewModel.SortBy}"
+                                      Loaded="{x:Bind ViewModel.SortByListView_Loaded}"
+                                      SelectionChanged="{x:Bind ViewModel.SortByListView_SelectionChanged}"/>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+            <GridView x:Name="PlaylistGridView"
+                      Grid.Row="1"
+                      helper:ListViewExtensions.ItemCornerRadius="8"
+                      IsItemClickEnabled="True"
+                      ItemClick="PlaylistGridView_ItemClick"
+                      Loaded="PlaylistGridView_Loaded"
+                      SelectionMode="None"/>
+        </Grid>
     </Grid>
 </Page>

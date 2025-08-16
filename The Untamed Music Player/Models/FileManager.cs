@@ -41,7 +41,7 @@ public class FileManager
                     CreationCollisionOption.OpenIfExists
                 );
 
-                // 计算并保存文件夹指纹 - 使用快速方法
+                // 计算并保存文件夹指纹
                 var folderFingerprints = new Dictionary<string, string>();
                 foreach (var folder in folders)
                 {
@@ -53,31 +53,22 @@ public class FileManager
                     folderFingerprints
                 );
 
-                // 保存歌曲列表 - 将 ConcurrentBag 转换为数组
-                await SaveObjectToFileAsync(libraryFolder, "Songs", songs.ToArray());
-
-                // 保存专辑数据 - 将 ConcurrentDictionary 转换为 Dictionary
-                await SaveObjectToFileAsync(
-                    libraryFolder,
-                    "Albums",
-                    albums.ToDictionary(kv => kv.Key, kv => kv.Value)
-                );
-
-                // 保存艺术家数据
-                await SaveObjectToFileAsync(
-                    libraryFolder,
-                    "Artists",
-                    artists.ToDictionary(kv => kv.Key, kv => kv.Value)
-                );
-
-                // 保存流派列表
-                await SaveObjectToFileAsync(libraryFolder, "Genres", genres.ToArray());
-
-                // 保存音乐文件夹列表
-                await SaveObjectToFileAsync(
+                var songsTask = SaveObjectToFileAsync(libraryFolder, "Songs", songs); // 保存歌曲列表
+                var albumsTask = SaveObjectToFileAsync(libraryFolder, "Albums", albums); // 保存专辑数据
+                var artistsTask = SaveObjectToFileAsync(libraryFolder, "Artists", artists); // 保存艺术家数据
+                var genresTask = SaveObjectToFileAsync(libraryFolder, "Genres", genres); // 保存流派列表
+                var musicFoldersTask = SaveObjectToFileAsync(
                     libraryFolder,
                     "MusicFolders",
-                    musicFolders.ToDictionary(kv => kv.Key, kv => kv.Value)
+                    musicFolders
+                ); // 保存音乐文件夹列表
+
+                await Task.WhenAll(
+                    songsTask,
+                    albumsTask,
+                    artistsTask,
+                    genresTask,
+                    musicFoldersTask
                 );
             }
             catch (Exception ex)
@@ -105,14 +96,8 @@ public class FileManager
                 CreationCollisionOption.OpenIfExists
             );
 
-            // 保存播放队列
-            await SaveObjectToFileAsync(playQueueFolder, "PlayQueue", playQueue.ToArray());
-            // 保存随机播放队列
-            await SaveObjectToFileAsync(
-                playQueueFolder,
-                "ShuffledPlayQueue",
-                shuffledPlayQueue.ToArray()
-            );
+            await SaveObjectToFileAsync(playQueueFolder, "PlayQueue", playQueue); // 保存播放队列
+            await SaveObjectToFileAsync(playQueueFolder, "ShuffledPlayQueue", shuffledPlayQueue); // 保存随机播放队列
         });
     }
 
@@ -174,34 +159,36 @@ public class FileManager
             }
 
             // 并行加载所有数据文件
-            var songsTask = LoadObjectFromFileAsync<BriefLocalSongInfo[]>(libraryFolder, "Songs");
-            var albumsTask = LoadObjectFromFileAsync<Dictionary<string, LocalAlbumInfo>>(
+            var songsTask = LoadObjectFromFileAsync<ConcurrentBag<BriefLocalSongInfo>>(
+                libraryFolder,
+                "Songs"
+            );
+            var albumsTask = LoadObjectFromFileAsync<ConcurrentDictionary<string, LocalAlbumInfo>>(
                 libraryFolder,
                 "Albums"
             );
-            var artistsTask = LoadObjectFromFileAsync<Dictionary<string, LocalArtistInfo>>(
-                libraryFolder,
-                "Artists"
-            );
-            var genresTask = LoadObjectFromFileAsync<string[]>(libraryFolder, "Genres");
-            var musicFoldersTask = LoadObjectFromFileAsync<Dictionary<string, byte>>(
+            var artistsTask = LoadObjectFromFileAsync<
+                ConcurrentDictionary<string, LocalArtistInfo>
+            >(libraryFolder, "Artists");
+            var genresTask = LoadObjectFromFileAsync<List<string>>(libraryFolder, "Genres");
+            var musicFoldersTask = LoadObjectFromFileAsync<ConcurrentDictionary<string, byte>>(
                 libraryFolder,
                 "MusicFolders"
             );
 
             await Task.WhenAll(songsTask, albumsTask, artistsTask, genresTask, musicFoldersTask);
 
-            var songsArray = songsTask.Result;
+            var songsList = songsTask.Result;
             var albumsDict = albumsTask.Result;
             var artistsDict = artistsTask.Result;
-            var genresArray = genresTask.Result;
+            var genresList = genresTask.Result;
             var musicFoldersDict = musicFoldersTask.Result;
 
             if (
-                songsArray is null
+                songsList is null
                 || albumsDict is null
                 || artistsDict is null
-                || genresArray is null
+                || genresList is null
                 || musicFoldersDict is null
             )
             {
@@ -209,11 +196,11 @@ public class FileManager
             }
 
             // 填充数据结构
-            data.Songs = [.. songsArray];
-            data.Albums = new ConcurrentDictionary<string, LocalAlbumInfo>(albumsDict);
-            data.Artists = new ConcurrentDictionary<string, LocalArtistInfo>(artistsDict);
-            data.Genres = [.. genresArray];
-            data.MusicFolders = new ConcurrentDictionary<string, byte>(musicFoldersDict);
+            data.Songs = songsList;
+            data.Albums = albumsDict;
+            data.Artists = artistsDict;
+            data.Genres = genresList;
+            data.MusicFolders = musicFoldersDict;
 
             // 加载所有专辑封面
             foreach (var album in albumsDict.Values)
@@ -250,24 +237,20 @@ public class FileManager
                 return ([], []);
             }
 
-            var playQueuetask = LoadObjectFromFileAsync<IBriefSongInfoBase[]>(
+            var playQueuetask = LoadObjectFromFileAsync<ObservableCollection<IBriefSongInfoBase>>(
                 playQueueFolder,
                 "PlayQueue"
             );
-            var shuffledPlayQueuetask = LoadObjectFromFileAsync<IBriefSongInfoBase[]>(
-                playQueueFolder,
-                "ShuffledPlayQueue"
-            );
+            var shuffledPlayQueuetask = LoadObjectFromFileAsync<
+                ObservableCollection<IBriefSongInfoBase>
+            >(playQueueFolder, "ShuffledPlayQueue");
 
             await Task.WhenAll(playQueuetask, shuffledPlayQueuetask);
 
-            var playQueueArray = playQueuetask.Result ?? [];
-            var shuffledPlayQueueArray = shuffledPlayQueuetask.Result ?? [];
+            var playQueueList = playQueuetask.Result ?? [];
+            var shuffledPlayQueueList = shuffledPlayQueuetask.Result ?? [];
 
-            return (
-                new ObservableCollection<IBriefSongInfoBase>(playQueueArray),
-                new ObservableCollection<IBriefSongInfoBase>(shuffledPlayQueueArray)
-            );
+            return (playQueueList, shuffledPlayQueueList);
         }
         catch (Exception ex)
         {
