@@ -1,10 +1,8 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using NLog.Config;
-using NLog.Extensions.Logging;
-using NLog.Targets;
 using The_Untamed_Music_Player.Messages;
 using Windows.Storage;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Services;
 
@@ -63,7 +61,6 @@ public static class LoggingService
     public static void Shutdown()
     {
         _loggerFactory?.Dispose();
-        NLog.LogManager.Shutdown();
     }
 
     /// <summary>
@@ -72,62 +69,28 @@ public static class LoggingService
     private static ILoggerFactory CreateLoggerFactory()
     {
         var logFolder = GetLogFolderPath();
-        var logFilePath = Path.Combine(logFolder, "app-${shortdate}.log");
 
         // 确保日志文件夹存在
         Directory.CreateDirectory(logFolder);
 
-        // 配置 NLog
-        var config = new LoggingConfiguration();
-
-        var fileTarget = new FileTarget("fileTarget")
-        {
-            FileName = logFilePath,
-            Layout =
-                "${longdate} [${level:uppercase=true:padding=5}] ${logger:shortName=true} ${message} ${exception:format=tostring}",
-            MaxArchiveFiles = 7, // 保留7天的日志
-            ArchiveEvery = FileArchivePeriod.Day,
-            ArchiveFileName = Path.Combine(logFolder, "app-{#}.log"), // 归档模式
-            ArchiveSuffixFormat = "{0:yyyyMMdd}",
-            KeepFileOpen = true,
-            AutoFlush = false, // 提高性能
-            OpenFileFlushTimeout = 5, // 5秒自动刷新
-            CreateDirs = true,
-            BufferSize = 32768, // 32KB缓冲区
-        };
-
-#if DEBUG
-        // 调试输出目标
-        var debugTarget = new DebugTarget("debugTarget")
-        {
-            Layout =
-                "${time} [${level:uppercase=true:padding=5}] ${logger:shortName=true} ${message}",
-        };
-        config.AddTarget(debugTarget);
-        config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, debugTarget);
-#endif
-
-        config.AddTarget(fileTarget);
-
-        // 所有级别写入文件
-        config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, fileTarget);
-
-        NLog.LogManager.Configuration = config;
-
-        // 创建自定义日志提供程序
+        // 创建日志工厂
         var loggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
         {
             builder.ClearProviders();
-            builder.AddNLog();
+
 #if DEBUG
             builder.SetMinimumLevel(LogLevel.Debug);
 #else
             builder.SetMinimumLevel(LogLevel.Information);
 #endif
-        });
 
-        // 添加Messenger日志提供程序
-        loggerFactory.AddProvider(new MessengerLoggerProvider());
+            // 添加文件日志提供程序
+            var logFilePath = Path.Combine(logFolder, $"app-{DateTime.Now:yyyyMMdd}.log");
+            builder.AddZLoggerFile(logFilePath);
+
+            // 添加Messenger日志提供程序（用于InfoBar显示）
+            builder.AddProvider(new MessengerLoggerProvider());
+        });
 
         return loggerFactory;
     }
@@ -184,7 +147,7 @@ public static class LoggingService
             }
 
             var cutoffDate = DateTime.Now.AddDays(-7);
-            var logFiles = Directory.GetFiles(logFolder, "*.log*");
+            var logFiles = Directory.GetFiles(logFolder, "app-*.log");
 
             foreach (var file in logFiles)
             {
