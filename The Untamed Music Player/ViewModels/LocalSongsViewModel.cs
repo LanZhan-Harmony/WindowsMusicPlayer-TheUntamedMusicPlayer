@@ -464,10 +464,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void SortByListView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (sender is ListView listView)
-        {
-            listView.SelectedIndex = SortMode;
-        }
+        (sender as ListView)!.SelectedIndex = SortMode;
     }
 
     public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -490,10 +487,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
 
     public void GenreListView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (sender is ListView listView)
-        {
-            listView.SelectedIndex = GenreMode;
-        }
+        (sender as ListView)!.SelectedIndex = GenreMode;
     }
 
     public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)

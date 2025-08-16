@@ -4,7 +4,6 @@
       xmlns:contract="using:The_Untamed_Music_Player.Contracts.Models"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
-      xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
       xmlns:ui="using:CommunityToolkit.WinUI"
