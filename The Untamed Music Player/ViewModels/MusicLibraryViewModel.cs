@@ -1,14 +1,19 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class MusicLibraryViewModel : ObservableRecipient
+public partial class MusicLibraryViewModel
+    : ObservableRecipient,
+        IRecipient<HaveMusicMessage>,
+        IDisposable
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
@@ -26,15 +31,23 @@ public partial class MusicLibraryViewModel : ObservableRecipient
     public partial Visibility HaveMusicControlVisibility { get; set; } = Visibility.Collapsed;
 
     public MusicLibraryViewModel()
+        : base(StrongReferenceMessenger.Default)
     {
+        Messenger.Register(this);
         InitializeLibraryAsync();
+    }
+
+    public void Receive(HaveMusicMessage message)
+    {
+        NoMusicControlVisibility = message.HasMusic ? Visibility.Collapsed : Visibility.Visible;
+        HaveMusicControlVisibility = message.HasMusic ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private async void InitializeLibraryAsync()
     {
         if (!Data.HasMusicLibraryLoaded)
         {
-            await Task.Run(Data.MusicLibrary.LoadLibraryAsync);
+            await Data.MusicLibrary.LoadLibraryAsync();
         }
         IsProgressRingActive = false;
         NoMusicControlVisibility = Data.MusicLibrary.Songs.IsEmpty
@@ -65,7 +78,7 @@ public partial class MusicLibraryViewModel : ObservableRecipient
             IsProgressRingActive = true;
             Data.MusicLibrary.Folders.Add(folder);
             await SettingsViewModel.SaveFoldersAsync();
-            await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync);
+            await Data.MusicLibrary.LoadLibraryAgainAsync();
             IsProgressRingActive = false;
         }
         (sender as Button)!.IsEnabled = true;
@@ -85,4 +98,6 @@ public partial class MusicLibraryViewModel : ObservableRecipient
             selectedIndex
         );
     }
+
+    public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }

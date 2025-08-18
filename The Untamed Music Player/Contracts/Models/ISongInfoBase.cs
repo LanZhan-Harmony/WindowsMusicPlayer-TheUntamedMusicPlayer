@@ -79,6 +79,18 @@ public partial interface IBriefSongInfoBase : ICloneable
     /// <param name="year"></param>
     /// <returns></returns>
     static string GetYearStr(ushort year) => year is 0 or 1970 ? "" : $"{year}";
+
+    static async Task<string?> GetCoverPathAsync(IBriefSongInfoBase info)
+    {
+        return info switch
+        {
+            BriefLocalSongInfo localInfo => localInfo.HasCover ? localInfo.Path : null,
+            BriefCloudOnlineSongInfo cloudInfo => (
+                await DetailedCloudOnlineSongInfo.CreateAsync(cloudInfo)
+            ).CoverPath,
+            _ => null,
+        };
+    }
 }
 
 public interface IDetailedSongInfoBase : IBriefSongInfoBase

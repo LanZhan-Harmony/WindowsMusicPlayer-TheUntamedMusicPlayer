@@ -5,7 +5,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
-      Unloaded="MusicLibraryPage_Unloaded"
       mc:Ignorable="d">
 
     <Grid x:Name="ContentArea">
