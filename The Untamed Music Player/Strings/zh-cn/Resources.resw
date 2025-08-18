@@ -561,6 +561,9 @@
   <data name="RenamePlaylistInfoDialog.Title" xml:space="preserve">
     <value>重命名播放列表</value>
   </data>
+  <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
+    <value>添加到新建播放列表</value>
+  </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
     <value>关闭</value>
   </data>
@@ -576,6 +579,9 @@
   <data name="RenamePlaylistInfoDialog.CloseButtonText" xml:space="preserve">
     <value>取消</value>
   </data>
+  <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>保存</value>
   </data>
@@ -584,6 +590,9 @@
   </data>
   <data name="RenamePlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>重命名</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>创建</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
     <value>桌面歌词</value>

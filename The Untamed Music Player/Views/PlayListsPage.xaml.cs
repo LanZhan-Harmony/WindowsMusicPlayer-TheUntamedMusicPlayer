@@ -90,6 +90,7 @@ public sealed partial class PlayListsPage : Page
     {
         var playlistName = PlaylistNameTextBox1.Text;
         Data.PlaylistLibrary.NewPlaylist(playlistName);
+        CreatePlaylistButton.Flyout.Hide();
     }
 
     private void PlaylistNameTextBox1_KeyUp(object sender, KeyRoutedEventArgs e)
@@ -102,6 +103,7 @@ public sealed partial class PlayListsPage : Page
     {
         var playlistName = PlaylistNameTextBox2.Text;
         Data.PlaylistLibrary.NewPlaylist(playlistName);
+        NewPlaylistButton.Flyout.Hide();
     }
 
     private void PlaylistNameTextBox2_KeyUp(object sender, KeyRoutedEventArgs e)

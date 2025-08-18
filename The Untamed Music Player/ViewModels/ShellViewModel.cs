@@ -53,7 +53,7 @@ public partial class ShellViewModel : ObservableObject
         {
             SelectedItem = navView.MenuItems[3];
         }
-        else if (CurrentPage is nameof(PlayListsPage))
+        else if (CurrentPage is nameof(PlayListsPage) or nameof(PlayListDetailPage))
         {
             SelectedItem = navView.MenuItems[4];
         }

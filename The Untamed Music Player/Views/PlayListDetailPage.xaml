@@ -156,9 +156,11 @@
                         <Setter Target="CoverArt.Height" Value="136"/>
                         <Setter Target="TitleText.FontSize" Value="28"/>
                         <Setter Target="CaptionText.Margin" Value="0,1,0,0"/>
-                        <Setter Target="AddToButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="RenameButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="DeleteButton.Visibility" Value="Collapsed"/>
                         <Setter Target="MoreButton.Visibility" Value="Visible"/>
-                        <Setter Target="AddToFlyout.Visibility" Value="Visible"/>
+                        <Setter Target="RenameInfoFlyout.Visibility" Value="Visible"/>
+                        <Setter Target="DeleteInfoFlyout.Visibility" Value="Visible"/>
                         <Setter Target="SongListView.Padding" Value="12,0,12,0"/>
                         <Setter Target="SongListView.Margin" Value="0,68,0,0"/>
                         <Setter Target="ListHeaderPadding.Height" Value="81"/>
@@ -175,9 +177,11 @@
                         <Setter Target="CoverArt.Height" Value="162"/>
                         <Setter Target="TitleText.FontSize" Value="28"/>
                         <Setter Target="CaptionText.Margin" Value="0,8,0,0"/>
-                        <Setter Target="AddToButton.Visibility" Value="Visible"/>
-                        <Setter Target="MoreButton.Visibility" Value="Collapsed"/>
-                        <Setter Target="AddToFlyout.Visibility" Value="Collapsed"/>
+                        <Setter Target="RenameButton.Visibility" Value="Visible"/>
+                        <Setter Target="DeleteButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                        <Setter Target="RenameInfoFlyout.Visibility" Value="Collapsed"/>
+                        <Setter Target="DeleteInfoFlyout.Visibility" Value="Visible"/>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
                         <Setter Target="SongListView.Margin" Value="0,46,0,0"/>
                         <Setter Target="ListHeaderPadding.Height" Value="103"/>
@@ -194,8 +198,11 @@
                         <Setter Target="CoverArt.Height" Value="208"/>
                         <Setter Target="TitleText.FontSize" Value="40"/>
                         <Setter Target="CaptionText.Margin" Value="0,8,0,0"/>
-                        <Setter Target="AddToButton.Visibility" Value="Visible"/>
+                        <Setter Target="RenameButton.Visibility" Value="Visible"/>
+                        <Setter Target="DeleteButton.Visibility" Value="Visible"/>
                         <Setter Target="MoreButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="RenameInfoFlyout.Visibility" Value="Collapsed"/>
+                        <Setter Target="DeleteInfoFlyout.Visibility" Value="Collapsed"/>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
                         <Setter Target="SongListView.Margin" Value="0,15,0,0"/>
                         <Setter Target="ListHeaderPadding.Height" Value="135"/>
@@ -230,16 +237,16 @@
                         SizeChanged="PlaylistArt_OnSizeChanged"
                         Translation="0,0,16">
                     <Border.Background>
-                        <ImageBrush ImageSource="{x:Bind ViewModel.Playlist.Cover}" Stretch="UniformToFill"/>
+                        <ImageBrush ImageSource="{x:Bind ViewModel.Cover, Mode=OneWay}" Stretch="UniformToFill"/>
                     </Border.Background>
                     <Border Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                             CornerRadius="{x:Bind CoverArt.CornerRadius, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.Playlist.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="CoverArtIcon"
                                   FontFamily="{StaticResource UntamedFontFamily}"
                                   FontSize="64"
                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                  Glyph="&#xE728;"/>
+                                  Glyph="&#xED3B;"/>
                     </Border>
                 </Border>
 
@@ -247,13 +254,13 @@
                             Grid.Column="1"
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
-                               Text="{x:Bind ViewModel.Playlist.Name, Mode=OneWay}"
+                               Text="{x:Bind ViewModel.PlaylistName, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
-                               ToolTipService.ToolTip="{x:Bind ViewModel.Playlist.Name}"/>
+                               ToolTipService.ToolTip="{x:Bind ViewModel.PlaylistName, Mode=OneWay}"/>
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind ViewModel.Playlist.TotalSongNumStr, Mode=OneWay}"
+                               Text="{x:Bind ViewModel.TotalSongNumStr, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
 
                     <Grid x:Name="ButtonPanel">
@@ -270,6 +277,25 @@
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                               FontSize="16" Glyph="&#xE768;"/>
                                     <TextBlock x:Uid="AlbumDetail_PlayAll" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="AddToButton"
+                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    XYFocusDown="{x:Bind SongListView}">
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
+                                                        Width="216"
+                                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                           Glyph=&#xE93F;}"/>
+                                        <MenuFlyoutSeparator/>
+                                        <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}"/>
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                              FontSize="16" Glyph="&#xE710;"/>
+                                    <TextBlock x:Uid="Songs_AddTo" FontSize="12"/>
                                 </StackPanel>
                             </Button>
                             <Button x:Name="RenameButton"
@@ -292,40 +318,20 @@
                                     <TextBlock x:Uid="PlayLists_Delete" FontSize="12"/>
                                 </StackPanel>
                             </Button>
-                            <Button x:Name="AddToButton"
-                                    Padding="11,9,11,9" HorizontalAlignment="Stretch"
-                                    XYFocusDown="{x:Bind SongListView}">
-                                <Button.Flyout>
-                                    <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                                        Width="216"
-                                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
-                                                                           Glyph=&#xE93F;}"/>
-                                        <MenuFlyoutSeparator/>
-                                        <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}"/>
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                                              FontSize="16" Glyph="&#xE710;"/>
-                                    <TextBlock x:Uid="Songs_AddTo" FontSize="12"/>
-                                </StackPanel>
-                            </Button>
                             <Button x:Name="MoreButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch">
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutSubItem x:Name="AddToFlyout" x:Uid="Songs_AddTo"
-                                                           Width="158"
-                                                           Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
-                                                                              Glyph=&#xE710;}">
-                                            <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                                            Width="216"
-                                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
-                                                                               Glyph=&#xE93F;}"/>
-                                            <MenuFlyoutSeparator/>
-                                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}"/>
-                                        </MenuFlyoutSubItem>
+                                        <MenuFlyoutItem x:Name="RenameInfoFlyout" x:Uid="PlayLists_Rename"
+                                                        Width="158"
+                                                        Click="RenameButton_Click"
+                                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                           Glyph=&#xE8AC;}"/>
+                                        <MenuFlyoutItem x:Name="DeleteInfoFlyout" x:Uid="PlayLists_Delete"
+                                                        Width="158"
+                                                        Click="{x:Bind ViewModel.DeleteButton_Click}"
+                                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                           Glyph=&#xE74D;}"/>
                                     </MenuFlyout>
                                 </Button.Flyout>
                                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}"

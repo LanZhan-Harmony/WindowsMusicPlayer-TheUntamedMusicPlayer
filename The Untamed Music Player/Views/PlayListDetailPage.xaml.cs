@@ -196,8 +196,6 @@ public sealed partial class PlayListDetailPage : Page
         }
     }
 
-    private void RenameButton_Click(object sender, RoutedEventArgs e) { }
-
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         var grid = sender as Grid;
@@ -214,6 +212,12 @@ public sealed partial class PlayListDetailPage : Page
         var playButton = grid?.FindName("PlayButton") as Button;
         checkBox?.Visibility = Visibility.Collapsed;
         playButton?.Visibility = Visibility.Collapsed;
+    }
+
+    private async void RenameButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new RenamePlaylistInfoDialog(ViewModel.Playlist) { XamlRoot = XamlRoot };
+        await dialog.ShowAsync();
     }
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
