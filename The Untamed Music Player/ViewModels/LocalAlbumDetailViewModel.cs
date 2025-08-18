@@ -8,7 +8,7 @@ using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class LocalAlbumDetailViewModel : ObservableRecipient
+public partial class LocalAlbumDetailViewModel : ObservableObject
 {
     public LocalAlbumInfo Album { get; set; } = Data.SelectedLocalAlbum!;
 
@@ -16,8 +16,7 @@ public partial class LocalAlbumDetailViewModel : ObservableRecipient
 
     public LocalAlbumDetailViewModel()
     {
-        var tempList = Data.MusicLibrary.GetSongsByAlbum(Album);
-        SongList = [.. tempList];
+        SongList = [.. Data.MusicLibrary.GetSongsByAlbum(Album)];
     }
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)

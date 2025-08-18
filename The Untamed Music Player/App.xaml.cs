@@ -70,19 +70,20 @@ public partial class App : Application
 
                     // Views and ViewModels
                     services.AddTransient<MainViewModel>();
-                    services.AddTransient<SettingsViewModel>();
-                    services.AddTransient<PlayListsViewModel>();
-                    services.AddTransient<PlayQueueViewModel>();
-                    services.AddTransient<MusicLibraryViewModel>();
-                    services.AddTransient<HomeViewModel>();
-                    services.AddSingleton<ShellViewModel>();
                     services.AddTransient<RootPlayBarViewModel>();
+                    services.AddSingleton<ShellViewModel>();
+                    services.AddTransient<SettingsViewModel>();
+                    services.AddTransient<HomeViewModel>();
+                    services.AddTransient<MusicLibraryViewModel>();
+                    services.AddTransient<PlayQueueViewModel>();
+                    services.AddTransient<PlayListsViewModel>();
                     services.AddTransient<LyricViewModel>();
                     services.AddTransient<LocalSongsViewModel>();
                     services.AddSingleton<LocalAlbumsViewModel>();
                     services.AddSingleton<LocalArtistsViewModel>();
                     services.AddTransient<LocalAlbumDetailViewModel>();
                     services.AddTransient<LocalArtistDetailViewModel>();
+                    services.AddTransient<PlayListDetailViewModel>();
                     services.AddTransient<OnlineSongsViewModel>();
                     services.AddTransient<OnlineAlbumsViewModel>();
                     services.AddTransient<OnlineArtistsViewModel>();

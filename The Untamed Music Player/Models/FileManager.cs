@@ -90,20 +90,55 @@ public class FileManager
     {
         Task.Run(async () =>
         {
-            var localFolder = ApplicationData.Current.LocalFolder;
-            var playQueueFolder = await localFolder.CreateFolderAsync(
-                "PlayQueueData",
-                CreationCollisionOption.OpenIfExists
-            );
+            try
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
+                var playQueueFolder = await localFolder.CreateFolderAsync(
+                    "PlayQueueData",
+                    CreationCollisionOption.OpenIfExists
+                );
 
-            await SaveObjectToFileAsync(playQueueFolder, "PlayQueue", playQueue); // 保存播放队列
-            await SaveObjectToFileAsync(playQueueFolder, "ShuffledPlayQueue", shuffledPlayQueue); // 保存随机播放队列
+                await SaveObjectToFileAsync(playQueueFolder, "PlayQueue", playQueue); // 保存播放队列
+                await SaveObjectToFileAsync(
+                    playQueueFolder,
+                    "ShuffledPlayQueue",
+                    shuffledPlayQueue
+                ); // 保存随机播放队列
+            }
+            catch { }
+        });
+    }
+
+    /// <summary>
+    /// 保存播放列表数据到文件
+    /// </summary>
+    /// <param name="playlists"></param>
+    public static void SavePlaylistDataAsync(List<PlaylistInfo> playlists)
+    {
+        Task.Run(async () =>
+        {
+            try
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
+                var playlistFolder = await localFolder.CreateFolderAsync(
+                    "PlaylistData",
+                    CreationCollisionOption.OpenIfExists
+                );
+
+                await SaveObjectToFileAsync(playlistFolder, "Playlists", playlists); // 保存播放列表
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"保存播放列表数据错误: {ex.Message}");
+            }
         });
     }
 
     /// <summary>
     /// 从文件加载音乐库数据
     /// </summary>
+    /// <param name="folders"></param>
+    /// <returns></returns>
     public static async Task<(bool needRescan, MusicLibraryData data)> LoadLibraryDataAsync(
         ObservableCollection<StorageFolder> folders
     )
@@ -217,6 +252,10 @@ public class FileManager
         }
     }
 
+    /// <summary>
+    /// 从文件加载播放队列数据
+    /// </summary>
+    /// <returns></returns>
     public static async Task<(
         ObservableCollection<IBriefSongInfoBase> playQueue,
         ObservableCollection<IBriefSongInfoBase> shuffledPlayQueue
@@ -225,7 +264,6 @@ public class FileManager
         try
         {
             var localFolder = ApplicationData.Current.LocalFolder;
-            // 尝试打开音乐库数据目录
             StorageFolder playQueueFolder;
             try
             {
@@ -233,7 +271,6 @@ public class FileManager
             }
             catch
             {
-                // 文件夹不存在，需要重新扫描
                 return ([], []);
             }
 
@@ -256,6 +293,35 @@ public class FileManager
         {
             Debug.WriteLine($"加载播放队列数据错误: {ex.Message}");
             return ([], []);
+        }
+    }
+
+    /// <summary>
+    /// 从文件加载播放列表数据
+    /// </summary>
+    /// <returns></returns>
+    public static async Task<List<PlaylistInfo>> LoadPlaylistDataAsync()
+    {
+        try
+        {
+            var localFolder = ApplicationData.Current.LocalFolder;
+            StorageFolder playlistFolder;
+            try
+            {
+                playlistFolder = await localFolder.GetFolderAsync("PlaylistData");
+            }
+            catch
+            {
+                return [];
+            }
+
+            return await LoadObjectFromFileAsync<List<PlaylistInfo>>(playlistFolder, "Playlists")
+                ?? [];
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"加载播放列表数据错误: {ex.Message}");
+            return [];
         }
     }
 

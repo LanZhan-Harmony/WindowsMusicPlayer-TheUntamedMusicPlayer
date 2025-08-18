@@ -4,14 +4,161 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      NavigationCacheMode="Enabled"
+      xmlns:model="using:The_Untamed_Music_Player.Models"
+      xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+      xmlns:ui="using:CommunityToolkit.WinUI"
       mc:Ignorable="d">
 
     <Page.Resources>
+        <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
+                                                        EmptyValue="Visible" NotEmptyValue="Collapsed"/>
         <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
             <ListViewItem Margin="0,2,0,2">
                 <TextBlock Text="{x:Bind}"/>
             </ListViewItem>
+        </DataTemplate>
+        <DataTemplate x:Key="PlaylistGridViewTemplate" x:DataType="model:PlaylistInfo">
+            <Grid Width="170" Height="226"
+                  Background="Transparent"
+                  PointerEntered="Grid_PointerEntered"
+                  PointerExited="Grid_PointerExited">
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Uid="Songs_Play"
+                                        Width="216"
+                                        Click="PlayButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE768;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_PlayNext"
+                                        Click="PlayNextButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xF5EB;}"/>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutSubItem x:Uid="Songs_AddTo" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
+                                            Width="216"
+                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                               Glyph=&#xE93F;}"/>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}"/>
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutItem x:Uid="PlayLists_Rename"
+                                        Click="RenameButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE8AC;}"/>
+                        <MenuFlyoutItem x:Uid="PlayLists_Delete"
+                                        Click="DeleteButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE74D;}"/>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem x:Uid="Songs_Select"
+                                        Click="SelectButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xEA20;}"/>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Canvas.ZIndex="2">
+                    <CheckBox x:Name="ItemCheckBox"
+                              Margin="18,12,0,0" HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Visibility="Collapsed"/>
+                    <Button x:Name="PlayButton"
+                            Width="32" Height="32"
+                            Margin="12,0,0,8" HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Click="PlayButton_Click"
+                            Style="{StaticResource CircularButtonStyle}"
+                            Visibility="Collapsed">
+                        <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                  FontSize="12" Glyph="&#xE768;"/>
+                    </Button>
+                    <Button x:Name="MenuButton"
+                            Width="32" Height="32"
+                            Margin="0,0,12,8" HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Style="{StaticResource CircularButtonStyle}"
+                            Visibility="Collapsed">
+                        <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                  FontSize="12" Glyph="&#xE712;"/>
+                        <Button.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem x:Uid="Songs_Play"
+                                                Width="216"
+                                                Click="PlayButton_Click"
+                                                Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                   Glyph=&#xE768;}"/>
+                                <MenuFlyoutItem x:Uid="Songs_PlayNext"
+                                                Click="PlayNextButton_Click"
+                                                Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                   Glyph=&#xF5EB;}"/>
+                                <MenuFlyoutSeparator/>
+                                <MenuFlyoutSubItem x:Uid="Songs_AddTo" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}">
+                                    <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
+                                                    Width="216"
+                                                    Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                       Glyph=&#xE93F;}"/>
+                                    <MenuFlyoutSeparator/>
+                                    <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}"/>
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutItem x:Uid="PlayLists_Rename"
+                                                Click="RenameButton_Click"
+                                                Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                   Glyph=&#xE8AC;}"/>
+                                <MenuFlyoutItem x:Uid="PlayLists_Delete"
+                                                Click="DeleteButton_Click"
+                                                Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                   Glyph=&#xE74D;}"/>
+                                <MenuFlyoutSeparator/>
+                                <MenuFlyoutItem x:Uid="Songs_Select"
+                                                Click="SelectButton_Click"
+                                                Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                   Glyph=&#xEA20;}"/>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
+                <Border x:Name="CoverBorder"
+                        Grid.Row="0"
+                        Width="158" Height="158"
+                        Margin="0,6,0,2" Padding="0"
+                        CornerRadius="5">
+                    <Grid>
+                        <Image x:Name="ControllerCover"
+                               Width="160" Height="160"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Canvas.ZIndex="1"
+                               Source="{x:Bind Cover}"
+                               Stretch="UniformToFill"/>
+                        <Grid Width="160" Height="160"
+                              Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
+                              Canvas.ZIndex="0">
+                            <FontIcon Canvas.ZIndex="0"
+                                      FontFamily="{StaticResource UntamedFontFamily}"
+                                      FontSize="50"
+                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                      Glyph="&#xED3B;"
+                                      Visibility="{x:Bind Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+                <TextBlock Grid.Row="1"
+                           Margin="9,0,9,0"
+                           FontWeight="SemiBold"
+                           Text="{x:Bind Name}"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Row="2"
+                           Margin="9,0,9,0"
+                           FontSize="12"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Text="{x:Bind TotalSongNumStr}"
+                           TextTrimming="CharacterEllipsis"/>
+            </Grid>
         </DataTemplate>
     </Page.Resources>
 
@@ -56,7 +203,7 @@
 
         <Grid x:Name="NoPlaylistControl"
               Grid.Row="1"
-              Visibility="Collapsed">
+              Visibility="{x:Bind ViewModel.NoPlaylistControlVisibility, Mode=OneWay}">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <StackPanel x:Name="StackPanel"
                             HorizontalAlignment="Center"
@@ -69,7 +216,7 @@
                     <StackPanel VerticalAlignment="Center"
                                 Orientation="Vertical" Spacing="8">
                         <TextBlock x:Uid="NoPlaylist_PlaylistDonotHave" FontSize="29"/>
-                        <Button Style="{StaticResource AccentButtonStyle}">
+                        <Button x:Name="CreatePlaylistButton" Style="{StaticResource AccentButtonStyle}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                           FontSize="12" Glyph="&#xE710;"/>
@@ -78,11 +225,13 @@
                             <Button.Flyout>
                                 <Flyout Placement="Bottom">
                                     <StackPanel Spacing="16">
-                                        <TextBox x:Uid="PlaylistInfo_UntitledPlaylist"
+                                        <TextBox x:Name="PlaylistNameTextBox1" x:Uid="PlaylistInfo_UntitledPlaylist1"
                                                  Width="280"
-                                                 HorizontalAlignment="Center"/>
-                                        <Button x:Uid="PlayLists_CreatePlaylist"
+                                                 HorizontalAlignment="Center"
+                                                 KeyUp="PlaylistNameTextBox1_KeyUp"/>
+                                        <Button x:Name="CreatePlaylistFlyoutButton1" x:Uid="PlayLists_CreatePlaylist"
                                                 HorizontalAlignment="Center"
+                                                Click="PlayLists_CreatePlaylist1"
                                                 Style="{StaticResource AccentButtonStyle}"/>
                                     </StackPanel>
                                 </Flyout>
@@ -95,7 +244,7 @@
 
         <Grid x:Name="HavePlaylistControl"
               Grid.Row="1"
-              Visibility="Visible">
+              Visibility="{x:Bind ViewModel.HavePlaylistControlVisibility, Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -117,11 +266,13 @@
                     <Button.Flyout>
                         <Flyout Placement="Bottom">
                             <StackPanel Spacing="16">
-                                <TextBox x:Uid="PlaylistInfo_UntitledPlaylist"
+                                <TextBox x:Name="PlaylistNameTextBox2" x:Uid="PlaylistInfo_UntitledPlaylist1"
                                          Width="280"
-                                         HorizontalAlignment="Center"/>
-                                <Button x:Uid="PlayLists_CreatePlaylist"
+                                         HorizontalAlignment="Center"
+                                         KeyUp="PlaylistNameTextBox2_KeyUp"/>
+                                <Button x:Name="CreatePlaylistFlyoutButton2" x:Uid="PlayLists_CreatePlaylist"
                                         HorizontalAlignment="Center"
+                                        Click="PlayLists_CreatePlaylist2"
                                         Style="{StaticResource AccentButtonStyle}"/>
                             </StackPanel>
                         </Flyout>
@@ -148,11 +299,19 @@
                     </Button.Flyout>
                 </Button>
             </Grid>
+            <ProgressRing Grid.Row="1"
+                          Width="50" Height="50"
+                          Margin="0,24,0,0"
+                          Canvas.ZIndex="1"
+                          IsActive="{x:Bind ViewModel.IsProgressRingActive, Mode=OneWay}"/>
             <GridView x:Name="PlaylistGridView"
                       Grid.Row="1"
+                      Margin="0,33,0,0"
                       helper:ListViewExtensions.ItemCornerRadius="8"
                       IsItemClickEnabled="True"
                       ItemClick="PlaylistGridView_ItemClick"
+                      ItemTemplate="{StaticResource PlaylistGridViewTemplate}"
+                      ItemsSource="{x:Bind ViewModel.Playlists, Mode=OneWay}"
                       Loaded="PlaylistGridView_Loaded"
                       SelectionMode="None"/>
         </Grid>

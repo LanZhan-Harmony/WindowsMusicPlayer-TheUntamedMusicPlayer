@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
-using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage;
 
 namespace The_Untamed_Music_Player.Models;
@@ -67,14 +66,12 @@ public partial class MusicLibrary : ObservableRecipient
     /// <summary>
     /// 文件夹列表
     /// </summary>
-    [ObservableProperty]
-    public partial ObservableCollection<StorageFolder> Folders { get; set; } = [];
+    public ObservableCollection<StorageFolder> Folders { get; set; } = [];
 
     /// <summary>
     /// 流派列表
     /// </summary>
-    [ObservableProperty]
-    public partial List<string> Genres { get; set; } = [];
+    public List<string> Genres { get; set; } = [];
 
     public MusicLibrary()
         : base(StrongReferenceMessenger.Default)
@@ -110,25 +107,83 @@ public partial class MusicLibrary : ObservableRecipient
 
     public async Task LoadLibraryAsync()
     {
-        await _librarySemaphore.WaitAsync(); // 等待信号量, 只允许一个线程访问此函数
-        try
+        await Task.Run(async () =>
         {
-            Songs.Clear();
-            Artists.Clear();
-            Albums.Clear();
-            var (needRescan, libraryData) = await FileManager.LoadLibraryDataAsync(Folders);
-            if (!needRescan)
+            await _librarySemaphore.WaitAsync(); // 等待信号量, 只允许一个线程访问此函数
+            try
             {
-                Songs = libraryData.Songs;
-                Albums = libraryData.Albums;
-                Artists = libraryData.Artists;
-                Genres = libraryData.Genres;
-                _musicFolders = libraryData.MusicFolders;
-                Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty));
-                await Task.Run(AddFolderWatcher);
+                Songs.Clear();
+                Artists.Clear();
+                Albums.Clear();
+                var (needRescan, libraryData) = await FileManager.LoadLibraryDataAsync(Folders);
+                if (!needRescan)
+                {
+                    Songs = libraryData.Songs;
+                    Albums = libraryData.Albums;
+                    Artists = libraryData.Artists;
+                    Genres = libraryData.Genres;
+                    _musicFolders = libraryData.MusicFolders;
+                    _dispatcherQueue.TryEnqueue(() =>
+                        Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
+                    );
+                    await Task.Run(AddFolderWatcher);
+                }
+                else
+                {
+                    var loadMusicTasks = new List<Task>();
+                    if (Folders.Any())
+                    {
+                        foreach (var folder in Folders)
+                        {
+                            _musicFolders.TryAdd(folder.Path, 0);
+                            loadMusicTasks.Add(LoadMusicAsync(folder, folder.DisplayName));
+                        }
+                    }
+                    await Task.WhenAll(loadMusicTasks);
+                    foreach (var album in Albums.Values)
+                    {
+                        album.LoadCover();
+                    }
+                    Genres =
+                    [
+                        .. _musicGenres
+                            .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
+                            .OrderBy(x => x, new GenreComparer()),
+                    ];
+                    _dispatcherQueue.TryEnqueue(() =>
+                        Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
+                    );
+                    _musicGenres.Clear();
+                    var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
+                    await Task.Run(AddFolderWatcher);
+                    FileManager.SaveLibraryDataAsync(Folders, data);
+                }
+                Data.HasMusicLibraryLoaded = true;
             }
-            else
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.StackTrace);
+            }
+            finally
+            {
+                _librarySemaphore.Release();
+                GC.Collect();
+            }
+        });
+    }
+
+    public async Task LoadLibraryAgainAsync()
+    {
+        await Task.Run(async () =>
+        {
+            await _librarySemaphore.WaitAsync();
+            try
+            {
+                _dispatcherQueue.TryEnqueue(() => IsProgressRingActive = true);
+                Songs.Clear();
+                Artists.Clear();
+                Albums.Clear();
+                _musicFolders.Clear();
                 var loadMusicTasks = new List<Task>();
                 if (Folders.Any())
                 {
@@ -149,78 +204,26 @@ public partial class MusicLibrary : ObservableRecipient
                         .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                         .OrderBy(x => x, new GenreComparer()),
                 ];
-                Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty));
+                _dispatcherQueue.TryEnqueue(() =>
+                    Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
+                );
                 _musicGenres.Clear();
+                FolderWatchers.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
                 await Task.Run(AddFolderWatcher);
                 FileManager.SaveLibraryDataAsync(Folders, data);
             }
-            Data.HasMusicLibraryLoaded = true;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex.StackTrace);
-        }
-        finally
-        {
-            _librarySemaphore.Release();
-            GC.Collect();
-        }
-    }
-
-    public async Task LoadLibraryAgainAsync()
-    {
-        await _librarySemaphore.WaitAsync();
-        try
-        {
-            _dispatcherQueue.TryEnqueue(() =>
+            catch (Exception ex)
             {
-                IsProgressRingActive = true;
-            });
-            Songs.Clear();
-            Artists.Clear();
-            Albums.Clear();
-            _musicFolders.Clear();
-            var loadMusicTasks = new List<Task>();
-            if (Folders.Any())
-            {
-                foreach (var folder in Folders)
-                {
-                    _musicFolders.TryAdd(folder.Path, 0);
-                    loadMusicTasks.Add(LoadMusicAsync(folder, folder.DisplayName));
-                }
+                Debug.WriteLine(ex.StackTrace);
             }
-            await Task.WhenAll(loadMusicTasks);
-            foreach (var album in Albums.Values)
+            finally
             {
-                album.LoadCover();
+                _dispatcherQueue.TryEnqueue(() => IsProgressRingActive = false);
+                _librarySemaphore.Release();
+                GC.Collect();
             }
-            Genres =
-            [
-                .. _musicGenres
-                    .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
-                    .OrderBy(x => x, new GenreComparer()),
-            ];
-            Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty));
-            _musicGenres.Clear();
-            FolderWatchers.Clear();
-            var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
-            await Task.Run(AddFolderWatcher);
-            FileManager.SaveLibraryDataAsync(Folders, data);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex.StackTrace);
-        }
-        finally
-        {
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                IsProgressRingActive = false;
-            });
-            _librarySemaphore.Release();
-            GC.Collect();
-        }
+        });
     }
 
     private async Task LoadMusicAsync(StorageFolder folder, string foldername)

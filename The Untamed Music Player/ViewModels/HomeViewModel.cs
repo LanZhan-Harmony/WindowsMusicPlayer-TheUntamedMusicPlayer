@@ -8,7 +8,7 @@ using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class HomeViewModel : ObservableRecipient
+public partial class HomeViewModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();

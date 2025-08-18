@@ -1,21 +1,70 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class PlayQueueViewModel
+public partial class PlayListDetailViewModel
+    : ObservableRecipient,
+        IRecipient<PlaylistChangeMessage>,
+        IDisposable
 {
-    public PlayQueueViewModel() { }
+    [ObservableProperty]
+    public partial PlaylistInfo Playlist { get; set; } = Data.SelectedPlaylist!;
 
-    public void PlayQueueListView_ItemClick(object sender, ItemClickEventArgs e)
+    [ObservableProperty]
+    public partial ObservableCollection<IndexedPlaylistSong> SongList { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsPlayAllButtonEnabled { get; set; } = false;
+
+    public PlayListDetailViewModel()
+        : base(StrongReferenceMessenger.Default)
     {
-        if (e.ClickedItem is IBriefSongInfoBase info)
+        Messenger.Register(this);
+        SongList = Playlist.SongList;
+        IsPlayAllButtonEnabled = SongList.Count > 0;
+    }
+
+    public void Receive(PlaylistChangeMessage message)
+    {
+        Playlist = Data.SelectedPlaylist = message.Playlist;
+        SongList = Playlist.SongList;
+        IsPlayAllButtonEnabled = SongList.Count > 0;
+    }
+
+    public void PlayAllButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (SongList.Count == 0)
         {
-            Data.MusicPlayer.PlaySongByInfo(info);
+            return;
+        }
+        var songList = SongList.Select(s => s.Song).ToList();
+        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList, 0, 0);
+        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+    }
+
+    public void DeleteButton_Click(object sender, RoutedEventArgs e)
+    {
+        Data.ShellPage!.GetFrame().GoBack();
+        Data.SelectedPlaylist = null;
+        Data.PlaylistLibrary.DeletePlaylist(Playlist);
+    }
+
+    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        var songList = SongList.Select(s => s.Song);
+        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList, 0, 0);
+        if (e.ClickedItem is IndexedPlaylistSong indexedInfo)
+        {
+            Data.MusicPlayer.PlaySongByInfo(indexedInfo.Song);
         }
     }
 
@@ -29,19 +78,23 @@ public class PlayQueueViewModel
         Data.MusicPlayer.AddSongToNextPlay(info);
     }
 
-    public async void RemoveButton_Click(IBriefSongInfoBase info)
+    public void RemoveButton_Click(IndexedPlaylistSong info)
     {
-        await Data.MusicPlayer.RemoveSong(info);
+        Data.PlaylistLibrary.DeleteFromPlaylist(Playlist, info);
+        if (SongList.Count == 0)
+        {
+            IsPlayAllButtonEnabled = false;
+        }
     }
 
-    public void MoveUpButton_Click(IBriefSongInfoBase info)
+    public void MoveUpButton_Click(IndexedPlaylistSong info)
     {
-        Data.MusicPlayer.MoveUpSong(info);
+        Data.PlaylistLibrary.MoveUpInPlaylist(Playlist, info);
     }
 
-    public void MoveDownButton_Click(IBriefSongInfoBase info)
+    public void MoveDownButton_Click(IndexedPlaylistSong info)
     {
-        Data.MusicPlayer.MoveDownSong(info);
+        Data.PlaylistLibrary.MoveDownInPlaylist(Playlist, info);
     }
 
     public async void ShowAlbumButton_Click(IBriefSongInfoBase info)
@@ -104,8 +157,5 @@ public class PlayQueueViewModel
         }
     }
 
-    public void ClearButton_Click(object sender, RoutedEventArgs e)
-    {
-        Data.MusicPlayer.ClearPlayQueue();
-    }
+    public void Dispose() => Messenger.Unregister<PlaylistChangeMessage>(this);
 }

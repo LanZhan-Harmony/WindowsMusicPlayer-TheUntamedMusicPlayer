@@ -10,10 +10,14 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class LocalSongsViewModel : ObservableRecipient
+public partial class LocalSongsViewModel
+    : ObservableRecipient,
+        IRecipient<HaveMusicMessage>,
+        IDisposable
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
@@ -97,8 +101,54 @@ public partial class LocalSongsViewModel : ObservableRecipient
     public LocalSongsViewModel()
         : base(StrongReferenceMessenger.Default)
     {
+        Messenger.Register(this);
         LoadModeAndSongList();
         Data.LocalSongsViewModel = this;
+    }
+
+    public void Receive(HaveMusicMessage message)
+    {
+        LoadModeAndSongList();
+    }
+
+    /// <summary>
+    /// 添加歌曲到播放队列
+    /// </summary>
+    public void AddToPlayQueueButton_Click(BriefLocalSongInfo info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            var list = new List<BriefLocalSongInfo> { info };
+            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list, 0, 0);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToNextPlay(info);
+        }
+    }
+
+    public async void AddToNewPlaylistButton_Click(BriefLocalSongInfo info)
+    {
+        var playlist = Data.PlaylistLibrary.NewPlaylist(
+            "PlaylistInfo_UntitledPlaylist".GetLocalized()
+        );
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
+    }
+
+    /// <summary>
+    /// 添加歌曲到指定播放列表
+    /// </summary>
+    public async void AddToPlaylistButton_Click(BriefLocalSongInfo info, PlaylistInfo playlist)
+    {
+        try
+        {
+            await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"添加歌曲到播放列表失败: {ex.Message}");
+        }
     }
 
     public async void LoadModeAndSongList()
@@ -108,7 +158,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             return;
         }
-        Genres = [.. Data.MusicLibrary.Genres];
+        Genres = Data.MusicLibrary.Genres;
         await LoadSortModeAsync();
         await LoadGenreModeAsync();
         try
@@ -169,6 +219,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         GroupedSongList =
         [
             .. _songList
+                .AsValueEnumerable()
                 .GroupBy(m => TitleComparer.GetGroupKey(m.Title[0]))
                 .Select(g => new GroupInfoList(g) { Key = g.Key }),
         ];
@@ -188,6 +239,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
             foreach (var group in GroupedSongList)
             {
                 var filteredItems = group
+                    .AsValueEnumerable()
                     .Where(item =>
                         item is BriefLocalSongInfo songInfo && songInfo.GenreStr == genreToFilter
                     )
@@ -203,6 +255,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         {
             // 过滤NotGroupedSongList
             var filteredSongs = NotGroupedSongList
+                .AsValueEnumerable()
                 .Where(songInfo => songInfo.GenreStr == genreToFilter)
                 .ToList();
             NotGroupedSongList.Clear();
@@ -218,7 +271,12 @@ public partial class LocalSongsViewModel : ObservableRecipient
     private List<BriefLocalSongInfo> ConvertGroupedToFlatList()
     {
         return _isGrouped
-            ? [.. GroupedSongList.SelectMany(group => group.OfType<BriefLocalSongInfo>())]
+            ?
+            [
+                .. GroupedSongList
+                    .AsValueEnumerable()
+                    .SelectMany(group => group.OfType<BriefLocalSongInfo>()),
+            ]
             : NotGroupedSongList;
     }
 
@@ -239,6 +297,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m.Title, new TitleComparer())
@@ -258,6 +317,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m.Title, new TitleComparer())
@@ -277,6 +337,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m, new MusicArtistComparer())
@@ -296,6 +357,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m, new MusicArtistComparer())
@@ -315,6 +377,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m, new MusicAlbumComparer())
@@ -334,6 +397,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m, new MusicAlbumComparer())
@@ -353,6 +417,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m.Year)
@@ -370,6 +435,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m.Year)
@@ -387,7 +453,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
     {
         await Task.Run(() =>
         {
-            var sortedGroups = NotGroupedSongList.OrderBy(m => m.ModifiedDate);
+            var sortedGroups = NotGroupedSongList.AsValueEnumerable().OrderBy(m => m.ModifiedDate);
 
             NotGroupedSongList = [.. sortedGroups];
         });
@@ -400,7 +466,9 @@ public partial class LocalSongsViewModel : ObservableRecipient
     {
         await Task.Run(() =>
         {
-            var sortedGroups = NotGroupedSongList.OrderByDescending(m => m.ModifiedDate);
+            var sortedGroups = NotGroupedSongList
+                .AsValueEnumerable()
+                .OrderByDescending(m => m.ModifiedDate);
 
             NotGroupedSongList = [.. sortedGroups];
         });
@@ -415,6 +483,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderBy(m => m, new MusicFolderComparer())
@@ -434,6 +503,7 @@ public partial class LocalSongsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = GroupedSongList
+                .AsValueEnumerable()
                 .SelectMany(group => group)
                 .OfType<BriefLocalSongInfo>()
                 .OrderByDescending(m => m, new MusicFolderComparer())
@@ -447,18 +517,15 @@ public partial class LocalSongsViewModel : ObservableRecipient
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var currentsortmode = SortMode;
-        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
+        SortMode = (byte)(sender as ListView)!.SelectedIndex;
+        if (SortMode != currentsortmode)
         {
-            SortMode = (byte)selectedIndex;
-            if (SortMode != currentsortmode)
-            {
-                IsProgressRingActive = true;
-                await SortSongs();
-                OnPropertyChanged(nameof(GroupedSongList));
-                OnPropertyChanged(nameof(NotGroupedSongList));
-                Messenger.Send(new ScrollToSongMessage());
-                IsProgressRingActive = false;
-            }
+            IsProgressRingActive = true;
+            await SortSongs();
+            OnPropertyChanged(nameof(GroupedSongList));
+            OnPropertyChanged(nameof(NotGroupedSongList));
+            Messenger.Send(new ScrollToSongMessage());
+            IsProgressRingActive = false;
         }
     }
 
@@ -470,18 +537,15 @@ public partial class LocalSongsViewModel : ObservableRecipient
     public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var currentGenreMode = GenreMode;
-        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
+        GenreMode = (byte)(sender as ListView)!.SelectedIndex;
+        if (GenreMode != currentGenreMode)
         {
-            GenreMode = selectedIndex;
-            if (GenreMode != currentGenreMode)
-            {
-                IsProgressRingActive = true;
-                await FilterSongs();
-                OnPropertyChanged(nameof(GroupedSongList));
-                OnPropertyChanged(nameof(NotGroupedSongList));
-                Messenger.Send(new ScrollToSongMessage());
-                IsProgressRingActive = false;
-            }
+            IsProgressRingActive = true;
+            await FilterSongs();
+            OnPropertyChanged(nameof(GroupedSongList));
+            OnPropertyChanged(nameof(NotGroupedSongList));
+            Messenger.Send(new ScrollToSongMessage());
+            IsProgressRingActive = false;
         }
     }
 
@@ -605,4 +669,6 @@ public partial class LocalSongsViewModel : ObservableRecipient
             _ => new Thickness(15, 0, 15, 0),
         };
     }
+
+    public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }

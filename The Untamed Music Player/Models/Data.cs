@@ -25,6 +25,7 @@ public static class Data
 
     public static LocalAlbumInfo? SelectedLocalAlbum { get; set; }
     public static LocalArtistInfo? SelectedLocalArtist { get; set; }
+    public static PlaylistInfo? SelectedPlaylist { get; set; }
     public static IBriefOnlineAlbumInfo? SelectedOnlineAlbum { get; set; }
     public static IBriefOnlineArtistInfo? SelectedOnlineArtist { get; set; }
     public static IBriefOnlinePlaylistInfo? SelectedOnlinePlaylist { get; set; }
@@ -81,6 +82,7 @@ public static class Data
 
     public static OnlineMusicLibrary OnlineMusicLibrary { get; set; } = new();
     public static MusicLibrary MusicLibrary { get; set; } = new();
+    public static PlaylistLibrary PlaylistLibrary { get; set; } = new();
     public static MusicPlayer MusicPlayer { get; set; } = new();
 
     public static MainWindow? MainWindow { get; set; }
