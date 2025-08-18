@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
@@ -18,6 +19,15 @@ public partial class PlayListDetailViewModel
 {
     [ObservableProperty]
     public partial PlaylistInfo Playlist { get; set; } = Data.SelectedPlaylist!;
+
+    [ObservableProperty]
+    public partial string PlaylistName { get; set; } = Data.SelectedPlaylist!.Name;
+
+    [ObservableProperty]
+    public partial string TotalSongNumStr { get; set; } = Data.SelectedPlaylist!.TotalSongNumStr;
+
+    [ObservableProperty]
+    public partial WriteableBitmap? Cover { get; set; } = Data.SelectedPlaylist!.Cover;
 
     [ObservableProperty]
     public partial ObservableCollection<IndexedPlaylistSong> SongList { get; set; }
@@ -36,6 +46,9 @@ public partial class PlayListDetailViewModel
     public void Receive(PlaylistChangeMessage message)
     {
         Playlist = Data.SelectedPlaylist = message.Playlist;
+        PlaylistName = Playlist.Name;
+        TotalSongNumStr = Playlist.TotalSongNumStr;
+        Cover = Playlist.Cover;
         SongList = Playlist.SongList;
         IsPlayAllButtonEnabled = SongList.Count > 0;
     }
@@ -53,8 +66,8 @@ public partial class PlayListDetailViewModel
 
     public void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.ShellPage!.GetFrame().GoBack();
         Data.SelectedPlaylist = null;
+        Data.ShellPage!.GetFrame().GoBack();
         Data.PlaylistLibrary.DeletePlaylist(Playlist);
     }
 

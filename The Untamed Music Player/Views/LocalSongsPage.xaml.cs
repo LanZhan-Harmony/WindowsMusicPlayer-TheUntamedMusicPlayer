@@ -124,11 +124,17 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         }
     }
 
-    private void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            ViewModel.AddToNewPlaylistButton_Click(info);
+            var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+            {
+                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+            }
         }
     }
 
