@@ -257,7 +257,9 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Style="{StaticResource AccentButtonStyle}">
+                <Button x:Name="NewPlaylistButton"
+                        Grid.Column="0"
+                        Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                   FontSize="12" Glyph="&#xE710;"/>

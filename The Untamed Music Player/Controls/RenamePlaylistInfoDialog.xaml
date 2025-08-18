@@ -6,7 +6,6 @@
                xmlns:local="using:The_Untamed_Music_Player.Controls"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
-               xmlns:ui="using:CommunityToolkit.WinUI"
                DefaultButton="Primary"
                PrimaryButtonClick="RenameButtonClick"
                Style="{StaticResource DefaultContentDialogStyle}"
