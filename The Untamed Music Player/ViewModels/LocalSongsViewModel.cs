@@ -128,27 +128,9 @@ public partial class LocalSongsViewModel
         }
     }
 
-    public async void AddToNewPlaylistButton_Click(BriefLocalSongInfo info)
-    {
-        var playlist = Data.PlaylistLibrary.NewPlaylist(
-            "PlaylistInfo_UntitledPlaylist".GetLocalized()
-        );
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
-    }
-
-    /// <summary>
-    /// 添加歌曲到指定播放列表
-    /// </summary>
     public async void AddToPlaylistButton_Click(BriefLocalSongInfo info, PlaylistInfo playlist)
     {
-        try
-        {
-            await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"添加歌曲到播放列表失败: {ex.Message}");
-        }
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
     }
 
     public async void LoadModeAndSongList()

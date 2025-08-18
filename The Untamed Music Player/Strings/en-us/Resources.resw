@@ -561,6 +561,9 @@
   <data name="RenamePlaylistInfoDialog.Title" xml:space="preserve">
     <value>Rename playlist</value>
   </data>
+  <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
+    <value>Add to new playlist</value>
+  </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -576,6 +579,9 @@
   <data name="RenamePlaylistInfoDialog.CloseButtonText" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>Save</value>
   </data>
@@ -584,6 +590,9 @@
   </data>
   <data name="RenamePlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>Rename</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Create</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
     <value>Desktop lyric</value>
