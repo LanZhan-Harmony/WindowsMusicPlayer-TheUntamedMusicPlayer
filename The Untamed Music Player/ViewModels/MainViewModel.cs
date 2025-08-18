@@ -1,4 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -13,7 +12,7 @@ using WinRT;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class MainViewModel : ObservableRecipient
+public class MainViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();

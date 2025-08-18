@@ -11,25 +11,20 @@ using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
 
-public sealed partial class LocalSongsPage
-    : Page,
-        IRecipient<ScrollToSongMessage>,
-        IRecipient<HaveMusicMessage>
+public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessage>
 {
     public LocalSongsViewModel ViewModel { get; }
 
     public LocalSongsPage()
     {
         ViewModel = App.GetService<LocalSongsViewModel>();
-        StrongReferenceMessenger.Default.Register<ScrollToSongMessage>(this);
-        StrongReferenceMessenger.Default.Register<HaveMusicMessage>(this);
+        StrongReferenceMessenger.Default.Register(this);
         InitializeComponent();
     }
 
     private void LocalSongsPage_Unloaded(object sender, RoutedEventArgs e)
     {
         StrongReferenceMessenger.Default.Unregister<ScrollToSongMessage>(this);
-        StrongReferenceMessenger.Default.Unregister<HaveMusicMessage>(this);
     }
 
     public void Receive(ScrollToSongMessage message)
@@ -57,9 +52,34 @@ public sealed partial class LocalSongsPage
         }
     }
 
-    public void Receive(HaveMusicMessage message)
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
     {
-        DispatcherQueue.TryEnqueue(ViewModel.LoadModeAndSongList);
+        if (sender is MenuFlyoutSubItem { DataContext: BriefLocalSongInfo info } menuItem)
+        {
+            while (menuItem.Items.Count > 3) // 保留前三个固定项目，清除其他动态添加的项目
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = new Tuple<BriefLocalSongInfo, PlaylistInfo>(info, playlist),
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: Tuple<BriefLocalSongInfo, PlaylistInfo> tuple })
+        {
+            var (songInfo, playlist) = tuple;
+            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
+        }
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -93,6 +113,22 @@ public sealed partial class LocalSongsPage
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
             ViewModel.PlayNextButton_Click(info);
+        }
+    }
+
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
+        {
+            ViewModel.AddToPlayQueueButton_Click(info);
+        }
+    }
+
+    private void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
+        {
+            ViewModel.AddToNewPlaylistButton_Click(info);
         }
     }
 

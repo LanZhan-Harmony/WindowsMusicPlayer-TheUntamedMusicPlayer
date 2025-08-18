@@ -1,3 +1,4 @@
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Helpers;
@@ -30,7 +31,7 @@ public sealed partial class SettingsPage : Page
         var titleTextBlock = new TextBlock
         {
             Text = "Settings_Dialog1Title".GetLocalized(),
-            FontWeight = Microsoft.UI.Text.FontWeights.Normal,
+            FontWeight = FontWeights.Normal,
         };
         var dialog = new ContentDialog
         {
@@ -40,10 +41,7 @@ public sealed partial class SettingsPage : Page
                 ? ElementTheme.Dark
                 : ElementTheme.Light,
             Title = titleTextBlock,
-            Content =
-                "Settings_Dialog1Content1".GetLocalized()
-                + folderName
-                + "Settings_Dialog1Content2".GetLocalized(),
+            Content = "Settings_Dialog1Content".GetLocalizedWithReplace("{title}", folderName),
             PrimaryButtonText = "Settings_Dialog1Primary".GetLocalized(),
             CloseButtonText = "Settings_Dialog1Close".GetLocalized(),
             DefaultButton = ContentDialogButton.Primary,
@@ -62,7 +60,7 @@ public sealed partial class SettingsPage : Page
         var titleTextBlock = new TextBlock
         {
             Text = "Settings_Dialog2Title".GetLocalized(),
-            FontWeight = Microsoft.UI.Text.FontWeights.Normal,
+            FontWeight = FontWeights.Normal,
         };
         var dialog = new ContentDialog
         {

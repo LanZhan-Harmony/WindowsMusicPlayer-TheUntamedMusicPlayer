@@ -107,11 +107,6 @@ public sealed partial class OnlinePlayListDetailPage : Page
         );
     }
 
-    /// <summary>
-    /// 创建头部的组合动画效果
-    /// </summary>
-    /// <param name="propSet"></param>
-    /// <param name="scrollVerticalOffset"></param>
     private void CreateHeaderAnimation(
         CompositionPropertySet propSet,
         ScalarNode scrollVerticalOffset

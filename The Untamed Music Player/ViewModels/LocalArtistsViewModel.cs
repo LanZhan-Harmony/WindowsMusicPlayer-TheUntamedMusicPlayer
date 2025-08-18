@@ -4,11 +4,16 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class LocalArtistsViewModel : ObservableRecipient
+public partial class LocalArtistsViewModel
+    : ObservableRecipient,
+        IRecipient<HaveMusicMessage>,
+        IDisposable
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
@@ -37,6 +42,12 @@ public partial class LocalArtistsViewModel : ObservableRecipient
     public LocalArtistsViewModel()
         : base(StrongReferenceMessenger.Default)
     {
+        Messenger.Register(this);
+        LoadModeAndArtistList();
+    }
+
+    public void Receive(HaveMusicMessage message)
+    {
         LoadModeAndArtistList();
     }
 
@@ -56,16 +67,13 @@ public partial class LocalArtistsViewModel : ObservableRecipient
     public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var currentsortmode = SortMode;
-        if (sender is ListView listView && listView.SelectedIndex is int selectedIndex)
+        SortMode = (byte)(sender as ListView)!.SelectedIndex;
+        if (SortMode != currentsortmode)
         {
-            SortMode = (byte)selectedIndex;
-            if (SortMode != currentsortmode)
-            {
-                IsProgressRingActive = true;
-                await SortArtists();
-                OnPropertyChanged(nameof(GroupedArtistList));
-                IsProgressRingActive = false;
-            }
+            IsProgressRingActive = true;
+            await SortArtists();
+            OnPropertyChanged(nameof(GroupedArtistList));
+            IsProgressRingActive = false;
         }
     }
 
@@ -91,6 +99,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = _artistList
+                .AsValueEnumerable()
                 .OrderBy(m => m.Name, new ArtistTitleComparer())
                 .GroupBy(m =>
                     m.Name == "SongInfo_UnknownArtist".GetLocalized()
@@ -108,6 +117,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
         await Task.Run(() =>
         {
             var sortedGroups = _artistList
+                .AsValueEnumerable()
                 .OrderByDescending(m => m.Name, new ArtistTitleComparer())
                 .GroupBy(m =>
                     m.Name == "SongInfo_UnknownArtist".GetLocalized()
@@ -124,7 +134,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
     {
         var tempList = Data.MusicLibrary.GetSongsByArtist(info);
         var songList = tempList.ToList();
-        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList, 0, SortMode);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList, 0, 0);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -134,7 +144,7 @@ public partial class LocalArtistsViewModel : ObservableRecipient
         var songList = tempList.ToList();
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList, 0, SortMode);
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList, 0, 0);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
@@ -158,4 +168,6 @@ public partial class LocalArtistsViewModel : ObservableRecipient
     {
         return isActive ? 0 : 1;
     }
+
+    public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
