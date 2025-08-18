@@ -10,7 +10,7 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
 namespace The_Untamed_Music_Player.Models;
 
-public partial class OnlineMusicLibrary : ObservableRecipient
+public partial class OnlineMusicLibrary : ObservableObject
 {
     private bool _isSearchingMore = false;
 

@@ -20,7 +20,7 @@ public sealed partial class OnlinePlayListsPage : Page
         InitializeComponent();
     }
 
-    private void OnlinePlaylistsPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void OnlinePlaylistsPage_Loaded(object sender, RoutedEventArgs e)
     {
         _scrollViewer =
             PlaylistGridView.FindDescendant<ScrollViewer>()

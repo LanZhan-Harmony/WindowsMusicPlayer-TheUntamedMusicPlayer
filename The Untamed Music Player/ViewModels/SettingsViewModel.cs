@@ -20,7 +20,7 @@ using WinRT.Interop;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class SettingsViewModel : ObservableRecipient
+public partial class SettingsViewModel : ObservableObject
 {
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILocalSettingsService _localSettingsService;
@@ -199,7 +199,7 @@ public partial class SettingsViewModel : ObservableRecipient
             Data.MusicLibrary.Folders.Add(folder);
             OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
             await SaveFoldersAsync();
-            await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync); // 重新加载音乐库
+            await Data.MusicLibrary.LoadLibraryAgainAsync(); // 重新加载音乐库
         }
         (sender as Button)!.IsEnabled = true;
     }
@@ -209,14 +209,14 @@ public partial class SettingsViewModel : ObservableRecipient
         Data.MusicLibrary.Folders?.Remove(folder);
         OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
         await SaveFoldersAsync();
-        await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync);
+        await Data.MusicLibrary.LoadLibraryAgainAsync();
     }
 
     public async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
         var senderButton = sender as Button;
         senderButton!.IsEnabled = false;
-        await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync);
+        await Data.MusicLibrary.LoadLibraryAgainAsync();
         senderButton!.IsEnabled = true;
     }
 

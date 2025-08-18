@@ -9,7 +9,7 @@ using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class OnlineAlbumDetailViewModel : ObservableRecipient
+public partial class OnlineAlbumDetailViewModel : ObservableObject
 {
     private IBriefOnlineAlbumInfo? _cachedBriefAlbum = null;
     public IBriefOnlineAlbumInfo BriefAlbum { get; set; } = Data.SelectedOnlineAlbum!;

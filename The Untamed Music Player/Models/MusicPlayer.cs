@@ -20,7 +20,7 @@ using Windows.System.Threading;
 
 namespace The_Untamed_Music_Player.Models;
 
-public partial class MusicPlayer : ObservableRecipient, IDisposable
+public partial class MusicPlayer : ObservableObject, IDisposable
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();

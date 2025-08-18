@@ -36,12 +36,17 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\**\*" />
+    <None Remove="Controls\RenamePlaylistInfoDialog.xaml" />
+    <None Remove="Views\PlayListDetailPage.xaml" />
     <Content Update="Assets\Fonts\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\PlayListDetailPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup Condition="'$(Platform)' == 'x86'">
     <None Include="Libraries\x86\**\*">
@@ -65,16 +70,10 @@
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference
-      Include="CommunityToolkit.Labs.WinUI.MarqueeText"
-      Version="0.1.250206-build.2040"
-    />
+    <PackageReference Include="CommunityToolkit.Labs.WinUI.MarqueeText" Version="0.1.250206-build.2040" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.250402" />
-    <PackageReference
-      Include="CommunityToolkit.WinUI.Controls.SettingsControls"
-      Version="8.2.250402"
-    />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
     <PackageReference Include="hyjiacan.pinyin4net" Version="4.1.1" />
