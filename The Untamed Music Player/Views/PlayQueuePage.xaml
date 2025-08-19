@@ -11,7 +11,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="contract:IBriefSongInfoBase">
+        <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="model:IndexedPlayQueueSong">
             <Grid Height="52"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -28,13 +28,20 @@
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xF5EB;}"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutSubItem x:Uid="Songs_AddTo" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}">
+                        <MenuFlyoutSubItem x:Uid="Songs_AddTo"
+                                           Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                              Glyph=&#xE710;}"
+                                           Loaded="AddToSubItem_Loaded">
                             <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
                                             Width="216"
+                                            Click="AddToPlayQueueButton_Click"
                                             Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                Glyph=&#xE93F;}"/>
                             <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}"/>
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist"
+                                            Click="AddToNewPlaylistButton_Click"
+                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                               Glyph=&#xE710;}"/>
                         </MenuFlyoutSubItem>
                         <MenuFlyoutItem x:Uid="PlayQueue_Remove"
                                         Click="RemoveButton_Click"
@@ -111,49 +118,49 @@
                            Grid.Column="2"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Text="{x:Bind Title}"
+                           Text="{x:Bind Song.Title}"
                            TextTrimming="CharacterEllipsis"
-                           ToolTipService.ToolTip="{x:Bind Title}"/>
+                           ToolTipService.ToolTip="{x:Bind Song.Title}"/>
                 <Button Grid.Column="3"
                         Background="Transparent" BorderBrush="Transparent"
                         Click="ShowArtistButton_Click">
                     <TextBlock x:Name="ArtistText"
                                FontSize="12"
-                               Text="{x:Bind ArtistsStr}"
+                               Text="{x:Bind Song.ArtistsStr}"
                                TextTrimming="CharacterEllipsis"
-                               ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
+                               ToolTipService.ToolTip="{x:Bind Song.ArtistsStr}"/>
                 </Button>
                 <Button Grid.Column="4"
                         Background="Transparent" BorderBrush="Transparent"
                         Click="ShowAlbumButton_Click">
                     <TextBlock x:Name="AlbumText"
                                FontSize="12"
-                               Text="{x:Bind Album}"
+                               Text="{x:Bind Song.Album}"
                                TextTrimming="CharacterEllipsis"
-                               ToolTipService.ToolTip="{x:Bind Album}"/>
+                               ToolTipService.ToolTip="{x:Bind Song.Album}"/>
                 </Button>
                 <TextBlock x:Name="YearText"
                            Grid.Column="5"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Text="{x:Bind YearStr}"
+                           Text="{x:Bind Song.YearStr}"
                            TextTrimming="CharacterEllipsis"
-                           ToolTipService.ToolTip="{x:Bind YearStr}"/>
+                           ToolTipService.ToolTip="{x:Bind Song.YearStr}"/>
                 <TextBlock x:Name="GenreText"
                            Grid.Column="6"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Text="{x:Bind GenreStr}"
+                           Text="{x:Bind Song.GenreStr}"
                            TextTrimming="CharacterEllipsis"
-                           ToolTipService.ToolTip="{x:Bind GenreStr}"/>
+                           ToolTipService.ToolTip="{x:Bind Song.GenreStr}"/>
                 <TextBlock x:Name="DurationText"
                            Grid.Column="7"
                            Margin="0,0,10,0" HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Text="{x:Bind DurationStr}"
+                           Text="{x:Bind Song.DurationStr}"
                            TextTrimming="CharacterEllipsis"/>
             </Grid>
         </DataTemplate>
@@ -287,7 +294,8 @@
             <Button x:Name="ClearButton" x:Uid="PlayQueue_ClearButton"
                     Padding="11,9,11,9"
                     AccessKey="CX"
-                    Click="{x:Bind ViewModel.ClearButton_Click}">
+                    Click="{x:Bind ViewModel.ClearButton_Click}"
+                    IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="X" Modifiers="Control,Shift"/>
                 </Button.KeyboardAccelerators>
@@ -300,7 +308,8 @@
             </Button>
             <Button x:Name="AddToButton"
                     Padding="11,9,11,9"
-                    AccessKey="CW">
+                    AccessKey="CW"
+                    IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                               FontSize="16" Glyph="&#xE710;"/>
@@ -308,13 +317,17 @@
                                FontSize="12"/>
                 </StackPanel>
                 <Button.Flyout>
-                    <MenuFlyout Placement="Bottom">
+                    <MenuFlyout Opened="AddToFlyout_Opened" Placement="Bottom">
                         <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
                                         Width="216"
+                                        Click="AddToPlayQueueFlyoutButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE93F;}"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist" Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE710;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist"
+                                        Click="AddToNewPlaylistFlyoutButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE710;}"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
@@ -331,6 +344,7 @@
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.PlayQueueListView_ItemClick}"
                   ItemTemplate="{StaticResource PlayQueueListViewTemplate}"
+                  ItemsSource="{x:Bind ViewModel.PlayQueue, Mode=OneWay}"
                   SelectionMode="None"/>
     </Grid>
 </Page>

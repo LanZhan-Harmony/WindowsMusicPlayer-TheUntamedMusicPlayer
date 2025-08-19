@@ -10,7 +10,6 @@ namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 [MemoryPackable]
 public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
 {
-    public int PlayQueueIndex { get; set; } = -1;
     public bool IsPlayAvailable { get; set; } = false;
     public string Path { get; set; } = null!;
     public string Title { get; set; } = "";
@@ -144,11 +143,6 @@ public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
         {
             IsPlayAvailable = false;
         }
-    }
-
-    public object Clone()
-    {
-        return MemberwiseClone();
     }
 }
 

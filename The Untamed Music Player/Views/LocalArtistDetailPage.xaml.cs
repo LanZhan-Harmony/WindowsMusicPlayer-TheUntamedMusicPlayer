@@ -59,6 +59,18 @@ public sealed partial class LocalArtistDetailPage : Page
         InitializeComponent();
     }
 
+    private void SongListViewAddToSubItem_Loaded(object sender, RoutedEventArgs e) { }
+
+    private void AlbumGridViewAddToSubItem_Loaded(object sender, RoutedEventArgs e) { }
+
+    private void AddToFlyout_Opened(object sender, object e) { }
+
+    private void AddToPlayQueueFlyoutButton_Click(object sender, RoutedEventArgs e) { }
+
+    private void AddToNewPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e) { }
+
+    private void AddToMoreFlyout_Loaded(object sender, RoutedEventArgs e) { }
+
     private async Task InitializeAsync()
     {
         SelectionBarSelectedIndex = await ViewModel.LoadSelectionBarSelectedIndex();
@@ -375,6 +387,10 @@ public sealed partial class LocalArtistDetailPage : Page
         }
     }
 
+    private void SongListViewAddToPlayQueueButton_Click(object sender, RoutedEventArgs e) { }
+
+    private void SongListViewAddToNewPlaylistButton_Click(object sender, RoutedEventArgs e) { }
+
     private async void SongListViewEditInfoButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
@@ -447,6 +463,10 @@ public sealed partial class LocalArtistDetailPage : Page
             ViewModel.AlbumGridViewPlayNextButton_Click(info);
         }
     }
+
+    private void AlbumGridViewAddToPlayQueueButton_Click(object sender, RoutedEventArgs e) { }
+
+    private void AlbumGridViewAddToNewPlaylistButton_Click(object sender, RoutedEventArgs e) { }
 
     private async void AlbumGridViewEditInfoButton_Click(object sender, RoutedEventArgs e)
     {

@@ -16,8 +16,12 @@ public class PlaylistLibrary
 
     public async Task LoadLibraryAsync()
     {
-        await Task.Run(async () => Playlists = await FileManager.LoadPlaylistDataAsync());
+        Playlists = await FileManager.LoadPlaylistDataAsync();
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        foreach (var playlist in Playlists)
+        {
+            await playlist.GetCoverAsync();
+        }
     }
 
     public PlaylistInfo? NewPlaylist(string? name)
@@ -30,21 +34,20 @@ public class PlaylistLibrary
         var info = new PlaylistInfo(uniqueName);
         Playlists.Add(info);
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(true));
-        FileManager.SavePlaylistDataAsync(Playlists);
         return info;
     }
 
     public bool RenamePlaylist(PlaylistInfo info, string newName)
     {
-        if (string.IsNullOrEmpty(newName) || newName == info.Name)
+        var oldName = info.Name;
+        if (string.IsNullOrEmpty(newName) || newName == oldName)
         {
             return false;
         }
         var uniqueName = GetUniquePlaylistName(newName);
         info.Name = uniqueName;
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
-        StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(info));
-        FileManager.SavePlaylistDataAsync(Playlists);
+        StrongReferenceMessenger.Default.Send(new PlaylistRenameMessage(oldName, info));
         return true;
     }
 
@@ -52,37 +55,36 @@ public class PlaylistLibrary
     {
         Playlists.Remove(info);
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
-        FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     public async Task AddToPlaylist(PlaylistInfo info, IBriefSongInfoBase song)
     {
         await info.Add(song);
-        FileManager.SavePlaylistDataAsync(Playlists);
+        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(info));
     }
 
     public async Task AddToPlaylist(PlaylistInfo info, IEnumerable<IBriefSongInfoBase> songs)
     {
         await info.AddRange(songs);
-        FileManager.SavePlaylistDataAsync(Playlists);
+        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(info));
     }
 
     public void DeleteFromPlaylist(PlaylistInfo info, IndexedPlaylistSong song)
     {
         info.Delete(song);
-        FileManager.SavePlaylistDataAsync(Playlists);
+        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
     }
 
     public void MoveUpInPlaylist(PlaylistInfo info, IndexedPlaylistSong song)
     {
         info.MoveUp(song);
-        FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     public void MoveDownInPlaylist(PlaylistInfo info, IndexedPlaylistSong song)
     {
         info.MoveDown(song);
-        FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     private string GetUniquePlaylistName(string baseName)
@@ -100,5 +102,10 @@ public class PlaylistLibrary
             counter++;
         } while (existingNames.Contains(candidateName));
         return candidateName;
+    }
+
+    public async void SaveLibraryAsync()
+    {
+        await FileManager.SavePlaylistDataAsync(Playlists);
     }
 }
