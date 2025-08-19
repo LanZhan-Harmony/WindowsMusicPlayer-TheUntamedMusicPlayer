@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 
@@ -15,6 +16,36 @@ public sealed partial class LocalArtistsPage : Page
     {
         ViewModel = App.GetService<LocalArtistsViewModel>();
         InitializeComponent();
+    }
+
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem { DataContext: LocalArtistInfo info } menuItem)
+        {
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = new Tuple<LocalArtistInfo, PlaylistInfo>(info, playlist),
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: Tuple<LocalArtistInfo, PlaylistInfo> tuple })
+        {
+            var (artistInfo, playlist) = tuple;
+            ViewModel.AddToPlaylistButton_Click(artistInfo, playlist);
+        }
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -95,6 +126,28 @@ public sealed partial class LocalArtistsPage : Page
         if (sender is FrameworkElement { DataContext: LocalArtistInfo info })
         {
             ViewModel.PlayNextButton_Click(info);
+        }
+    }
+
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LocalArtistInfo info })
+        {
+            ViewModel.AddToPlayQueueButton_Click(info);
+        }
+    }
+
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LocalArtistInfo info })
+        {
+            var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+            {
+                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+            }
         }
     }
 

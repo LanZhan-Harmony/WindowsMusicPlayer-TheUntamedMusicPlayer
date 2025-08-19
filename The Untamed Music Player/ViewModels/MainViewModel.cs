@@ -323,6 +323,7 @@ public class MainViewModel
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
         Data.MusicPlayer.SaveCurrentStateAsync();
+        Data.PlaylistLibrary.SaveLibraryAsync();
         Data.MusicPlayer.Dispose();
         _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();

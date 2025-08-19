@@ -14,6 +14,7 @@ namespace The_Untamed_Music_Player.ViewModels;
 
 public partial class PlayListDetailViewModel
     : ObservableRecipient,
+        IRecipient<PlaylistRenameMessage>,
         IRecipient<PlaylistChangeMessage>,
         IDisposable
 {
@@ -38,19 +39,36 @@ public partial class PlayListDetailViewModel
     public PlayListDetailViewModel()
         : base(StrongReferenceMessenger.Default)
     {
-        Messenger.Register(this);
+        Messenger.Register<PlaylistRenameMessage>(this);
+        Messenger.Register<PlaylistChangeMessage>(this);
         SongList = Playlist.SongList;
         IsPlayAllButtonEnabled = SongList.Count > 0;
     }
 
+    public void Receive(PlaylistRenameMessage message)
+    {
+        if (PlaylistName == message.OldName)
+        {
+            Playlist = Data.SelectedPlaylist = message.Playlist;
+            PlaylistName = Playlist.Name;
+            TotalSongNumStr = Playlist.TotalSongNumStr;
+            Cover = Playlist.Cover;
+            SongList = Playlist.SongList;
+            IsPlayAllButtonEnabled = SongList.Count > 0;
+        }
+    }
+
     public void Receive(PlaylistChangeMessage message)
     {
-        Playlist = Data.SelectedPlaylist = message.Playlist;
-        PlaylistName = Playlist.Name;
-        TotalSongNumStr = Playlist.TotalSongNumStr;
-        Cover = Playlist.Cover;
-        SongList = Playlist.SongList;
-        IsPlayAllButtonEnabled = SongList.Count > 0;
+        if (PlaylistName == message.Playlist.Name)
+        {
+            Playlist = Data.SelectedPlaylist = message.Playlist;
+            PlaylistName = Playlist.Name;
+            TotalSongNumStr = Playlist.TotalSongNumStr;
+            Cover = Playlist.Cover;
+            SongList = Playlist.SongList;
+            IsPlayAllButtonEnabled = SongList.Count > 0;
+        }
     }
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
@@ -60,7 +78,7 @@ public partial class PlayListDetailViewModel
             return;
         }
         var songList = SongList.Select(s => s.Song).ToList();
-        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -74,7 +92,7 @@ public partial class PlayListDetailViewModel
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         var songList = SongList.Select(s => s.Song);
-        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
         if (e.ClickedItem is IndexedPlaylistSong indexedInfo)
         {
             Data.MusicPlayer.PlaySongByInfo(indexedInfo.Song);
@@ -170,5 +188,9 @@ public partial class PlayListDetailViewModel
         }
     }
 
-    public void Dispose() => Messenger.Unregister<PlaylistChangeMessage>(this);
+    public void Dispose()
+    {
+        Messenger.Unregister<PlaylistRenameMessage>(this);
+        Messenger.Unregister<PlaylistChangeMessage>(this);
+    }
 }

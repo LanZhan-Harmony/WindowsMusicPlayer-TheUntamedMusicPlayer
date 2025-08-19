@@ -18,6 +18,36 @@ public sealed partial class LocalAlbumsPage : Page
         InitializeComponent();
     }
 
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem { DataContext: LocalAlbumInfo info } menuItem)
+        {
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = new Tuple<LocalAlbumInfo, PlaylistInfo>(info, playlist),
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: Tuple<LocalAlbumInfo, PlaylistInfo> tuple })
+        {
+            var (albumInfo, playlist) = tuple;
+            ViewModel.AddToPlaylistButton_Click(albumInfo, playlist);
+        }
+    }
+
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         var grid = sender as Grid;
@@ -96,6 +126,28 @@ public sealed partial class LocalAlbumsPage : Page
         if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
             ViewModel.PlayNextButton_Click(info);
+        }
+    }
+
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
+        {
+            ViewModel.AddToPlayQueueButton_Click(info);
+        }
+    }
+
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
+        {
+            var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+            {
+                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+            }
         }
     }
 
