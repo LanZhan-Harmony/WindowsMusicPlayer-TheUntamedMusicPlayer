@@ -151,11 +151,11 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="Header.Margin" Value="16,54,16,-80"/>
-                        <Setter Target="ButtonStackPanel.Margin" Value="0,5,0,0"/>
+                        <Setter Target="ButtonStackPanel.Margin" Value="0,14,0,0"/>
                         <Setter Target="CoverArt.Width" Value="136"/>
                         <Setter Target="CoverArt.Height" Value="136"/>
                         <Setter Target="TitleText.FontSize" Value="28"/>
-                        <Setter Target="CaptionText.Margin" Value="0,1,0,0"/>
+                        <Setter Target="CaptionText.Margin" Value="0,8,0,0"/>
                         <Setter Target="RenameButton.Visibility" Value="Collapsed"/>
                         <Setter Target="DeleteButton.Visibility" Value="Collapsed"/>
                         <Setter Target="MoreButton.Visibility" Value="Visible"/>
@@ -172,7 +172,7 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="Header.Margin" Value="56,54,56,-80"/>
-                        <Setter Target="ButtonStackPanel.Margin" Value="0,14,0,0"/>
+                        <Setter Target="ButtonStackPanel.Margin" Value="0,25,0,0"/>
                         <Setter Target="CoverArt.Width" Value="162"/>
                         <Setter Target="CoverArt.Height" Value="162"/>
                         <Setter Target="TitleText.FontSize" Value="28"/>
@@ -236,18 +236,22 @@
                         Shadow="{StaticResource SharedShadow}"
                         SizeChanged="PlaylistArt_OnSizeChanged"
                         Translation="0,0,16">
-                    <Border.Background>
-                        <ImageBrush ImageSource="{x:Bind ViewModel.Cover, Mode=OneWay}" Stretch="UniformToFill"/>
-                    </Border.Background>
-                    <Border Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
-                            CornerRadius="{x:Bind CoverArt.CornerRadius, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
-                        <FontIcon x:Name="CoverArtIcon"
-                                  FontFamily="{StaticResource UntamedFontFamily}"
-                                  FontSize="64"
-                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                  Glyph="&#xED3B;"/>
-                    </Border>
+                    <Grid>
+                        <Image x:Name="ControllerCover"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               Canvas.ZIndex="1"
+                               Source="{x:Bind ViewModel.Cover, Mode=OneWay}"
+                               Stretch="UniformToFill"/>
+                        <Grid Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}" Canvas.ZIndex="0">
+                            <FontIcon Canvas.ZIndex="0"
+                                      FontFamily="{StaticResource UntamedFontFamily}"
+                                      FontSize="50"
+                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                      Glyph="&#xED3B;"
+                                      Visibility="{x:Bind ViewModel.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}"/>
+                        </Grid>
+                    </Grid>
                 </Border>
 
                 <StackPanel x:Name="TextPanel"

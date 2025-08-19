@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using MemoryPack;
-using The_Untamed_Music_Player.Contracts.Models;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
@@ -83,12 +82,12 @@ public class FileManager
     /// </summary>
     /// <param name="playQueue"></param>
     /// <param name="shuffledPlayQueue"></param>
-    public static void SavePlayQueueDataAsync(
-        ObservableCollection<IBriefSongInfoBase> playQueue,
-        ObservableCollection<IBriefSongInfoBase> shuffledPlayQueue
+    public static async Task SavePlayQueueDataAsync(
+        ObservableCollection<IndexedPlayQueueSong> playQueue,
+        ObservableCollection<IndexedPlayQueueSong> shuffledPlayQueue
     )
     {
-        Task.Run(async () =>
+        await Task.Run(async () =>
         {
             try
             {
@@ -113,9 +112,9 @@ public class FileManager
     /// 保存播放列表数据到文件
     /// </summary>
     /// <param name="playlists"></param>
-    public static void SavePlaylistDataAsync(List<PlaylistInfo> playlists)
+    public static async Task SavePlaylistDataAsync(List<PlaylistInfo> playlists)
     {
-        Task.Run(async () =>
+        await Task.Run(async () =>
         {
             try
             {
@@ -257,8 +256,8 @@ public class FileManager
     /// </summary>
     /// <returns></returns>
     public static async Task<(
-        ObservableCollection<IBriefSongInfoBase> playQueue,
-        ObservableCollection<IBriefSongInfoBase> shuffledPlayQueue
+        ObservableCollection<IndexedPlayQueueSong> playQueue,
+        ObservableCollection<IndexedPlayQueueSong> shuffledPlayQueue
     )> LoadPlayQueueDataAsync()
     {
         try
@@ -274,12 +273,12 @@ public class FileManager
                 return ([], []);
             }
 
-            var playQueuetask = LoadObjectFromFileAsync<ObservableCollection<IBriefSongInfoBase>>(
+            var playQueuetask = LoadObjectFromFileAsync<ObservableCollection<IndexedPlayQueueSong>>(
                 playQueueFolder,
                 "PlayQueue"
             );
             var shuffledPlayQueuetask = LoadObjectFromFileAsync<
-                ObservableCollection<IBriefSongInfoBase>
+                ObservableCollection<IndexedPlayQueueSong>
             >(playQueueFolder, "ShuffledPlayQueue");
 
             await Task.WhenAll(playQueuetask, shuffledPlayQueuetask);

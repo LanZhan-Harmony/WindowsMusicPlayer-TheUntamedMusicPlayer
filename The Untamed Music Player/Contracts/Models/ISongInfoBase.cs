@@ -9,7 +9,7 @@ namespace The_Untamed_Music_Player.Contracts.Models;
 [MemoryPackable]
 [MemoryPackUnion(0, typeof(BriefLocalSongInfo))]
 [MemoryPackUnion(1, typeof(BriefCloudOnlineSongInfo))]
-public partial interface IBriefSongInfoBase : ICloneable
+public partial interface IBriefSongInfoBase
 {
     protected static readonly string _unknownAlbum = "SongInfo_UnknownAlbum".GetLocalized();
     protected static readonly string _unknownArtist = "SongInfo_UnknownArtist".GetLocalized();
@@ -18,11 +18,6 @@ public partial interface IBriefSongInfoBase : ICloneable
     /// 是否可以播放
     /// </summary>
     bool IsPlayAvailable { get; set; }
-
-    /// <summary>
-    /// 在播放队列中的索引
-    /// </summary>
-    int PlayQueueIndex { get; set; }
 
     /// <summary>
     /// 路径
@@ -89,6 +84,16 @@ public partial interface IBriefSongInfoBase : ICloneable
                 await DetailedCloudOnlineSongInfo.CreateAsync(cloudInfo)
             ).CoverPath,
             _ => null,
+        };
+    }
+
+    static short GetSourceMode(IBriefSongInfoBase? info)
+    {
+        return info switch
+        {
+            BriefLocalSongInfo => 0,
+            BriefCloudOnlineSongInfo => 1,
+            _ => -1,
         };
     }
 }

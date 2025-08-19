@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
@@ -155,7 +156,7 @@ public partial class PlayListsViewModel
         {
             return;
         }
-        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{info.Name}", songList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{info.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -168,13 +169,37 @@ public partial class PlayListsViewModel
         }
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{info.Name}", songList, 0, 0);
+            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
             Data.MusicPlayer.AddSongsToNextPlay(songList);
         }
+    }
+
+    public void AddToPlayQueueButton_Click(PlaylistInfo info)
+    {
+        var songList = info.GetAllSongs().ToList();
+        if (songList.Count == 0)
+        {
+            return;
+        }
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{info.Name}", songList);
+            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongsToNextPlay(songList);
+        }
+    }
+
+    public async void AddToPlaylistButton_Click(PlaylistInfo info, PlaylistInfo playlist)
+    {
+        var songList = info.GetAllSongs().ToList();
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
     }
 
     public async Task LoadSortModeAsync()

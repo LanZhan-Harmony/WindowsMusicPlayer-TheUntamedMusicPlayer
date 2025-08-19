@@ -29,7 +29,7 @@ public sealed partial class PlayListDetailPage : Page
     private float CoverScaleFactor => GetValue(0.632479f, 0.528571f, 0.488888f);
 
     // 按钮面板在滚动时的偏移量
-    private int ButtonPanelOffset => GetValue(32, 56, 67);
+    private int ButtonPanelOffset => GetValue(30, 40, 40);
 
     private CompositionPropertySet? _props;
     private Compositor? _compositor;

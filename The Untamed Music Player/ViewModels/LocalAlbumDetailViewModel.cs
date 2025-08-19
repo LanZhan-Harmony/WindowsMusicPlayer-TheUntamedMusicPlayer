@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -19,26 +20,31 @@ public partial class LocalAlbumDetailViewModel : ObservableObject
         SongList = [.. Data.MusicLibrary.GetSongsByAlbum(Album)];
     }
 
+    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, SongList);
+    }
+
+    public void AddToPlayQueueFlyoutButton_Click()
+    {
+        Data.MusicPlayer.AddSongsToPlayQueue(SongList);
+    }
+
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
         Data.MusicPlayer.PlaySongByInfo(SongList[0]);
     }
 
     public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetShuffledPlayQueue(
-            $"ShuffledLocalSongs:Album:{Album.Name}",
-            SongList,
-            0,
-            0
-        );
-        Data.MusicPlayer.PlaySongByInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+        Data.MusicPlayer.SetShuffledPlayQueue($"ShuffledLocalSongs:Album:{Album.Name}", SongList);
+        Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
         if (e.ClickedItem is BriefLocalSongInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
@@ -47,7 +53,7 @@ public partial class LocalAlbumDetailViewModel : ObservableObject
 
     public void PlayButton_Click(BriefLocalSongInfo info)
     {
-        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
@@ -56,13 +62,30 @@ public partial class LocalAlbumDetailViewModel : ObservableObject
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Part", list, 0, 0);
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
             Data.MusicPlayer.AddSongToNextPlay(info);
         }
+    }
+
+    public void AddToPlayQueueButton_Click(BriefLocalSongInfo info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToPlayQueue(info);
+        }
+    }
+
+    public async void AddToPlaylistButton_Click(BriefLocalSongInfo info, PlaylistInfo playlist)
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
     }
 
     public void ShowArtistButton_Click(BriefLocalSongInfo info)

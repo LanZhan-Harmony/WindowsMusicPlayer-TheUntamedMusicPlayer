@@ -59,7 +59,7 @@
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xF5EB;}"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutSubItem x:Name="AddToSubItem" x:Uid="Songs_AddTo"
+                        <MenuFlyoutSubItem x:Uid="Songs_AddTo"
                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                               Glyph=&#xE710;}"
                                            Loaded="AddToSubItem_Loaded">

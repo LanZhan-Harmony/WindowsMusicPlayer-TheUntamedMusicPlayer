@@ -132,25 +132,43 @@ public partial class LocalArtistsViewModel
 
     public void PlayButton_Click(LocalArtistInfo info)
     {
-        var tempList = Data.MusicLibrary.GetSongsByArtist(info);
-        var songList = tempList.ToList();
-        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList, 0, 0);
+        var songList = Data.MusicLibrary.GetSongsByArtist(info).ToList();
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
     public void PlayNextButton_Click(LocalArtistInfo info)
     {
-        var tempList = Data.MusicLibrary.GetSongsByArtist(info);
-        var songList = tempList.ToList();
+        var songList = Data.MusicLibrary.GetSongsByArtist(info).ToList();
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList, 0, 0);
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
             Data.MusicPlayer.AddSongsToNextPlay(songList);
         }
+    }
+
+    public void AddToPlayQueueButton_Click(LocalArtistInfo info)
+    {
+        var songList = Data.MusicLibrary.GetSongsByArtist(info).ToList();
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
+            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongsToPlayQueue(songList);
+        }
+    }
+
+    public async void AddToPlaylistButton_Click(LocalArtistInfo info, PlaylistInfo playlist)
+    {
+        var songList = Data.MusicLibrary.GetSongsByArtist(info);
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
     }
 
     public async Task LoadSortModeAsync()

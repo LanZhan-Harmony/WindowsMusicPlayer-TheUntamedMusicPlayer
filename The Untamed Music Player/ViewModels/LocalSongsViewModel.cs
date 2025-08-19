@@ -111,28 +111,6 @@ public partial class LocalSongsViewModel
         LoadModeAndSongList();
     }
 
-    /// <summary>
-    /// 添加歌曲到播放队列
-    /// </summary>
-    public void AddToPlayQueueButton_Click(BriefLocalSongInfo info)
-    {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
-        {
-            var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list, 0, 0);
-            Data.MusicPlayer.PlaySongByInfo(info);
-        }
-        else
-        {
-            Data.MusicPlayer.AddSongToNextPlay(info);
-        }
-    }
-
-    public async void AddToPlaylistButton_Click(BriefLocalSongInfo info, PlaylistInfo playlist)
-    {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
-    }
-
     public async void LoadModeAndSongList()
     {
         _songList = [.. Data.MusicLibrary.Songs];
@@ -538,18 +516,13 @@ public partial class LocalSongsViewModel
 
     public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
     {
-        Data.MusicPlayer.SetShuffledPlayQueue(
-            "ShuffledLocalSongs:All",
-            ConvertGroupedToFlatList(),
-            0,
-            SortMode
-        );
-        Data.MusicPlayer.PlaySongByInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+        Data.MusicPlayer.SetShuffledPlayQueue("ShuffledLocalSongs:All", ConvertGroupedToFlatList());
+        Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayQueue("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:All:{SortByStr}", ConvertGroupedToFlatList());
         if (e.ClickedItem is BriefLocalSongInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
@@ -558,7 +531,7 @@ public partial class LocalSongsViewModel
 
     public void PlayButton_Click(BriefLocalSongInfo info)
     {
-        Data.MusicPlayer.SetPlayQueue("LocalSongs:All", ConvertGroupedToFlatList(), 0, SortMode);
+        Data.MusicPlayer.SetPlayQueue($"LocalSongs:All:{SortByStr}", ConvertGroupedToFlatList());
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
@@ -567,13 +540,35 @@ public partial class LocalSongsViewModel
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list, 0, 0);
+            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
             Data.MusicPlayer.AddSongToNextPlay(info);
         }
+    }
+
+    /// <summary>
+    /// 添加歌曲到播放队列
+    /// </summary>
+    public void AddToPlayQueueButton_Click(BriefLocalSongInfo info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            var list = new List<BriefLocalSongInfo> { info };
+            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToPlayQueue(info);
+        }
+    }
+
+    public async void AddToPlaylistButton_Click(BriefLocalSongInfo info, PlaylistInfo playlist)
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
     }
 
     public void ShowAlbumButton_Click(BriefLocalSongInfo info)

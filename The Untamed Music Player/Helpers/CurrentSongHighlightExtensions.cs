@@ -264,21 +264,20 @@ public static class CurrentSongHighlightExtensions
             return false;
         }
 
+        // 如果是播放队列模式，直接比较包装对象和索引
+        if (isPlayQueue && songInfo is IndexedPlayQueueSong indexedPlayQueueSong)
+        {
+            return indexedPlayQueueSong.Index == Data.MusicPlayer.PlayQueueIndex;
+        }
+
+        // 获取实际的歌曲对象进行比较
         var actualSong = GetActualSong(songInfo);
         if (actualSong is null)
         {
             return false;
         }
 
-        var isSameSong = IsSameSong(currentSong, actualSong);
-
-        // 如果是播放队列模式，还需要检查 PlayQueueIndex
-        if (isPlayQueue && isSameSong)
-        {
-            return actualSong.PlayQueueIndex == Data.MusicPlayer.PlayQueueIndex;
-        }
-
-        return isSameSong;
+        return IsSameSong(currentSong, actualSong);
     }
 
     /// <summary>
@@ -291,6 +290,7 @@ public static class CurrentSongHighlightExtensions
         return songInfo switch
         {
             IBriefSongInfoBase baseSong => baseSong,
+            IndexedPlayQueueSong indexedSong => indexedSong.Song,
             IndexedPlaylistSong indexedSong => indexedSong.Song,
             _ => null,
         };

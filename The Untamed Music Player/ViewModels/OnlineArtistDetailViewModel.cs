@@ -141,9 +141,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         }
         Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList(),
-            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-            0
+            ConvertAllSongsToFlatList()
         );
         Data.MusicPlayer.PlaySongByInfo(Artist.AlbumList[0].SongList[0]);
     }
@@ -156,20 +154,16 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         }
         Data.MusicPlayer.SetShuffledPlayQueue(
             $"ShuffledOnlineSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList(),
-            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-            0
+            ConvertAllSongsToFlatList()
         );
-        Data.MusicPlayer.PlaySongByInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+        Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
     }
 
     public void SongListView_ItemClick(IBriefSongInfoBase info)
     {
         Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList(),
-            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-            0
+            ConvertAllSongsToFlatList()
         );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
@@ -178,9 +172,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
     {
         Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList(),
-            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-            0
+            ConvertAllSongsToFlatList()
         );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
@@ -190,12 +182,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<IBriefSongInfoBase> { info };
-            Data.MusicPlayer.SetPlayQueue(
-                "OnlineSongs:Part",
-                list,
-                (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-                0
-            );
+            Data.MusicPlayer.SetPlayQueue("OnlineSongs:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
@@ -221,12 +208,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
     public void AlbumGridViewPlayButton_Click(IOnlineArtistAlbumInfo info)
     {
         var songList = info.SongList;
-        Data.MusicPlayer.SetPlayQueue(
-            $"OnlineSongs:Album:{info.Name}",
-            songList,
-            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-            0
-        );
+        Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -235,12 +217,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         var songList = info.SongList;
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue(
-                $"OnlineSongs:Album:{info.Name}",
-                songList,
-                (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-                0
-            );
+            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
