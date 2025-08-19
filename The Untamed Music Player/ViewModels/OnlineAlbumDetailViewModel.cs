@@ -80,12 +80,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         {
             return;
         }
-        Data.MusicPlayer.SetPlayQueue(
-            $"OnlineSongs:Album:{Album.Name}",
-            Album.SongList,
-            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-            0
-        );
+        Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
         Data.MusicPlayer.PlaySongByInfo(Album.SongList[0]);
     }
 
@@ -97,21 +92,14 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         }
         Data.MusicPlayer.SetShuffledPlayQueue(
             $"ShuffledOnlineSongs:Album:{Album.Name}",
-            Album.SongList,
-            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-            0
+            Album.SongList
         );
-        Data.MusicPlayer.PlaySongByInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+        Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayQueue(
-            $"OnlineSongs:Album:{Album.Name}",
-            Album.SongList,
-            (byte)(Data.OnlineMusicLibrary.MusicLibraryIndex + 1),
-            0
-        );
+        Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
         if (e.ClickedItem is IBriefOnlineSongInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
@@ -120,7 +108,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
 
     public void PlayButton_Click(IBriefOnlineSongInfo info)
     {
-        Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList, 0, 0);
+        Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
@@ -129,7 +117,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Part", list, 0, 0);
+            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else

@@ -1,3 +1,7 @@
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -7,21 +11,61 @@ using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public class PlayQueueViewModel
+public partial class PlayQueueViewModel : ObservableObject
 {
-    public PlayQueueViewModel() { }
+    [ObservableProperty]
+    public partial ObservableCollection<IndexedPlayQueueSong> PlayQueue { get; set; } =
+        Data.MusicPlayer.ShuffleMode
+            ? Data.MusicPlayer.ShuffledPlayQueue
+            : Data.MusicPlayer.PlayQueue;
 
-    public void PlayQueueListView_ItemClick(object sender, ItemClickEventArgs e)
+    [ObservableProperty]
+    public partial bool IsButtonEnabled { get; set; } = false;
+
+    public PlayQueueViewModel()
     {
-        if (e.ClickedItem is IBriefSongInfoBase info)
+        IsButtonEnabled = PlayQueue.Count > 0;
+        Data.MusicPlayer.PropertyChanged += MusicPlayer_PropertyChanged;
+    }
+
+    private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (
+            e.PropertyName == nameof(Data.MusicPlayer.ShuffleMode)
+            || e.PropertyName == nameof(Data.MusicPlayer.PlayQueue)
+            || e.PropertyName == nameof(Data.MusicPlayer.ShuffledPlayQueue)
+        )
         {
-            Data.MusicPlayer.PlaySongByInfo(info);
+            PlayQueue = Data.MusicPlayer.ShuffleMode
+                ? Data.MusicPlayer.ShuffledPlayQueue
+                : Data.MusicPlayer.PlayQueue;
+            IsButtonEnabled = PlayQueue.Count > 0;
         }
     }
 
-    public void PlayButton_Click(IBriefSongInfoBase info)
+    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
     {
-        Data.MusicPlayer.PlaySongByInfo(info);
+        var songList = PlayQueue.Select(song => song.Song);
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
+    }
+
+    public void AddToPlayQueueFlyoutButton_Click()
+    {
+        var songList = PlayQueue.Select(song => song.Song).ToList();
+        Data.MusicPlayer.AddSongsToPlayQueue(songList);
+    }
+
+    public void PlayQueueListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is IndexedPlayQueueSong info)
+        {
+            Data.MusicPlayer.PlaySongByIndexedInfo(info);
+        }
+    }
+
+    public void PlayButton_Click(IndexedPlayQueueSong info)
+    {
+        Data.MusicPlayer.PlaySongByIndexedInfo(info);
     }
 
     public void PlayNextButton_Click(IBriefSongInfoBase info)
@@ -29,17 +73,27 @@ public class PlayQueueViewModel
         Data.MusicPlayer.AddSongToNextPlay(info);
     }
 
-    public async void RemoveButton_Click(IBriefSongInfoBase info)
+    public void AddToPlayQueueButton_Click(IBriefSongInfoBase info)
+    {
+        Data.MusicPlayer.AddSongToPlayQueue(info);
+    }
+
+    public async void AddToPlaylistButton_Click(IBriefSongInfoBase info, PlaylistInfo playlist)
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
+    }
+
+    public async void RemoveButton_Click(IndexedPlayQueueSong info)
     {
         await Data.MusicPlayer.RemoveSong(info);
     }
 
-    public void MoveUpButton_Click(IBriefSongInfoBase info)
+    public void MoveUpButton_Click(IndexedPlayQueueSong info)
     {
         Data.MusicPlayer.MoveUpSong(info);
     }
 
-    public void MoveDownButton_Click(IBriefSongInfoBase info)
+    public void MoveDownButton_Click(IndexedPlayQueueSong info)
     {
         Data.MusicPlayer.MoveDownSong(info);
     }

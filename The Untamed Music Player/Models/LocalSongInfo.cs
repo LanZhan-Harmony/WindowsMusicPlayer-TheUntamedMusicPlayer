@@ -23,11 +23,6 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     public bool IsPlayAvailable { get; set; } = true;
 
     /// <summary>
-    /// 在播放队列中的索引
-    /// </summary>
-    public int PlayQueueIndex { get; set; } = -1;
-
-    /// <summary>
     /// 文件位置
     /// </summary>
     public string Path { get; set; } = null!;
@@ -170,11 +165,6 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     /// </summary>
     /// <returns></returns>
     protected static string GetGenreStr(string[] genre) => string.Join(", ", genre);
-
-    public object Clone()
-    {
-        return MemberwiseClone();
-    }
 }
 
 public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
