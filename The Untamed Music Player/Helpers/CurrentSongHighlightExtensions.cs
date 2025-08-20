@@ -208,10 +208,7 @@ public static class CurrentSongHighlightExtensions
             return;
         }
 
-        if (
-            args.ItemContainer is ListViewItem container
-            && args.Item is IBriefSongInfoBase songInfo
-        )
+        if (args.ItemContainer is ListViewItem container && args.Item is object songInfo)
         {
             UpdateItemHighlight(sender, container, songInfo);
         }
@@ -223,7 +220,7 @@ public static class CurrentSongHighlightExtensions
         {
             if (
                 listView.ContainerFromItem(item) is ListViewItem container
-                && item is IBriefSongInfoBase songInfo
+                && item is object songInfo
             )
             {
                 UpdateItemHighlight(listView, container, songInfo);
@@ -234,7 +231,7 @@ public static class CurrentSongHighlightExtensions
     private static void UpdateItemHighlight(
         ListViewBase listView,
         ListViewItem container,
-        IBriefSongInfoBase songInfo
+        object songInfo
     )
     {
         if (container.ContentTemplateRoot is not Grid grid)
@@ -248,15 +245,17 @@ public static class CurrentSongHighlightExtensions
         var isCurrentlyPlaying = IsCurrentlyPlaying(currentSong, songInfo, isPlayQueue);
 
         // 获取对应的画刷
-        var brush = isCurrentlyPlaying ? GetPlayingBrush(listView) : GetNotPlayingBrush(listView);
+        var (brush, visibility) = isCurrentlyPlaying
+            ? (GetPlayingBrush(listView), Visibility.Visible)
+            : (GetNotPlayingBrush(listView), Visibility.Collapsed);
 
         // 查找并更新所有文本块的前景色
-        UpdateTextBlocksForeground(grid, brush);
+        UpdateTextBlocksForeground(grid, brush, visibility);
     }
 
     private static bool IsCurrentlyPlaying(
         IDetailedSongInfoBase? currentSong,
-        IBriefSongInfoBase songInfo,
+        object songInfo,
         bool isPlayQueue
     )
     {
@@ -265,32 +264,65 @@ public static class CurrentSongHighlightExtensions
             return false;
         }
 
-        bool isSameSong;
+        // 如果是播放队列模式，直接比较包装对象和索引
+        if (isPlayQueue && songInfo is IndexedPlayQueueSong indexedPlayQueueSong)
+        {
+            return indexedPlayQueueSong.Index == Data.MusicPlayer.PlayQueueIndex;
+        }
 
-        // 支持本地和在线歌曲的比较
-        if (currentSong.IsOnline && songInfo is IBriefOnlineSongInfo onlineSong)
-        {
-            isSameSong = ((IDetailedOnlineSongInfo)currentSong).ID == onlineSong.ID;
-        }
-        else if (!currentSong.IsOnline && songInfo is BriefLocalSongInfo localSong)
-        {
-            isSameSong = ((BriefLocalSongInfo)currentSong).Path == localSong.Path;
-        }
-        else
+        // 获取实际的歌曲对象进行比较
+        var actualSong = GetActualSong(songInfo);
+        if (actualSong is null)
         {
             return false;
         }
 
-        // 如果是播放队列模式，还需要检查 PlayQueueIndex
-        if (isPlayQueue && isSameSong)
-        {
-            return songInfo.PlayQueueIndex == Data.MusicPlayer.PlayQueueIndex;
-        }
-
-        return isSameSong;
+        return IsSameSong(currentSong, actualSong);
     }
 
-    private static void UpdateTextBlocksForeground(Grid grid, Brush brush)
+    /// <summary>
+    /// 从 songInfo 中提取实际的歌曲对象
+    /// </summary>
+    /// <param name="songInfo">歌曲信息对象</param>
+    /// <returns>实际的歌曲对象，如果无法提取则返回 null</returns>
+    private static IBriefSongInfoBase? GetActualSong(object songInfo)
+    {
+        return songInfo switch
+        {
+            IBriefSongInfoBase baseSong => baseSong,
+            IndexedPlayQueueSong indexedSong => indexedSong.Song,
+            IndexedPlaylistSong indexedSong => indexedSong.Song,
+            _ => null,
+        };
+    }
+
+    /// <summary>
+    /// 比较两首歌曲是否相同
+    /// </summary>
+    /// <param name="currentSong">当前播放的歌曲</param>
+    /// <param name="compareSong">要比较的歌曲</param>
+    /// <returns>如果是同一首歌曲则返回 true，否则返回 false</returns>
+    private static bool IsSameSong(
+        IDetailedSongInfoBase currentSong,
+        IBriefSongInfoBase compareSong
+    )
+    {
+        return (currentSong.IsOnline, compareSong) switch
+        {
+            // 在线歌曲比较：通过 ID 比较
+            (true, IBriefOnlineSongInfo onlineSong) => ((IDetailedOnlineSongInfo)currentSong).ID
+                == onlineSong.ID,
+
+            // 本地歌曲比较：通过路径比较
+            (false, BriefLocalSongInfo localSong) => ((BriefLocalSongInfo)currentSong).Path
+                == localSong.Path,
+
+            // 类型不匹配
+            _ => false,
+        };
+    }
+
+    private static void UpdateTextBlocksForeground(Grid grid, Brush brush, Visibility visibility)
     {
         // 常见的文本块名称
         var textBlockNames = new[]
@@ -312,14 +344,13 @@ public static class CurrentSongHighlightExtensions
         }
 
         // 支持 FontIcon (如播放队列中的音乐图标)
-        var fontIconNames = new[] { "MusicFontIcon" };
-
-        foreach (var name in fontIconNames)
+        if (
+            grid.FindName("MusicFontIcon") is FontIcon musicFontIcon
+            && grid.FindName("PlayingFontIcon") is FontIcon playingFontIcon
+        )
         {
-            if (grid.FindName(name) is FontIcon fontIcon)
-            {
-                fontIcon.Foreground = brush;
-            }
+            musicFontIcon.Foreground = brush;
+            playingFontIcon.Visibility = visibility;
         }
     }
 }

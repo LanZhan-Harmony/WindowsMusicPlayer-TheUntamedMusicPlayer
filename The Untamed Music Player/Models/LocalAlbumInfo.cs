@@ -151,9 +151,8 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
             {
                 try
                 {
-                    var bitmap = new BitmapImage { DecodePixelWidth = 160 };
-                    await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
-                    Cover = bitmap;
+                    Cover = new BitmapImage { DecodePixelWidth = 160 };
+                    await Cover.SetSourceAsync(stream.AsRandomAccessStream());
                 }
                 catch
                 {

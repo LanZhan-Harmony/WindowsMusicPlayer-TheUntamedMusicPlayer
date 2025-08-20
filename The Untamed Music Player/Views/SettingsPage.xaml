@@ -1,14 +1,10 @@
-<Page x:Name="SettingPage"
-      x:Class="The_Untamed_Music_Player.Views.SettingsPage"
+<Page x:Class="The_Untamed_Music_Player.Views.SettingsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:controls="using:Microsoft.UI.Xaml.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
-      xmlns:muxc="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:muxs="using:Microsoft.UI.Xaml.Controls"
       xmlns:storage="using:Windows.Storage"
       xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
       xmlns:ui="using:CommunityToolkit.WinUI"
@@ -19,12 +15,13 @@
         <helper:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
         <DataTemplate x:Key="MusicFolderTemplate" x:DataType="storage:StorageFolder">
             <toolkit:SettingsCard Header="{x:Bind Path}">
-                <Button x:Name="removeFolder" x:Uid="Settings_RemoveFolder"
+                <Button x:Uid="Settings_RemoveFolder"
                         Width="27" Height="27"
                         Margin="0" Padding="0"
                         Click="RemoveMusicFolderButton_Click"
                         DataContext="{x:Bind}">
-                    <FontIcon FontSize="15" Glyph="&#xE711;"/>
+                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                              FontSize="15" Glyph="&#xE711;"/>
                 </Button>
             </toolkit:SettingsCard>
         </DataTemplate>
@@ -60,13 +57,11 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="TitleGrid" Grid.Row="0">
-            <TextBlock x:Uid="Shell_Settings1"
-                       FontSize="40"
-                       FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
+            <TextBlock x:Uid="Shell_Settings1" Style="{StaticResource TitleLargeTextBlockStyle}"/>
         </Grid>
         <ScrollViewer Grid.Row="1" Padding="0,0,0,16">
             <StackPanel x:Name="ContentArea"
-                        Orientation="Vertical" Spacing="34">
+                        Orientation="Vertical" Spacing="18">
 
                 <!--  动画  -->
                 <StackPanel.ChildrenTransitions>
@@ -86,15 +81,15 @@
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
 
                     <!--  音乐库位置  -->
-                    <toolkit:SettingsExpander x:Name="musicFolder" x:Uid="Settings_MusicLibraryLocation"
+                    <toolkit:SettingsExpander x:Uid="Settings_MusicLibraryLocation"
+                                              HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                                       Glyph=&#xE8B7;}"
                                               ItemTemplate="{StaticResource MusicFolderTemplate}"
                                               ItemsSource="{x:Bind model:Data.MusicLibrary.Folders, Mode=OneWay}">
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon Glyph="&#xE8B7;"/>
-                        </toolkit:SettingsExpander.HeaderIcon>
                         <Button x:Name="addMusicFolder" Click="{x:Bind ViewModel.PickMusicFolderButton_Click}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon FontSize="16" Glyph="&#xE8F4;"/>
+                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                          FontSize="16" Glyph="&#xE8F4;"/>
                                 <TextBlock x:Uid="Settings_AddFolder"/>
                             </StackPanel>
                         </Button>
@@ -111,15 +106,11 @@
                     </toolkit:SettingsExpander>
 
                     <!--  刷新库  -->
-                    <toolkit:SettingsExpander x:Name="Refresh" x:Uid="Settings_RefreshLibrary">
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon Glyph="&#xE90F;"/>
-                        </toolkit:SettingsExpander.HeaderIcon>
+                    <toolkit:SettingsExpander x:Uid="Settings_RefreshLibrary" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE90F;}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <ProgressRing Width="24" Height="24"
                                           IsActive="{x:Bind model:Data.MusicLibrary.IsProgressRingActive, Mode=OneWay}"/>
-                            <Button x:Name="refresh" x:Uid="Settings_Refresh"
-                                    Click="{x:Bind ViewModel.RefreshButton_Click}"/>
+                            <Button x:Uid="Settings_Refresh" Click="{x:Bind ViewModel.RefreshButton_Click}"/>
                         </StackPanel>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">
@@ -133,10 +124,7 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
 
-                    <toolkit:SettingsCard x:Uid="Settings_SongDownloadLocation">
-                        <toolkit:SettingsCard.HeaderIcon>
-                            <FontIcon Glyph="&#xE8B7;"/>
-                        </toolkit:SettingsCard.HeaderIcon>
+                    <toolkit:SettingsCard x:Uid="Settings_SongDownloadLocation" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE8B7;}">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <HyperlinkButton VerticalAlignment="Center"
                                              Click="{x:Bind ViewModel.SongDownloadLocationButton_Click}"
@@ -156,10 +144,7 @@
                     <TextBlock x:Uid="Settings_Personalization"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <toolkit:SettingsExpander x:Name="AppThemeExpander1" x:Uid="Settings_Theme">
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon Glyph="&#xE790;"/>
-                        </toolkit:SettingsExpander.HeaderIcon>
+                    <toolkit:SettingsExpander x:Uid="Settings_Theme" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE795;}">
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">
                                 <StackPanel>
@@ -192,10 +177,7 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
 
-                    <toolkit:SettingsExpander x:Uid="Settings_WindowMaterial">
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon Glyph="&#xF5ED;"/>
-                        </toolkit:SettingsExpander.HeaderIcon>
+                    <toolkit:SettingsExpander x:Uid="Settings_WindowMaterial" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xEABC;}">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <Button x:Uid="Settings_Reset" Click="{x:Bind ViewModel.ResetButton_Click}"/>
                             <ComboBox x:Name="MaterialComboBox" x:Uid="Settings_ChooseAMaterial"
@@ -227,26 +209,17 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
 
-                    <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundFollowsCover">
-                        <toolkit:SettingsCard.HeaderIcon>
-                            <FontIcon Glyph="&#xE7C4;"/>
-                        </toolkit:SettingsCard.HeaderIcon>
+                    <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundFollowsCover" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE790;}">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsWindowBackgroundFollowsCover, Mode=TwoWay}"/>
                     </toolkit:SettingsCard>
                 </StackPanel>
 
+                <!--  歌词设置  -->
                 <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_LyricSettings"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <toolkit:SettingsCard x:Uid="Settings_LyricFontFamily">
-                        <toolkit:SettingsCard.HeaderIcon>
-                            <FontIcon Glyph="&#xE8D2;"/>
-                        </toolkit:SettingsCard.HeaderIcon>
+                    <toolkit:SettingsCard x:Uid="Settings_LyricFontFamily" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE8D2;}">
                         <ComboBox x:Name="FontComboBox" x:Uid="Settings_ChooseAFontFamily"
                                   ItemTemplate="{StaticResource FontComboboxTemplate}"
                                   ItemsSource="{x:Bind ViewModel.Fonts}"
@@ -255,6 +228,15 @@
                     </toolkit:SettingsCard>
                 </StackPanel>
 
+                <!--  开发者选项  -->
+                <StackPanel Spacing="2">
+                    <TextBlock x:Uid="Settings_DeveloperOptions"
+                               Margin="0,12,0,5"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <toolkit:SettingsCard x:Uid="Settings_Logging" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE9A4;}">
+                        <Button x:Uid="Settings_OpenFolder" Click="{x:Bind ViewModel.OpenLoggingFolderButton_Click}"/>
+                    </toolkit:SettingsCard>
+                </StackPanel>
 
                 <!--  关于  -->
                 <StackPanel Spacing="2">
@@ -262,12 +244,9 @@
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
                     <toolkit:SettingsExpander x:Name="About" x:Uid="Settings_AboutDescription"
-                                              Header="{x:Bind model:Data.AppDisplayName}">
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <BitmapIcon AutomationProperties.AccessibilityView="Raw"
-                                        ShowAsMonochrome="False"
-                                        UriSource="ms-appx:///Assets/AppIcon/WindowIcon.ico"/>
-                        </toolkit:SettingsExpander.HeaderIcon>
+                                              Header="{x:Bind model:Data.AppDisplayName}"
+                                              HeaderIcon="{ui:BitmapIcon ShowAsMonochrome=False,
+                                                                         Source=ms-appx:///Assets/AppIcon/WindowIcon.ico}">
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}"/>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard x:Uid="Settings_Thanks"/>

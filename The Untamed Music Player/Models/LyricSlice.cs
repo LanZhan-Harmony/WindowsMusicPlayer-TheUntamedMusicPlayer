@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml;
 
 namespace The_Untamed_Music_Player.Models;
 
-public partial class LyricSlice(double time, string content) : ObservableRecipient
+public partial class LyricSlice(double time, string content) : ObservableObject
 {
     public string Content { get; set; } = content;
     public double Time { get; set; } = time;
