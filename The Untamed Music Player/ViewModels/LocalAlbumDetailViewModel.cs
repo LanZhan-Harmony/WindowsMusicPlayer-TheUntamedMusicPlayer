@@ -9,7 +9,7 @@ using The_Untamed_Music_Player.Views;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class LocalAlbumDetailViewModel : ObservableObject
+public class LocalAlbumDetailViewModel
 {
     public LocalAlbumInfo Album { get; set; } = Data.SelectedLocalAlbum!;
 
@@ -18,16 +18,6 @@ public partial class LocalAlbumDetailViewModel : ObservableObject
     public LocalAlbumDetailViewModel()
     {
         SongList = [.. Data.MusicLibrary.GetSongsByAlbum(Album)];
-    }
-
-    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
-    {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, SongList);
-    }
-
-    public void AddToPlayQueueFlyoutButton_Click()
-    {
-        Data.MusicPlayer.AddSongsToPlayQueue(SongList);
     }
 
     public void PlayAllButton_Click(object sender, RoutedEventArgs e)
@@ -40,6 +30,24 @@ public partial class LocalAlbumDetailViewModel : ObservableObject
     {
         Data.MusicPlayer.SetShuffledPlayQueue($"ShuffledLocalSongs:Album:{Album.Name}", SongList);
         Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+    }
+
+    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, SongList);
+    }
+
+    public void AddToPlayQueueFlyoutButton_Click()
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
+            Data.MusicPlayer.PlaySongByInfo(SongList[0]);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongsToPlayQueue(SongList);
+        }
     }
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -75,7 +83,9 @@ public partial class LocalAlbumDetailViewModel : ObservableObject
     {
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
+            var list = new List<BriefLocalSongInfo> { info };
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}:Part", list);
+            Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {

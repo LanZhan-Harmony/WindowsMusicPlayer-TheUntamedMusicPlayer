@@ -214,6 +214,81 @@ public sealed partial class PlayListDetailPage : Page
         playButton?.Visibility = Visibility.Collapsed;
     }
 
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem { DataContext: IndexedPlaylistSong info } menuItem)
+        {
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = new Tuple<IBriefSongInfoBase, PlaylistInfo>(info.Song, playlist),
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: Tuple<IBriefSongInfoBase, PlaylistInfo> tuple })
+        {
+            var (songInfo, playlist) = tuple;
+            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
+        }
+    }
+
+    private void AddToFlyout_Opened(object sender, object e)
+    {
+        if (sender is MenuFlyout flyout)
+        {
+            while (flyout.Items.Count > 3)
+            {
+                flyout.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = playlist,
+                };
+                playlistMenuItem.Click += AddToPlaylistFlyoutButton_Click;
+                flyout.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void AddToPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
+        {
+            ViewModel.AddToPlaylistFlyoutButton_Click(playlist);
+        }
+    }
+
+    private void AddToPlayQueueFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.AddToPlayQueueFlyoutButton_Click();
+    }
+
+    private async void AddToNewPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+        {
+            ViewModel.AddToPlaylistFlyoutButton_Click(dialog.CreatedPlaylist);
+        }
+    }
+
     private async void RenameButton_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new RenamePlaylistInfoDialog(ViewModel.Playlist) { XamlRoot = XamlRoot };
@@ -233,6 +308,28 @@ public sealed partial class PlayListDetailPage : Page
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
             ViewModel.PlayNextButton_Click(info.Song);
+        }
+    }
+
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
+        {
+            ViewModel.AddToPlayQueueButton_Click(info.Song);
+        }
+    }
+
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
+        {
+            var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+            {
+                ViewModel.AddToPlaylistButton_Click(info.Song, dialog.CreatedPlaylist);
+            }
         }
     }
 

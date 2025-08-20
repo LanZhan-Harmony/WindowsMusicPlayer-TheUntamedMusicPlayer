@@ -97,6 +97,28 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
     }
 
+    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, Album.SongList);
+    }
+
+    public void AddToPlayQueueFlyoutButton_Click()
+    {
+        if (Album.SongList.Count == 0)
+        {
+            return;
+        }
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
+            Data.MusicPlayer.PlaySongByInfo(Album.SongList[0]);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongsToPlayQueue(Album.SongList);
+        }
+    }
+
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
@@ -117,13 +139,32 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Part", list);
+            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{Album.Name}:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
             Data.MusicPlayer.AddSongToNextPlay(info);
         }
+    }
+
+    public void AddToPlayQueueButton_Click(IBriefOnlineSongInfo info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            var list = new List<IBriefOnlineSongInfo> { info };
+            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{Album.Name}:Part", list);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToPlayQueue(info);
+        }
+    }
+
+    public async void AddToPlaylistButton_Click(IBriefOnlineSongInfo info, PlaylistInfo playlist)
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
     }
 
     public async void ShowArtistButton_Click(IBriefOnlineSongInfo info)

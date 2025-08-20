@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
@@ -65,6 +66,7 @@ public partial class PlayListDetailViewModel
             Playlist = Data.SelectedPlaylist = message.Playlist;
             PlaylistName = Playlist.Name;
             TotalSongNumStr = Playlist.TotalSongNumStr;
+            Cover = null;
             Cover = Playlist.Cover;
             SongList = Playlist.SongList;
             IsPlayAllButtonEnabled = SongList.Count > 0;
@@ -80,6 +82,30 @@ public partial class PlayListDetailViewModel
         var songList = SongList.Select(s => s.Song).ToList();
         Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
+    }
+
+    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
+    {
+        var songList = SongList.Select(s => s.Song).ToList();
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
+    }
+
+    public void AddToPlayQueueFlyoutButton_Click()
+    {
+        if (SongList.Count == 0)
+        {
+            return;
+        }
+        var songList = SongList.Select(s => s.Song).ToList();
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
+            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongsToPlayQueue(songList);
+        }
     }
 
     public void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -101,17 +127,49 @@ public partial class PlayListDetailViewModel
 
     public void PlayButton_Click(IBriefSongInfoBase info)
     {
+        Data.MusicPlayer.SetPlayQueue(
+            $"Songs:Playlist:{Playlist.Name}",
+            SongList.Select(s => s.Song)
+        );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
     public void PlayNextButton_Click(IBriefSongInfoBase info)
     {
-        Data.MusicPlayer.AddSongToNextPlay(info);
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            var list = new List<IBriefSongInfoBase> { info };
+            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToNextPlay(info);
+        }
     }
 
-    public void RemoveButton_Click(IndexedPlaylistSong info)
+    public void AddToPlayQueueButton_Click(IBriefSongInfoBase info)
     {
-        Data.PlaylistLibrary.DeleteFromPlaylist(Playlist, info);
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            var list = new List<IBriefSongInfoBase> { info };
+            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToPlayQueue(info);
+        }
+    }
+
+    public async void AddToPlaylistButton_Click(IBriefSongInfoBase info, PlaylistInfo playlist)
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
+    }
+
+    public async void RemoveButton_Click(IndexedPlaylistSong info)
+    {
+        await Data.PlaylistLibrary.DeleteFromPlaylist(Playlist, info);
         if (SongList.Count == 0)
         {
             IsPlayAllButtonEnabled = false;
