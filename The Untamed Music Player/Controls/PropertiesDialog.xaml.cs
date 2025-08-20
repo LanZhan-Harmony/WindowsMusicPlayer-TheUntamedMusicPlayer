@@ -2,22 +2,24 @@ using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Models;
 
 namespace The_Untamed_Music_Player.Controls;
 
 public sealed partial class PropertiesDialog : ContentDialog
 {
-    public IDetailedSongInfoBase Song { get; set; }
+    private readonly IDetailedSongInfoBase _song;
 
-    public PropertiesDialog(IDetailedSongInfoBase song)
+    public PropertiesDialog(IDetailedSongInfoBase info)
     {
-        Song = song;
+        _song = info;
+        RequestedTheme = Data.MainViewModel!.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
     }
 
     private void OpenFileLocationButton_Click(object sender, RoutedEventArgs e)
     {
-        var filePath = Song.Path;
+        var filePath = _song.Path;
         if (filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase))
         {
             Process.Start(new ProcessStartInfo { FileName = filePath, UseShellExecute = true });

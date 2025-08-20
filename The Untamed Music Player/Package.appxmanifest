@@ -12,7 +12,7 @@
 	<Identity
 	  Name="C19A3696.28439CB846862"
 	  Publisher="CN=D8BFD4E9-94E2-482B-A987-F96C72D65FDF"
-	  Version="0.4.1.0" />
+	  Version="0.5.0.0" />
 
 	<mp:PhoneIdentity PhoneProductId="a6eca51b-8a00-4fe8-ad95-1a8f85e1222e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -49,6 +49,7 @@
 					</uap:ShowNameOnTiles>
 				</uap:DefaultTile>
 				<uap:SplashScreen Image="Assets\AppIcon\SplashScreen.png" />
+				<uap:LockScreen BadgeLogo="Assets\AppIcon\BadgeLogo.png" Notification="badgeAndTileText"/>
 			</uap:VisualElements>
 			<Extensions>
 				<desktop:Extension Category="windows.toastNotificationActivation">

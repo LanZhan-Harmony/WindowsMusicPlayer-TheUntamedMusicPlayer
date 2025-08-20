@@ -29,7 +29,7 @@ public static class DownloadHelper
         await CancelCurrentDownloadAsync();
         _currentDownloadCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-        Data.IsMusicDownloading = true;
+        Data.IsMusicProcessing = true;
         _currentDownloadPath = null;
         _currentFinalPath = null;
 
@@ -86,7 +86,7 @@ public static class DownloadHelper
         }
         finally
         {
-            Data.IsMusicDownloading = false;
+            Data.IsMusicProcessing = false;
             _currentDownloadCts?.Dispose();
             _currentDownloadCts = null;
             _currentDownloadPath = null;
@@ -359,12 +359,7 @@ public static class DownloadHelper
         try
         {
             var imageBytes = await _sharedHttpClient.GetByteArrayAsync(coverUrl, cancellationToken);
-            var picture = new Picture(imageBytes)
-            {
-                Type = PictureType.FrontCover,
-                Description = "Cover",
-                MimeType = GetMimeTypeFromBytes(imageBytes),
-            };
+            var picture = new Picture(imageBytes);
             musicFile.Tag.Pictures = [picture];
         }
         catch (Exception ex)
@@ -372,29 +367,6 @@ public static class DownloadHelper
             Debug.WriteLine($"设置封面失败: {ex.Message}");
             // 封面设置失败不应该影响整个下载过程，所以不重新抛出异常
         }
-    }
-
-    private static string GetMimeTypeFromBytes(byte[] imageBytes)
-    {
-        if (imageBytes.Length >= 4)
-        {
-            if (
-                imageBytes[0] == 0x89
-                && imageBytes[1] == 0x50
-                && imageBytes[2] == 0x4E
-                && imageBytes[3] == 0x47
-            )
-            {
-                return "image/png";
-            }
-
-            if (imageBytes[0] == 0xFF && imageBytes[1] == 0xD8)
-            {
-                return "image/jpeg";
-            }
-        }
-
-        return "image/png"; // 默认
     }
 
     /// <summary>

@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
@@ -11,6 +10,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
@@ -20,7 +20,8 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class LocalAlbumDetailPage : Page
 {
-    public LocalAlbumDetailViewModel ViewModel { get; }
+    public LocalAlbumDetailViewModel ViewModel { get; } =
+        App.GetService<LocalAlbumDetailViewModel>();
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 80, 107);
@@ -43,7 +44,6 @@ public sealed partial class LocalAlbumDetailPage : Page
 
     public LocalAlbumDetailPage()
     {
-        ViewModel = App.GetService<LocalAlbumDetailViewModel>();
         InitializeComponent();
     }
 
@@ -253,24 +253,6 @@ public sealed partial class LocalAlbumDetailPage : Page
         _backgroundVisual.Size = new Vector2((float)e.NewSize.Width, BackgroundVisualHeight);
     }
 
-    private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid?.FindName("PlayButton") as Button;
-        checkBox?.Visibility = Visibility.Visible;
-        playButton?.Visibility = Visibility.Visible;
-    }
-
-    private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
-        var grid = sender as Grid;
-        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid?.FindName("PlayButton") as Button;
-        checkBox?.Visibility = Visibility.Collapsed;
-        playButton?.Visibility = Visibility.Collapsed;
-    }
-
     /// <summary>
     /// 辅助方法根据窗口宽度返回相应的值
     /// </summary>
@@ -295,6 +277,120 @@ public sealed partial class LocalAlbumDetailPage : Page
         }
     }
 
+    private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        var grid = sender as Grid;
+        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
+        var playButton = grid?.FindName("PlayButton") as Button;
+        checkBox?.Visibility = Visibility.Visible;
+        playButton?.Visibility = Visibility.Visible;
+    }
+
+    private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        var grid = sender as Grid;
+        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
+        var playButton = grid?.FindName("PlayButton") as Button;
+        checkBox?.Visibility = Visibility.Collapsed;
+        playButton?.Visibility = Visibility.Collapsed;
+    }
+
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem { DataContext: BriefLocalSongInfo info } menuItem)
+        {
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = new Tuple<BriefLocalSongInfo, PlaylistInfo>(info, playlist),
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: Tuple<BriefLocalSongInfo, PlaylistInfo> tuple })
+        {
+            var (songInfo, playlist) = tuple;
+            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
+        }
+    }
+
+    private void AddToFlyout_Opened(object sender, object e)
+    {
+        if (sender is MenuFlyout flyout)
+        {
+            while (flyout.Items.Count > 3)
+            {
+                flyout.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = playlist,
+                };
+                playlistMenuItem.Click += AddToPlaylistFlyoutButton_Click;
+                flyout.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void AddToPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
+        {
+            ViewModel.AddToPlaylistFlyoutButton_Click(playlist);
+        }
+    }
+
+    private void AddToPlayQueueFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.AddToPlayQueueFlyoutButton_Click();
+    }
+
+    private async void AddToNewPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+        {
+            ViewModel.AddToPlaylistFlyoutButton_Click(dialog.CreatedPlaylist);
+        }
+    }
+
+    private void AddToMoreFlyout_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem menuItem)
+        {
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = playlist,
+                };
+                playlistMenuItem.Click += AddToPlaylistFlyoutButton_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
     private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
@@ -311,12 +407,33 @@ public sealed partial class LocalAlbumDetailPage : Page
         }
     }
 
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
+        {
+            ViewModel.AddToPlayQueueButton_Click(info);
+        }
+    }
+
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
+        {
+            var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+            {
+                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+            }
+        }
+    }
+
     private async void EditSongInfoButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            var song = new DetailedLocalSongInfo(info);
-            var dialog = new EditSongInfoDialog(song) { XamlRoot = XamlRoot };
+            var dialog = new EditSongInfoDialog(info) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }

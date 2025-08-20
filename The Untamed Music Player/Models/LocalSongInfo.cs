@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
+using TagLib;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 
@@ -9,21 +10,17 @@ namespace The_Untamed_Music_Player.Models;
 [MemoryPackable]
 public partial class BriefLocalSongInfo : IBriefSongInfoBase
 {
+    protected static readonly string _unknownGenre = "SongInfo_UnknownGenre".GetLocalized();
+
     /// <summary>
     /// 歌手分隔符
     /// </summary>
-    protected static readonly char[] _delimiters = ['、', ',', '，', '|', '/'];
-    protected static readonly string _unknownGenre = "SongInfo_UnknownGenre".GetLocalized();
+    public static char[] Delimiters { get; } = ['、', ',', '，', '|', '/'];
 
     /// <summary>
     /// 是否可以播放
     /// </summary>
     public bool IsPlayAvailable { get; set; } = true;
-
-    /// <summary>
-    /// 在播放队列中的索引
-    /// </summary>
-    public int PlayQueueIndex { get; set; } = -1;
 
     /// <summary>
     /// 文件位置
@@ -55,7 +52,10 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             field = [
                 .. value
                     .SelectMany(artist =>
-                        artist.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries)
+                        artist.Split(
+                            Delimiters,
+                            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+                        )
                     )
                     .Distinct(),
             ];
@@ -97,6 +97,11 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     public virtual string GenreStr { get; set; } = null!;
 
     /// <summary>
+    /// 曲目字符串, 为0时返回""
+    /// </summary>
+    public string TrackStr { get; set; } = null!;
+
+    /// <summary>
     /// 修改日期
     /// </summary>
     public long ModifiedDate { get; set; } = 0;
@@ -131,12 +136,12 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             var genres = musicFile.Tag.Genres;
             Genre = genres.Length != 0 ? genres : [_unknownGenre];
             GenreStr = GetGenreStr(Genre);
+            TrackStr = musicFile.Tag.Track == 0 ? "" : $"{musicFile.Tag.Track}";
             Duration = musicFile.Properties.Duration;
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
             HasCover = musicFile.Tag.Pictures.Length != 0;
         }
-        catch (Exception ex)
-            when (ex is TagLib.CorruptFileException or TagLib.UnsupportedFormatException)
+        catch (Exception ex) when (ex is CorruptFileException or UnsupportedFormatException)
         {
             // 设置默认值
             Title = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -160,11 +165,6 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     /// </summary>
     /// <returns></returns>
     protected static string GetGenreStr(string[] genre) => string.Join(", ", genre);
-
-    public object Clone()
-    {
-        return MemberwiseClone();
-    }
 }
 
 public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
@@ -222,11 +222,6 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
     public string BitRate { get; set; } = "";
 
     /// <summary>
-    /// 曲目, 为空时返回""
-    /// </summary>
-    public string Track { get; set; } = "";
-
-    /// <summary>
     /// 歌词, 为空时返回""
     /// </summary>
     public string Lyric { get; set; } = "";
@@ -237,6 +232,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
         Path = info.Path;
         Folder = info.Folder;
         Title = info.Title;
+        TrackStr = info.TrackStr;
         try
         {
             using var musicFile = TagLib.File.Create(Path);
@@ -247,7 +243,11 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
                 [
                     .. musicFile
                         .Tag.AlbumArtists.SelectMany(artist =>
-                            artist.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries)
+                            artist.Split(
+                                Delimiters,
+                                StringSplitOptions.RemoveEmptyEntries
+                                    | StringSplitOptions.TrimEntries
+                            )
                         )
                         .Distinct(),
                 ]
@@ -259,7 +259,6 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
             GenreStr = GetGenreStr(Genre);
             Duration = info.Duration;
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
-            Track = musicFile.Tag.Track == 0 ? "" : $"{musicFile.Tag.Track}";
             Lyric = musicFile.Tag.Lyrics ?? "";
             BitRate = $"{musicFile.Properties.AudioBitrate} kbps";
             ModifiedDate = info.ModifiedDate;
@@ -273,8 +272,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
                 Cover.SetSource(stream.AsRandomAccessStream());
             }
         }
-        catch (Exception ex)
-            when (ex is TagLib.CorruptFileException or TagLib.UnsupportedFormatException) { }
+        catch (Exception ex) when (ex is CorruptFileException or UnsupportedFormatException) { }
         catch (Exception ex) when (ex is FileNotFoundException)
         {
             IsPlayAvailable = false;

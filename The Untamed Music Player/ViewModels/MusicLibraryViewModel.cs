@@ -1,16 +1,22 @@
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
-using The_Untamed_Music_Player.Views;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class MusicLibraryViewModel : ObservableRecipient
+public partial class MusicLibraryViewModel
+    : ObservableRecipient,
+        IRecipient<HaveMusicMessage>,
+        IDisposable
 {
-    /// <summary>
-    /// 是否已经导航到了页面
-    /// </summary>
-    private bool _hasNavigated = false;
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
 
     /// <summary>
     /// 是否显示加载进度环
@@ -18,37 +24,80 @@ public partial class MusicLibraryViewModel : ObservableRecipient
     [ObservableProperty]
     public partial bool IsProgressRingActive { get; set; } = true;
 
+    [ObservableProperty]
+    public partial Visibility NoMusicControlVisibility { get; set; } = Visibility.Collapsed;
+
+    [ObservableProperty]
+    public partial Visibility HaveMusicControlVisibility { get; set; } = Visibility.Collapsed;
+
     public MusicLibraryViewModel()
+        : base(StrongReferenceMessenger.Default)
     {
-        _ = InitializeLibraryAsync();
+        Messenger.Register(this);
+        InitializeLibraryAsync();
     }
 
-    private async Task InitializeLibraryAsync()
+    public void Receive(HaveMusicMessage message)
     {
-        Data.MusicLibrary.PropertyChanged += MusicLibrary_PropertyChanged;
+        NoMusicControlVisibility = message.HasMusic ? Visibility.Collapsed : Visibility.Visible;
+        HaveMusicControlVisibility = message.HasMusic ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private async void InitializeLibraryAsync()
+    {
         if (!Data.HasMusicLibraryLoaded)
         {
-            await Task.Run(Data.MusicLibrary.LoadLibraryAsync);
+            await Data.MusicLibrary.LoadLibraryAsync();
         }
         IsProgressRingActive = false;
-        if (!_hasNavigated)
-        {
-            UpdateContentFrame();
-        }
+        NoMusicControlVisibility = Data.MusicLibrary.Songs.IsEmpty
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+        HaveMusicControlVisibility = Data.MusicLibrary.Songs.IsEmpty
+            ? Visibility.Collapsed
+            : Visibility.Visible;
     }
 
-    private void MusicLibrary_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
-        if (e.PropertyName == nameof(Data.MusicLibrary.HasMusics))
+        (sender as Button)!.IsEnabled = false;
+        var openPicker = new FolderPicker
         {
-            UpdateContentFrame();
+            SuggestedStartLocation = PickerLocationId.MusicLibrary,
+        };
+        openPicker.FileTypeFilter.Add("*");
+        var window = App.MainWindow;
+        var hWnd = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(openPicker, hWnd);
+
+        var folder = await openPicker.PickSingleFolderAsync();
+        if (folder is not null && !Data.MusicLibrary.Folders.Any(f => f.Path == folder.Path))
+        {
+            NoMusicControlVisibility = Visibility.Collapsed;
+            HaveMusicControlVisibility = Visibility.Collapsed;
+            IsProgressRingActive = true;
+            Data.MusicLibrary.Folders.Add(folder);
+            await SettingsViewModel.SaveFoldersAsync();
+            await Data.MusicLibrary.LoadLibraryAgainAsync();
+            IsProgressRingActive = false;
         }
+        (sender as Button)!.IsEnabled = true;
     }
 
-    private void UpdateContentFrame()
+    public async Task<int> LoadSelectionBarSelectedIndex()
     {
-        _hasNavigated = true;
-        Data.MusicLibraryPage?.GetContentFrame()
-            .Navigate(Data.MusicLibrary.HasMusics ? typeof(HaveMusicPage) : typeof(NoMusicPage));
+        return await _localSettingsService.ReadSettingAsync<int>(
+            "HaveMusicSelectionBarSelectedIndex"
+        );
     }
+
+    public async void SaveSelectionBarSelectedIndex(int selectedIndex)
+    {
+        await _localSettingsService.SaveSettingAsync(
+            "HaveMusicSelectionBarSelectedIndex",
+            selectedIndex
+        );
+    }
+
+    public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
