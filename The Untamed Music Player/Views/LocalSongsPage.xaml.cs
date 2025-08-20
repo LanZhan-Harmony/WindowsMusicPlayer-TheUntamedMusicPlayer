@@ -18,15 +18,11 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
     public LocalSongsPage()
     {
         ViewModel = App.GetService<LocalSongsViewModel>();
+        StrongReferenceMessenger.Default.Register(this);
         InitializeComponent();
     }
 
-    private void LocalSongsPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        StrongReferenceMessenger.Default.Register(this);
-    }
-
-    private void LocalSongsPage_UnLoaded(object sender, RoutedEventArgs e)
+    private void LocalSongsPage_Unloaded(object sender, RoutedEventArgs e)
     {
         StrongReferenceMessenger.Default.Unregister<ScrollToSongMessage>(this);
     }
@@ -53,6 +49,36 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         if (targetSong is not null)
         {
             SongListView.ScrollIntoView(targetSong, message.Alignment);
+        }
+    }
+
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem { DataContext: BriefLocalSongInfo info } menuItem)
+        {
+            while (menuItem.Items.Count > 3) // 保留前三个固定项目，清除其他动态添加的项目
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = new Tuple<BriefLocalSongInfo, PlaylistInfo>(info, playlist),
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: Tuple<BriefLocalSongInfo, PlaylistInfo> tuple })
+        {
+            var (songInfo, playlist) = tuple;
+            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
         }
     }
 
@@ -90,12 +116,33 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         }
     }
 
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
+        {
+            ViewModel.AddToPlayQueueButton_Click(info);
+        }
+    }
+
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
+        {
+            var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+            {
+                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+            }
+        }
+    }
+
     private async void EditInfoButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            var song = new DetailedLocalSongInfo(info);
-            var dialog = new EditSongInfoDialog(song) { XamlRoot = XamlRoot };
+            var dialog = new EditSongInfoDialog(info) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }

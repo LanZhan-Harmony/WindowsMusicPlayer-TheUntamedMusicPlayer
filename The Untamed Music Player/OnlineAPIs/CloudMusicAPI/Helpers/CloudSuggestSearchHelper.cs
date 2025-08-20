@@ -25,7 +25,7 @@ public class CloudSuggestSearchHelper
 
                 if (root.TryGetProperty("result", out var resultElement))
                 {
-                    AddResultsFromProperty(resultElement, "songs", 5, "\uE8D6", list);
+                    AddResultsFromProperty(resultElement, "songs", 5, "\uE940", list);
                     AddResultsFromProperty(resultElement, "albums", 3, "\uE93C", list);
                     AddResultsFromProperty(resultElement, "artists", 3, "\uE77B", list);
                     AddResultsFromProperty(resultElement, "playlists", 2, "\uE728", list);

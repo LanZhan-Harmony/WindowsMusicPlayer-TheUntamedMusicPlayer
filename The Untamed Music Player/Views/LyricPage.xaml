@@ -12,10 +12,8 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <media:AttachedCardShadow x:Key="CommonShadow" Offset="4"/>
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
-        <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
         <DataTemplate x:Key="LyricViewTemplate" x:DataType="model:LyricSlice">
             <UserControl>
@@ -152,8 +150,9 @@
                           Visibility="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="ControllerCoverFontIcon"
                                   Canvas.ZIndex="0"
+                                  FontFamily="{StaticResource UntamedFontFamily}"
                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                  Glyph="&#xE8D6;"/>
+                                  Glyph="&#xE940;"/>
                     </Grid>
                 </Grid>
                 <ui:Effects.Shadow>

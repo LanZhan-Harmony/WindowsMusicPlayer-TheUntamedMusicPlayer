@@ -19,12 +19,13 @@ public static class Data
     public static bool HasMusicLibraryLoaded { get; set; } = false;
 
     /// <summary>
-    /// 是否正在下载音乐
+    /// 是否正在下载或更改音乐
     /// </summary>
-    public static bool IsMusicDownloading { get; set; } = false;
+    public static bool IsMusicProcessing { get; set; } = false;
 
     public static LocalAlbumInfo? SelectedLocalAlbum { get; set; }
     public static LocalArtistInfo? SelectedLocalArtist { get; set; }
+    public static PlaylistInfo? SelectedPlaylist { get; set; }
     public static IBriefOnlineAlbumInfo? SelectedOnlineAlbum { get; set; }
     public static IBriefOnlineArtistInfo? SelectedOnlineArtist { get; set; }
     public static IBriefOnlinePlaylistInfo? SelectedOnlinePlaylist { get; set; }
@@ -35,11 +36,6 @@ public static class Data
     public static readonly string AppDisplayName = "AppDisplayName".GetLocalized();
 
     /// <summary>
-    /// 软件语言
-    /// </summary>
-    public static readonly string Language = "Data_Language".GetLocalized();
-
-    /// <summary>
     /// 播放器支持的音频文件类型
     /// </summary>
     public static readonly string[] SupportedAudioTypes =
@@ -47,17 +43,15 @@ public static class Data
         ".mp3",
         ".flac",
         ".ogg",
+        ".m4a",
         ".wav",
+        ".midi",
         ".mp2",
         ".mp1",
         ".aif",
         ".aiff",
-        ".m4a",
         ".m2a",
         ".m1a",
-        ".mpa",
-        ".mpg",
-        ".mpeg",
         ".mp3pro",
         ".bwf",
         ".mus",
@@ -69,11 +63,6 @@ public static class Data
         ".it",
         ".mtm",
         ".umx",
-        ".mdz",
-        ".s3z",
-        ".itz",
-        ".x",
-        ".mz",
     ];
 
     /// <summary>
@@ -93,12 +82,12 @@ public static class Data
 
     public static OnlineMusicLibrary OnlineMusicLibrary { get; set; } = new();
     public static MusicLibrary MusicLibrary { get; set; } = new();
+    public static PlaylistLibrary PlaylistLibrary { get; set; } = new();
     public static MusicPlayer MusicPlayer { get; set; } = new();
 
     public static MainWindow? MainWindow { get; set; }
     public static ShellPage? ShellPage { get; set; }
     public static HomePage HomePage { get; set; } = null!;
-    public static MusicLibraryPage? MusicLibraryPage { get; set; }
     public static LyricPage? LyricPage { get; set; }
     public static RootPlayBarView? RootPlayBarView { get; set; }
     public static DesktopLyricWindow? DesktopLyricWindow { get; set; }
@@ -106,7 +95,6 @@ public static class Data
     public static SettingsViewModel? SettingsViewModel { get; set; }
     public static ShellViewModel? ShellViewModel { get; set; }
     public static RootPlayBarViewModel? RootPlayBarViewModel { get; set; }
-    public static HaveMusicViewModel? HaveMusicViewModel { get; set; }
     public static LocalSongsViewModel? LocalSongsViewModel { get; set; }
     public static LocalAlbumsViewModel? LocalAlbumsViewModel { get; set; }
 }

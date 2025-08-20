@@ -4,7 +4,6 @@
       xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
-      xmlns:i="using:Microsoft.Xaml.Interactivity"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ui="using:CommunityToolkit.WinUI"
       Loaded="OnLoaded">
@@ -54,7 +53,9 @@
                 </NavigationView.AutoSuggestBox>
                 <NavigationView.MenuItems>
                     <NavigationViewItem x:Uid="Shell_Home"
-                                        AccessKey="NO" Icon="Home"
+                                        AccessKey="NO"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE80F;}"
                                         Tag="HomePage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="F" Modifiers="Control,Shift"/>
@@ -62,7 +63,8 @@
                     </NavigationViewItem>
                     <NavigationViewItem x:Uid="Shell_MusicLibrary"
                                         AccessKey="NS"
-                                        Icon="{ui:FontIcon Glyph=&#xE8D6;}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE940;}"
                                         Tag="MusicLibraryPage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="R" Modifiers="Control"/>
@@ -71,7 +73,8 @@
                     <NavigationViewItemSeparator/>
                     <NavigationViewItem x:Uid="Shell_PlayQueue"
                                         AccessKey="NQ"
-                                        Icon="{ui:FontIcon Glyph=&#xE90B;}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE93F;}"
                                         Tag="PlayQueuePage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Q" Modifiers="Control"/>
@@ -79,7 +82,8 @@
                     </NavigationViewItem>
                     <NavigationViewItem x:Uid="Shell_PlayLists"
                                         AccessKey="NP"
-                                        Icon="{ui:FontIcon Glyph=&#xE93C;}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xED3B;}"
                                         Tag="PlayListsPage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Y" Modifiers="Control"/>
@@ -95,7 +99,7 @@
                                     <animatedvisuals:AnimatedSettingsVisualSource/>
                                 </AnimatedIcon.Source>
                                 <AnimatedIcon.FallbackIconSource>
-                                    <FontIconSource Glyph="&#xE713;"/>
+                                    <FontIconSource FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE713;"/>
                                 </AnimatedIcon.FallbackIconSource>
                             </AnimatedIcon>
                         </NavigationViewItem.Icon>
@@ -106,11 +110,6 @@
                 </NavigationView.FooterMenuItems>
                 <Frame x:Name="NavigationFrame" Navigating="{x:Bind ViewModel.NavigationFrame_Navigating}"/>
             </NavigationView>
-            <InfoBar Title="无法打开，因为当前无法访问你的存储。请稍等片刻，然后再试。"
-                     Margin="20" HorizontalAlignment="Right"
-                     VerticalAlignment="Bottom"
-                     Canvas.ZIndex="1" IsClosable="True"
-                     IsIconVisible="False" IsOpen="False"/>
         </Grid>
     </Grid>
 </Page>

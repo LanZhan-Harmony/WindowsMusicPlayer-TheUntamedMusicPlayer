@@ -1,6 +1,8 @@
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Storage;
 using Windows.System;
@@ -29,17 +31,17 @@ public sealed partial class SettingsPage : Page
         var titleTextBlock = new TextBlock
         {
             Text = "Settings_Dialog1Title".GetLocalized(),
-            FontWeight = Microsoft.UI.Text.FontWeights.Normal,
+            FontWeight = FontWeights.Normal,
         };
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            RequestedTheme = Data.MainViewModel!.IsDarkTheme
+                ? ElementTheme.Dark
+                : ElementTheme.Light,
             Title = titleTextBlock,
-            Content =
-                "Settings_Dialog1Content1".GetLocalized()
-                + folderName
-                + "Settings_Dialog1Content2".GetLocalized(),
+            Content = "Settings_Dialog1Content".GetLocalizedWithReplace("{title}", folderName),
             PrimaryButtonText = "Settings_Dialog1Primary".GetLocalized(),
             CloseButtonText = "Settings_Dialog1Close".GetLocalized(),
             DefaultButton = ContentDialogButton.Primary,
@@ -58,12 +60,15 @@ public sealed partial class SettingsPage : Page
         var titleTextBlock = new TextBlock
         {
             Text = "Settings_Dialog2Title".GetLocalized(),
-            FontWeight = Microsoft.UI.Text.FontWeights.Normal,
+            FontWeight = FontWeights.Normal,
         };
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            RequestedTheme = Data.MainViewModel!.IsDarkTheme
+                ? ElementTheme.Dark
+                : ElementTheme.Light,
             Title = titleTextBlock,
             Content = "Settings_Dialog2Content".GetLocalized(),
             PrimaryButtonText = "Settings_Dialog2Primary".GetLocalized(),

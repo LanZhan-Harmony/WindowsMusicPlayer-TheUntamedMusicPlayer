@@ -228,17 +228,26 @@
   <data name="Settings_Dialog1Title" xml:space="preserve">
     <value>删除此文件夹吗？</value>
   </data>
-  <data name="Settings_Dialog1Content1" xml:space="preserve">
-    <value>如果将“</value>
-  </data>
-  <data name="Settings_Dialog1Content2" xml:space="preserve">
-    <value>”文件夹从音乐中移除，则该文件夹不会再出现在音乐中，但不会被删除。</value>
+  <data name="Settings_Dialog1Content" xml:space="preserve">
+    <value>如果将"{title}"文件夹从音乐中移除，则该文件夹不会再出现在音乐中，但不会被删除。</value>
   </data>
   <data name="Settings_Dialog1Primary" xml:space="preserve">
     <value>删除文件夹</value>
   </data>
   <data name="Settings_Dialog1Close" xml:space="preserve">
     <value>取消</value>
+  </data>
+  <data name="PlayLists_DeleteDialogClose" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="PlayLists_DeleteDialogPrimary" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
+    <value>是否永久删除播放列表？</value>
+  </data>
+  <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
+    <value>是否确实要删除此播放列表？如果删除"{title}"，将无法恢复它。</value>
   </data>
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
     <value>管理系统索引设置</value>
@@ -444,9 +453,6 @@
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>拼音</value>
   </data>
-  <data name="Data_Language" xml:space="preserve">
-    <value>简体中文</value>
-  </data>
   <data name="Settings_Version" xml:space="preserve">
     <value>版本</value>
   </data>
@@ -473,6 +479,9 @@
   </data>
   <data name="Artists_SortBy" xml:space="preserve">
     <value>A-Z, Z-A</value>
+  </data>
+  <data name="Playlists_SortBy" xml:space="preserve">
+    <value>A-Z, Z-A, 修改日期 (升序), 修改日期 (降序)</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
     <value>窗口失去焦点后背景停止更新</value>
@@ -543,8 +552,17 @@
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
     <value>编辑歌曲信息</value>
   </data>
+  <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
+    <value>歌词</value>
+  </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
     <value>编辑专辑信息</value>
+  </data>
+  <data name="RenamePlaylistInfoDialog.Title" xml:space="preserve">
+    <value>重命名播放列表</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
+    <value>添加到新建播放列表</value>
   </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
     <value>关闭</value>
@@ -553,16 +571,28 @@
     <value>关闭</value>
   </data>
   <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>关闭</value>
+    <value>取消</value>
   </data>
   <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>关闭</value>
+    <value>取消</value>
+  </data>
+  <data name="RenamePlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
   </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>保存</value>
   </data>
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>保存</value>
+  </data>
+  <data name="RenamePlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>创建</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
     <value>桌面歌词</value>
@@ -705,7 +735,64 @@
   <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
     <value>显示播放列表</value>
   </data>
+  <data name="PlayLists_Rename.Text" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <data name="PlayLists_Delete.Text" xml:space="preserve">
+    <value>删除</value>
+  </data>
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
     <value>显示歌单</value>
+  </data>
+  <data name="Main_SendFeedback.Content" xml:space="preserve">
+    <value>发送反馈</value>
+  </data>
+  <data name="Error_SongPlayback" xml:space="preserve">
+    <value>我们无法打开 {title}。这可能是因为文件类型不受支持、文件扩展名不正确、文件已损坏或网络异常。</value>
+  </data>
+  <data name="Error_EditingSongInfoIO" xml:space="preserve">
+    <value>我们无法编辑 {title}。这可能是因为当前文件正在播放、被其他进程占用或文件类型不受支持。</value>
+  </data>
+  <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
+    <value>开发者选项</value>
+  </data>
+  <data name="Settings_Logging.Header" xml:space="preserve">
+    <value>日志记录</value>
+  </data>
+  <data name="Settings_OpenFolder.Content" xml:space="preserve">
+    <value>打开文件夹</value>
+  </data>
+  <data name="Error_EditingSongInfoOther" xml:space="preserve">
+    <value>我们无法编辑 {title} 的部分属性。这可能是因为文件类型不受支持或文件已损坏。</value>
+  </data>
+  <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
+    <value>你没有任何播放列表</value>
+  </data>
+  <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
+    <value>创建一个新的播放列表</value>
+  </data>
+  <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
+    <value>新建播放列表</value>
+  </data>
+  <data name="PlayLists_CreatePlaylist.Content" xml:space="preserve">
+    <value>创建播放列表</value>
+  </data>
+  <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
+    <value>无标题播放列表</value>
+  </data>
+  <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
+    <value>无标题播放列表</value>
+  </data>
+  <data name="PlaylistInfo_Create" xml:space="preserve">
+    <value>已创建播放列表"{title}"。</value>
+  </data>
+  <data name="PlaylistInfo_Delete" xml:space="preserve">
+    <value>已删除播放列表"{title}"。</value>
+  </data>
+  <data name="PlaylistInfo_AddItems" xml:space="preserve">
+    <value>{num} 项已添加到播放列表"{title}"。</value>
+  </data>
+  <data name="PlaylistInfo_AddItem" xml:space="preserve">
+    <value>{num} 项已添加到播放列表"{title}"。</value>
   </data>
 </root>

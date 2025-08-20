@@ -228,17 +228,26 @@
   <data name="Settings_Dialog1Title" xml:space="preserve">
     <value>Revome this folder?</value>
   </data>
-  <data name="Settings_Dialog1Content1" xml:space="preserve">
-    <value>If you remove the “</value>
-  </data>
-  <data name="Settings_Dialog1Content2" xml:space="preserve">
-    <value>“ folder from Music, it won't appear in Music anymore, but won't be deleted.</value>
+  <data name="Settings_Dialog1Content" xml:space="preserve">
+    <value>If you remove the "{title}" folder from Music, it won't appear in Music anymore, but won't be deleted.</value>
   </data>
   <data name="Settings_Dialog1Primary" xml:space="preserve">
     <value>Remove Folder</value>
   </data>
   <data name="Settings_Dialog1Close" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="PlayLists_DeleteDialogClose" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="PlayLists_DeleteDialogPrimary" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
+    <value>Delete playlists permanently?</value>
+  </data>
+  <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
+    <value>Are you sure you want to delete this playlist? If you delete '{title}', you won't be able to recover it.</value>
   </data>
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
     <value>Manage system indexing settings</value>
@@ -444,9 +453,6 @@
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
   </data>
-  <data name="Data_Language" xml:space="preserve">
-    <value>English</value>
-  </data>
   <data name="Settings_Version" xml:space="preserve">
     <value>Version</value>
   </data>
@@ -473,6 +479,9 @@
   </data>
   <data name="Artists_SortBy" xml:space="preserve">
     <value>A - Z, Z - A</value>
+  </data>
+  <data name="Playlists_SortBy" xml:space="preserve">
+    <value>A - Z, Z - A, Date modified (Asc), Date modified (Desc)</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
     <value>Background stops updating after window loses focus</value>
@@ -543,8 +552,17 @@
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
     <value>Edit song info</value>
   </data>
+  <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
+    <value>Lyric</value>
+  </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
     <value>Edit album info</value>
+  </data>
+  <data name="RenamePlaylistInfoDialog.Title" xml:space="preserve">
+    <value>Rename playlist</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
+    <value>Add to new playlist</value>
   </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
     <value>Close</value>
@@ -553,16 +571,28 @@
     <value>Close</value>
   </data>
   <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Close</value>
+    <value>Cancel</value>
   </data>
   <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Close</value>
+    <value>Cancel</value>
+  </data>
+  <data name="RenamePlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
   </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>Save</value>
   </data>
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="RenamePlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Create</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
     <value>Desktop lyric</value>
@@ -705,7 +735,64 @@
   <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
     <value>Show playlist</value>
   </data>
+  <data name="PlayLists_Rename.Text" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="PlayLists_Delete.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
     <value>Show playlist</value>
+  </data>
+  <data name="Main_SendFeedback.Content" xml:space="preserve">
+    <value>Send feedback</value>
+  </data>
+  <data name="Error_SongPlayback" xml:space="preserve">
+    <value>We can't open {title}. This may be because the file type is unsupported, the file extension is incorrect, the file is corrupted, or the network is abnormal.</value>
+  </data>
+  <data name="Error_EditingSongInfoIO" xml:space="preserve">
+    <value>We can't edit {title}. This may be because the current file is playing, being occupied by another process, or the file type is unsupported.</value>
+  </data>
+  <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
+    <value>Developer options</value>
+  </data>
+  <data name="Settings_Logging.Header" xml:space="preserve">
+    <value>Logging</value>
+  </data>
+  <data name="Settings_OpenFolder.Content" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="Error_EditingSongInfoOther" xml:space="preserve">
+    <value>We can't edit some of the properties of {title}. This may be because the file type is unsupported, or the file is corrupted.</value>
+  </data>
+  <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
+    <value>You don't have any playlists</value>
+  </data>
+  <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
+    <value>Create a new playlist</value>
+  </data>
+  <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
+    <value>New playlist</value>
+  </data>
+  <data name="PlayLists_CreatePlaylist.Content" xml:space="preserve">
+    <value>Create playlist</value>
+  </data>
+  <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
+    <value>Untitled playlist</value>
+  </data>
+  <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
+    <value>Untitled playlist</value>
+  </data>
+  <data name="PlaylistInfo_Create" xml:space="preserve">
+    <value>Playlist '{title}' created.</value>
+  </data>
+  <data name="PlaylistInfo_Delete" xml:space="preserve">
+    <value>Playlist '{title}' deleted.</value>
+  </data>
+  <data name="PlaylistInfo_AddItems" xml:space="preserve">
+    <value>{num} items added to playlist '{title}'.</value>
+  </data>
+  <data name="PlaylistInfo_AddItem" xml:space="preserve">
+    <value>{num} item added to playlist '{title}'.</value>
   </data>
 </root>

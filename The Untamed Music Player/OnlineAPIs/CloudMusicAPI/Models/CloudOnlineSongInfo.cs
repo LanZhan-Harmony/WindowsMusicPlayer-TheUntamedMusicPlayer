@@ -10,7 +10,6 @@ namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 [MemoryPackable]
 public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
 {
-    public int PlayQueueIndex { get; set; } = -1;
     public bool IsPlayAvailable { get; set; } = false;
     public string Path { get; set; } = null!;
     public string Title { get; set; } = "";
@@ -145,14 +144,9 @@ public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
             IsPlayAvailable = false;
         }
     }
-
-    public object Clone()
-    {
-        return MemberwiseClone();
-    }
 }
 
-public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOnlineSongInfo
+public class DetailedCloudOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOnlineSongInfo
 {
     public bool IsOnline { get; set; } = true;
     public string AlbumArtistsStr { get; set; } = "";
@@ -161,14 +155,14 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
     public string? CoverPath { get; set; }
     public string ItemType { get; set; } = "";
     public string BitRate { get; set; } = "";
-    public string Track { get; set; } = "";
+    public string TrackStr { get; set; } = "";
     public string Lyric { get; set; } = "";
 
-    public CloudDetailedOnlineSongInfo() { }
+    public DetailedCloudOnlineSongInfo() { }
 
-    public static async Task<CloudDetailedOnlineSongInfo> CreateAsync(BriefCloudOnlineSongInfo info)
+    public static async Task<DetailedCloudOnlineSongInfo> CreateAsync(BriefCloudOnlineSongInfo info)
     {
-        var detailedInfo = new CloudDetailedOnlineSongInfo
+        var detailedInfo = new DetailedCloudOnlineSongInfo
         {
             IsPlayAvailable = info.IsPlayAvailable,
             ID = info.ID,
@@ -176,7 +170,6 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
             AlbumID = info.AlbumID,
             ArtistID = info.ArtistID,
             DurationStr = info.DurationStr,
-            YearStr = info.YearStr,
         };
         var api = NeteaseCloudMusicApi.Instance;
         var songUrlTask = api.RequestAsync(
@@ -216,6 +209,12 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
                 detailedInfo.AlbumArtistsStr = IDetailedSongInfoBase.GetAlbumArtistsStr(
                     albumArtists
                 );
+                detailedInfo.YearStr = IBriefSongInfoBase.GetYearStr(
+                    (ushort)
+                        DateTimeOffset
+                            .FromUnixTimeMilliseconds((long)albumResult["album"]!["publishTime"]!)
+                            .Year
+                );
             }
             detailedInfo.ArtistsStr =
                 info.ArtistsStr == IBriefSongInfoBase._unknownArtist ? "" : info.ArtistsStr;
@@ -248,7 +247,7 @@ public class CloudDetailedOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
         }
     }
 
-    private static async Task<bool> LoadCoverAsync(CloudDetailedOnlineSongInfo info)
+    private static async Task<bool> LoadCoverAsync(DetailedCloudOnlineSongInfo info)
     {
         try
         {
