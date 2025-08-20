@@ -783,4 +783,16 @@
   <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
     <value>无标题播放列表</value>
   </data>
+  <data name="PlaylistInfo_Create" xml:space="preserve">
+    <value>已创建播放列表"{title}"。</value>
+  </data>
+  <data name="PlaylistInfo_Delete" xml:space="preserve">
+    <value>已删除播放列表"{title}"。</value>
+  </data>
+  <data name="PlaylistInfo_AddItems" xml:space="preserve">
+    <value>{num} 项已添加到播放列表"{title}"。</value>
+  </data>
+  <data name="PlaylistInfo_AddItem" xml:space="preserve">
+    <value>{num} 项已添加到播放列表"{title}"。</value>
+  </data>
 </root>

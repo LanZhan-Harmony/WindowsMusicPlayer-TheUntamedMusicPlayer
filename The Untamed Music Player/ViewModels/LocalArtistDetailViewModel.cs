@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Contracts.Models;
@@ -39,6 +40,25 @@ public class LocalArtistDetailViewModel
         Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
     }
 
+    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, ConvertAllSongsToFlatList());
+    }
+
+    public void AddToPlayQueueFlyoutButton_Click()
+    {
+        var allSongs = ConvertAllSongsToFlatList();
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{Artist.Name}", allSongs);
+            Data.MusicPlayer.PlaySongByInfo(allSongs[0]);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongsToPlayQueue(allSongs);
+        }
+    }
+
     public void SongListView_ItemClick(BriefLocalSongInfo info)
     {
         Data.MusicPlayer.SetPlayQueue(
@@ -62,13 +82,35 @@ public class LocalArtistDetailViewModel
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list);
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{Artist.Name}:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
             Data.MusicPlayer.AddSongToNextPlay(info);
         }
+    }
+
+    public void SongListViewAddToPlayQueueButton_Click(BriefLocalSongInfo info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            var list = new List<BriefLocalSongInfo> { info };
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{Artist.Name}:Part", list);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToPlayQueue(info);
+        }
+    }
+
+    public async void SongListViewAddToPlaylistButton_Click(
+        BriefLocalSongInfo info,
+        PlaylistInfo playlist
+    )
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
     }
 
     public void SongListViewShowAlbumButton_Click(BriefLocalSongInfo info)
@@ -104,6 +146,28 @@ public class LocalArtistDetailViewModel
         {
             Data.MusicPlayer.AddSongsToNextPlay(songList);
         }
+    }
+
+    public void AlbumGridViewAddToPlayQueueButton_Click(LocalArtistAlbumInfo info)
+    {
+        var songList = info.SongList;
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongsToPlayQueue(songList);
+        }
+    }
+
+    public async void AlbumGridViewAddToPlaylistButton_Click(
+        LocalArtistAlbumInfo info,
+        PlaylistInfo playlist
+    )
+    {
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, info.SongList);
     }
 
     private List<IBriefSongInfoBase> ConvertAllSongsToFlatList()

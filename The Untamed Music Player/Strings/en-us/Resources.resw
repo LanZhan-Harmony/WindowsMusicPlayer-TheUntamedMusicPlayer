@@ -229,7 +229,7 @@
     <value>Revome this folder?</value>
   </data>
   <data name="Settings_Dialog1Content" xml:space="preserve">
-    <value>If you remove the '{title}' folder from Music, it won't appear in Music anymore, but won't be deleted.</value>
+    <value>If you remove the "{title}" folder from Music, it won't appear in Music anymore, but won't be deleted.</value>
   </data>
   <data name="Settings_Dialog1Primary" xml:space="preserve">
     <value>Remove Folder</value>
@@ -782,5 +782,17 @@
   </data>
   <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
     <value>Untitled playlist</value>
+  </data>
+  <data name="PlaylistInfo_Create" xml:space="preserve">
+    <value>Playlist '{title}' created.</value>
+  </data>
+  <data name="PlaylistInfo_Delete" xml:space="preserve">
+    <value>Playlist '{title}' deleted.</value>
+  </data>
+  <data name="PlaylistInfo_AddItems" xml:space="preserve">
+    <value>{num} items added to playlist '{title}'.</value>
+  </data>
+  <data name="PlaylistInfo_AddItem" xml:space="preserve">
+    <value>{num} item added to playlist '{title}'.</value>
   </data>
 </root>
