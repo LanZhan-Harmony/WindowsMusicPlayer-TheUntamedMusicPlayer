@@ -123,10 +123,10 @@ public partial class MusicLibrary : ObservableRecipient
                     Artists = libraryData.Artists;
                     Genres = libraryData.Genres;
                     _musicFolders = libraryData.MusicFolders;
+                    LoadCoverAsync();
                     _dispatcherQueue.TryEnqueue(() =>
                         Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
                     );
-                    await Task.Run(AddFolderWatcher);
                 }
                 else
                 {
@@ -140,22 +140,18 @@ public partial class MusicLibrary : ObservableRecipient
                         }
                     }
                     await Task.WhenAll(loadMusicTasks);
-                    foreach (var album in Albums.Values)
-                    {
-                        album.LoadCover();
-                    }
                     Genres =
                     [
                         .. _musicGenres
                             .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                             .OrderBy(x => x, new GenreComparer()),
                     ];
+                    LoadCoverAsync();
                     _dispatcherQueue.TryEnqueue(() =>
                         Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
                     );
                     _musicGenres.Clear();
                     var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
-                    await Task.Run(AddFolderWatcher);
                     FileManager.SaveLibraryDataAsync(Folders, data);
                 }
                 Data.HasMusicLibraryLoaded = true;
@@ -166,6 +162,7 @@ public partial class MusicLibrary : ObservableRecipient
             }
             finally
             {
+                _ = Task.Run(AddFolderWatcher);
                 _librarySemaphore.Release();
                 GC.Collect();
             }
@@ -194,10 +191,7 @@ public partial class MusicLibrary : ObservableRecipient
                     }
                 }
                 await Task.WhenAll(loadMusicTasks);
-                foreach (var album in Albums.Values)
-                {
-                    album.LoadCover();
-                }
+                LoadCoverAsync();
                 Genres =
                 [
                     .. _musicGenres
@@ -210,7 +204,7 @@ public partial class MusicLibrary : ObservableRecipient
                 _musicGenres.Clear();
                 FolderWatchers.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
-                await Task.Run(AddFolderWatcher);
+                _ = Task.Run(AddFolderWatcher);
                 FileManager.SaveLibraryDataAsync(Folders, data);
             }
             catch (Exception ex)
@@ -224,6 +218,14 @@ public partial class MusicLibrary : ObservableRecipient
                 GC.Collect();
             }
         });
+    }
+
+    public void LoadCoverAsync()
+    {
+        foreach (var album in Albums.Values)
+        {
+            album.LoadCover(); // 使用同步的懒加载方法
+        }
     }
 
     private async Task LoadMusicAsync(StorageFolder folder, string foldername)

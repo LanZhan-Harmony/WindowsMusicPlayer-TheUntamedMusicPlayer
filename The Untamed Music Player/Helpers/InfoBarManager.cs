@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -12,6 +13,7 @@ namespace The_Untamed_Music_Player.Helpers;
 public partial class InfoBarManager : IDisposable
 {
     private readonly InfoBar _infoBar;
+    private readonly HyperlinkButton _sendFeedbackButton;
     private readonly Storyboard _showInfoBarStoryboard;
     private readonly Storyboard _hideInfoBarStoryboard;
     private readonly Queue<LogMessage> _messageQueue = [];
@@ -20,11 +22,13 @@ public partial class InfoBarManager : IDisposable
 
     public InfoBarManager(
         InfoBar infoBar,
+        HyperlinkButton sendFeedbackButton,
         Storyboard showInfoBarStoryboard,
         Storyboard hideInfoBarStoryBoard
     )
     {
         _infoBar = infoBar;
+        _sendFeedbackButton = sendFeedbackButton;
         _showInfoBarStoryboard = showInfoBarStoryboard;
         _hideInfoBarStoryboard = hideInfoBarStoryBoard;
         _infoBar.Closed += OnInfoBarClosed;
@@ -53,9 +57,9 @@ public partial class InfoBarManager : IDisposable
         {
             _isDisplaying = true;
             _autoCloseTimer?.Stop();
-
+            _sendFeedbackButton.Visibility =
+                logMessage.Level == LogLevel.None ? Visibility.Collapsed : Visibility.Visible;
             _infoBar.Title = logMessage.Message;
-
             _infoBar.IsOpen = true;
             _infoBar.Opacity = 0;
             _infoBar.Visibility = Visibility.Visible;

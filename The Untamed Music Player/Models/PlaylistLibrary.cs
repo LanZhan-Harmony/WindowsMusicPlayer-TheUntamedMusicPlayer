@@ -1,5 +1,7 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using ZLinq;
 
@@ -17,11 +19,11 @@ public class PlaylistLibrary
     public async Task LoadLibraryAsync()
     {
         Playlists = await FileManager.LoadPlaylistDataAsync();
-        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
         foreach (var playlist in Playlists)
         {
-            await playlist.GetCoverAsync();
+            playlist.GetCover();
         }
+        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
     }
 
     public PlaylistInfo? NewPlaylist(string? name)
@@ -34,6 +36,12 @@ public class PlaylistLibrary
         var info = new PlaylistInfo(uniqueName);
         Playlists.Add(info);
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(true));
+        StrongReferenceMessenger.Default.Send(
+            new LogMessage(
+                LogLevel.None,
+                "PlaylistInfo_Create".GetLocalizedWithReplace("{title}", uniqueName)
+            )
+        );
         return info;
     }
 
@@ -55,6 +63,12 @@ public class PlaylistLibrary
     {
         Playlists.Remove(info);
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        StrongReferenceMessenger.Default.Send(
+            new LogMessage(
+                LogLevel.None,
+                "PlaylistInfo_Delete".GetLocalizedWithReplace("{title}", info.Name)
+            )
+        );
     }
 
     public async Task AddToPlaylist(PlaylistInfo info, IBriefSongInfoBase song)
@@ -62,19 +76,49 @@ public class PlaylistLibrary
         await info.Add(song);
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
         StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(info));
+        var replacements = new Dictionary<string, string>
+        {
+            { "{num}", "1" },
+            { "{title}", info.Name },
+        };
+        StrongReferenceMessenger.Default.Send(
+            new LogMessage(
+                LogLevel.None,
+                "PlaylistInfo_AddItem".GetLocalizedWithReplace(replacements)
+            )
+        );
     }
 
     public async Task AddToPlaylist(PlaylistInfo info, IEnumerable<IBriefSongInfoBase> songs)
     {
+        if (!songs.Any())
+        {
+            return;
+        }
         await info.AddRange(songs);
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
         StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(info));
+        var count = songs.Count();
+        var replacements = new Dictionary<string, string>
+        {
+            { "{num}", $"{count}" },
+            { "{title}", info.Name },
+        };
+        StrongReferenceMessenger.Default.Send(
+            new LogMessage(
+                LogLevel.None,
+                count == 1
+                    ? "PlaylistInfo_AddItem".GetLocalizedWithReplace(replacements)
+                    : "PlaylistInfo_AddItems".GetLocalizedWithReplace(replacements)
+            )
+        );
     }
 
-    public void DeleteFromPlaylist(PlaylistInfo info, IndexedPlaylistSong song)
+    public async Task DeleteFromPlaylist(PlaylistInfo info, IndexedPlaylistSong song)
     {
-        info.Delete(song);
+        await info.Delete(song);
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(info));
     }
 
     public void MoveUpInPlaylist(PlaylistInfo info, IndexedPlaylistSong song)

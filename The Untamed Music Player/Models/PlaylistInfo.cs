@@ -55,7 +55,7 @@ public partial class PlaylistInfo
 
         if (coverPathIndex >= 0)
         {
-            await GetCoverAsync();
+            GetCover();
         }
     }
 
@@ -64,10 +64,6 @@ public partial class PlaylistInfo
     /// </summary>
     public async Task AddRange(IEnumerable<IBriefSongInfoBase> songs)
     {
-        if (!songs.Any())
-        {
-            return;
-        }
         var coverUpdated = false;
         foreach (var song in songs)
         {
@@ -84,22 +80,26 @@ public partial class PlaylistInfo
         ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
         if (coverUpdated)
         {
-            await GetCoverAsync();
+            GetCover();
         }
     }
 
     /// <summary>
     /// 从播放列表中删除一首歌曲
     /// </summary>
-    public void Delete(IndexedPlaylistSong song)
+    public async Task Delete(IndexedPlaylistSong song)
     {
         if (song.Index < 0 || song.Index >= SongList.Count)
         {
             return;
         }
+
+        var needRefillCover = false;
+
         if (song.CoverPathIndex >= 0 && song.CoverPathIndex < CoverPaths.Count)
         {
             CoverPaths.RemoveAt(song.CoverPathIndex); // 删除对应的封面路径
+            needRefillCover = true;
 
             // 更新其他歌曲的封面路径索引
             for (var i = 0; i < SongList.Count; i++)
@@ -114,6 +114,14 @@ public partial class PlaylistInfo
         ReindexSongs(); // 重新索引以确保Index对应真实位置
         TotalSongNumStr = GetTotalSongNumStr(SongList.Count);
         ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
+        if (needRefillCover)
+        {
+            if (CoverPaths.Count < 4)
+            {
+                await RefillCoverPaths();
+            }
+            GetCover();
+        }
     }
 
     /// <summary>
@@ -165,32 +173,6 @@ public partial class PlaylistInfo
     }
 
     /// <summary>
-    /// 通过位置上移歌曲
-    /// </summary>
-    public void MoveUpByPosition(int position)
-    {
-        if (position <= 0 || position >= SongList.Count)
-        {
-            return;
-        }
-
-        MoveUp(SongList[position]);
-    }
-
-    /// <summary>
-    /// 通过位置下移歌曲
-    /// </summary>
-    public void MoveDownByPosition(int position)
-    {
-        if (position < 0 || position >= SongList.Count - 1)
-        {
-            return;
-        }
-
-        MoveDown(SongList[position]);
-    }
-
-    /// <summary>
     /// 获取所有歌曲
     /// </summary>
     public IEnumerable<IBriefSongInfoBase> GetAllSongs()
@@ -218,115 +200,123 @@ public partial class PlaylistInfo
         return -1;
     }
 
-    public async Task GetCoverAsync()
+    /// <summary>
+    /// 重新填充封面路径，从剩余歌曲中寻找新的封面
+    /// </summary>
+    private async Task RefillCoverPaths()
+    {
+        foreach (var indexedSong in SongList)
+        {
+            if (CoverPaths.Count >= 4)
+            {
+                break;
+            }
+
+            // 如果这首歌还没有封面路径索引，尝试添加它的封面
+            if (indexedSong.CoverPathIndex == -1)
+            {
+                var coverPath = await IBriefSongInfoBase.GetCoverPathAsync(indexedSong.Song);
+                if (!string.IsNullOrWhiteSpace(coverPath))
+                {
+                    CoverPaths.Add(coverPath);
+                    indexedSong.CoverPathIndex = CoverPaths.Count - 1;
+                }
+            }
+        }
+    }
+
+    public void GetCover()
     {
         if (CoverPaths.Count == 0)
         {
             return;
         }
 
-        try
+        App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
         {
-            var tcs = new TaskCompletionSource<WriteableBitmap?>();
-            App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
+            try
             {
-                try
+                // 创建一个256x256的WriteableBitmap作为画布
+                const int canvasSize = 256;
+                const int halfSize = canvasSize / 2;
+
+                Cover = new WriteableBitmap(canvasSize, canvasSize);
+                var buffer = Cover.PixelBuffer;
+                var pixels = new byte[buffer.Length];
+
+                // 初始化为透明
+                Array.Fill(pixels, (byte)0);
+
+                // 定义四个区域的位置 (x, y, width, height)
+                var regions = new[]
                 {
-                    // 创建一个256x256的WriteableBitmap作为画布
-                    const int canvasSize = 256;
-                    const int halfSize = canvasSize / 2;
+                    new PictureRegion(0, 0, halfSize, halfSize), // 左上
+                    new PictureRegion(halfSize, 0, halfSize, halfSize), // 右上
+                    new PictureRegion(0, halfSize, halfSize, halfSize), // 左下
+                    new PictureRegion(halfSize, halfSize, halfSize, halfSize), // 右下
+                };
 
-                    var compositeBitmap = new WriteableBitmap(canvasSize, canvasSize);
-                    var buffer = compositeBitmap.PixelBuffer;
-                    var pixels = new byte[buffer.Length];
-
-                    // 初始化为透明
-                    Array.Fill(pixels, (byte)0);
-
-                    // 定义四个区域的位置 (x, y, width, height)
-                    var regions = new[]
-                    {
-                        new PictureRegion(0, 0, halfSize, halfSize), // 左上
-                        new PictureRegion(halfSize, 0, halfSize, halfSize), // 右上
-                        new PictureRegion(0, halfSize, halfSize, halfSize), // 左下
-                        new PictureRegion(halfSize, halfSize, halfSize, halfSize), // 右下
-                    };
-
-                    for (var i = 0; i < CoverPaths.Count; i++)
-                    {
-                        var coverPath = CoverPaths[i];
-                        try
-                        {
-                            byte[]? imageBytes = null;
-
-                            // 获取图片字节数据
-                            if (coverPath.StartsWith("http", StringComparison.OrdinalIgnoreCase)) // 网络图片
-                            {
-                                using var httpClient = new HttpClient();
-                                imageBytes = await httpClient.GetByteArrayAsync(coverPath);
-                            }
-                            else if (File.Exists(coverPath)) // 本地音乐文件
-                            {
-                                using var musicFile = TagLib.File.Create(coverPath);
-                                if (musicFile.Tag.Pictures.Length > 0)
-                                {
-                                    imageBytes = musicFile.Tag.Pictures[0].Data.Data;
-                                }
-                            }
-
-                            if (imageBytes is null)
-                            {
-                                continue;
-                            }
-
-                            // 加载并调整图片大小
-                            var resizedImageBytes = await ResizeImageToFitRegionAsync(
-                                imageBytes,
-                                halfSize,
-                                halfSize
-                            );
-                            if (resizedImageBytes is null)
-                            {
-                                continue;
-                            }
-
-                            // 将调整后的图片绘制到对应区域
-                            DrawImageToRegion(pixels, resizedImageBytes, regions[i], canvasSize);
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine($"处理封面失败: {coverPath}, 错误: {ex.Message}");
-                        }
-                    }
-
-                    // 将像素数据写入WriteableBitmap
-                    using (var pixelStream = buffer.AsStream())
-                    {
-                        pixelStream.Write(pixels, 0, pixels.Length);
-                    }
-
-                    // 使WriteableBitmap失效以更新显示
-                    compositeBitmap.Invalidate();
-
-                    tcs.SetResult(compositeBitmap);
-                }
-                catch (Exception ex)
+                for (var i = 0; i < CoverPaths.Count; i++)
                 {
-                    Debug.WriteLine($"创建WriteableBitmap失败: {ex.Message}");
-                    tcs.SetResult(null);
-                }
-            });
+                    var coverPath = CoverPaths[i];
+                    try
+                    {
+                        byte[]? imageBytes = null;
 
-            var result = await tcs.Task;
-            if (result is not null)
-            {
-                Cover = result;
+                        // 获取图片字节数据
+                        if (coverPath.StartsWith("http", StringComparison.OrdinalIgnoreCase)) // 网络图片
+                        {
+                            using var httpClient = new HttpClient();
+                            imageBytes = await httpClient.GetByteArrayAsync(coverPath);
+                        }
+                        else if (File.Exists(coverPath)) // 本地音乐文件
+                        {
+                            using var musicFile = TagLib.File.Create(coverPath);
+                            if (musicFile.Tag.Pictures.Length > 0)
+                            {
+                                imageBytes = musicFile.Tag.Pictures[0].Data.Data;
+                            }
+                        }
+
+                        if (imageBytes is null)
+                        {
+                            continue;
+                        }
+
+                        // 加载并调整图片大小
+                        var resizedImageBytes = await ResizeImageToFitRegionAsync(
+                            imageBytes,
+                            halfSize,
+                            halfSize
+                        );
+                        if (resizedImageBytes is null)
+                        {
+                            continue;
+                        }
+
+                        // 将调整后的图片绘制到对应区域
+                        DrawImageToRegion(pixels, resizedImageBytes, regions[i], canvasSize);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"处理封面失败: {coverPath}, 错误: {ex.Message}");
+                    }
+                }
+
+                // 将像素数据写入WriteableBitmap
+                using (var pixelStream = buffer.AsStream())
+                {
+                    pixelStream.Write(pixels, 0, pixels.Length);
+                }
+
+                // 使WriteableBitmap失效以更新显示
+                Cover.Invalidate();
             }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"生成封面拼接失败: {ex.Message}");
-        }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"创建WriteableBitmap失败: {ex.Message}");
+            }
+        });
     }
 
     private static async Task<byte[]?> ResizeImageToFitRegionAsync(

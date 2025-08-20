@@ -18,4 +18,17 @@ public static class ResourceExtensions
         var template = _resourceLoader.GetString(resourceKey);
         return template.Replace(placeholder, value);
     }
+
+    public static string GetLocalizedWithReplace(
+        this string resourceKey,
+        IDictionary<string, string> replacements
+    )
+    {
+        var template = _resourceLoader.GetString(resourceKey);
+        foreach (var (placeholder, value) in replacements)
+        {
+            template = template.Replace(placeholder, value);
+        }
+        return template;
+    }
 }

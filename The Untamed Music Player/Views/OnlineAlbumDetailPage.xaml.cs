@@ -21,7 +21,8 @@ namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class OnlineAlbumDetailPage : Page
 {
-    public OnlineAlbumDetailViewModel ViewModel { get; }
+    public OnlineAlbumDetailViewModel ViewModel { get; } =
+        App.GetService<OnlineAlbumDetailViewModel>();
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 82, 115);
@@ -44,7 +45,6 @@ public sealed partial class OnlineAlbumDetailPage : Page
 
     public OnlineAlbumDetailPage()
     {
-        ViewModel = App.GetService<OnlineAlbumDetailViewModel>();
         InitializeComponent();
     }
 
@@ -252,6 +252,22 @@ public sealed partial class OnlineAlbumDetailPage : Page
         _backgroundVisual.Size = new Vector2((float)e.NewSize.Width, BackgroundVisualHeight);
     }
 
+    private T GetValue<T>(T small, T medium, T large)
+    {
+        if (ActualWidth < 641)
+        {
+            return small;
+        }
+        else if (ActualWidth < 850)
+        {
+            return medium;
+        }
+        else
+        {
+            return large;
+        }
+    }
+
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         var grid = sender as Grid;
@@ -270,19 +286,104 @@ public sealed partial class OnlineAlbumDetailPage : Page
         playButton?.Visibility = Visibility.Collapsed;
     }
 
-    private T GetValue<T>(T small, T medium, T large)
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
     {
-        if (ActualWidth < 641)
+        if (sender is MenuFlyoutSubItem { DataContext: IBriefOnlineSongInfo info } menuItem)
         {
-            return small;
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = new Tuple<IBriefOnlineSongInfo, PlaylistInfo>(info, playlist),
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
         }
-        else if (ActualWidth < 850)
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (
+            sender is MenuFlyoutItem
+            {
+                DataContext: Tuple<IBriefOnlineSongInfo, PlaylistInfo> tuple
+            }
+        )
         {
-            return medium;
+            var (songInfo, playlist) = tuple;
+            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
         }
-        else
+    }
+
+    private void AddToFlyout_Opened(object sender, object e)
+    {
+        if (sender is MenuFlyout flyout)
         {
-            return large;
+            while (flyout.Items.Count > 3)
+            {
+                flyout.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = playlist,
+                };
+                playlistMenuItem.Click += AddToPlaylistFlyoutButton_Click;
+                flyout.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void AddToPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
+        {
+            ViewModel.AddToPlaylistFlyoutButton_Click(playlist);
+        }
+    }
+
+    private void AddToPlayQueueFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.AddToPlayQueueFlyoutButton_Click();
+    }
+
+    private async void AddToNewPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+        {
+            ViewModel.AddToPlaylistFlyoutButton_Click(dialog.CreatedPlaylist);
+        }
+    }
+
+    private void AddToMoreFlyout_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem menuItem)
+        {
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = playlist,
+                };
+                playlistMenuItem.Click += AddToPlaylistFlyoutButton_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
         }
     }
 
@@ -307,6 +408,28 @@ public sealed partial class OnlineAlbumDetailPage : Page
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
             await DownloadHelper.DownloadOnlineSongAsync(info);
+        }
+    }
+
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.AddToPlayQueueButton_Click(info);
+        }
+    }
+
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+            {
+                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+            }
         }
     }
 
