@@ -41,6 +41,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         // 初始化InfoBar管理器
         _infoBarManager = new InfoBarManager(
             ErrorInfoBar,
+            SendFeedbackButton,
             ShowInfoBarStoryboard,
             HideInfoBarStoryboard
         );
@@ -58,16 +59,14 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     public void Receive(LogMessage message)
     {
         // 只处理Error和Critical级别的日志
-        if (message.Level < LogLevel.Error)
+        if (message.Level >= LogLevel.Error)
         {
-            return;
+            // 确保在UI线程上执行
+            dispatcherQueue.TryEnqueue(() =>
+            {
+                _infoBarManager?.ShowMessage(message);
+            });
         }
-
-        // 确保在UI线程上执行
-        dispatcherQueue.TryEnqueue(() =>
-        {
-            _infoBarManager?.ShowMessage(message);
-        });
     }
 
     /// <summary>

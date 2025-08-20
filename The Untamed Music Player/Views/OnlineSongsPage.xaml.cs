@@ -99,7 +99,10 @@ public sealed partial class OnlineSongsPage : Page
         )
         {
             var targetSong = songs.FirstOrDefault(song => song.ID == currentSong.ID);
-            SongListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
+            if (targetSong is not null)
+            {
+                SongListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
+            }
         }
     }
 
@@ -116,6 +119,14 @@ public sealed partial class OnlineSongsPage : Page
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
             ViewModel.OnlineSongsPlayNextButton_Click(info);
+        }
+    }
+
+    private async void DownloadButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            await DownloadHelper.DownloadOnlineSongAsync(info);
         }
     }
 
@@ -138,14 +149,6 @@ public sealed partial class OnlineSongsPage : Page
             {
                 ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
             }
-        }
-    }
-
-    private async void DownloadButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
-        {
-            await DownloadHelper.DownloadOnlineSongAsync(info);
         }
     }
 

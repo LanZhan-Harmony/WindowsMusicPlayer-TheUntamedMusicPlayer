@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using MemoryPack;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -236,12 +237,6 @@ public class FileManager
             data.Genres = genresList;
             data.MusicFolders = musicFoldersDict;
 
-            // 加载所有专辑封面
-            foreach (var album in albumsDict.Values)
-            {
-                album.LoadCover();
-            }
-
             return (false, data);
         }
         catch (Exception ex)
@@ -381,18 +376,19 @@ public class FileManager
             var dirInfo = new DirectoryInfo(folderPath);
             if (!dirInfo.Exists)
             {
-                var guid = Guid.NewGuid().ToString();
+                var guid = $"{Guid.NewGuid()}";
                 return guid;
             }
 
-            // 只使用文件夹的最后写入时间作为指纹，这是最快的方法
-            var fingerprint = dirInfo.LastWriteTime.Ticks.ToString();
+            // 只使用文件夹的最后写入时间和语言作为指纹，这是最快的方法
+            var fingerprint =
+                $"{dirInfo.LastWriteTime.Ticks}-{CultureInfo.CurrentUICulture.Name.ToLowerInvariant()}";
             return fingerprint;
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"快速计算文件夹指纹错误: {ex.Message}");
-            var guid = Guid.NewGuid().ToString();
+            var guid = $"{Guid.NewGuid()}";
             return guid;
         }
     }

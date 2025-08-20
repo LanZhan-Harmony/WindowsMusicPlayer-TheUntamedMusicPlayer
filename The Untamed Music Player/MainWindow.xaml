@@ -53,7 +53,7 @@
                  Canvas.ZIndex="2" IsClosable="True"
                  IsIconVisible="False" Opacity="1"
                  Severity="Informational" Visibility="Collapsed">
-            <HyperlinkButton x:Uid="Main_SendFeedback"
+            <HyperlinkButton x:Name="SendFeedbackButton" x:Uid="Main_SendFeedback"
                              Margin="-12,-10,0,9"
                              NavigateUri="https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer/issues"/>
             <InfoBar.Shadow>

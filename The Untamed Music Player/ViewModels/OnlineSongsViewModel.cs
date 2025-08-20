@@ -11,6 +11,41 @@ public class OnlineSongsViewModel
 {
     public OnlineSongsViewModel() { }
 
+    public void OnlineSongsSongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        Data.MusicPlayer.SetPlayQueue(
+            $"OnlineSongs:{Data.OnlineMusicLibrary.SearchKeyWords}",
+            Data.OnlineMusicLibrary.OnlineSongInfoList
+        );
+        if (e.ClickedItem is IBriefOnlineSongInfo info)
+        {
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+    }
+
+    public void OnlineSongsPlayButton_Click(IBriefOnlineSongInfo info)
+    {
+        Data.MusicPlayer.SetPlayQueue(
+            $"OnlineSongs:{Data.OnlineMusicLibrary.SearchKeyWords}",
+            Data.OnlineMusicLibrary.OnlineSongInfoList
+        );
+        Data.MusicPlayer.PlaySongByInfo(info);
+    }
+
+    public void OnlineSongsPlayNextButton_Click(IBriefOnlineSongInfo info)
+    {
+        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        {
+            var list = new List<IBriefOnlineSongInfo> { info };
+            Data.MusicPlayer.SetPlayQueue("OnlineSongs:Part", list);
+            Data.MusicPlayer.PlaySongByInfo(info);
+        }
+        else
+        {
+            Data.MusicPlayer.AddSongToNextPlay(info);
+        }
+    }
+
     public void AddToPlayQueueButton_Click(IBriefOnlineSongInfo info)
     {
         if (Data.MusicPlayer.PlayQueue.Count == 0)
@@ -28,41 +63,6 @@ public class OnlineSongsViewModel
     public async void AddToPlaylistButton_Click(IBriefOnlineSongInfo info, PlaylistInfo playlist)
     {
         await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
-    }
-
-    public void OnlineSongsSongListView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-        Data.MusicPlayer.SetPlayQueue(
-            $"OnlineSongs:Part:{Data.OnlineMusicLibrary.SearchKeyWords}",
-            Data.OnlineMusicLibrary.OnlineSongInfoList
-        );
-        if (e.ClickedItem is IBriefOnlineSongInfo info)
-        {
-            Data.MusicPlayer.PlaySongByInfo(info);
-        }
-    }
-
-    public void OnlineSongsPlayButton_Click(IBriefOnlineSongInfo info)
-    {
-        Data.MusicPlayer.SetPlayQueue(
-            $"OnlineSongs:Part:{Data.OnlineMusicLibrary.SearchKeyWords}",
-            Data.OnlineMusicLibrary.OnlineSongInfoList
-        );
-        Data.MusicPlayer.PlaySongByInfo(info);
-    }
-
-    public void OnlineSongsPlayNextButton_Click(IBriefOnlineSongInfo info)
-    {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
-        {
-            var list = new List<IBriefOnlineSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list);
-            Data.MusicPlayer.PlaySongByInfo(info);
-        }
-        else
-        {
-            Data.MusicPlayer.AddSongToNextPlay(info);
-        }
     }
 
     public async void ShowAlbumButton_Click(IBriefOnlineSongInfo info)
