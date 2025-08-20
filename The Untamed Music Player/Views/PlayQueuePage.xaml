@@ -4,7 +4,6 @@
       xmlns:contract="using:The_Untamed_Music_Player.Contracts.Models"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
-      xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
       xmlns:ui="using:CommunityToolkit.WinUI"
@@ -12,7 +11,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="contract:IBriefSongInfoBase">
+        <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="model:IndexedPlayQueueSong">
             <Grid Height="52"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -21,69 +20,58 @@
                     <MenuFlyout>
                         <MenuFlyoutItem x:Uid="Songs_Play"
                                         Width="216"
-                                        Click="PlayButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE768;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="Songs_PlayNext" Click="PlayNextButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xECC8;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
+                                        Click="PlayButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE768;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_PlayNext"
+                                        Click="PlayNextButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xF5EB;}"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutSubItem x:Uid="Songs_AddTo">
-                            <MenuFlyoutSubItem.Icon>
-                                <FontIcon Glyph="&#xE710;"/>
-                            </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue" Width="216">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE90B;"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
+                        <MenuFlyoutSubItem x:Uid="Songs_AddTo"
+                                           Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                              Glyph=&#xE710;}"
+                                           Loaded="AddToSubItem_Loaded">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
+                                            Width="216"
+                                            Click="AddToPlayQueueButton_Click"
+                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                               Glyph=&#xE93F;}"/>
                             <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE710;"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist"
+                                            Click="AddToNewPlaylistButton_Click"
+                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                               Glyph=&#xE710;}"/>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="PlayQueue_Remove" Click="RemoveButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE711;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="PlayQueue_MoveUp" Click="MoveUpButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE74A;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="PlayQueue_MoveDown" Click="MoveDownButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE74B;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="Songs_ShowAlbum" Click="ShowAlbumButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE93C;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="Songs_ShowArtist" Click="ShowArtistButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE77B;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="Songs_Properties" Click="PropertiesButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE946;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="PlayQueue_Remove"
+                                        Click="RemoveButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE711;}"/>
+                        <MenuFlyoutItem x:Uid="PlayQueue_MoveUp"
+                                        Click="MoveUpButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE74A;}"/>
+                        <MenuFlyoutItem x:Uid="PlayQueue_MoveDown"
+                                        Click="MoveDownButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE74B;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_ShowAlbum"
+                                        Click="ShowAlbumButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE93C;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_ShowArtist"
+                                        Click="ShowArtistButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE77B;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_Properties"
+                                        Click="PropertiesButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE946;}"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="Songs_Select" Click="SelectButton_Click">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE762;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="Songs_Select"
+                                        Click="SelectButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xEA20;}"/>
                     </MenuFlyout>
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
@@ -98,7 +86,17 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
-                          IsThreeState="False" Visibility="Collapsed"/>
+                          Canvas.ZIndex="1" IsThreeState="False"
+                          Visibility="Collapsed"/>
+                <FontIcon x:Name="PlayingFontIcon"
+                          Grid.Column="0"
+                          Margin="2,0,0,0" HorizontalAlignment="Left"
+                          Canvas.ZIndex="0"
+                          FontFamily="{StaticResource UntamedFontFamily}"
+                          FontSize="16"
+                          Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                          Glyph="&#xE93D;"
+                          Visibility="Collapsed"/>
                 <Button x:Name="PlayButton" x:Uid="Songs_PlayButton"
                         Grid.Column="1"
                         Padding="5"
@@ -106,61 +104,63 @@
                         Canvas.ZIndex="1" Click="PlayButton_Click"
                         Style="{StaticResource SmallPlayButtonStyle}"
                         Visibility="Collapsed">
-                    <FontIcon FontSize="16"
+                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                              FontSize="16"
                               Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                               Glyph="&#xE768;"/>
                 </Button>
                 <FontIcon x:Name="MusicFontIcon"
                           Grid.Column="1"
-                          Canvas.ZIndex="0" FontSize="16"
-                          Glyph="&#xE8D6;"/>
+                          Canvas.ZIndex="0"
+                          FontFamily="{StaticResource UntamedFontFamily}"
+                          FontSize="16" Glyph="&#xE940;"/>
                 <TextBlock x:Name="TitleText"
                            Grid.Column="2"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Text="{x:Bind Title}"
+                           Text="{x:Bind Song.Title}"
                            TextTrimming="CharacterEllipsis"
-                           ToolTipService.ToolTip="{x:Bind Title}"/>
+                           ToolTipService.ToolTip="{x:Bind Song.Title}"/>
                 <Button Grid.Column="3"
                         Background="Transparent" BorderBrush="Transparent"
                         Click="ShowArtistButton_Click">
                     <TextBlock x:Name="ArtistText"
                                FontSize="12"
-                               Text="{x:Bind ArtistsStr}"
+                               Text="{x:Bind Song.ArtistsStr}"
                                TextTrimming="CharacterEllipsis"
-                               ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
+                               ToolTipService.ToolTip="{x:Bind Song.ArtistsStr}"/>
                 </Button>
                 <Button Grid.Column="4"
                         Background="Transparent" BorderBrush="Transparent"
                         Click="ShowAlbumButton_Click">
                     <TextBlock x:Name="AlbumText"
                                FontSize="12"
-                               Text="{x:Bind Album}"
+                               Text="{x:Bind Song.Album}"
                                TextTrimming="CharacterEllipsis"
-                               ToolTipService.ToolTip="{x:Bind Album}"/>
+                               ToolTipService.ToolTip="{x:Bind Song.Album}"/>
                 </Button>
                 <TextBlock x:Name="YearText"
                            Grid.Column="5"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Text="{x:Bind YearStr}"
+                           Text="{x:Bind Song.YearStr}"
                            TextTrimming="CharacterEllipsis"
-                           ToolTipService.ToolTip="{x:Bind YearStr}"/>
+                           ToolTipService.ToolTip="{x:Bind Song.YearStr}"/>
                 <TextBlock x:Name="GenreText"
                            Grid.Column="6"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Text="{x:Bind GenreStr}"
+                           Text="{x:Bind Song.GenreStr}"
                            TextTrimming="CharacterEllipsis"
-                           ToolTipService.ToolTip="{x:Bind GenreStr}"/>
+                           ToolTipService.ToolTip="{x:Bind Song.GenreStr}"/>
                 <TextBlock x:Name="DurationText"
                            Grid.Column="7"
                            Margin="0,0,10,0" HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
-                           Text="{x:Bind DurationStr}"
+                           Text="{x:Bind Song.DurationStr}"
                            TextTrimming="CharacterEllipsis"/>
             </Grid>
         </DataTemplate>
@@ -214,13 +214,13 @@
             </Grid.ColumnDefinitions>
             <TextBlock x:Uid="Shell_PlayQueue1"
                        Grid.Column="0"
-                       FontSize="40"
-                       FontWeight="{x:Bind helper:LanguageRelated.GetTitleFontWeight()}"/>
+                       Style="{StaticResource TitleLargeTextBlockStyle}"/>
             <SplitButton x:Uid="PlayQueue_AddFilesButton"
                          Grid.Column="2"
                          Height="30">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon FontSize="12" Glyph="&#xE838;"/>
+                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                              FontSize="12" Glyph="&#xE838;"/>
                     <TextBlock x:Name="AddTextBlock" x:Uid="PlayQueue_AddFiles"/>
                 </StackPanel>
                 <SplitButton.Flyout>
@@ -231,7 +231,8 @@
                                     <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
                                                     Orientation="Horizontal" Spacing="12">
-                                            <FontIcon FontSize="16" Glyph="&#xE838;"/>
+                                            <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                                      FontSize="16" Glyph="&#xE838;"/>
                                             <StackPanel>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_AddFilesToPlayQueue"/>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_BrowseForFiles"
@@ -250,7 +251,8 @@
                                     <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
                                                     Orientation="Horizontal" Spacing="12">
-                                            <FontIcon FontSize="16" Glyph="&#xE8B7;"/>
+                                            <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                                      FontSize="16" Glyph="&#xF2CE;"/>
                                             <StackPanel>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_AddFolderToPlayQueue"/>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_ChooseAFolder"
@@ -268,7 +270,8 @@
                                     <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
                                                     Orientation="Horizontal" Spacing="12">
-                                            <FontIcon FontSize="16" Glyph="&#xE774;"/>
+                                            <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                                      FontSize="16" Glyph="&#xE774;"/>
                                             <StackPanel>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_AddMediaFromURL"/>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_EnterAURL"
@@ -291,37 +294,40 @@
             <Button x:Name="ClearButton" x:Uid="PlayQueue_ClearButton"
                     Padding="11,9,11,9"
                     AccessKey="CX"
-                    Click="{x:Bind ViewModel.ClearButton_Click}">
+                    Click="{x:Bind ViewModel.ClearButton_Click}"
+                    IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="X" Modifiers="Control,Shift"/>
                 </Button.KeyboardAccelerators>
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon FontSize="16" Glyph="&#xE74D;"/>
+                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                              FontSize="16" Glyph="&#xE74D;"/>
                     <TextBlock x:Name="ClearTextBlock" x:Uid="PlayQueue_Clear"
                                FontSize="12"/>
                 </StackPanel>
             </Button>
             <Button x:Name="AddToButton"
                     Padding="11,9,11,9"
-                    AccessKey="CW">
+                    AccessKey="CW"
+                    IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon FontSize="16" Glyph="&#xE710;"/>
+                    <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                              FontSize="16" Glyph="&#xE710;"/>
                     <TextBlock x:Name="AddToTextBlock" x:Uid="Songs_AddTo"
                                FontSize="12"/>
                 </StackPanel>
                 <Button.Flyout>
-                    <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue" Width="216">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE90B;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
+                    <MenuFlyout Opened="AddToFlyout_Opened" Placement="Bottom">
+                        <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
+                                        Width="216"
+                                        Click="AddToPlayQueueFlyoutButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE93F;}"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE710;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist"
+                                        Click="AddToNewPlaylistFlyoutButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE710;}"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
@@ -338,6 +344,7 @@
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.PlayQueueListView_ItemClick}"
                   ItemTemplate="{StaticResource PlayQueueListViewTemplate}"
+                  ItemsSource="{x:Bind ViewModel.PlayQueue, Mode=OneWay}"
                   SelectionMode="None"/>
     </Grid>
 </Page>

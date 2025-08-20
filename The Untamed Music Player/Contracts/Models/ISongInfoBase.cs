@@ -9,7 +9,7 @@ namespace The_Untamed_Music_Player.Contracts.Models;
 [MemoryPackable]
 [MemoryPackUnion(0, typeof(BriefLocalSongInfo))]
 [MemoryPackUnion(1, typeof(BriefCloudOnlineSongInfo))]
-public partial interface IBriefSongInfoBase : ICloneable
+public partial interface IBriefSongInfoBase
 {
     protected static readonly string _unknownAlbum = "SongInfo_UnknownAlbum".GetLocalized();
     protected static readonly string _unknownArtist = "SongInfo_UnknownArtist".GetLocalized();
@@ -18,11 +18,6 @@ public partial interface IBriefSongInfoBase : ICloneable
     /// 是否可以播放
     /// </summary>
     bool IsPlayAvailable { get; set; }
-
-    /// <summary>
-    /// 在播放队列中的索引
-    /// </summary>
-    int PlayQueueIndex { get; set; }
 
     /// <summary>
     /// 路径
@@ -79,6 +74,28 @@ public partial interface IBriefSongInfoBase : ICloneable
     /// <param name="year"></param>
     /// <returns></returns>
     static string GetYearStr(ushort year) => year is 0 or 1970 ? "" : $"{year}";
+
+    static async Task<string?> GetCoverPathAsync(IBriefSongInfoBase info)
+    {
+        return info switch
+        {
+            BriefLocalSongInfo localInfo => localInfo.HasCover ? localInfo.Path : null,
+            BriefCloudOnlineSongInfo cloudInfo => (
+                await DetailedCloudOnlineSongInfo.CreateAsync(cloudInfo)
+            ).CoverPath,
+            _ => null,
+        };
+    }
+
+    static short GetSourceMode(IBriefSongInfoBase? info)
+    {
+        return info switch
+        {
+            BriefLocalSongInfo => 0,
+            BriefCloudOnlineSongInfo => 1,
+            _ => -1,
+        };
+    }
 }
 
 public interface IDetailedSongInfoBase : IBriefSongInfoBase
@@ -89,7 +106,7 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
     string ArtistAndAlbumStr { get; set; }
     BitmapImage? Cover { get; set; }
     string BitRate { get; set; }
-    string Track { get; set; }
+    string TrackStr { get; set; }
     string Lyric { get; set; }
 
     /// <summary>
@@ -128,10 +145,10 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
         return info switch
         {
             BriefLocalSongInfo localInfo => new DetailedLocalSongInfo(localInfo),
-            BriefCloudOnlineSongInfo cloudInfo => await CloudDetailedOnlineSongInfo.CreateAsync(
+            BriefCloudOnlineSongInfo cloudInfo => await DetailedCloudOnlineSongInfo.CreateAsync(
                 cloudInfo
             ),
-            _ => await CloudDetailedOnlineSongInfo.CreateAsync((BriefCloudOnlineSongInfo)info),
+            _ => await DetailedCloudOnlineSongInfo.CreateAsync((BriefCloudOnlineSongInfo)info),
         };
     }
 }

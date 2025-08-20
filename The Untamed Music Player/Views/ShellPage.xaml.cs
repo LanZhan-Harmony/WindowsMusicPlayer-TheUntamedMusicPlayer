@@ -58,10 +58,17 @@ public sealed partial class ShellPage : Page
         {
             var pageToNavigate = ViewModel.CurrentPage switch
             {
-                nameof(HomePage) => nameof(HomePage),
-                nameof(MusicLibraryPage) => nameof(MusicLibraryPage),
+                nameof(HomePage)
+                or nameof(OnlineAlbumDetailPage)
+                or nameof(OnlineArtistDetailPage)
+                or nameof(OnlinePlayListDetailPage) => nameof(HomePage),
+
+                nameof(MusicLibraryPage)
+                or nameof(LocalAlbumDetailPage)
+                or nameof(LocalArtistDetailPage) => nameof(MusicLibraryPage),
+
                 nameof(PlayQueuePage) => nameof(PlayQueuePage),
-                nameof(PlayListsPage) => nameof(PlayListsPage),
+                nameof(PlayListsPage) or nameof(PlayListDetailPage) => nameof(PlayListsPage),
                 nameof(SettingsPage) => nameof(SettingsPage),
                 _ => nameof(HomePage),
             };
@@ -126,6 +133,7 @@ public sealed partial class ShellPage : Page
             nameof(SettingsPage) => typeof(SettingsPage),
             nameof(LocalAlbumDetailPage) => typeof(LocalAlbumDetailPage),
             nameof(LocalArtistDetailPage) => typeof(LocalArtistDetailPage),
+            nameof(PlayListDetailPage) => typeof(PlayListDetailPage),
             nameof(OnlineAlbumDetailPage) => typeof(OnlineAlbumDetailPage),
             nameof(OnlineArtistDetailPage) => typeof(OnlineArtistDetailPage),
             nameof(OnlinePlayListDetailPage) => typeof(OnlinePlayListDetailPage),

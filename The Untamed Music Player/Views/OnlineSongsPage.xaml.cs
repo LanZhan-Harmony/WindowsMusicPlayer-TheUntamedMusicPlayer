@@ -21,6 +21,41 @@ public sealed partial class OnlineSongsPage : Page
         InitializeComponent();
     }
 
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem { DataContext: IBriefOnlineSongInfo info } menuItem)
+        {
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = new Tuple<IBriefOnlineSongInfo, PlaylistInfo>(info, playlist),
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (
+            sender is MenuFlyoutItem
+            {
+                DataContext: Tuple<IBriefOnlineSongInfo, PlaylistInfo> tuple
+            }
+        )
+        {
+            var (songInfo, playlist) = tuple;
+            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
+        }
+    }
+
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         var grid = sender as Grid;
@@ -64,7 +99,10 @@ public sealed partial class OnlineSongsPage : Page
         )
         {
             var targetSong = songs.FirstOrDefault(song => song.ID == currentSong.ID);
-            SongListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
+            if (targetSong is not null)
+            {
+                SongListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
+            }
         }
     }
 
@@ -89,6 +127,28 @@ public sealed partial class OnlineSongsPage : Page
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
             await DownloadHelper.DownloadOnlineSongAsync(info);
+        }
+    }
+
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            ViewModel.AddToPlayQueueButton_Click(info);
+        }
+    }
+
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
+        {
+            var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+            {
+                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+            }
         }
     }
 

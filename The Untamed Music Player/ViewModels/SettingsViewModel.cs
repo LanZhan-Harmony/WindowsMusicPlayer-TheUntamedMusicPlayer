@@ -1,6 +1,6 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Graphics.Canvas.Text;
@@ -11,14 +11,16 @@ using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
+using WinRT.Interop;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class SettingsViewModel : ObservableRecipient
+public partial class SettingsViewModel : ObservableObject
 {
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILocalSettingsService _localSettingsService;
@@ -171,18 +173,25 @@ public partial class SettingsViewModel : ObservableRecipient
         Data.SettingsViewModel = this;
     }
 
+    /// <summary>
+    /// 通知 EmptyFolderMessageVisibility 属性发生了变化（供外部调用）
+    /// </summary>
+    public void NotifyEmptyFolderMessageVisibilityChanged()
+    {
+        OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
+    }
+
     public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
-        var senderButton = sender as Button;
-        senderButton!.IsEnabled = false;
-        var openPicker = new FolderPicker();
-        var window = App.MainWindow;
-        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-
-        WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
-
-        openPicker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
+        (sender as Button)!.IsEnabled = false;
+        var openPicker = new FolderPicker
+        {
+            SuggestedStartLocation = PickerLocationId.MusicLibrary,
+        };
         openPicker.FileTypeFilter.Add("*");
+        var window = App.MainWindow;
+        var hWnd = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(openPicker, hWnd);
 
         var folder = await openPicker.PickSingleFolderAsync();
         if (folder is not null && !Data.MusicLibrary.Folders.Any(f => f.Path == folder.Path))
@@ -190,9 +199,9 @@ public partial class SettingsViewModel : ObservableRecipient
             Data.MusicLibrary.Folders.Add(folder);
             OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
             await SaveFoldersAsync();
-            await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync); // 重新加载音乐库
+            await Data.MusicLibrary.LoadLibraryAgainAsync(); // 重新加载音乐库
         }
-        senderButton!.IsEnabled = true;
+        (sender as Button)!.IsEnabled = true;
     }
 
     public async void RemoveMusicFolder(StorageFolder folder)
@@ -200,14 +209,14 @@ public partial class SettingsViewModel : ObservableRecipient
         Data.MusicLibrary.Folders?.Remove(folder);
         OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
         await SaveFoldersAsync();
-        await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync);
+        await Data.MusicLibrary.LoadLibraryAgainAsync();
     }
 
     public async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
         var senderButton = sender as Button;
         senderButton!.IsEnabled = false;
-        await Task.Run(Data.MusicLibrary.LoadLibraryAgainAsync);
+        await Data.MusicLibrary.LoadLibraryAgainAsync();
         senderButton!.IsEnabled = true;
     }
 
@@ -222,8 +231,8 @@ public partial class SettingsViewModel : ObservableRecipient
         senderButton!.IsEnabled = false;
         var openPicker = new FolderPicker();
         var window = App.MainWindow;
-        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-        WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
+        var hWnd = WindowNative.GetWindowHandle(window);
+        InitializeWithWindow.Initialize(openPicker, hWnd);
         openPicker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
         openPicker.FileTypeFilter.Add("*");
         var folder = await openPicker.PickSingleFolderAsync();
@@ -286,7 +295,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
     public void LoadFonts()
     {
-        var language = new string[] { LanguageRelated.GetSimpleLanguage() };
+        var language = new string[] { CultureInfo.CurrentUICulture.Name.ToLowerInvariant() };
         var names = CanvasTextFormat.GetSystemFontFamilies();
         var displayNames = CanvasTextFormat.GetSystemFontFamilies(language);
         var list = new List<FontInfo>();
@@ -315,6 +324,13 @@ public partial class SettingsViewModel : ObservableRecipient
                 comboBox.SelectedIndex = index;
             }
         }
+    }
+
+    public void OpenLoggingFolderButton_Click(object sender, RoutedEventArgs e)
+    {
+        var logFolder = LoggingService.GetLogFolderPath();
+        Directory.CreateDirectory(logFolder);
+        Process.Start("explorer.exe", logFolder);
     }
 
     private static string GetVersionDescription()
@@ -361,7 +377,7 @@ public partial class SettingsViewModel : ObservableRecipient
         SongDownloadLocation = location;
     }
 
-    private static async Task SaveFoldersAsync()
+    public static async Task SaveFoldersAsync()
     {
         var folderPaths = Data.MusicLibrary.Folders?.Select(f => f.Path).ToList();
         await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths); //	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
