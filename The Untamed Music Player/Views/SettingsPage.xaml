@@ -245,8 +245,7 @@
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
                     <toolkit:SettingsExpander x:Name="About" x:Uid="Settings_AboutDescription"
                                               Header="{x:Bind model:Data.AppDisplayName}"
-                                              HeaderIcon="{ui:BitmapIcon ShowAsMonochrome=False,
-                                                                         Source=ms-appx:///Assets/AppIcon/WindowIcon.ico}">
+                                              HeaderIcon="{ui:BitmapIcon Source=ms-appx:///Assets/AppIcon/Icon.png}">
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}"/>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard x:Uid="Settings_Thanks"/>

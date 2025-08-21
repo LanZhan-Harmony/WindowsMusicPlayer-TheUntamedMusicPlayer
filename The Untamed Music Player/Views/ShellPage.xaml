@@ -6,7 +6,8 @@
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ui="using:CommunityToolkit.WinUI"
-      Loaded="OnLoaded">
+      Loaded="ShellPage_Loaded"
+      Unloaded="ShellPage_Unloaded">
 
     <Page.Resources>
         <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent"/>
@@ -25,7 +26,7 @@
                   Canvas.ZIndex="1">
                 <Image Width="16" Height="16"
                        Margin="12,0,0,0" HorizontalAlignment="Left"
-                       Source="/Assets/AppIcon/WindowIcon.ico"/>
+                       Source="/Assets/AppIcon/Icon.png"/>
                 <TextBlock Margin="40,0,0,0" VerticalAlignment="Center"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            Text="{x:Bind _appTitleBarText}"
@@ -80,10 +81,11 @@
                             <KeyboardAccelerator Key="Q" Modifiers="Control"/>
                         </NavigationViewItem.KeyboardAccelerators>
                     </NavigationViewItem>
-                    <NavigationViewItem x:Uid="Shell_PlayLists"
+                    <NavigationViewItem x:Name="PlaylistsNavItem" x:Uid="Shell_PlayLists"
                                         AccessKey="NP"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xED3B;}"
+                                        Loaded="PlaylistsNavItem_Loaded"
                                         Tag="PlayListsPage">
                         <NavigationViewItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Y" Modifiers="Control"/>
