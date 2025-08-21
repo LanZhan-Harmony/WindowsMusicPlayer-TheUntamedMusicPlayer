@@ -59,6 +59,7 @@ public partial class App : Application
 
                     // Other Activation Handlers
                     services.AddTransient<IActivationHandler, AppNotificationActivationHandler>();
+                    services.AddTransient<IActivationHandler, FileActivationHandler>();
 
                     // Services
                     services.AddSingleton<IAppNotificationService, AppNotificationService>();
@@ -113,7 +114,7 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
-    protected override async void OnLaunched(LaunchActivatedEventArgs args)
+    protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
         MainWindow = new MainWindow();

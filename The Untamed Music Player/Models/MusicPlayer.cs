@@ -309,6 +309,17 @@ public partial class MusicPlayer : ObservableObject, IDisposable
         _timelineProperties.MinSeekTime = TimeSpan.Zero;
     }
 
+    public void Reset()
+    {
+        Stop();
+        CurrentBriefSong = null;
+        CurrentSong = null;
+        PlayQueueIndex = 0;
+        _playQueueLength = 0;
+        PlayQueue.Clear();
+        ShuffledPlayQueue.Clear();
+    }
+
     /// <summary>
     /// Bass同步回调 - 播放结束
     /// </summary>
@@ -773,6 +784,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
                 }
             }
         }
+        _ = FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
     }
 
     public void SetShuffledPlayQueue(string name, IEnumerable<IBriefSongInfoBase> list)
@@ -790,6 +802,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
                 ShuffledPlayQueue[i].Index = i;
             }
         }
+        _ = FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
     }
 
     /// <summary>
