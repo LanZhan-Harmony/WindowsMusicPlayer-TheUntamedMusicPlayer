@@ -252,7 +252,7 @@
                         <Grid Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}" Canvas.ZIndex="0">
                             <FontIcon Canvas.ZIndex="0"
                                       FontFamily="{StaticResource UntamedFontFamily}"
-                                      FontSize="50"
+                                      FontSize="64"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xED3B;"
                                       Visibility="{x:Bind ViewModel.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}"/>

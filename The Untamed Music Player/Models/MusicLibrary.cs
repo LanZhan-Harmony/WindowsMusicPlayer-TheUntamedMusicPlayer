@@ -123,7 +123,7 @@ public partial class MusicLibrary : ObservableRecipient
                     Artists = libraryData.Artists;
                     Genres = libraryData.Genres;
                     _musicFolders = libraryData.MusicFolders;
-                    LoadCoverAsync();
+                    await InitializeCovers();
                     _dispatcherQueue.TryEnqueue(() =>
                         Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
                     );
@@ -146,7 +146,7 @@ public partial class MusicLibrary : ObservableRecipient
                             .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
                             .OrderBy(x => x, new GenreComparer()),
                     ];
-                    LoadCoverAsync();
+                    await InitializeCovers();
                     _dispatcherQueue.TryEnqueue(() =>
                         Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
                     );
@@ -162,6 +162,7 @@ public partial class MusicLibrary : ObservableRecipient
             }
             finally
             {
+                _ = Task.Run(LoadCovers);
                 _ = Task.Run(AddFolderWatcher);
                 _librarySemaphore.Release();
                 GC.Collect();
@@ -191,7 +192,7 @@ public partial class MusicLibrary : ObservableRecipient
                     }
                 }
                 await Task.WhenAll(loadMusicTasks);
-                LoadCoverAsync();
+                await InitializeCovers();
                 Genres =
                 [
                     .. _musicGenres
@@ -204,6 +205,7 @@ public partial class MusicLibrary : ObservableRecipient
                 _musicGenres.Clear();
                 FolderWatchers.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
+                _ = Task.Run(LoadCovers);
                 _ = Task.Run(AddFolderWatcher);
                 FileManager.SaveLibraryDataAsync(Folders, data);
             }
@@ -220,11 +222,25 @@ public partial class MusicLibrary : ObservableRecipient
         });
     }
 
-    public void LoadCoverAsync()
+    public Task<bool> InitializeCovers()
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        _dispatcherQueue.TryEnqueue(() =>
+        {
+            foreach (var album in Albums.Values)
+            {
+                album.InitializeCover();
+            }
+            tcs.SetResult(true);
+        });
+        return tcs.Task;
+    }
+
+    public void LoadCovers()
     {
         foreach (var album in Albums.Values)
         {
-            album.LoadCover(); // 使用同步的懒加载方法
+            album.LoadCover();
         }
     }
 
