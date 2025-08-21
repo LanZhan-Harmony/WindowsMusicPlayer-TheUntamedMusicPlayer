@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using The_Untamed_Music_Player.Contracts.Models;
@@ -7,11 +9,12 @@ using ZLinq;
 
 namespace The_Untamed_Music_Player.Models;
 
-public class PlaylistLibrary
+public partial class PlaylistLibrary : ObservableRecipient
 {
     public List<PlaylistInfo> Playlists { get; set; } = [];
 
     public PlaylistLibrary()
+        : base(StrongReferenceMessenger.Default)
     {
         _ = LoadLibraryAsync();
     }
@@ -21,9 +24,15 @@ public class PlaylistLibrary
         Playlists = await FileManager.LoadPlaylistDataAsync();
         foreach (var playlist in Playlists)
         {
+            playlist.InitializeCover();
+        }
+        Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
+
+        foreach (var playlist in Playlists)
+        {
             playlist.GetCover();
         }
-        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        GC.Collect();
     }
 
     public PlaylistInfo? NewPlaylist(string? name)
@@ -35,8 +44,9 @@ public class PlaylistLibrary
         var uniqueName = GetUniquePlaylistName(name);
         var info = new PlaylistInfo(uniqueName);
         Playlists.Add(info);
-        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(true));
-        StrongReferenceMessenger.Default.Send(
+        Playlists = [.. Playlists.OrderBy(p => p.Name, new TitleComparer())];
+        Messenger.Send(new HavePlaylistMessage(true));
+        Messenger.Send(
             new LogMessage(
                 LogLevel.None,
                 "PlaylistInfo_Create".GetLocalizedWithReplace("{title}", uniqueName)
@@ -54,16 +64,16 @@ public class PlaylistLibrary
         }
         var uniqueName = GetUniquePlaylistName(newName);
         info.Name = uniqueName;
-        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
-        StrongReferenceMessenger.Default.Send(new PlaylistRenameMessage(oldName, info));
+        Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        Messenger.Send(new PlaylistRenameMessage(oldName, info));
         return true;
     }
 
     public void DeletePlaylist(PlaylistInfo info)
     {
         Playlists.Remove(info);
-        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
-        StrongReferenceMessenger.Default.Send(
+        Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        Messenger.Send(
             new LogMessage(
                 LogLevel.None,
                 "PlaylistInfo_Delete".GetLocalizedWithReplace("{title}", info.Name)
@@ -74,14 +84,14 @@ public class PlaylistLibrary
     public async Task AddToPlaylist(PlaylistInfo info, IBriefSongInfoBase song)
     {
         await info.Add(song);
-        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
-        StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(info));
+        Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        Messenger.Send(new PlaylistChangeMessage(info));
         var replacements = new Dictionary<string, string>
         {
             { "{num}", "1" },
             { "{title}", info.Name },
         };
-        StrongReferenceMessenger.Default.Send(
+        Messenger.Send(
             new LogMessage(
                 LogLevel.None,
                 "PlaylistInfo_AddItem".GetLocalizedWithReplace(replacements)
@@ -96,15 +106,15 @@ public class PlaylistLibrary
             return;
         }
         await info.AddRange(songs);
-        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
-        StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(info));
+        Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        Messenger.Send(new PlaylistChangeMessage(info));
         var count = songs.Count();
         var replacements = new Dictionary<string, string>
         {
             { "{num}", $"{count}" },
             { "{title}", info.Name },
         };
-        StrongReferenceMessenger.Default.Send(
+        Messenger.Send(
             new LogMessage(
                 LogLevel.None,
                 count == 1
@@ -117,8 +127,8 @@ public class PlaylistLibrary
     public async Task DeleteFromPlaylist(PlaylistInfo info, IndexedPlaylistSong song)
     {
         await info.Delete(song);
-        StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(Playlists.Count > 0));
-        StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(info));
+        Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
+        Messenger.Send(new PlaylistChangeMessage(info));
     }
 
     public void MoveUpInPlaylist(PlaylistInfo info, IndexedPlaylistSong song)

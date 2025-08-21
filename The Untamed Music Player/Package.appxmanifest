@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
@@ -7,7 +7,8 @@
   xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-  IgnorableNamespaces="uap rescap genTemplate">
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  IgnorableNamespaces="uap rescap genTemplate uap3">
 
 	<Identity
 	  Name="C19A3696.28439CB846862"
@@ -70,6 +71,7 @@
 	<Capabilities>
 		<rescap:Capability Name="runFullTrust" />
 		<uap:Capability Name="musicLibrary"/>
+		<uap3:Capability Name="backgroundMediaPlayback"/>
 	</Capabilities>
 
 	<genTemplate:Metadata>
