@@ -33,6 +33,11 @@ public partial class RootPlayBarViewModel : ObservableObject
 
     public void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
     {
+        DetailModeUpdate();
+    }
+
+    public void DetailModeUpdate()
+    {
         if (!IsDetail)
         {
             Data.LyricPage = new LyricPage();

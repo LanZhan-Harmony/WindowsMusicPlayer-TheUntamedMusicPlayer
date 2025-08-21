@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using MemoryPack;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
@@ -136,9 +137,25 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         return string.Join(" • ", parts);
     }
 
-    public void LoadCover()
+    public void InitializeCover()
     {
         if (string.IsNullOrEmpty(CoverPath))
+        {
+            return;
+        }
+        try
+        {
+            Cover = new BitmapImage { DecodePixelWidth = 160 };
+        }
+        catch
+        {
+            Debug.WriteLine($"专辑封面初始化失败：{Name}");
+        }
+    }
+
+    public void LoadCover()
+    {
+        if (Cover is null)
         {
             return;
         }
@@ -147,22 +164,24 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
             using var musicFile = TagLib.File.Create(CoverPath);
             var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
             var stream = new MemoryStream(coverBuffer);
-            App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
-            {
-                try
+            App.MainWindow?.DispatcherQueue.TryEnqueue(
+                DispatcherQueuePriority.Low,
+                async () =>
                 {
-                    Cover = new BitmapImage { DecodePixelWidth = 160 };
-                    await Cover.SetSourceAsync(stream.AsRandomAccessStream());
+                    try
+                    {
+                        await Cover.SetSourceAsync(stream.AsRandomAccessStream());
+                    }
+                    catch
+                    {
+                        Debug.WriteLine($"专辑封面加载失败：{Name}");
+                    }
+                    finally
+                    {
+                        stream.Dispose();
+                    }
                 }
-                catch
-                {
-                    Debug.WriteLine($"专辑封面加载失败：{Name}");
-                }
-                finally
-                {
-                    stream.Dispose();
-                }
-            });
+            );
         }
         catch
         {

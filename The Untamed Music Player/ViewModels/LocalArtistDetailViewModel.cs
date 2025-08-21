@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Contracts.Models;
