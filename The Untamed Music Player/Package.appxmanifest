@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
@@ -7,14 +7,15 @@
   xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-  IgnorableNamespaces="uap rescap genTemplate">
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  IgnorableNamespaces="uap rescap genTemplate uap3">
 
 	<Identity
 	  Name="C19A3696.28439CB846862"
 	  Publisher="CN=D8BFD4E9-94E2-482B-A987-F96C72D65FDF"
 	  Version="0.5.0.0" />
 
-	<mp:PhoneIdentity PhoneProductId="a6eca51b-8a00-4fe8-ad95-1a8f85e1222e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+	<mp:PhoneIdentity PhoneProductId="4b2c875e-db2d-4ef4-938e-760bd94fe9a8" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
 	<Properties>
 		<DisplayName>无羁 音乐播放器</DisplayName>
@@ -52,6 +53,37 @@
 				<uap:LockScreen BadgeLogo="Assets\AppIcon\BadgeLogo.png" Notification="badgeAndTileText"/>
 			</uap:VisualElements>
 			<Extensions>
+				<uap:Extension Category="windows.fileTypeAssociation">
+					<uap:FileTypeAssociation Name="fileassociations">
+						<uap:Logo>Assets\AppIcon\FileExtension.png</uap:Logo>
+						<uap:SupportedFileTypes>
+							<uap:FileType>.mp3</uap:FileType>
+							<uap:FileType>.flac</uap:FileType>
+							<uap:FileType>.ogg</uap:FileType>
+							<uap:FileType>.m4a</uap:FileType>
+							<uap:FileType>.wav</uap:FileType>
+							<uap:FileType>.midi</uap:FileType>
+							<uap:FileType>.mp2</uap:FileType>
+							<uap:FileType>.mp1</uap:FileType>
+							<uap:FileType>.aif</uap:FileType>
+							<uap:FileType>.aiff</uap:FileType>
+							<uap:FileType>.m2a</uap:FileType>
+							<uap:FileType>.m1a</uap:FileType>
+							<uap:FileType>.mp3pro</uap:FileType>
+							<uap:FileType>.bwf</uap:FileType>
+							<uap:FileType>.mus</uap:FileType>
+							<uap:FileType>.mod</uap:FileType>
+							<uap:FileType>.mid</uap:FileType>
+							<uap:FileType>.mo3</uap:FileType>
+							<uap:FileType>.s3m</uap:FileType>
+							<uap:FileType>.xm</uap:FileType>
+							<uap:FileType>.it</uap:FileType>
+							<uap:FileType>.mtm</uap:FileType>
+							<uap:FileType>.umx</uap:FileType>
+						</uap:SupportedFileTypes>
+					</uap:FileTypeAssociation>
+				</uap:Extension>
+				
 				<desktop:Extension Category="windows.toastNotificationActivation">
 					<desktop:ToastNotificationActivation ToastActivatorCLSID="a76c0e5a-b343-4b7b-9c1e-01a6a0f1fc39" />
 				</desktop:Extension>
@@ -70,6 +102,7 @@
 	<Capabilities>
 		<rescap:Capability Name="runFullTrust" />
 		<uap:Capability Name="musicLibrary"/>
+		<uap3:Capability Name="backgroundMediaPlayback"/>
 	</Capabilities>
 
 	<genTemplate:Metadata>

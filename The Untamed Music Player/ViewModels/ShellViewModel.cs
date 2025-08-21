@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Models;
@@ -17,6 +18,8 @@ public partial class ShellViewModel : ObservableObject
 
     public string CurrentPage { get; set; } = null!;
 
+    public PlaylistInfo? PrevPlaylistInfo { get; set; }
+
     [ObservableProperty]
     public partial object SelectedItem { get; set; } = null!;
 
@@ -28,6 +31,10 @@ public partial class ShellViewModel : ObservableObject
 
     public void NavigationFrame_Navigating(object sender, NavigatingCancelEventArgs e)
     {
+        if (e.NavigationMode == NavigationMode.Back)
+        {
+            PrevPlaylistInfo = null;
+        }
         CurrentPage = e.SourcePageType.Name;
         var navView = Data.ShellPage!.GetNavigationView();
         if (
@@ -53,9 +60,26 @@ public partial class ShellViewModel : ObservableObject
         {
             SelectedItem = navView.MenuItems[3];
         }
-        else if (CurrentPage is nameof(PlayListsPage) or nameof(PlayListDetailPage))
+        else if (CurrentPage is nameof(PlayListsPage))
         {
             SelectedItem = navView.MenuItems[4];
+        }
+        else if (CurrentPage is nameof(PlayListDetailPage))
+        {
+            var playlistsNavItem = navView.MenuItems[4] as NavigationViewItem;
+            var playlistSubItem = playlistsNavItem!
+                .MenuItems.Cast<NavigationViewItem>()
+                .FirstOrDefault(item =>
+                    item.DataContext is PlaylistInfo playlist && playlist == PrevPlaylistInfo
+                );
+            if (playlistSubItem is not null)
+            {
+                SelectedItem = playlistSubItem;
+            }
+            else
+            {
+                SelectedItem = playlistsNavItem;
+            }
         }
         else if (CurrentPage is nameof(SettingsPage))
         {

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using MemoryPack;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
@@ -55,6 +56,7 @@ public partial class PlaylistInfo
 
         if (coverPathIndex >= 0)
         {
+            InitializeCover();
             GetCover();
         }
     }
@@ -80,6 +82,7 @@ public partial class PlaylistInfo
         ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
         if (coverUpdated)
         {
+            InitializeCover();
             GetCover();
         }
     }
@@ -120,6 +123,7 @@ public partial class PlaylistInfo
             {
                 await RefillCoverPaths();
             }
+            InitializeCover();
             GetCover();
         }
     }
@@ -225,36 +229,35 @@ public partial class PlaylistInfo
         }
     }
 
-    public void GetCover()
+    public void InitializeCover()
     {
         if (CoverPaths.Count == 0)
         {
+            Cover = null;
             return;
         }
+        else if (Cover is null)
+        {
+            const int canvasSize = 256;
+            Cover = new WriteableBitmap(canvasSize, canvasSize);
+        }
+    }
 
-        App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
+    public async void GetCover()
+    {
+        if (Cover is null)
+        {
+            return;
+        }
+        await Task.Run(async () =>
         {
             try
             {
-                // 创建一个256x256的WriteableBitmap作为画布
                 const int canvasSize = 256;
                 const int halfSize = canvasSize / 2;
 
-                Cover = new WriteableBitmap(canvasSize, canvasSize);
-                var buffer = Cover.PixelBuffer;
-                var pixels = new byte[buffer.Length];
-
-                // 初始化为透明
-                Array.Fill(pixels, (byte)0);
-
-                // 定义四个区域的位置 (x, y, width, height)
-                var regions = new[]
-                {
-                    new PictureRegion(0, 0, halfSize, halfSize), // 左上
-                    new PictureRegion(halfSize, 0, halfSize, halfSize), // 右上
-                    new PictureRegion(0, halfSize, halfSize, halfSize), // 左下
-                    new PictureRegion(halfSize, halfSize, halfSize, halfSize), // 右下
-                };
+                // 在后台线程中处理所有图像数据
+                var processedRegions = new List<(byte[] pixels, int regionIndex)>();
 
                 for (var i = 0; i < CoverPaths.Count; i++)
                 {
@@ -263,13 +266,13 @@ public partial class PlaylistInfo
                     {
                         byte[]? imageBytes = null;
 
-                        // 获取图片字节数据
-                        if (coverPath.StartsWith("http", StringComparison.OrdinalIgnoreCase)) // 网络图片
+                        if (coverPath.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                         {
                             using var httpClient = new HttpClient();
+                            httpClient.Timeout = TimeSpan.FromSeconds(5); // 设置超时
                             imageBytes = await httpClient.GetByteArrayAsync(coverPath);
                         }
-                        else if (File.Exists(coverPath)) // 本地音乐文件
+                        else if (File.Exists(coverPath))
                         {
                             using var musicFile = TagLib.File.Create(coverPath);
                             if (musicFile.Tag.Pictures.Length > 0)
@@ -283,19 +286,20 @@ public partial class PlaylistInfo
                             continue;
                         }
 
-                        // 加载并调整图片大小
+                        // 处理图像并立即释放原始数据
                         var resizedImageBytes = await ResizeImageToFitRegionAsync(
                             imageBytes,
                             halfSize,
                             halfSize
                         );
-                        if (resizedImageBytes is null)
-                        {
-                            continue;
-                        }
 
-                        // 将调整后的图片绘制到对应区域
-                        DrawImageToRegion(pixels, resizedImageBytes, regions[i], canvasSize);
+                        // 释放原始图像数据
+                        imageBytes = null;
+
+                        if (resizedImageBytes is not null)
+                        {
+                            processedRegions.Add((resizedImageBytes, i));
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -303,14 +307,57 @@ public partial class PlaylistInfo
                     }
                 }
 
-                // 将像素数据写入WriteableBitmap
-                using (var pixelStream = buffer.AsStream())
-                {
-                    pixelStream.Write(pixels, 0, pixels.Length);
-                }
+                // 切换回UI线程进行最终的绘制
+                App.MainWindow?.DispatcherQueue.TryEnqueue(
+                    DispatcherQueuePriority.Low,
+                    async () =>
+                    {
+                        try
+                        {
+                            var buffer = Cover.PixelBuffer;
+                            var pixels = new byte[buffer.Length];
 
-                // 使WriteableBitmap失效以更新显示
-                Cover.Invalidate();
+                            // 初始化为透明
+                            Array.Fill(pixels, (byte)0);
+
+                            // 定义四个区域的位置
+                            var regions = new[]
+                            {
+                                new PictureRegion(0, 0, halfSize, halfSize), // 左上
+                                new PictureRegion(halfSize, 0, halfSize, halfSize), // 右上
+                                new PictureRegion(0, halfSize, halfSize, halfSize), // 左下
+                                new PictureRegion(halfSize, halfSize, halfSize, halfSize), // 右下
+                            };
+
+                            // 绘制所有处理好的区域
+                            foreach (var (regionPixels, regionIndex) in processedRegions)
+                            {
+                                if (regionIndex < regions.Length)
+                                {
+                                    DrawImageToRegion(
+                                        pixels,
+                                        regionPixels,
+                                        regions[regionIndex],
+                                        canvasSize
+                                    );
+                                }
+                            }
+
+                            // 将像素数据写入WriteableBitmap
+                            using (var pixelStream = buffer.AsStream())
+                            {
+                                await pixelStream.WriteAsync(pixels);
+                            }
+
+                            // 使WriteableBitmap失效以更新显示
+                            Cover.Invalidate();
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"UI线程绘制失败: {ex.Message}");
+                        }
+                    }
+                );
             }
             catch (Exception ex)
             {

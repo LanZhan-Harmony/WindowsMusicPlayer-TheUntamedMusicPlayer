@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
@@ -111,7 +110,14 @@ public partial class PlayListDetailViewModel
     public void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
         Data.SelectedPlaylist = null;
-        Data.ShellPage!.GetFrame().GoBack();
+        if (Data.ShellViewModel!.CurrentPage == nameof(PlayListsPage))
+        {
+            Data.ShellPage!.GoBack();
+        }
+        else
+        {
+            Data.ShellPage!.GoBack();
+        }
         Data.PlaylistLibrary.DeletePlaylist(Playlist);
     }
 
