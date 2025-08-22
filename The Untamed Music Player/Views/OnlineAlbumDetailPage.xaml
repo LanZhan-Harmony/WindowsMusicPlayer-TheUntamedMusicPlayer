@@ -4,6 +4,7 @@
       xmlns:contract="using:The_Untamed_Music_Player.Contracts.Models"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:The_Untamed_Music_Player.Helpers"
+      xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:local="using:The_Untamed_Music_Player.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:The_Untamed_Music_Player.Models"
@@ -368,7 +369,6 @@
                   helper:CurrentSongHighlightExtensions.PlayingBrush="{ThemeResource AccentTextFillColorTertiaryBrush}"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
-                  ui:ListViewExtensions.AlternateColor="{ThemeResource AlternateBackgroundBrush}"
                   ui:ListViewExtensions.ItemContainerStretchDirection="Horizontal"
                   ui:ScrollViewerExtensions.VerticalScrollBarMargin="0,-150,0,0"
                   IsItemClickEnabled="True"
@@ -377,6 +377,11 @@
                   ItemsSource="{x:Bind ViewModel.Album.SongList, Mode=OneWay}"
                   SelectionMode="None"
                   XYFocusUp="{x:Bind PlayAllButton}">
+            <interactivity:Interaction.Behaviors>
+                <helper:AlternatingListViewBehavior AlternateBackground="{ThemeResource AlternateBackgroundBrush}"
+                                                    AlternateBorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                    AlternateBorderThickness="1"/>
+            </interactivity:Interaction.Behaviors>
             <ListView.Header>
                 <Border x:Name="ListHeaderPadding"/>
             </ListView.Header>

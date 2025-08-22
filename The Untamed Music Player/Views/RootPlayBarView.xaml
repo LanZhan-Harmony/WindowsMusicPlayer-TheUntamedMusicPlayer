@@ -126,8 +126,7 @@
                 Grid.Row="1" Grid.Column="0"
                 Height="80" MinWidth="162"
                 Margin="4,0,0,4" HorizontalAlignment="Left"
-                AccessKey="Z"
-                Click="{x:Bind ViewModel.CoverBtnClickToDetail}"
+                AccessKey="Z" Click="CoverBtnClickToDetail"
                 IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                 Style="{StaticResource CoverButtonStyle}">
             <Button.KeyboardAccelerators>
