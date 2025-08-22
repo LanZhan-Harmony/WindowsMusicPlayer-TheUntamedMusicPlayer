@@ -750,6 +750,9 @@
   <data name="Error_SongPlayback" xml:space="preserve">
     <value>我们无法打开 {title}。这可能是因为文件类型不受支持、文件扩展名不正确、文件已损坏或网络异常。</value>
   </data>
+  <data name="Error_SamePlaylistName" xml:space="preserve">
+    <value>此文件夹中已存在具有此名称的播放列表。请输入其他名称，然后重试。</value>
+  </data>
   <data name="Error_EditingSongInfoIO" xml:space="preserve">
     <value>我们无法编辑 {title}。这可能是因为当前文件正在播放、被其他进程占用或文件类型不受支持。</value>
   </data>

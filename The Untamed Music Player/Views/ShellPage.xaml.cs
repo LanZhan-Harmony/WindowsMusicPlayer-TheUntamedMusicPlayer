@@ -27,6 +27,10 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
     public void Receive(HavePlaylistMessage message)
     {
         PlaylistsNavItem.MenuItems.Clear();
+        if (!message.HasPlaylist)
+        {
+            return;
+        }
         foreach (var playlist in Data.PlaylistLibrary.Playlists)
         {
             var playlistItem = new NavigationViewItem
