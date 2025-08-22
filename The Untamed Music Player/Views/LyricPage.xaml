@@ -104,8 +104,7 @@
               Canvas.ZIndex="1" IsHitTestVisible="True">
             <StackPanel Orientation="Horizontal">
                 <Button Width="48" Height="39"
-                        AccessKey="A"
-                        Click="{x:Bind model:Data.RootPlayBarViewModel.CoverBtnClickToDetail}"
+                        AccessKey="A" Click="CoverBtnClickToDetail"
                         FontSize="12"
                         Style="{StaticResource NavigationBackButtonNormalStyle}"/>
                 <Image Width="16" Height="16"

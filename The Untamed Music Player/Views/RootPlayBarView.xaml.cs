@@ -218,4 +218,9 @@ public sealed partial class RootPlayBarView : UserControl
         var dialog = new EqualizerDialog { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
     }
+
+    private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
+    {
+        ViewModel.DetailModeUpdate();
+    }
 }

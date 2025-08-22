@@ -110,14 +110,7 @@ public partial class PlayListDetailViewModel
     public void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
         Data.SelectedPlaylist = null;
-        if (Data.ShellViewModel!.CurrentPage == nameof(PlayListsPage))
-        {
-            Data.ShellPage!.GoBack();
-        }
-        else
-        {
-            Data.ShellPage!.GoBack();
-        }
+        Data.ShellPage!.GoBack();
         Data.PlaylistLibrary.DeletePlaylist(Playlist);
     }
 

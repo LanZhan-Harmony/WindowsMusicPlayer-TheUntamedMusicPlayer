@@ -31,11 +31,6 @@ public partial class RootPlayBarViewModel : ObservableObject
         Data.RootPlayBarViewModel = this;
     }
 
-    public void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
-    {
-        DetailModeUpdate();
-    }
-
     public void DetailModeUpdate()
     {
         if (!IsDetail)
