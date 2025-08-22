@@ -171,7 +171,13 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     /// <summary>
     /// 当前播放的歌曲简要版
     /// </summary>
-    public IBriefSongInfoBase? CurrentBriefSong { get; set; }
+    [ObservableProperty]
+    public partial IBriefSongInfoBase? CurrentBriefSong { get; set; }
+
+    partial void OnCurrentBriefSongChanged(IBriefSongInfoBase? value)
+    {
+        _ = SaveCurrentBriefSongAsync();
+    }
 
     /// <summary>
     /// 当前播放歌曲
@@ -1359,6 +1365,19 @@ public partial class MusicPlayer : ObservableObject, IDisposable
         }
     }
 
+    public async Task SaveCurrentBriefSongAsync()
+    {
+        await Task.Run(async () =>
+        {
+            if (CurrentBriefSong is not null)
+            {
+                var sourceMode = IBriefSongInfoBase.GetSourceMode(CurrentBriefSong);
+                await _localSettingsService.SaveSettingAsync("CurrentBriefSong", CurrentBriefSong);
+                await _localSettingsService.SaveSettingAsync("SourceMode", sourceMode);
+            }
+        });
+    }
+
     /// <summary>
     /// 保存当前播放状态至设置存储
     /// </summary>
@@ -1372,10 +1391,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
         await _localSettingsService.SaveSettingAsync("CurrentVolume", CurrentVolume);
         await _localSettingsService.SaveSettingAsync("PlaySpeed", PlaySpeed);
         await _localSettingsService.SaveSettingAsync("CurrentBriefSong", CurrentBriefSong);
-        await _localSettingsService.SaveSettingAsync(
-            "SourceMode",
-            IBriefSongInfoBase.GetSourceMode(CurrentBriefSong)
-        );
+        await SaveCurrentBriefSongAsync();
     }
 
     /// <summary>

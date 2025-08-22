@@ -51,6 +51,7 @@ public partial class PlaylistLibrary : ObservableRecipient
                 "PlaylistInfo_Create".GetLocalizedWithReplace("{title}", uniqueName)
             )
         );
+        _ = FileManager.SavePlaylistDataAsync(Playlists);
         return info;
     }
 
@@ -65,6 +66,7 @@ public partial class PlaylistLibrary : ObservableRecipient
         info.Name = uniqueName;
         Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
         Messenger.Send(new PlaylistRenameMessage(oldName, info));
+        _ = FileManager.SavePlaylistDataAsync(Playlists);
         return true;
     }
 
@@ -78,6 +80,7 @@ public partial class PlaylistLibrary : ObservableRecipient
                 "PlaylistInfo_Delete".GetLocalizedWithReplace("{title}", info.Name)
             )
         );
+        _ = FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     public async Task AddToPlaylist(PlaylistInfo info, IBriefSongInfoBase song)
@@ -96,6 +99,7 @@ public partial class PlaylistLibrary : ObservableRecipient
                 "PlaylistInfo_AddItem".GetLocalizedWithReplace(replacements)
             )
         );
+        _ = FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     public async Task AddToPlaylist(PlaylistInfo info, IEnumerable<IBriefSongInfoBase> songs)
@@ -121,6 +125,7 @@ public partial class PlaylistLibrary : ObservableRecipient
                     : "PlaylistInfo_AddItems".GetLocalizedWithReplace(replacements)
             )
         );
+        _ = FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     public async Task DeleteFromPlaylist(PlaylistInfo info, IndexedPlaylistSong song)
@@ -128,16 +133,19 @@ public partial class PlaylistLibrary : ObservableRecipient
         await info.Delete(song);
         Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
         Messenger.Send(new PlaylistChangeMessage(info));
+        _ = FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     public void MoveUpInPlaylist(PlaylistInfo info, IndexedPlaylistSong song)
     {
         info.MoveUp(song);
+        _ = FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     public void MoveDownInPlaylist(PlaylistInfo info, IndexedPlaylistSong song)
     {
         info.MoveDown(song);
+        _ = FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     private string GetUniquePlaylistName(string baseName)
