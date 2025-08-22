@@ -19,6 +19,11 @@ public sealed partial class LyricPage : Page, IDisposable
         Data.MusicPlayer.PropertyChanged += MusicPlayer_PropertyChanged;
     }
 
+    private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
+    {
+        Data.RootPlayBarViewModel!.DetailModeUpdate();
+    }
+
     private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Data.MusicPlayer.CurrentSong))
