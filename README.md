@@ -24,7 +24,7 @@
 ## 下载
 |分发方式|分发链接|
 |-------|-------|
-| Microsoft Store (**推荐**) | [商店链接](https://apps.microsoft.com/detail/9ncfn17f3lxj)
+| Microsoft Store（**推荐**） | [商店链接](https://apps.microsoft.com/detail/9ncfn17f3lxj)
 | Github Release | [分发链接](https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer/releases)
 | 123云盘 | [分发链接](https://www.123865.com/s/yvXSVv-j2mFd)
 
