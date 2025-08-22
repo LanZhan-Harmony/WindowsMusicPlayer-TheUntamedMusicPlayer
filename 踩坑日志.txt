@@ -1,4 +1,4 @@
-1. 需要先部署项目，然后才能进行调试。请在配置服务器中启用部署。=>关掉正在运行的程序。
+1. 需要先部署项目，然后才能进行调试。请在配置服务器中启用部署。=>重新生成项目。
 2. 使用navigateto(page)时。page的构造函数不能有参。
 3. onlaunched方法可能比App的构造函数先执行完。
 4. Template Studio中不导航到MainWindow的原因是MainWindow的content=null。
