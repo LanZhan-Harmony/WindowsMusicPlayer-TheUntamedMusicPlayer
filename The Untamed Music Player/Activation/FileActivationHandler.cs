@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using The_Untamed_Music_Player.Models;
@@ -18,7 +19,7 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
             == ExtendedActivationKind.File;
     }
 
-    protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
+    protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
         // 获取文件激活参数
         var activatedArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
@@ -51,8 +52,7 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 
             if (musicFiles.Count > 0)
             {
-                PlayMusicFiles(musicFiles);
-                Data.RootPlayBarViewModel?.DetailModeUpdate();
+                await PlayMusicFiles(musicFiles);
             }
         }
     }
@@ -76,7 +76,7 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
     /// <summary>
     /// 播放音乐文件
     /// </summary>
-    private static void PlayMusicFiles(List<BriefLocalSongInfo> musicFiles)
+    private static async Task PlayMusicFiles(List<BriefLocalSongInfo> musicFiles)
     {
         try
         {
@@ -85,8 +85,10 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
                 return;
             }
             Data.MusicPlayer.Reset();
+            await Task.Delay(200);
             Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", musicFiles);
             Data.MusicPlayer.PlaySongByInfo(musicFiles[0]);
+            Data.RootPlayBarViewModel?.DetailModeUpdate();
         }
         catch (Exception ex)
         {
