@@ -148,6 +148,10 @@ public static class ZLoggerExtensions
             $"{"Error_EditingSongInfoOther".GetLocalizedWithReplace("{title}", title)}"
         );
 
+    // 播放列表相关日志
+    public static void SamePlaylistName(this ILogger logger) =>
+        logger.ZLogError($"{"Error_SamePlaylistName".GetLocalized()}");
+
     // 高性能性能监控日志
     public static void LogPerformanceStart(
         this ILogger logger,
