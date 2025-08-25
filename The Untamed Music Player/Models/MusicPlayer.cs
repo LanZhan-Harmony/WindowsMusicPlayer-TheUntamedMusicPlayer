@@ -18,6 +18,7 @@ using The_Untamed_Music_Player.Services;
 using Windows.Media;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -411,7 +412,8 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     /// <param name="info"></param>
     public void PlaySongByInfo(IBriefSongInfoBase info)
     {
-        var index = PlayQueue.FirstOrDefault(song => song.Song == info)?.Index ?? 0;
+        var index =
+            PlayQueue.AsValueEnumerable().FirstOrDefault(song => song.Song == info)?.Index ?? 0;
         PlaySongByIndex(index);
     }
 
@@ -484,7 +486,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
             queue.Insert(insertIndex, new IndexedPlayQueueSong(insertIndex, song));
             insertIndex++;
         }
-        _playQueueLength += songs.Count();
+        _playQueueLength += songs.AsValueEnumerable().Count();
         // 仅更新从插入位置之后的索引
         for (var i = insertIndex; i < queue.Count; i++)
         {
@@ -525,7 +527,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
         {
             queue.Add(new IndexedPlayQueueSong(queue.Count, song));
         }
-        _playQueueLength += songs.Count();
+        _playQueueLength += songs.AsValueEnumerable().Count();
         if (ShuffleMode)
         {
             foreach (var song in songs)
@@ -773,12 +775,16 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     /// <param name="list"></param>
     public void SetPlayQueue(string name, IEnumerable<IBriefSongInfoBase> list)
     {
-        if (PlayQueue.Count != list.Count() || PlayQueueName != name)
+        if (PlayQueue.Count != list.AsValueEnumerable().Count() || PlayQueueName != name)
         {
             PlayQueueName = name;
-            PlayQueue = [.. list.Select((song, index) => new IndexedPlayQueueSong(index, song))];
+            PlayQueue =
+            [
+                .. list.AsValueEnumerable()
+                    .Select((song, index) => new IndexedPlayQueueSong(index, song)),
+            ];
 
-            _playQueueLength = list.Count();
+            _playQueueLength = list.AsValueEnumerable().Count();
 
             if (ShuffleMode)
             {
@@ -795,12 +801,20 @@ public partial class MusicPlayer : ObservableObject, IDisposable
 
     public void SetShuffledPlayQueue(string name, IEnumerable<IBriefSongInfoBase> list)
     {
-        if (ShuffleMode == false || PlayQueue.Count != list.Count() || PlayQueueName != name)
+        if (
+            ShuffleMode == false
+            || PlayQueue.Count != list.AsValueEnumerable().Count()
+            || PlayQueueName != name
+        )
         {
             ShuffleMode = true;
             PlayQueueName = name;
-            PlayQueue = [.. list.Select((song, index) => new IndexedPlayQueueSong(index, song))];
-            _playQueueLength = list.Count();
+            PlayQueue =
+            [
+                .. list.AsValueEnumerable()
+                    .Select((song, index) => new IndexedPlayQueueSong(index, song)),
+            ];
+            _playQueueLength = list.AsValueEnumerable().Count();
 
             UpdateShufflePlayQueue();
             for (var i = 0; i < ShuffledPlayQueue.Count; i++)
@@ -1077,6 +1091,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
             {
                 PlayQueueIndex =
                     ShuffledPlayQueue
+                        .AsValueEnumerable()
                         .FirstOrDefault(info =>
                             CurrentSong.IsOnline
                                 ? ((IBriefOnlineSongInfo)info.Song).ID
@@ -1097,6 +1112,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
             {
                 PlayQueueIndex =
                     PlayQueue
+                        .AsValueEnumerable()
                         .FirstOrDefault(info =>
                             CurrentSong.IsOnline
                                 ? ((IBriefOnlineSongInfo)info.Song).ID
@@ -1136,7 +1152,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     /// <returns></returns>
     public void UpdateShufflePlayQueue()
     {
-        ShuffledPlayQueue = [.. PlayQueue.OrderBy(x => Guid.NewGuid())];
+        ShuffledPlayQueue = [.. PlayQueue.AsValueEnumerable().OrderBy(x => Guid.NewGuid())];
     }
 
     /// <summary>
@@ -1441,10 +1457,11 @@ public partial class MusicPlayer : ObservableObject, IDisposable
                 PlaySpeed = 1;
             }
             Data.RootPlayBarViewModel?.ButtonVisibility =
-                CurrentSong is not null && PlayQueue.Any()
+                CurrentSong is not null && PlayQueue.Count > 0
                     ? Visibility.Visible
                     : Visibility.Collapsed;
-            Data.RootPlayBarViewModel?.Availability = CurrentSong is not null && PlayQueue.Any();
+            Data.RootPlayBarViewModel?.Availability =
+                CurrentSong is not null && PlayQueue.Count > 0;
         }
         catch (Exception ex)
         {
