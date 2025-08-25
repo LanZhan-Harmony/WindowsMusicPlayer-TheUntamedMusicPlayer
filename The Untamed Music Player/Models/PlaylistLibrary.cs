@@ -43,7 +43,7 @@ public partial class PlaylistLibrary : ObservableRecipient
         var uniqueName = GetUniquePlaylistName(name);
         var info = new PlaylistInfo(uniqueName);
         Playlists.Add(info);
-        Playlists = [.. Playlists.OrderBy(p => p.Name, new TitleComparer())];
+        Playlists = [.. Playlists.AsValueEnumerable().OrderBy(p => p.Name, new TitleComparer())];
         Messenger.Send(new HavePlaylistMessage(true));
         Messenger.Send(
             new LogMessage(
@@ -104,14 +104,14 @@ public partial class PlaylistLibrary : ObservableRecipient
 
     public async Task AddToPlaylist(PlaylistInfo info, IEnumerable<IBriefSongInfoBase> songs)
     {
-        if (!songs.Any())
+        if (!songs.AsValueEnumerable().Any())
         {
             return;
         }
         await info.AddRange(songs);
         Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
         Messenger.Send(new PlaylistChangeMessage(info));
-        var count = songs.Count();
+        var count = songs.AsValueEnumerable().Count();
         var replacements = new Dictionary<string, string>
         {
             { "{num}", $"{count}" },

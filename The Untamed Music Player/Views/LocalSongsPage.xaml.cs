@@ -8,6 +8,7 @@ using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -38,11 +39,14 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         IBriefSongInfoBase? targetSong = null;
         if (listViewSource is IEnumerable<BriefLocalSongInfo> songs)
         {
-            targetSong = songs.FirstOrDefault(song => song.Path == message.Song.Path);
+            targetSong = songs
+                .AsValueEnumerable()
+                .FirstOrDefault(song => song.Path == message.Song.Path);
         }
         else if (listViewSource is ICollectionView groupedSongs)
         {
             targetSong = groupedSongs
+                .AsValueEnumerable()
                 .OfType<BriefLocalSongInfo>()
                 .FirstOrDefault(song => song.Path == message.Song.Path);
         }

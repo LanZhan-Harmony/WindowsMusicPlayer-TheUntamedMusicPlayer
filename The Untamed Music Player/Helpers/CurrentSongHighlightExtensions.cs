@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Helpers;
 
@@ -139,7 +140,7 @@ public static class CurrentSongHighlightExtensions
     /// </summary>
     /// <param name="parent">父级容器</param>
     /// <returns>具有高亮属性的 ListView 列表</returns>
-    private static IEnumerable<ListViewBase> FindAllListViewsWithHighlight(DependencyObject? parent)
+    private static ListViewBase[] FindAllListViewsWithHighlight(DependencyObject? parent)
     {
         if (parent is null)
         {
@@ -148,10 +149,12 @@ public static class CurrentSongHighlightExtensions
 
         return parent
             .FindDescendants()
+            .AsValueEnumerable()
             .OfType<ListViewBase>()
             .Where(listView =>
                 GetPlayingBrush(listView) is not null && GetNotPlayingBrush(listView) is not null
-            );
+            )
+            .ToArray();
     }
 
     private static void UnregisterListView(ListViewBase listView)
@@ -191,7 +194,7 @@ public static class CurrentSongHighlightExtensions
         )
         {
             // 当前歌曲或播放队列索引变化时，更新所有注册的 ListView
-            foreach (var listView in _registeredListViews.Keys.ToList())
+            foreach (var listView in _registeredListViews.Keys)
             {
                 listView.DispatcherQueue.TryEnqueue(() => UpdateAllVisibleItems(listView));
             }

@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Navigation;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -68,7 +69,8 @@ public partial class ShellViewModel : ObservableObject
         {
             var playlistsNavItem = navView.MenuItems[4] as NavigationViewItem;
             var playlistSubItem = playlistsNavItem!
-                .MenuItems.Cast<NavigationViewItem>()
+                .MenuItems.AsValueEnumerable()
+                .Cast<NavigationViewItem>()
                 .FirstOrDefault(item =>
                     item.DataContext is PlaylistInfo playlist && playlist == PrevPlaylistInfo
                 );

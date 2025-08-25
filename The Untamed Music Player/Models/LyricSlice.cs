@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -155,6 +156,6 @@ public partial class LyricSlice(double time, string content) : ObservableObject
                 lyricSlices.Add(new LyricSlice(emptyStartTime, "•••"));
             }
         });
-        return [.. lyricSlices.OrderBy(t => t.Time)];
+        return [.. lyricSlices.AsValueEnumerable().OrderBy(t => t.Time)];
     }
 }

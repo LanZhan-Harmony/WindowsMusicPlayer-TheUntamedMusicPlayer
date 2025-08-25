@@ -11,6 +11,7 @@ using The_Untamed_Music_Player.Services;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Controls;
 
@@ -56,7 +57,7 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
     {
         _album = info;
         var songs = Data.MusicLibrary.GetSongsByAlbum(info);
-        _tempSongs = [.. songs.Select(song => new TempSongInfo(song))];
+        _tempSongs = [.. songs.AsValueEnumerable().Select(song => new TempSongInfo(song))];
         _name = info.Name;
         _albumArtist = info.ArtistsStr;
         _genre = info.GenreStr;
@@ -119,6 +120,7 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
                                 StringSplitOptions.RemoveEmptyEntries
                                     | StringSplitOptions.TrimEntries
                             )
+                            .AsValueEnumerable()
                             .Distinct()
                     )
                     {
@@ -154,6 +156,7 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
                                 StringSplitOptions.RemoveEmptyEntries
                                     | StringSplitOptions.TrimEntries
                             )
+                            .AsValueEnumerable()
                             .Distinct()
                     )
                     {

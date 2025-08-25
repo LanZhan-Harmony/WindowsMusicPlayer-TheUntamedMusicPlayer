@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 using Windows.Graphics.Imaging;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -179,9 +180,9 @@ public partial class PlaylistInfo
     /// <summary>
     /// 获取所有歌曲
     /// </summary>
-    public IEnumerable<IBriefSongInfoBase> GetAllSongs()
+    public IBriefSongInfoBase[] GetAllSongs()
     {
-        return SongList.Select(indexedSong => indexedSong.Song);
+        return [.. SongList.AsValueEnumerable().Select(indexedSong => indexedSong.Song)];
     }
 
     /// <summary>

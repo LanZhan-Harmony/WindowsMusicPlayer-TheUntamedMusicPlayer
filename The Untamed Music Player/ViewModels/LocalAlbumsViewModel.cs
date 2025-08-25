@@ -151,7 +151,7 @@ public partial class LocalAlbumsViewModel
                         item is LocalAlbumInfo localAlbumInfo
                         && localAlbumInfo.GenreStr == genreToFilter
                     )
-                    .ToList();
+                    .ToArray();
                 group.Clear();
                 foreach (var item in filteredItems)
                 {
@@ -165,7 +165,7 @@ public partial class LocalAlbumsViewModel
             var filteredSongs = NotGroupedAlbumList
                 .AsValueEnumerable()
                 .Where(localAlbumInfo => localAlbumInfo.GenreStr == genreToFilter)
-                .ToList();
+                .ToArray();
             NotGroupedAlbumList.Clear();
             foreach (var song in filteredSongs)
             {
@@ -349,14 +349,14 @@ public partial class LocalAlbumsViewModel
 
     public void PlayButton_Click(LocalAlbumInfo info)
     {
-        var songList = Data.MusicLibrary.GetSongsByAlbum(info).ToList();
+        var songList = Data.MusicLibrary.GetSongsByAlbum(info);
         Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{info.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
     public void PlayNextButton_Click(LocalAlbumInfo info)
     {
-        var songList = Data.MusicLibrary.GetSongsByAlbum(info).ToList();
+        var songList = Data.MusicLibrary.GetSongsByAlbum(info);
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{info.Name}", songList);
@@ -370,7 +370,7 @@ public partial class LocalAlbumsViewModel
 
     public void AddToPlayQueueButton_Click(LocalAlbumInfo info)
     {
-        var songList = Data.MusicLibrary.GetSongsByAlbum(info).ToList();
+        var songList = Data.MusicLibrary.GetSongsByAlbum(info);
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{info.Name}", songList);

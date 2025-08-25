@@ -7,6 +7,7 @@ using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using Windows.Storage;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -131,7 +132,7 @@ public partial class MusicLibrary : ObservableRecipient
                 else
                 {
                     var loadMusicTasks = new List<Task>();
-                    if (Folders.Any())
+                    if (Folders.Count > 0)
                     {
                         foreach (var folder in Folders)
                         {
@@ -143,7 +144,8 @@ public partial class MusicLibrary : ObservableRecipient
                     Genres =
                     [
                         .. _musicGenres
-                            .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
+                            .Keys.AsValueEnumerable()
+                            .Concat(["SongInfo_AllGenres".GetLocalized()])
                             .OrderBy(x => x, new GenreComparer()),
                     ];
                     await InitializeCovers();
@@ -183,7 +185,7 @@ public partial class MusicLibrary : ObservableRecipient
                 Albums.Clear();
                 _musicFolders.Clear();
                 var loadMusicTasks = new List<Task>();
-                if (Folders.Any())
+                if (Folders.Count > 0)
                 {
                     foreach (var folder in Folders)
                     {
@@ -196,7 +198,8 @@ public partial class MusicLibrary : ObservableRecipient
                 Genres =
                 [
                     .. _musicGenres
-                        .Keys.Concat(["SongInfo_AllGenres".GetLocalized()])
+                        .Keys.AsValueEnumerable()
+                        .Concat(["SongInfo_AllGenres".GetLocalized()])
                         .OrderBy(x => x, new GenreComparer()),
                 ];
                 _dispatcherQueue.TryEnqueue(() =>
@@ -263,6 +266,7 @@ public partial class MusicLibrary : ObservableRecipient
 
             // 同时处理当前文件夹的文件
             var supportedFiles = entries
+                .AsValueEnumerable()
                 .OfType<StorageFile>()
                 .Where(file => Data.SupportedAudioTypes.Contains(file.FileType.ToLower()));
 
@@ -405,8 +409,13 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="localAlbumInfo"></param>
     /// <returns></returns>
-    public IOrderedEnumerable<BriefLocalSongInfo> GetSongsByAlbum(LocalAlbumInfo localAlbumInfo) =>
-        Songs.Where(m => m.Album == localAlbumInfo.Name).OrderBy(m => m.Title, new TitleComparer());
+    public BriefLocalSongInfo[] GetSongsByAlbum(LocalAlbumInfo localAlbumInfo) =>
+        [
+            .. Songs
+                .AsValueEnumerable()
+                .Where(m => m.Album == localAlbumInfo.Name)
+                .OrderBy(m => m.Title, new TitleComparer()),
+        ];
 
     /// <summary>
     /// 根据歌曲信息获取专辑信息
@@ -424,7 +433,8 @@ public partial class MusicLibrary : ObservableRecipient
     public List<LocalArtistAlbumInfo> GetAlbumsByArtist(LocalArtistInfo localArtistInfo) =>
         [
             .. localArtistInfo
-                .Albums.Select(album => new LocalArtistAlbumInfo(Albums[album]))
+                .Albums.AsValueEnumerable()
+                .Select(album => new LocalArtistAlbumInfo(Albums[album]))
                 .OrderBy(m => m.Name, new AlbumTitleComparer()),
         ];
 
@@ -433,10 +443,11 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     /// <param name="localArtistInfo"></param>
     /// <returns></returns>
-    public IEnumerable<BriefLocalSongInfo> GetSongsByArtist(LocalArtistInfo localArtistInfo) =>
+    public BriefLocalSongInfo[] GetSongsByArtist(LocalArtistInfo localArtistInfo) =>
         [
             .. localArtistInfo
-                .Albums.OrderBy(album => album, new AlbumTitleComparer())
+                .Albums.AsValueEnumerable()
+                .OrderBy(album => album, new AlbumTitleComparer())
                 .SelectMany(album => GetSongsByAlbum(Albums[album])),
         ];
 
