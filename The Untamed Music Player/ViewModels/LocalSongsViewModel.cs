@@ -203,7 +203,7 @@ public partial class LocalSongsViewModel
                     .Where(item =>
                         item is BriefLocalSongInfo songInfo && songInfo.GenreStr == genreToFilter
                     )
-                    .ToList();
+                    .ToArray();
                 group.Clear();
                 foreach (var item in filteredItems)
                 {
@@ -217,7 +217,7 @@ public partial class LocalSongsViewModel
             var filteredSongs = NotGroupedSongList
                 .AsValueEnumerable()
                 .Where(songInfo => songInfo.GenreStr == genreToFilter)
-                .ToList();
+                .ToArray();
             NotGroupedSongList.Clear();
             foreach (var song in filteredSongs)
             {

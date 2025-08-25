@@ -6,6 +6,7 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -206,7 +207,7 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
     {
         if (NavigationFrame.CanGoBack)
         {
-            var page = NavigationFrame.BackStack.LastOrDefault();
+            var page = NavigationFrame.BackStack.AsValueEnumerable().LastOrDefault();
             if (page?.SourcePageType == typeof(PlayListDetailPage) && Data.SelectedPlaylist is null)
             {
                 NavigationFrame.BackStack.Remove(page);
