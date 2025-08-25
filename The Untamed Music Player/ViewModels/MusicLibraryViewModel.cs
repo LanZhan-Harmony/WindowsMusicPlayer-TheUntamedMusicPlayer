@@ -7,6 +7,7 @@ using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -71,7 +72,10 @@ public partial class MusicLibraryViewModel
         InitializeWithWindow.Initialize(openPicker, hWnd);
 
         var folder = await openPicker.PickSingleFolderAsync();
-        if (folder is not null && !Data.MusicLibrary.Folders.Any(f => f.Path == folder.Path))
+        if (
+            folder is not null
+            && !Data.MusicLibrary.Folders.AsValueEnumerable().Any(f => f.Path == folder.Path)
+        )
         {
             NoMusicControlVisibility = Visibility.Collapsed;
             HaveMusicControlVisibility = Visibility.Collapsed;

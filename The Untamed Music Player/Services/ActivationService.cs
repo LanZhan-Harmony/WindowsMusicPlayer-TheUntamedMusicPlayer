@@ -1,5 +1,6 @@
 using The_Untamed_Music_Player.Activation;
 using The_Untamed_Music_Player.Contracts.Services;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Services;
 
@@ -28,9 +29,9 @@ public class ActivationService(
 
     private async Task HandleActivationAsync(object activationArgs)
     {
-        var activationHandler = _activationHandlers.FirstOrDefault(h =>
-            h.CanHandle(activationArgs)
-        );
+        var activationHandler = _activationHandlers
+            .AsValueEnumerable()
+            .FirstOrDefault(h => h.CanHandle(activationArgs));
 
         if (activationHandler is not null)
         {

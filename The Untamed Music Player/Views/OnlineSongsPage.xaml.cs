@@ -7,6 +7,7 @@ using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -98,7 +99,9 @@ public sealed partial class OnlineSongsPage : Page
             && SongListView.ItemsSource is IEnumerable<IBriefOnlineSongInfo> songs
         )
         {
-            var targetSong = songs.FirstOrDefault(song => song.ID == currentSong.ID);
+            var targetSong = songs
+                .AsValueEnumerable()
+                .FirstOrDefault(song => song.ID == currentSong.ID);
             if (targetSong is not null)
             {
                 SongListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);

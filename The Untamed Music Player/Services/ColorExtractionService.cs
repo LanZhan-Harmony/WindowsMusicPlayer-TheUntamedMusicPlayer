@@ -5,6 +5,7 @@ using The_Untamed_Music_Player.Contracts.Services;
 using Windows.Graphics;
 using Windows.Storage.Streams;
 using Windows.UI;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Services;
 
@@ -87,17 +88,12 @@ public class ColorExtractionService : IColorExtractionService
         }
 
         // 按亮度排序
-        var sortedColors = colors.OrderBy(CalculateLuminance).ToList();
+        var sortedColors = colors.AsValueEnumerable().OrderBy(CalculateLuminance).ToArray();
 
         // 选择中间的颜色用于渐变
-        var gradientColors = new List<Color>();
-        var count = Math.Min(sortedColors.Count, 4);
-        var startIndex = Math.Max(0, (sortedColors.Count - count) / 2);
-
-        for (var i = 0; i < count; i++)
-        {
-            gradientColors.Add(sortedColors[startIndex + i]);
-        }
+        var count = Math.Min(sortedColors.Length, 4);
+        var startIndex = Math.Max(0, (sortedColors.Length - count) / 2);
+        var gradientColors = sortedColors.AsValueEnumerable().Skip(startIndex).Take(count).ToList();
 
         return new GradientConfig(gradientColors, -45);
     }
@@ -116,6 +112,7 @@ public class ColorExtractionService : IColorExtractionService
 
         // 选择饱和度和亮度适中的颜色作为强调色
         return colors
+            .AsValueEnumerable()
             .OrderByDescending(color =>
                 CalculateSaturation(color) * (1 - Math.Abs(CalculateLuminance(color) - 0.5))
             )
@@ -188,6 +185,7 @@ public class ColorExtractionService : IColorExtractionService
         return
         [
             .. colorStats
+                .AsValueEnumerable()
                 .OrderByDescending(kvp => kvp.Value)
                 .Take(maxColors)
                 .Select(kvp => kvp.Key),

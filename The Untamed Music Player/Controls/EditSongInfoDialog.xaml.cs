@@ -12,6 +12,7 @@ using The_Untamed_Music_Player.Services;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using ZLinq;
 using TextBox = Microsoft.UI.Xaml.Controls.TextBox;
 
 namespace The_Untamed_Music_Player.Controls;
@@ -116,6 +117,7 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
                             BriefLocalSongInfo.Delimiters,
                             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
                         )
+                        .AsValueEnumerable()
                         .Distinct()
                 )
                 {
@@ -151,6 +153,7 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
                                 StringSplitOptions.RemoveEmptyEntries
                                     | StringSplitOptions.TrimEntries
                             )
+                            .AsValueEnumerable()
                             .Distinct()
                     )
                     {

@@ -17,6 +17,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
 using WinRT.Interop;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -194,7 +195,10 @@ public partial class SettingsViewModel : ObservableObject
         InitializeWithWindow.Initialize(openPicker, hWnd);
 
         var folder = await openPicker.PickSingleFolderAsync();
-        if (folder is not null && !Data.MusicLibrary.Folders.Any(f => f.Path == folder.Path))
+        if (
+            folder is not null
+            && !Data.MusicLibrary.Folders.AsValueEnumerable().Any(f => f.Path == folder.Path)
+        )
         {
             Data.MusicLibrary.Folders.Add(folder);
             OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
@@ -310,7 +314,7 @@ public partial class SettingsViewModel : ObservableObject
                 }
             );
         }
-        Fonts = [.. list.OrderBy(f => f.Name)];
+        Fonts = [.. list.AsValueEnumerable().OrderBy(f => f.Name)];
     }
 
     public void FontComboBox_Loaded(object sender, RoutedEventArgs e)
@@ -361,9 +365,9 @@ public partial class SettingsViewModel : ObservableObject
         var location = await _localSettingsService.ReadSettingAsync<string>("SongDownloadLocation");
         if (string.IsNullOrWhiteSpace(location))
         {
-            var folder = (
-                await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music)
-            ).Folders.FirstOrDefault();
+            var folder = (await StorageLibrary.GetLibraryAsync(KnownLibraryId.Music))
+                .Folders.AsValueEnumerable()
+                .FirstOrDefault();
             location = folder?.Path;
             if (string.IsNullOrWhiteSpace(location))
             {
@@ -379,7 +383,10 @@ public partial class SettingsViewModel : ObservableObject
 
     public static async Task SaveFoldersAsync()
     {
-        var folderPaths = Data.MusicLibrary.Folders?.Select(f => f.Path).ToList();
+        var folderPaths = Data
+            .MusicLibrary.Folders?.AsValueEnumerable()
+            .Select(f => f.Path)
+            .ToList();
         await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths); //	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
     }
 

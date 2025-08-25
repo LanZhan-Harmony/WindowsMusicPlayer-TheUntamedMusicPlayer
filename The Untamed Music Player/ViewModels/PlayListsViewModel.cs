@@ -7,6 +7,7 @@ using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -98,8 +99,10 @@ public partial class PlayListsViewModel
     {
         await Task.Run(() =>
         {
-            var templist = _tempPlaylists.OrderBy(p => p.Name, new TitleComparer());
-            Playlists = new ObservableCollection<PlaylistInfo>(templist);
+            var templist = _tempPlaylists
+                .AsValueEnumerable()
+                .OrderBy(p => p.Name, new TitleComparer());
+            Playlists = [.. templist];
         });
     }
 
@@ -107,8 +110,10 @@ public partial class PlayListsViewModel
     {
         await Task.Run(() =>
         {
-            var templist = _tempPlaylists.OrderByDescending(p => p.Name, new TitleComparer());
-            Playlists = new ObservableCollection<PlaylistInfo>(templist);
+            var templist = _tempPlaylists
+                .AsValueEnumerable()
+                .OrderByDescending(p => p.Name, new TitleComparer());
+            Playlists = [.. templist];
         });
     }
 
@@ -116,8 +121,8 @@ public partial class PlayListsViewModel
     {
         await Task.Run(() =>
         {
-            var templist = _tempPlaylists.OrderBy(p => p.ModifiedDate);
-            Playlists = new ObservableCollection<PlaylistInfo>(templist);
+            var templist = _tempPlaylists.AsValueEnumerable().OrderBy(p => p.ModifiedDate);
+            Playlists = [.. templist];
         });
     }
 
@@ -125,8 +130,10 @@ public partial class PlayListsViewModel
     {
         await Task.Run(() =>
         {
-            var templist = _tempPlaylists.OrderByDescending(p => p.ModifiedDate);
-            Playlists = new ObservableCollection<PlaylistInfo>(templist);
+            var templist = _tempPlaylists
+                .AsValueEnumerable()
+                .OrderByDescending(p => p.ModifiedDate);
+            Playlists = [.. templist];
         });
     }
 
@@ -150,8 +157,8 @@ public partial class PlayListsViewModel
 
     public void PlayButton_Click(PlaylistInfo info)
     {
-        var songList = info.GetAllSongs().ToList();
-        if (songList.Count == 0)
+        var songList = info.GetAllSongs();
+        if (songList.Length == 0)
         {
             return;
         }
@@ -161,8 +168,8 @@ public partial class PlayListsViewModel
 
     public void PlayNextButton_Click(PlaylistInfo info)
     {
-        var songList = info.GetAllSongs().ToList();
-        if (songList.Count == 0)
+        var songList = info.GetAllSongs();
+        if (songList.Length == 0)
         {
             return;
         }
@@ -179,8 +186,8 @@ public partial class PlayListsViewModel
 
     public void AddToPlayQueueButton_Click(PlaylistInfo info)
     {
-        var songList = info.GetAllSongs().ToList();
-        if (songList.Count == 0)
+        var songList = info.GetAllSongs();
+        if (songList.Length == 0)
         {
             return;
         }
@@ -197,7 +204,7 @@ public partial class PlayListsViewModel
 
     public async void AddToPlaylistButton_Click(PlaylistInfo info, PlaylistInfo playlist)
     {
-        var songList = info.GetAllSongs().ToList();
+        var songList = info.GetAllSongs();
         await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
     }
 

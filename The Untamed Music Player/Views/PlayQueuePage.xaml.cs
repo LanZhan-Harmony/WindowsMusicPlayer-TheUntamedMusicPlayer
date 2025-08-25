@@ -5,6 +5,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Views;
 
@@ -104,12 +105,14 @@ public sealed partial class PlayQueuePage : Page
         {
             var targetSong = currentSong switch
             {
-                BriefLocalSongInfo localSong => songs.FirstOrDefault(song =>
-                    song.Song.Path == localSong.Path
-                ),
-                IBriefOnlineSongInfo onlineSong => songs.FirstOrDefault(song =>
-                    song.Song is IBriefOnlineSongInfo s && s.ID == onlineSong.ID
-                ),
+                BriefLocalSongInfo localSong => songs
+                    .AsValueEnumerable()
+                    .FirstOrDefault(song => song.Song.Path == localSong.Path),
+                IBriefOnlineSongInfo onlineSong => songs
+                    .AsValueEnumerable()
+                    .FirstOrDefault(song =>
+                        song.Song is IBriefOnlineSongInfo s && s.ID == onlineSong.ID
+                    ),
                 _ => null,
             };
             if (targetSong is not null)

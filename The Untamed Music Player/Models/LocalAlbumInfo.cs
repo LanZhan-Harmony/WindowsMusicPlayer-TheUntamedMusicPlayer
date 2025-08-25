@@ -4,6 +4,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -91,7 +92,7 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         {
             CoverPath = briefLocalSongInfo.Path;
         }
-        Artists = [.. Artists!.Concat(briefLocalSongInfo.Artists).Distinct()];
+        Artists = [.. Artists.AsValueEnumerable().Concat(briefLocalSongInfo.Artists).Distinct()];
         ArtistsStr = IAlbumInfoBase.GetArtistsStr(Artists);
     }
 

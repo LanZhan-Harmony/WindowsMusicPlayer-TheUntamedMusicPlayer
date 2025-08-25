@@ -9,6 +9,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -78,14 +79,14 @@ public partial class PlayListDetailViewModel
         {
             return;
         }
-        var songList = SongList.Select(s => s.Song).ToList();
+        var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
         Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
     public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
     {
-        var songList = SongList.Select(s => s.Song).ToList();
+        var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
         await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
     }
 
@@ -95,7 +96,7 @@ public partial class PlayListDetailViewModel
         {
             return;
         }
-        var songList = SongList.Select(s => s.Song).ToList();
+        var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
@@ -116,7 +117,7 @@ public partial class PlayListDetailViewModel
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        var songList = SongList.Select(s => s.Song);
+        var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
         Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
         if (e.ClickedItem is IndexedPlaylistSong indexedInfo)
         {
@@ -128,7 +129,7 @@ public partial class PlayListDetailViewModel
     {
         Data.MusicPlayer.SetPlayQueue(
             $"Songs:Playlist:{Playlist.Name}",
-            SongList.Select(s => s.Song)
+            SongList.AsValueEnumerable().Select(s => s.Song).ToArray()
         );
         Data.MusicPlayer.PlaySongByInfo(info);
     }

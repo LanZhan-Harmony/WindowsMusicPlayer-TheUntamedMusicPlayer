@@ -132,14 +132,14 @@ public partial class LocalArtistsViewModel
 
     public void PlayButton_Click(LocalArtistInfo info)
     {
-        var songList = Data.MusicLibrary.GetSongsByArtist(info).ToList();
+        var songList = Data.MusicLibrary.GetSongsByArtist(info);
         Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
     public void PlayNextButton_Click(LocalArtistInfo info)
     {
-        var songList = Data.MusicLibrary.GetSongsByArtist(info).ToList();
+        var songList = Data.MusicLibrary.GetSongsByArtist(info);
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
@@ -153,7 +153,7 @@ public partial class LocalArtistsViewModel
 
     public void AddToPlayQueueButton_Click(LocalArtistInfo info)
     {
-        var songList = Data.MusicLibrary.GetSongsByArtist(info).ToList();
+        var songList = Data.MusicLibrary.GetSongsByArtist(info);
         if (Data.MusicPlayer.PlayQueue.Count == 0)
         {
             Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList);

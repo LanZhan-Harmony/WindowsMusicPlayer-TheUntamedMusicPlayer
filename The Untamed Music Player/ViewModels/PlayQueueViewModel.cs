@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -44,13 +45,13 @@ public partial class PlayQueueViewModel : ObservableObject
 
     public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
     {
-        var songList = PlayQueue.Select(song => song.Song);
+        var songList = PlayQueue.AsValueEnumerable().Select(song => song.Song).ToArray();
         await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
     }
 
     public void AddToPlayQueueFlyoutButton_Click()
     {
-        var songList = PlayQueue.Select(song => song.Song).ToList();
+        var songList = PlayQueue.AsValueEnumerable().Select(song => song.Song).ToArray();
         Data.MusicPlayer.AddSongsToPlayQueue(songList);
     }
 

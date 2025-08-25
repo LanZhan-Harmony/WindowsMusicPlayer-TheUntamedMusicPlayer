@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using TagLib;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -51,6 +52,7 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
         set =>
             field = [
                 .. value
+                    .AsValueEnumerable()
                     .SelectMany(artist =>
                         artist.Split(
                             Delimiters,
@@ -242,7 +244,8 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
             AlbumArtistsStr = IDetailedSongInfoBase.GetAlbumArtistsStr(
                 [
                     .. musicFile
-                        .Tag.AlbumArtists.SelectMany(artist =>
+                        .Tag.AlbumArtists.AsValueEnumerable()
+                        .SelectMany(artist =>
                             artist.Split(
                                 Delimiters,
                                 StringSplitOptions.RemoveEmptyEntries
