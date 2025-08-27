@@ -1,18 +1,25 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
+using Windows.Storage;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
 public partial class PlayQueueViewModel : ObservableObject
 {
+    private IndexedPlayQueueSong? _currentSong;
+
     [ObservableProperty]
     public partial ObservableCollection<IndexedPlayQueueSong> PlayQueue { get; set; } =
         Data.MusicPlayer.ShuffleMode
@@ -161,5 +168,154 @@ public partial class PlayQueueViewModel : ObservableObject
     public void ClearButton_Click(object sender, RoutedEventArgs e)
     {
         Data.MusicPlayer.ClearPlayQueue();
+    }
+
+    public void PlayqueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+    {
+        _currentSong = PlayQueue[Data.MusicPlayer.PlayQueueIndex];
+        if (e.Items.Count > 0)
+        {
+            e.Data.RequestedOperation = DataPackageOperation.Move;
+        }
+    }
+
+    public void PlayqueueListView_DragOver(object sender, DragEventArgs e)
+    {
+        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+            e.DragUIOverride.Caption = "PlayQueue_AddToPlayQueue".GetLocalized();
+            e.DragUIOverride.IsCaptionVisible = true;
+            e.DragUIOverride.IsContentVisible = true;
+            e.DragUIOverride.IsGlyphVisible = false;
+        }
+    }
+
+    public void PlayqueueListView_DragItemsCompleted(object sender, DragItemsCompletedEventArgs e)
+    {
+        // 检查是否是重排序操作（Move操作且在同一个ListView内）
+        if (e.DropResult == DataPackageOperation.Move && e.Items.Count > 0)
+        {
+            var songs = e.Items.AsValueEnumerable().Cast<IndexedPlayQueueSong>().ToArray();
+            if (songs.Length == 0)
+            {
+                return;
+            }
+            var oldIndex = songs[0].Index;
+            var newIndex = PlayQueue.IndexOf(songs[0]);
+            if (oldIndex == newIndex)
+            {
+                return;
+            }
+            for (var i = 0; i < PlayQueue.Count; i++)
+            {
+                PlayQueue[i].Index = i;
+            }
+            Data.MusicPlayer.PlayQueueIndex = _currentSong!.Index;
+        }
+    }
+
+    public async void PlayqueueListView_Drop(object sender, DragEventArgs e)
+    {
+        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            var def = e.GetDeferral();
+            var items = await e.DataView.GetStorageItemsAsync();
+            var musicFiles = new List<StorageFile>();
+            await Task.Run(async () =>
+            {
+                foreach (var item in items)
+                {
+                    if (item is StorageFile file)
+                    {
+                        var extension = Path.GetExtension(file.Path).ToLowerInvariant();
+                        if (Data.SupportedAudioTypes.Contains(extension))
+                        {
+                            musicFiles.Add(file);
+                        }
+                    }
+                    else if (item is StorageFolder folder)
+                    {
+                        var folderFiles = await GetMusicFilesFromFolderAsync(folder);
+                        musicFiles.AddRange(folderFiles);
+                    }
+                }
+            });
+
+            if (musicFiles.Count > 0)
+            {
+                var listView = (ListView)sender;
+                var position = e.GetPosition(listView.ItemsPanelRoot);
+                var index = 0;
+
+                if (listView.Items.Count != 0)
+                {
+                    var sampleItem = (ListViewItem)listView.ContainerFromIndex(0);
+                    var itemHeight =
+                        sampleItem.ActualHeight + sampleItem.Margin.Top + sampleItem.Margin.Bottom;
+
+                    if (itemHeight > 0)
+                    {
+                        var calculatedIndex = (int)(position.Y / itemHeight);
+                        index =
+                            calculatedIndex >= listView.Items.Count
+                                ? listView.Items.Count
+                                : calculatedIndex;
+                        index = Math.Min(listView.Items.Count, Math.Max(0, index));
+                    }
+                }
+
+                await AddExternalFilesToPlayQueue(musicFiles, index);
+            }
+            def.Complete();
+        }
+    }
+
+    private static async Task<List<StorageFile>> GetMusicFilesFromFolderAsync(StorageFolder folder)
+    {
+        var musicFiles = new List<StorageFile>();
+        try
+        {
+            var files = await folder.GetFilesAsync();
+            foreach (var file in files)
+            {
+                var extension = Path.GetExtension(file.Path).ToLowerInvariant();
+                if (Data.SupportedAudioTypes.Contains(extension))
+                {
+                    musicFiles.Add(file);
+                }
+            }
+
+            var subFolders = await folder.GetFoldersAsync();
+            foreach (var subFolder in subFolders)
+            {
+                var subFiles = await GetMusicFilesFromFolderAsync(subFolder);
+                musicFiles.AddRange(subFiles);
+            }
+        }
+        catch { }
+        return musicFiles;
+    }
+
+    public static async Task AddExternalFilesToPlayQueue(List<StorageFile> files, int insertIndex)
+    {
+        var newSongs = new List<IBriefSongInfoBase>();
+        await Task.Run(() =>
+        {
+            foreach (var file in files)
+            {
+                try
+                {
+                    var folder = Path.GetDirectoryName(file.Path) ?? "";
+                    var songInfo = new BriefLocalSongInfo(file.Path, folder);
+                    newSongs.Add(songInfo);
+                }
+                catch { }
+            }
+        });
+        if (newSongs.Count > 0)
+        {
+            Data.MusicPlayer.InsertSongsToPlayQueue(newSongs, insertIndex);
+        }
     }
 }

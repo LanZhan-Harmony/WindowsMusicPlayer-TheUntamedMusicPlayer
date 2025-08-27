@@ -369,6 +369,9 @@
   <data name="PlayQueue_Clear.Text" xml:space="preserve">
     <value>清除</value>
   </data>
+  <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
+    <value>添加到播放队列</value>
+  </data>
   <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
     <value>播放队列</value>
   </data>

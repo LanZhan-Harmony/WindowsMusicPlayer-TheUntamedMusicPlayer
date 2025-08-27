@@ -369,6 +369,9 @@
   <data name="PlayQueue_Clear.Text" xml:space="preserve">
     <value>Clear</value>
   </data>
+  <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
+    <value>Add to play queue</value>
+  </data>
   <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
     <value>Play queue</value>
   </data>

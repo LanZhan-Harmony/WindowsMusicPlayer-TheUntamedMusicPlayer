@@ -5,7 +5,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:model="using:The_Untamed_Music_Player.Models"
              xmlns:ui="using:CommunityToolkit.WinUI"
-             Loaded="RootPlayBarView_Loaded"
              mc:Ignorable="d">
 
     <Grid KeyTipPlacementMode="Top">
@@ -105,7 +104,8 @@
                     VerticalAlignment="Center"
                     AccessKey="S"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
-                    IsThumbToolTipEnabled="False" Maximum="100"
+                    IsThumbToolTipEnabled="False"
+                    Loaded="ProgressSlider_Loaded" Maximum="100"
                     Minimum="0" Orientation="Horizontal"
                     Visibility="{x:Bind GetSliderVisibility(model:Data.MusicPlayer.PlayState), Mode=OneWay}"
                     Value="{x:Bind model:Data.MusicPlayer.CurrentPosition, Mode=OneWay}"/>
