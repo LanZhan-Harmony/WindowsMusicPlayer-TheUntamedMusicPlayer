@@ -65,13 +65,13 @@ public partial class TitleBarHelper
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
             if (hwnd == GetActiveWindow())
             {
-                SendMessage(hwnd, WMACTIVATE, WAINACTIVE, IntPtr.Zero);
-                SendMessage(hwnd, WMACTIVATE, WAACTIVE, IntPtr.Zero);
+                SendMessage(hwnd, WMACTIVATE, WAINACTIVE, nint.Zero);
+                SendMessage(hwnd, WMACTIVATE, WAACTIVE, nint.Zero);
             }
             else
             {
-                SendMessage(hwnd, WMACTIVATE, WAACTIVE, IntPtr.Zero);
-                SendMessage(hwnd, WMACTIVATE, WAINACTIVE, IntPtr.Zero);
+                SendMessage(hwnd, WMACTIVATE, WAACTIVE, nint.Zero);
+                SendMessage(hwnd, WMACTIVATE, WAINACTIVE, nint.Zero);
             }
         }
     }

@@ -330,7 +330,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     /// <summary>
     /// Bass同步回调 - 播放结束
     /// </summary>
-    private void OnPlayBackEnded(int handle, int channel, int data, IntPtr user)
+    private void OnPlayBackEnded(int handle, int channel, int data, nint user)
     {
         Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
         {
@@ -351,7 +351,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     /// <summary>
     /// Bass同步回调 - 播放失败
     /// </summary>
-    private void OnPlaybackFailed(int handle, int channel, int data, IntPtr user)
+    private void OnPlaybackFailed(int handle, int channel, int data, nint user)
     {
         _logger.SongPlaybackError(CurrentSong!.Title);
         Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
@@ -627,6 +627,34 @@ public partial class MusicPlayer : ObservableObject, IDisposable
             if (index == PlayQueueIndex)
             {
                 PlayQueueIndex++;
+            }
+        }
+    }
+
+    public void InsertSongsToPlayQueue(List<IBriefSongInfoBase> songs, int insertIndex)
+    {
+        var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+        var actualIndex = Math.Min(insertIndex, queue.Count);
+        foreach (var song in songs)
+        {
+            queue.Insert(actualIndex, new IndexedPlayQueueSong(actualIndex, song));
+            actualIndex++;
+        }
+        _playQueueLength += songs.Count;
+        // 仅更新从插入位置之后的索引
+        for (var i = actualIndex; i < queue.Count; i++)
+        {
+            queue[i].Index = i;
+        }
+        if (actualIndex <= PlayQueueIndex)
+        {
+            PlayQueueIndex += songs.Count;
+        }
+        if (ShuffleMode)
+        {
+            foreach (var song in songs)
+            {
+                PlayQueue.Add(new IndexedPlayQueueSong(PlayQueue.Count, song));
             }
         }
     }
@@ -1195,6 +1223,20 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     }
 
     /// <summary>
+    /// 键盘按下移动滑动条事件
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public void ProgressLock(object sender, KeyRoutedEventArgs e)
+    {
+        _lockable = true;
+        CurrentPlayingTime = TimeSpan.FromMilliseconds(
+            ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100
+        );
+        UpdateCurrentLyricIndex(CurrentPlayingTime.TotalMilliseconds);
+    }
+
+    /// <summary>
     /// 滑动滑动条事件
     /// </summary>
     /// <param name="sender"></param>
@@ -1214,117 +1256,74 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     /// <param name="e"></param>
     public void ProgressUpdate(object sender, PointerRoutedEventArgs e)
     {
-        if (_tempoStream != 0) // 使用_tempoStream而不是_currentStream
-        {
-            var targetTimeSeconds = ((Slider)sender).Value * TotalPlayingTime.TotalSeconds / 100;
-            var targetBytes = Bass.ChannelSeconds2Bytes(_tempoStream, targetTimeSeconds);
-
-            // 对原始流设置位置，tempo流会自动跟随
-            var result = Bass.ChannelSetPosition(_tempoStream, targetBytes);
-            if (!result)
-            {
-                Debug.WriteLine($"设置播放位置失败: {Bass.LastError}");
-            }
-
-            CurrentPlayingTime = TimeSpan.FromSeconds(targetTimeSeconds);
-            if (TotalPlayingTime.TotalMilliseconds > 0)
-            {
-                CurrentPosition =
-                    100
-                    * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
-            }
-            UpdateCurrentLyricIndex(CurrentPlayingTime.TotalMilliseconds);
-        }
-        _lockable = false;
+        var targetTimeSeconds = ((Slider)sender).Value * TotalPlayingTime.TotalSeconds / 100;
+        SetPlaybackPosition(targetTimeSeconds, false);
     }
 
     /// <summary>
-    /// 点击歌词更新播放进度
+    /// 键盘松开移动滑动条事件
     /// </summary>
-    /// <param name="time"></param>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public void ProgressUpdate(object sender, KeyRoutedEventArgs e)
+    {
+        var targetTimeSeconds = ((Slider)sender).Value * TotalPlayingTime.TotalSeconds / 100;
+        SetPlaybackPosition(targetTimeSeconds, false);
+    }
+
     public void LyricProgressUpdate(double time)
     {
-        _lockable = true;
-        if (_tempoStream != 0) // 使用_tempoStream而不是_currentStream
-        {
-            var targetTimeSeconds = time / 1000.0;
-            var targetBytes = Bass.ChannelSeconds2Bytes(_tempoStream, targetTimeSeconds);
-
-            // 对原始流设置位置，tempo流会自动跟随
-            var result = Bass.ChannelSetPosition(_tempoStream, targetBytes);
-            if (!result)
-            {
-                Debug.WriteLine($"设置播放位置失败: {Bass.LastError}");
-            }
-
-            CurrentPlayingTime = TimeSpan.FromMilliseconds(time);
-            if (TotalPlayingTime.TotalMilliseconds > 0)
-            {
-                CurrentPosition =
-                    100
-                    * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
-            }
-            UpdateCurrentLyricIndex(time);
-        }
-        _lockable = false;
+        var targetTimeSeconds = time / 1000.0;
+        SetPlaybackPosition(targetTimeSeconds);
     }
 
     public void SkipBack10sButton_Click(object sender, RoutedEventArgs e)
     {
-        _lockable = true;
-        if (_tempoStream != 0) // 使用_tempoStream而不是_currentStream
+        if (_tempoStream == 0)
         {
-            var currentPositionBytes = Bass.ChannelGetPosition(_tempoStream);
-            var currentPositionSeconds = Bass.ChannelBytes2Seconds(
-                _tempoStream,
-                currentPositionBytes
-            );
-            var newPositionSeconds = Math.Max(0, currentPositionSeconds - 10);
-            var newPositionBytes = Bass.ChannelSeconds2Bytes(_tempoStream, newPositionSeconds);
-
-            var result = Bass.ChannelSetPosition(_tempoStream, newPositionBytes);
-            if (!result)
-            {
-                Debug.WriteLine($"设置播放位置失败: {Bass.LastError}");
-            }
-
-            CurrentPlayingTime = TimeSpan.FromSeconds(newPositionSeconds);
-
-            if (TotalPlayingTime.TotalMilliseconds > 0)
-            {
-                CurrentPosition =
-                    100
-                    * (CurrentPlayingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
-            }
-            UpdateCurrentLyricIndex(CurrentPlayingTime.TotalMilliseconds);
+            return;
         }
-        _lockable = false;
+        var currentPositionBytes = Bass.ChannelGetPosition(_tempoStream);
+        var currentPositionSeconds = Bass.ChannelBytes2Seconds(_tempoStream, currentPositionBytes);
+        var newPositionSeconds = Math.Max(0, currentPositionSeconds - 10);
+        SetPlaybackPosition(newPositionSeconds);
     }
 
     public void SkipForw30sButton_Click(object sender, RoutedEventArgs e)
     {
-        _lockable = true;
-        if (_tempoStream != 0) // 使用_tempoStream而不是_currentStream
+        if (_tempoStream == 0)
         {
-            var currentPositionBytes = Bass.ChannelGetPosition(_tempoStream);
-            var currentPositionSeconds = Bass.ChannelBytes2Seconds(
-                _tempoStream,
-                currentPositionBytes
-            );
-            var newPositionSeconds = Math.Min(
-                TotalPlayingTime.TotalSeconds,
-                currentPositionSeconds + 30
-            );
-            var newPositionBytes = Bass.ChannelSeconds2Bytes(_tempoStream, newPositionSeconds);
+            return;
+        }
+        var currentPositionBytes = Bass.ChannelGetPosition(_tempoStream);
+        var currentPositionSeconds = Bass.ChannelBytes2Seconds(_tempoStream, currentPositionBytes);
+        var newPositionSeconds = Math.Min(
+            TotalPlayingTime.TotalSeconds,
+            currentPositionSeconds + 30
+        );
+        SetPlaybackPosition(newPositionSeconds);
+    }
 
-            var result = Bass.ChannelSetPosition(_tempoStream, newPositionBytes);
+    /// <summary>
+    /// 设置播放位置的通用方法
+    /// </summary>
+    /// <param name="targetTimeSeconds">目标时间(秒)</param>
+    /// <param name="shouldLock">是否需要设置锁定状态</param>
+    private void SetPlaybackPosition(double targetTimeSeconds, bool shouldLock = true)
+    {
+        if (shouldLock)
+        {
+            _lockable = true;
+        }
+        if (_tempoStream != 0)
+        {
+            var targetBytes = Bass.ChannelSeconds2Bytes(_tempoStream, targetTimeSeconds);
+            var result = Bass.ChannelSetPosition(_tempoStream, targetBytes);
             if (!result)
             {
                 Debug.WriteLine($"设置播放位置失败: {Bass.LastError}");
             }
-
-            CurrentPlayingTime = TimeSpan.FromSeconds(newPositionSeconds);
-
+            CurrentPlayingTime = TimeSpan.FromSeconds(targetTimeSeconds);
             if (TotalPlayingTime.TotalMilliseconds > 0)
             {
                 CurrentPosition =
@@ -1417,10 +1416,22 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     {
         try
         {
-            PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>("PlayQueueIndex");
             ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
             RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
             IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
+            if (Data.NotFirstUsed)
+            {
+                CurrentVolume = await _localSettingsService.ReadSettingAsync<double>(
+                    "CurrentVolume"
+                );
+                PlaySpeed = await _localSettingsService.ReadSettingAsync<double>("PlaySpeed");
+            }
+            else
+            {
+                CurrentVolume = 100;
+                PlaySpeed = 1;
+            }
+            PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>("PlayQueueIndex");
             var sourceMode = await _localSettingsService.ReadSettingAsync<short>("SourceMode");
             CurrentBriefSong = sourceMode switch
             {
@@ -1443,18 +1454,6 @@ public partial class MusicPlayer : ObservableObject, IDisposable
                 _ = UpdateLyric(CurrentSong!.Lyric);
                 _systemControls.IsPlayEnabled = true;
                 _systemControls.IsPauseEnabled = true;
-            }
-            if (Data.NotFirstUsed)
-            {
-                CurrentVolume = await _localSettingsService.ReadSettingAsync<double>(
-                    "CurrentVolume"
-                );
-                PlaySpeed = await _localSettingsService.ReadSettingAsync<double>("PlaySpeed");
-            }
-            else
-            {
-                CurrentVolume = 100;
-                PlaySpeed = 1;
             }
             Data.RootPlayBarViewModel?.ButtonVisibility =
                 CurrentSong is not null && PlayQueue.Count > 0
