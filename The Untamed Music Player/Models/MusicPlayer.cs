@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using ManagedBass;
 using ManagedBass.Fx;
 using MemoryPack;
@@ -13,6 +14,7 @@ using Microsoft.UI.Xaml.Input;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using The_Untamed_Music_Player.Services;
 using Windows.Media;
@@ -22,7 +24,10 @@ using ZLinq;
 
 namespace The_Untamed_Music_Player.Models;
 
-public partial class MusicPlayer : ObservableObject, IDisposable
+public partial class MusicPlayer
+    : ObservableRecipient,
+        IRecipient<FontSizeChangeMessage>,
+        IDisposable
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
@@ -249,7 +254,9 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     public partial List<LyricSlice> CurrentLyric { get; set; } = [];
 
     public MusicPlayer()
+        : base(StrongReferenceMessenger.Default)
     {
+        Messenger.Register(this);
         InitializeBass();
         InitializeSystemMediaTransportControls();
         LoadCurrentStateAsync();
@@ -314,6 +321,14 @@ public partial class MusicPlayer : ObservableObject, IDisposable
         _systemControls.ButtonPressed += SystemControls_ButtonPressed;
         _timelineProperties.StartTime = TimeSpan.Zero;
         _timelineProperties.MinSeekTime = TimeSpan.Zero;
+    }
+
+    public void Receive(FontSizeChangeMessage message)
+    {
+        foreach (var slice in CurrentLyric)
+        {
+            slice.UpdateStyle();
+        }
     }
 
     public void Reset()
@@ -1477,6 +1492,7 @@ public partial class MusicPlayer : ObservableObject, IDisposable
     public void Dispose()
     {
         Stop();
+        Messenger.Unregister<FontSizeChangeMessage>(this);
         if (_tempoStream != 0)
         {
             Bass.StreamFree(_tempoStream);
