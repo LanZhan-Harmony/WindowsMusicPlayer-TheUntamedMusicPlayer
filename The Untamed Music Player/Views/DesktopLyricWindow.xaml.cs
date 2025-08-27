@@ -164,7 +164,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         const uint SWP_NOACTIVATE = 0x0010;
         const uint flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE;
 
-        var position = value ? new IntPtr(-1) : new IntPtr(-2);
+        var position = value ? new nint(-1) : new nint(-2);
 
         SetWindowPos(_hWnd, position, 0, 0, 0, 0, flags);
     }
