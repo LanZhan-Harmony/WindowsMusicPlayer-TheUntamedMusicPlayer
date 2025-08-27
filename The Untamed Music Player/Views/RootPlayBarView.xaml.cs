@@ -194,23 +194,26 @@ public sealed partial class RootPlayBarView : UserControl
         await dialog.ShowAsync();
     }
 
-    private void RootPlayBarView_Loaded(object sender, RoutedEventArgs e)
+    private void ProgressSlider_Loaded(object sender, RoutedEventArgs e)
     {
-        ProgressSlider.AddHandler(
+        var slider = (sender as Slider)!;
+        slider.AddHandler(
             PointerPressedEvent,
             new PointerEventHandler(Data.MusicPlayer.ProgressLock),
             true
         );
-        ProgressSlider.AddHandler(
+        slider.AddHandler(
             PointerMovedEvent,
             new PointerEventHandler(Data.MusicPlayer.SliderUpdate),
             true
         );
-        ProgressSlider.AddHandler(
+        slider.AddHandler(
             PointerReleasedEvent,
             new PointerEventHandler(Data.MusicPlayer.ProgressUpdate),
             true
         );
+        slider.AddHandler(KeyDownEvent, new KeyEventHandler(Data.MusicPlayer.ProgressLock), true);
+        slider.AddHandler(KeyUpEvent, new KeyEventHandler(Data.MusicPlayer.ProgressUpdate), true);
     }
 
     private async void EqualizerButton_Click(object sender, RoutedEventArgs e)

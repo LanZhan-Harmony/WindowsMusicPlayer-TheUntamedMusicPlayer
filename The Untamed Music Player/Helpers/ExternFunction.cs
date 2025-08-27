@@ -23,16 +23,16 @@ public static partial class ExternFunction
     }
 
     [LibraryImport("user32.dll", EntryPoint = "GetWindowLongW")]
-    private static partial IntPtr GetWindowLong32(IntPtr hWnd, int nIndex);
+    private static partial nint GetWindowLong32(nint hWnd, int nIndex);
 
     [LibraryImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
-    private static partial IntPtr GetWindowLong64(IntPtr hWnd, int nIndex);
+    private static partial nint GetWindowLong64(nint hWnd, int nIndex);
 
     [LibraryImport("user32.dll", EntryPoint = "SetWindowLongW")]
-    private static partial IntPtr SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+    private static partial nint SetWindowLong32(nint hWnd, int nIndex, int dwNewLong);
 
     [LibraryImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
-    private static partial IntPtr SetWindowLong64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+    private static partial nint SetWindowLong64(nint hWnd, int nIndex, nint dwNewLong);
 
     [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -40,13 +40,13 @@ public static partial class ExternFunction
 
     [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+    public static partial bool GetWindowRect(nint hWnd, out RECT lpRect);
 
     [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool SetWindowPos(
-        IntPtr hWnd,
-        IntPtr hWndInsertAfter,
+        nint hWnd,
+        nint hWndInsertAfter,
         int X,
         int Y,
         int cx,
@@ -55,17 +55,17 @@ public static partial class ExternFunction
     );
 
     [LibraryImport("user32.dll")]
-    public static partial IntPtr GetActiveWindow();
+    public static partial nint GetActiveWindow();
 
     [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
-    public static partial IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam);
+    public static partial nint SendMessage(nint hWnd, int msg, int wParam, nint lParam);
 
-    public static IntPtr GetWindowLong(IntPtr hWnd, int nIndex)
+    public static nint GetWindowLong(nint hWnd, int nIndex)
     {
         return _is64BitProcess ? GetWindowLong64(hWnd, nIndex) : GetWindowLong32(hWnd, nIndex);
     }
 
-    public static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+    public static nint SetWindowLong(nint hWnd, int nIndex, nint dwNewLong)
     {
         return _is64BitProcess
             ? SetWindowLong64(hWnd, nIndex, dwNewLong)
