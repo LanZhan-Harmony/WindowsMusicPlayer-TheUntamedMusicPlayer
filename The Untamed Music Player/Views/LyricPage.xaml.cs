@@ -81,7 +81,7 @@ public sealed partial class LyricPage : Page, IDisposable
     private void TextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         var textblock = sender as TextBlock;
-        if (textblock!.FontSize == Data.SelectedFontSize)
+        if (textblock!.FontSize == Data.SelectedCurrentFontSize)
         {
             var currentScrollPosition = LyricViewer.VerticalOffset;
             var point = new Point(0, currentScrollPosition);

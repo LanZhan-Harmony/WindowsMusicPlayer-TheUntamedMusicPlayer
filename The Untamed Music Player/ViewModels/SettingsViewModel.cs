@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -10,6 +11,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using Windows.ApplicationModel;
@@ -21,7 +23,7 @@ using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class SettingsViewModel : ObservableObject
+public partial class SettingsViewModel : ObservableRecipient
 {
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILocalSettingsService _localSettingsService;
@@ -71,9 +73,33 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     /// <summary>
+    /// 是否为独占模式
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsExclusiveMode { get; set; }
+
+    partial void OnIsExclusiveModeChanged(bool value)
+    {
+        SaveExclusiveModeAsync(value);
+    }
+
+    /// <summary>
+    /// 是否为如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsOnlyAddSpecificFolder { get; set; }
+
+    partial void OnIsOnlyAddSpecificFolderChanged(bool value)
+    {
+        SaveOnlyAddSpecificFolderAsync(value);
+    }
+
+    /// <summary>
     /// 字体列表
     /// </summary>
-    public List<FontInfo> Fonts { get; set; } = [];
+    public List<FontInfo> FontFamilies { get; set; } = [];
+
+    public List<double> FontSizes { get; set; } = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75];
 
     /// <summary>
     /// 窗口材质列表
@@ -106,14 +132,29 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// 选中的字号
+    /// 选中的高亮字号
     /// </summary>
     [ObservableProperty]
-    public partial double SelectedFontSize { get; set; } = Data.SelectedFontSize;
+    public partial double SelectedCurrentFontSize { get; set; } = Data.SelectedCurrentFontSize;
 
-    partial void OnSelectedFontSizeChanged(double value)
+    partial void OnSelectedCurrentFontSizeChanged(double value)
     {
-        Data.SelectedFontSize = value;
+        Data.SelectedCurrentFontSize = value;
+        SelectedNotCurrentFontSize = value * 0.4;
+        SaveSelectedFontSizeAsync(value);
+    }
+
+    /// <summary>
+    /// 选中的非高亮字号
+    /// </summary>
+    [ObservableProperty]
+    public partial double SelectedNotCurrentFontSize { get; set; } =
+        Data.SelectedNotCurrentFontSize;
+
+    partial void OnSelectedNotCurrentFontSizeChanged(double value)
+    {
+        Data.SelectedNotCurrentFontSize = value;
+        Messenger.Send(new FontSizeChangeMessage());
         SaveSelectedFontSizeAsync(value);
     }
 
@@ -163,6 +204,7 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     public SettingsViewModel()
+        : base(StrongReferenceMessenger.Default)
     {
         _themeSelectorService = App.GetService<IThemeSelectorService>();
         _localSettingsService = App.GetService<ILocalSettingsService>();
@@ -281,7 +323,7 @@ public partial class SettingsViewModel : ObservableObject
         Data.MainViewModel!.ChangeTintColor(TintColor);
     }
 
-    public void FontComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public void FontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontInfo selectedFont)
         {
@@ -289,12 +331,29 @@ public partial class SettingsViewModel : ObservableObject
         }
     }
 
+    public void FontSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is double fontSize)
+        {
+            SelectedCurrentFontSize = fontSize;
+        }
+    }
+
+    public void ComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
+    {
+        if (double.TryParse(args.Text, out var fontSize))
+        {
+            SelectedCurrentFontSize = Math.Clamp(fontSize, 20, 100);
+        }
+        else
+        {
+            sender.Text = $"{SelectedCurrentFontSize}";
+        }
+    }
+
     public void MaterialComboBox_Loaded(object sender, RoutedEventArgs e)
     {
-        if (sender is ComboBox comboBox)
-        {
-            comboBox.SelectedIndex = SelectedMaterial;
-        }
+        (sender as ComboBox)!.SelectedIndex = SelectedMaterial;
     }
 
     public void LoadFonts()
@@ -314,19 +373,29 @@ public partial class SettingsViewModel : ObservableObject
                 }
             );
         }
-        Fonts = [.. list.AsValueEnumerable().OrderBy(f => f.Name)];
+        FontFamilies = [.. list.AsValueEnumerable().OrderBy(f => f.Name)];
     }
 
-    public void FontComboBox_Loaded(object sender, RoutedEventArgs e)
+    public void FontFamilyComboBox_Loaded(object sender, RoutedEventArgs e)
     {
-        if (sender is ComboBox comboBox)
+        var selectedFontName = SelectedFontFamily.Source;
+        var index = FontFamilies.FindIndex(f => f.Name == selectedFontName);
+        if (index >= 0)
         {
-            var selectedFontName = SelectedFontFamily.Source;
-            var index = Fonts.FindIndex(f => f.Name == selectedFontName);
-            if (index >= 0)
-            {
-                comboBox.SelectedIndex = index;
-            }
+            (sender as ComboBox)!.SelectedIndex = index;
+        }
+    }
+
+    public void FontSizeComboBox_Loaded(object sender, RoutedEventArgs e)
+    {
+        var selectedItem = FontSizes.FirstOrDefault(f => f == SelectedCurrentFontSize);
+        if (selectedItem != 0.0)
+        {
+            (sender as ComboBox)!.SelectedItem = selectedItem;
+        }
+        else
+        {
+            (sender as ComboBox)!.Text = $"{SelectedCurrentFontSize}";
         }
     }
 
@@ -395,16 +464,6 @@ public partial class SettingsViewModel : ObservableObject
         await _localSettingsService.SaveSettingAsync("SongDownloadLocation", songDownloadLocation);
     }
 
-    private async void SaveSelectedFontFamilyAsync(string fontName)
-    {
-        await _localSettingsService.SaveSettingAsync("SelectedFontFamily", fontName);
-    }
-
-    private async void SaveSelectedFontSizeAsync(double fontSize)
-    {
-        await _localSettingsService.SaveSettingAsync("SelectedFontSize", fontSize);
-    }
-
     private async void SaveSelectedMaterialAsync(byte material)
     {
         await _localSettingsService.SaveSettingAsync("SelectedMaterial", material);
@@ -431,5 +490,28 @@ public partial class SettingsViewModel : ObservableObject
             "IsWindowBackgroundFollowsCover",
             isWindowBackgroundFollowsCover
         );
+    }
+
+    private async void SaveExclusiveModeAsync(bool isExclusiveMode)
+    {
+        await _localSettingsService.SaveSettingAsync("IsExclusiveMode", isExclusiveMode);
+    }
+
+    private async void SaveOnlyAddSpecificFolderAsync(bool isOnlyAddSpecificFolder)
+    {
+        await _localSettingsService.SaveSettingAsync(
+            "IsOnlyAddSpecificFolder",
+            isOnlyAddSpecificFolder
+        );
+    }
+
+    private async void SaveSelectedFontFamilyAsync(string fontName)
+    {
+        await _localSettingsService.SaveSettingAsync("SelectedFontFamily", fontName);
+    }
+
+    private async void SaveSelectedFontSizeAsync(double fontSize)
+    {
+        await _localSettingsService.SaveSettingAsync("SelectedFontSize", fontSize);
     }
 }

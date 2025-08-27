@@ -19,12 +19,12 @@ public partial class LyricSlice(double time, string content) : ObservableObject
         set
         {
             field = value;
-            UpdateStyle(value);
+            UpdateStyle();
         }
     } = false;
 
     [ObservableProperty]
-    public partial double FontSize { get; set; } = Data.SelectedFontSize * 0.4;
+    public partial double FontSize { get; set; } = Data.SelectedNotCurrentFontSize;
 
     [ObservableProperty]
     public partial Thickness Margin { get; set; } = new(0, 20, 0, 20);
@@ -41,11 +41,11 @@ public partial class LyricSlice(double time, string content) : ObservableObject
     [GeneratedRegex(@"\[offset:\s*([+-]?\d+)\]", RegexOptions.Compiled)]
     private static partial Regex RegexOffset();
 
-    private void UpdateStyle(bool isCurrent)
+    public void UpdateStyle()
     {
-        FontSize = isCurrent ? Data.SelectedFontSize : Data.SelectedFontSize * 0.4;
-        Margin = isCurrent ? new Thickness(0, 40, 0, 40) : new Thickness(0, 20, 0, 20);
-        Opacity = isCurrent ? 1.0 : 0.5;
+        FontSize = IsCurrent ? Data.SelectedCurrentFontSize : Data.SelectedNotCurrentFontSize;
+        Margin = IsCurrent ? new Thickness(0, 40, 0, 40) : new Thickness(0, 20, 0, 20);
+        Opacity = IsCurrent ? 1.0 : 0.5;
     }
 
     public static async Task<List<LyricSlice>> GetLyricSlices(string lyric)

@@ -110,7 +110,11 @@
                         </NavigationViewItem.KeyboardAccelerators>
                     </NavigationViewItem>
                 </NavigationView.FooterMenuItems>
-                <Frame x:Name="NavigationFrame" Navigating="{x:Bind ViewModel.NavigationFrame_Navigating}"/>
+                <Frame x:Name="NavigationFrame"
+                       AllowDrop="True"
+                       DragOver="{x:Bind ViewModel.NavigationFrame_DragOver}"
+                       Drop="{x:Bind ViewModel.NavigationFrame_Drop}"
+                       Navigating="{x:Bind ViewModel.NavigationFrame_Navigating}"/>
             </NavigationView>
         </Grid>
     </Grid>

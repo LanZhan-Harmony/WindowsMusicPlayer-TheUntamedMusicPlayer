@@ -1,9 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
@@ -88,6 +93,110 @@ public partial class ShellViewModel : ObservableObject
             SelectedItem = navView.FooterMenuItems[0];
         }
         SaveCurrentPageAsync();
+    }
+
+    public void NavigationFrame_DragOver(object sender, DragEventArgs e)
+    {
+        if (CurrentPage == nameof(PlayQueuePage))
+        {
+            return;
+        }
+        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+            e.DragUIOverride.Caption = "Shell_PlayFiles".GetLocalized();
+            e.DragUIOverride.IsCaptionVisible = true;
+            e.DragUIOverride.IsContentVisible = true;
+            e.DragUIOverride.IsGlyphVisible = false;
+        }
+    }
+
+    public async void NavigationFrame_Drop(object sender, DragEventArgs e)
+    {
+        if (CurrentPage == nameof(PlayQueuePage))
+        {
+            return;
+        }
+        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            var def = e.GetDeferral();
+            var items = await e.DataView.GetStorageItemsAsync();
+            var musicFiles = new List<StorageFile>();
+            await Task.Run(async () =>
+            {
+                foreach (var item in items)
+                {
+                    if (item is StorageFile file)
+                    {
+                        var extension = Path.GetExtension(file.Path).ToLowerInvariant();
+                        if (Data.SupportedAudioTypes.Contains(extension))
+                        {
+                            musicFiles.Add(file);
+                        }
+                    }
+                    else if (item is StorageFolder folder)
+                    {
+                        var folderFiles = await GetMusicFilesFromFolderAsync(folder);
+                        musicFiles.AddRange(folderFiles);
+                    }
+                }
+            });
+
+            if (musicFiles.Count > 0)
+            {
+                await AddExternalFilesToPlayQueue(musicFiles);
+            }
+            def.Complete();
+        }
+    }
+
+    private static async Task<List<StorageFile>> GetMusicFilesFromFolderAsync(StorageFolder folder)
+    {
+        var musicFiles = new List<StorageFile>();
+        try
+        {
+            var files = await folder.GetFilesAsync();
+            foreach (var file in files)
+            {
+                var extension = Path.GetExtension(file.Path).ToLowerInvariant();
+                if (Data.SupportedAudioTypes.Contains(extension))
+                {
+                    musicFiles.Add(file);
+                }
+            }
+
+            var subFolders = await folder.GetFoldersAsync();
+            foreach (var subFolder in subFolders)
+            {
+                var subFiles = await GetMusicFilesFromFolderAsync(subFolder);
+                musicFiles.AddRange(subFiles);
+            }
+        }
+        catch { }
+        return musicFiles;
+    }
+
+    public static async Task AddExternalFilesToPlayQueue(List<StorageFile> files)
+    {
+        var newSongs = new List<IBriefSongInfoBase>();
+        await Task.Run(() =>
+        {
+            foreach (var file in files)
+            {
+                try
+                {
+                    var folder = Path.GetDirectoryName(file.Path) ?? "";
+                    var songInfo = new BriefLocalSongInfo(file.Path, folder);
+                    newSongs.Add(songInfo);
+                }
+                catch { }
+            }
+        });
+        if (newSongs.Count > 0)
+        {
+            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", newSongs);
+            Data.MusicPlayer.PlaySongByInfo(newSongs[0]);
+        }
     }
 
     private async void LoadAsync()
