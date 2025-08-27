@@ -135,6 +135,12 @@
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>个性化</value>
   </data>
+  <data name="Settings_ThisIsAnOrdinaryLyric.Text" xml:space="preserve">
+    <value>这是一句普通歌词</value>
+  </data>
+  <data name="Settings_ThisIsAHighlightedLyric.Text" xml:space="preserve">
+    <value>这是一句高亮歌词</value>
+  </data>
   <data name="Settings_Theme.Header" xml:space="preserve">
     <value>应用主题</value>
   </data>
@@ -162,14 +168,35 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>音乐库位置</value>
   </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>歌词预览</value>
+  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>此库中不包含任何文件夹</value>
   </data>
   <data name="Settings_Refresh.Content" xml:space="preserve">
     <value>刷新</value>
   </data>
+  <data name="Settings_Import.Content" xml:space="preserve">
+    <value>导入</value>
+  </data>
+  <data name="Settings_Export.Content" xml:space="preserve">
+    <value>导出</value>
+  </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
     <value>刷新库</value>
+  </data>
+  <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
+    <value>独占模式</value>
+  </data>
+  <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
+    <value>如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列</value>
+  </data>
+  <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
+    <value>仅添加歌曲所在文件夹</value>
+  </data>
+  <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
+    <value>播放列表导入/导出</value>
   </data>
   <data name="Settings_ReIndex.Text" xml:space="preserve">
     <value>如果看不到库位置中的所有媒体，可以立即重新索引库。</value>
@@ -441,14 +468,17 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>选择一个材质</value>
   </data>
-  <data name="Settings_LyricSettings.Text" xml:space="preserve">
-    <value>歌词设置</value>
-  </data>
   <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
     <value>歌词字体</value>
   </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>歌词字号</value>
+  </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>选择一种字体</value>
+  </data>
+  <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
+    <value>选择一个字号</value>
   </data>
   <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
     <value>窗口背景跟随封面主题色</value>
@@ -750,6 +780,9 @@
   <data name="Main_SendFeedback.Content" xml:space="preserve">
     <value>发送反馈</value>
   </data>
+  <data name="Shell_PlayFiles" xml:space="preserve">
+    <value>播放文件</value>
+  </data>
   <data name="Error_SongPlayback" xml:space="preserve">
     <value>我们无法打开 {title}。这可能是因为文件类型不受支持、文件扩展名不正确、文件已损坏或网络异常。</value>
   </data>
@@ -800,5 +833,11 @@
   </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
     <value>{num} 项已添加到播放列表"{title}"。</value>
+  </data>
+  <data name="Settings_Lyric.Text" xml:space="preserve">
+    <value>歌词</value>
+  </data>
+  <data name="Settings_Play.Text" xml:space="preserve">
+    <value>播放</value>
   </data>
 </root>
