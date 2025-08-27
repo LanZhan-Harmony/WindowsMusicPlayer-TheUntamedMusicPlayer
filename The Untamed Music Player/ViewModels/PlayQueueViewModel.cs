@@ -248,7 +248,7 @@ public partial class PlayQueueViewModel : ObservableObject
                 var position = e.GetPosition(listView.ItemsPanelRoot);
                 var index = 0;
 
-                if (listView.Items.Count != 0)
+                if (listView.Items.Count > 0)
                 {
                     var sampleItem = (ListViewItem)listView.ContainerFromIndex(0);
                     var itemHeight =
@@ -268,6 +268,7 @@ public partial class PlayQueueViewModel : ObservableObject
                 await AddExternalFilesToPlayQueue(musicFiles, index);
             }
             def.Complete();
+            IsButtonEnabled = PlayQueue.Count > 0;
         }
     }
 
@@ -297,7 +298,7 @@ public partial class PlayQueueViewModel : ObservableObject
         return musicFiles;
     }
 
-    public static async Task AddExternalFilesToPlayQueue(List<StorageFile> files, int insertIndex)
+    public async Task AddExternalFilesToPlayQueue(List<StorageFile> files, int insertIndex)
     {
         var newSongs = new List<IBriefSongInfoBase>();
         await Task.Run(() =>
@@ -315,7 +316,15 @@ public partial class PlayQueueViewModel : ObservableObject
         });
         if (newSongs.Count > 0)
         {
-            Data.MusicPlayer.InsertSongsToPlayQueue(newSongs, insertIndex);
+            if (PlayQueue.Count > 0)
+            {
+                Data.MusicPlayer.InsertSongsToPlayQueue(newSongs, insertIndex);
+            }
+            else
+            {
+                Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", newSongs);
+                Data.MusicPlayer.PlaySongByInfo(newSongs[0]);
+            }
         }
     }
 }
