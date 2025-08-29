@@ -55,6 +55,19 @@ public partial class PlaylistLibrary : ObservableRecipient
         return info;
     }
 
+    public void NewPlaylists(List<PlaylistInfo> list)
+    {
+        foreach (var info in list)
+        {
+            var name = GetUniquePlaylistName(info.Name);
+            if (name == info.Name)
+            {
+                Playlists.Add(info);
+            }
+            else { }
+        }
+    }
+
     public bool RenamePlaylist(PlaylistInfo info, string newName)
     {
         var oldName = info.Name;

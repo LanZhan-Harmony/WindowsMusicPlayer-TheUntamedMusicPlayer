@@ -273,6 +273,10 @@ public partial class MusicLibrary : ObservableRecipient
             foreach (var file in supportedFiles)
             {
                 var briefLocalSongInfo = new BriefLocalSongInfo(file.Path, foldername);
+                if (!briefLocalSongInfo.IsPlayAvailable)
+                {
+                    continue;
+                }
                 Songs.Add(briefLocalSongInfo);
                 _musicGenres.TryAdd(briefLocalSongInfo.GenreStr, 0);
                 UpdateAlbumInfo(briefLocalSongInfo);

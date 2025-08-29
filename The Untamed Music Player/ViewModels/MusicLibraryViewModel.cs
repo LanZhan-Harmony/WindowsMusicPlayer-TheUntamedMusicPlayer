@@ -65,12 +65,10 @@ public partial class MusicLibraryViewModel
         var openPicker = new FolderPicker
         {
             SuggestedStartLocation = PickerLocationId.MusicLibrary,
+            FileTypeFilter = { "*" },
         };
-        openPicker.FileTypeFilter.Add("*");
-        var window = App.MainWindow;
-        var hWnd = WindowNative.GetWindowHandle(window);
+        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(openPicker, hWnd);
-
         var folder = await openPicker.PickSingleFolderAsync();
         if (
             folder is not null

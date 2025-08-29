@@ -24,6 +24,7 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
     private string _albumArtist;
     private string _genre;
     private string _year;
+    private readonly bool _isSaveCoverButtonEnabled;
     private BitmapImage? Cover
     {
         get;
@@ -33,16 +34,6 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
             OnPropertyChanged(nameof(Cover));
         }
     }
-
-    private bool IsSaveCoverButtonEnabled
-    {
-        get;
-        set
-        {
-            field = value;
-            OnPropertyChanged(nameof(IsSaveCoverButtonEnabled));
-        }
-    } = false;
 
     private readonly List<TempSongInfo> _tempSongs;
 
@@ -63,7 +54,7 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
         _genre = info.GenreStr;
         _year = $"{info.Year}";
         Cover = info.Cover;
-        IsSaveCoverButtonEnabled = Cover is not null;
+        _isSaveCoverButtonEnabled = Cover is not null;
         RequestedTheme = Data.MainViewModel!.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
     }
@@ -188,26 +179,27 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
             {
                 return;
             }
-
-            var openPicker = new FolderPicker();
-            var window = App.MainWindow;
-            var hWnd = WindowNative.GetWindowHandle(window);
-            InitializeWithWindow.Initialize(openPicker, hWnd);
-            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            openPicker.FileTypeFilter.Add("*");
-            var folder = await openPicker.PickSingleFolderAsync();
-            if (folder is null)
-            {
-                return;
-            }
-
             using var musicFile = TagLib.File.Create(_album.CoverPath);
             var picture = musicFile.Tag.Pictures[0];
             var bytes = picture.Data.Data;
             var extension = picture.MimeType.Split('/')[1];
-            var fileName = $"{_album.Name}.{extension}";
-            var uniqueFilePath = GetUniqueFilePath(Path.Combine(folder.Path, fileName));
-            await File.WriteAllBytesAsync(uniqueFilePath, bytes);
+            var fileName = _album.Name;
+            var savePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+                SuggestedFileName = fileName,
+                FileTypeChoices =
+                {
+                    new("EditSongInfoDialog_CoverImage".GetLocalized(), [extension]),
+                },
+            };
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(savePicker, hWnd);
+            var file = await savePicker.PickSaveFileAsync();
+            if (file is not null)
+            {
+                await FileIO.WriteBytesAsync(file, bytes);
+            }
         }
         catch (Exception ex)
         {
@@ -216,27 +208,6 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
         finally
         {
             (sender as Button)!.IsEnabled = true;
-        }
-    }
-
-    private static string GetUniqueFilePath(string path)
-    {
-        if (!File.Exists(path))
-        {
-            return path;
-        }
-
-        var directory = Path.GetDirectoryName(path) ?? "";
-        var fileNameWithoutExt = Path.GetFileNameWithoutExtension(path);
-        var extension = Path.GetExtension(path);
-
-        for (var count = 1; ; count++)
-        {
-            var uniquePath = Path.Combine(directory, $"{fileNameWithoutExt}({count}){extension}");
-            if (!File.Exists(uniquePath))
-            {
-                return uniquePath;
-            }
         }
     }
 }

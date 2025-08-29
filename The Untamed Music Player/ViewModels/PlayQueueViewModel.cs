@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -10,8 +9,9 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Storage;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
@@ -170,6 +170,65 @@ public partial class PlayQueueViewModel : ObservableObject
         Data.MusicPlayer.ClearPlayQueue();
     }
 
+    public async Task AddFilesButton_Click()
+    {
+        var picker = new FileOpenPicker { SuggestedStartLocation = PickerLocationId.MusicLibrary };
+        foreach (var type in Data.SupportedAudioTypes)
+        {
+            picker.FileTypeFilter.Add(type);
+        }
+        var hwnd = WindowNative.GetWindowHandle(App.MainWindow);
+        InitializeWithWindow.Initialize(picker, hwnd);
+        var files = await picker.PickMultipleFilesAsync();
+        if (files.Count > 0)
+        {
+            await AddExternalFilesToPlayQueue([.. files], PlayQueue.Count);
+        }
+    }
+
+    public async Task AddFolderButton_Click()
+    {
+        var picker = new FolderPicker
+        {
+            SuggestedStartLocation = PickerLocationId.MusicLibrary,
+            FileTypeFilter = { "*" },
+        };
+        var hwnd = WindowNative.GetWindowHandle(App.MainWindow);
+        InitializeWithWindow.Initialize(picker, hwnd);
+        var folder = await picker.PickSingleFolderAsync();
+        if (folder is not null)
+        {
+            List<StorageFile>? musicFiles = null;
+            await Task.Run(async () =>
+            {
+                musicFiles = await GetMusicFilesFromFolderAsync(folder);
+            });
+            if (musicFiles?.Count > 0)
+            {
+                await AddExternalFilesToPlayQueue(musicFiles, PlayQueue.Count);
+            }
+        }
+    }
+
+    public void AddUrlButton_Click(string url)
+    {
+        var songInfo = new BriefUnknownSongInfo(new Uri(url));
+        if (!songInfo.IsPlayAvailable)
+        {
+            return;
+        }
+        if (PlayQueue.Count > 0)
+        {
+            Data.MusicPlayer.AddSongToPlayQueue(songInfo);
+        }
+        else
+        {
+            Data.MusicPlayer.SetPlayQueue("UnknownOnlineSongs:Part", [songInfo]);
+            Data.MusicPlayer.PlaySongByInfo(songInfo);
+        }
+        IsButtonEnabled = PlayQueue.Count > 0;
+    }
+
     public void PlayqueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
         _currentSong = PlayQueue[Data.MusicPlayer.PlayQueueIndex];
@@ -268,7 +327,6 @@ public partial class PlayQueueViewModel : ObservableObject
                 await AddExternalFilesToPlayQueue(musicFiles, index);
             }
             def.Complete();
-            IsButtonEnabled = PlayQueue.Count > 0;
         }
     }
 
@@ -309,7 +367,10 @@ public partial class PlayQueueViewModel : ObservableObject
                 {
                     var folder = Path.GetDirectoryName(file.Path) ?? "";
                     var songInfo = new BriefLocalSongInfo(file.Path, folder);
-                    newSongs.Add(songInfo);
+                    if (songInfo.IsPlayAvailable)
+                    {
+                        newSongs.Add(songInfo);
+                    }
                 }
                 catch { }
             }
@@ -326,5 +387,6 @@ public partial class PlayQueueViewModel : ObservableObject
                 Data.MusicPlayer.PlaySongByInfo(newSongs[0]);
             }
         }
+        IsButtonEnabled = PlayQueue.Count > 0;
     }
 }

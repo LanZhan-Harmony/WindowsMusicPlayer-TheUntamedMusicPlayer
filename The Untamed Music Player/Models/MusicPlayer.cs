@@ -425,11 +425,27 @@ public partial class MusicPlayer
     /// 按路径播放歌曲
     /// </summary>
     /// <param name="info"></param>
-    public void PlaySongByInfo(IBriefSongInfoBase info)
+    public async void PlaySongByInfo(IBriefSongInfoBase info)
     {
-        var index =
-            PlayQueue.AsValueEnumerable().FirstOrDefault(song => song.Song == info)?.Index ?? 0;
-        PlaySongByIndex(index);
+        Stop();
+        PlayState = 2;
+        CurrentBriefSong = info;
+        CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+        var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
+        PlayQueueIndex =
+            queue.AsValueEnumerable().FirstOrDefault(song => song.Song == info)?.Index ?? 0;
+        if (CurrentSong!.IsPlayAvailable)
+        {
+            await SetSource(CurrentSong!.Path);
+            _ = UpdateLyric(CurrentSong!.Lyric);
+            _systemControls.IsPlayEnabled = true;
+            _systemControls.IsPauseEnabled = true;
+            Play();
+        }
+        else
+        {
+            HandleSongNotAvailable();
+        }
     }
 
     public void PlaySongByIndexedInfo(IndexedPlayQueueSong info)
@@ -707,6 +723,7 @@ public partial class MusicPlayer
             }
             if (_currentStream == 0)
             {
+                OnPlaybackFailed(0, 0, 0, 0);
                 Debug.WriteLine($"创建Bass流失败: {Bass.LastError}");
                 return;
             }
@@ -1136,10 +1153,7 @@ public partial class MusicPlayer
                     ShuffledPlayQueue
                         .AsValueEnumerable()
                         .FirstOrDefault(info =>
-                            CurrentSong.IsOnline
-                                ? ((IBriefOnlineSongInfo)info.Song).ID
-                                    == ((IDetailedOnlineSongInfo)CurrentSong).ID
-                                : info.Song.Path == CurrentSong.Path
+                            CurrentSongHighlightExtensions.IsSameSong(CurrentSong, info.Song)
                         )
                         ?.Index ?? 0;
             }
@@ -1157,10 +1171,7 @@ public partial class MusicPlayer
                     PlayQueue
                         .AsValueEnumerable()
                         .FirstOrDefault(info =>
-                            CurrentSong.IsOnline
-                                ? ((IBriefOnlineSongInfo)info.Song).ID
-                                    == ((IDetailedOnlineSongInfo)CurrentSong).ID
-                                : info.Song.Path == CurrentSong.Path
+                            CurrentSongHighlightExtensions.IsSameSong(CurrentSong, info.Song)
                         )
                         ?.Index ?? 0;
             }
@@ -1446,36 +1457,44 @@ public partial class MusicPlayer
                 CurrentVolume = 100;
                 PlaySpeed = 1;
             }
-            PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>("PlayQueueIndex");
-            var sourceMode = await _localSettingsService.ReadSettingAsync<short>("SourceMode");
-            CurrentBriefSong = sourceMode switch
-            {
-                0 => await _localSettingsService.ReadSettingAsync<BriefLocalSongInfo>(
-                    "CurrentBriefSong"
-                ),
-                1 => await _localSettingsService.ReadSettingAsync<BriefCloudOnlineSongInfo>(
-                    "CurrentBriefSong"
-                ),
-                _ => null,
-            };
             (PlayQueue, ShuffledPlayQueue) = await FileManager.LoadPlayQueueDataAsync();
             _playQueueLength = PlayQueue.Count;
-            if (CurrentBriefSong is not null)
+            if (_playQueueLength > 0)
             {
-                CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-                    CurrentBriefSong
+                PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>(
+                    "PlayQueueIndex"
                 );
-                await SetSource(CurrentSong!.Path);
-                _ = UpdateLyric(CurrentSong!.Lyric);
-                _systemControls.IsPlayEnabled = true;
-                _systemControls.IsPauseEnabled = true;
+                var sourceMode = await _localSettingsService.ReadSettingAsync<short>("SourceMode");
+                CurrentBriefSong = sourceMode switch
+                {
+                    0 => await _localSettingsService.ReadSettingAsync<BriefLocalSongInfo>(
+                        "CurrentBriefSong"
+                    ),
+                    1 => await _localSettingsService.ReadSettingAsync<BriefUnknownSongInfo>(
+                        "CurrentBriefSong"
+                    ),
+                    2 => await _localSettingsService.ReadSettingAsync<BriefCloudOnlineSongInfo>(
+                        "CurrentBriefSong"
+                    ),
+                    _ => null,
+                };
+                if (CurrentBriefSong is not null)
+                {
+                    CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
+                        CurrentBriefSong
+                    );
+                    await SetSource(CurrentSong!.Path);
+                    _ = UpdateLyric(CurrentSong!.Lyric);
+                    _systemControls.IsPlayEnabled = true;
+                    _systemControls.IsPauseEnabled = true;
+                }
             }
             Data.RootPlayBarViewModel?.ButtonVisibility =
-                CurrentSong is not null && PlayQueue.Count > 0
+                CurrentSong is not null && _playQueueLength > 0
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             Data.RootPlayBarViewModel?.Availability =
-                CurrentSong is not null && PlayQueue.Count > 0;
+                CurrentSong is not null && _playQueueLength > 0;
         }
         catch (Exception ex)
         {

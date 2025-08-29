@@ -94,7 +94,7 @@
                                     VerticalAlignment="Bottom"
                                     Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                                     Canvas.ZIndex="2" Click="SaveCoverButton_Click"
-                                    IsEnabled="{x:Bind IsSaveCoverButtonEnabled, Mode=OneWay}"
+                                    IsEnabled="{x:Bind _isSaveCoverButtonEnabled}"
                                     Style="{StaticResource MenuButtonStyle}">
                                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE74E;"/>
                             </Button>
