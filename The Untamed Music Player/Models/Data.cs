@@ -65,6 +65,20 @@ public static class Data
         ".umx",
     ];
 
+    public static readonly string[] SupportedCoverTypes =
+    [
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".jpe",
+        ".jfif",
+        ".bmp",
+        ".dip",
+        ".gif",
+        ".tif",
+        ".tiff",
+    ];
+
     /// <summary>
     /// 歌词字体
     /// </summary>

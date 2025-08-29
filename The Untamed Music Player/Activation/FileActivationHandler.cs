@@ -44,7 +44,10 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
                             file.Path,
                             Path.GetDirectoryName(file.Path) ?? ""
                         );
-                        musicFiles.Add(songInfo);
+                        if (songInfo.IsPlayAvailable)
+                        {
+                            musicFiles.Add(songInfo);
+                        }
                     }
                 }
             });

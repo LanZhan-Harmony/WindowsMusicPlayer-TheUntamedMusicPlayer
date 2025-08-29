@@ -3,6 +3,8 @@ using System.Text.Json;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
+using ZLinq;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
@@ -107,48 +109,15 @@ public class DetailedCloudOnlinePlaylistInfo
             }
             var trackIds = tracksElement
                 .EnumerateArray()
+                .AsValueEnumerable()
                 .Select(t => t.GetProperty("id").GetInt64())
                 .ToArray();
-
-            var (_, checkResult) = await api.RequestAsync(
-                CloudMusicApiProviders.SongUrl,
-                new Dictionary<string, string> { { "id", string.Join(',', trackIds) } }
-            );
-            var (_, detailsResult) = await api.RequestAsync(
-                CloudMusicApiProviders.SongDetail,
-                new Dictionary<string, string> { { "ids", string.Join(',', trackIds) } }
-            );
-            var data = checkResult["data"]!;
-            var availabilityMap = data.AsArray()
-                .ToDictionary(
-                    item => item!["id"]!.GetValue<long>(),
-                    item => item!["url"] is not null
-                );
-            var detailsMap = detailsResult["songs"]!
-                .AsArray()
-                .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item);
-
-            for (var i = 0; i < actualCount; i++)
-            {
-                var songId = trackIds[i];
-                var available = availabilityMap.GetValueOrDefault(songId, false);
-                if (!available)
-                {
-                    continue;
-                }
-
-                var trackElement = detailsMap.GetValueOrDefault(songId)!;
-
-                try
-                {
-                    var songInfo = new BriefCloudOnlineSongInfo(trackElement);
-                    info.SongList.Add(songInfo);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.StackTrace);
-                }
-            }
+            info.SongList =
+            [
+                .. (await CloudSongSearchHelper.SearchSongsByIDsAsync(trackIds))
+                    .AsValueEnumerable()
+                    .Cast<IBriefOnlineSongInfo>(),
+            ];
         }
         catch { }
         return info;

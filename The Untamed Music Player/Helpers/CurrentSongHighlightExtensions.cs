@@ -305,20 +305,21 @@ public static class CurrentSongHighlightExtensions
     /// <param name="currentSong">当前播放的歌曲</param>
     /// <param name="compareSong">要比较的歌曲</param>
     /// <returns>如果是同一首歌曲则返回 true，否则返回 false</returns>
-    private static bool IsSameSong(
-        IDetailedSongInfoBase currentSong,
-        IBriefSongInfoBase compareSong
-    )
+    public static bool IsSameSong(IDetailedSongInfoBase currentSong, IBriefSongInfoBase compareSong)
     {
-        return (currentSong.IsOnline, compareSong) switch
+        return (compareSong, currentSong) switch
         {
-            // 在线歌曲比较：通过 ID 比较
-            (true, IBriefOnlineSongInfo onlineSong) => ((IDetailedOnlineSongInfo)currentSong).ID
-                == onlineSong.ID,
-
             // 本地歌曲比较：通过路径比较
-            (false, BriefLocalSongInfo localSong) => ((BriefLocalSongInfo)currentSong).Path
-                == localSong.Path,
+            (DetailedLocalSongInfo detailedLocalSong, BriefLocalSongInfo localSong) =>
+                detailedLocalSong.Path == localSong.Path,
+
+            // 在线未知歌曲比较：通过路径比较
+            (DetailedUnknownSongInfo detailedUnknownSong, BriefUnknownSongInfo unknownSong) =>
+                detailedUnknownSong.Path == unknownSong.Path,
+
+            // 在线歌曲比较：通过 ID 比较
+            (IDetailedOnlineSongInfo detailedOnlineInfo, IBriefOnlineSongInfo onlineSong) =>
+                detailedOnlineInfo.ID == onlineSong.ID,
 
             // 类型不匹配
             _ => false,

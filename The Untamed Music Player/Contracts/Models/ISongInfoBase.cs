@@ -8,7 +8,8 @@ namespace The_Untamed_Music_Player.Contracts.Models;
 
 [MemoryPackable]
 [MemoryPackUnion(0, typeof(BriefLocalSongInfo))]
-[MemoryPackUnion(1, typeof(BriefCloudOnlineSongInfo))]
+[MemoryPackUnion(1, typeof(BriefUnknownSongInfo))]
+[MemoryPackUnion(2, typeof(BriefCloudOnlineSongInfo))]
 public partial interface IBriefSongInfoBase
 {
     protected static readonly string _unknownAlbum = "SongInfo_UnknownAlbum".GetLocalized();
@@ -80,6 +81,7 @@ public partial interface IBriefSongInfoBase
         return info switch
         {
             BriefLocalSongInfo localInfo => localInfo.HasCover ? localInfo.Path : null,
+            BriefUnknownSongInfo => null,
             BriefCloudOnlineSongInfo cloudInfo => (
                 await DetailedCloudOnlineSongInfo.CreateAsync(cloudInfo)
             ).CoverPath,
@@ -92,7 +94,8 @@ public partial interface IBriefSongInfoBase
         return info switch
         {
             BriefLocalSongInfo => 0,
-            BriefCloudOnlineSongInfo => 1,
+            BriefUnknownSongInfo => 1,
+            BriefCloudOnlineSongInfo => 2,
             _ => -1,
         };
     }
@@ -145,10 +148,11 @@ public interface IDetailedSongInfoBase : IBriefSongInfoBase
         return info switch
         {
             BriefLocalSongInfo localInfo => new DetailedLocalSongInfo(localInfo),
+            BriefUnknownSongInfo unknownInfo => new DetailedUnknownSongInfo(unknownInfo),
             BriefCloudOnlineSongInfo cloudInfo => await DetailedCloudOnlineSongInfo.CreateAsync(
                 cloudInfo
             ),
-            _ => await DetailedCloudOnlineSongInfo.CreateAsync((BriefCloudOnlineSongInfo)info),
+            _ => new DetailedUnknownSongInfo((BriefUnknownSongInfo)info),
         };
     }
 }

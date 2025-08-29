@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Microsoft.UI.Xaml.Controls;
 
 namespace The_Untamed_Music_Player.Controls;

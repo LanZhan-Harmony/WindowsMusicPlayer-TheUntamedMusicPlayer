@@ -144,6 +144,9 @@
   <data name="Settings_Theme.Header" xml:space="preserve">
     <value>应用主题</value>
   </data>
+  <data name="Settings_ResetSoftware.Header" xml:space="preserve">
+    <value>重置本软件</value>
+  </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>浅色</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>关于</value>
+  </data>
+  <data name="Settings_AddFolderToMusic" xml:space="preserve">
+    <value>将此文件夹添加到 音乐</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
     <value>© 2025 Untamed Corporation。保留所有权利。</value>
@@ -252,16 +258,28 @@
   <data name="HaveMusic_Artists.Text" xml:space="preserve">
     <value>艺术家</value>
   </data>
-  <data name="Settings_Dialog1Title" xml:space="preserve">
+  <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
     <value>删除此文件夹吗？</value>
   </data>
-  <data name="Settings_Dialog1Content" xml:space="preserve">
+  <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
+    <value>确定要重置此软件吗？</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
     <value>如果将"{title}"文件夹从音乐中移除，则该文件夹不会再出现在音乐中，但不会被删除。</value>
   </data>
-  <data name="Settings_Dialog1Primary" xml:space="preserve">
+  <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
+    <value>将清空此软件的所有数据，包括设置、播放队列、播放列表等，请谨慎操作。</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
     <value>删除文件夹</value>
   </data>
-  <data name="Settings_Dialog1Close" xml:space="preserve">
+  <data name="Settings_ResetSoftwareDialogPrimary" xml:space="preserve">
+    <value>重置并重启</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogClose" xml:space="preserve">
     <value>取消</value>
   </data>
   <data name="PlayLists_DeleteDialogClose" xml:space="preserve">
@@ -279,16 +297,16 @@
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
     <value>管理系统索引设置</value>
   </data>
-  <data name="Settings_Dialog2Title" xml:space="preserve">
+  <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
     <value>你指的是要切换应用吗？</value>
   </data>
-  <data name="Settings_Dialog2Content" xml:space="preserve">
+  <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
     <value>“媒体播放器”正在尝试打开“设置”。</value>
   </data>
-  <data name="Settings_Dialog2Primary" xml:space="preserve">
+  <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
     <value>是</value>
   </data>
-  <data name="Settings_Dialog2Close" xml:space="preserve">
+  <data name="Settings_OpenSettingDialogClose" xml:space="preserve">
     <value>否</value>
   </data>
   <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
@@ -381,6 +399,30 @@
   <data name="SongInfo_UnknownGenre" xml:space="preserve">
     <value>未知流派</value>
   </data>
+  <data name="DisplaySongInfo_SourceMode0" xml:space="preserve">
+    <value>本地歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
+    <value>在线歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
+    <value>来自乐库5的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
+    <value>来自乐库6的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
+    <value>来自乐库4的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
+    <value>来自乐库3的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
+    <value>来自乐库2的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
+    <value>来自乐库1的歌曲</value>
+  </data>
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
     <value>未知专辑</value>
   </data>
@@ -425,6 +467,18 @@
   </data>
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
     <value>输入URL，并将该地址中的媒体添加到播放队列</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
+    <value>打开 URL</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
+    <value>打开</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
+    <value>打开文件、流或播放列表的URL</value>
   </data>
   <data name="Songs_Play.Text" xml:space="preserve">
     <value>播放</value>
@@ -588,6 +642,9 @@
   <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
     <value>歌词</value>
   </data>
+  <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
+    <value>封面图片</value>
+  </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
     <value>编辑专辑信息</value>
   </data>
@@ -617,6 +674,33 @@
   </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>保存</value>
+  </data>
+  <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
+    <value>导入</value>
+  </data>
+  <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ImportPlaylistDialog.Title" xml:space="preserve">
+    <value>导入播放列表</value>
+  </data>
+  <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportFromFolder.Content" xml:space="preserve">
+    <value>从文件夹导入</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
+    <value>导入歌曲</value>
+  </data>
+  <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
+    <value>歌曲数量</value>
+  </data>
+  <data name="ImportPlaylistDialog_Type.Text" xml:space="preserve">
+    <value>类型</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportFromM3u8Files.Content" xml:space="preserve">
+    <value>从 m3u8 文件导入</value>
   </data>
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>保存</value>

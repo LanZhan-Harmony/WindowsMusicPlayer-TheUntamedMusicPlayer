@@ -144,6 +144,9 @@
   <data name="Settings_Theme.Header" xml:space="preserve">
     <value>App theme</value>
   </data>
+  <data name="Settings_ResetSoftware.Header" xml:space="preserve">
+    <value>Reset this software</value>
+  </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>Light</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>About this application</value>
+  </data>
+  <data name="Settings_AddFolderToMusic" xml:space="preserve">
+    <value>Add this folder to Music</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
     <value>© 2025 Untamed Corporation. All rights reserved.</value>
@@ -252,16 +258,28 @@
   <data name="HaveMusic_Artists.Text" xml:space="preserve">
     <value>Artists</value>
   </data>
-  <data name="Settings_Dialog1Title" xml:space="preserve">
+  <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
     <value>Revome this folder?</value>
   </data>
-  <data name="Settings_Dialog1Content" xml:space="preserve">
+  <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
+    <value>Are you sure you want to reset this software?</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
     <value>If you remove the "{title}" folder from Music, it won't appear in Music anymore, but won't be deleted.</value>
   </data>
-  <data name="Settings_Dialog1Primary" xml:space="preserve">
+  <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
+    <value>All data of this software will be emptied, including settings, play queue, playlists, etc., please proceed with caution.</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
     <value>Remove Folder</value>
   </data>
-  <data name="Settings_Dialog1Close" xml:space="preserve">
+  <data name="Settings_ResetSoftwareDialogPrimary" xml:space="preserve">
+    <value>Reset and restart</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogClose" xml:space="preserve">
     <value>Cancel</value>
   </data>
   <data name="PlayLists_DeleteDialogClose" xml:space="preserve">
@@ -279,16 +297,16 @@
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
     <value>Manage system indexing settings</value>
   </data>
-  <data name="Settings_Dialog2Title" xml:space="preserve">
+  <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
     <value>Did you mean to switch apps?</value>
   </data>
-  <data name="Settings_Dialog2Content" xml:space="preserve">
+  <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
     <value> “Media Player” is trying to open “Settings”.</value>
   </data>
-  <data name="Settings_Dialog2Primary" xml:space="preserve">
+  <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="Settings_Dialog2Close" xml:space="preserve">
+  <data name="Settings_OpenSettingDialogClose" xml:space="preserve">
     <value>No</value>
   </data>
   <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
@@ -381,6 +399,30 @@
   <data name="SongInfo_UnknownGenre" xml:space="preserve">
     <value>Unknown genre</value>
   </data>
+  <data name="DisplaySongInfo_SourceMode0" xml:space="preserve">
+    <value>Local song</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
+    <value>Online song</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
+    <value>Song from Music Library 5</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
+    <value>Song from Music Library 6</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
+    <value>Song from Music Library 4</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
+    <value>Song from Music Library 3</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
+    <value>Song from Music Library 2</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
+    <value>Song from Music Library 1</value>
+  </data>
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
     <value>Unknown album</value>
   </data>
@@ -425,6 +467,18 @@
   </data>
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
     <value>Enter a URL, and add the media from that address to the play queue</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
+    <value>Open a URL</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
+    <value>Enter the URL for a file, stream, or playlist</value>
   </data>
   <data name="Songs_Play.Text" xml:space="preserve">
     <value>Play</value>
@@ -588,6 +642,9 @@
   <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
     <value>Lyric</value>
   </data>
+  <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
+    <value>Cover image</value>
+  </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
     <value>Edit album info</value>
   </data>
@@ -617,6 +674,33 @@
   </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ImportPlaylistDialog.Title" xml:space="preserve">
+    <value>Import playlist</value>
+  </data>
+  <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportFromFolder.Content" xml:space="preserve">
+    <value>Import from folder</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
+    <value>Import songs</value>
+  </data>
+  <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
+    <value>Number of songs</value>
+  </data>
+  <data name="ImportPlaylistDialog_Type.Text" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportFromM3u8Files.Content" xml:space="preserve">
+    <value>Import from m3u8 files</value>
   </data>
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>Save</value>

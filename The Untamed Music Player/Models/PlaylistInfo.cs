@@ -18,7 +18,8 @@ public partial class PlaylistInfo
     public string TotalSongNumStr { get; set; } = null!;
     public long ModifiedDate { get; set; }
     public ObservableCollection<IndexedPlaylistSong> SongList { get; set; } = [];
-    public List<string> CoverPaths { get; set; } = new List<string>(4);
+    public bool IsCoverEdited { get; set; } = false;
+    public List<string> CoverPaths { get; set; } = new(4);
 
     [MemoryPackIgnore]
     public WriteableBitmap? Cover { get; set; }
@@ -31,6 +32,42 @@ public partial class PlaylistInfo
         Name = name;
         TotalSongNumStr = GetTotalSongNumStr(0);
         ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
+    }
+
+    public PlaylistInfo(string name, List<IBriefSongInfoBase> list, string? coverPath)
+    {
+        Name = name;
+        IsCoverEdited = coverPath is not null;
+        if (IsCoverEdited)
+        {
+            CoverPaths.Add(coverPath!);
+        }
+        AddSongs(list);
+    }
+
+    private async void AddSongs(List<IBriefSongInfoBase> songs)
+    {
+        foreach (var song in songs)
+        {
+            var coverPathIndex = IsCoverEdited ? -1 : await TryAddCoverPath(song);
+            var indexedSong = new IndexedPlaylistSong(SongList.Count, song, coverPathIndex);
+            SongList.Add(indexedSong);
+        }
+        TotalSongNumStr = GetTotalSongNumStr(SongList.Count);
+        ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
+        InitializeCover();
+        GetCover();
+    }
+
+    public PlaylistInfo(string name, PlaylistInfo info)
+    {
+        Name = name;
+        TotalSongNumStr = info.TotalSongNumStr;
+        ModifiedDate = info.ModifiedDate;
+        SongList = info.SongList;
+        IsCoverEdited = info.IsCoverEdited;
+        CoverPaths = info.CoverPaths;
+        Cover = info.Cover;
     }
 
     /// <summary>
@@ -49,7 +86,7 @@ public partial class PlaylistInfo
     /// </summary>
     public async Task Add(IBriefSongInfoBase song)
     {
-        var coverPathIndex = await TryAddCoverPath(song);
+        var coverPathIndex = IsCoverEdited ? -1 : await TryAddCoverPath(song);
         var indexedSong = new IndexedPlaylistSong(SongList.Count, song, coverPathIndex);
         SongList.Add(indexedSong);
         TotalSongNumStr = GetTotalSongNumStr(SongList.Count);
@@ -70,7 +107,7 @@ public partial class PlaylistInfo
         var coverUpdated = false;
         foreach (var song in songs)
         {
-            var coverPathIndex = await TryAddCoverPath(song);
+            var coverPathIndex = IsCoverEdited ? -1 : await TryAddCoverPath(song);
             var indexedSong = new IndexedPlaylistSong(SongList.Count, song, coverPathIndex);
             SongList.Add(indexedSong);
 
@@ -235,7 +272,6 @@ public partial class PlaylistInfo
         if (CoverPaths.Count == 0)
         {
             Cover = null;
-            return;
         }
         else if (Cover is null)
         {
@@ -250,6 +286,75 @@ public partial class PlaylistInfo
         {
             return;
         }
+        if (IsCoverEdited) // 用户自定义封面，直接从CoverPaths[0]加载图片
+        {
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    var imagePath = CoverPaths[0];
+                    if (!File.Exists(imagePath))
+                    {
+                        return;
+                    }
+                    const int canvasSize = 256;
+
+                    // 使用BitmapDecoder读取图片文件
+                    using var fileStream = new FileStream(
+                        imagePath,
+                        FileMode.Open,
+                        FileAccess.Read
+                    );
+                    var decoder = await BitmapDecoder.CreateAsync(
+                        fileStream.AsRandomAccessStream()
+                    );
+
+                    // 调整图片尺寸到256x256
+                    var transform = new BitmapTransform
+                    {
+                        ScaledWidth = canvasSize,
+                        ScaledHeight = canvasSize,
+                    };
+
+                    var pixelData = await decoder.GetPixelDataAsync(
+                        BitmapPixelFormat.Bgra8,
+                        BitmapAlphaMode.Premultiplied,
+                        transform,
+                        ExifOrientationMode.RespectExifOrientation,
+                        ColorManagementMode.DoNotColorManage
+                    );
+
+                    var pixels = pixelData.DetachPixelData();
+
+                    // 切换到UI线程更新WriteableBitmap
+                    App.MainWindow?.DispatcherQueue.TryEnqueue(
+                        DispatcherQueuePriority.Low,
+                        async () =>
+                        {
+                            try
+                            {
+                                // 将像素数据写入WriteableBitmap
+                                using var pixelStream = Cover.PixelBuffer.AsStream();
+                                await pixelStream.WriteAsync(pixels);
+
+                                Cover.Invalidate();
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine($"更新自定义封面失败: {ex.Message}");
+                            }
+                        }
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"加载自定义封面失败: {ex.Message}");
+                }
+            });
+            return;
+        }
+
+        // 自动组合封面
         await Task.Run(async () =>
         {
             try
@@ -462,6 +567,28 @@ public partial class PlaylistInfo
         {
             Debug.WriteLine($"绘制图片到区域失败: {ex.Message}");
         }
+    }
+
+    public void ClearCover()
+    {
+        if (
+            CoverPaths.Count > 0
+            && Data.SupportedCoverTypes.Contains(Path.GetExtension(CoverPaths[0]).ToLower())
+        )
+        {
+            try
+            {
+                File.Delete(CoverPaths[0]);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"删除封面图片失败: {ex.Message}");
+            }
+        }
+        CoverPaths.Clear();
+        IsCoverEdited = true;
+        Cover = null;
+        SongList.AsValueEnumerable().Select(i => i.CoverPathIndex = -1);
     }
 
     private static string GetTotalSongNumStr(int totalSongNum)

@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using TagLib;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using Windows.Storage;
@@ -218,28 +219,13 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         {
             var openPicker = new FileOpenPicker
             {
-                ViewMode = PickerViewMode.Thumbnail,
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
             };
-            var fileTypes = new[]
+            foreach (var type in Data.SupportedCoverTypes)
             {
-                ".png",
-                ".jpg",
-                ".jpeg",
-                ".jpe",
-                ".jfif",
-                ".bmp",
-                ".dip",
-                ".gif",
-                ".tif",
-                ".tiff",
-            };
-            foreach (var fileType in fileTypes)
-            {
-                openPicker.FileTypeFilter.Add(fileType);
+                openPicker.FileTypeFilter.Add(type);
             }
-            var window = App.MainWindow;
-            var hWnd = WindowNative.GetWindowHandle(window);
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
             InitializeWithWindow.Initialize(openPicker, hWnd);
             var file = await openPicker.PickSingleFileAsync();
             if (file is not null)
@@ -278,25 +264,27 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         (sender as Button)!.IsEnabled = false;
         try
         {
-            var openPicker = new FolderPicker();
-            var window = App.MainWindow;
-            var hWnd = WindowNative.GetWindowHandle(window);
-            InitializeWithWindow.Initialize(openPicker, hWnd);
-            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            openPicker.FileTypeFilter.Add("*");
-            var folder = await openPicker.PickSingleFolderAsync();
-            if (folder is null)
-            {
-                return;
-            }
-
             using var musicFile = TagLib.File.Create(_song.Path);
             var picture = musicFile.Tag.Pictures[0];
             var bytes = picture.Data.Data;
-            var extension = picture.MimeType.Split('/')[1];
-            var fileName = $"{_song.Title}.{extension}";
-            var uniqueFilePath = GetUniqueFilePath(Path.Combine(folder.Path, fileName));
-            await System.IO.File.WriteAllBytesAsync(uniqueFilePath, bytes);
+            var extension = $".{picture.MimeType.Split('/')[1]}";
+            var fileName = _song.Title;
+            var savePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+                SuggestedFileName = fileName,
+                FileTypeChoices =
+                {
+                    new("EditSongInfoDialog_CoverImage".GetLocalized(), [extension]),
+                },
+            };
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(savePicker, hWnd);
+            var file = await savePicker.PickSaveFileAsync();
+            if (file is not null)
+            {
+                await FileIO.WriteBytesAsync(file, bytes);
+            }
         }
         catch (Exception ex)
         {
@@ -305,27 +293,6 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         finally
         {
             (sender as Button)!.IsEnabled = true;
-        }
-    }
-
-    private static string GetUniqueFilePath(string path)
-    {
-        if (!System.IO.File.Exists(path))
-        {
-            return path;
-        }
-
-        var directory = Path.GetDirectoryName(path) ?? "";
-        var fileNameWithoutExt = Path.GetFileNameWithoutExtension(path);
-        var extension = Path.GetExtension(path);
-
-        for (var count = 1; ; count++)
-        {
-            var uniquePath = Path.Combine(directory, $"{fileNameWithoutExt}({count}){extension}");
-            if (!System.IO.File.Exists(uniquePath))
-            {
-                return uniquePath;
-            }
         }
     }
 }
