@@ -15,6 +15,7 @@ using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -230,12 +231,11 @@ public partial class SettingsViewModel : ObservableRecipient
         var openPicker = new FolderPicker
         {
             SuggestedStartLocation = PickerLocationId.MusicLibrary,
+            FileTypeFilter = { "*" },
+            CommitButtonText = "Settings_AddFolderToMusic".GetLocalized(),
         };
-        openPicker.FileTypeFilter.Add("*");
-        var window = App.MainWindow;
-        var hWnd = WindowNative.GetWindowHandle(window);
+        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(openPicker, hWnd);
-
         var folder = await openPicker.PickSingleFolderAsync();
         if (
             folder is not null
@@ -275,12 +275,13 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         var senderButton = sender as Button;
         senderButton!.IsEnabled = false;
-        var openPicker = new FolderPicker();
-        var window = App.MainWindow;
-        var hWnd = WindowNative.GetWindowHandle(window);
+        var openPicker = new FolderPicker
+        {
+            SuggestedStartLocation = PickerLocationId.MusicLibrary,
+            FileTypeFilter = { "*" },
+        };
+        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(openPicker, hWnd);
-        openPicker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
-        openPicker.FileTypeFilter.Add("*");
         var folder = await openPicker.PickSingleFolderAsync();
         if (folder is not null)
         {
@@ -404,6 +405,16 @@ public partial class SettingsViewModel : ObservableRecipient
         var logFolder = LoggingService.GetLogFolderPath();
         Directory.CreateDirectory(logFolder);
         Process.Start("explorer.exe", logFolder);
+    }
+
+    public async Task ResetSoftwareButton_Click()
+    {
+        try
+        {
+            await ApplicationData.Current.ClearAsync();
+        }
+        catch { }
+        Microsoft.Windows.AppLifecycle.AppInstance.Restart("--reset-completed");
     }
 
     private static string GetVersionDescription()

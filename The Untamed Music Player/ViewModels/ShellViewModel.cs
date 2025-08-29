@@ -187,7 +187,10 @@ public partial class ShellViewModel : ObservableObject
                 {
                     var folder = Path.GetDirectoryName(file.Path) ?? "";
                     var songInfo = new BriefLocalSongInfo(file.Path, folder);
-                    newSongs.Add(songInfo);
+                    if (songInfo.IsPlayAvailable)
+                    {
+                        newSongs.Add(songInfo);
+                    }
                 }
                 catch { }
             }

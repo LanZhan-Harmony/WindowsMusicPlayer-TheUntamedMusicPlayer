@@ -216,9 +216,10 @@
             <TextBlock x:Uid="Shell_PlayQueue1"
                        Grid.Column="0"
                        Style="{StaticResource TitleLargeTextBlockStyle}"/>
-            <SplitButton x:Uid="PlayQueue_AddFilesButton"
+            <SplitButton x:Name="AddFilesSplitButton" x:Uid="PlayQueue_AddFilesButton"
                          Grid.Column="2"
-                         Height="30">
+                         Height="30"
+                         Click="AddFilesSplitButton_Click">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                               FontSize="12" Glyph="&#xE838;"/>
@@ -229,7 +230,9 @@
                         <MenuFlyoutItem Margin="3,1,3,2">
                             <MenuFlyoutItem.Template>
                                 <ControlTemplate>
-                                    <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
+                                    <Button HorizontalAlignment="Stretch"
+                                            Click="AddFilesButton_Click"
+                                            Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
                                                     Orientation="Horizontal" Spacing="12">
                                             <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
@@ -249,7 +252,9 @@
                         <MenuFlyoutItem Margin="3,0,3,2">
                             <MenuFlyoutItem.Template>
                                 <ControlTemplate>
-                                    <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
+                                    <Button HorizontalAlignment="Stretch"
+                                            Click="AddFolderButton_Click"
+                                            Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
                                                     Orientation="Horizontal" Spacing="12">
                                             <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
@@ -265,10 +270,13 @@
                                 </ControlTemplate>
                             </MenuFlyoutItem.Template>
                         </MenuFlyoutItem>
+
                         <MenuFlyoutItem Margin="3,0,3,1">
                             <MenuFlyoutItem.Template>
                                 <ControlTemplate>
-                                    <Button HorizontalAlignment="Stretch" Style="{StaticResource FlyoutButtonStyle}">
+                                    <Button HorizontalAlignment="Stretch"
+                                            Click="AddUrlButton_Click"
+                                            Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
                                                     Orientation="Horizontal" Spacing="12">
                                             <FontIcon FontFamily="{StaticResource UntamedFontFamily}"

@@ -1,5 +1,4 @@
-using System.Collections.ObjectModel;
-using System.IO;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -8,9 +7,6 @@ using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Storage;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.Views;
@@ -244,4 +240,70 @@ public sealed partial class PlayQueuePage : Page
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
+
+    private async void AddFilesSplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
+    {
+        sender.IsEnabled = false;
+        await ViewModel.AddFilesButton_Click();
+        sender.IsEnabled = true;
+    }
+
+    private async void AddFilesButton_Click(object sender, RoutedEventArgs e)
+    {
+        AddFilesSplitButton.IsEnabled = false;
+        await ViewModel.AddFilesButton_Click();
+        AddFilesSplitButton.IsEnabled = true;
+    }
+
+    private async void AddFolderButton_Click(object sender, RoutedEventArgs e)
+    {
+        AddFilesSplitButton.IsEnabled = false;
+        await ViewModel.AddFolderButton_Click();
+        AddFilesSplitButton.IsEnabled = true;
+    }
+
+    private async void AddUrlButton_Click(object sender, RoutedEventArgs e)
+    {
+        AddFilesSplitButton.IsEnabled = false;
+        AddFilesSplitButton.Flyout.Hide();
+        var titleTextBlock = new TextBlock
+        {
+            Text = "PlayQueue_AddUrlDialog_OpenAURL".GetLocalized(),
+            FontWeight = FontWeights.Normal,
+        };
+        var contentTextBox = new TextBox
+        {
+            PlaceholderText = "PlayQueue_AddUrlDialog_EnterTheURL".GetLocalized(),
+            Width = 290,
+        };
+        var dialog = new ContentDialog
+        {
+            XamlRoot = XamlRoot,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            RequestedTheme = Data.MainViewModel!.IsDarkTheme
+                ? ElementTheme.Dark
+                : ElementTheme.Light,
+            Title = titleTextBlock,
+            Content = contentTextBox,
+            PrimaryButtonText = "PlayQueue_AddUrlDialog_Open".GetLocalized(),
+            IsPrimaryButtonEnabled = false,
+            CloseButtonText = "PlayQueue_AddUrlDialog_Cancel".GetLocalized(),
+            DefaultButton = ContentDialogButton.Primary,
+        };
+        contentTextBox.KeyUp += (sender, _) =>
+        {
+            dialog.IsPrimaryButtonEnabled = Uri.TryCreate(
+                (sender as TextBox)!.Text,
+                UriKind.Absolute,
+                out var _
+            );
+        };
+
+        var result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary)
+        {
+            ViewModel.AddUrlButton_Click(contentTextBox.Text);
+        }
+        AddFilesSplitButton.IsEnabled = true;
+    }
 }
