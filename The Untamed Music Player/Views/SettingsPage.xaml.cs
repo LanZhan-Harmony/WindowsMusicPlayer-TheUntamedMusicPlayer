@@ -1,6 +1,7 @@
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
@@ -30,7 +31,7 @@ public sealed partial class SettingsPage : Page
         }
         var titleTextBlock = new TextBlock
         {
-            Text = "Settings_Dialog1Title".GetLocalized(),
+            Text = "Settings_RemoveFolderDialogTitle".GetLocalized(),
             FontWeight = FontWeights.Normal,
         };
         var dialog = new ContentDialog
@@ -41,9 +42,12 @@ public sealed partial class SettingsPage : Page
                 ? ElementTheme.Dark
                 : ElementTheme.Light,
             Title = titleTextBlock,
-            Content = "Settings_Dialog1Content".GetLocalizedWithReplace("{title}", folderName),
-            PrimaryButtonText = "Settings_Dialog1Primary".GetLocalized(),
-            CloseButtonText = "Settings_Dialog1Close".GetLocalized(),
+            Content = "Settings_RemoveFolderDialogContent".GetLocalizedWithReplace(
+                "{title}",
+                folderName
+            ),
+            PrimaryButtonText = "Settings_RemoveFolderDialogPrimary".GetLocalized(),
+            CloseButtonText = "Settings_RemoveFolderDialogClose".GetLocalized(),
             DefaultButton = ContentDialogButton.Primary,
         };
 
@@ -59,7 +63,7 @@ public sealed partial class SettingsPage : Page
     {
         var titleTextBlock = new TextBlock
         {
-            Text = "Settings_Dialog2Title".GetLocalized(),
+            Text = "Settings_OpenSettingDialogTitle".GetLocalized(),
             FontWeight = FontWeights.Normal,
         };
         var dialog = new ContentDialog
@@ -70,9 +74,9 @@ public sealed partial class SettingsPage : Page
                 ? ElementTheme.Dark
                 : ElementTheme.Light,
             Title = titleTextBlock,
-            Content = "Settings_Dialog2Content".GetLocalized(),
-            PrimaryButtonText = "Settings_Dialog2Primary".GetLocalized(),
-            CloseButtonText = "Settings_Dialog2Close".GetLocalized(),
+            Content = "Settings_OpenSettingDialogContent".GetLocalized(),
+            PrimaryButtonText = "Settings_OpenSettingDialogPrimary".GetLocalized(),
+            CloseButtonText = "Settings_OpenSettingDialogClose".GetLocalized(),
             DefaultButton = ContentDialogButton.Close,
         };
 
@@ -82,5 +86,50 @@ public sealed partial class SettingsPage : Page
         {
             await Launcher.LaunchUriAsync(new Uri("ms-settings:search"));
         }
+    }
+
+    private async void ImportPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        var dialog = new ImportPlaylistDialog { XamlRoot = XamlRoot };
+        await dialog.ShowAsync();
+        (sender as Button)!.IsEnabled = true;
+    }
+
+    private void ExportPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        (sender as Button)!.IsEnabled = true;
+    }
+
+    private async void ResetSoftwareButton_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        var titleTextBlock = new TextBlock
+        {
+            Text = "Settings_ResetSoftwareDialogTitle".GetLocalized(),
+            FontWeight = FontWeights.Normal,
+        };
+        var dialog = new ContentDialog
+        {
+            XamlRoot = XamlRoot,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            RequestedTheme = Data.MainViewModel!.IsDarkTheme
+                ? ElementTheme.Dark
+                : ElementTheme.Light,
+            Title = titleTextBlock,
+            Content = "Settings_ResetSoftwareDialogContent".GetLocalized(),
+            PrimaryButtonText = "Settings_ResetSoftwareDialogPrimary".GetLocalized(),
+            CloseButtonText = "Settings_ResetSoftwareDialogClose".GetLocalized(),
+            DefaultButton = ContentDialogButton.Close,
+        };
+
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+        {
+            await ViewModel.ResetSoftwareButton_Click();
+        }
+        (sender as Button)!.IsEnabled = true;
     }
 }

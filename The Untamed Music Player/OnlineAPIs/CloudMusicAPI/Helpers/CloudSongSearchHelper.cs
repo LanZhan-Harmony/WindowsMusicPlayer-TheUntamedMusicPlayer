@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using The_Untamed_Music_Player.Contracts.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 
@@ -167,5 +168,47 @@ public class CloudSongSearchHelper
         {
             list.Add(info);
         }
+    }
+
+    public static async Task<List<BriefCloudOnlineSongInfo>> SearchSongsByIDsAsync(long[] IDs)
+    {
+        var list = new List<BriefCloudOnlineSongInfo>();
+        var (_, checkResult) = await _api.RequestAsync(
+            CloudMusicApiProviders.SongUrl,
+            new Dictionary<string, string> { { "id", string.Join(',', IDs) } }
+        );
+        var (_, detailsResult) = await _api.RequestAsync(
+            CloudMusicApiProviders.SongDetail,
+            new Dictionary<string, string> { { "ids", string.Join(',', IDs) } }
+        );
+        var data = checkResult["data"]!;
+        var availabilityMap = data.AsArray()
+            .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item!["url"] is not null);
+        var detailsMap = detailsResult["songs"]!
+            .AsArray()
+            .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item);
+
+        for (var i = 0; i < IDs.Length; i++)
+        {
+            var songId = IDs[i];
+            var available = availabilityMap.GetValueOrDefault(songId, false);
+            if (!available)
+            {
+                continue;
+            }
+
+            var trackElement = detailsMap.GetValueOrDefault(songId)!;
+
+            try
+            {
+                var songInfo = new BriefCloudOnlineSongInfo(trackElement);
+                list.Add(songInfo);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.StackTrace);
+            }
+        }
+        return list;
     }
 }

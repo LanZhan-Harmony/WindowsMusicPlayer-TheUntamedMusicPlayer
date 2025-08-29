@@ -136,8 +136,8 @@
 
                     <toolkit:SettingsCard x:Uid="Settings_PlaylistImportExport" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xED3B;}">
                         <StackPanel Orientation="Horizontal" Spacing="4">
-                            <Button x:Uid="Settings_Import"/>
-                            <Button x:Uid="Settings_Export"/>
+                            <Button x:Uid="Settings_Import" Click="ImportPlaylistButton_Click"/>
+                            <Button x:Uid="Settings_Export" Click="ExportPlaylistButton_Click"/>
                         </StackPanel>
                     </toolkit:SettingsCard>
                 </StackPanel>
@@ -284,6 +284,9 @@
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
                     <toolkit:SettingsCard x:Uid="Settings_Logging" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE9A4;}">
                         <Button x:Uid="Settings_OpenFolder" Click="{x:Bind ViewModel.OpenLoggingFolderButton_Click}"/>
+                    </toolkit:SettingsCard>
+                    <toolkit:SettingsCard x:Uid="Settings_ResetSoftware" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xEBC4;}">
+                        <Button x:Uid="Settings_Reset" Click="ResetSoftwareButton_Click"/>
                     </toolkit:SettingsCard>
                 </StackPanel>
 
