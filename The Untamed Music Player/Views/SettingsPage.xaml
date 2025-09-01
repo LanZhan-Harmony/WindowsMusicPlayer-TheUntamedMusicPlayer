@@ -134,12 +134,81 @@
                         </StackPanel>
                     </toolkit:SettingsCard>
 
-                    <toolkit:SettingsCard x:Uid="Settings_PlaylistImportExport" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xED3B;}">
-                        <StackPanel Orientation="Horizontal" Spacing="4">
-                            <Button x:Uid="Settings_Import" Click="ImportPlaylistButton_Click"/>
-                            <Button x:Uid="Settings_Export" Click="ExportPlaylistButton_Click"/>
-                        </StackPanel>
+                    <toolkit:SettingsExpander x:Uid="Settings_PlaylistImportExport" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xED3B;}">
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard x:Uid="Settings_ImportIndividualPlaylist">
+                                <Button x:Uid="Settings_Import" Click="ImportIndividualPlaylistButton_Click"/>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard x:Uid="Settings_ImportFromM3u8">
+                                <Button x:Uid="Settings_Import" Click="{x:Bind ViewModel.ImportFromM3u8Button_Click}"/>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard x:Uid="Settings_ImportFromBin">
+                                <Button x:Uid="Settings_Import" Click="{x:Bind ViewModel.ImportFromBinButton_Click}"/>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard x:Uid="Settings_ExportToM3u8">
+                                <Button x:Uid="Settings_Export" Click="{x:Bind ViewModel.ExportToM3u8Button_Click}"/>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard x:Uid="Settings_ExportToBin">
+                                <Button x:Uid="Settings_Export" Click="{x:Bind ViewModel.ExportToBinButton_Click}"/>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
+                </StackPanel>
+
+                <!--  播放  -->
+                <StackPanel Spacing="2">
+                    <StackPanel.ChildrenTransitions>
+                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
+                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                    </StackPanel.ChildrenTransitions>
+                    <TextBlock x:Uid="Settings_Play"
+                               Margin="0,12,0,5"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <toolkit:SettingsCard x:Uid="Settings_ExclusiveMode" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xF623;}">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsExclusiveMode, Mode=TwoWay}"/>
                     </toolkit:SettingsCard>
+                    <toolkit:SettingsCard x:Uid="Settings_OnlyAddSpecificFolder" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE62F;}">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsOnlyAddSpecificFolder, Mode=TwoWay}"/>
+                    </toolkit:SettingsCard>
+                </StackPanel>
+
+                <!--  歌词  -->
+                <StackPanel Spacing="2">
+                    <StackPanel.ChildrenTransitions>
+                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
+                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                    </StackPanel.ChildrenTransitions>
+                    <TextBlock x:Uid="Settings_Lyric"
+                               Margin="0,12,0,5"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <toolkit:SettingsCard x:Uid="Settings_LyricFontFamily" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE8D2;}">
+                        <ComboBox x:Uid="Settings_ChooseAFontFamily"
+                                  ItemTemplate="{StaticResource FontComboBoxTemplate}"
+                                  ItemsSource="{x:Bind ViewModel.FontFamilies}"
+                                  Loaded="{x:Bind ViewModel.FontFamilyComboBox_Loaded}"
+                                  SelectionChanged="{x:Bind ViewModel.FontFamilyComboBox_SelectionChanged}"/>
+                    </toolkit:SettingsCard>
+                    <toolkit:SettingsExpander x:Uid="Settings_LyricFontSize" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE8E9;}">
+                        <ComboBox x:Uid="Settings_ChooseAFontSize"
+                                  IsEditable="True"
+                                  ItemsSource="{x:Bind ViewModel.FontSizes}"
+                                  Loaded="{x:Bind ViewModel.FontSizeComboBox_Loaded}"
+                                  SelectionChanged="{x:Bind ViewModel.FontSizeComboBox_SelectionChanged}"
+                                  TextSubmitted="{x:Bind ViewModel.ComboBox_TextSubmitted}"/>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard x:Uid="Settings_LyricPreview">
+                                <StackPanel>
+                                    <TextBlock x:Uid="Settings_ThisIsAHighlightedLyric"
+                                               FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
+                                               FontSize="{x:Bind ViewModel.SelectedCurrentFontSize, Mode=OneWay}"/>
+                                    <TextBlock x:Uid="Settings_ThisIsAnOrdinaryLyric"
+                                               FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
+                                               FontSize="{x:Bind ViewModel.SelectedNotCurrentFontSize, Mode=OneWay}"
+                                               Opacity="0.5"/>
+                                </StackPanel>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
                 </StackPanel>
 
                 <!--  个性化  -->
@@ -219,62 +288,6 @@
                     <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundFollowsCover" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE790;}">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsWindowBackgroundFollowsCover, Mode=TwoWay}"/>
                     </toolkit:SettingsCard>
-                </StackPanel>
-
-                <!--  播放  -->
-                <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
-                    <TextBlock x:Uid="Settings_Play"
-                               Margin="0,12,0,5"
-                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <toolkit:SettingsCard x:Uid="Settings_ExclusiveMode" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xF623;}">
-                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsExclusiveMode, Mode=TwoWay}"/>
-                    </toolkit:SettingsCard>
-                    <toolkit:SettingsCard x:Uid="Settings_OnlyAddSpecificFolder" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE62F;}">
-                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsOnlyAddSpecificFolder, Mode=TwoWay}"/>
-                    </toolkit:SettingsCard>
-                </StackPanel>
-
-                <!--  歌词  -->
-                <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
-                    <TextBlock x:Uid="Settings_Lyric"
-                               Margin="0,12,0,5"
-                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <toolkit:SettingsCard x:Uid="Settings_LyricFontFamily" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE8D2;}">
-                        <ComboBox x:Uid="Settings_ChooseAFontFamily"
-                                  ItemTemplate="{StaticResource FontComboBoxTemplate}"
-                                  ItemsSource="{x:Bind ViewModel.FontFamilies}"
-                                  Loaded="{x:Bind ViewModel.FontFamilyComboBox_Loaded}"
-                                  SelectionChanged="{x:Bind ViewModel.FontFamilyComboBox_SelectionChanged}"/>
-                    </toolkit:SettingsCard>
-                    <toolkit:SettingsExpander x:Uid="Settings_LyricFontSize" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE8E9;}">
-                        <ComboBox x:Uid="Settings_ChooseAFontSize"
-                                  IsEditable="True"
-                                  ItemsSource="{x:Bind ViewModel.FontSizes}"
-                                  Loaded="{x:Bind ViewModel.FontSizeComboBox_Loaded}"
-                                  SelectionChanged="{x:Bind ViewModel.FontSizeComboBox_SelectionChanged}"
-                                  TextSubmitted="{x:Bind ViewModel.ComboBox_TextSubmitted}"/>
-                        <toolkit:SettingsExpander.Items>
-                            <toolkit:SettingsCard x:Uid="Settings_LyricPreview">
-                                <StackPanel>
-                                    <TextBlock x:Uid="Settings_ThisIsAHighlightedLyric"
-                                               FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
-                                               FontSize="{x:Bind ViewModel.SelectedCurrentFontSize, Mode=OneWay}"/>
-                                    <TextBlock x:Uid="Settings_ThisIsAnOrdinaryLyric"
-                                               FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
-                                               FontSize="{x:Bind ViewModel.SelectedNotCurrentFontSize, Mode=OneWay}"
-                                               Opacity="0.5"/>
-                                </StackPanel>
-                            </toolkit:SettingsCard>
-                        </toolkit:SettingsExpander.Items>
-                    </toolkit:SettingsExpander>
                 </StackPanel>
 
                 <!--  开发者选项  -->

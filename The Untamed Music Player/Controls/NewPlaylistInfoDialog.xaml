@@ -24,7 +24,7 @@
             <TextBox x:Name="NameTextBox" x:Uid="PlaylistInfo_UntitledPlaylist1"
                      Width="290"
                      HorizontalAlignment="Center"
-                     KeyUp="NameTextBox_KeyUp"/>
+                     TextChanged="NameTextBox_TextChanged"/>
         </StackPanel>
     </Grid>
 </ContentDialog>

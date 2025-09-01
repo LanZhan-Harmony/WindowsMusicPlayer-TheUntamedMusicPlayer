@@ -186,8 +186,29 @@
   <data name="Settings_Import.Content" xml:space="preserve">
     <value>Import</value>
   </data>
+  <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
+    <value>Import individual playlist</value>
+  </data>
+  <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
+    <value>Batch import playlists from m3u8 files</value>
+  </data>
+  <data name="Settings_ImportFromBin.Header" xml:space="preserve">
+    <value>Batch import playlists from binary file</value>
+  </data>
   <data name="Settings_Export.Content" xml:space="preserve">
     <value>Export</value>
+  </data>
+  <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
+    <value>Batch export playlists to m3u8 files</value>
+  </data>
+  <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
+    <value>Better compatibility and works with most music players</value>
+  </data>
+  <data name="Settings_ExportToBin.Header" xml:space="preserve">
+    <value>Batch export playlists to binary file</value>
+  </data>
+  <data name="Settings_ExportToBin.Description" xml:space="preserve">
+    <value>Faster but only available for this software</value>
   </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
     <value>Refresh libraries</value>

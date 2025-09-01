@@ -50,7 +50,7 @@
                             Padding="24,0,0,0"
                             Spacing="12">
                     <TextBox x:Name="PlaylistNameTextBox" x:Uid="PlaylistInfo_UntitledPlaylist1"
-                             KeyUp="PlaylistNameTextBox_KeyUp">
+                             TextChanged="PlaylistNameTextBox_TextChanged">
                         <TextBox.Header>
                             <TextBlock x:Uid="ImportPlaylistDialog_Name"
                                        FontSize="12"

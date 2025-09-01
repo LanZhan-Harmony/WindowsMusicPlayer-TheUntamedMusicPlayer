@@ -21,7 +21,7 @@ public sealed partial class NewPlaylistInfoDialog : ContentDialog
         CreatedPlaylist = Data.PlaylistLibrary.NewPlaylist(name);
     }
 
-    private void NameTextBox_KeyUp(object sender, KeyRoutedEventArgs e)
+    private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         IsPrimaryButtonEnabled = !string.IsNullOrEmpty((sender as TextBox)!.Text);
     }

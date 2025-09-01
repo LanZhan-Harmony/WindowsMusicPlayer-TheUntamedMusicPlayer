@@ -237,12 +237,13 @@
                                 <TextBlock x:Uid="PlayLists_CreateNewPlaylist"/>
                             </StackPanel>
                             <Button.Flyout>
-                                <Flyout Placement="Bottom">
+                                <Flyout Closed="CreatePlaylistFlyout_Closed" Placement="Bottom">
                                     <StackPanel Spacing="16">
-                                        <TextBox x:Name="PlaylistNameTextBox1" x:Uid="PlaylistInfo_UntitledPlaylist1"
+                                        <TextBox x:Name="PlaylistNameTextBox1"
                                                  Width="280"
                                                  HorizontalAlignment="Center"
-                                                 KeyUp="PlaylistNameTextBox1_KeyUp"/>
+                                                 Loaded="PlaylistNameTextBox_Loaded"
+                                                 TextChanged="PlaylistNameTextBox1_TextChanged"/>
                                         <Button x:Name="CreatePlaylistFlyoutButton1" x:Uid="PlayLists_CreatePlaylist"
                                                 HorizontalAlignment="Center"
                                                 Click="PlayLists_CreatePlaylist1"
@@ -280,12 +281,13 @@
                         <TextBlock x:Uid="PlayLists_NewPlaylist"/>
                     </StackPanel>
                     <Button.Flyout>
-                        <Flyout Placement="Bottom">
+                        <Flyout Closed="NewPlaylistFlyout_Closed" Placement="Bottom">
                             <StackPanel Spacing="16">
-                                <TextBox x:Name="PlaylistNameTextBox2" x:Uid="PlaylistInfo_UntitledPlaylist1"
+                                <TextBox x:Name="PlaylistNameTextBox2"
                                          Width="280"
                                          HorizontalAlignment="Center"
-                                         KeyUp="PlaylistNameTextBox2_KeyUp"/>
+                                         Loaded="PlaylistNameTextBox_Loaded"
+                                         TextChanged="PlaylistNameTextBox2_TextChanged"/>
                                 <Button x:Name="CreatePlaylistFlyoutButton2" x:Uid="PlayLists_CreatePlaylist"
                                         HorizontalAlignment="Center"
                                         Click="PlayLists_CreatePlaylist2"
