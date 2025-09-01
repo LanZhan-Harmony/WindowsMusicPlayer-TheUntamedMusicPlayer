@@ -64,8 +64,15 @@ public partial class PlaylistLibrary : ObservableRecipient
             {
                 Playlists.Add(info);
             }
-            else { }
+            else
+            {
+                var newInfo = new PlaylistInfo(name, info);
+                Playlists.Add(newInfo);
+            }
         }
+        Playlists = [.. Playlists.AsValueEnumerable().OrderBy(p => p.Name, new TitleComparer())];
+        Messenger.Send(new HavePlaylistMessage(true));
+        _ = FileManager.SavePlaylistDataAsync(Playlists);
     }
 
     public bool RenamePlaylist(PlaylistInfo info, string newName)

@@ -186,8 +186,29 @@
   <data name="Settings_Import.Content" xml:space="preserve">
     <value>导入</value>
   </data>
+  <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
+    <value>导入单个播放列表</value>
+  </data>
+  <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
+    <value>从 m3u8 文件批量导入播放列表</value>
+  </data>
+  <data name="Settings_ImportFromBin.Header" xml:space="preserve">
+    <value>从二进制文件批量导入播放列表</value>
+  </data>
   <data name="Settings_Export.Content" xml:space="preserve">
     <value>导出</value>
+  </data>
+  <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
+    <value>批量导出播放列表至 m3u8 文件</value>
+  </data>
+  <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
+    <value>兼容性更好，适用于大多数音乐播放器</value>
+  </data>
+  <data name="Settings_ExportToBin.Header" xml:space="preserve">
+    <value>批量导出播放列表至二进制文件</value>
+  </data>
+  <data name="Settings_ExportToBin.Description" xml:space="preserve">
+    <value>速度更快，但仅适用于此软件</value>
   </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
     <value>刷新库</value>
