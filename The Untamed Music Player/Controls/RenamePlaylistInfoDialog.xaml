@@ -43,8 +43,8 @@
             <TextBox x:Name="RenameTextBox"
                      Width="290"
                      HorizontalAlignment="Center"
-                     KeyUp="RenameTextBox_KeyUp"
-                     SelectedText="{x:Bind _playlist.Name}"/>
+                     SelectedText="{x:Bind _playlist.Name}"
+                     TextChanged="RenameTextBox_TextChanged"/>
         </StackPanel>
     </Grid>
 </ContentDialog>

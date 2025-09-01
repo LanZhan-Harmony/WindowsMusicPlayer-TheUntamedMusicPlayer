@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -269,6 +270,50 @@ public partial class SettingsViewModel : ObservableRecipient
     public void SongDownloadLocationButton_Click(object sender, RoutedEventArgs e)
     {
         Process.Start("explorer.exe", SongDownloadLocation);
+    }
+
+    public async void ImportFromM3u8Button_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        var picker = new FileOpenPicker
+        {
+            SuggestedStartLocation = PickerLocationId.MusicLibrary,
+            FileTypeFilter = { ".m3u8", ".m3u" },
+        };
+        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+        InitializeWithWindow.Initialize(picker, hWnd);
+        var files = await picker.PickMultipleFilesAsync();
+        var infos = new List<PlaylistInfo>();
+        foreach (var file in files)
+        {
+            var (playlistName, coverPath, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
+            if (string.IsNullOrEmpty(playlistName))
+            {
+                playlistName = "PlaylistInfo_UntitledPlaylist".GetLocalized();
+            }
+            var info = new PlaylistInfo(playlistName, songs, coverPath);
+            infos.Add(info);
+        }
+        Data.PlaylistLibrary.NewPlaylists(infos);
+        (sender as Button)!.IsEnabled = true;
+    }
+
+    public void ImportFromBinButton_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        (sender as Button)!.IsEnabled = true;
+    }
+
+    public void ExportToM3u8Button_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        (sender as Button)!.IsEnabled = true;
+    }
+
+    public void ExportToBinButton_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        (sender as Button)!.IsEnabled = true;
     }
 
     public async void ChangeSongDownloadLocationButton_Click(object sender, RoutedEventArgs e)

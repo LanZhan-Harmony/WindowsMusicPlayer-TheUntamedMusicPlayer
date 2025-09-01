@@ -30,7 +30,7 @@ public sealed partial class RenamePlaylistInfoDialog : ContentDialog
         }
     }
 
-    private void RenameTextBox_KeyUp(object sender, KeyRoutedEventArgs e)
+    private void RenameTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         IsPrimaryButtonEnabled = !string.IsNullOrEmpty((sender as TextBox)!.Text);
     }

@@ -19,7 +19,6 @@ namespace The_Untamed_Music_Player.Controls;
 
 public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropertyChanged
 {
-    private readonly PlaylistInfo _playlist = new();
     private ObservableCollection<DisplaySongInfo> Songs { get; set; } = [];
     private int SongCount
     {
@@ -40,6 +39,8 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
             OnPropertyChanged(nameof(SongListViewVisibility));
         }
     } = Visibility.Collapsed;
+
+    private string? _coverPath;
 
     private BitmapImage? Cover
     {
@@ -96,7 +97,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         InitializeComponent();
     }
 
-    private void PlaylistNameTextBox_KeyUp(object sender, KeyRoutedEventArgs e)
+    private void PlaylistNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         IsPrimaryButtonEnabled = !string.IsNullOrEmpty((sender as TextBox)!.Text);
     }
@@ -137,9 +138,8 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
             await file.CopyAndReplaceAsync(targetFile);
 
             Cover = new BitmapImage(new Uri(targetFile.Path));
+            _coverPath = targetFile.Path;
             IsSaveCoverButtonEnabled = Cover is not null;
-            _playlist.ClearCover();
-            _playlist.CoverPaths.Add(targetFile.Path);
         }
         catch (Exception ex)
         {
@@ -155,8 +155,8 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
     private void DeleteCoverButton_Click(object sender, RoutedEventArgs e)
     {
         Cover = null;
+        _coverPath = null;
         IsSaveCoverButtonEnabled = false;
-        _playlist.ClearCover();
     }
 
     private async void SaveCoverButton_Click(object sender, RoutedEventArgs e)
@@ -164,12 +164,11 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         (sender as Button)!.IsEnabled = false;
         try
         {
-            if (_playlist.CoverPaths.Count == 0 || !File.Exists(_playlist.CoverPaths[0]))
+            if (string.IsNullOrEmpty(_coverPath) || !File.Exists(_coverPath))
             {
                 return;
             }
-            var filePath = _playlist.CoverPaths[0];
-            var extension = Path.GetExtension(filePath);
+            var extension = Path.GetExtension(_coverPath);
             var fileName = string.IsNullOrWhiteSpace(PlaylistNameTextBox.Text)
                 ? "PlaylistInfo_UntitledPlaylist".GetLocalized()
                 : PlaylistNameTextBox.Text;
@@ -187,7 +186,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
             var file = await savePicker.PickSaveFileAsync();
             if (file is not null)
             {
-                var imageBytes = await File.ReadAllBytesAsync(filePath);
+                var imageBytes = await File.ReadAllBytesAsync(_coverPath);
                 await FileIO.WriteBytesAsync(file, imageBytes);
             }
         }
@@ -243,9 +242,8 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         if (shouldSetCoverPath && coverPath is not null)
         {
             Cover = new BitmapImage(new Uri(coverPath));
+            _coverPath = coverPath;
             IsSaveCoverButtonEnabled = Cover is not null;
-            _playlist.ClearCover();
-            _playlist.CoverPaths.Add(coverPath);
         }
         IsImportingProgressRingActive = false;
     }
@@ -344,18 +342,24 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         }
     }
 
-    private void ImportButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args) { }
+    private void ImportButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        var name = string.IsNullOrEmpty(PlaylistNameTextBox.Text)
+            ? "PlaylistInfo_UntitledPlaylist".GetLocalized()
+            : PlaylistNameTextBox.Text;
+        var playlist = new PlaylistInfo(name, [.. Songs.Select(s => s.Song)], _coverPath);
+        Data.PlaylistLibrary!.NewPlaylists([playlist]);
+    }
 
     private new void CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         if (Cover is not null)
         {
-            var coverPath = _playlist.CoverPaths[0];
-            if (File.Exists(coverPath))
+            if (File.Exists(_coverPath))
             {
                 try
                 {
-                    File.Delete(coverPath);
+                    File.Delete(_coverPath);
                 }
                 catch (Exception ex)
                 {

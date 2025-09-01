@@ -122,10 +122,21 @@ public sealed partial class PlayListsPage : Page
         CreatePlaylistButton.Flyout.Hide();
     }
 
-    private void PlaylistNameTextBox1_KeyUp(object sender, KeyRoutedEventArgs e)
+    private void PlaylistNameTextBox_Loaded(object sender, RoutedEventArgs e)
+    {
+        (sender as TextBox)!.SelectedText = "PlaylistInfo_UntitledPlaylist".GetLocalized();
+    }
+
+    private void PlaylistNameTextBox1_TextChanged(object sender, TextChangedEventArgs e)
     {
         CreatePlaylistButton.IsEnabled = !string.IsNullOrEmpty((sender as TextBox)!.Text);
         CreatePlaylistFlyoutButton1.IsEnabled = !string.IsNullOrEmpty((sender as TextBox)!.Text);
+    }
+
+    private void CreatePlaylistFlyout_Closed(object sender, object e)
+    {
+        CreatePlaylistButton.IsEnabled = true;
+        CreatePlaylistFlyoutButton1.IsEnabled = true;
     }
 
     private void PlayLists_CreatePlaylist2(object sender, RoutedEventArgs e)
@@ -135,9 +146,14 @@ public sealed partial class PlayListsPage : Page
         NewPlaylistButton.Flyout.Hide();
     }
 
-    private void PlaylistNameTextBox2_KeyUp(object sender, KeyRoutedEventArgs e)
+    private void PlaylistNameTextBox2_TextChanged(object sender, TextChangedEventArgs e)
     {
         CreatePlaylistFlyoutButton2.IsEnabled = !string.IsNullOrEmpty((sender as TextBox)!.Text);
+    }
+
+    private void NewPlaylistFlyout_Closed(object sender, object e)
+    {
+        CreatePlaylistFlyoutButton2.IsEnabled = true;
     }
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)
