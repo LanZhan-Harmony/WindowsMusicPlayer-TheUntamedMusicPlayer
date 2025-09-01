@@ -88,17 +88,11 @@ public sealed partial class SettingsPage : Page
         }
     }
 
-    private async void ImportPlaylistButton_Click(object sender, RoutedEventArgs e)
+    private async void ImportIndividualPlaylistButton_Click(object sender, RoutedEventArgs e)
     {
         (sender as Button)!.IsEnabled = false;
         var dialog = new ImportPlaylistDialog { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
-        (sender as Button)!.IsEnabled = true;
-    }
-
-    private void ExportPlaylistButton_Click(object sender, RoutedEventArgs e)
-    {
-        (sender as Button)!.IsEnabled = false;
         (sender as Button)!.IsEnabled = true;
     }
 
