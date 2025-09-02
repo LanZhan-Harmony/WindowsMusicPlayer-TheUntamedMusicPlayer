@@ -39,6 +39,11 @@ public partial class PlaylistInfo
         ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
     }
 
+    /// <summary>
+    /// 仅在创建播放列表时使用
+    /// </summary>
+    /// <param name="songs"></param>
+    /// <returns></returns>
     public async Task AddSongs(List<IBriefSongInfoBase> songs)
     {
         foreach (var song in songs)
@@ -293,32 +298,20 @@ public partial class PlaylistInfo
                     }
                     const int canvasSize = 256;
 
-                    // 使用BitmapDecoder读取图片文件
-                    using var fileStream = new FileStream(
-                        imagePath,
-                        FileMode.Open,
-                        FileAccess.Read
-                    );
-                    var decoder = await BitmapDecoder.CreateAsync(
-                        fileStream.AsRandomAccessStream()
+                    // 读取图片文件为字节数组
+                    var imageBytes = await File.ReadAllBytesAsync(imagePath);
+
+                    // 使用ResizeImageToFitRegionAsync来正确调整图片尺寸
+                    var resizedImageBytes = await ResizeImageToFitRegionAsync(
+                        imageBytes,
+                        canvasSize,
+                        canvasSize
                     );
 
-                    // 调整图片尺寸到256x256
-                    var transform = new BitmapTransform
+                    if (resizedImageBytes is null)
                     {
-                        ScaledWidth = canvasSize,
-                        ScaledHeight = canvasSize,
-                    };
-
-                    var pixelData = await decoder.GetPixelDataAsync(
-                        BitmapPixelFormat.Bgra8,
-                        BitmapAlphaMode.Premultiplied,
-                        transform,
-                        ExifOrientationMode.RespectExifOrientation,
-                        ColorManagementMode.DoNotColorManage
-                    );
-
-                    var pixels = pixelData.DetachPixelData();
+                        return;
+                    }
 
                     // 切换到UI线程更新WriteableBitmap
                     App.MainWindow?.DispatcherQueue.TryEnqueue(
@@ -329,8 +322,7 @@ public partial class PlaylistInfo
                             {
                                 // 将像素数据写入WriteableBitmap
                                 using var pixelStream = Cover.PixelBuffer.AsStream();
-                                await pixelStream.WriteAsync(pixels);
-
+                                await pixelStream.WriteAsync(resizedImageBytes);
                                 Cover.Invalidate();
                             }
                             catch (Exception ex)
@@ -466,7 +458,7 @@ public partial class PlaylistInfo
         });
     }
 
-    private static async Task<byte[]?> ResizeImageToFitRegionAsync(
+    public static async Task<byte[]?> ResizeImageToFitRegionAsync(
         byte[] imageBytes,
         int targetWidth,
         int targetHeight

@@ -163,10 +163,10 @@
                         <Setter Target="CoverArt.Height" Value="136"/>
                         <Setter Target="TitleText.FontSize" Value="28"/>
                         <Setter Target="CaptionText.Margin" Value="0,8,0,0"/>
-                        <Setter Target="RenameButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="EditInfoButton.Visibility" Value="Collapsed"/>
                         <Setter Target="DeleteButton.Visibility" Value="Collapsed"/>
                         <Setter Target="MoreButton.Visibility" Value="Visible"/>
-                        <Setter Target="RenameInfoFlyout.Visibility" Value="Visible"/>
+                        <Setter Target="EditInfoInfoFlyout.Visibility" Value="Visible"/>
                         <Setter Target="DeleteInfoFlyout.Visibility" Value="Visible"/>
                         <Setter Target="SongListView.Padding" Value="12,0,12,0"/>
                         <Setter Target="SongListView.Margin" Value="0,68,0,0"/>
@@ -184,10 +184,10 @@
                         <Setter Target="CoverArt.Height" Value="162"/>
                         <Setter Target="TitleText.FontSize" Value="28"/>
                         <Setter Target="CaptionText.Margin" Value="0,8,0,0"/>
-                        <Setter Target="RenameButton.Visibility" Value="Visible"/>
+                        <Setter Target="EditInfoButton.Visibility" Value="Visible"/>
                         <Setter Target="DeleteButton.Visibility" Value="Collapsed"/>
                         <Setter Target="MoreButton.Visibility" Value="Visible"/>
-                        <Setter Target="RenameInfoFlyout.Visibility" Value="Collapsed"/>
+                        <Setter Target="EditInfoInfoFlyout.Visibility" Value="Collapsed"/>
                         <Setter Target="DeleteInfoFlyout.Visibility" Value="Visible"/>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
                         <Setter Target="SongListView.Margin" Value="0,46,0,0"/>
@@ -205,10 +205,10 @@
                         <Setter Target="CoverArt.Height" Value="208"/>
                         <Setter Target="TitleText.FontSize" Value="40"/>
                         <Setter Target="CaptionText.Margin" Value="0,8,0,0"/>
-                        <Setter Target="RenameButton.Visibility" Value="Visible"/>
+                        <Setter Target="EditInfoButton.Visibility" Value="Visible"/>
                         <Setter Target="DeleteButton.Visibility" Value="Visible"/>
                         <Setter Target="MoreButton.Visibility" Value="Collapsed"/>
-                        <Setter Target="RenameInfoFlyout.Visibility" Value="Collapsed"/>
+                        <Setter Target="EditInfoInfoFlyout.Visibility" Value="Collapsed"/>
                         <Setter Target="DeleteInfoFlyout.Visibility" Value="Collapsed"/>
                         <Setter Target="SongListView.Padding" Value="52,0,52,0"/>
                         <Setter Target="SongListView.Margin" Value="0,15,0,0"/>
@@ -314,14 +314,14 @@
                                     <TextBlock x:Uid="Songs_AddTo" FontSize="12"/>
                                 </StackPanel>
                             </Button>
-                            <Button x:Name="RenameButton"
+                            <Button x:Name="EditInfoButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
-                                    Click="RenameButton_Click"
+                                    Click="EditInfoButton_Click"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                                              FontSize="16" Glyph="&#xE8AC;"/>
-                                    <TextBlock x:Uid="PlayLists_Rename" FontSize="12"/>
+                                              FontSize="16" Glyph="&#xE70F;"/>
+                                    <TextBlock x:Uid="Songs_EditInfo" FontSize="12"/>
                                 </StackPanel>
                             </Button>
                             <Button x:Name="DeleteButton"
@@ -338,11 +338,11 @@
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch">
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem x:Name="RenameInfoFlyout" x:Uid="PlayLists_Rename"
+                                        <MenuFlyoutItem x:Name="EditInfoInfoFlyout" x:Uid="Songs_EditInfo"
                                                         Width="158"
-                                                        Click="RenameButton_Click"
+                                                        Click="EditInfoButton_Click"
                                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
-                                                                           Glyph=&#xE8AC;}"/>
+                                                                           Glyph=&#xE70F;}"/>
                                         <MenuFlyoutItem x:Name="DeleteInfoFlyout" x:Uid="PlayLists_Delete"
                                                         Width="158"
                                                         Click="{x:Bind ViewModel.DeleteButton_Click}"

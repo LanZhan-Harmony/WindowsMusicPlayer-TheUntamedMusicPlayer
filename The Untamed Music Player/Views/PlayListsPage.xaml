@@ -49,10 +49,10 @@
                                             Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                Glyph=&#xE710;}"/>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="PlayLists_Rename"
-                                        Click="RenameButton_Click"
+                        <MenuFlyoutItem x:Uid="Songs_EditInfo"
+                                        Click="EditInfoButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
-                                                           Glyph=&#xE8AC;}"/>
+                                                           Glyph=&#xE70F;}"/>
                         <MenuFlyoutItem x:Uid="PlayLists_Delete"
                                         Click="DeleteButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
@@ -119,10 +119,10 @@
                                                     Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                        Glyph=&#xE710;}"/>
                                 </MenuFlyoutSubItem>
-                                <MenuFlyoutItem x:Uid="PlayLists_Rename"
-                                                Click="RenameButton_Click"
+                                <MenuFlyoutItem x:Uid="Songs_EditInfo"
+                                                Click="EditInfoButton_Click"
                                                 Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
-                                                                   Glyph=&#xE8AC;}"/>
+                                                                   Glyph=&#xE70F;}"/>
                                 <MenuFlyoutItem x:Uid="PlayLists_Delete"
                                                 Click="DeleteButton_Click"
                                                 Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},

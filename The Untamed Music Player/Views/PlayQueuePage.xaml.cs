@@ -102,7 +102,7 @@ public sealed partial class PlayQueuePage : Page
         {
             return;
         }
-        var listViewSource = PlayqueueListView.ItemsSource;
+        var listViewSource = PlayQueueListView.ItemsSource;
         if (listViewSource is IEnumerable<IndexedPlayQueueSong> songs)
         {
             var targetSong = currentSong switch
@@ -119,7 +119,7 @@ public sealed partial class PlayQueuePage : Page
             };
             if (targetSong is not null)
             {
-                PlayqueueListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
+                PlayQueueListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
             }
         }
     }

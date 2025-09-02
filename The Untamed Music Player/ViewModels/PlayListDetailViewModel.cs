@@ -52,12 +52,7 @@ public partial class PlayListDetailViewModel
     {
         if (PlaylistName == message.OldName)
         {
-            Playlist = Data.SelectedPlaylist = message.Playlist;
-            PlaylistName = Playlist.Name;
-            TotalSongNumStr = Playlist.TotalSongNumStr;
-            Cover = Playlist.Cover;
-            SongList = Playlist.SongList;
-            IsPlayAllButtonEnabled = SongList.Count > 0;
+            PlaylistName = message.NewName;
         }
     }
 
@@ -65,8 +60,6 @@ public partial class PlayListDetailViewModel
     {
         if (PlaylistName == message.Playlist.Name)
         {
-            Playlist = Data.SelectedPlaylist = message.Playlist;
-            PlaylistName = Playlist.Name;
             TotalSongNumStr = Playlist.TotalSongNumStr;
             Cover = null;
             Cover = Playlist.Cover;
