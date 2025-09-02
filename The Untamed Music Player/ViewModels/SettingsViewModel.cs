@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -18,8 +16,6 @@ using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
-using Windows.Media.Playlists;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
