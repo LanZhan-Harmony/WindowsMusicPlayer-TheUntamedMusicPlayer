@@ -214,7 +214,7 @@
     <value>Refresh libraries</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>Exclusive mode</value>
+    <value>Exclusive mode (Comming soon)</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
     <value>If you are on the music library's song page with folder sorting enabled, clicking a song will only add songs from that same folder to the playback queue</value>
@@ -936,6 +936,18 @@
   <data name="PlaylistInfo_AddItems" xml:space="preserve">
     <value>{num} items added to playlist '{title}'.</value>
   </data>
+  <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
+    <value>{num} playlist has been imported.</value>
+  </data>
+  <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
+    <value>{num} playlist has been exported.</value>
+  </data>
+  <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
+    <value>{num} playlists have been exported.</value>
+  </data>
+  <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
+    <value>{num} playlists have been imported.</value>
+  </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
     <value>{num} item added to playlist '{title}'.</value>
   </data>
@@ -944,5 +956,11 @@
   </data>
   <data name="Settings_Play.Text" xml:space="preserve">
     <value>Play</value>
+  </data>
+  <data name="Settings_PlaylistFile" xml:space="preserve">
+    <value>Playlist file</value>
+  </data>
+  <data name="Settings_Playlist" xml:space="preserve">
+    <value>Playlist</value>
   </data>
 </root>

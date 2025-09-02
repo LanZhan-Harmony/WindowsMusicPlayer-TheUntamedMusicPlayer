@@ -1,10 +1,12 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -17,6 +19,7 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
+using Windows.Media.Playlists;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -25,7 +28,10 @@ using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
-public partial class SettingsViewModel : ObservableRecipient
+public partial class SettingsViewModel
+    : ObservableRecipient,
+        IRecipient<HavePlaylistMessage>,
+        IDisposable
 {
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILocalSettingsService _localSettingsService;
@@ -46,6 +52,9 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         SaveSongDownloadLocationAsync(value);
     }
+
+    [ObservableProperty]
+    public partial bool IsExportPlaylistsButtonEnabled { get; set; } = false;
 
     /// <summary>
     /// 是否启用窗口失去焦点回退
@@ -78,10 +87,11 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 是否为独占模式
     /// </summary>
     [ObservableProperty]
-    public partial bool IsExclusiveMode { get; set; }
+    public partial bool IsExclusiveMode { get; set; } = Data.IsExclusiveMode;
 
     partial void OnIsExclusiveModeChanged(bool value)
     {
+        Data.IsExclusiveMode = value;
         SaveExclusiveModeAsync(value);
     }
 
@@ -89,10 +99,11 @@ public partial class SettingsViewModel : ObservableRecipient
     /// 是否为如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列
     /// </summary>
     [ObservableProperty]
-    public partial bool IsOnlyAddSpecificFolder { get; set; }
+    public partial bool IsOnlyAddSpecificFolder { get; set; } = Data.IsOnlyAddSpecificFolder;
 
     partial void OnIsOnlyAddSpecificFolderChanged(bool value)
     {
+        Data.IsOnlyAddSpecificFolder = value;
         SaveOnlyAddSpecificFolderAsync(value);
     }
 
@@ -208,6 +219,7 @@ public partial class SettingsViewModel : ObservableRecipient
     public SettingsViewModel()
         : base(StrongReferenceMessenger.Default)
     {
+        Messenger.Register(this);
         _themeSelectorService = App.GetService<IThemeSelectorService>();
         _localSettingsService = App.GetService<ILocalSettingsService>();
         ElementTheme = _themeSelectorService.Theme;
@@ -215,7 +227,13 @@ public partial class SettingsViewModel : ObservableRecipient
 
         LoadSongDownloadLocationAsync();
         LoadFonts();
+        IsExportPlaylistsButtonEnabled = Data.PlaylistLibrary.Playlists.Count > 0;
         Data.SettingsViewModel = this;
+    }
+
+    public void Receive(HavePlaylistMessage message)
+    {
+        IsExportPlaylistsButtonEnabled = message.HasPlaylist;
     }
 
     /// <summary>
@@ -272,67 +290,217 @@ public partial class SettingsViewModel : ObservableRecipient
         Process.Start("explorer.exe", SongDownloadLocation);
     }
 
+    public async void ChangeSongDownloadLocationButton_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        try
+        {
+            var openPicker = new FolderPicker
+            {
+                SuggestedStartLocation = PickerLocationId.MusicLibrary,
+                FileTypeFilter = { "*" },
+            };
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(openPicker, hWnd);
+            var folder = await openPicker.PickSingleFolderAsync();
+            if (folder is not null)
+            {
+                SongDownloadLocation = folder.Path;
+            }
+        }
+        catch { }
+        finally
+        {
+            (sender as Button)!.IsEnabled = true;
+        }
+    }
+
     public async void ImportFromM3u8Button_Click(object sender, RoutedEventArgs e)
     {
         (sender as Button)!.IsEnabled = false;
-        var picker = new FileOpenPicker
+        try
         {
-            SuggestedStartLocation = PickerLocationId.MusicLibrary,
-            FileTypeFilter = { ".m3u8", ".m3u" },
-        };
-        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(picker, hWnd);
-        var files = await picker.PickMultipleFilesAsync();
-        var infos = new List<PlaylistInfo>();
-        foreach (var file in files)
-        {
-            var (playlistName, coverPath, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
-            if (string.IsNullOrEmpty(playlistName))
+            var picker = new FileOpenPicker
             {
-                playlistName = "PlaylistInfo_UntitledPlaylist".GetLocalized();
+                SuggestedStartLocation = PickerLocationId.MusicLibrary,
+                FileTypeFilter = { ".m3u8", ".m3u" },
+            };
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(picker, hWnd);
+            var files = await picker.PickMultipleFilesAsync();
+            if (files.Count == 0)
+            {
+                return;
             }
-            var info = new PlaylistInfo(playlistName, songs, coverPath);
-            infos.Add(info);
+            var infos = new List<PlaylistInfo>();
+            foreach (var file in files)
+            {
+                var (playlistName, coverPath, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(
+                    file
+                );
+                if (string.IsNullOrEmpty(playlistName))
+                {
+                    playlistName = "PlaylistInfo_UntitledPlaylist".GetLocalized();
+                }
+                var info = new PlaylistInfo(playlistName, coverPath);
+                await info.AddSongs(songs);
+                infos.Add(info);
+            }
+            Data.PlaylistLibrary.NewPlaylists(infos);
+            Messenger.Send(
+                new LogMessage(
+                    LogLevel.None,
+                    infos.Count == 1
+                        ? "PlaylistInfo_ImportPlaylist".GetLocalizedWithReplace(
+                            "{num}",
+                            $"{infos.Count}"
+                        )
+                        : "PlaylistInfo_ImportPlaylists".GetLocalizedWithReplace(
+                            "{num}",
+                            $"{infos.Count}"
+                        )
+                )
+            );
         }
-        Data.PlaylistLibrary.NewPlaylists(infos);
-        (sender as Button)!.IsEnabled = true;
-    }
-
-    public void ImportFromBinButton_Click(object sender, RoutedEventArgs e)
-    {
-        (sender as Button)!.IsEnabled = false;
-        (sender as Button)!.IsEnabled = true;
-    }
-
-    public void ExportToM3u8Button_Click(object sender, RoutedEventArgs e)
-    {
-        (sender as Button)!.IsEnabled = false;
-        (sender as Button)!.IsEnabled = true;
-    }
-
-    public void ExportToBinButton_Click(object sender, RoutedEventArgs e)
-    {
-        (sender as Button)!.IsEnabled = false;
-        (sender as Button)!.IsEnabled = true;
-    }
-
-    public async void ChangeSongDownloadLocationButton_Click(object sender, RoutedEventArgs e)
-    {
-        var senderButton = sender as Button;
-        senderButton!.IsEnabled = false;
-        var openPicker = new FolderPicker
+        catch { }
+        finally
         {
-            SuggestedStartLocation = PickerLocationId.MusicLibrary,
-            FileTypeFilter = { "*" },
-        };
-        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(openPicker, hWnd);
-        var folder = await openPicker.PickSingleFolderAsync();
-        if (folder is not null)
-        {
-            SongDownloadLocation = folder.Path;
+            (sender as Button)!.IsEnabled = true;
         }
-        senderButton!.IsEnabled = true;
+    }
+
+    public async void ImportFromBinButton_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        try
+        {
+            var picker = new FileOpenPicker
+            {
+                SuggestedStartLocation = PickerLocationId.MusicLibrary,
+                FileTypeFilter = { ".bin" },
+            };
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(picker, hWnd);
+            var file = await picker.PickSingleFileAsync();
+            if (file is not null)
+            {
+                var playlists = await FileManager.LoadPlaylistDataAsync(file);
+                foreach (var playlist in playlists)
+                {
+                    playlist.InitializeCover();
+                    playlist.GetCover();
+                }
+                Data.PlaylistLibrary.NewPlaylists(playlists);
+                Messenger.Send(
+                    new LogMessage(
+                        LogLevel.None,
+                        playlists.Count == 1
+                            ? "PlaylistInfo_ImportPlaylist".GetLocalizedWithReplace(
+                                "{num}",
+                                $"{playlists.Count}"
+                            )
+                            : "PlaylistInfo_ImportPlaylists".GetLocalizedWithReplace(
+                                "{num}",
+                                $"{playlists.Count}"
+                            )
+                    )
+                );
+            }
+        }
+        catch { }
+        finally
+        {
+            (sender as Button)!.IsEnabled = true;
+        }
+    }
+
+    public async void ExportToM3u8Button_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        try
+        {
+            var folderPicker = new FolderPicker
+            {
+                SuggestedStartLocation = PickerLocationId.MusicLibrary,
+                FileTypeFilter = { "*" },
+            };
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(folderPicker, hWnd);
+            var folder = await folderPicker.PickSingleFolderAsync();
+            var count = Data.PlaylistLibrary.Playlists.Count;
+            if (folder is not null && count != 0)
+            {
+                await M3u8Helper.ExportPlaylistsToM3u8Async(folder);
+                Messenger.Send(
+                    new LogMessage(
+                        LogLevel.None,
+                        count == 1
+                            ? "PlaylistInfo_ExportPlaylist".GetLocalizedWithReplace(
+                                "{num}",
+                                $"{count}"
+                            )
+                            : "PlaylistInfo_ExportPlaylists".GetLocalizedWithReplace(
+                                "{num}",
+                                $"{count}"
+                            )
+                    )
+                );
+            }
+        }
+        catch { }
+        finally
+        {
+            (sender as Button)!.IsEnabled = true;
+        }
+    }
+
+    public async void ExportToBinButton_Click(object sender, RoutedEventArgs e)
+    {
+        (sender as Button)!.IsEnabled = false;
+        try
+        {
+            var prepareBinTask = FileManager.SavePlaylistDataAsync(Data.PlaylistLibrary.Playlists);
+            var savePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.MusicLibrary,
+                SuggestedFileName = "Settings_Playlist".GetLocalized(),
+                FileTypeChoices = { new("Settings_PlaylistFile".GetLocalized(), [".bin"]) },
+            };
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(savePicker, hWnd);
+            var file = await savePicker.PickSaveFileAsync();
+            var count = Data.PlaylistLibrary.Playlists.Count;
+            if (file is not null && count != 0)
+            {
+                await prepareBinTask;
+                var binPath = Path.Combine(
+                    ApplicationData.Current.LocalFolder.Path,
+                    "PlaylistData",
+                    "Playlists.bin"
+                );
+                var sourceFile = await StorageFile.GetFileFromPathAsync(binPath);
+                await sourceFile.CopyAndReplaceAsync(file);
+                Messenger.Send(
+                    new LogMessage(
+                        LogLevel.None,
+                        count == 1
+                            ? "PlaylistInfo_ExportPlaylist".GetLocalizedWithReplace(
+                                "{num}",
+                                $"{count}"
+                            )
+                            : "PlaylistInfo_ExportPlaylists".GetLocalizedWithReplace(
+                                "{num}",
+                                $"{count}"
+                            )
+                    )
+                );
+            }
+        }
+        catch { }
+        finally
+        {
+            (sender as Button)!.IsEnabled = true;
+        }
     }
 
     public void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -569,5 +737,10 @@ public partial class SettingsViewModel : ObservableRecipient
     private async void SaveSelectedFontSizeAsync(double fontSize)
     {
         await _localSettingsService.SaveSettingAsync("SelectedFontSize", fontSize);
+    }
+
+    public void Dispose()
+    {
+        Messenger.Unregister<HavePlaylistMessage>(this);
     }
 }
