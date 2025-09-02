@@ -289,9 +289,9 @@ public sealed partial class PlayListDetailPage : Page
         }
     }
 
-    private async void RenameButton_Click(object sender, RoutedEventArgs e)
+    private async void EditInfoButton_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new RenamePlaylistInfoDialog(ViewModel.Playlist) { XamlRoot = XamlRoot };
+        var dialog = new EditPlaylistInfoDialog(ViewModel.Playlist) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
     }
 

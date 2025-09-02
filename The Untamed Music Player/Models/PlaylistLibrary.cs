@@ -75,21 +75,6 @@ public partial class PlaylistLibrary : ObservableRecipient
         _ = FileManager.SavePlaylistDataAsync(Playlists);
     }
 
-    public bool RenamePlaylist(PlaylistInfo info, string newName)
-    {
-        var oldName = info.Name;
-        if (string.IsNullOrEmpty(newName) || newName == oldName)
-        {
-            return false;
-        }
-        var uniqueName = GetUniquePlaylistName(newName);
-        info.Name = uniqueName;
-        Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
-        Messenger.Send(new PlaylistRenameMessage(oldName, info));
-        _ = FileManager.SavePlaylistDataAsync(Playlists);
-        return true;
-    }
-
     public void DeletePlaylist(PlaylistInfo info)
     {
         Playlists.Remove(info);
@@ -168,7 +153,7 @@ public partial class PlaylistLibrary : ObservableRecipient
         _ = FileManager.SavePlaylistDataAsync(Playlists);
     }
 
-    private string GetUniquePlaylistName(string baseName)
+    public string GetUniquePlaylistName(string baseName)
     {
         var existingNames = Playlists.AsValueEnumerable().Select(p => p.Name).ToHashSet();
         if (!existingNames.Contains(baseName))
