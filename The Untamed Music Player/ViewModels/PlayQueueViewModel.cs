@@ -250,12 +250,15 @@ public partial class PlayQueueViewModel : ObservableObject
         }
     }
 
-    public void PlayqueueListView_DragItemsCompleted(object sender, DragItemsCompletedEventArgs e)
+    public void PlayqueueListView_DragItemsCompleted(
+        object sender,
+        DragItemsCompletedEventArgs args
+    )
     {
         // 检查是否是重排序操作（Move操作且在同一个ListView内）
-        if (e.DropResult == DataPackageOperation.Move && e.Items.Count > 0)
+        if (args.DropResult == DataPackageOperation.Move && args.Items.Count > 0)
         {
-            var songs = e.Items.AsValueEnumerable().Cast<IndexedPlayQueueSong>().ToArray();
+            var songs = args.Items.AsValueEnumerable().Cast<IndexedPlayQueueSong>().ToArray();
             if (songs.Length == 0)
             {
                 return;

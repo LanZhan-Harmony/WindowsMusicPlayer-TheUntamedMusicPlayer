@@ -246,7 +246,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         {
             response?.Dispose();
         }
-    errorExit:
+        errorExit:
         return (false, new JsonObject { { "code", 301 } });
     }
 
@@ -317,7 +317,8 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     }
 
     [GeneratedRegex(
-        @"<div class=""cver u-cover u-cover-3"">[\s\S]*?<img src=""([^""]+)"">[\s\S]*?<a class=""sname f-fs1 s-fc0"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>[\s\S]*?<a class=""nm nm f-thide s-fc3"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>"
+        @"<div class=""cver u-cover u-cover-3"">[\s\S]*?<img src=""([^""]+)"">[\s\S]*?<a class=""sname f-fs1 s-fc0"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>[\s\S]*?<a class=""nm nm f-thide s-fc3"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>",
+        RegexOptions.Compiled
     )]
     private static partial Regex MyRegex();
 }

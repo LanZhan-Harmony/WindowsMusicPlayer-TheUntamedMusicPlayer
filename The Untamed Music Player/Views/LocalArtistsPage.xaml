@@ -171,10 +171,11 @@
                 </Border>
                 <TextBlock Grid.Row="1"
                            Margin="9,3,9,0" HorizontalAlignment="Center"
-                           FontWeight="SemiBold"
+                           FontWeight="SemiBold" MaxLines="2"
                            Text="{x:Bind Name}"
                            TextTrimming="CharacterEllipsis"
-                           TextWrapping="WrapWholeWords"/>
+                           TextWrapping="WrapWholeWords"
+                           ToolTipService.ToolTip="{x:Bind Name}"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>

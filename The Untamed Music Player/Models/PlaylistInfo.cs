@@ -27,25 +27,19 @@ public partial class PlaylistInfo
     [MemoryPackConstructor]
     public PlaylistInfo() { }
 
-    public PlaylistInfo(string name)
+    public PlaylistInfo(string name, string? coverPath = null)
     {
         Name = name;
         TotalSongNumStr = GetTotalSongNumStr(0);
-        ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
-    }
-
-    public PlaylistInfo(string name, List<IBriefSongInfoBase> list, string? coverPath)
-    {
-        Name = name;
         IsCoverEdited = coverPath is not null;
         if (IsCoverEdited)
         {
             CoverPaths.Add(coverPath!);
         }
-        AddSongs(list);
+        ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
     }
 
-    private async void AddSongs(List<IBriefSongInfoBase> songs)
+    public async Task AddSongs(List<IBriefSongInfoBase> songs)
     {
         foreach (var song in songs)
         {
@@ -73,7 +67,7 @@ public partial class PlaylistInfo
     /// <summary>
     /// 重新索引所有歌曲，确保Index对应真实位置
     /// </summary>
-    private void ReindexSongs()
+    public void ReindexSongs()
     {
         for (var i = 0; i < SongList.Count; i++)
         {

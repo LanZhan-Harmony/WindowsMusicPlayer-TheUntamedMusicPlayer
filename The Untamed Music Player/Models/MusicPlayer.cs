@@ -99,6 +99,11 @@ public partial class MusicPlayer
     private SyncProcedure? _syncFailCallback;
 
     /// <summary>
+    /// 是否已经加载完成
+    /// </summary>
+    public bool HasLoaded { get; private set; } = false;
+
+    /// <summary>
     /// 播放速度
     /// </summary>
     public double PlaySpeed
@@ -329,17 +334,6 @@ public partial class MusicPlayer
         {
             slice.UpdateStyle();
         }
-    }
-
-    public void Reset()
-    {
-        Stop();
-        CurrentBriefSong = null;
-        CurrentSong = null;
-        PlayQueueIndex = 0;
-        _playQueueLength = 0;
-        PlayQueue.Clear();
-        ShuffledPlayQueue.Clear();
     }
 
     /// <summary>
@@ -1457,6 +1451,16 @@ public partial class MusicPlayer
                 CurrentVolume = 100;
                 PlaySpeed = 1;
             }
+
+            // 如果是文件激活启动，跳过播放队列和当前歌曲的加载
+            if (Data.IsFileActivationLaunch)
+            {
+                Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Visible;
+                Data.RootPlayBarViewModel?.Availability = true;
+                HasLoaded = true;
+                return;
+            }
+
             (PlayQueue, ShuffledPlayQueue) = await FileManager.LoadPlayQueueDataAsync();
             _playQueueLength = PlayQueue.Count;
             if (_playQueueLength > 0)
@@ -1495,6 +1499,7 @@ public partial class MusicPlayer
                     : Visibility.Collapsed;
             Data.RootPlayBarViewModel?.Availability =
                 CurrentSong is not null && _playQueueLength > 0;
+            HasLoaded = true;
         }
         catch (Exception ex)
         {
@@ -1504,6 +1509,7 @@ public partial class MusicPlayer
             ShuffledPlayQueue = [];
             Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Collapsed;
             Data.RootPlayBarViewModel?.Availability = false;
+            HasLoaded = true;
             Debug.WriteLine(ex.StackTrace);
         }
     }

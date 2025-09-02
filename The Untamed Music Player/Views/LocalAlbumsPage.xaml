@@ -41,7 +41,7 @@
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:LocalAlbumInfo">
-            <Grid Width="170" Height="226"
+            <Grid Width="170" Height="228"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
@@ -192,16 +192,20 @@
                     </Grid>
                 </Border>
                 <TextBlock Grid.Row="1"
-                           Margin="9,0,9,0"
-                           FontWeight="SemiBold"
+                           Margin="9,3,9,0"
+                           FontWeight="SemiBold" MaxLines="2"
                            Text="{x:Bind Name}"
-                           TextTrimming="CharacterEllipsis"/>
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="WrapWholeWords"
+                           ToolTipService.ToolTip="{x:Bind Name}"/>
                 <TextBlock Grid.Row="2"
+                           Height="40"
                            Margin="9,0,9,0"
                            FontSize="12"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Text="{x:Bind ArtistsStr}"
-                           TextTrimming="CharacterEllipsis"/>
+                           TextTrimming="CharacterEllipsis"
+                           ToolTipService.ToolTip="{x:Bind ArtistsStr}"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>

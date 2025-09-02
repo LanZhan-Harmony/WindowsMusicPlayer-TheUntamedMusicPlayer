@@ -23,6 +23,11 @@ public static class Data
     /// </summary>
     public static bool IsMusicProcessing { get; set; } = false;
 
+    /// <summary>
+    /// 是否为文件激活启动（通过文件关联启动）
+    /// </summary>
+    public static bool IsFileActivationLaunch { get; set; } = false;
+
     public static LocalAlbumInfo? SelectedLocalAlbum { get; set; }
     public static LocalArtistInfo? SelectedLocalArtist { get; set; }
     public static PlaylistInfo? SelectedPlaylist { get; set; }
@@ -78,6 +83,16 @@ public static class Data
         ".tif",
         ".tiff",
     ];
+
+    /// <summary>
+    /// 是否为独占模式
+    /// </summary>
+    public static bool IsExclusiveMode { get; set; }
+
+    /// <summary>
+    /// 是否为如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列
+    /// </summary>
+    public static bool IsOnlyAddSpecificFolder { get; set; }
 
     /// <summary>
     /// 歌词字体
