@@ -307,7 +307,7 @@ public static class CurrentSongHighlightExtensions
     /// <returns>如果是同一首歌曲则返回 true，否则返回 false</returns>
     public static bool IsSameSong(IDetailedSongInfoBase currentSong, IBriefSongInfoBase compareSong)
     {
-        return (compareSong, currentSong) switch
+        return (currentSong, compareSong) switch
         {
             // 本地歌曲比较：通过路径比较
             (DetailedLocalSongInfo detailedLocalSong, BriefLocalSongInfo localSong) =>

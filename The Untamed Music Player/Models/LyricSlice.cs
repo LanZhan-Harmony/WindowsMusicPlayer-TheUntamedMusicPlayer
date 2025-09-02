@@ -32,7 +32,7 @@ public partial class LyricSlice(double time, string content) : ObservableObject
     [ObservableProperty]
     public partial double Opacity { get; set; } = 0.5;
 
-    [GeneratedRegex(@".*\](.*)")]
+    [GeneratedRegex(@".*\](.*)", RegexOptions.Compiled)]
     private static partial Regex RegexWord();
 
     [GeneratedRegex(@"\[([0-9.:]*)\]", RegexOptions.Compiled)]
@@ -48,6 +48,11 @@ public partial class LyricSlice(double time, string content) : ObservableObject
         Opacity = IsCurrent ? 1.0 : 0.5;
     }
 
+    /// <summary>
+    /// 解析歌词文本并返回歌词片段列表
+    /// </summary>
+    /// <param name="lyric">LRC格式的歌词文本</param>
+    /// <returns>按时间排序的歌词片段列表</returns>
     public static async Task<List<LyricSlice>> GetLyricSlices(string lyric)
     {
         if (string.IsNullOrWhiteSpace(lyric))
@@ -59,103 +64,121 @@ public partial class LyricSlice(double time, string content) : ObservableObject
         await Task.Run(() =>
         {
             var lines = lyric.Split('\n');
-            var offset = 0.0;
-            double? lastTime = null;
-            var emptyStartTime = 0.0;
-            var inEmptyBlock = false;
+            var offset = 0.0; // 时间偏移量（毫秒）
+            double? lastTime = null; // 上一条歌词的时间
+            var emptyStartTime = 0.0; // 空白歌词块的开始时间
+            var inEmptyBlock = false; // 当前是否在空白歌词块中
+            var timeGroupedLyrics = new Dictionary<double, List<string>>(); // 用于存储时间相同的歌词内容(例如翻译), Dictionary<时间, 歌词内容列表>
 
-            // 预编译的正则表达式已经在类级别定义，直接使用
-            var regexword = RegexWord();
-            var regextime = RegexTime();
-            var regexOffset = RegexOffset();
-
-            foreach (var line in lines)
+            foreach (var line in lines) // 解析所有歌词行并按时间分组
             {
                 if (string.IsNullOrEmpty(line))
                 {
                     continue;
                 }
 
-                // 处理元信息行
-                if (line.StartsWith("[offset:"))
+                if (line.StartsWith("[offset:")) // 处理偏移量标签 [offset:±毫秒数]
                 {
-                    var offsetMatch = regexOffset.Match(line);
+                    var offsetMatch = RegexOffset().Match(line);
                     if (offsetMatch.Success)
                     {
                         offset = double.Parse(offsetMatch.Groups[1].Value);
                     }
                     continue;
                 }
+
                 if (
-                    line.StartsWith("[ti:")
-                    || line.StartsWith("[ar:")
-                    || line.StartsWith("[al:")
-                    || line.StartsWith("[by:")
-                )
+                    line.StartsWith("[ti:") // 标题
+                    || line.StartsWith("[ar:") // 艺术家
+                    || line.StartsWith("[al:") // 专辑
+                    || line.StartsWith("[by:") // 制作者
+                ) // 跳过元信息标签
                 {
                     continue;
                 }
 
                 try
                 {
-                    var wordMatch = regexword.Match(line);
-                    var timeMatches = regextime.Matches(line);
+                    // 提取歌词内容
+                    var wordMatch = RegexWord().Match(line);
+                    var word = wordMatch.Groups[1].Value;
+                    var isEmptyWord = string.IsNullOrWhiteSpace(word);
 
+                    // 提取时间标签
+                    var timeMatches = RegexTime().Matches(line);
                     if (timeMatches.Count == 0)
                     {
                         continue;
                     }
 
-                    var word = wordMatch.Groups[1].Value;
-                    var isEmptyWord = string.IsNullOrWhiteSpace(word);
-
-                    var currentTime =
-                        TimeSpan.Parse("00:" + timeMatches[0].Groups[1].Value).TotalMilliseconds
-                        + offset;
-
-                    if (isEmptyWord)
+                    foreach (Match timeMatch in timeMatches) // 处理该行的所有时间标签
                     {
-                        if (!inEmptyBlock)
+                        var time =
+                            TimeSpan.Parse("00:" + timeMatch.Groups[1].Value).TotalMilliseconds
+                            + offset; // 解析时间并加上偏移量
+
+                        if (isEmptyWord) // 是空白歌词
                         {
-                            emptyStartTime =
-                                currentTime != lastTime ? currentTime : (lastTime ?? 0) + 1;
-                            inEmptyBlock = true;
-                        }
-                    }
-                    else
-                    {
-                        if (inEmptyBlock)
-                        {
-                            if (currentTime - emptyStartTime > 5000)
+                            if (!inEmptyBlock) // 是空白块中第一个空白行
                             {
-                                lyricSlices.Add(new LyricSlice(emptyStartTime, "•••"));
+                                emptyStartTime = time != lastTime ? time : (lastTime ?? 0) + 1; // 如果时间与上一条歌词相同, 则将空白块开始时间设为上一条歌词时间+1毫秒
+                                inEmptyBlock = true;
                             }
-                            inEmptyBlock = false;
                         }
-
-                        foreach (Match timeMatch in timeMatches)
+                        else // 不是空白歌词
                         {
-                            var time =
-                                TimeSpan.Parse("00:" + timeMatch.Groups[1].Value).TotalMilliseconds
-                                + offset;
-                            lyricSlices.Add(new LyricSlice(time, word));
+                            if (inEmptyBlock) // 之前在空白块中, 现在遇到非空白歌词, 结束空白块
+                            {
+                                if (time - emptyStartTime > 5000) // 如果空白块持续时间超过5秒，添加省略号
+                                {
+                                    if (
+                                        !timeGroupedLyrics.TryGetValue(
+                                            emptyStartTime,
+                                            out var emptyBlockList
+                                        )
+                                    )
+                                    {
+                                        timeGroupedLyrics[emptyStartTime] = emptyBlockList = [];
+                                    }
+                                    emptyBlockList.Add("•••");
+                                }
+                                inEmptyBlock = false;
+                            }
+
+                            if (!timeGroupedLyrics.TryGetValue(time, out var lyricList)) // 将歌词按时间分组
+                            {
+                                timeGroupedLyrics[time] = lyricList = [];
+                            }
+                            lyricList.Add(word);
                             lastTime = time;
                         }
                     }
                 }
-                catch (Exception)
+                catch
                 {
-                    // 考虑添加日志记录，而不是静默忽略
                     continue;
                 }
             }
 
-            // 处理最后一个空白块
-            if (inEmptyBlock && lastTime.HasValue && lastTime.Value - emptyStartTime > 5000)
+            if (inEmptyBlock && lastTime.HasValue && lastTime.Value - emptyStartTime > 5000) // 处理最后一个空白块
             {
-                lyricSlices.Add(new LyricSlice(emptyStartTime, "•••"));
+                if (!timeGroupedLyrics.TryGetValue(emptyStartTime, out var emptyBlockList))
+                {
+                    timeGroupedLyrics[emptyStartTime] = emptyBlockList = [];
+                }
+                emptyBlockList.Add("•••");
+            }
+
+            foreach (var kvp in timeGroupedLyrics) // 将分组的歌词转换为LyricSlice对象
+            {
+                var time = kvp.Key;
+                var contents = kvp.Value;
+                var mergedContent = string.Join("\n", contents); // 将同一时间的多行歌词用换行符连接
+                lyricSlices.Add(new LyricSlice(time, mergedContent));
             }
         });
+
+        // 按时间排序并返回
         return [.. lyricSlices.AsValueEnumerable().OrderBy(t => t.Time)];
     }
 }

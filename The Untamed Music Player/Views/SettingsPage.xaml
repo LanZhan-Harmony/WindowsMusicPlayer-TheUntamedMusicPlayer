@@ -146,10 +146,14 @@
                                 <Button x:Uid="Settings_Import" Click="{x:Bind ViewModel.ImportFromBinButton_Click}"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_ExportToM3u8">
-                                <Button x:Uid="Settings_Export" Click="{x:Bind ViewModel.ExportToM3u8Button_Click}"/>
+                                <Button x:Uid="Settings_Export"
+                                        Click="{x:Bind ViewModel.ExportToM3u8Button_Click}"
+                                        IsEnabled="{x:Bind ViewModel.IsExportPlaylistsButtonEnabled, Mode=OneWay}"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_ExportToBin">
-                                <Button x:Uid="Settings_Export" Click="{x:Bind ViewModel.ExportToBinButton_Click}"/>
+                                <Button x:Uid="Settings_Export"
+                                        Click="{x:Bind ViewModel.ExportToBinButton_Click}"
+                                        IsEnabled="{x:Bind ViewModel.IsExportPlaylistsButtonEnabled, Mode=OneWay}"/>
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>

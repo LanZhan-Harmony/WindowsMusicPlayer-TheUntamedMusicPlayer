@@ -9,6 +9,8 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Media.Playlists;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
@@ -243,6 +245,32 @@ public partial class PlayListDetailViewModel
                     new SuppressNavigationTransitionInfo()
                 );
             }
+        }
+    }
+
+    public void SongListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+    {
+        if (e.Items.Count > 0)
+        {
+            e.Data.RequestedOperation = DataPackageOperation.Move;
+        }
+    }
+
+    public void SongListView_DragItemsCompleted(
+        ListViewBase sender,
+        DragItemsCompletedEventArgs args
+    )
+    {
+        if (args.DropResult == DataPackageOperation.Move && args.Items.Count > 0)
+        {
+            var songs = args.Items.AsValueEnumerable().OfType<IndexedPlaylistSong>().ToArray();
+            if (songs.Length == 0)
+            {
+                return;
+            }
+            Playlist.ReindexSongs();
+            Messenger.Send(new HavePlaylistMessage(true));
+            _ = FileManager.SavePlaylistDataAsync(Data.PlaylistLibrary.Playlists);
         }
     }
 

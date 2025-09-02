@@ -291,17 +291,21 @@ public static partial class M3u8Helper
         ];
     }
 
-    public static async Task ExportPlaylistsToM3u8(StorageFolder folder)
+    public static async Task ExportPlaylistsToM3u8Async(StorageFolder folder)
     {
         var playlists = Data.PlaylistLibrary.Playlists;
         await Task.Run(async () =>
         {
             foreach (var playlist in playlists)
             {
-                var m3u8Content = GenerateM3u8Content(playlist);
-                var fileName = $"{playlist.Name}.m3u8";
-                var filePath = GetUniqueFilePath(Path.Combine(folder.Path, fileName));
-                await File.WriteAllTextAsync(filePath, m3u8Content, Encoding.UTF8);
+                try
+                {
+                    var m3u8Content = GenerateM3u8Content(playlist);
+                    var fileName = $"{playlist.Name}.m3u8";
+                    var filePath = GetUniqueFilePath(Path.Combine(folder.Path, fileName));
+                    await File.WriteAllTextAsync(filePath, m3u8Content, Encoding.UTF8);
+                }
+                catch { }
             }
         });
     }

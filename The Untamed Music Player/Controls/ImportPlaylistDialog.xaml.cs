@@ -2,12 +2,16 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using Windows.Storage;
@@ -123,7 +127,6 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
             {
                 return;
             }
-
             var localFolder = ApplicationData.Current.LocalFolder;
             var playlistCoverFolder = await localFolder.CreateFolderAsync(
                 "PlaylistCover",
@@ -136,10 +139,8 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
                 CreationCollisionOption.ReplaceExisting
             );
             await file.CopyAndReplaceAsync(targetFile);
-
             Cover = new BitmapImage(new Uri(targetFile.Path));
             _coverPath = targetFile.Path;
-            IsSaveCoverButtonEnabled = Cover is not null;
         }
         catch (Exception ex)
         {
@@ -147,6 +148,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         }
         finally
         {
+            IsSaveCoverButtonEnabled = Cover is not null;
             IsChangingCoverProgressRingActive = false;
             (sender as Button)!.IsEnabled = true;
         }
@@ -203,64 +205,79 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
     private async void ImportFromM3u8FilesButton_Click(object sender, RoutedEventArgs e)
     {
         IsImportingProgressRingActive = true;
-        var picker = new FileOpenPicker
+        try
         {
-            SuggestedStartLocation = PickerLocationId.MusicLibrary,
-            FileTypeFilter = { ".m3u8", ".m3u" },
-        };
-        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(picker, hWnd);
-        var files = await picker.PickMultipleFilesAsync();
-        var shouldSetPlaylistName =
-            string.IsNullOrWhiteSpace(PlaylistNameTextBox.Text)
-            || PlaylistNameTextBox.Text == "PlaylistInfo_UntitledPlaylist".GetLocalized();
-        var shouldSetCoverPath = Cover is null;
-        string? playlistName = null;
-        string? coverPath = null;
-        foreach (var file in files)
-        {
-            var (name, path, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
-            foreach (var song in songs)
+            var picker = new FileOpenPicker
             {
-                Songs.Add(new DisplaySongInfo(song));
+                SuggestedStartLocation = PickerLocationId.MusicLibrary,
+                FileTypeFilter = { ".m3u8", ".m3u" },
+            };
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(picker, hWnd);
+            var files = await picker.PickMultipleFilesAsync();
+            if (files.Count == 0)
+            {
+                return;
             }
-            if (shouldSetPlaylistName && playlistName is null && name is not null)
+            var shouldSetPlaylistName =
+                string.IsNullOrWhiteSpace(PlaylistNameTextBox.Text)
+                || PlaylistNameTextBox.Text == "PlaylistInfo_UntitledPlaylist".GetLocalized();
+            var shouldSetCoverPath = Cover is null;
+            string? playlistName = null;
+            string? coverPath = null;
+            foreach (var file in files)
             {
-                playlistName = name;
+                var (name, path, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
+                foreach (var song in songs)
+                {
+                    Songs.Add(new DisplaySongInfo(song));
+                }
+                if (shouldSetPlaylistName && playlistName is null && name is not null)
+                {
+                    playlistName = name;
+                }
+                if (shouldSetCoverPath && coverPath is null && path is not null)
+                {
+                    coverPath = path;
+                }
             }
-            if (shouldSetCoverPath && coverPath is null && path is not null)
+            if (shouldSetPlaylistName && playlistName is not null)
             {
-                coverPath = path;
+                PlaylistNameTextBox.SelectedText = playlistName;
+                IsPrimaryButtonEnabled = true;
+            }
+            if (shouldSetCoverPath && coverPath is not null)
+            {
+                Cover = new BitmapImage(new Uri(coverPath));
+                _coverPath = coverPath;
             }
         }
-        SongCount = Songs.Count;
-        if (shouldSetPlaylistName && playlistName is not null)
+        catch { }
+        finally
         {
-            PlaylistNameTextBox.SelectedText = playlistName;
-            IsPrimaryButtonEnabled = true;
-        }
-        if (shouldSetCoverPath && coverPath is not null)
-        {
-            Cover = new BitmapImage(new Uri(coverPath));
-            _coverPath = coverPath;
+            SongCount = Songs.Count;
             IsSaveCoverButtonEnabled = Cover is not null;
+            IsImportingProgressRingActive = false;
         }
-        IsImportingProgressRingActive = false;
     }
 
     private async void ImportFromFolderButton_Click(object sender, RoutedEventArgs e)
     {
         IsImportingProgressRingActive = true;
-        var folderPicker = new FolderPicker
+        try
         {
-            SuggestedStartLocation = PickerLocationId.MusicLibrary,
-            FileTypeFilter = { "*" },
-        };
-        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(folderPicker, hWnd);
-        var folder = await folderPicker.PickSingleFolderAsync();
-        if (folder is not null)
-        {
+            var folderPicker = new FolderPicker
+            {
+                SuggestedStartLocation = PickerLocationId.MusicLibrary,
+                FileTypeFilter = { "*" },
+            };
+            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(folderPicker, hWnd);
+            var folder = await folderPicker.PickSingleFolderAsync();
+            if (folder is null)
+            {
+                return;
+            }
             var songList = new ConcurrentBag<IBriefSongInfoBase>();
             await LoadMusicAsync(songList, folder);
             foreach (var song in songList)
@@ -276,8 +293,12 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
                 IsPrimaryButtonEnabled = true;
             }
         }
-        SongCount = Songs.Count;
-        IsImportingProgressRingActive = false;
+        catch { }
+        finally
+        {
+            SongCount = Songs.Count;
+            IsImportingProgressRingActive = false;
+        }
     }
 
     private static async Task LoadMusicAsync(
@@ -342,13 +363,23 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         }
     }
 
-    private void ImportButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    private async void ImportButtonClick(
+        ContentDialog sender,
+        ContentDialogButtonClickEventArgs args
+    )
     {
         var name = string.IsNullOrEmpty(PlaylistNameTextBox.Text)
             ? "PlaylistInfo_UntitledPlaylist".GetLocalized()
             : PlaylistNameTextBox.Text;
-        var playlist = new PlaylistInfo(name, [.. Songs.Select(s => s.Song)], _coverPath);
+        var playlist = new PlaylistInfo(name, _coverPath);
+        await playlist.AddSongs([.. Songs.Select(s => s.Song)]);
         Data.PlaylistLibrary!.NewPlaylists([playlist]);
+        StrongReferenceMessenger.Default.Send(
+            new LogMessage(
+                LogLevel.None,
+                "PlaylistInfo_ImportPlaylist".GetLocalizedWithReplace("{num}", "1")
+            )
+        );
     }
 
     private new void CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -361,10 +392,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
                 {
                     File.Delete(_coverPath);
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"删除封面失败: {ex.Message}");
-                }
+                catch { }
             }
         }
     }

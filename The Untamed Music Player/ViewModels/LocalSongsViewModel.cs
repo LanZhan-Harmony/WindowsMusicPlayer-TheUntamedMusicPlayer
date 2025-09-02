@@ -228,16 +228,31 @@ public partial class LocalSongsViewModel
         await SortSongs();
     }
 
-    private List<BriefLocalSongInfo> ConvertGroupedToFlatList()
+    private List<BriefLocalSongInfo> ConvertGroupedToFlatList(BriefLocalSongInfo? info = null)
     {
-        return _isGrouped
-            ?
+        if (_isGrouped)
+        {
+            if ((SortMode is 10 or 11) && Data.IsOnlyAddSpecificFolder)
+            {
+                return
+                [
+                    .. GroupedSongList
+                        .AsValueEnumerable()
+                        .Where(group => group.Key == info?.Folder)
+                        .SelectMany(group => group.OfType<BriefLocalSongInfo>()),
+                ];
+            }
+            return
             [
                 .. GroupedSongList
                     .AsValueEnumerable()
                     .SelectMany(group => group.OfType<BriefLocalSongInfo>()),
-            ]
-            : NotGroupedSongList;
+            ];
+        }
+        else
+        {
+            return NotGroupedSongList;
+        }
     }
 
     public object GetSongListViewSource(
@@ -522,16 +537,22 @@ public partial class LocalSongsViewModel
 
     public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayQueue($"LocalSongs:All:{SortByStr}", ConvertGroupedToFlatList());
         if (e.ClickedItem is BriefLocalSongInfo info)
         {
+            Data.MusicPlayer.SetPlayQueue(
+                $"LocalSongs:All:{SortByStr}",
+                ConvertGroupedToFlatList(info)
+            );
             Data.MusicPlayer.PlaySongByInfo(info);
         }
     }
 
     public void PlayButton_Click(BriefLocalSongInfo info)
     {
-        Data.MusicPlayer.SetPlayQueue($"LocalSongs:All:{SortByStr}", ConvertGroupedToFlatList());
+        Data.MusicPlayer.SetPlayQueue(
+            $"LocalSongs:All:{SortByStr}",
+            ConvertGroupedToFlatList(info)
+        );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
