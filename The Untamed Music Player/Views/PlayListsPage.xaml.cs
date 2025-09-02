@@ -195,11 +195,11 @@ public sealed partial class PlayListsPage : Page
         }
     }
 
-    private async void RenameButton_Click(object sender, RoutedEventArgs e)
+    private async void EditInfoButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: PlaylistInfo info })
         {
-            var dialog = new RenamePlaylistInfoDialog(info) { XamlRoot = XamlRoot };
+            var dialog = new EditPlaylistInfoDialog(info) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
     }
