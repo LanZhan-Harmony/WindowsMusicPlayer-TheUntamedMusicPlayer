@@ -187,7 +187,7 @@
                         <Setter Target="AddToButton.Width" Value="68"/>
                         <Setter Target="ClearTextBlock.Visibility" Value="Collapsed"/>
                         <Setter Target="AddToTextBlock.Visibility" Value="Collapsed"/>
-                        <Setter Target="PlayqueueListView.Padding" Value="12,0,12,0"/>
+                        <Setter Target="PlayQueueListView.Padding" Value="12,0,12,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
@@ -200,7 +200,7 @@
                         <Setter Target="MenuPanel.Margin" Value="56,22,56,0"/>
                         <Setter Target="ClearTextBlock.Visibility" Value="Visible"/>
                         <Setter Target="AddToTextBlock.Visibility" Value="Visible"/>
-                        <Setter Target="PlayqueueListView.Padding" Value="52,0,52,0"/>
+                        <Setter Target="PlayQueueListView.Padding" Value="52,0,52,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -341,7 +341,7 @@
                 </Button.Flyout>
             </Button>
         </StackPanel>
-        <ListView x:Name="PlayqueueListView"
+        <ListView x:Name="PlayQueueListView"
                   Grid.Row="2"
                   Margin="0,22,0,0"
                   helper:CurrentSongHighlightExtensions.IsPlayQueue="True"
@@ -351,10 +351,10 @@
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
                   AllowDrop="True" CanDragItems="True"
                   CanReorderItems="True"
-                  DragItemsCompleted="{x:Bind ViewModel.PlayqueueListView_DragItemsCompleted}"
-                  DragItemsStarting="{x:Bind ViewModel.PlayqueueListView_DragItemsStarting}"
-                  DragOver="{x:Bind ViewModel.PlayqueueListView_DragOver}"
-                  Drop="{x:Bind ViewModel.PlayqueueListView_Drop}"
+                  DragItemsCompleted="{x:Bind ViewModel.PlayQueueListView_DragItemsCompleted}"
+                  DragItemsStarting="{x:Bind ViewModel.PlayQueueListView_DragItemsStarting}"
+                  DragOver="{x:Bind ViewModel.PlayQueueListView_DragOver}"
+                  Drop="{x:Bind ViewModel.PlayQueueListView_Drop}"
                   IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.PlayQueueListView_ItemClick}"
                   ItemTemplate="{StaticResource PlayQueueListViewTemplate}"

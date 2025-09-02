@@ -301,7 +301,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         }
     }
 
-    private static async Task LoadMusicAsync(
+    public static async Task LoadMusicAsync(
         ConcurrentBag<IBriefSongInfoBase> songList,
         StorageFolder folder
     )

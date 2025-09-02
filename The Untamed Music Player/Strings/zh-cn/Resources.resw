@@ -669,8 +669,8 @@
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
     <value>编辑专辑信息</value>
   </data>
-  <data name="RenamePlaylistInfoDialog.Title" xml:space="preserve">
-    <value>重命名播放列表</value>
+  <data name="EditPlaylistInfoDialog.Title" xml:space="preserve">
+    <value>编辑播放列表信息</value>
   </data>
   <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
     <value>添加到新建播放列表</value>
@@ -687,7 +687,7 @@
   <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
     <value>取消</value>
   </data>
-  <data name="RenamePlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+  <data name="EditPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
     <value>取消</value>
   </data>
   <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
@@ -726,8 +726,8 @@
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>保存</value>
   </data>
-  <data name="RenamePlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>重命名</value>
+  <data name="EditPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
   </data>
   <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>创建</value>
