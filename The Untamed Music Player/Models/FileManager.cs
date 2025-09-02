@@ -319,6 +319,23 @@ public class FileManager
         }
     }
 
+    public static async Task<List<PlaylistInfo>> LoadPlaylistDataAsync(StorageFile file)
+    {
+        try
+        {
+            var buffer = await FileIO.ReadBufferAsync(file);
+            var data = new byte[buffer.Length];
+            using var dataReader = DataReader.FromBuffer(buffer);
+            dataReader.ReadBytes(data);
+            return MemoryPackSerializer.Deserialize<List<PlaylistInfo>>(data) ?? [];
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"加载播放列表数据错误: {ex.Message}");
+            return [];
+        }
+    }
+
     /// <summary>
     /// 使用二进制序列化保存对象到文件
     /// </summary>

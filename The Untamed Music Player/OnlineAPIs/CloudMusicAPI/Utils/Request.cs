@@ -315,9 +315,9 @@ internal static partial class Request
         }
     }
 
-    [GeneratedRegex(@"\w*api")]
+    [GeneratedRegex(@"\w*api", RegexOptions.Compiled)]
     private static partial Regex MyRegex1();
 
-    [GeneratedRegex(@"\s*Domain=[^(;|$)]+;*")]
+    [GeneratedRegex(@"\s*Domain=[^(;|$)]+;*", RegexOptions.Compiled)]
     private static partial Regex MyRegex2();
 }

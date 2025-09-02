@@ -18,8 +18,11 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
             == ExtendedActivationKind.File;
     }
 
-    protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
+    protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
+        // 设置文件激活标志
+        Data.IsFileActivationLaunch = true;
+
         // 获取文件激活参数
         var activatedArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
         if (
@@ -54,7 +57,7 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 
             if (musicFiles.Count > 0)
             {
-                await PlayMusicFiles(musicFiles);
+                PlayMusicFiles(musicFiles);
             }
         }
     }
@@ -66,7 +69,7 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
     {
         // 等待数据对象初始化
         var timeout = DateTime.Now.AddSeconds(10); // 10秒超时
-        while (Data.MusicPlayer is null && DateTime.Now < timeout)
+        while ((Data.MusicPlayer is null || !Data.MusicPlayer.HasLoaded) && DateTime.Now < timeout)
         {
             await Task.Delay(100);
         }
@@ -78,16 +81,10 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
     /// <summary>
     /// 播放音乐文件
     /// </summary>
-    private static async Task PlayMusicFiles(List<BriefLocalSongInfo> musicFiles)
+    private static void PlayMusicFiles(List<BriefLocalSongInfo> musicFiles)
     {
         try
         {
-            if (Data.MusicPlayer is null)
-            {
-                return;
-            }
-            Data.MusicPlayer.Reset();
-            await Task.Delay(200);
             Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", musicFiles);
             Data.MusicPlayer.PlaySongByInfo(musicFiles[0]);
             Data.RootPlayBarViewModel?.DetailModeUpdate();

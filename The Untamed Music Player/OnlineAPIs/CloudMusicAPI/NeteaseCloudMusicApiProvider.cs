@@ -2429,6 +2429,6 @@ public static partial class CloudMusicApiProviders
         };
     }
 
-    [GeneratedRegex(@"^\d+$")]
+    [GeneratedRegex(@"^\d+$", RegexOptions.Compiled)]
     private static partial Regex MyRegex();
 }

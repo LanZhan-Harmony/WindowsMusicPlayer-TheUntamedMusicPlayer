@@ -355,6 +355,12 @@ public class MainViewModel
         Data.IsWindowBackgroundFollowsCover = await _localSettingsService.ReadSettingAsync<bool>(
             "IsWindowBackgroundFollowsCover"
         );
+        Data.IsExclusiveMode = await _localSettingsService.ReadSettingAsync<bool>(
+            "IsExclusiveMode"
+        );
+        Data.IsOnlyAddSpecificFolder = await _localSettingsService.ReadSettingAsync<bool>(
+            "IsOnlyAddSpecificFolder"
+        );
         Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
         if (Data.NotFirstUsed)
         {

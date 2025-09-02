@@ -13,7 +13,7 @@
 
     <Page.Resources>
         <DataTemplate x:Key="PlaylistGridViewTemplate" x:DataType="contract:IBriefOnlinePlaylistInfo">
-            <Grid Width="170" Height="226"
+            <Grid Width="170" Height="228"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
@@ -149,10 +149,13 @@
                 </Border>
                 <TextBlock Grid.Row="1"
                            Margin="9,0,9,0"
-                           FontWeight="SemiBold"
+                           FontWeight="SemiBold" MaxLines="2"
                            Text="{x:Bind Name}"
-                           TextTrimming="CharacterEllipsis"/>
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="WrapWholeWords"
+                           ToolTipService.ToolTip="{x:Bind Name}"/>
                 <TextBlock Grid.Row="2"
+                           Height="40"
                            Margin="9,0,9,0"
                            FontSize="12"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"

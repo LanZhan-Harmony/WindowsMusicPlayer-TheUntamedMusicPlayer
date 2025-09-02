@@ -214,7 +214,7 @@
     <value>刷新库</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>独占模式</value>
+    <value>独占模式 (敬请期待)</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
     <value>如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列</value>
@@ -936,6 +936,18 @@
   <data name="PlaylistInfo_AddItems" xml:space="preserve">
     <value>{num} 项已添加到播放列表"{title}"。</value>
   </data>
+  <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
+    <value>已导入 {num} 个播放列表。</value>
+  </data>
+  <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
+    <value>已导出 {num} 个播放列表。</value>
+  </data>
+  <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
+    <value>已导出 {num} 个播放列表。</value>
+  </data>
+  <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
+    <value>已导入 {num} 个播放列表。</value>
+  </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
     <value>{num} 项已添加到播放列表"{title}"。</value>
   </data>
@@ -944,5 +956,11 @@
   </data>
   <data name="Settings_Play.Text" xml:space="preserve">
     <value>播放</value>
+  </data>
+  <data name="Settings_PlaylistFile" xml:space="preserve">
+    <value>播放列表文件</value>
+  </data>
+  <data name="Settings_Playlist" xml:space="preserve">
+    <value>播放列表</value>
   </data>
 </root>

@@ -124,6 +124,7 @@ public sealed partial class PlayListsPage : Page
 
     private void PlaylistNameTextBox_Loaded(object sender, RoutedEventArgs e)
     {
+        (sender as TextBox)!.Text = "";
         (sender as TextBox)!.SelectedText = "PlaylistInfo_UntitledPlaylist".GetLocalized();
     }
 
