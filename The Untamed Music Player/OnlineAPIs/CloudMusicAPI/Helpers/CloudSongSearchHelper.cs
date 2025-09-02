@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Text.Json;
-using The_Untamed_Music_Player.Contracts.Models;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 

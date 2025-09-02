@@ -10,7 +10,6 @@ using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Media.Playlists;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
