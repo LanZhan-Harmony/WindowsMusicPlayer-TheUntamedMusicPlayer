@@ -1,11 +1,12 @@
-using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Microsoft.Extensions.Logging;
 using Microsoft.Graphics.Canvas;
 using The_Untamed_Music_Player.Contracts.Services;
 using Windows.Graphics;
 using Windows.Storage.Streams;
 using Windows.UI;
 using ZLinq;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Services;
 
@@ -14,6 +15,8 @@ namespace The_Untamed_Music_Player.Services;
 /// </summary>
 public class ColorExtractionService : IColorExtractionService
 {
+    private readonly ILogger _logger = LoggingService.CreateLogger<ColorExtractionService>();
+
     /// <summary>
     /// 从字节数组中提取主色调
     /// </summary>
@@ -49,7 +52,7 @@ public class ColorExtractionService : IColorExtractionService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"颜色提取失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"从字节数组中提取颜色失败");
             return []; // 返回空列表而不是抛出异常
         }
     }
@@ -70,7 +73,7 @@ public class ColorExtractionService : IColorExtractionService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"从URL提取颜色失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"从URL{imageUrl}提取颜色失败");
             return [];
         }
     }

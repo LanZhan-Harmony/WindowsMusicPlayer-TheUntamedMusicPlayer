@@ -1,15 +1,19 @@
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using MemoryPack;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Services;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 
 [MemoryPackable]
 public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
 {
+    protected static readonly ILogger _logger =
+        LoggingService.CreateLogger<BriefCloudOnlineSongInfo>();
     public bool IsPlayAvailable { get; set; } = false;
     public string Path { get; set; } = null!;
     public string Title { get; set; } = "";
@@ -139,9 +143,10 @@ public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
             );
             IsPlayAvailable = true;
         }
-        catch
+        catch (Exception ex)
         {
             IsPlayAvailable = false;
+            _logger.ZLogInformation(ex, $"读取网易云音乐歌曲信息时发生错误");
         }
     }
 }
@@ -242,7 +247,7 @@ public class DetailedCloudOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOn
         catch (Exception ex)
         {
             detailedInfo.IsPlayAvailable = false;
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"读取网易云音乐{info.ID}详细信息时发生错误");
             return detailedInfo;
         }
     }

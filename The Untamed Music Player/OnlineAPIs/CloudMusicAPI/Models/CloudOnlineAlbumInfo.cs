@@ -1,14 +1,18 @@
-using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Services;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
 
 public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
 {
+    protected static readonly ILogger _logger =
+        LoggingService.CreateLogger<BriefCloudOnlineAlbumInfo>();
     public long ID { get; set; }
     public string Name { get; set; } = null!;
     public BitmapImage? Cover { get; set; }
@@ -48,7 +52,10 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
                 await coverTask;
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"读取网易云专辑信息失败");
+        }
         return info;
     }
 
@@ -211,7 +218,7 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.StackTrace);
+                _logger.ZLogInformation(ex, $"读取网易云专辑内的音乐信息失败");
             }
         }
     }
@@ -219,6 +226,8 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
 
 public class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
 {
+    private static readonly ILogger _logger =
+        LoggingService.CreateLogger<CloudOnlineArtistAlbumInfo>();
     public bool IsAvailable { get; set; } = false;
     public long ID { get; set; }
     public string Name { get; set; } = null!;
@@ -321,7 +330,7 @@ public class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.StackTrace);
+                _logger.ZLogInformation(ex, $"读取网易云专辑内的音乐信息失败");
             }
         }
     }

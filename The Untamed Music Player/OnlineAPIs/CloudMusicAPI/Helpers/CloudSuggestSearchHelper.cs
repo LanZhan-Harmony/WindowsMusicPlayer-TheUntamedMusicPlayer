@@ -1,11 +1,15 @@
-using System.Diagnostics;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 
 public class CloudSuggestSearchHelper
 {
+    private static readonly ILogger _logger =
+        LoggingService.CreateLogger<CloudSuggestSearchHelper>();
     private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
     public static async Task<List<SuggestResult>> GetSuggestAsync(string keyWords)
@@ -31,9 +35,9 @@ public class CloudSuggestSearchHelper
                     AddResultsFromProperty(resultElement, "playlists", 2, "\uE728", list);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Debug.WriteLine("获取网易云音乐搜索建议失败");
+                _logger.ZLogInformation(ex, $"获取网易云搜索建议失败");
             }
         });
         return list;

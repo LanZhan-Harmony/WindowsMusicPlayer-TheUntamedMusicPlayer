@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Numerics;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Hosting;
@@ -8,6 +8,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Models;
 using Windows.UI;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Services;
 
@@ -17,6 +18,7 @@ namespace The_Untamed_Music_Player.Services;
 public class DynamicBackgroundService(IColorExtractionService colorExtractionService)
     : IDynamicBackgroundService
 {
+    private readonly ILogger _logger = LoggingService.CreateLogger<DynamicBackgroundService>();
     private Compositor? _compositor;
     private SpriteVisual? _backgroundVisual;
     private FrameworkElement? _targetElement;
@@ -124,7 +126,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"更新动态背景失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"更新动态背景失败");
             App.MainWindow!.DispatcherQueue.TryEnqueue(ClearBackground);
         }
     }
@@ -197,7 +199,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"应用渐变背景失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"应用渐变背景失败");
         }
     }
 

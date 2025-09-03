@@ -1,16 +1,20 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using MemoryPack;
+using Microsoft.Extensions.Logging;
+using The_Untamed_Music_Player.Services;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Models;
 
 public class FileManager
 {
+    private static readonly ILogger _logger = LoggingService.CreateLogger<FileManager>();
+
     /// <summary>
     /// 保存音乐库数据到文件
     /// </summary>
@@ -73,7 +77,7 @@ public class FileManager
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"保存音乐库数据错误: {ex.Message}");
+                _logger.ZLogInformation(ex, $"保存音乐库数据错误");
             }
         });
     }
@@ -105,7 +109,10 @@ public class FileManager
                     shuffledPlayQueue
                 ); // 保存随机播放队列
             }
-            catch { }
+            catch (Exception ex)
+            {
+                _logger.ZLogInformation(ex, $"保存播放队列数据错误");
+            }
         });
     }
 
@@ -129,7 +136,7 @@ public class FileManager
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"保存播放列表数据错误: {ex.Message}");
+                _logger.ZLogInformation(ex, $"保存播放列表数据错误");
             }
         });
     }
@@ -241,7 +248,7 @@ public class FileManager
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"加载音乐库数据错误: {ex.Message}");
+            _logger.ZLogInformation(ex, $"加载音乐库数据错误");
             return (true, data);
         }
     }
@@ -285,7 +292,7 @@ public class FileManager
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"加载播放队列数据错误: {ex.Message}");
+            _logger.ZLogInformation(ex, $"加载播放队列数据错误");
             return ([], []);
         }
     }
@@ -314,7 +321,7 @@ public class FileManager
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"加载播放列表数据错误: {ex.Message}");
+            _logger.ZLogInformation(ex, $"加载播放列表数据错误");
             return [];
         }
     }
@@ -331,7 +338,7 @@ public class FileManager
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"加载播放列表数据错误: {ex.Message}");
+            _logger.ZLogInformation(ex, $"加载播放列表数据错误");
             return [];
         }
     }
@@ -341,12 +348,19 @@ public class FileManager
     /// </summary>
     public static async Task SaveObjectToFileAsync<T>(StorageFolder folder, string fileName, T obj)
     {
-        var data = MemoryPackSerializer.Serialize(obj);
-        var file = await folder.CreateFileAsync(
-            fileName + ".bin",
-            CreationCollisionOption.ReplaceExisting
-        );
-        await FileIO.WriteBytesAsync(file, data);
+        try
+        {
+            var data = MemoryPackSerializer.Serialize(obj);
+            var file = await folder.CreateFileAsync(
+                fileName + ".bin",
+                CreationCollisionOption.ReplaceExisting
+            );
+            await FileIO.WriteBytesAsync(file, data);
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"保存对象错误");
+        }
     }
 
     /// <summary>
@@ -376,7 +390,7 @@ public class FileManager
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"加载对象错误: {ex.Message}");
+            _logger.ZLogInformation(ex, $"加载对象错误");
             return default;
         }
     }
@@ -404,7 +418,7 @@ public class FileManager
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"快速计算文件夹指纹错误: {ex.Message}");
+            _logger.ZLogInformation(ex, $"快速计算文件夹指纹错误");
             var guid = $"{Guid.NewGuid()}";
             return guid;
         }

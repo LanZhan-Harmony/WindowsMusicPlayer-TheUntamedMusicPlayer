@@ -1,12 +1,14 @@
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.Views;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.ViewModels;
 
@@ -14,6 +16,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly ILogger _logger = LoggingService.CreateLogger<OnlinePlayListDetailViewModel>();
 
     private bool _isSearchingMore = false;
     private IBriefOnlineArtistInfo? _cachedBriefArtist = null;
@@ -97,7 +100,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            _logger.ZLogInformation(ex, $"加载艺术家{Artist.Name}详情时发生错误");
         }
         finally
         {
@@ -122,7 +125,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                _logger.ZLogInformation(ex, $"加载更多艺术家{Artist.Name}详情时发生错误");
             }
             finally
             {

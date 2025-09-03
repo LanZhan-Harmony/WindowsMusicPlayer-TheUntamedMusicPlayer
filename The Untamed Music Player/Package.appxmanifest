@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
@@ -12,8 +12,8 @@
 
 	<Identity
 	  Name="C19A3696.28439CB846862"
-	  Publisher="CN=D8BFD4E9-94E2-482B-A987-F96C72D65FDF"
-	  Version="0.5.1.0" />
+	  Publisher="CN=蓝忘机"
+	  Version="0.5.2.0" />
 
 	<mp:PhoneIdentity PhoneProductId="4b2c875e-db2d-4ef4-938e-760bd94fe9a8" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -62,7 +62,6 @@
 							<uap:FileType>.ogg</uap:FileType>
 							<uap:FileType>.m4a</uap:FileType>
 							<uap:FileType>.wav</uap:FileType>
-							<uap:FileType>.midi</uap:FileType>
 							<uap:FileType>.mp2</uap:FileType>
 							<uap:FileType>.mp1</uap:FileType>
 							<uap:FileType>.aif</uap:FileType>
@@ -71,15 +70,6 @@
 							<uap:FileType>.m1a</uap:FileType>
 							<uap:FileType>.mp3pro</uap:FileType>
 							<uap:FileType>.bwf</uap:FileType>
-							<uap:FileType>.mus</uap:FileType>
-							<uap:FileType>.mod</uap:FileType>
-							<uap:FileType>.mid</uap:FileType>
-							<uap:FileType>.mo3</uap:FileType>
-							<uap:FileType>.s3m</uap:FileType>
-							<uap:FileType>.xm</uap:FileType>
-							<uap:FileType>.it</uap:FileType>
-							<uap:FileType>.mtm</uap:FileType>
-							<uap:FileType>.umx</uap:FileType>
 						</uap:SupportedFileTypes>
 					</uap:FileTypeAssociation>
 				</uap:Extension>

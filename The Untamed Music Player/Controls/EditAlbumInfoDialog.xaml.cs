@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -12,6 +11,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 using ZLinq;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Controls;
 
@@ -203,7 +203,7 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"保存封面失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"保存{_album.Name}专辑封面失败");
         }
         finally
         {

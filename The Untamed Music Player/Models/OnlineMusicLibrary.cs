@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Contracts.Models;
@@ -7,11 +7,14 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
+using The_Untamed_Music_Player.Services;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Models;
 
 public partial class OnlineMusicLibrary : ObservableObject
 {
+    private static readonly ILogger _logger = LoggingService.CreateLogger<OnlineMusicLibrary>();
     private bool _isSearchingMore = false;
 
     // 缓存上次搜索的参数，用于避免重复搜索
@@ -209,7 +212,7 @@ public partial class OnlineMusicLibrary : ObservableObject
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.Message);
+            _logger.ZLogInformation(ex, $"在线搜索{SearchKeyWords}时发生错误");
         }
         finally
         {
@@ -345,7 +348,7 @@ public partial class OnlineMusicLibrary : ObservableObject
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.ZLogInformation(ex, $"在线搜索更多{SearchKeyWords}时发生错误");
             }
             finally
             {

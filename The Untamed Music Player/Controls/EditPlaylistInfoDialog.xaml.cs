@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -12,14 +12,17 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Controls;
 
 public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPropertyChanged
 {
+    private readonly ILogger _logger = LoggingService.CreateLogger<EditPlaylistInfoDialog>();
     private readonly PlaylistInfo _playlist;
     private readonly string _originalName;
     private string _name;
@@ -46,6 +49,8 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
     } = Visibility.Collapsed;
 
     private bool _isCoverEdited;
+
+    private bool _isCoverAdded = false;
 
     private readonly List<string> _coverPaths;
 
@@ -108,7 +113,12 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
             Songs.Add(new DisplaySongInfo(song.Song));
         }
         SongCount = Songs.Count;
-        Cover = info.Cover;
+        if (info.Cover is not null)
+        {
+            Cover = new WriteableBitmap(info.Cover.PixelWidth, info.Cover.PixelHeight); // 注意要创建副本
+            info.Cover.PixelBuffer.CopyTo(Cover.PixelBuffer);
+            Cover.Invalidate();
+        }
         _isCoverEdited = info.IsCoverEdited;
         _coverPaths = [.. info.CoverPaths]; // 注意要创建副本
         IsSaveCoverButtonEnabled = Cover is not null;
@@ -155,13 +165,14 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
             );
             await file.CopyAndReplaceAsync(targetFile);
             _isCoverEdited = true;
+            _isCoverAdded = true;
             _coverPaths.Clear();
             _coverPaths.Add(targetFile.Path);
             await GetCover();
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"更改封面失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"更改{_playlist.Name}播放列表封面失败");
         }
         finally
         {
@@ -174,6 +185,18 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
     private void DeleteCoverButton_Click(object sender, RoutedEventArgs e)
     {
         _isCoverEdited = true;
+        if (_isCoverAdded && _coverPaths.Count > 0)
+        {
+            if (File.Exists(_coverPaths[0]))
+            {
+                try
+                {
+                    File.Delete(_coverPaths[0]);
+                }
+                catch { }
+            }
+            _isCoverAdded = false;
+        }
         _coverPaths.Clear();
         Cover = null;
         IsSaveCoverButtonEnabled = false;
@@ -212,7 +235,7 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"保存封面失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"保存{_playlist.Name}播放列表封面失败");
         }
         finally
         {
@@ -254,6 +277,7 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
             if (shouldSetCoverPath && coverPath is not null)
             {
                 _isCoverEdited = true;
+                _isCoverAdded = true;
                 _coverPaths.Clear();
                 _coverPaths.Add(coverPath);
                 await GetCover();
@@ -366,7 +390,7 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
 
     private new void CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        if (_isCoverEdited && _coverPaths.Count > 0)
+        if (_isCoverAdded && _coverPaths.Count > 0)
         {
             if (File.Exists(_coverPaths[0]))
             {
