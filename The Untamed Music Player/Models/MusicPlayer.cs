@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -21,6 +20,7 @@ using Windows.Media;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
 using ZLinq;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -275,7 +275,7 @@ public partial class MusicPlayer
         // 初始化Bass - 使用默认设备
         if (!Bass.Init())
         {
-            Debug.WriteLine($"Bass初始化失败: {Bass.LastError}");
+            _logger.ZLogInformation($"Bass初始化失败: {Bass.LastError}");
             return;
         }
 
@@ -718,7 +718,7 @@ public partial class MusicPlayer
             if (_currentStream == 0)
             {
                 OnPlaybackFailed(0, 0, 0, 0);
-                Debug.WriteLine($"创建Bass流失败: {Bass.LastError}");
+                _logger.ZLogInformation($"创建Bass流失败: {Bass.LastError}");
                 return;
             }
 
@@ -726,7 +726,7 @@ public partial class MusicPlayer
             _tempoStream = BassFx.TempoCreate(_currentStream, BassFlags.FxFreeSource);
             if (_tempoStream == 0)
             {
-                Debug.WriteLine($"创建Tempo流失败: {Bass.LastError}");
+                _logger.ZLogInformation($"创建Tempo流失败: {Bass.LastError}");
                 return;
             }
 
@@ -739,7 +739,7 @@ public partial class MusicPlayer
             );
             if (!result)
             {
-                Debug.WriteLine($"设置Tempo失败: {Bass.LastError}");
+                _logger.ZLogInformation($"设置播放速度失败: {Bass.LastError}");
             }
 
             Bass.ChannelSetSync(_tempoStream, SyncFlags.End, 0, _syncEndCallback); // 设置播放结束回调
@@ -767,7 +767,7 @@ public partial class MusicPlayer
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"SetSource异常: {ex.Message}");
+            _logger.ZLogInformation(ex, $"SetSource失败");
         }
 
         // 设置封面图片
@@ -918,7 +918,7 @@ public partial class MusicPlayer
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"计时器更新异常: {ex.Message}");
+            _logger.ZLogInformation(ex, $"计时器更新失败");
         }
     }
 
@@ -1085,7 +1085,7 @@ public partial class MusicPlayer
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"播放上一曲失败");
         }
     }
 
@@ -1109,7 +1109,7 @@ public partial class MusicPlayer
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"播放下一曲失败");
         }
     }
 
@@ -1341,7 +1341,7 @@ public partial class MusicPlayer
             var result = Bass.ChannelSetPosition(_tempoStream, targetBytes);
             if (!result)
             {
-                Debug.WriteLine($"设置播放位置失败: {Bass.LastError}");
+                _logger.ZLogInformation($"设置播放位置失败: {Bass.LastError}");
             }
             CurrentPlayingTime = TimeSpan.FromSeconds(targetTimeSeconds);
             if (TotalPlayingTime.TotalMilliseconds > 0)
@@ -1510,7 +1510,7 @@ public partial class MusicPlayer
             Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Collapsed;
             Data.RootPlayBarViewModel?.Availability = false;
             HasLoaded = true;
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"初始化播放状态失败");
         }
     }
 

@@ -1,13 +1,15 @@
-using System.Diagnostics;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
+using The_Untamed_Music_Player.Services;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 
 public class CloudAlbumSearchHelper
 {
+    private static readonly ILogger _logger = LoggingService.CreateLogger<CloudAlbumSearchHelper>();
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
-
     private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
     public static async Task SearchAlbumsAsync(string keyWords, CloudOnlineAlbumInfoList list)
@@ -148,7 +150,7 @@ public class CloudAlbumSearchHelper
                     {
                         list.ListCount++;
                     }
-                    Debug.WriteLine(ex.StackTrace);
+                    _logger.ZLogInformation(ex, $"处理网易云专辑信息失败");
                 }
             }
         );

@@ -1,16 +1,20 @@
-using System.Diagnostics;
 using MemoryPack;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Services;
 using ZLinq;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Models;
 
 [MemoryPackable]
 public partial class LocalAlbumInfo : IAlbumInfoBase
 {
+    private static readonly ILogger _logger = LoggingService.CreateLogger<LocalAlbumInfo>();
+
     /// <summary>
     /// 专辑名
     /// </summary>
@@ -148,9 +152,9 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
         {
             Cover = new BitmapImage { DecodePixelWidth = 160 };
         }
-        catch
+        catch (Exception ex)
         {
-            Debug.WriteLine($"专辑封面初始化失败：{Name}");
+            _logger.ZLogInformation(ex, $"专辑{Name}封面初始化失败");
         }
     }
 
@@ -173,9 +177,9 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
                     {
                         await Cover.SetSourceAsync(stream.AsRandomAccessStream());
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        Debug.WriteLine($"专辑封面加载失败：{Name}");
+                        _logger.ZLogInformation(ex, $"专辑{Name}封面加载失败");
                     }
                     finally
                     {
@@ -184,9 +188,9 @@ public partial class LocalAlbumInfo : IAlbumInfoBase
                 }
             );
         }
-        catch
+        catch (Exception ex)
         {
-            Debug.WriteLine($"专辑封面加载失败：{Name}");
+            _logger.ZLogInformation(ex, $"专辑{Name}封面加载失败");
         }
     }
 }

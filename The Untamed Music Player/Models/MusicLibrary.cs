@@ -1,18 +1,22 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
+using The_Untamed_Music_Player.Services;
 using Windows.Storage;
 using ZLinq;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Models;
 
 public partial class MusicLibrary : ObservableRecipient
 {
+    private static readonly ILogger _logger = LoggingService.CreateLogger<MusicLibrary>();
+
     /// <summary>
     /// 调度器队列
     /// </summary>
@@ -99,7 +103,10 @@ public partial class MusicLibrary : ObservableRecipient
                     var folder = await StorageFolder.GetFolderFromPathAsync(path);
                     Folders.Add(folder);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    _logger.ZLogInformation(ex, $"加载音乐文件夹失败：{path}");
+                }
             }
             Data.SettingsViewModel?.NotifyEmptyFolderMessageVisibilityChanged();
         }
@@ -160,7 +167,7 @@ public partial class MusicLibrary : ObservableRecipient
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.StackTrace);
+                _logger.ZLogInformation(ex, $"加载音乐库失败");
             }
             finally
             {
@@ -214,7 +221,7 @@ public partial class MusicLibrary : ObservableRecipient
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.StackTrace);
+                _logger.ZLogInformation(ex, $"重新加载音乐库失败");
             }
             finally
             {
@@ -288,7 +295,7 @@ public partial class MusicLibrary : ObservableRecipient
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"加载音乐文件失败: {folder.Path}");
         }
     }
 
@@ -354,7 +361,7 @@ public partial class MusicLibrary : ObservableRecipient
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"添加文件夹监视器失败");
         }
     }
 
@@ -375,7 +382,7 @@ public partial class MusicLibrary : ObservableRecipient
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"处理文件夹变更事件失败");
         }
         finally
         {
@@ -400,7 +407,7 @@ public partial class MusicLibrary : ObservableRecipient
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"处理文件夹重命名事件失败");
         }
         finally
         {

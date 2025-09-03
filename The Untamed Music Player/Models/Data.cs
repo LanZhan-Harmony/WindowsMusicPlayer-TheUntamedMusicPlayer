@@ -50,7 +50,6 @@ public static class Data
         ".ogg",
         ".m4a",
         ".wav",
-        ".midi",
         ".mp2",
         ".mp1",
         ".aif",
@@ -59,15 +58,6 @@ public static class Data
         ".m1a",
         ".mp3pro",
         ".bwf",
-        ".mus",
-        ".mod",
-        ".mid",
-        ".mo3",
-        ".s3m",
-        ".xm",
-        ".it",
-        ".mtm",
-        ".umx",
     ];
 
     public static readonly string[] SupportedCoverTypes =

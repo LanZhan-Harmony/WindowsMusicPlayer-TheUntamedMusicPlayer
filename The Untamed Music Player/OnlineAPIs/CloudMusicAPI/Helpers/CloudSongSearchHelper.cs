@@ -1,12 +1,14 @@
-using System.Diagnostics;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using The_Untamed_Music_Player.Services;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 
 public class CloudSongSearchHelper
 {
+    private static readonly ILogger _logger = LoggingService.CreateLogger<CloudSongSearchHelper>();
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
-
     private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
     public static async Task SearchSongsAsync(string keyWords, CloudOnlineSongInfoList list)
@@ -157,7 +159,7 @@ public class CloudSongSearchHelper
                 catch (Exception ex)
                 {
                     list.ListCount++;
-                    Debug.WriteLine(ex.StackTrace);
+                    _logger.ZLogInformation(ex, $"处理网易云歌曲信息失败");
                     return null;
                 }
             })
@@ -205,7 +207,7 @@ public class CloudSongSearchHelper
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.StackTrace);
+                _logger.ZLogInformation(ex, $"通过ID获取网易云歌曲信息失败");
             }
         }
         return list;
