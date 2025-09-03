@@ -1,14 +1,17 @@
-using System.Diagnostics;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Models;
+using The_Untamed_Music_Player.Services;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
 
 public class CloudArtistDetailSearchHelper
 {
+    private static readonly ILogger _logger =
+        LoggingService.CreateLogger<CloudArtistDetailSearchHelper>();
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
-
     private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
 
     public static async Task<DetailedCloudOnlineArtistInfo> SearchArtistDetailAsync(
@@ -63,7 +66,7 @@ public class CloudArtistDetailSearchHelper
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            _logger.ZLogInformation(ex, $"搜索网易云艺术家{briefInfo.Name}详情失败");
         }
         finally
         {
@@ -95,7 +98,7 @@ public class CloudArtistDetailSearchHelper
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            _logger.ZLogInformation(ex, $"搜索网易云艺术家{info.Name}更多详情失败");
         }
         finally
         {
@@ -137,7 +140,7 @@ public class CloudArtistDetailSearchHelper
                     {
                         info.CurrentAlbumNum++;
                     }
-                    Debug.WriteLine(ex.StackTrace);
+                    _logger.ZLogInformation(ex, $"处理网易云艺术家详细信息失败");
                 }
             }
         );
@@ -191,7 +194,7 @@ public class CloudArtistDetailSearchHelper
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine(ex.StackTrace);
+                        _logger.ZLogInformation(ex, $"获取网易云艺术家{info.Name}歌曲失败");
                     }
                 }
             );
@@ -205,7 +208,7 @@ public class CloudArtistDetailSearchHelper
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            _logger.ZLogInformation(ex, $"获取网易云艺术家{info.Name}歌曲失败");
         }
 
         return songs;

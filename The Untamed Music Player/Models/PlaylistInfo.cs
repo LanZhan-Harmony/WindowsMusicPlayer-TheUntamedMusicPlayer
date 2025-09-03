@@ -1,19 +1,22 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using MemoryPack;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Services;
 using Windows.Graphics.Imaging;
 using ZLinq;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Models;
 
 [MemoryPackable]
 public partial class PlaylistInfo
 {
+    private static readonly ILogger _logger = LoggingService.CreateLogger<PlaylistInfo>();
     public string Name { get; set; } = null!;
     public string TotalSongNumStr { get; set; } = null!;
     public long ModifiedDate { get; set; }
@@ -327,14 +330,14 @@ public partial class PlaylistInfo
                             }
                             catch (Exception ex)
                             {
-                                Debug.WriteLine($"更新自定义封面失败: {ex.Message}");
+                                _logger.ZLogInformation(ex, $"播放列表{Name}更新自定义封面失败");
                             }
                         }
                     );
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"加载自定义封面失败: {ex.Message}");
+                    _logger.ZLogInformation(ex, $"播放列表{Name}加载自定义封面失败");
                 }
             });
             return;
@@ -395,7 +398,7 @@ public partial class PlaylistInfo
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine($"处理封面失败: {coverPath}, 错误: {ex.Message}");
+                        _logger.ZLogInformation(ex, $"播放列表{Name}处理封面{coverPath}失败");
                     }
                 }
 
@@ -446,14 +449,14 @@ public partial class PlaylistInfo
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine($"UI线程绘制失败: {ex.Message}");
+                            _logger.ZLogInformation(ex, $"播放列表{Name}UI线程绘制封面失败");
                         }
                     }
                 );
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"创建WriteableBitmap失败: {ex.Message}");
+                _logger.ZLogInformation(ex, $"播放列表{Name}创建WriteableBitmap失败");
             }
         });
     }
@@ -510,7 +513,7 @@ public partial class PlaylistInfo
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"调整图片大小失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"调整图片大小失败");
             return null;
         }
     }
@@ -551,7 +554,7 @@ public partial class PlaylistInfo
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"绘制图片到区域失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"绘制图片到区域失败");
         }
     }
 
@@ -568,7 +571,7 @@ public partial class PlaylistInfo
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"删除封面图片失败: {ex.Message}");
+                _logger.ZLogInformation(ex, $"播放列表{Name}删除封面图片失败");
             }
         }
         CoverPaths.Clear();
