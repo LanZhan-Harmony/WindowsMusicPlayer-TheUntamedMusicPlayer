@@ -14,6 +14,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 using ZLinq;
+using ZLogger;
 using TextBox = Microsoft.UI.Xaml.Controls.TextBox;
 
 namespace The_Untamed_Music_Player.Controls;
@@ -238,7 +239,7 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"更改封面失败: {ex.StackTrace}");
+            _logger.ZLogInformation(ex, $"更改{_song.Title}歌曲封面失败");
         }
         finally
         {
@@ -288,7 +289,7 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"保存封面失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"保存{_song.Title}歌曲封面失败");
         }
         finally
         {

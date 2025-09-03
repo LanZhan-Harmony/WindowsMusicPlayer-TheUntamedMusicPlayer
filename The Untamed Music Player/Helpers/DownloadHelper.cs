@@ -1,17 +1,19 @@
-using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
-using TagLib;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using Windows.Storage;
 using ZLinq;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Helpers;
 
 public static class DownloadHelper
 {
+    private static readonly ILogger _logger = LoggingService.CreateLogger(nameof(DownloadHelper));
     private static readonly HttpClient _sharedHttpClient = new()
     {
         Timeout = TimeSpan.FromMinutes(5), // 增加超时时间
@@ -82,7 +84,7 @@ public static class DownloadHelper
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"下载失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"下载{info.Title}失败");
             await HandleDownloadErrorAsync(info.Title);
         }
         finally
@@ -181,19 +183,17 @@ public static class DownloadHelper
         try
         {
             // 确保目标文件不存在
-            if (System.IO.File.Exists(finalPath))
+            if (File.Exists(finalPath))
             {
-                System.IO.File.Delete(finalPath);
+                File.Delete(finalPath);
             }
 
             // 重命名临时文件到最终路径
-            await Task.Run(() => System.IO.File.Move(tempPath, finalPath));
-
-            Debug.WriteLine($"文件重命名成功: {tempPath} -> {finalPath}");
+            await Task.Run(() => File.Move(tempPath, finalPath));
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"文件重命名失败: {ex.Message}");
+            _logger.ZLogError(ex, $"文件重命名失败");
             throw;
         }
     }
@@ -205,45 +205,30 @@ public static class DownloadHelper
     {
         await Task.Run(() =>
         {
-            try
+            // 清理临时文件 (.crdownload)
+            if (!string.IsNullOrEmpty(_currentDownloadPath) && File.Exists(_currentDownloadPath))
             {
-                // 清理临时文件 (.crdownload)
-                if (
-                    !string.IsNullOrEmpty(_currentDownloadPath)
-                    && System.IO.File.Exists(_currentDownloadPath)
-                )
+                try
                 {
-                    try
-                    {
-                        System.IO.File.Delete(_currentDownloadPath);
-                        Debug.WriteLine($"已删除临时下载文件: {_currentDownloadPath}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"删除临时下载文件失败: {ex.Message}");
-                    }
+                    File.Delete(_currentDownloadPath);
                 }
-
-                // 清理最终文件（如果已经重命名但操作失败）
-                if (
-                    !string.IsNullOrEmpty(_currentFinalPath)
-                    && System.IO.File.Exists(_currentFinalPath)
-                )
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        System.IO.File.Delete(_currentFinalPath);
-                        Debug.WriteLine($"已删除最终文件: {_currentFinalPath}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"删除最终文件失败: {ex.Message}");
-                    }
+                    _logger.ZLogInformation(ex, $"删除临时下载文件失败");
                 }
             }
-            catch (Exception ex)
+
+            // 清理最终文件（如果已经重命名但操作失败）
+            if (!string.IsNullOrEmpty(_currentFinalPath) && File.Exists(_currentFinalPath))
             {
-                Debug.WriteLine($"清理下载文件时出错: {ex.Message}");
+                try
+                {
+                    File.Delete(_currentFinalPath);
+                }
+                catch (Exception ex)
+                {
+                    _logger.ZLogInformation(ex, $"删除最终下载文件失败");
+                }
             }
         });
     }
@@ -270,7 +255,7 @@ public static class DownloadHelper
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"取消下载时出错: {ex.Message}");
+            _logger.ZLogError(ex, $"取消下载失败");
         }
     }
 
@@ -320,7 +305,7 @@ public static class DownloadHelper
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"写入歌曲信息失败: {ex.Message}");
+            _logger.ZLogError(ex, $"写入{detailedInfo.Title}歌曲信息失败");
             throw; // 重新抛出异常以便上层处理
         }
     }
@@ -346,7 +331,7 @@ public static class DownloadHelper
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"写入TagLib信息失败: {ex.Message}");
+            _logger.ZLogError(ex, $"写入{detailedInfo.Title}TagLib信息失败");
             throw; // 重新抛出异常以便上层处理
         }
     }
@@ -360,13 +345,12 @@ public static class DownloadHelper
         try
         {
             var imageBytes = await _sharedHttpClient.GetByteArrayAsync(coverUrl, cancellationToken);
-            var picture = new Picture(imageBytes);
+            var picture = new TagLib.Picture(imageBytes);
             musicFile.Tag.Pictures = [picture];
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"设置封面失败: {ex.Message}");
-            // 封面设置失败不应该影响整个下载过程，所以不重新抛出异常
+            _logger.ZLogInformation(ex, $"设置封面失败");
         }
     }
 
@@ -488,7 +472,7 @@ public static class DownloadHelper
 
     private static string GetUniqueFilePath(string path)
     {
-        if (!System.IO.File.Exists(path))
+        if (!File.Exists(path))
         {
             return path;
         }
@@ -500,7 +484,7 @@ public static class DownloadHelper
         for (var count = 1; ; count++)
         {
             var uniquePath = Path.Combine(directory, $"{fileNameWithoutExt}({count}){extension}");
-            if (!System.IO.File.Exists(uniquePath))
+            if (!File.Exists(uniquePath))
             {
                 return uniquePath;
             }

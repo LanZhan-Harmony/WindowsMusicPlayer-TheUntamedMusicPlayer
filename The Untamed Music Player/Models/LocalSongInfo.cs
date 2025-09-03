@@ -1,10 +1,12 @@
-using System.Diagnostics;
 using MemoryPack;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
 using TagLib;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Services;
 using ZLinq;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -12,6 +14,7 @@ namespace The_Untamed_Music_Player.Models;
 public partial class BriefLocalSongInfo : IBriefSongInfoBase
 {
     protected static readonly string _unknownGenre = "SongInfo_UnknownGenre".GetLocalized();
+    protected static readonly ILogger _logger = LoggingService.CreateLogger<BriefLocalSongInfo>();
 
     /// <summary>
     /// 歌手分隔符
@@ -158,7 +161,7 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
         catch (Exception ex)
         {
             IsPlayAvailable = false;
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"读取本地音乐文件{Path}信息时发生错误");
         }
     }
 
@@ -283,7 +286,7 @@ public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
         catch (Exception ex)
         {
             IsPlayAvailable = false;
-            Debug.WriteLine(ex.StackTrace);
+            _logger.ZLogInformation(ex, $"读取本地音乐文件{Path}详细信息时发生错误");
         }
     }
 }

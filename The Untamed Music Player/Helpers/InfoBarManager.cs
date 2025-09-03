@@ -1,9 +1,10 @@
-using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Messages;
+using The_Untamed_Music_Player.Services;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Helpers;
 
@@ -12,6 +13,7 @@ namespace The_Untamed_Music_Player.Helpers;
 /// </summary>
 public partial class InfoBarManager : IDisposable
 {
+    private readonly ILogger _logger = LoggingService.CreateLogger<InfoBarManager>();
     private readonly InfoBar _infoBar;
     private readonly HyperlinkButton _sendFeedbackButton;
     private readonly Storyboard _showInfoBarStoryboard;
@@ -82,7 +84,7 @@ public partial class InfoBarManager : IDisposable
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"显示InfoBar消息时出错: {ex.Message}");
+            _logger.ZLogInformation(ex, $"显示InfoBar消息失败");
             _isDisplaying = false;
         }
     }

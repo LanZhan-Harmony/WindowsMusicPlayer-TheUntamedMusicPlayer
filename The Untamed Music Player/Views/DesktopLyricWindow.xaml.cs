@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using CommunityToolkit.Labs.WinUI.MarqueeTextRns;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -7,16 +7,19 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
 using Windows.System;
 using WinRT.Interop;
+using ZLogger;
 using static The_Untamed_Music_Player.Helpers.ExternFunction;
 
 namespace The_Untamed_Music_Player.Views;
 
 public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 {
+    private readonly ILogger _logger = LoggingService.CreateLogger<DesktopLyricWindow>();
     private readonly nint _hWnd;
 
     private bool _isDragging = false; // 检测是否在拖动的变量
@@ -275,7 +278,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.Message);
+            _logger.ZLogInformation(ex, $"调整灵动词岛宽度时发生错误");
         }
     }
 }

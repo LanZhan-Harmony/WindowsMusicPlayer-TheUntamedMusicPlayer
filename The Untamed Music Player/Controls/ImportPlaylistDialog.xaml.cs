@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -12,15 +11,18 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
+using The_Untamed_Music_Player.Services;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 using ZLinq;
+using ZLogger;
 
 namespace The_Untamed_Music_Player.Controls;
 
 public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropertyChanged
 {
+    private readonly ILogger _logger = LoggingService.CreateLogger<ImportPlaylistDialog>();
     private ObservableCollection<DisplaySongInfo> Songs { get; set; } = [];
     private int SongCount
     {
@@ -142,7 +144,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"更改封面失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"更改导入的播放列表封面失败");
         }
         finally
         {
@@ -192,7 +194,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"保存封面失败: {ex.Message}");
+            _logger.ZLogInformation(ex, $"保存导入的播放列表封面失败");
         }
         finally
         {
@@ -357,7 +359,8 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.StackTrace);
+            var logger = LoggingService.CreateLogger(nameof(LoadMusicAsync));
+            logger.ZLogInformation(ex, $"扫描歌曲导入播放列表失败");
         }
     }
 
