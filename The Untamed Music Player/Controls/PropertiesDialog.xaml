@@ -30,7 +30,7 @@
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock IsTextSelectionEnabled="True"
                                    Text="{x:Bind _song.Title}"
-                                   TextWrapping="WrapWholeWords"/>
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
                     <StackPanel Margin="0,30,0,0">
                         <TextBlock x:Uid="PropertiesDialog_Album"
