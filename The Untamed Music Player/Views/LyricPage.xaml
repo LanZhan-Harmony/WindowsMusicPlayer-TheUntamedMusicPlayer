@@ -135,7 +135,7 @@
                   SizeChanged="ReferenceGrid_SizeChanged"/>
             <Border x:Name="CoverBorder"
                     Grid.Row="0" Grid.Column="0"
-                    Margin="0,0,0,0" Padding="0"
+                    Padding="0"
                     CornerRadius="10">
                 <Grid>
                     <Image x:Name="ControllerCover"
