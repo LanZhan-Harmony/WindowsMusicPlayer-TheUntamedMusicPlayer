@@ -229,19 +229,19 @@
     <value>如果看不到库位置中的所有媒体，可以立即重新索引库。</value>
   </data>
   <data name="Shell_Search.PlaceholderText" xml:space="preserve">
-    <value>搜索</value>
+    <value>搜索 (敬请期待)</value>
   </data>
   <data name="PlayBar_Property.Text" xml:space="preserve">
     <value>属性</value>
   </data>
   <data name="PlayBar_Equalizer.Text" xml:space="preserve">
-    <value>均衡器</value>
+    <value>均衡器 (敬请期待)</value>
   </data>
   <data name="PlayBar_Speed.Text" xml:space="preserve">
     <value>速度</value>
   </data>
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
-    <value>投放到设备</value>
+    <value>投放到设备 (敬请期待)</value>
   </data>
   <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
     <value>快退10秒</value>
@@ -607,7 +607,7 @@
     <value>主页 (Ctrl+Shift+F)</value>
   </data>
   <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
-    <value>搜索在线歌曲</value>
+    <value>搜索在线内容</value>
   </data>
   <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
     <value>不透明度</value>
