@@ -466,7 +466,11 @@ public partial class MusicPlayer
             _ = UpdateLyric(CurrentSong!.Lyric);
             _systemControls.IsPlayEnabled = true;
             _systemControls.IsPauseEnabled = true;
-            if (!isLast)
+            if (isLast)
+            {
+                PlayState = 0;
+            }
+            else
             {
                 Play();
             }
