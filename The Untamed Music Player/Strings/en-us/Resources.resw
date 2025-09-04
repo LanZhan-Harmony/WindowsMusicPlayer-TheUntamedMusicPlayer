@@ -229,19 +229,19 @@
     <value>If you're not seeing all the media from your library locations, you can re-index your libraries now.</value>
   </data>
   <data name="Shell_Search.PlaceholderText" xml:space="preserve">
-    <value>Search</value>
+    <value>Search (Coming soon)</value>
   </data>
   <data name="PlayBar_Property.Text" xml:space="preserve">
     <value>Properties</value>
   </data>
   <data name="PlayBar_Equalizer.Text" xml:space="preserve">
-    <value>Equalizer</value>
+    <value>Equalizer (Coming soon)</value>
   </data>
   <data name="PlayBar_Speed.Text" xml:space="preserve">
     <value>Speed</value>
   </data>
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
-    <value>Cast to device</value>
+    <value>Cast to device (Coming soon)</value>
   </data>
   <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
     <value>Skip back 10 seconds</value>
@@ -607,7 +607,7 @@
     <value>Home (Ctrl+Shift+F)</value>
   </data>
   <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
-    <value>Search online songs</value>
+    <value>Search online content</value>
   </data>
   <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
     <value>Luminosity opacity</value>
