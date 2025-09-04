@@ -18,8 +18,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <PackageCertificateKeyFile>The Untamed Music Player_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <!--<PublishSelfContained>True</PublishSelfContained>-->
+    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+    <PublishSelfContained>True</PublishSelfContained>
     <WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
@@ -27,7 +27,7 @@
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <AppxBundle>Auto</AppxBundle>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <LangVersion>preview</LangVersion>
     <IsAotCompatible>True</IsAotCompatible>
     <PublishAot>True</PublishAot>
@@ -67,7 +67,7 @@
   <ItemGroup>
     <PackageReference
       Include="CommunityToolkit.Labs.WinUI.MarqueeText"
-      Version="0.1.250206-build.2040"
+      Version="0.1.250828-build.2223"
     />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.250402" />
