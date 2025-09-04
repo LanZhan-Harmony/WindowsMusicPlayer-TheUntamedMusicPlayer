@@ -45,11 +45,6 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
         }
     }
 
-    private void ShellPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        TitleBarHelper.UpdateTitleBar(RequestedTheme);
-    }
-
     private void ShellPage_Unloaded(object sender, RoutedEventArgs e)
     {
         StrongReferenceMessenger.Default.Unregister<HavePlaylistMessage>(this);
