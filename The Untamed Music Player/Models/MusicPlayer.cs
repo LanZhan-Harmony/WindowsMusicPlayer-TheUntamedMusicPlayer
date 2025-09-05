@@ -1420,7 +1420,7 @@ public partial class MusicPlayer
     /// <summary>
     /// 保存当前播放状态至设置存储
     /// </summary>
-    public async void SaveCurrentStateAsync()
+    public async Task SaveCurrentStateAsync()
     {
         await FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
         await _localSettingsService.SaveSettingAsync("PlayQueueIndex", PlayQueueIndex);
