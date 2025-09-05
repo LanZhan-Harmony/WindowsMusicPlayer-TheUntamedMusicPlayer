@@ -1,15 +1,20 @@
+using System.Diagnostics;
 using System.Numerics;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
 using The_Untamed_Music_Player.Views;
 using Windows.UI.ViewManagement;
+using ZLogger;
 
 namespace The_Untamed_Music_Player;
 
@@ -17,6 +22,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 {
     private readonly DispatcherQueue dispatcherQueue;
     private readonly UISettings settings;
+    private readonly ILogger _logger = LoggingService.CreateLogger<MainWindow>();
     private InfoBarManager? _infoBarManager;
 
     public MainViewModel ViewModel { get; }
@@ -50,6 +56,9 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         StrongReferenceMessenger.Default.Register(this);
 
         ErrorInfoBar.Translation += new Vector3(0, 0, 40);
+
+        // 注册AppWindow.Closing事件来处理窗口关闭
+        AppWindow.Closing += AppWindow_Closing;
     }
 
     /// <summary>
@@ -95,14 +104,45 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     }
 
     /// <summary>
+    /// 处理AppWindow关闭请求 - 在窗口实际关闭前处理数据保存
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
+    {
+        try
+        {
+            await Data.MusicPlayer.SaveCurrentStateAsync();
+            await Data.PlaylistLibrary.SaveLibraryAsync();
+            Data.MusicPlayer.Dispose();
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"保存应用程序数据失败");
+        }
+    }
+
+    /// <summary>
     /// 窗口关闭时的清理工作
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
-        StrongReferenceMessenger.Default.Unregister<LogMessage>(this);
-        _infoBarManager?.Dispose();
-        _infoBarManager = null;
+        try
+        {
+            ViewModel.CleanupDynamicBackgroundService(); // 清理背景服务
+            ViewModel.CleanupSystemBackdrop(); // 清理系统背景
+            Data.DesktopLyricWindow?.Close(); // 关闭桌面歌词窗口
+            Data.DesktopLyricWindow?.Dispose();
+            StrongReferenceMessenger.Default.Unregister<LogMessage>(this); // 清理消息接收
+            _infoBarManager?.Dispose(); // 清理InfoBar管理器
+            _infoBarManager = null;
+            LoggingService.Shutdown(); // 关闭日志服务
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"清理资源失败");
+        }
     }
 }
