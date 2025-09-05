@@ -46,7 +46,6 @@ public class MainViewModel
             );
         InitializeAsync();
         _mainMindow.Activated += MainWindow_Activated;
-        _mainMindow.Closed += MainWindow_Closed;
         ((FrameworkElement)_mainMindow.Content).ActualThemeChanged += Window_ThemeChanged;
         Data.MainViewModel = this;
     }
@@ -320,19 +319,23 @@ public class MainViewModel
         }
     }
 
-    private void MainWindow_Closed(object sender, WindowEventArgs args)
+    /// <summary>
+    /// 清理动态背景服务
+    /// </summary>
+    public void CleanupDynamicBackgroundService()
     {
-        Data.MusicPlayer.SaveCurrentStateAsync();
-        Data.PlaylistLibrary.SaveLibraryAsync();
-        Data.MusicPlayer.Dispose();
+        _dynamicBackgroundService?.Dispose();
+    }
+
+    /// <summary>
+    /// 清理系统背景
+    /// </summary>
+    public void CleanupSystemBackdrop()
+    {
         _mainMindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
-        _dynamicBackgroundService.Dispose();
         _mainMindow.Activated -= MainWindow_Activated;
-        Data.DesktopLyricWindow?.Close();
-        Data.DesktopLyricWindow?.Dispose();
-        LoggingService.Shutdown();
     }
 
     /// <summary>

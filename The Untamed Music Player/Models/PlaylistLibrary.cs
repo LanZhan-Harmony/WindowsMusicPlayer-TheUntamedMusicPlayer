@@ -170,7 +170,7 @@ public partial class PlaylistLibrary : ObservableRecipient
         return candidateName;
     }
 
-    public async void SaveLibraryAsync()
+    public async Task SaveLibraryAsync()
     {
         await FileManager.SavePlaylistDataAsync(Playlists);
     }
