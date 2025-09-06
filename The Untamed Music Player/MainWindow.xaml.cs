@@ -114,7 +114,6 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         {
             await Data.MusicPlayer.SaveCurrentStateAsync();
             await Data.PlaylistLibrary.SaveLibraryAsync();
-            Data.MusicPlayer.Dispose();
         }
         catch (Exception ex)
         {
@@ -131,6 +130,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         try
         {
+            Data.MusicPlayer.Dispose();
             ViewModel.CleanupDynamicBackgroundService(); // 清理背景服务
             ViewModel.CleanupSystemBackdrop(); // 清理系统背景
             Data.DesktopLyricWindow?.Close(); // 关闭桌面歌词窗口

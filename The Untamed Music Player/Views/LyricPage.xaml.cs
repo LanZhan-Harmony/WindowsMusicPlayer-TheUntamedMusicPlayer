@@ -1,6 +1,9 @@
 using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using The_Untamed_Music_Player.Contracts.Models;
+using The_Untamed_Music_Player.Controls;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
@@ -22,6 +25,53 @@ public sealed partial class LyricPage : Page, IDisposable
     private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
     {
         Data.RootPlayBarViewModel!.DetailModeUpdate();
+    }
+
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem menuItem)
+        {
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = playlist,
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
+        {
+            ViewModel.AddToPlaylistButton_Click(playlist);
+        }
+    }
+
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+        {
+            ViewModel.AddToPlaylistButton_Click(dialog.CreatedPlaylist);
+        }
+    }
+
+    private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
+    {
+        var currentSong = Data.MusicPlayer.CurrentSong;
+        var dialog = new PropertiesDialog(currentSong!) { XamlRoot = XamlRoot };
+        await dialog.ShowAsync();
     }
 
     private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)

@@ -17,7 +17,7 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
             == ExtendedActivationKind.File;
     }
 
-    protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
+    protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
         // 设置文件激活标志
         Data.IsFileActivationLaunch = true;
