@@ -130,17 +130,56 @@
             <Border x:Name="ShadowTarget"/>
             <Grid x:Name="ReferenceGrid"
                   Grid.Row="0" Grid.Column="0"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   SizeChanged="ReferenceGrid_SizeChanged"/>
             <Border x:Name="CoverBorder"
                     Grid.Row="0" Grid.Column="0"
                     Padding="0"
                     CornerRadius="10">
+                <Border.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Uid="Songs_Play"
+                                        Width="216"
+                                        Click="{x:Bind ViewModel.PlayButton_Click}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE768;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_PlayNext"
+                                        Click="{x:Bind ViewModel.PlayNextButton_Click}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xF5EB;}"/>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutSubItem x:Uid="Songs_AddTo"
+                                           Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                              Glyph=&#xE710;}"
+                                           Loaded="AddToSubItem_Loaded">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
+                                            Width="216"
+                                            Click="{x:Bind ViewModel.AddToPlayQueueButton_Click}"
+                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                               Glyph=&#xE93F;}"/>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist"
+                                            Click="AddToNewPlaylistButton_Click"
+                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                               Glyph=&#xE710;}"/>
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutItem x:Uid="Songs_ShowAlbum"
+                                        Click="{x:Bind ViewModel.ShowAlbumButton_Click}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE93C;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_ShowArtist"
+                                        Click="{x:Bind ViewModel.ShowArtistButton_Click}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE77B;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_Properties"
+                                        Click="PropertiesButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE946;}"/>
+                    </MenuFlyout>
+                </Border.ContextFlyout>
                 <Grid>
                     <Image x:Name="ControllerCover"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
                            Canvas.ZIndex="1"
                            Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"/>
                     <Grid x:Name="ControllerCoverGrid"
