@@ -199,7 +199,7 @@
     <value>Export</value>
   </data>
   <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
-    <value>Batch export playlists to m3u8 files</value>
+    <value>Batch export playlists to m3u8 files (Recommend)</value>
   </data>
   <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
     <value>Better compatibility and works with most music players</value>
