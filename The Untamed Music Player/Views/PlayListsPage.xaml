@@ -336,5 +336,10 @@
                       Loaded="PlaylistGridView_Loaded"
                       SelectionMode="None"/>
         </Grid>
+
+        <ProgressRing Grid.Row="1"
+                      Width="50" Height="50"
+                      Canvas.ZIndex="1"
+                      IsActive="{x:Bind ViewModel.IsMainProgressRingActive, Mode=OneWay}"/>
     </Grid>
 </Page>
