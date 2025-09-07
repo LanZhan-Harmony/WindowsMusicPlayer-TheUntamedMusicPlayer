@@ -199,7 +199,7 @@
     <value>导出</value>
   </data>
   <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
-    <value>批量导出播放列表至 m3u8 文件</value>
+    <value>批量导出播放列表至 m3u8 文件 (推荐)</value>
   </data>
   <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
     <value>兼容性更好，适用于大多数音乐播放器</value>
