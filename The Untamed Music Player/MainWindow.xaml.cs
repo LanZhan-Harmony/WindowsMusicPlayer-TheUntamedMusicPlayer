@@ -112,12 +112,17 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         try
         {
+            args.Cancel = true;
             await Data.MusicPlayer.SaveCurrentStateAsync();
             await Data.PlaylistLibrary.SaveLibraryAsync();
         }
         catch (Exception ex)
         {
             _logger.ZLogInformation(ex, $"保存应用程序数据失败");
+        }
+        finally
+        {
+            Close();
         }
     }
 

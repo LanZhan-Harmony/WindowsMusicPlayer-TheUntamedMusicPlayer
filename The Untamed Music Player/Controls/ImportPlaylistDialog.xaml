@@ -16,6 +16,7 @@
 
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
+        <x:Double x:Key="ContentDialogMaxHeight">2000</x:Double>
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
 
@@ -153,7 +154,8 @@
 
                 <ListView Grid.Row="1" Grid.Column="0"
                           Grid.ColumnSpan="3"
-                          Margin="24,40,24,0"
+                          Height="300"
+                          Margin="24,40,14,0" Padding="0,0,10,0"
                           helper:ListViewExtensions.ItemCornerRadius="8"
                           IsItemClickEnabled="False"
                           ItemTemplate="{StaticResource SongListViewTemplate}"

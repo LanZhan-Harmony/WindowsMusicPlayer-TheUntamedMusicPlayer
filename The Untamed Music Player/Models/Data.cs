@@ -11,7 +11,7 @@ public static class Data
     /// <summary>
     /// 是否是第一次使用本软件
     /// </summary>
-    public static bool NotFirstUsed { get; set; } = false;
+    public static bool? NotFirstUsed { get; set; } = null;
 
     /// <summary>
     /// 是否已经加载了音乐库

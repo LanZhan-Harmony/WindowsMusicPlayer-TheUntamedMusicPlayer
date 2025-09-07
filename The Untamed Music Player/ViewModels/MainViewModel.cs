@@ -365,7 +365,7 @@ public class MainViewModel
             "IsOnlyAddSpecificFolder"
         );
         Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
-        if (Data.NotFirstUsed)
+        if (Data.NotFirstUsed.Value)
         {
             _previousIsDarkTheme = await _localSettingsService.ReadSettingAsync<bool>(
                 "IsDarkTheme"
