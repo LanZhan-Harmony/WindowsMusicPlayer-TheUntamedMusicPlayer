@@ -46,7 +46,7 @@ public partial class MusicLibraryViewModel
 
     private async void InitializeLibraryAsync()
     {
-        if (!Data.HasMusicLibraryLoaded)
+        if (!Data.MusicLibrary.HasLoaded)
         {
             await Data.MusicLibrary.LoadLibraryAsync();
         }

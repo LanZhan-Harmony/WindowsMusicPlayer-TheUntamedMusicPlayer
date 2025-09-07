@@ -14,11 +14,6 @@ public static class Data
     public static bool? NotFirstUsed { get; set; } = null;
 
     /// <summary>
-    /// 是否已经加载了音乐库
-    /// </summary>
-    public static bool HasMusicLibraryLoaded { get; set; } = false;
-
-    /// <summary>
     /// 是否正在下载或更改音乐
     /// </summary>
     public static bool IsMusicProcessing { get; set; } = false;
