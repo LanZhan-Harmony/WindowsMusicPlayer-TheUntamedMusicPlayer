@@ -331,14 +331,8 @@ public partial class SettingsViewModel
             var infos = new List<PlaylistInfo>();
             foreach (var file in files)
             {
-                var (playlistName, coverPath, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(
-                    file
-                );
-                if (string.IsNullOrEmpty(playlistName))
-                {
-                    playlistName = "PlaylistInfo_UntitledPlaylist".GetLocalized();
-                }
-                var info = new PlaylistInfo(playlistName, coverPath);
+                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
+                var info = new PlaylistInfo(name, cover);
                 await info.AddSongs(songs);
                 infos.Add(info);
             }

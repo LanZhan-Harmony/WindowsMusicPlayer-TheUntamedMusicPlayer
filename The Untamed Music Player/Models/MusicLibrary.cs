@@ -42,6 +42,8 @@ public partial class MusicLibrary : ObservableRecipient
     /// </summary>
     private readonly ConcurrentDictionary<string, byte> _musicGenres = [];
 
+    public bool HasLoaded { get; private set; } = false;
+
     /// <summary>
     /// 文件夹监视器
     /// </summary>
@@ -163,7 +165,7 @@ public partial class MusicLibrary : ObservableRecipient
                     var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
                     FileManager.SaveLibraryDataAsync(Folders, data);
                 }
-                Data.HasMusicLibraryLoaded = true;
+                HasLoaded = true;
             }
             catch (Exception ex)
             {

@@ -227,18 +227,18 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
             string? coverPath = null;
             foreach (var file in files)
             {
-                var (name, path, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
+                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
                 foreach (var song in songs)
                 {
                     Songs.Add(new DisplaySongInfo(song));
                 }
-                if (shouldSetPlaylistName && playlistName is null && name is not null)
+                if (shouldSetPlaylistName && playlistName is null)
                 {
                     playlistName = name;
                 }
-                if (shouldSetCoverPath && coverPath is null && path is not null)
+                if (shouldSetCoverPath && coverPath is null && cover is not null)
                 {
-                    coverPath = path;
+                    coverPath = cover;
                 }
             }
             if (shouldSetPlaylistName && playlistName is not null)

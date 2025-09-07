@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using MemoryPack;
 using Microsoft.Extensions.Logging;
+using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Services;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -137,6 +138,35 @@ public class FileManager
             catch (Exception ex)
             {
                 _logger.ZLogInformation(ex, $"保存播放列表数据错误");
+            }
+        });
+    }
+
+    public static async Task SavePlaylistDataToM3u8Async()
+    {
+        await Task.Run(async () =>
+        {
+            try
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
+                var playlistFolder = await localFolder.CreateFolderAsync(
+                    "PlaylistM3u8Data",
+                    CreationCollisionOption.OpenIfExists
+                );
+                var files = await playlistFolder.GetFilesAsync();
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        await file.DeleteAsync();
+                    }
+                    catch { }
+                }
+                await M3u8Helper.ExportPlaylistsToM3u8Async(playlistFolder);
+            }
+            catch (Exception ex)
+            {
+                _logger.ZLogInformation(ex, $"保存播放列表数据至M3U8文件错误");
             }
         });
     }
@@ -313,15 +343,45 @@ public class FileManager
             }
             catch
             {
-                return [];
+                return await LoadPlaylistDataFromM3u8Async();
             }
-
-            return await LoadObjectFromFileAsync<List<PlaylistInfo>>(playlistFolder, "Playlists")
-                ?? [];
+            var playlists = await LoadObjectFromFileAsync<List<PlaylistInfo>>(
+                playlistFolder,
+                "Playlists"
+            );
+            if (playlists is null)
+            {
+                return await LoadPlaylistDataFromM3u8Async();
+            }
+            return playlists;
         }
         catch (Exception ex)
         {
             _logger.ZLogInformation(ex, $"加载播放列表数据错误");
+            return await LoadPlaylistDataFromM3u8Async();
+        }
+    }
+
+    public static async Task<List<PlaylistInfo>> LoadPlaylistDataFromM3u8Async()
+    {
+        try
+        {
+            var localFolder = ApplicationData.Current.LocalFolder;
+            var playlistFolder = await localFolder.GetFolderAsync("PlaylistM3u8Data");
+            var files = await playlistFolder.GetFilesAsync();
+            var playlists = new List<PlaylistInfo>();
+            foreach (var file in files)
+            {
+                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
+                var playlist = new PlaylistInfo(name, cover);
+                await playlist.AddRange(songs);
+                playlists.Add(playlist);
+            }
+            return playlists;
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"从M3U8文件加载播放列表数据错误");
             return [];
         }
     }
