@@ -29,6 +29,7 @@
     <AppxBundle>Auto</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <LangVersion>preview</LangVersion>
+    <PublishReadyToRun>True</PublishReadyToRun>
     <IsAotCompatible>True</IsAotCompatible>
     <PublishAot>True</PublishAot>
     <PublishTrimmed>True</PublishTrimmed>
