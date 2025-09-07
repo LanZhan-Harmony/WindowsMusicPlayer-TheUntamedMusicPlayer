@@ -24,6 +24,9 @@ public partial class PlayListsViewModel
     public ObservableCollection<PlaylistInfo> Playlists { get; set; } = [];
 
     [ObservableProperty]
+    public partial bool IsMainProgressRingActive { get; set; } = !Data.PlaylistLibrary.HasLoaded;
+
+    [ObservableProperty]
     public partial Visibility NoPlaylistControlVisibility { get; set; } = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -55,6 +58,7 @@ public partial class PlayListsViewModel
 
     public void Receive(HavePlaylistMessage message)
     {
+        IsMainProgressRingActive = false;
         NoPlaylistControlVisibility = message.HasPlaylist
             ? Visibility.Collapsed
             : Visibility.Visible;
@@ -66,6 +70,10 @@ public partial class PlayListsViewModel
 
     public async void LoadModeAndPlayList()
     {
+        if (IsMainProgressRingActive)
+        {
+            return;
+        }
         _tempPlaylists = Data.PlaylistLibrary.Playlists;
         if (_tempPlaylists.Count == 0)
         {

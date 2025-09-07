@@ -17,7 +17,7 @@ public static partial class M3u8Helper
     // 用于保持顺序的歌曲项
     private record SongItem(int Index, int Type, object Data);
 
-    public static async Task<(string?, string?, List<IBriefSongInfoBase>)> GetNameAndSongsFromM3u8(
+    public static async Task<(string, string?, List<IBriefSongInfoBase>)> GetNameAndSongsFromM3u8(
         StorageFile m3u8File
     )
     {

@@ -10,6 +10,8 @@ namespace The_Untamed_Music_Player.Models;
 
 public partial class PlaylistLibrary : ObservableRecipient
 {
+    public bool HasLoaded { get; private set; } = false;
+
     public List<PlaylistInfo> Playlists { get; set; } = [];
 
     public PlaylistLibrary()
@@ -25,8 +27,8 @@ public partial class PlaylistLibrary : ObservableRecipient
         {
             playlist.InitializeCover();
         }
+        HasLoaded = true;
         Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
-
         foreach (var playlist in Playlists)
         {
             playlist.GetCover();
@@ -173,5 +175,6 @@ public partial class PlaylistLibrary : ObservableRecipient
     public async Task SaveLibraryAsync()
     {
         await FileManager.SavePlaylistDataAsync(Playlists);
+        await FileManager.SavePlaylistDataToM3u8Async();
     }
 }
