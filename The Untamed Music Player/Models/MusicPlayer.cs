@@ -1454,11 +1454,6 @@ public partial class MusicPlayer
                 );
                 PlaySpeed = await _localSettingsService.ReadSettingAsync<double>("PlaySpeed");
             }
-            else
-            {
-                CurrentVolume = 100;
-                PlaySpeed = 1;
-            }
 
             // 如果是文件激活启动，跳过播放队列和当前歌曲的加载
             if (Data.IsFileActivationLaunch)
