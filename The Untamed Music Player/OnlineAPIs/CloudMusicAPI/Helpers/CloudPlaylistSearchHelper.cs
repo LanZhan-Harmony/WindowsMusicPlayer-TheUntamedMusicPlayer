@@ -75,7 +75,7 @@ public class CloudPlaylistSearchHelper
         finally
         {
             _searchSemaphore.Release();
-            GC.Collect();
+            GC.Collect(2, GCCollectionMode.Forced, true, true);
         }
     }
 
@@ -118,7 +118,7 @@ public class CloudPlaylistSearchHelper
         finally
         {
             _searchSemaphore.Release();
-            GC.Collect();
+            GC.Collect(2, GCCollectionMode.Forced, true, true);
         }
     }
 
