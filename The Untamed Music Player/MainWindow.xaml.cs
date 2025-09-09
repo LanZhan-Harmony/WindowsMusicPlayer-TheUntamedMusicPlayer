@@ -31,7 +31,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         InitializeComponent();
 
-        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppIcon/Icon.png"));
+        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppIcon/Icon.ico"));
         Title = "AppDisplayName".GetLocalized();
         ExtendsContentIntoTitleBar = true;
 
