@@ -246,7 +246,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         {
             response?.Dispose();
         }
-        errorExit:
+    errorExit:
         return (false, new JsonObject { { "code", 301 } });
     }
 
