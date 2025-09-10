@@ -94,41 +94,41 @@ internal static partial class Request
         switch (options.crypto)
         {
             case "weapi":
-            {
-                data["csrf_token"] = options.cookie["__csrf"]?.Value ?? string.Empty;
-                data = Crypto.WEApi(data);
-                url = MyRegex1().Replace(url, "weapi");
-                break;
-            }
+                {
+                    data["csrf_token"] = options.cookie["__csrf"]?.Value ?? string.Empty;
+                    data = Crypto.WEApi(data);
+                    url = MyRegex1().Replace(url, "weapi");
+                    break;
+                }
             case "linuxapi":
-            {
-                data = Crypto.LinuxApi(
-                    new Dictionary<string, object>
-                    {
+                {
+                    data = Crypto.LinuxApi(
+                        new Dictionary<string, object>
+                        {
                         { "method", method.Method },
                         { "url", MyRegex1().Replace(url, "api") },
                         { "params", data },
-                    }
-                );
-                headers["User-Agent"] =
-                    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36";
-                url = "https://music.163.com/api/linux/forward";
-                break;
-            }
-            case "eapi":
-            {
-                CookieCollection cookie;
-                string csrfToken;
-                Dictionary<string, string> header;
-
-                cookie = [];
-                foreach (Cookie item in options.cookie)
-                {
-                    cookie.Add(new Cookie(item.Name, item.Value));
+                        }
+                    );
+                    headers["User-Agent"] =
+                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36";
+                    url = "https://music.163.com/api/linux/forward";
+                    break;
                 }
+            case "eapi":
+                {
+                    CookieCollection cookie;
+                    string csrfToken;
+                    Dictionary<string, string> header;
 
-                csrfToken = cookie["__csrf"]?.Value ?? string.Empty;
-                header = new Dictionary<string, string>()
+                    cookie = [];
+                    foreach (Cookie item in options.cookie)
+                    {
+                        cookie.Add(new Cookie(item.Name, item.Value));
+                    }
+
+                    csrfToken = cookie["__csrf"]?.Value ?? string.Empty;
+                    header = new Dictionary<string, string>()
                 {
                     { "osver", cookie["osver"]?.Value ?? string.Empty }, // 系统版本
                     { "deviceId", cookie["deviceId"]?.Value ?? string.Empty }, // encrypt.base64.encode(imei + '\t02:00:00:00:00:00\t5106025eb79a5247\t70ffbaac7')
@@ -145,27 +145,27 @@ internal static partial class Request
                         $"{GetCurrentTotalMilliseconds()}_{$"{Math.Floor(new Random().NextDouble() * 1000)}".PadLeft(4, '0')}"
                     },
                 };
-                if (cookie["MUSIC_U"] is not null)
-                {
-                    header["MUSIC_U"] = cookie["MUSIC_U"].Value;
-                }
+                    if (cookie["MUSIC_U"] is not null)
+                    {
+                        header["MUSIC_U"] = cookie["MUSIC_U"].Value;
+                    }
 
-                if (cookie["MUSIC_A"] is not null)
-                {
-                    header["MUSIC_A"] = cookie["MUSIC_A"].Value;
-                }
+                    if (cookie["MUSIC_A"] is not null)
+                    {
+                        header["MUSIC_A"] = cookie["MUSIC_A"].Value;
+                    }
 
-                headers["Cookie"] = string.Join(
-                    "; ",
-                    header.Select(t =>
-                        Uri.EscapeDataString(t.Key) + "=" + Uri.EscapeDataString(t.Value)
-                    )
-                );
-                data["header"] = JsonSerializer.Serialize(header);
-                data = Crypto.EApi(options.url, data);
-                url = MyRegex1().Replace(url, "eapi");
-                break;
-            }
+                    headers["Cookie"] = string.Join(
+                        "; ",
+                        header.Select(t =>
+                            Uri.EscapeDataString(t.Key) + "=" + Uri.EscapeDataString(t.Value)
+                        )
+                    );
+                    data["header"] = JsonSerializer.Serialize(header);
+                    data = Crypto.EApi(options.url, data);
+                    url = MyRegex1().Replace(url, "eapi");
+                    break;
+                }
         }
         answer = new JsonObject
         {
