@@ -130,7 +130,8 @@
             <Border x:Name="ShadowTarget"/>
             <Grid x:Name="ReferenceGrid"
                   Grid.Row="0" Grid.Column="0"
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
                   SizeChanged="ReferenceGrid_SizeChanged"/>
             <Border x:Name="CoverBorder"
                     Grid.Row="0" Grid.Column="0"
@@ -179,7 +180,8 @@
                 </Border.ContextFlyout>
                 <Grid>
                     <Image x:Name="ControllerCover"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            Canvas.ZIndex="1"
                            Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"/>
                     <Grid x:Name="ControllerCoverGrid"
