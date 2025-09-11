@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Windows.Storage.Pickers;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
@@ -17,9 +18,7 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using Windows.ApplicationModel;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.UI;
-using WinRT.Interop;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
@@ -243,21 +242,18 @@ public partial class SettingsViewModel
     public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
         (sender as Button)!.IsEnabled = false;
-        var openPicker = new FolderPicker
+        var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
         {
             SuggestedStartLocation = PickerLocationId.MusicLibrary,
-            FileTypeFilter = { "*" },
             CommitButtonText = "Settings_AddFolderToMusic".GetLocalized(),
         };
-        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(openPicker, hWnd);
         var folder = await openPicker.PickSingleFolderAsync();
         if (
             folder is not null
-            && !Data.MusicLibrary.Folders.AsValueEnumerable().Any(f => f.Path == folder.Path)
+            && !Data.MusicLibrary.Folders.AsValueEnumerable().Contains(folder.Path)
         )
         {
-            Data.MusicLibrary.Folders.Add(folder);
+            Data.MusicLibrary.Folders.Add(folder.Path);
             OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
             await SaveFoldersAsync();
             await Data.MusicLibrary.LoadLibraryAgainAsync(); // 重新加载音乐库
@@ -265,9 +261,9 @@ public partial class SettingsViewModel
         (sender as Button)!.IsEnabled = true;
     }
 
-    public async void RemoveMusicFolder(StorageFolder folder)
+    public async void RemoveMusicFolder(string folder)
     {
-        Data.MusicLibrary.Folders?.Remove(folder);
+        Data.MusicLibrary.Folders.Remove(folder);
         OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
         await SaveFoldersAsync();
         await Data.MusicLibrary.LoadLibraryAgainAsync();
@@ -291,13 +287,10 @@ public partial class SettingsViewModel
         (sender as Button)!.IsEnabled = false;
         try
         {
-            var openPicker = new FolderPicker
+            var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.MusicLibrary,
-                FileTypeFilter = { "*" },
             };
-            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-            InitializeWithWindow.Initialize(openPicker, hWnd);
             var folder = await openPicker.PickSingleFolderAsync();
             if (folder is not null)
             {
@@ -316,13 +309,11 @@ public partial class SettingsViewModel
         (sender as Button)!.IsEnabled = false;
         try
         {
-            var picker = new FileOpenPicker
+            var picker = new FileOpenPicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.MusicLibrary,
                 FileTypeFilter = { ".m3u8", ".m3u" },
             };
-            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-            InitializeWithWindow.Initialize(picker, hWnd);
             var files = await picker.PickMultipleFilesAsync();
             if (files.Count == 0)
             {
@@ -331,7 +322,7 @@ public partial class SettingsViewModel
             var infos = new List<PlaylistInfo>();
             foreach (var file in files)
             {
-                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
+                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file.Path);
                 var info = new PlaylistInfo(name, cover);
                 await info.AddSongs(songs);
                 infos.Add(info);
@@ -364,17 +355,15 @@ public partial class SettingsViewModel
         (sender as Button)!.IsEnabled = false;
         try
         {
-            var picker = new FileOpenPicker
+            var picker = new FileOpenPicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.MusicLibrary,
                 FileTypeFilter = { ".bin" },
             };
-            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-            InitializeWithWindow.Initialize(picker, hWnd);
             var file = await picker.PickSingleFileAsync();
             if (file is not null)
             {
-                var playlists = await FileManager.LoadPlaylistDataAsync(file);
+                var playlists = await FileManager.LoadPlaylistDataFromBinAsync(file.Path);
                 foreach (var playlist in playlists)
                 {
                     playlist.InitializeCover();
@@ -409,18 +398,15 @@ public partial class SettingsViewModel
         (sender as Button)!.IsEnabled = false;
         try
         {
-            var folderPicker = new FolderPicker
+            var folderPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.MusicLibrary,
-                FileTypeFilter = { "*" },
             };
-            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-            InitializeWithWindow.Initialize(folderPicker, hWnd);
             var folder = await folderPicker.PickSingleFolderAsync();
             var count = Data.PlaylistLibrary.Playlists.Count;
             if (folder is not null && count != 0)
             {
-                await M3u8Helper.ExportPlaylistsToM3u8Async(folder);
+                await M3u8Helper.ExportPlaylistsToM3u8Async(folder.Path);
                 Messenger.Send(
                     new LogMessage(
                         LogLevel.None,
@@ -450,14 +436,12 @@ public partial class SettingsViewModel
         try
         {
             var prepareBinTask = FileManager.SavePlaylistDataAsync(Data.PlaylistLibrary.Playlists);
-            var savePicker = new FileSavePicker
+            var savePicker = new FileSavePicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.MusicLibrary,
                 SuggestedFileName = "Settings_Playlist".GetLocalized(),
-                FileTypeChoices = { new("Settings_PlaylistFile".GetLocalized(), [".bin"]) },
+                FileTypeChoices = { { "Settings_PlaylistFile".GetLocalized(), [".bin"] } },
             };
-            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-            InitializeWithWindow.Initialize(savePicker, hWnd);
             var file = await savePicker.PickSaveFileAsync();
             var count = Data.PlaylistLibrary.Playlists.Count;
             if (file is not null && count != 0)
@@ -469,7 +453,8 @@ public partial class SettingsViewModel
                     "Playlists.bin"
                 );
                 var sourceFile = await StorageFile.GetFileFromPathAsync(binPath);
-                await sourceFile.CopyAndReplaceAsync(file);
+                var destFile = await StorageFile.GetFileFromPathAsync(file.Path);
+                await sourceFile.CopyAndReplaceAsync(destFile);
                 Messenger.Send(
                     new LogMessage(
                         LogLevel.None,
@@ -666,10 +651,7 @@ public partial class SettingsViewModel
 
     public static async Task SaveFoldersAsync()
     {
-        var folderPaths = Data
-            .MusicLibrary.Folders?.AsValueEnumerable()
-            .Select(f => f.Path)
-            .ToList();
+        var folderPaths = Data.MusicLibrary.Folders?.AsValueEnumerable().ToList();
         await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths); //	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
     }
 
