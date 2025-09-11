@@ -22,40 +22,36 @@ public sealed partial class SettingsPage : Page
 
     private async void RemoveMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
-        var folderName = "";
-        StorageFolder? folder = null;
-        if (sender is FrameworkElement { DataContext: StorageFolder storageFolder })
+        if (sender is FrameworkElement { DataContext: string folder })
         {
-            folderName = storageFolder.DisplayName;
-            folder = storageFolder;
-        }
-        var titleTextBlock = new TextBlock
-        {
-            Text = "Settings_RemoveFolderDialogTitle".GetLocalized(),
-            FontWeight = FontWeights.Normal,
-        };
-        var dialog = new ContentDialog
-        {
-            XamlRoot = XamlRoot,
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            RequestedTheme = Data.MainViewModel!.IsDarkTheme
-                ? ElementTheme.Dark
-                : ElementTheme.Light,
-            Title = titleTextBlock,
-            Content = "Settings_RemoveFolderDialogContent".GetLocalizedWithReplace(
-                "{title}",
-                folderName
-            ),
-            PrimaryButtonText = "Settings_RemoveFolderDialogPrimary".GetLocalized(),
-            CloseButtonText = "Settings_RemoveFolderDialogClose".GetLocalized(),
-            DefaultButton = ContentDialogButton.Primary,
-        };
+            var folderName = (await StorageFolder.GetFolderFromPathAsync(folder)).DisplayName;
+            var titleTextBlock = new TextBlock
+            {
+                Text = "Settings_RemoveFolderDialogTitle".GetLocalized(),
+                FontWeight = FontWeights.Normal,
+            };
+            var dialog = new ContentDialog
+            {
+                XamlRoot = XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                RequestedTheme = Data.MainViewModel!.IsDarkTheme
+                    ? ElementTheme.Dark
+                    : ElementTheme.Light,
+                Title = titleTextBlock,
+                Content = "Settings_RemoveFolderDialogContent".GetLocalizedWithReplace(
+                    "{title}",
+                    folderName
+                ),
+                PrimaryButtonText = "Settings_RemoveFolderDialogPrimary".GetLocalized(),
+                CloseButtonText = "Settings_RemoveFolderDialogClose".GetLocalized(),
+                DefaultButton = ContentDialogButton.Primary,
+            };
 
-        var result = await dialog.ShowAsync();
-
-        if (result == ContentDialogResult.Primary)
-        {
-            ViewModel.RemoveMusicFolder(folder!);
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                ViewModel.RemoveMusicFolder(folder);
+            }
         }
     }
 
