@@ -73,7 +73,7 @@ public partial class MusicLibrary : ObservableRecipient
     /// <summary>
     /// 文件夹列表
     /// </summary>
-    public ObservableCollection<StorageFolder> Folders { get; set; } = [];
+    public ObservableCollection<string> Folders { get; set; } = [];
 
     /// <summary>
     /// 流派列表
@@ -102,8 +102,7 @@ public partial class MusicLibrary : ObservableRecipient
                     {
                         continue;
                     }
-                    var folder = await StorageFolder.GetFolderFromPathAsync(path);
-                    Folders.Add(folder);
+                    Folders.Add(path);
                 }
                 catch (Exception ex)
                 {
@@ -145,8 +144,11 @@ public partial class MusicLibrary : ObservableRecipient
                     {
                         foreach (var folder in Folders)
                         {
-                            _musicFolders.TryAdd(folder.Path, 0);
-                            loadMusicTasks.Add(LoadMusicAsync(folder, folder.DisplayName));
+                            _musicFolders.TryAdd(folder, 0);
+                            var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder);
+                            loadMusicTasks.Add(
+                                LoadMusicAsync(storageFolder, storageFolder.DisplayName)
+                            );
                         }
                     }
                     await Task.WhenAll(loadMusicTasks);
@@ -198,8 +200,11 @@ public partial class MusicLibrary : ObservableRecipient
                 {
                     foreach (var folder in Folders)
                     {
-                        _musicFolders.TryAdd(folder.Path, 0);
-                        loadMusicTasks.Add(LoadMusicAsync(folder, folder.DisplayName));
+                        _musicFolders.TryAdd(folder, 0);
+                        var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder);
+                        loadMusicTasks.Add(
+                            LoadMusicAsync(storageFolder, storageFolder.DisplayName)
+                        );
                     }
                 }
                 await Task.WhenAll(loadMusicTasks);

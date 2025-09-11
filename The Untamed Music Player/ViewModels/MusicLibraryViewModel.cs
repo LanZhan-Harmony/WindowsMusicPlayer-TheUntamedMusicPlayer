@@ -2,11 +2,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.Storage.Pickers;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
@@ -62,23 +61,20 @@ public partial class MusicLibraryViewModel
     public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
         (sender as Button)!.IsEnabled = false;
-        var openPicker = new FolderPicker
+        var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
         {
             SuggestedStartLocation = PickerLocationId.MusicLibrary,
-            FileTypeFilter = { "*" },
         };
-        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(openPicker, hWnd);
         var folder = await openPicker.PickSingleFolderAsync();
         if (
             folder is not null
-            && !Data.MusicLibrary.Folders.AsValueEnumerable().Any(f => f.Path == folder.Path)
+            && !Data.MusicLibrary.Folders.AsValueEnumerable().Contains(folder.Path)
         )
         {
             NoMusicControlVisibility = Visibility.Collapsed;
             HaveMusicControlVisibility = Visibility.Collapsed;
             IsProgressRingActive = true;
-            Data.MusicLibrary.Folders.Add(folder);
+            Data.MusicLibrary.Folders.Add(folder.Path);
             await SettingsViewModel.SaveFoldersAsync();
             await Data.MusicLibrary.LoadLibraryAgainAsync();
             IsProgressRingActive = false;

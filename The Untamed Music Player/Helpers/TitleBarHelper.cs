@@ -2,6 +2,7 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Windows.UI;
 using Windows.UI.ViewManagement;
+using WinRT.Interop;
 using static The_Untamed_Music_Player.Helpers.ExternFunction;
 
 namespace The_Untamed_Music_Player.Helpers;
@@ -62,7 +63,7 @@ public partial class TitleBarHelper
 
             App.MainWindow.AppWindow.TitleBar.BackgroundColor = Colors.Transparent;
 
-            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+            var hwnd = WindowNative.GetWindowHandle(App.MainWindow);
             if (hwnd == GetActiveWindow())
             {
                 SendMessage(hwnd, WMACTIVATE, WAINACTIVE, nint.Zero);

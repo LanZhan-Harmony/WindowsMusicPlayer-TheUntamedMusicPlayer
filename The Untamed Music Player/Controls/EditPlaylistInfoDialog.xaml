@@ -101,7 +101,7 @@
                                 </Button>
                                 <Button Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                                         Click="DeleteCoverButton_Click"
-                                        IsEnabled="{x:Bind IsSaveCoverButtonEnabled, Mode=OneWay}"
+                                        IsEnabled="{x:Bind IsDeleteCoverButtonEnabled, Mode=OneWay}"
                                         Style="{StaticResource MenuButtonStyle}">
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE74D;"/>
                                 </Button>

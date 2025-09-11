@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI.Helpers;
-using Windows.Storage;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.Helpers;
@@ -18,11 +17,11 @@ public static partial class M3u8Helper
     private record SongItem(int Index, int Type, object Data);
 
     public static async Task<(string, string?, List<IBriefSongInfoBase>)> GetNameAndSongsFromM3u8(
-        StorageFile m3u8File
+        string m3u8File
     )
     {
-        var m3u8Directory = Path.GetDirectoryName(m3u8File.Path)!;
-        var playlistName = Path.GetFileNameWithoutExtension(m3u8File.Name);
+        var m3u8Directory = Path.GetDirectoryName(m3u8File)!;
+        var playlistName = Path.GetFileNameWithoutExtension(m3u8File);
         string? coverPath = null;
         var songItems = new List<SongItem>();
 
@@ -31,7 +30,7 @@ public static partial class M3u8Helper
             await Task.Run(async () =>
             {
                 var currentIndex = 0;
-                var lines = await FileIO.ReadLinesAsync(m3u8File);
+                var lines = await File.ReadAllLinesAsync(m3u8File);
                 foreach (var line in lines)
                 {
                     try
@@ -291,7 +290,7 @@ public static partial class M3u8Helper
         ];
     }
 
-    public static async Task ExportPlaylistsToM3u8Async(StorageFolder folder)
+    public static async Task ExportPlaylistsToM3u8Async(string folder)
     {
         var playlists = Data.PlaylistLibrary.Playlists;
         await Task.Run(async () =>
@@ -302,7 +301,7 @@ public static partial class M3u8Helper
                 {
                     var m3u8Content = GenerateM3u8Content(playlist);
                     var fileName = $"{playlist.Name}.m3u8";
-                    var filePath = GetUniqueFilePath(Path.Combine(folder.Path, fileName));
+                    var filePath = GetUniqueFilePath(Path.Combine(folder, fileName));
                     await File.WriteAllTextAsync(filePath, m3u8Content, Encoding.UTF8);
                 }
                 catch { }

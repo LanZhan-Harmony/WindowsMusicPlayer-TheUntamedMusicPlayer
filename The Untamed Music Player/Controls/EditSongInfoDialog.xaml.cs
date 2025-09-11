@@ -6,13 +6,11 @@ using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
-using TagLib;
+using Microsoft.Windows.Storage.Pickers;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using Windows.Storage;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
 using ZLinq;
 using ZLogger;
 using TextBox = Microsoft.UI.Xaml.Controls.TextBox;
@@ -183,8 +181,8 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
             musicFile.Tag.Lyrics = string.IsNullOrWhiteSpace(_lyric) ? null : _lyric;
             musicFile.Tag.Pictures =
                 _hasCoverDeleted ? []
-                : _hasCoverChanged && System.IO.File.Exists(_coverFilePath)
-                    ? [new Picture(_coverFilePath)]
+                : _hasCoverChanged && File.Exists(_coverFilePath)
+                    ? [new TagLib.Picture(_coverFilePath)]
                 : musicFile.Tag.Pictures;
             musicFile.Save();
         }
@@ -218,16 +216,11 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         IsChangingCoverProgressRingActive = true;
         try
         {
-            var openPicker = new FileOpenPicker
+            var openPicker = new FileOpenPicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
             };
-            foreach (var type in Data.SupportedCoverTypes)
-            {
-                openPicker.FileTypeFilter.Add(type);
-            }
-            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-            InitializeWithWindow.Initialize(openPicker, hWnd);
+            Array.ForEach(Data.SupportedCoverTypes, openPicker.FileTypeFilter.Add);
             var file = await openPicker.PickSingleFileAsync();
             if (file is not null)
             {
@@ -270,21 +263,19 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
             var bytes = picture.Data.Data;
             var extension = $".{picture.MimeType.Split('/')[1]}";
             var fileName = _song.Title;
-            var savePicker = new FileSavePicker
+            var savePicker = new FileSavePicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
                 SuggestedFileName = fileName,
                 FileTypeChoices =
                 {
-                    new("EditSongInfoDialog_CoverImage".GetLocalized(), [extension]),
+                    { "EditSongInfoDialog_CoverImage".GetLocalized(), [extension] },
                 },
             };
-            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-            InitializeWithWindow.Initialize(savePicker, hWnd);
             var file = await savePicker.PickSaveFileAsync();
             if (file is not null)
             {
-                await FileIO.WriteBytesAsync(file, bytes);
+                await File.WriteAllBytesAsync(file.Path, bytes);
             }
         }
         catch (Exception ex)
