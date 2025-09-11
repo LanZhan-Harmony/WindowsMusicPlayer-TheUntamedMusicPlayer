@@ -4,12 +4,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Windows.Storage.Pickers;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using Windows.Storage;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
 using ZLinq;
 using ZLogger;
 
@@ -184,21 +183,19 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
             var bytes = picture.Data.Data;
             var extension = picture.MimeType.Split('/')[1];
             var fileName = _album.Name;
-            var savePicker = new FileSavePicker
+            var savePicker = new FileSavePicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
                 SuggestedFileName = fileName,
                 FileTypeChoices =
                 {
-                    new("EditSongInfoDialog_CoverImage".GetLocalized(), [extension]),
+                    { "EditSongInfoDialog_CoverImage".GetLocalized(), [extension] },
                 },
             };
-            var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-            InitializeWithWindow.Initialize(savePicker, hWnd);
             var file = await savePicker.PickSaveFileAsync();
             if (file is not null)
             {
-                await FileIO.WriteBytesAsync(file, bytes);
+                await File.WriteAllBytesAsync(file.Path, bytes);
             }
         }
         catch (Exception ex)

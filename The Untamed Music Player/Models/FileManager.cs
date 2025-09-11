@@ -20,7 +20,7 @@ public class FileManager
     /// 保存音乐库数据到文件
     /// </summary>
     public static void SaveLibraryDataAsync(
-        ObservableCollection<StorageFolder> folders,
+        ObservableCollection<string> folders,
         MusicLibraryData data
     )
     {
@@ -50,7 +50,7 @@ public class FileManager
                 var folderFingerprints = new Dictionary<string, string>();
                 foreach (var folder in folders)
                 {
-                    folderFingerprints[folder.Path] = GetFolderFingerprintFastAsync(folder);
+                    folderFingerprints[folder] = GetFolderFingerprintFastAsync(folder);
                 }
                 await SaveObjectToFileAsync(
                     libraryFolder,
@@ -162,7 +162,7 @@ public class FileManager
                     }
                     catch { }
                 }
-                await M3u8Helper.ExportPlaylistsToM3u8Async(playlistFolder);
+                await M3u8Helper.ExportPlaylistsToM3u8Async(playlistFolder.Path);
             }
             catch (Exception ex)
             {
@@ -177,7 +177,7 @@ public class FileManager
     /// <param name="folders"></param>
     /// <returns></returns>
     public static async Task<(bool needRescan, MusicLibraryData data)> LoadLibraryDataAsync(
-        ObservableCollection<StorageFolder> folders
+        ObservableCollection<string> folders
     )
     {
         var data = new MusicLibraryData();
@@ -218,7 +218,7 @@ public class FileManager
             // 使用更快速的文件夹变化检测
             foreach (var folder in folders)
             {
-                if (!savedFingerprints.TryGetValue(folder.Path, out var savedFingerprint))
+                if (!savedFingerprints.TryGetValue(folder, out var savedFingerprint))
                 {
                     return (true, data); // 找不到保存的指纹，需要重新扫描
                 }
@@ -372,7 +372,7 @@ public class FileManager
             var playlists = new List<PlaylistInfo>();
             foreach (var file in files)
             {
-                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file);
+                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file.Path);
                 var playlist = new PlaylistInfo(name, cover);
                 await playlist.AddRange(songs);
                 playlists.Add(playlist);
@@ -386,14 +386,11 @@ public class FileManager
         }
     }
 
-    public static async Task<List<PlaylistInfo>> LoadPlaylistDataAsync(StorageFile file)
+    public static async Task<List<PlaylistInfo>> LoadPlaylistDataFromBinAsync(string file)
     {
         try
         {
-            var buffer = await FileIO.ReadBufferAsync(file);
-            var data = new byte[buffer.Length];
-            using var dataReader = DataReader.FromBuffer(buffer);
-            dataReader.ReadBytes(data);
+            var data = await File.ReadAllBytesAsync(file);
             return MemoryPackSerializer.Deserialize<List<PlaylistInfo>>(data) ?? [];
         }
         catch (Exception ex)
@@ -459,12 +456,11 @@ public class FileManager
     /// 超快速文件夹变化检测，使用缓存和最简单的检测方法
     /// 仅检查文件夹修改时间，不完全准确但极快
     /// </summary>
-    private static string GetFolderFingerprintFastAsync(StorageFolder folder)
+    private static string GetFolderFingerprintFastAsync(string folder)
     {
-        var folderPath = folder.Path;
         try
         {
-            var dirInfo = new DirectoryInfo(folderPath);
+            var dirInfo = new DirectoryInfo(folder);
             if (!dirInfo.Exists)
             {
                 var guid = $"{Guid.NewGuid()}";

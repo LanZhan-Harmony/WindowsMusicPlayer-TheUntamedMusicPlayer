@@ -13,8 +13,8 @@
 
     <Page.Resources>
         <helper:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
-        <DataTemplate x:Key="MusicFolderTemplate" x:DataType="storage:StorageFolder">
-            <toolkit:SettingsCard Header="{x:Bind Path}">
+        <DataTemplate x:Key="MusicFolderTemplate" x:DataType="x:String">
+            <toolkit:SettingsCard Header="{x:Bind}">
                 <Button x:Uid="Settings_RemoveFolder"
                         Width="27" Height="27"
                         Margin="0" Padding="0"

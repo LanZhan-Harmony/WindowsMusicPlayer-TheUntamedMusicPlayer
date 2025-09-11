@@ -4,14 +4,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.Windows.Storage.Pickers;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Views;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
 using ZLinq;
 
 namespace The_Untamed_Music_Player.ViewModels;
@@ -172,40 +171,42 @@ public partial class PlayQueueViewModel : ObservableObject
 
     public async Task AddFilesButton_Click()
     {
-        var picker = new FileOpenPicker { SuggestedStartLocation = PickerLocationId.MusicLibrary };
-        foreach (var type in Data.SupportedAudioTypes)
+        var picker = new FileOpenPicker(App.MainWindow!.AppWindow.Id)
         {
-            picker.FileTypeFilter.Add(type);
-        }
-        var hwnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(picker, hwnd);
+            SuggestedStartLocation = PickerLocationId.MusicLibrary,
+        };
+        Array.ForEach(Data.SupportedAudioTypes, picker.FileTypeFilter.Add);
         var files = await picker.PickMultipleFilesAsync();
         if (files.Count > 0)
         {
-            await AddExternalFilesToPlayQueue([.. files], PlayQueue.Count);
+            await AddExternalFilesToPlayQueue(
+                [.. files.AsValueEnumerable().Select(f => f.Path)],
+                PlayQueue.Count
+            );
         }
     }
 
     public async Task AddFolderButton_Click()
     {
-        var picker = new FolderPicker
+        var picker = new FolderPicker(App.MainWindow!.AppWindow.Id)
         {
             SuggestedStartLocation = PickerLocationId.MusicLibrary,
-            FileTypeFilter = { "*" },
         };
-        var hwnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(picker, hwnd);
         var folder = await picker.PickSingleFolderAsync();
         if (folder is not null)
         {
             List<StorageFile>? musicFiles = null;
             await Task.Run(async () =>
             {
-                musicFiles = await GetMusicFilesFromFolderAsync(folder);
+                var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder.Path);
+                musicFiles = await GetMusicFilesFromFolderAsync(storageFolder);
             });
             if (musicFiles?.Count > 0)
             {
-                await AddExternalFilesToPlayQueue(musicFiles, PlayQueue.Count);
+                await AddExternalFilesToPlayQueue(
+                    [.. musicFiles.AsValueEnumerable().Select(f => f.Path)],
+                    PlayQueue.Count
+                );
             }
         }
     }
@@ -327,7 +328,10 @@ public partial class PlayQueueViewModel : ObservableObject
                     }
                 }
 
-                await AddExternalFilesToPlayQueue(musicFiles, index);
+                await AddExternalFilesToPlayQueue(
+                    [.. musicFiles.AsValueEnumerable().Select(f => f.Path)],
+                    index
+                );
             }
             def.Complete();
         }
@@ -359,7 +363,7 @@ public partial class PlayQueueViewModel : ObservableObject
         return musicFiles;
     }
 
-    public async Task AddExternalFilesToPlayQueue(List<StorageFile> files, int insertIndex)
+    public async Task AddExternalFilesToPlayQueue(List<string> files, int insertIndex)
     {
         var newSongs = new List<IBriefSongInfoBase>();
         await Task.Run(() =>
@@ -368,8 +372,8 @@ public partial class PlayQueueViewModel : ObservableObject
             {
                 try
                 {
-                    var folder = Path.GetDirectoryName(file.Path) ?? "";
-                    var songInfo = new BriefLocalSongInfo(file.Path, folder);
+                    var folder = Path.GetDirectoryName(file) ?? "";
+                    var songInfo = new BriefLocalSongInfo(file, folder);
                     if (songInfo.IsPlayAvailable)
                     {
                         newSongs.Add(songInfo);
