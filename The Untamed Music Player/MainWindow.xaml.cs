@@ -12,6 +12,7 @@ using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
 using The_Untamed_Music_Player.Views;
 using Windows.UI.ViewManagement;
+using WinUIEx;
 using ZLogger;
 
 namespace The_Untamed_Music_Player;
