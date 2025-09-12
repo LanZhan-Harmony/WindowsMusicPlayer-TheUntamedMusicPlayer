@@ -1,6 +1,7 @@
 using Microsoft.UI;
 using Windows.UI;
 using Windows.UI.Composition;
+using WinUIEx;
 
 namespace The_Untamed_Music_Player.Helpers;
 

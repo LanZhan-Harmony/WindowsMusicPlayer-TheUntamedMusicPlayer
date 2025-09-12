@@ -8,6 +8,7 @@ using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
+using WinUIEx;
 
 namespace The_Untamed_Music_Player;
 
