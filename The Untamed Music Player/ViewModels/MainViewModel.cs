@@ -8,6 +8,7 @@ using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using Windows.UI;
 using WinRT;
+using WinUIEx;
 
 namespace The_Untamed_Music_Player.ViewModels;
 

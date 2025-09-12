@@ -1,8 +1,7 @@
 {
   "profiles": {
     "The Untamed Music Player (Package)": {
-      "commandName": "MsixPackage",
-      "nativeDebugging": false
+      "commandName": "MsixPackage"
     },
     "The Untamed Music Player (Unpackaged)": {
       "commandName": "Project"

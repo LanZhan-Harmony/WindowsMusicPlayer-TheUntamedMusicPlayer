@@ -10,28 +10,12 @@
     <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <UseWinUI>True</UseWinUI>
-    <EnableMsixTooling>True</EnableMsixTooling>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <PackageCertificateKeyFile>The Untamed Music Player_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-    <PublishSelfContained>True</PublishSelfContained>
-    <WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
-    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
-    <GenerateTestArtifacts>False</GenerateTestArtifacts>
-    <AppxBundle>Auto</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <LangVersion>preview</LangVersion>
-    <PublishReadyToRun>True</PublishReadyToRun>
-    <IsAotCompatible>True</IsAotCompatible>
-    <PublishAot>True</PublishAot>
-    <PublishTrimmed>True</PublishTrimmed>
-    <JsonSerializerIsReflectionEnabledByDefault>True</JsonSerializerIsReflectionEnabledByDefault>
+    <GenerateTestArtifacts>False</GenerateTestArtifacts>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\**\*" />
@@ -90,9 +74,6 @@
     <PackageReference Include="ZLinq" Version="1.5.2" />
     <PackageReference Include="ZLogger" Version="2.5.10" />
   </ItemGroup>
-  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix" />
-  </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="TagLibSharp" />
   </ItemGroup>
@@ -100,8 +81,13 @@
     <DefaultLanguage>en-us</DefaultLanguage>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
   </PropertyGroup>
+  <!-- 在此处定义“Msix” ProjectCapability 允许即使尚未还原 Windows App SDK Nuget 包，也可以为此项目激活单项目 MSIX 打包工具扩展。 -->
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <!-- 在此处定义“HasPackageAndPublishMenuAddedByProject”属性允许即使尚未还原 Windows App SDK Nuget 包，也可以为此项目启用解决方案资源管理器“打包和发布”上下文菜单项。 -->
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+    <HasPackageAndPublishMenu>True</HasPackageAndPublishMenu>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <DebugType>full</DebugType>
@@ -132,4 +118,21 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </PRIResource>
   </ItemGroup>
+  <!-- 发布属性 -->
+  <PropertyGroup>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <PublishSelfContained>True</PublishSelfContained>
+    <WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
+    <PublishReadyToRun>True</PublishReadyToRun>
+    <IsAotCompatible>True</IsAotCompatible>
+    <PublishAot>True</PublishAot>
+    <PublishTrimmed>True</PublishTrimmed>
+    <JsonSerializerIsReflectionEnabledByDefault>True</JsonSerializerIsReflectionEnabledByDefault>
+    <PackageCertificateKeyFile>The Untamed Music Player_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <EnableMsixTooling>True</EnableMsixTooling>
+  </PropertyGroup>
 </Project>
