@@ -12,6 +12,7 @@ using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
 using Windows.System;
 using WinRT.Interop;
+using WinUIEx;
 using ZLogger;
 using static The_Untamed_Music_Player.Helpers.ExternFunction;
 
