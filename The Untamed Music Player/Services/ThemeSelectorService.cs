@@ -4,25 +4,21 @@ using The_Untamed_Music_Player.Helpers;
 
 namespace The_Untamed_Music_Player.Services;
 
-public class ThemeSelectorService(ILocalSettingsService localSettingsService)
-    : IThemeSelectorService
+public class ThemeSelectorService : IThemeSelectorService
 {
     private const string SettingsKey = "AppBackgroundRequestedTheme";
-
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
     public ElementTheme Theme { get; set; } = ElementTheme.Default;
-
-    private readonly ILocalSettingsService _localSettingsService = localSettingsService;
 
     public async Task InitializeAsync()
     {
         Theme = await LoadThemeFromSettingsAsync();
-        await Task.CompletedTask;
     }
 
     public async Task SetThemeAsync(ElementTheme theme)
     {
         Theme = theme;
-
         await SetRequestedThemeAsync();
         await SaveThemeInSettingsAsync(Theme);
     }
@@ -32,7 +28,6 @@ public class ThemeSelectorService(ILocalSettingsService localSettingsService)
         if (App.MainWindow?.Content is FrameworkElement rootElement)
         {
             rootElement.RequestedTheme = Theme;
-
             TitleBarHelper.UpdateTitleBar(Theme);
         }
 
@@ -42,12 +37,10 @@ public class ThemeSelectorService(ILocalSettingsService localSettingsService)
     private async Task<ElementTheme> LoadThemeFromSettingsAsync()
     {
         var themeName = await _localSettingsService.ReadSettingAsync<string>(SettingsKey);
-
         if (Enum.TryParse(themeName, out ElementTheme cacheTheme))
         {
             return cacheTheme;
         }
-
         return ElementTheme.Default;
     }
 
