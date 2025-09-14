@@ -5,8 +5,6 @@ namespace The_Untamed_Music_Player.Activation;
 
 public class AppNotificationActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
-    public AppNotificationActivationHandler() { }
-
     protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
     {
         return AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind
@@ -20,11 +18,6 @@ public class AppNotificationActivationHandler : ActivationHandler<LaunchActivate
     /// <returns></returns>
     protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
-        /*App.MainWindow!.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
-        {
-            App.MainWindow.ShowMessageDialogAsync("TODO: Handle notification activations.", "Notification Activation");
-        });*/
-
         await Task.CompletedTask;
     }
 }

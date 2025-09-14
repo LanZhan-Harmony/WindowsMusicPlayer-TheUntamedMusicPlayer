@@ -1393,7 +1393,7 @@ public partial class MusicPlayer
 
     public async Task UpdateLyric(string lyric)
     {
-        CurrentLyric = await LyricSlice.GetLyricSlices(lyric);
+        CurrentLyric = await LyricHelper.GetLyricSlices(lyric);
         _currentLyricIndex = 0;
         CurrentLyricContent = "";
 

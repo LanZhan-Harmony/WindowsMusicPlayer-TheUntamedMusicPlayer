@@ -4,27 +4,24 @@ using ZLinq;
 
 namespace The_Untamed_Music_Player.Services;
 
-public class ActivationService(
-    IEnumerable<IActivationHandler> activationHandlers,
-    IThemeSelectorService themeSelectorService
-) : IActivationService
+public class ActivationService(IEnumerable<IActivationHandler> activationHandlers)
+    : IActivationService
 {
     private readonly IEnumerable<IActivationHandler> _activationHandlers = activationHandlers;
-    private readonly IThemeSelectorService _themeSelectorService = themeSelectorService;
+    private readonly IThemeSelectorService _themeSelectorService =
+        App.GetService<IThemeSelectorService>();
 
     public async Task ActivateAsync(object activationArgs)
     {
-        // Execute tasks before activation.
-        await InitializeAsync();
+        await InitializeAsync(); // 在激活之前执行任务
+        await HandleActivationAsync(activationArgs); // 通过 ActivationHandlers 处理激活
+        App.MainWindow?.Activate(); // 打开 MainWindow
+        await StartupAsync(); // 在激活之后执行任务
+    }
 
-        // Handle activation via ActivationHandlers.
-        await HandleActivationAsync(activationArgs);
-
-        // Activate the MainWindow.
-        App.MainWindow?.Activate();
-
-        // Execute tasks after activation.
-        await StartupAsync();
+    private async Task InitializeAsync()
+    {
+        await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
     }
 
     private async Task HandleActivationAsync(object activationArgs)
@@ -39,15 +36,8 @@ public class ActivationService(
         }
     }
 
-    private async Task InitializeAsync()
-    {
-        await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
-        await Task.CompletedTask;
-    }
-
     private async Task StartupAsync()
     {
         await _themeSelectorService.SetRequestedThemeAsync();
-        await Task.CompletedTask;
     }
 }
