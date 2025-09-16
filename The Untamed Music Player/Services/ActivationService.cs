@@ -10,6 +10,8 @@ public class ActivationService(IEnumerable<IActivationHandler> activationHandler
     private readonly IEnumerable<IActivationHandler> _activationHandlers = activationHandlers;
     private readonly IThemeSelectorService _themeSelectorService =
         App.GetService<IThemeSelectorService>();
+    private readonly IMaterialSelectorService _materialSelectorService =
+        App.GetService<IMaterialSelectorService>();
 
     public async Task ActivateAsync(object activationArgs)
     {
@@ -39,5 +41,6 @@ public class ActivationService(IEnumerable<IActivationHandler> activationHandler
     private async Task StartupAsync()
     {
         await _themeSelectorService.SetRequestedThemeAsync();
+        await _materialSelectorService.InitializeAsync();
     }
 }

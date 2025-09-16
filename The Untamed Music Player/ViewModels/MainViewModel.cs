@@ -18,305 +18,42 @@ public class MainViewModel
         App.GetService<ILocalSettingsService>();
     private IDynamicBackgroundService _dynamicBackgroundService = null!;
 
-    private readonly MainWindow _mainMindow;
-    private readonly ICompositionSupportsSystemBackdrop? _backdropTarget;
-    private readonly SystemBackdropConfiguration _configurationSource = new()
-    {
-        IsInputActive = true,
-    };
-    private ISystemBackdropControllerWithTargets? _currentBackdropController;
-    private bool _previousIsDarkTheme = false;
-    public bool IsDarkTheme { get; set; }
+    private readonly MainWindow _mainWindow;
 
-    public bool FirstStart { get; set; } = true;
-    public byte SelectedMaterial { get; set; } = 3;
-    public bool IsFallBack { get; set; } = true;
-    public byte LuminosityOpacity { get; set; } = 85;
-    public Color TintColor { get; set; } = default;
+    public bool IsDarkTheme { get; set; }
 
     public MainViewModel()
     {
-        _mainMindow = Data.MainWindow ?? new();
-        _backdropTarget = _mainMindow.As<ICompositionSupportsSystemBackdrop>();
+        _mainWindow = Data.MainWindow ?? new();
         IsDarkTheme =
-            ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark
+            ((FrameworkElement)_mainWindow.Content).ActualTheme == ElementTheme.Dark
             || (
-                ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default
+                ((FrameworkElement)_mainWindow.Content).ActualTheme == ElementTheme.Default
                 && App.Current.RequestedTheme == ApplicationTheme.Dark
             );
-        InitializeAsync();
-        _mainMindow.Activated += MainWindow_Activated;
-        ((FrameworkElement)_mainMindow.Content).ActualThemeChanged += Window_ThemeChanged;
+        InitializeDynamicBackground();
+        ((FrameworkElement)_mainWindow.Content).ActualThemeChanged += Window_ThemeChanged;
         Data.MainViewModel = this;
     }
 
-    public async void InitializeAsync()
-    {
-        await LoadSettingsAsync();
-        ChangeMaterial(SelectedMaterial);
-        SaveIsDarkThemeAsync();
-        InitializeDynamicBackgroundAsync();
-    }
-
-    public void InitializeDynamicBackgroundAsync()
+    public void InitializeDynamicBackground()
     {
         _dynamicBackgroundService = App.GetService<IDynamicBackgroundService>();
         // 初始化动态背景服务，使用根网格作为目标元素
-        _dynamicBackgroundService.Initialize(_mainMindow.GetBackgroundGrid());
+        _dynamicBackgroundService.Initialize(_mainWindow.GetBackgroundGrid());
 
         // 如果当前已有正在播放的歌曲，立即更新背景
         _ = _dynamicBackgroundService.UpdateBackgroundAsync();
     }
 
-    public async void ChangeMaterial(byte material)
-    {
-        _mainMindow.SystemBackdrop = null;
-        _currentBackdropController?.RemoveAllSystemBackdropTargets();
-        _currentBackdropController?.Dispose();
-
-        _currentBackdropController = material switch
-        {
-            1 => new MicaController { Kind = MicaKind.Base },
-            2 => new MicaController { Kind = MicaKind.BaseAlt },
-            3 => new DesktopAcrylicController { Kind = DesktopAcrylicKind.Default },
-            4 => new DesktopAcrylicController { Kind = DesktopAcrylicKind.Base },
-            5 => new DesktopAcrylicController { Kind = DesktopAcrylicKind.Thin },
-            _ => null,
-        };
-
-        if (_currentBackdropController is not null)
-        {
-            SetConfigurationSourceTheme();
-            _currentBackdropController?.AddSystemBackdropTarget(_backdropTarget);
-            _currentBackdropController?.SetSystemBackdropConfiguration(_configurationSource);
-            await Task.Delay(100);
-        }
-        else
-        {
-            _ = material switch
-            {
-                6 => TrySetBlurBackdrop(),
-                7 => TrySetTransparentBackdrop(),
-                8 => TrySetAnimatedBackdrop(),
-                _ => false,
-            };
-        }
-
-        if (FirstStart && IsDarkTheme == _previousIsDarkTheme)
-        {
-            ChangeLuminosityOpacity(LuminosityOpacity);
-            ChangeTintColor(TintColor);
-            FirstStart = false;
-        }
-        else
-        {
-            LuminosityOpacity = GetLuminosityOpacity();
-            TintColor = GetTintColor();
-            if (Data.SettingsViewModel is not null)
-            {
-                Data.SettingsViewModel.LuminosityOpacity = LuminosityOpacity;
-                Data.SettingsViewModel.TintColor = TintColor;
-            }
-        }
-    }
-
-    /// <summary>
-    /// 尝试设置模糊背景
-    /// </summary>
-    /// <returns></returns>
-    public bool TrySetBlurBackdrop()
-    {
-        try
-        {
-            var blurBackdrop = new BlurredBackdrop();
-            _mainMindow.SystemBackdrop = blurBackdrop;
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// 尝试设置透明背景
-    /// </summary>
-    /// <param name="tintColor"></param>
-    /// <returns></returns>
-    public bool TrySetTransparentBackdrop(Color? tintColor = null)
-    {
-        try
-        {
-            var color = tintColor ?? Colors.Transparent;
-            var transparentBackdrop = new TransparentTintBackdrop(color);
-            _mainMindow.SystemBackdrop = transparentBackdrop;
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// 尝试设置动画背景
-    /// </summary>
-    /// <returns></returns>
-    public bool TrySetAnimatedBackdrop()
-    {
-        try
-        {
-            var animatedBackdrop = new ColorAnimatedBackdrop();
-            _mainMindow.SystemBackdrop = animatedBackdrop;
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public void ChangeLuminosityOpacity(byte luminosityOpacity)
-    {
-        if (_currentBackdropController is MicaController micaController)
-        {
-            micaController.LuminosityOpacity = luminosityOpacity / 100.0F;
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            desktopAcrylicController.LuminosityOpacity = luminosityOpacity / 100.0F;
-        }
-    }
-
-    public byte GetLuminosityOpacity()
-    {
-        if (_currentBackdropController is MicaController micaController)
-        {
-            return (byte)(micaController.LuminosityOpacity * 100);
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            return (byte)(desktopAcrylicController.LuminosityOpacity * 100);
-        }
-        return LuminosityOpacity;
-    }
-
-    public void ChangeTintColor(Color tintColor)
-    {
-        if (_currentBackdropController is MicaController micaController)
-        {
-            micaController.TintColor = tintColor;
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            desktopAcrylicController.TintColor = tintColor;
-        }
-    }
-
-    public Color GetTintColor()
-    {
-        if (_currentBackdropController is MicaController micaController)
-        {
-            return micaController.TintColor;
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            return desktopAcrylicController.TintColor;
-        }
-        return TintColor;
-    }
-
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
-        SetConfigurationSourceTheme();
         IsDarkTheme =
-            ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Dark
+            ((FrameworkElement)_mainWindow.Content).ActualTheme == ElementTheme.Dark
             || (
-                ((FrameworkElement)_mainMindow.Content).ActualTheme == ElementTheme.Default
+                ((FrameworkElement)_mainWindow.Content).ActualTheme == ElementTheme.Default
                 && App.Current.RequestedTheme == ApplicationTheme.Dark
             );
-        ChangeTheme();
-        SaveIsDarkThemeAsync();
-    }
-
-    private void ChangeTheme()
-    {
-        Color darkColor,
-            lightColor;
-
-        if (_currentBackdropController is MicaController micaController)
-        {
-            switch (SelectedMaterial)
-            {
-                case 1:
-                    darkColor = Color.FromArgb(255, 32, 32, 32);
-                    lightColor = Color.FromArgb(255, 243, 243, 243);
-                    break;
-                case 2:
-                    darkColor = Color.FromArgb(255, 10, 10, 10);
-                    lightColor = Color.FromArgb(255, 218, 218, 218);
-                    break;
-                default:
-                    return;
-            }
-            var color = IsDarkTheme ? darkColor : lightColor;
-            micaController.TintColor = color;
-            TintColor = color;
-            Data.SettingsViewModel?.TintColor = color;
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            switch (SelectedMaterial)
-            {
-                case 3:
-                    darkColor = Color.FromArgb(255, 44, 44, 44);
-                    lightColor = Color.FromArgb(255, 252, 252, 252);
-                    break;
-                case 4:
-                    darkColor = Color.FromArgb(255, 32, 32, 32);
-                    lightColor = Color.FromArgb(255, 243, 243, 243);
-                    break;
-                case 5:
-                    darkColor = Color.FromArgb(255, 84, 84, 84);
-                    lightColor = Color.FromArgb(255, 211, 211, 211);
-                    break;
-                default:
-                    return;
-            }
-            var color = IsDarkTheme ? darkColor : lightColor;
-            desktopAcrylicController.TintColor = color;
-            TintColor = color;
-            Data.SettingsViewModel?.TintColor = color;
-        }
-    }
-
-    private void SetConfigurationSourceTheme()
-    {
-        switch (((FrameworkElement)_mainMindow.Content).ActualTheme)
-        {
-            case ElementTheme.Dark:
-                _configurationSource.Theme = SystemBackdropTheme.Dark;
-                break;
-            case ElementTheme.Light:
-                _configurationSource.Theme = SystemBackdropTheme.Light;
-                break;
-            case ElementTheme.Default:
-                _configurationSource.Theme = SystemBackdropTheme.Default;
-                break;
-        }
-    }
-
-    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-    {
-        if (IsFallBack)
-        {
-            _currentBackdropController?.SetSystemBackdropConfiguration(
-                new()
-                {
-                    IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated,
-                }
-            );
-        }
     }
 
     /// <summary>
@@ -325,75 +62,5 @@ public class MainViewModel
     public void CleanupDynamicBackgroundService()
     {
         _dynamicBackgroundService?.Dispose();
-    }
-
-    /// <summary>
-    /// 清理系统背景
-    /// </summary>
-    public void CleanupSystemBackdrop()
-    {
-        _mainMindow.SystemBackdrop = null;
-        _currentBackdropController?.RemoveAllSystemBackdropTargets();
-        _currentBackdropController?.Dispose();
-        _mainMindow.Activated -= MainWindow_Activated;
-    }
-
-    /// <summary>
-    /// 从设置存储读取选定的材质
-    /// </summary>
-    /// <returns></returns>
-    private async Task LoadSettingsAsync()
-    {
-        var fontName = await _localSettingsService.ReadSettingAsync<string>("SelectedFontFamily");
-        var fontSize = await _localSettingsService.ReadSettingAsync<double>("SelectedFontSize");
-        if (!string.IsNullOrEmpty(fontName))
-        {
-            Data.SelectedFontFamily = new FontFamily(fontName);
-        }
-        if (fontSize != 0.0)
-        {
-            Data.SelectedCurrentFontSize = fontSize;
-            Data.SelectedNotCurrentFontSize = fontSize * 0.4;
-        }
-        Data.IsWindowBackgroundFollowsCover = await _localSettingsService.ReadSettingAsync<bool>(
-            "IsWindowBackgroundFollowsCover"
-        );
-        Data.IsExclusiveMode = await _localSettingsService.ReadSettingAsync<bool>(
-            "IsExclusiveMode"
-        );
-        Data.IsOnlyAddSpecificFolder = await _localSettingsService.ReadSettingAsync<bool>(
-            "IsOnlyAddSpecificFolder"
-        );
-        Data.NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>("NotFirstUsed");
-        if (Data.NotFirstUsed.Value)
-        {
-            _previousIsDarkTheme = await _localSettingsService.ReadSettingAsync<bool>(
-                "IsDarkTheme"
-            );
-            SelectedMaterial = await _localSettingsService.ReadSettingAsync<byte>(
-                "SelectedMaterial"
-            );
-            IsFallBack = await _localSettingsService.ReadSettingAsync<bool>("IsFallBack");
-            LuminosityOpacity = await _localSettingsService.ReadSettingAsync<byte>(
-                "LuminosityOpacity"
-            );
-            TintColor = await _localSettingsService.ReadSettingAsync<Color>("TintColor");
-        }
-        else
-        {
-            var darkColor = Color.FromArgb(255, 44, 44, 44);
-            var lightColor = Color.FromArgb(255, 252, 252, 252);
-            TintColor = IsDarkTheme ? darkColor : lightColor;
-            await _localSettingsService.SaveSettingAsync("NotFirstUsed", true);
-            await _localSettingsService.SaveSettingAsync("SelectedMaterial", SelectedMaterial);
-            await _localSettingsService.SaveSettingAsync("IsFallBack", IsFallBack);
-            await _localSettingsService.SaveSettingAsync("LuminosityOpacity", LuminosityOpacity);
-            await _localSettingsService.SaveSettingAsync("TintColor", TintColor);
-        }
-    }
-
-    private async void SaveIsDarkThemeAsync()
-    {
-        await _localSettingsService.SaveSettingAsync("IsDarkTheme", IsDarkTheme);
     }
 }
