@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -28,8 +29,14 @@ public partial class SettingsViewModel
         IRecipient<HavePlaylistMessage>,
         IDisposable
 {
-    private readonly IThemeSelectorService _themeSelectorService;
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly IThemeSelectorService _themeSelectorService =
+        App.GetService<IThemeSelectorService>();
+    private readonly IMaterialSelectorService _materialSelectorService =
+        App.GetService<IMaterialSelectorService>();
+    private readonly IDynamicBackgroundService _dynamicBackgroundService =
+        App.GetService<IDynamicBackgroundService>();
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
 
     /// <summary>
     /// 是否显示文件夹为空信息
@@ -52,54 +59,25 @@ public partial class SettingsViewModel
     public partial bool IsExportPlaylistsButtonEnabled { get; set; } = false;
 
     /// <summary>
-    /// 是否启用窗口失去焦点回退
-    /// </summary>
-    [ObservableProperty]
-    public partial bool IsFallBack { get; set; } = Data.MainViewModel!.IsFallBack;
-
-    partial void OnIsFallBackChanged(bool value)
-    {
-        Data.MainViewModel!.IsFallBack = value;
-        SaveIsFallBackAsync(value);
-    }
-
-    /// <summary>
-    /// 是否显示歌词背景
-    /// </summary>
-    [ObservableProperty]
-    public partial bool IsWindowBackgroundFollowsCover { get; set; } =
-        Data.IsWindowBackgroundFollowsCover;
-
-    partial void OnIsWindowBackgroundFollowsCoverChanged(bool value)
-    {
-        var dynamicBackgroundService = App.GetService<IDynamicBackgroundService>();
-        dynamicBackgroundService.IsEnabled = value;
-        Data.IsWindowBackgroundFollowsCover = value;
-        SaveLyricBackgroundVisibilityAsync(value);
-    }
-
-    /// <summary>
     /// 是否为独占模式
     /// </summary>
     [ObservableProperty]
-    public partial bool IsExclusiveMode { get; set; } = Data.IsExclusiveMode;
+    public partial bool IsExclusiveMode { get; set; } = Settings.IsExclusiveMode;
 
     partial void OnIsExclusiveModeChanged(bool value)
     {
-        Data.IsExclusiveMode = value;
-        SaveExclusiveModeAsync(value);
+        Settings.IsExclusiveMode = value;
     }
 
     /// <summary>
     /// 是否为如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列
     /// </summary>
     [ObservableProperty]
-    public partial bool IsOnlyAddSpecificFolder { get; set; } = Data.IsOnlyAddSpecificFolder;
+    public partial bool IsOnlyAddSpecificFolder { get; set; } = Settings.IsOnlyAddSpecificFolder;
 
     partial void OnIsOnlyAddSpecificFolderChanged(bool value)
     {
-        Data.IsOnlyAddSpecificFolder = value;
-        SaveOnlyAddSpecificFolderAsync(value);
+        Settings.IsOnlyAddSpecificFolder = value;
     }
 
     /// <summary>
@@ -107,49 +85,29 @@ public partial class SettingsViewModel
     /// </summary>
     public List<FontInfo> FontFamilies { get; set; } = [];
 
-    public List<double> FontSizes { get; set; } = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75];
-
-    /// <summary>
-    /// 窗口材质列表
-    /// </summary>
-    public List<string> Materials { get; set; } =
-        [.. "Settings_Materials".GetLocalized().Split(", ")];
-
-    /// <summary>
-    /// 深浅色主题
-    /// </summary>
-    [ObservableProperty]
-    public partial ElementTheme ElementTheme { get; set; }
-
-    /// <summary>
-    /// 版本信息
-    /// </summary>
-    [ObservableProperty]
-    public partial string VersionDescription { get; set; }
+    public double[] FontSizes { get; set; } = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75];
 
     /// <summary>
     /// 选中的字体
     /// </summary>
     [ObservableProperty]
-    public partial FontFamily SelectedFontFamily { get; set; } = Data.SelectedFontFamily;
+    public partial FontFamily SelectedFontFamily { get; set; } = Settings.FontFamily;
 
     partial void OnSelectedFontFamilyChanged(FontFamily value)
     {
-        Data.SelectedFontFamily = value;
-        SaveSelectedFontFamilyAsync(value.Source);
+        Settings.FontFamily = value;
     }
 
     /// <summary>
     /// 选中的高亮字号
     /// </summary>
     [ObservableProperty]
-    public partial double SelectedCurrentFontSize { get; set; } = Data.SelectedCurrentFontSize;
+    public partial double SelectedCurrentFontSize { get; set; } = Settings.LyricPageCurrentFontSize;
 
     partial void OnSelectedCurrentFontSizeChanged(double value)
     {
-        Data.SelectedCurrentFontSize = value;
+        Settings.LyricPageCurrentFontSize = value;
         SelectedNotCurrentFontSize = value * 0.4;
-        SaveSelectedFontSizeAsync(value);
     }
 
     /// <summary>
@@ -157,49 +115,18 @@ public partial class SettingsViewModel
     /// </summary>
     [ObservableProperty]
     public partial double SelectedNotCurrentFontSize { get; set; } =
-        Data.SelectedNotCurrentFontSize;
+        Settings.LyricPageNotCurrentFontSize;
 
     partial void OnSelectedNotCurrentFontSizeChanged(double value)
     {
-        Data.SelectedNotCurrentFontSize = value;
         Messenger.Send(new FontSizeChangeMessage());
-        SaveSelectedFontSizeAsync(value);
     }
 
     /// <summary>
-    /// 选中的材质
+    /// 深浅色主题
     /// </summary>
     [ObservableProperty]
-    public partial byte SelectedMaterial { get; set; } = Data.MainViewModel!.SelectedMaterial;
-
-    partial void OnSelectedMaterialChanged(byte value)
-    {
-        SaveSelectedMaterialAsync(value);
-    }
-
-    /// <summary>
-    /// 透明度
-    /// </summary>
-    [ObservableProperty]
-    public partial byte LuminosityOpacity { get; set; } = Data.MainViewModel!.LuminosityOpacity;
-
-    partial void OnLuminosityOpacityChanged(byte value)
-    {
-        Data.MainViewModel!.LuminosityOpacity = value;
-        SaveLuminosityOpacityAsync(value);
-    }
-
-    /// <summary>
-    /// 背景颜色
-    /// </summary>
-    [ObservableProperty]
-    public partial Color TintColor { get; set; } = Data.MainViewModel!.TintColor;
-
-    partial void OnTintColorChanged(Color value)
-    {
-        Data.MainViewModel!.TintColor = value;
-        SaveTintColorAsync(value);
-    }
+    public partial ElementTheme ElementTheme { get; set; }
 
     [RelayCommand]
     public async Task SwitchThemeAsync(ElementTheme theme)
@@ -211,13 +138,68 @@ public partial class SettingsViewModel
         }
     }
 
+    /// <summary>
+    /// 窗口材质列表
+    /// </summary>
+    public List<string> Materials { get; set; } =
+        [.. "Settings_Materials".GetLocalized().Split(", ")];
+
+    /// <summary>
+    /// 选中的材质
+    /// </summary>
+    [ObservableProperty]
+    public partial byte SelectedMaterial { get; set; }
+
+    /// <summary>
+    /// 是否启用窗口失去焦点回退
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsFallBack { get; set; }
+
+    partial void OnIsFallBackChanged(bool value)
+    {
+        _materialSelectorService.SetIsFallBack(value);
+    }
+
+    /// <summary>
+    /// 不透明度
+    /// </summary>
+    [ObservableProperty]
+    public partial byte LuminosityOpacity { get; set; }
+
+    /// <summary>
+    /// 背景颜色
+    /// </summary>
+    [ObservableProperty]
+    public partial Color TintColor { get; set; }
+
+    /// <summary>
+    /// 是否显示歌词背景
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsWindowBackgroundFollowsCover { get; set; } =
+        Settings.IsWindowBackgroundFollowsCover;
+
+    partial void OnIsWindowBackgroundFollowsCoverChanged(bool value)
+    {
+        _dynamicBackgroundService.IsEnabled = value;
+    }
+
+    /// <summary>
+    /// 版本信息
+    /// </summary>
+    [ObservableProperty]
+    public partial string VersionDescription { get; set; }
+
     public SettingsViewModel()
         : base(StrongReferenceMessenger.Default)
     {
         Messenger.Register(this);
-        _themeSelectorService = App.GetService<IThemeSelectorService>();
-        _localSettingsService = App.GetService<ILocalSettingsService>();
         ElementTheme = _themeSelectorService.Theme;
+        IsFallBack = _materialSelectorService.IsFallBack;
+        SelectedMaterial = (byte)_materialSelectorService.Material;
+        LuminosityOpacity = _materialSelectorService.LuminosityOpacity;
+        TintColor = _materialSelectorService.TintColor;
         VersionDescription = GetVersionDescription();
 
         LoadSongDownloadLocationAsync();
@@ -478,24 +460,24 @@ public partial class SettingsViewModel
         }
     }
 
-    public void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public async void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (SelectedMaterial != Data.MainViewModel!.SelectedMaterial)
-        {
-            Data.MainViewModel.SelectedMaterial = SelectedMaterial;
-            Data.MainViewModel.ChangeMaterial(SelectedMaterial);
-            LuminosityOpacity = Data.MainViewModel.LuminosityOpacity;
-            TintColor = Data.MainViewModel.TintColor;
-        }
+        var (opacity, color) = await _materialSelectorService.SetMaterial(
+            (MaterialType)SelectedMaterial
+        );
+        LuminosityOpacity = opacity;
+        TintColor = color;
     }
 
-    public void ResetButton_Click(object sender, RoutedEventArgs e)
+    public async void ResetButton_Click(object sender, RoutedEventArgs e)
     {
         IsFallBack = true;
         SelectedMaterial = 3;
-        Data.MainViewModel!.ChangeMaterial(SelectedMaterial);
-        LuminosityOpacity = Data.MainViewModel.LuminosityOpacity;
-        TintColor = Data.MainViewModel.TintColor;
+        var (opacity, color) = await _materialSelectorService.SetMaterial(
+            (MaterialType)SelectedMaterial
+        );
+        LuminosityOpacity = opacity;
+        TintColor = color;
         OnPropertyChanged(nameof(SelectedMaterial));
     }
 
@@ -504,12 +486,12 @@ public partial class SettingsViewModel
         RangeBaseValueChangedEventArgs e
     )
     {
-        Data.MainViewModel!.ChangeLuminosityOpacity(LuminosityOpacity);
+        _materialSelectorService.SetLuminosityOpacity(LuminosityOpacity);
     }
 
     public void TintColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
     {
-        Data.MainViewModel!.ChangeTintColor(TintColor);
+        _materialSelectorService.SetTintColor(args.NewColor);
     }
 
     public void FontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -652,63 +634,12 @@ public partial class SettingsViewModel
     public static async Task SaveFoldersAsync()
     {
         var folderPaths = Data.MusicLibrary.Folders?.AsValueEnumerable().ToList();
-        await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths); //	ApplicationData.Current.LocalFolder：获取应用程序的本地存储文件夹。SaveAsync("MusicFolders", folderPaths)：调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
+        await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths); //	调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
     }
 
     private async void SaveSongDownloadLocationAsync(string songDownloadLocation)
     {
         await _localSettingsService.SaveSettingAsync("SongDownloadLocation", songDownloadLocation);
-    }
-
-    private async void SaveSelectedMaterialAsync(byte material)
-    {
-        await _localSettingsService.SaveSettingAsync("SelectedMaterial", material);
-    }
-
-    private async void SaveIsFallBackAsync(bool isFallBack)
-    {
-        await _localSettingsService.SaveSettingAsync("IsFallBack", isFallBack);
-    }
-
-    private async void SaveLuminosityOpacityAsync(byte luminosityOpacity)
-    {
-        await _localSettingsService.SaveSettingAsync("LuminosityOpacity", luminosityOpacity);
-    }
-
-    private async void SaveTintColorAsync(Color tintColor)
-    {
-        await _localSettingsService.SaveSettingAsync("TintColor", tintColor);
-    }
-
-    private async void SaveLyricBackgroundVisibilityAsync(bool isWindowBackgroundFollowsCover)
-    {
-        await _localSettingsService.SaveSettingAsync(
-            "IsWindowBackgroundFollowsCover",
-            isWindowBackgroundFollowsCover
-        );
-    }
-
-    private async void SaveExclusiveModeAsync(bool isExclusiveMode)
-    {
-        await _localSettingsService.SaveSettingAsync("IsExclusiveMode", isExclusiveMode);
-    }
-
-    private async void SaveOnlyAddSpecificFolderAsync(bool isOnlyAddSpecificFolder)
-    {
-        await _localSettingsService.SaveSettingAsync(
-            "IsOnlyAddSpecificFolder",
-            isOnlyAddSpecificFolder
-        );
-    }
-
-    private async void SaveSelectedFontFamilyAsync(string fontName)
-    {
-        await _localSettingsService.SaveSettingAsync("SelectedFontFamily", fontName);
-    }
-
-    private async void SaveSelectedFontSizeAsync(double fontSize)
-    {
-        await _localSettingsService.SaveSettingAsync("SelectedFontSize", fontSize);
     }
 
     public void Dispose()

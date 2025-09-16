@@ -9,6 +9,12 @@ public class ThemeSelectorService : IThemeSelectorService
     private const string SettingsKey = "AppBackgroundRequestedTheme";
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    public static bool IsDarkTheme =>
+        ((FrameworkElement)App.MainWindow!.Content).ActualTheme == ElementTheme.Dark
+        || (
+            ((FrameworkElement)App.MainWindow!.Content).ActualTheme == ElementTheme.Default
+            && App.Current.RequestedTheme == ApplicationTheme.Dark
+        );
     public ElementTheme Theme { get; set; } = ElementTheme.Default;
 
     public async Task InitializeAsync()
@@ -25,7 +31,7 @@ public class ThemeSelectorService : IThemeSelectorService
 
     public async Task SetRequestedThemeAsync()
     {
-        if (App.MainWindow?.Content is FrameworkElement rootElement)
+        if (App.MainWindow!.Content is FrameworkElement rootElement)
         {
             rootElement.RequestedTheme = Theme;
             TitleBarHelper.UpdateTitleBar(Theme);

@@ -30,6 +30,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
         set
         {
             field = value;
+            Settings.IsWindowBackgroundFollowsCover = value;
             _ = UpdateBackgroundAsync();
             if (!value)
             {

@@ -7,11 +7,12 @@ public interface IMaterialSelectorService
     MaterialType Material { get; }
     bool IsFallBack { get; }
     byte LuminosityOpacity { get; }
-    Color BackgroundColor { get; }
-    Task SetMaterial(MaterialType material);
-    Task SetIsFallBack(bool isFallBack);
-    Task SetLuminosityOpacity(byte opacity);
-    Task SetBackgroundColor(Color color);
+    Color TintColor { get; }
+    Task InitializeAsync();
+    Task<(byte, Color)> SetMaterial(MaterialType material);
+    void SetIsFallBack(bool isFallBack);
+    void SetLuminosityOpacity(byte opacity);
+    void SetTintColor(Color color);
 }
 
 public enum MaterialType
