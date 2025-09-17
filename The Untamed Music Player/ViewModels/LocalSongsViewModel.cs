@@ -235,7 +235,7 @@ public partial class LocalSongsViewModel
     {
         if (_isGrouped)
         {
-            if ((SortMode is 10 or 11) && Data.IsOnlyAddSpecificFolder)
+            if ((SortMode is 10 or 11) && Settings.IsOnlyAddSpecificFolder)
             {
                 return
                 [

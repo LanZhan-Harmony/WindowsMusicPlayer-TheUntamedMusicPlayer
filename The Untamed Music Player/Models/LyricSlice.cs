@@ -22,7 +22,7 @@ public partial class LyricSlice(double time, string content) : ObservableObject
     } = false;
 
     [ObservableProperty]
-    public partial double FontSize { get; set; } = Data.SelectedNotCurrentFontSize;
+    public partial double FontSize { get; set; } = Settings.LyricPageNotCurrentFontSize;
 
     [ObservableProperty]
     public partial Thickness Margin { get; set; } = new(0, 20, 0, 20);
@@ -32,7 +32,9 @@ public partial class LyricSlice(double time, string content) : ObservableObject
 
     public void UpdateStyle()
     {
-        FontSize = IsCurrent ? Data.SelectedCurrentFontSize : Data.SelectedNotCurrentFontSize;
+        FontSize = IsCurrent
+            ? Settings.LyricPageCurrentFontSize
+            : Settings.LyricPageNotCurrentFontSize;
         Margin = IsCurrent ? new Thickness(0, 40, 0, 40) : new Thickness(0, 20, 0, 20);
         Opacity = IsCurrent ? 1.0 : 0.5;
     }

@@ -259,7 +259,7 @@
 
                     <toolkit:SettingsExpander x:Uid="Settings_WindowMaterial" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xEABC;}">
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Button x:Uid="Settings_Reset" Click="{x:Bind ViewModel.ResetButton_Click}"/>
+                            <Button x:Uid="Settings_Reset" Click="{x:Bind ViewModel.ResetMaterialButton_Click}"/>
                             <ComboBox x:Name="MaterialComboBox" x:Uid="Settings_ChooseAMaterial"
                                       ItemsSource="{x:Bind ViewModel.Materials}"
                                       SelectedIndex="{x:Bind ViewModel.SelectedMaterial, Mode=TwoWay}"

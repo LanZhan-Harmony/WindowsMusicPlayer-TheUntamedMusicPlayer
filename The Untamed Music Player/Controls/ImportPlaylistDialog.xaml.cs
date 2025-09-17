@@ -96,7 +96,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
 
     public ImportPlaylistDialog()
     {
-        RequestedTheme = Data.MainViewModel!.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
+        RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
     }
 

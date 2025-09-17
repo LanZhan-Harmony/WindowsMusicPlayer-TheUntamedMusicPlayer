@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Services;
@@ -109,7 +110,8 @@ public partial class MusicLibrary : ObservableRecipient
                     _logger.ZLogInformation(ex, $"加载音乐文件夹失败：{path}");
                 }
             }
-            Data.SettingsViewModel?.NotifyEmptyFolderMessageVisibilityChanged();
+            Data.SettingsViewModel?.EmptyFolderMessageVisibility =
+                Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
         }
         _librarySemaphore.Release();
     }

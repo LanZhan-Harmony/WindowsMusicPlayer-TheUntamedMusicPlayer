@@ -33,7 +33,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private readonly TextBlock _measureTextBlock = new()
     {
         FontSize = 32,
-        FontFamily = Data.SelectedFontFamily,
+        FontFamily = Settings.FontFamily,
     };
 
     public DesktopLyricViewModel ViewModel { get; }
@@ -58,7 +58,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         var exStyle = GetWindowLong(_hWnd, GWL_EXSTYLE);
         exStyle |= WS_EX_TOOLWINDOW; // 添加工具窗口样式
         exStyle &= ~WS_EX_APPWINDOW; // 移除应用窗口样式
-        _ = SetWindowLong(_hWnd, GWL_EXSTYLE, exStyle);
+        SetWindowLong(_hWnd, GWL_EXSTYLE, exStyle);
 
         SetTopmost(true);
 
@@ -147,16 +147,12 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         if (isClickThrough)
         {
             // 添加 WS_EX_TRANSPARENT 使窗口点击穿透
-            _ = SetWindowLong(_hWnd, GWL_EXSTYLE, currentStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT);
+            SetWindowLong(_hWnd, GWL_EXSTYLE, currentStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT);
         }
         else
         {
             // 移除 WS_EX_TRANSPARENT 使窗口可接收点击
-            _ = SetWindowLong(
-                _hWnd,
-                GWL_EXSTYLE,
-                (currentStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT
-            );
+            SetWindowLong(_hWnd, GWL_EXSTYLE, (currentStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT);
         }
     }
 
@@ -167,23 +163,9 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         const uint SWP_NOSIZE = 0x0001;
         const uint SWP_NOACTIVATE = 0x0010;
         const uint flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE;
-
         var position = value ? new nint(-1) : new nint(-2);
-
         SetWindowPos(_hWnd, position, 0, 0, 0, 0, flags);
     }
-
-    private void Window_Closed(object sender, WindowEventArgs args)
-    {
-        Data.RootPlayBarViewModel?.IsDesktopLyricWindowStarted = false;
-        if (_updateTimer250ms is not null)
-        {
-            _updateTimer250ms.Stop();
-            _updateTimer250ms = null;
-        }
-    }
-
-    public void Dispose() { }
 
     private void AnimatedBorder_PointerPressed(object sender, PointerRoutedEventArgs e)
     {
@@ -227,7 +209,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         {
             Text = "TEST测试",
             FontSize = 32,
-            FontFamily = Data.SelectedFontFamily,
+            FontFamily = Settings.FontFamily,
         };
         textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         (sender as MarqueeText)!.Height = textBlock.DesiredSize.Height;
@@ -282,4 +264,13 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
             _logger.ZLogInformation(ex, $"调整灵动词岛宽度时发生错误");
         }
     }
+
+    private void Window_Closed(object sender, WindowEventArgs args)
+    {
+        Data.RootPlayBarViewModel?.IsDesktopLyricWindowStarted = false;
+        _updateTimer250ms?.Stop();
+        _updateTimer250ms = null;
+    }
+
+    public void Dispose() { }
 }
