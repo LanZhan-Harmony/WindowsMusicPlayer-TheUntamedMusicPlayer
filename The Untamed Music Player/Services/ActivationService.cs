@@ -28,6 +28,7 @@ public class ActivationService(IEnumerable<IActivationHandler> activationHandler
     {
         await Settings.InitializeAsync().ConfigureAwait(false);
         _themeSelectorService.Initialize();
+        _materialSelectorService.InitializeSettings();
     }
 
     private async Task HandleActivationAsync(object activationArgs)
@@ -45,7 +46,7 @@ public class ActivationService(IEnumerable<IActivationHandler> activationHandler
     private async Task StartupAsync()
     {
         _themeSelectorService.SetRequestedThemeAsync();
-        await _materialSelectorService.InitializeAsync();
+        await _materialSelectorService.InitializeMaterialAsync();
         await _dynamicBackgroundService.InitializeAsync();
     }
 }

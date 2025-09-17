@@ -18,9 +18,11 @@ using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using The_Untamed_Music_Player.Services;
 using Windows.Media;
 using Windows.Storage.Streams;
+using Windows.System;
 using Windows.System.Threading;
 using ZLinq;
 using ZLogger;
+using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
 
 namespace The_Untamed_Music_Player.Models;
 
@@ -1253,6 +1255,10 @@ public partial class MusicPlayer
     /// <param name="e"></param>
     public void ProgressLock(object sender, KeyRoutedEventArgs e)
     {
+        if (e.Key != VirtualKey.Left && e.Key != VirtualKey.Right)
+        {
+            return;
+        }
         _lockable = true;
         CurrentPlayingTime = TimeSpan.FromMilliseconds(
             ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100
@@ -1291,6 +1297,10 @@ public partial class MusicPlayer
     /// <param name="e"></param>
     public void ProgressUpdate(object sender, KeyRoutedEventArgs e)
     {
+        if (e.Key != VirtualKey.Left && e.Key != VirtualKey.Right)
+        {
+            return;
+        }
         var targetTimeSeconds = ((Slider)sender).Value * TotalPlayingTime.TotalSeconds / 100;
         SetPlaybackPosition(targetTimeSeconds, false);
     }
