@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -41,8 +40,8 @@ public partial class SettingsViewModel
     /// <summary>
     /// 是否显示文件夹为空信息
     /// </summary>
-    public Visibility EmptyFolderMessageVisibility =>
-        Data.MusicLibrary.Folders?.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+    [ObservableProperty]
+    public partial Visibility EmptyFolderMessageVisibility { get; set; } = Visibility.Collapsed;
 
     /// <summary>
     /// 歌曲下载位置
@@ -129,12 +128,12 @@ public partial class SettingsViewModel
     public partial ElementTheme ElementTheme { get; set; }
 
     [RelayCommand]
-    public async Task SwitchThemeAsync(ElementTheme theme)
+    public void SwitchTheme(ElementTheme theme)
     {
         if (ElementTheme != theme)
         {
             ElementTheme = theme;
-            await _themeSelectorService.SetThemeAsync(theme);
+            _themeSelectorService.SetThemeAsync(theme);
         }
     }
 
@@ -202,6 +201,8 @@ public partial class SettingsViewModel
         TintColor = _materialSelectorService.TintColor;
         VersionDescription = GetVersionDescription();
 
+        EmptyFolderMessageVisibility =
+            Data.MusicLibrary.Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
         LoadSongDownloadLocationAsync();
         LoadFonts();
         IsExportPlaylistsButtonEnabled = Data.PlaylistLibrary.Playlists.Count > 0;
@@ -211,14 +212,6 @@ public partial class SettingsViewModel
     public void Receive(HavePlaylistMessage message)
     {
         IsExportPlaylistsButtonEnabled = message.HasPlaylist;
-    }
-
-    /// <summary>
-    /// 通知 EmptyFolderMessageVisibility 属性发生了变化（供外部调用）
-    /// </summary>
-    public void NotifyEmptyFolderMessageVisibilityChanged()
-    {
-        OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
     }
 
     public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
@@ -236,7 +229,8 @@ public partial class SettingsViewModel
         )
         {
             Data.MusicLibrary.Folders.Add(folder.Path);
-            OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
+            EmptyFolderMessageVisibility =
+                Data.MusicLibrary.Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
             await SaveFoldersAsync();
             await Data.MusicLibrary.LoadLibraryAgainAsync(); // 重新加载音乐库
         }
@@ -246,7 +240,8 @@ public partial class SettingsViewModel
     public async void RemoveMusicFolder(string folder)
     {
         Data.MusicLibrary.Folders.Remove(folder);
-        OnPropertyChanged(nameof(EmptyFolderMessageVisibility));
+        EmptyFolderMessageVisibility =
+            Data.MusicLibrary.Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
         await SaveFoldersAsync();
         await Data.MusicLibrary.LoadLibraryAgainAsync();
     }
@@ -463,18 +458,22 @@ public partial class SettingsViewModel
     public async void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var (opacity, color) = await _materialSelectorService.SetMaterial(
-            (MaterialType)SelectedMaterial
+            (MaterialType)SelectedMaterial,
+            false,
+            false
         );
         LuminosityOpacity = opacity;
         TintColor = color;
     }
 
-    public async void ResetButton_Click(object sender, RoutedEventArgs e)
+    public async void ResetMaterialButton_Click(object sender, RoutedEventArgs e)
     {
         IsFallBack = true;
-        SelectedMaterial = 3;
+        SelectedMaterial = (byte)MaterialType.DesktopAcrylic;
         var (opacity, color) = await _materialSelectorService.SetMaterial(
-            (MaterialType)SelectedMaterial
+            (MaterialType)SelectedMaterial,
+            false,
+            true
         );
         LuminosityOpacity = opacity;
         TintColor = color;
@@ -486,12 +485,12 @@ public partial class SettingsViewModel
         RangeBaseValueChangedEventArgs e
     )
     {
-        _materialSelectorService.SetLuminosityOpacity(LuminosityOpacity);
+        _materialSelectorService.SetLuminosityOpacity(LuminosityOpacity, false);
     }
 
     public void TintColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
     {
-        _materialSelectorService.SetTintColor(args.NewColor);
+        _materialSelectorService.SetTintColor(args.NewColor, false);
     }
 
     public void FontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

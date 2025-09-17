@@ -54,7 +54,7 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
         _year = $"{info.Year}";
         Cover = info.Cover;
         _isSaveCoverButtonEnabled = Cover is not null;
-        RequestedTheme = Data.MainViewModel!.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
+        RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
     }
 

@@ -5,6 +5,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
@@ -22,13 +23,15 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private readonly DispatcherQueue dispatcherQueue;
     private readonly UISettings settings;
     private readonly ILogger _logger = LoggingService.CreateLogger<MainWindow>();
-    private InfoBarManager? _infoBarManager;
+    private readonly InfoBarManager? _infoBarManager;
 
     public MainViewModel ViewModel { get; }
 
     public MainWindow()
     {
         InitializeComponent();
+        Data.MainWindow = this;
+        ViewModel = App.GetService<MainViewModel>();
 
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppIcon/Icon.ico"));
         Title = "AppDisplayName".GetLocalized();
@@ -38,10 +41,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         settings = new UISettings();
         settings.ColorValuesChanged += Settings_ColorValuesChanged;
 
-        Data.MainWindow = this;
-
         ShellFrame.Navigate(typeof(ShellPage));
-        ViewModel = App.GetService<MainViewModel>();
 
         // 初始化InfoBar管理器
         _infoBarManager = new InfoBarManager(
@@ -135,13 +135,12 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         try
         {
             Data.MusicPlayer.Dispose();
-            ViewModel.CleanupDynamicBackgroundService(); // 清理背景服务
-            ViewModel.CleanupSystemBackdrop(); // 清理系统背景
             Data.DesktopLyricWindow?.Close(); // 关闭桌面歌词窗口
             Data.DesktopLyricWindow?.Dispose();
             StrongReferenceMessenger.Default.Unregister<LogMessage>(this); // 清理消息接收
             _infoBarManager?.Dispose(); // 清理InfoBar管理器
-            _infoBarManager = null;
+            App.GetService<IMaterialSelectorService>().Dispose();
+            App.GetService<IDynamicBackgroundService>().Dispose();
             LoggingService.Shutdown(); // 关闭日志服务
         }
         catch (Exception ex)

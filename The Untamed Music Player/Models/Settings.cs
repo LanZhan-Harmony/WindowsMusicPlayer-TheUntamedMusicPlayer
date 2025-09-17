@@ -220,25 +220,15 @@ public static class Settings
                     ?? "Microsoft YaHei"
             );
             var themeName = await _localSettingsService.ReadSettingAsync<string>(nameof(Theme));
-            if (Enum.TryParse(themeName, out ElementTheme cacheTheme))
-            {
-                Theme = cacheTheme;
-            }
-            else
-            {
-                Theme = ElementTheme.Default;
-            }
+            Theme = Enum.TryParse<ElementTheme>(themeName, out var cacheTheme)
+                ? cacheTheme
+                : ElementTheme.Default;
             var materialName = await _localSettingsService.ReadSettingAsync<string>(
                 nameof(Material)
             );
-            if (Enum.TryParse(materialName, out MaterialType cacheMaterial))
-            {
-                Material = cacheMaterial;
-            }
-            else
-            {
-                Material = MaterialType.DesktopAcrylic;
-            }
+            Material = Enum.TryParse<MaterialType>(materialName, out var cacheMaterial)
+                ? cacheMaterial
+                : MaterialType.DesktopAcrylic;
 
             if (NotFirstUsed)
             {

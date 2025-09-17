@@ -24,7 +24,7 @@
                               HorizontalContentAlignment="Center"
                               VerticalContentAlignment="Center"
                               Behavior="Bouncing" Direction="Left"
-                              FontFamily="{x:Bind model:Data.SelectedFontFamily}"
+                              FontFamily="{x:Bind model:Settings.FontFamily}"
                               FontSize="32" Foreground="#FDFDFD"
                               Loaded="LyricContent_Loaded"
                               SizeChanged="LyricContentTextBlock_SizeChanged"
