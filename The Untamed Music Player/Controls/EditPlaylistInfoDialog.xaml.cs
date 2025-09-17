@@ -132,7 +132,7 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
         _coverPaths = [.. info.CoverPaths]; // 注意要创建副本
         IsDeleteCoverButtonEnabled = Cover is not null;
         IsSaveCoverButtonEnabled = Cover is not null && _isCoverEdited;
-        RequestedTheme = Data.MainViewModel!.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
+        RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
     }
 

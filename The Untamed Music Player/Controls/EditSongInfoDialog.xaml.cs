@@ -83,7 +83,7 @@ public sealed partial class EditSongInfoDialog : ContentDialog, INotifyPropertyC
         _lyric = detailedInfo.Lyric;
         Cover = detailedInfo.Cover;
         IsSaveCoverButtonEnabled = Cover is not null;
-        RequestedTheme = Data.MainViewModel!.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
+        RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
         LyricEditor.Document.SetText(TextSetOptions.None, _lyric);
     }

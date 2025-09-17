@@ -41,7 +41,7 @@
 
                     <TextBlock x:Name="LyricTextBlock"
                                Margin="{x:Bind Margin, Mode=OneWay}"
-                               FontFamily="{x:Bind model:Data.SelectedFontFamily}"
+                               FontFamily="{x:Bind model:Settings.FontFamily}"
                                FontSize="{x:Bind FontSize, Mode=OneWay}"
                                Opacity="{x:Bind Opacity, Mode=OneWay}"
                                SizeChanged="TextBlock_SizeChanged"
@@ -128,6 +128,19 @@
                 <ColumnDefinition Width="1.2*"/>
             </Grid.ColumnDefinitions>
             <Border x:Name="ShadowTarget"/>
+            <ScrollViewer x:Name="LyricViewer" VerticalScrollBarVisibility="Hidden">
+                <StackPanel>
+                    <StackPanel Height="600"/>
+                    <ListView x:Name="LyricView"
+                              helper:ListViewExtensions.ItemCornerRadius="15"
+                              IsItemClickEnabled="True"
+                              ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
+                              ItemTemplate="{StaticResource LyricViewTemplate}"
+                              ItemsSource="{x:Bind model:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
+                              SelectionMode="None"/>
+                    <StackPanel Height="600"/>
+                </StackPanel>
+            </ScrollViewer>
             <Grid x:Name="ReferenceGrid"
                   Grid.Row="0" Grid.Column="0"
                   HorizontalAlignment="Stretch"
@@ -203,19 +216,6 @@
                                            Offset="20,20"/>
                 </ui:Effects.Shadow>
             </Border>
-            <ScrollViewer x:Name="LyricViewer" VerticalScrollBarVisibility="Hidden">
-                <StackPanel>
-                    <StackPanel Height="600"/>
-                    <ListView x:Name="LyricView"
-                              helper:ListViewExtensions.ItemCornerRadius="15"
-                              IsItemClickEnabled="True"
-                              ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
-                              ItemTemplate="{StaticResource LyricViewTemplate}"
-                              ItemsSource="{x:Bind model:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
-                              SelectionMode="None"/>
-                    <StackPanel Height="600"/>
-                </StackPanel>
-            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

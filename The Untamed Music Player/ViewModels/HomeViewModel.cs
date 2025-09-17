@@ -136,7 +136,7 @@ public partial class HomeViewModel : ObservableObject
         _selectorBar?.SelectedItem = _selectorBar.Items[currentSelectedIndex];
 
         _ = Data.OnlineMusicLibrary.Search();
-        Data.HomePage.GetFrame()
+        Data.HomePage?.GetFrame()
             .Navigate(
                 page,
                 null,

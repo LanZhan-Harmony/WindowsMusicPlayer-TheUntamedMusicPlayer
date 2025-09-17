@@ -19,7 +19,6 @@ public class MaterialSelectorService : IMaterialSelectorService
         IsInputActive = true,
     };
     private ISystemBackdropControllerWithTargets? _currentBackdropController;
-    public bool _firstStart = true;
     public MaterialType Material
     {
         get;
@@ -67,11 +66,19 @@ public class MaterialSelectorService : IMaterialSelectorService
         IsFallBack = Settings.IsFallBack;
         LuminosityOpacity = Settings.LuminosityOpacity;
         TintColor = Settings.TintColor;
-        await SetMaterial(Material);
+        await SetMaterial(Material, true, true);
     }
 
-    public async Task<(byte, Color)> SetMaterial(MaterialType material)
+    public async Task<(byte, Color)> SetMaterial(
+        MaterialType material,
+        bool firstStart = false,
+        bool forced = false
+    )
     {
+        if (Material == material && !forced)
+        {
+            return (LuminosityOpacity, TintColor);
+        }
         _mainWindow.SystemBackdrop = null;
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
@@ -111,11 +118,10 @@ public class MaterialSelectorService : IMaterialSelectorService
             };
         }
 
-        if (_firstStart && ThemeSelectorService.IsDarkTheme == Settings.PreviousIsDarkTheme)
+        if (firstStart && ThemeSelectorService.IsDarkTheme == Settings.PreviousIsDarkTheme)
         {
-            SetLuminosityOpacity(LuminosityOpacity);
-            SetTintColor(TintColor);
-            _firstStart = false;
+            SetLuminosityOpacity(LuminosityOpacity, true);
+            SetTintColor(TintColor, true);
         }
         else
         {
@@ -128,8 +134,12 @@ public class MaterialSelectorService : IMaterialSelectorService
 
     public void SetIsFallBack(bool isFallBack) => IsFallBack = isFallBack;
 
-    public void SetLuminosityOpacity(byte opacity)
+    public void SetLuminosityOpacity(byte opacity, bool forced = false)
     {
+        if (LuminosityOpacity == opacity && !forced)
+        {
+            return;
+        }
         if (_currentBackdropController is MicaController micaController)
         {
             micaController.LuminosityOpacity = opacity / 100f;
@@ -141,8 +151,12 @@ public class MaterialSelectorService : IMaterialSelectorService
         LuminosityOpacity = opacity;
     }
 
-    public void SetTintColor(Color color)
+    public void SetTintColor(Color color, bool forced = false)
     {
+        if (TintColor == color && !forced)
+        {
+            return;
+        }
         if (_currentBackdropController is MicaController micaController)
         {
             micaController.TintColor = color;
@@ -203,11 +217,11 @@ public class MaterialSelectorService : IMaterialSelectorService
         {
             color = Material switch
             {
-                MaterialType.Mica => Color.FromArgb(255, 32, 32, 32),
-                MaterialType.MicaAlt => Color.FromArgb(255, 10, 10, 10),
-                MaterialType.DesktopAcrylic => Color.FromArgb(255, 44, 44, 44),
-                MaterialType.AcrylicBase => Color.FromArgb(255, 32, 32, 32),
-                MaterialType.AcrylicThin => Color.FromArgb(255, 84, 84, 84),
+                MaterialType.Mica => ColorFromHex(0xFF202020),
+                MaterialType.MicaAlt => ColorFromHex(0xFF0A0A0A),
+                MaterialType.DesktopAcrylic => ColorFromHex(0xFF2C2C2C),
+                MaterialType.AcrylicBase => ColorFromHex(0xFF202020),
+                MaterialType.AcrylicThin => ColorFromHex(0xFF545454),
                 _ => TintColor,
             };
         }
@@ -215,11 +229,11 @@ public class MaterialSelectorService : IMaterialSelectorService
         {
             color = Material switch
             {
-                MaterialType.Mica => Color.FromArgb(255, 243, 243, 243),
-                MaterialType.MicaAlt => Color.FromArgb(255, 218, 218, 218),
-                MaterialType.DesktopAcrylic => Color.FromArgb(255, 252, 252, 252),
-                MaterialType.AcrylicBase => Color.FromArgb(255, 243, 243, 243),
-                MaterialType.AcrylicThin => Color.FromArgb(255, 211, 211, 211),
+                MaterialType.Mica => ColorFromHex(0xFFF3F3F3),
+                MaterialType.MicaAlt => ColorFromHex(0xFFDADADA),
+                MaterialType.DesktopAcrylic => ColorFromHex(0xFFFCFCFC),
+                MaterialType.AcrylicBase => ColorFromHex(0xFFF3F3F3),
+                MaterialType.AcrylicThin => ColorFromHex(0xFFD3D3D3),
                 _ => TintColor,
             };
         }
@@ -232,6 +246,15 @@ public class MaterialSelectorService : IMaterialSelectorService
             desktopAcrylicController.TintColor = color;
         }
         TintColor = color;
+    }
+
+    private static Color ColorFromHex(uint hex)
+    {
+        var a = (byte)((hex >> 24) & 0xFF);
+        var r = (byte)((hex >> 16) & 0xFF);
+        var g = (byte)((hex >> 8) & 0xFF);
+        var b = (byte)(hex & 0xFF);
+        return Color.FromArgb(a, r, g, b);
     }
 
     private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
@@ -251,5 +274,15 @@ public class MaterialSelectorService : IMaterialSelectorService
     {
         SetConfigurationSourceTheme();
         ChangeTheme();
+    }
+
+    public void Dispose()
+    {
+        _currentBackdropController?.RemoveAllSystemBackdropTargets();
+        _currentBackdropController?.Dispose();
+        _currentBackdropController = null;
+        _mainWindow.Activated -= MainWindow_Activated;
+        ((FrameworkElement)_mainWindow.Content).ActualThemeChanged -= Window_ThemeChanged;
+        GC.SuppressFinalize(this);
     }
 }

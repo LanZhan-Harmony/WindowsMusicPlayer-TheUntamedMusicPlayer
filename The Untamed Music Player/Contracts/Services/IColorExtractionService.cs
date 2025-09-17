@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml;
 using The_Untamed_Music_Player.Services;
 using Windows.UI;
 
@@ -42,7 +43,7 @@ public interface IColorExtractionService
 /// <summary>
 /// 动态背景服务接口
 /// </summary>
-public interface IDynamicBackgroundService
+public interface IDynamicBackgroundService : IDisposable
 {
     /// <summary>
     /// 是否启用
@@ -58,16 +59,11 @@ public interface IDynamicBackgroundService
     /// 初始化动态背景服务
     /// </summary>
     /// <param name="targetElement">目标元素</param>
-    void Initialize(Microsoft.UI.Xaml.FrameworkElement targetElement);
+    Task InitializeAsync(FrameworkElement? targetElement = null);
 
     /// <summary>
     /// 手动更新背景
     /// </summary>
     /// <returns></returns>
     Task UpdateBackgroundAsync();
-
-    /// <summary>
-    /// 清理资源
-    /// </summary>
-    void Dispose();
 }

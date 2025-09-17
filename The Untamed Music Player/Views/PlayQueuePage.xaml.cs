@@ -6,6 +6,7 @@ using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
 using ZLinq;
 
@@ -280,7 +281,7 @@ public sealed partial class PlayQueuePage : Page
         {
             XamlRoot = XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            RequestedTheme = Data.MainViewModel!.IsDarkTheme
+            RequestedTheme = ThemeSelectorService.IsDarkTheme
                 ? ElementTheme.Dark
                 : ElementTheme.Light,
             Title = titleTextBlock,
