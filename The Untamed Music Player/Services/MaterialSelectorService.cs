@@ -10,7 +10,7 @@ using WinUIEx;
 
 namespace The_Untamed_Music_Player.Services;
 
-public class MaterialSelectorService : IMaterialSelectorService
+public partial class MaterialSelectorService : IMaterialSelectorService
 {
     private WindowEx _mainWindow = null!;
     private ICompositionSupportsSystemBackdrop? _backdropTarget;
@@ -56,16 +56,20 @@ public class MaterialSelectorService : IMaterialSelectorService
         }
     }
 
-    public async Task InitializeAsync()
+    public void InitializeSettings()
+    {
+        Material = Settings.Material;
+        IsFallBack = Settings.IsFallBack;
+        LuminosityOpacity = Settings.LuminosityOpacity;
+        TintColor = Settings.TintColor;
+    }
+
+    public async Task InitializeMaterialAsync()
     {
         _mainWindow = App.MainWindow!;
         _mainWindow.Activated += MainWindow_Activated;
         ((FrameworkElement)_mainWindow.Content).ActualThemeChanged += Window_ThemeChanged;
         _backdropTarget = _mainWindow.As<ICompositionSupportsSystemBackdrop>();
-        Material = Settings.Material;
-        IsFallBack = Settings.IsFallBack;
-        LuminosityOpacity = Settings.LuminosityOpacity;
-        TintColor = Settings.TintColor;
         await SetMaterial(Material, true, true);
     }
 
@@ -75,7 +79,7 @@ public class MaterialSelectorService : IMaterialSelectorService
         bool forced = false
     )
     {
-        if (Material == material && !forced)
+        if ((Material == material && !forced) || _mainWindow is null)
         {
             return (LuminosityOpacity, TintColor);
         }
@@ -272,6 +276,7 @@ public class MaterialSelectorService : IMaterialSelectorService
 
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
+        TitleBarHelper.UpdateTitleBar(sender.ActualTheme);
         SetConfigurationSourceTheme();
         ChangeTheme();
     }
