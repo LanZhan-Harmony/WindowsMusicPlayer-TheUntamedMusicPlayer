@@ -194,11 +194,11 @@ public partial class SettingsViewModel
         : base(StrongReferenceMessenger.Default)
     {
         Messenger.Register(this);
-        ElementTheme = _themeSelectorService.Theme;
-        IsFallBack = _materialSelectorService.IsFallBack;
-        SelectedMaterial = (byte)_materialSelectorService.Material;
-        LuminosityOpacity = _materialSelectorService.LuminosityOpacity;
-        TintColor = _materialSelectorService.TintColor;
+        ElementTheme = Settings.Theme;
+        IsFallBack = Settings.IsFallBack;
+        SelectedMaterial = (byte)Settings.Material;
+        LuminosityOpacity = Settings.LuminosityOpacity;
+        TintColor = Settings.TintColor;
         VersionDescription = GetVersionDescription();
 
         EmptyFolderMessageVisibility =
