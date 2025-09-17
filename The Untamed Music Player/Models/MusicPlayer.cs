@@ -1443,11 +1443,8 @@ public partial class MusicPlayer
             ShuffleMode = await _localSettingsService.ReadSettingAsync<bool>("ShuffleMode");
             RepeatMode = await _localSettingsService.ReadSettingAsync<byte>("RepeatMode");
             IsMute = await _localSettingsService.ReadSettingAsync<bool>("IsMute");
-            while (!Data.NotFirstUsed.HasValue)
-            {
-                await Task.Delay(100);
-            }
-            if (Data.NotFirstUsed.Value)
+
+            if (Settings.NotFirstUsed)
             {
                 CurrentVolume = await _localSettingsService.ReadSettingAsync<double>(
                     "CurrentVolume"

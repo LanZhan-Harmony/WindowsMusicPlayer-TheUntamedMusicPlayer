@@ -15,7 +15,7 @@ namespace The_Untamed_Music_Player.Services;
 /// <summary>
 /// 动态背景服务，根据当前播放歌曲的封面颜色动态改变窗口背景
 /// </summary>
-public class DynamicBackgroundService(IColorExtractionService colorExtractionService)
+public partial class DynamicBackgroundService(IColorExtractionService colorExtractionService)
     : IDynamicBackgroundService
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<DynamicBackgroundService>();
@@ -37,7 +37,7 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
                 ClearBackground();
             }
         }
-    } = Data.IsWindowBackgroundFollowsCover;
+    }
 
     /// <summary>
     /// 背景更新事件
@@ -48,27 +48,15 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
     /// 初始化动态背景服务
     /// </summary>
     /// <param name="targetElement">目标元素（通常是MainWindow的根容器）</param>
-    public void Initialize(FrameworkElement targetElement)
+    public async Task InitializeAsync(FrameworkElement? targetElement = null)
     {
-        _targetElement = targetElement;
-        _compositor = ElementCompositionPreview.GetElementVisual(targetElement).Compositor;
+        IsEnabled = Settings.IsWindowBackgroundFollowsCover;
+        _targetElement = targetElement ?? Data.MainWindow!.GetBackgroundGrid();
+        _compositor = ElementCompositionPreview.GetElementVisual(_targetElement).Compositor;
 
         // 监听当前歌曲变化
         Data.MusicPlayer.PropertyChanged += OnMusicPlayerPropertyChanged;
-    }
-
-    /// <summary>
-    /// 清理资源
-    /// </summary>
-    public void Dispose()
-    {
-        Data.MusicPlayer.PropertyChanged -= OnMusicPlayerPropertyChanged;
-
-        // ClearBackground();
-        _backgroundVisual?.Dispose();
-        _currentGradientBrush?.Dispose();
-
-        _targetElement?.SizeChanged -= OnTargetElementSizeChanged;
+        await UpdateBackgroundAsync();
     }
 
     /// <summary>
@@ -357,5 +345,17 @@ public class DynamicBackgroundService(IColorExtractionService colorExtractionSer
             (byte)((g + m) * 255),
             (byte)((b + m) * 255)
         );
+    }
+
+    /// <summary>
+    /// 清理资源
+    /// </summary>
+    public void Dispose()
+    {
+        Data.MusicPlayer.PropertyChanged -= OnMusicPlayerPropertyChanged;
+        _backgroundVisual?.Dispose();
+        _currentGradientBrush?.Dispose();
+        _targetElement?.SizeChanged -= OnTargetElementSizeChanged;
+        GC.SuppressFinalize(this);
     }
 }

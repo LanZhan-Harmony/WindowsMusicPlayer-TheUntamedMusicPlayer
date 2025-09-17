@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Controls;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
+using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
 
 namespace The_Untamed_Music_Player.Views;
@@ -217,7 +218,7 @@ public sealed partial class PlayListsPage : Page
             {
                 XamlRoot = XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                RequestedTheme = Data.MainViewModel!.IsDarkTheme
+                RequestedTheme = ThemeSelectorService.IsDarkTheme
                     ? ElementTheme.Dark
                     : ElementTheme.Light,
                 Title = titleTextBlock,

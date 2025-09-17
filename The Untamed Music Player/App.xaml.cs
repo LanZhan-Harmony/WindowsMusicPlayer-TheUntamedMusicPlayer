@@ -30,7 +30,7 @@ public partial class App : Application
         if ((Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
         {
             throw new ArgumentException(
-                $"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs."
+                $"{typeof(T)} 需要在 App.xaml.cs 的 ConfigureServices 中注册"
             );
         }
 
@@ -116,7 +116,7 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
-    protected override async void OnLaunched(LaunchActivatedEventArgs args)
+    protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
         MainWindow = new MainWindow();
