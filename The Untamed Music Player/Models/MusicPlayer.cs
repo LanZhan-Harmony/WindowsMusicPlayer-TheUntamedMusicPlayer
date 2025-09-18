@@ -237,7 +237,7 @@ public partial class MusicPlayer
     {
         if (!IsMute)
         {
-            SetVolumeValue(value);
+            SetVolumeValue(value / 100.0);
         }
     }
 
@@ -424,7 +424,7 @@ public partial class MusicPlayer
                 -1,
                 0,
                 0,
-                WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven | WasapiInitFlags.Raw,
+                WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven,
                 0.05f,
                 0,
                 _wasapiProc,
