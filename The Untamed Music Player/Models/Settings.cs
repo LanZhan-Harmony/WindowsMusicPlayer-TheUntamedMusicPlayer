@@ -229,7 +229,9 @@ public static class Settings
             Material = Enum.TryParse<MaterialType>(materialName, out var cacheMaterial)
                 ? cacheMaterial
                 : MaterialType.DesktopAcrylic;
-
+            IsWindowBackgroundFollowsCover = await _localSettingsService.ReadSettingAsync<bool>(
+                nameof(IsWindowBackgroundFollowsCover)
+            );
             if (NotFirstUsed)
             {
                 var lyricPageCurrentFontSize = await _localSettingsService.ReadSettingAsync<double>(

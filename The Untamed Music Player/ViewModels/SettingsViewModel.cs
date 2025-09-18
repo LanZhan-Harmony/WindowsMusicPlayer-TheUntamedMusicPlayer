@@ -66,6 +66,7 @@ public partial class SettingsViewModel
     partial void OnIsExclusiveModeChanged(bool value)
     {
         Settings.IsExclusiveMode = value;
+        Data.MusicPlayer.SetExclusiveMode(value);
     }
 
     /// <summary>
