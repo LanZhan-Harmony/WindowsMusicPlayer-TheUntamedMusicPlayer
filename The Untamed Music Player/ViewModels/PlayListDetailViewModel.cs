@@ -67,7 +67,7 @@ public partial class PlayListDetailViewModel
         }
     }
 
-    public void PlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void PlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         if (SongList.Count == 0)
         {
@@ -102,14 +102,14 @@ public partial class PlayListDetailViewModel
         }
     }
 
-    public void DeleteButton_Click(object sender, RoutedEventArgs e)
+    public void DeleteButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.SelectedPlaylist = null;
         Data.ShellPage!.GoBack();
         Data.PlaylistLibrary.DeletePlaylist(Playlist);
     }
 
-    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
         Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
@@ -240,7 +240,7 @@ public partial class PlayListDetailViewModel
         }
     }
 
-    public void SongListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+    public void SongListView_DragItemsStarting(object _, DragItemsStartingEventArgs e)
     {
         if (e.Items.Count > 0)
         {
@@ -249,7 +249,7 @@ public partial class PlayListDetailViewModel
     }
 
     public void SongListView_DragItemsCompleted(
-        ListViewBase sender,
+        ListViewBase _1,
         DragItemsCompletedEventArgs args
     )
     {

@@ -11,7 +11,7 @@ public class LyricViewModel
 {
     public LyricViewModel() { }
 
-    public void ListView_ItemClick(object sender, ItemClickEventArgs e)
+    public void ListView_ItemClick(object _, ItemClickEventArgs e)
     {
         if (e.ClickedItem is LyricSlice lyricSlice)
         {
@@ -20,19 +20,19 @@ public class LyricViewModel
         }
     }
 
-    public void PlayButton_Click(object sender, RoutedEventArgs e)
+    public void PlayButton_Click(object _1, RoutedEventArgs _2)
     {
         var currentSong = Data.MusicPlayer.CurrentBriefSong;
         Data.MusicPlayer.PlaySongByInfo(currentSong!);
     }
 
-    public void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    public void PlayNextButton_Click(object _1, RoutedEventArgs _2)
     {
         var currentSong = Data.MusicPlayer.CurrentBriefSong;
         Data.MusicPlayer.AddSongToNextPlay(currentSong!);
     }
 
-    public void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    public void AddToPlayQueueButton_Click(object _1, RoutedEventArgs _2)
     {
         var currentSong = Data.MusicPlayer.CurrentBriefSong;
         Data.MusicPlayer.AddSongToPlayQueue(currentSong!);
@@ -44,7 +44,7 @@ public class LyricViewModel
         await Data.PlaylistLibrary.AddToPlaylist(playlist, currentSong!);
     }
 
-    public async void ShowAlbumButton_Click(object sender, RoutedEventArgs e)
+    public async void ShowAlbumButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.RootPlayBarViewModel!.DetailModeUpdate();
         var info = Data.MusicPlayer.CurrentBriefSong;
@@ -76,7 +76,7 @@ public class LyricViewModel
         }
     }
 
-    public async void ShowArtistButton_Click(object sender, RoutedEventArgs e)
+    public async void ShowArtistButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.RootPlayBarViewModel!.DetailModeUpdate();
         var info = Data.MusicPlayer.CurrentBriefSong;

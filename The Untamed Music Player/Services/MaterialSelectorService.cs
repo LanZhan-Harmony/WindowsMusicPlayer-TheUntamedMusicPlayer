@@ -19,6 +19,12 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         IsInputActive = true,
     };
     private ISystemBackdropControllerWithTargets? _currentBackdropController;
+
+    // 防抖相关字段
+    private Timer? _debounceTimer;
+    private readonly Lock _debounceLock = new();
+    private const int DEBOUNCE_DELAY_MS = 100; // 100毫秒防抖延迟
+
     public MaterialType Material
     {
         get;
@@ -79,64 +85,66 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         bool forced = false
     )
     {
-        if ((Material == material && !forced) || _mainWindow is null)
+        try
         {
-            return (LuminosityOpacity, TintColor);
-        }
-        _mainWindow.SystemBackdrop = null;
-        _currentBackdropController?.RemoveAllSystemBackdropTargets();
-        _currentBackdropController?.Dispose();
-        _currentBackdropController = material switch
-        {
-            MaterialType.Mica => new MicaController { Kind = MicaKind.Base },
-            MaterialType.MicaAlt => new MicaController { Kind = MicaKind.BaseAlt },
-            MaterialType.DesktopAcrylic => new DesktopAcrylicController
+            if ((Material == material && !forced) || _mainWindow is null)
             {
-                Kind = DesktopAcrylicKind.Default,
-            },
-            MaterialType.AcrylicBase => new DesktopAcrylicController
+                return (LuminosityOpacity, TintColor);
+            }
+            _mainWindow.SystemBackdrop = null;
+            _currentBackdropController?.RemoveAllSystemBackdropTargets();
+            _currentBackdropController?.Dispose();
+            _currentBackdropController = material switch
             {
-                Kind = DesktopAcrylicKind.Base,
-            },
-            MaterialType.AcrylicThin => new DesktopAcrylicController
-            {
-                Kind = DesktopAcrylicKind.Thin,
-            },
-            _ => null,
-        };
-        if (_currentBackdropController is not null)
-        {
-            SetConfigurationSourceTheme();
-            _currentBackdropController?.AddSystemBackdropTarget(_backdropTarget);
-            _currentBackdropController?.SetSystemBackdropConfiguration(_configurationSource);
-            await Task.Delay(100);
-        }
-        else
-        {
-            _mainWindow.SystemBackdrop = material switch
-            {
-                MaterialType.Blur => new BlurredBackdrop(),
-                MaterialType.Transparent => new TransparentTintBackdrop(),
-                MaterialType.Animated => new ColorAnimatedBackdrop(),
+                MaterialType.Mica => new MicaController { Kind = MicaKind.Base },
+                MaterialType.MicaAlt => new MicaController { Kind = MicaKind.BaseAlt },
+                MaterialType.DesktopAcrylic => new DesktopAcrylicController
+                {
+                    Kind = DesktopAcrylicKind.Default,
+                },
+                MaterialType.AcrylicBase => new DesktopAcrylicController
+                {
+                    Kind = DesktopAcrylicKind.Base,
+                },
+                MaterialType.AcrylicThin => new DesktopAcrylicController
+                {
+                    Kind = DesktopAcrylicKind.Thin,
+                },
                 _ => null,
             };
-        }
+            if (_currentBackdropController is not null)
+            {
+                SetConfigurationSourceTheme();
+                _currentBackdropController?.AddSystemBackdropTarget(_backdropTarget);
+                _currentBackdropController?.SetSystemBackdropConfiguration(_configurationSource);
+                await Task.Delay(100);
+            }
+            else
+            {
+                _mainWindow.SystemBackdrop = material switch
+                {
+                    MaterialType.Blur => new BlurredBackdrop(),
+                    MaterialType.Transparent => new TransparentTintBackdrop(),
+                    MaterialType.Animated => new ColorAnimatedBackdrop(),
+                    _ => null,
+                };
+            }
 
-        if (firstStart && ThemeSelectorService.IsDarkTheme == Settings.PreviousIsDarkTheme)
-        {
-            SetLuminosityOpacity(LuminosityOpacity, true);
-            SetTintColor(TintColor, true);
+            if (firstStart && ThemeSelectorService.IsDarkTheme == Settings.PreviousIsDarkTheme)
+            {
+                SetLuminosityOpacity(LuminosityOpacity, true);
+                SetTintColor(TintColor, true);
+            }
+            else
+            {
+                LuminosityOpacity = GetLuminosityOpacity();
+                TintColor = GetTintColor();
+            }
         }
-        else
-        {
-            LuminosityOpacity = GetLuminosityOpacity();
-            TintColor = GetTintColor();
-        }
+        catch { }
         Material = material;
         return (LuminosityOpacity, TintColor);
     }
-
-    public void SetIsFallBack(bool isFallBack) => IsFallBack = isFallBack;
 
     public void SetLuminosityOpacity(byte opacity, bool forced = false)
     {
@@ -144,13 +152,41 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         {
             return;
         }
-        if (_currentBackdropController is MicaController micaController)
+
+        lock (_debounceLock)
         {
-            micaController.LuminosityOpacity = opacity / 100f;
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            desktopAcrylicController.LuminosityOpacity = opacity / 100f;
+            _debounceTimer?.Dispose(); // 取消之前的定时器
+            _debounceTimer = new Timer( // 创建新的定时器，延迟执行
+                _ =>
+                {
+                    try
+                    {
+                        if (_currentBackdropController is MicaController micaController)
+                        {
+                            micaController.LuminosityOpacity = opacity / 100f;
+                        }
+                        else if (
+                            _currentBackdropController
+                            is DesktopAcrylicController desktopAcrylicController
+                        )
+                        {
+                            desktopAcrylicController.LuminosityOpacity = opacity / 100f;
+                        }
+                    }
+                    catch { }
+                    finally
+                    {
+                        lock (_debounceLock)
+                        {
+                            _debounceTimer?.Dispose();
+                            _debounceTimer = null;
+                        }
+                    }
+                },
+                null,
+                DEBOUNCE_DELAY_MS,
+                Timeout.Infinite
+            );
         }
         LuminosityOpacity = opacity;
     }
@@ -161,13 +197,41 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         {
             return;
         }
-        if (_currentBackdropController is MicaController micaController)
+
+        lock (_debounceLock)
         {
-            micaController.TintColor = color;
-        }
-        else if (_currentBackdropController is DesktopAcrylicController desktopAcrylicController)
-        {
-            desktopAcrylicController.TintColor = color;
+            _debounceTimer?.Dispose();
+            _debounceTimer = new Timer(
+                _ =>
+                {
+                    try
+                    {
+                        if (_currentBackdropController is MicaController micaController)
+                        {
+                            micaController.TintColor = color;
+                        }
+                        else if (
+                            _currentBackdropController
+                            is DesktopAcrylicController desktopAcrylicController
+                        )
+                        {
+                            desktopAcrylicController.TintColor = color;
+                        }
+                    }
+                    catch { }
+                    finally
+                    {
+                        lock (_debounceLock)
+                        {
+                            _debounceTimer?.Dispose();
+                            _debounceTimer = null;
+                        }
+                    }
+                },
+                null,
+                DEBOUNCE_DELAY_MS,
+                Timeout.Infinite
+            );
         }
         TintColor = color;
     }
@@ -283,6 +347,19 @@ public partial class MaterialSelectorService : IMaterialSelectorService
 
     public void Dispose()
     {
+        // 清理防抖定时器
+        lock (_debounceLock)
+        {
+            _debounceTimer?.Dispose();
+            _debounceTimer = null;
+        }
+
+        lock (_debounceLock)
+        {
+            _debounceTimer?.Dispose();
+            _debounceTimer = null;
+        }
+
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
         _currentBackdropController = null;

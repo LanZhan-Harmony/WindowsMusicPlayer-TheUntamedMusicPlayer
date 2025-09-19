@@ -122,7 +122,7 @@ public partial class RootPlayBarViewModel : ObservableObject
         }
     }
 
-    public void FullScreenButton_Click(object sender, RoutedEventArgs e)
+    public void FullScreenButton_Click(object _1, RoutedEventArgs _2)
     {
         var appWindow = App.MainWindow!.AppWindow;
         if (appWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen)
@@ -137,7 +137,7 @@ public partial class RootPlayBarViewModel : ObservableObject
         }
     }
 
-    public void DesktopLyricButton_Click(object sender, RoutedEventArgs e)
+    public void DesktopLyricButton_Click(object _1, RoutedEventArgs _2)
     {
         if (!IsDesktopLyricWindowStarted)
         {
