@@ -21,7 +21,7 @@ public class LocalArtistDetailViewModel
         AlbumList = Data.MusicLibrary.GetAlbumsByArtist(Artist);
     }
 
-    public void PlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void PlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.MusicPlayer.SetPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
@@ -30,7 +30,7 @@ public class LocalArtistDetailViewModel
         Data.MusicPlayer.PlaySongByInfo(AlbumList[0].SongList[0]);
     }
 
-    public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void ShuffledPlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.MusicPlayer.SetShuffledPlayQueue(
             $"ShuffledLocalSongs:Artist:{Artist.Name}",

@@ -391,7 +391,7 @@ public partial class OnlineMusicLibrary : ObservableObject
         SuggestResultList = [];
     }
 
-    public void AutoSuggestBox_Loaded(object sender, RoutedEventArgs e)
+    public void AutoSuggestBox_Loaded(object sender, RoutedEventArgs _)
     {
         if (sender is AutoSuggestBox autoSuggestBox)
         {
@@ -399,7 +399,7 @@ public partial class OnlineMusicLibrary : ObservableObject
         }
     }
 
-    public async void RetryButton_Click(object sender, RoutedEventArgs e)
+    public async void RetryButton_Click(object _1, RoutedEventArgs _2)
     {
         await ForceSearch();
     }

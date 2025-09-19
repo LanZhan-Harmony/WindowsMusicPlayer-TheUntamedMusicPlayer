@@ -136,7 +136,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         }
     }
 
-    public void PlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void PlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         if (Artist.AlbumList.Count == 0)
         {
@@ -147,7 +147,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         Data.MusicPlayer.PlaySongByInfo(allSongs[0]);
     }
 
-    public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void ShuffledPlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         if (Artist.AlbumList.Count == 0)
         {

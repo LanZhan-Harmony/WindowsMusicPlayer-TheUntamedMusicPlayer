@@ -9,6 +9,7 @@ using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using The_Untamed_Music_Player.ViewModels;
 using WinUIEx;
+using ZLogger;
 
 namespace The_Untamed_Music_Player;
 
@@ -135,19 +136,15 @@ public partial class App : Application
         _logger.UnexpectedException(errorMessage, exception);
 
         // 记录堆栈跟踪和内部异常
-        _logger.LogError(
+        _logger.ZLogInformation(
             exception,
-            "异常详细信息: {ExceptionType}, 堆栈跟踪: {StackTrace}",
-            exception.GetType().Name,
-            exception.StackTrace
+            $"异常详细信息: {exception.GetType().Name}, 堆栈跟踪: {exception.StackTrace}"
         );
-
         if (exception.InnerException is not null)
         {
-            _logger.LogError(
+            _logger.ZLogInformation(
                 exception.InnerException,
-                "内部异常: {InnerExceptionMessage}",
-                exception.InnerException.Message
+                $"内部异常: {exception.InnerException.Message}"
             );
         }
         e.Handled = true;

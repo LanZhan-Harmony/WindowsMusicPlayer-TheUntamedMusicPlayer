@@ -74,7 +74,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         IsSearchProgressRingActive = false;
     }
 
-    public void PlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void PlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         if (Album.SongList.Count == 0)
         {
@@ -84,7 +84,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         Data.MusicPlayer.PlaySongByInfo(Album.SongList[0]);
     }
 
-    public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void ShuffledPlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         if (Album.SongList.Count == 0)
         {
@@ -119,7 +119,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         }
     }
 
-    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
         if (e.ClickedItem is IBriefOnlineSongInfo info)
