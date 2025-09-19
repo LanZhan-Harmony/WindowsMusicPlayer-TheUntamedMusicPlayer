@@ -5,6 +5,7 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                xmlns:local="using:The_Untamed_Music_Player.Controls"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               CloseButtonClick="CloseButtonClick"
                DefaultButton="Primary"
                PrimaryButtonClick="CreateButtonClick"
                Style="{StaticResource DefaultContentDialogStyle}"
