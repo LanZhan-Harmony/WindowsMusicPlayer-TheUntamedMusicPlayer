@@ -1,8 +1,10 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using The_Untamed_Music_Player.Contracts.Services;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using Windows.UI;
 using WinRT;
@@ -340,6 +342,9 @@ public partial class MaterialSelectorService : IMaterialSelectorService
 
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
+        StrongReferenceMessenger.Default.Send(
+            new ThemeChangeMessage(ThemeSelectorService.IsDarkTheme)
+        );
         TitleBarHelper.UpdateTitleBar(sender.ActualTheme);
         SetConfigurationSourceTheme();
         ChangeTheme();

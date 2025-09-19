@@ -19,7 +19,10 @@ using ZLogger;
 
 namespace The_Untamed_Music_Player.Controls;
 
-public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPropertyChanged
+public sealed partial class EditPlaylistInfoDialog
+    : ContentDialog,
+        INotifyPropertyChanged,
+        IRecipient<ThemeChangeMessage>
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<EditPlaylistInfoDialog>();
     private readonly PlaylistInfo _playlist;
@@ -114,6 +117,7 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
 
     public EditPlaylistInfoDialog(PlaylistInfo info)
     {
+        StrongReferenceMessenger.Default.Register(this);
         _playlist = info;
         _originalName = info.Name;
         _name = info.Name;
@@ -134,6 +138,11 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
         IsSaveCoverButtonEnabled = Cover is not null && _isCoverEdited;
         RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
+    }
+
+    public void Receive(ThemeChangeMessage message)
+    {
+        RequestedTheme = message.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
     }
 
     private void PlaylistNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -403,5 +412,6 @@ public sealed partial class EditPlaylistInfoDialog : ContentDialog, INotifyPrope
                 catch { }
             }
         }
+        StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
