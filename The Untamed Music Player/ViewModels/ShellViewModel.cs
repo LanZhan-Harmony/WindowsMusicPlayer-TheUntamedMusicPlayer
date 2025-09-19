@@ -35,7 +35,7 @@ public partial class ShellViewModel : ObservableObject
         LoadAsync();
     }
 
-    public void NavigationFrame_Navigating(object sender, NavigatingCancelEventArgs e)
+    public void NavigationFrame_Navigating(object _, NavigatingCancelEventArgs e)
     {
         if (e.NavigationMode == NavigationMode.Back)
         {
@@ -95,7 +95,7 @@ public partial class ShellViewModel : ObservableObject
         SaveCurrentPageAsync();
     }
 
-    public void NavigationFrame_DragOver(object sender, DragEventArgs e)
+    public void NavigationFrame_DragOver(object _, DragEventArgs e)
     {
         if (CurrentPage == nameof(PlayQueuePage))
         {
@@ -111,7 +111,7 @@ public partial class ShellViewModel : ObservableObject
         }
     }
 
-    public async void NavigationFrame_Drop(object sender, DragEventArgs e)
+    public async void NavigationFrame_Drop(object _, DragEventArgs e)
     {
         if (CurrentPage == nameof(PlayQueuePage))
         {

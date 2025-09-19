@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using ManagedBass;
@@ -18,7 +17,6 @@ using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.OnlineAPIs.CloudMusicAPI;
 using The_Untamed_Music_Player.Services;
 using Windows.Media;
-using Windows.Storage.Streams;
 using Windows.System;
 using Windows.System.Threading;
 using ZLinq;
@@ -37,29 +35,9 @@ public partial class MusicPlayer
     private static readonly ILogger _logger = LoggingService.CreateLogger<MusicPlayer>();
 
     /// <summary>
-    /// 用于获取SMTC的临时播放器
+    /// SMTC管理器
     /// </summary>
-    private readonly Windows.Media.Playback.MediaPlayer _tempPlayer = new();
-
-    /// <summary>
-    /// 用于SMTC显示封面图片的流
-    /// </summary>
-    private static InMemoryRandomAccessStream? _currentCoverStream = null!;
-
-    /// <summary>
-    /// SMTC控件
-    /// </summary>
-    private SystemMediaTransportControls _systemControls = null!;
-
-    /// <summary>
-    /// SMTC显示内容更新器
-    /// </summary>
-    private SystemMediaTransportControlsDisplayUpdater _displayUpdater = null!;
-
-    /// <summary>
-    /// SMTC时间线属性
-    /// </summary>
-    private readonly SystemMediaTransportControlsTimelineProperties _timelineProperties = new();
+    private readonly SystemMediaTransportControlsManager _smtcManager = new();
 
     /// <summary>
     /// 线程锁开启状态, true为开启, false为关闭
@@ -141,59 +119,53 @@ public partial class MusicPlayer
     public partial ObservableCollection<IndexedPlayQueueSong> PlayQueue { get; set; } = [];
 
     /// <summary>
-    /// 隨機播放隊列集合
+    /// 随机播放队列集合
     /// </summary>
     [ObservableProperty]
     public partial ObservableCollection<IndexedPlayQueueSong> ShuffledPlayQueue { get; set; } = [];
 
     /// <summary>
-    /// 隨機播放模式, true為開啟, false為關閉.
+    /// 随机播放模式, true为开启, false为关闭.
     /// </summary>
     [ObservableProperty]
     public partial bool ShuffleMode { get; set; } = false;
 
     /// <summary>
-    /// 播放隊列名
+    /// 播放队列名
     /// </summary>
     [ObservableProperty]
     public partial string PlayQueueName { get; set; } = "";
 
     /// <summary>
-    /// 當前歌曲在播放隊列中的索引
+    /// 当前歌曲在播放队列中的索引
     /// </summary>
     [ObservableProperty]
     public partial int PlayQueueIndex { get; set; }
 
     partial void OnPlayQueueIndexChanged(int value)
     {
-        var repeatOffOrSingle = RepeatMode == 0 || RepeatMode == 2;
-        _systemControls.IsPreviousEnabled = !(value == 0 && repeatOffOrSingle);
-        _systemControls.IsNextEnabled = !(value == _playQueueLength - 1 && repeatOffOrSingle);
+        _smtcManager.UpdatePlayQueueInfo(value, _playQueueLength, RepeatMode);
     }
 
     /// <summary>
-    /// 循環播放模式, 0為不循環, 1為列表循環, 2為單曲循環
+    /// 循环播放模式, 0为不循环, 1为列表循环, 2为单曲循环
     /// </summary>
     [ObservableProperty]
     public partial byte RepeatMode { get; set; } = 0;
 
     partial void OnRepeatModeChanged(byte value)
     {
-        var isFirstSong = PlayQueueIndex == 0;
-        var isLastSong = PlayQueueIndex == _playQueueLength - 1;
-        var isRepeatOffOrSingle = value == 0 || value == 2;
-        _systemControls.IsPreviousEnabled = !(isFirstSong && isRepeatOffOrSingle);
-        _systemControls.IsNextEnabled = !(isLastSong && isRepeatOffOrSingle);
+        _smtcManager.UpdatePlayQueueInfo(PlayQueueIndex, _playQueueLength, value);
     }
 
     /// <summary>
-    /// 播放狀態, 0為暫停, 1為播放, 2為加載中
+    /// 播放状态, 0为暂停, 1为播放, 2为加载中
     /// </summary>
     [ObservableProperty]
     public partial byte PlayState { get; set; } = 0;
 
     /// <summary>
-    /// 當前播放的歌曲簡要版
+    /// 当前播放的歌曲简要版
     /// </summary>
     [ObservableProperty]
     public partial IBriefSongInfoBase? CurrentBriefSong { get; set; }
@@ -204,31 +176,31 @@ public partial class MusicPlayer
     }
 
     /// <summary>
-    /// 當前播放歌曲
+    /// 当前播放歌曲
     /// </summary>
     [ObservableProperty]
     public partial IDetailedSongInfoBase? CurrentSong { get; set; }
 
     /// <summary>
-    /// 當前播放時間
+    /// 当前播放时间
     /// </summary>
     [ObservableProperty]
     public partial TimeSpan CurrentPlayingTime { get; set; } = TimeSpan.Zero;
 
     /// <summary>
-    /// 當前歌曲總時長
+    /// 当前歌曲总时长
     /// </summary>
     [ObservableProperty]
     public partial TimeSpan TotalPlayingTime { get; set; } = TimeSpan.Zero;
 
     /// <summary>
-    /// 當前播放進度(百分比)
+    /// 当前播放进度(百分比)
     /// </summary>
     [ObservableProperty]
     public partial double CurrentPosition { get; set; } = 0;
 
     /// <summary>
-    /// 當前音量
+    /// 当前音量
     /// </summary>
     [ObservableProperty]
     public partial double CurrentVolume { get; set; } = 100;
@@ -258,11 +230,6 @@ public partial class MusicPlayer
     public bool IsExclusiveMode { get; set; } = false;
 
     /// <summary>
-    /// 当前音频源文件路径
-    /// </summary>
-    private string? _currentSourcePath = null;
-
-    /// <summary>
     /// 当前歌词内容
     /// </summary>
     [ObservableProperty]
@@ -279,8 +246,16 @@ public partial class MusicPlayer
     {
         Messenger.Register(this);
         InitializeBass();
-        InitializeSystemMediaTransportControls();
+        InitializeSmtc();
         LoadCurrentStateAsync();
+    }
+
+    public void Receive(FontSizeChangeMessage message)
+    {
+        foreach (var slice in CurrentLyric)
+        {
+            slice.UpdateStyle();
+        }
     }
 
     /// <summary>
@@ -293,7 +268,6 @@ public partial class MusicPlayer
             _logger.ZLogInformation($"Bass初始化失败: {Bass.LastError}");
             return;
         }
-
         LoadBassPlugins(); // 加载Bass插件
 
         // 设置同步回调
@@ -305,226 +279,41 @@ public partial class MusicPlayer
     }
 
     /// <summary>
-    /// WASAPI回调处理程序
+    /// 初始化SMTC
     /// </summary>
-    private int WasapiProc(nint buffer, int length, nint user)
+    private void InitializeSmtc()
     {
-        if (_tempoStream == 0) // 确保流句柄有效
-        {
-            return 0;
-        }
-        var bytesRead = Bass.ChannelGetData(_tempoStream, buffer, length); // 从解码流获取数据
-        if (bytesRead == -1 || bytesRead == 0) // 如果读取失败或到达流末尾，返回0
-        {
-            return 0;
-        }
-        return bytesRead;
+        _smtcManager.ButtonPressed += OnSmtcButtonPressed;
     }
 
     /// <summary>
-    /// 切换独占模式
+    /// 处理SMTC按钮按下事件
     /// </summary>
-    public bool SetExclusiveMode(bool isExclusiveMode)
+    private void OnSmtcButtonPressed(SystemMediaTransportControlsButton button)
     {
-        if (IsExclusiveMode == isExclusiveMode) // 如果模式没有改变，直接返回成功
+        switch (button)
         {
-            return true;
-        }
-        var wasPlaying = PlayState == 1;
-        var currentTime = CurrentPlayingTime.TotalSeconds;
-        var prevMode = IsExclusiveMode;
-        try
-        {
-            if (wasPlaying) // 停止当前播放
-            {
-                InternalStop();
-            }
-            CleanupWasapi(); // 清理WASAPI状态
-            IsExclusiveMode = isExclusiveMode; // 更新模式
-            if (!string.IsNullOrEmpty(_currentSourcePath)) // 如果有当前音频源，重新设置
-            {
-                CreateStreamFromPath(_currentSourcePath);
-                SetVolumeValue(IsMute ? 0.0 : CurrentVolume / 100.0);
-                if (currentTime > 0) // 恢复播放位置
-                {
-                    SetPlaybackPositionInternal(currentTime);
-                }
-                if (wasPlaying) // 如果之前在播放，继续播放
-                {
-                    InternalPlay();
-                }
-            }
-            return true;
-        }
-        catch
-        {
-            // 回退到之前的模式
-            IsExclusiveMode = prevMode;
-            CleanupWasapi();
-
-            // 尝试恢复播放
-            if (!string.IsNullOrEmpty(_currentSourcePath))
-            {
-                try
-                {
-                    CreateStreamFromPath(_currentSourcePath);
-                    SetVolumeValue(IsMute ? 0.0 : CurrentVolume / 100.0);
-                    if (currentTime > 0)
-                    {
-                        SetPlaybackPositionInternal(currentTime);
-                    }
-                    if (wasPlaying)
-                    {
-                        InternalPlay();
-                    }
-                }
-                catch (Exception restoreEx)
-                {
-                    _logger.ZLogInformation(restoreEx, $"恢复播放失败");
-                }
-            }
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// 清理WASAPI资源
-    /// </summary>
-    private static void CleanupWasapi()
-    {
-        try
-        {
-            if (BassWasapi.IsStarted)
-            {
-                BassWasapi.Stop(true);
-            }
-            BassWasapi.Free();
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"清理WASAPI资源时出错");
-        }
-    }
-
-    /// <summary>
-    /// 初始化WASAPI独占模式
-    /// </summary>
-    private bool InitializeWasapiExclusive()
-    {
-        try
-        {
-            if (_tempoStream == 0) // 确保有有效的流
-            {
-                _logger.ZLogInformation($"没有有效的音频流，无法初始化WASAPI独占模式");
-                return false;
-            }
-
-            // 初始化WASAPI独占模式
-            var result = BassWasapi.Init(
-                -1,
-                0,
-                0,
-                WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven,
-                0.05f,
-                0,
-                _wasapiProc,
-                IntPtr.Zero
-            );
-
-            if (!result)
-            {
-                var error = Bass.LastError;
-                _logger.ZLogInformation($"WASAPI独占模式初始化失败: {error}");
-
-                // 处理ALREADY错误，释放后重试
-                if (error == Errors.Already)
-                {
-                    CleanupWasapi();
-                    result = BassWasapi.Init(
-                        -1,
-                        0,
-                        0,
-                        WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven,
-                        0.05f,
-                        0,
-                        _wasapiProc,
-                        IntPtr.Zero
-                    );
-
-                    if (!result)
-                    {
-                        _logger.ZLogInformation($"WASAPI独占模式重试初始化失败: {Bass.LastError}");
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            _logger.ZLogInformation($"WASAPI独占模式初始化成功");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"初始化WASAPI独占模式时出现异常");
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// 启动WASAPI独占模式播放
-    /// </summary>
-    private bool StartWasapiExclusivePlayback()
-    {
-        try
-        {
-            if (!InitializeWasapiExclusive())
-            {
-                return false;
-            }
-
-            if (!BassWasapi.Start()) // 启动WASAPI
-            {
-                var error = Bass.LastError;
-                _logger.ZLogInformation($"WASAPI启动失败: {error}");
-                CleanupWasapi();
-                return false;
-            }
-
-            _logger.ZLogInformation($"WASAPI独占模式播放启动成功");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"启动WASAPI独占模式播放时出现异常");
-            CleanupWasapi();
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// 停止WASAPI播放
-    /// </summary>
-    private void StopWasapiPlayback()
-    {
-        try
-        {
-            if (BassWasapi.IsStarted)
-            {
-                BassWasapi.Stop(true);
-            }
-
-            if (_wasapiDevice != -1)
-            {
-                BassWasapi.Free();
-                _wasapiDevice = -1;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"停止WASAPI播放时出错");
+            case SystemMediaTransportControlsButton.Play:
+            case SystemMediaTransportControlsButton.Pause:
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+                    DispatcherQueuePriority.Low,
+                    PlayPauseUpdate
+                );
+                break;
+            case SystemMediaTransportControlsButton.Previous:
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+                    DispatcherQueuePriority.Low,
+                    PlayPreviousSong
+                );
+                break;
+            case SystemMediaTransportControlsButton.Next:
+                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
+                    DispatcherQueuePriority.Low,
+                    PlayNextSong
+                );
+                break;
+            default:
+                break;
         }
     }
 
@@ -551,29 +340,6 @@ public partial class MusicPlayer
         {
             var fullPath = Path.Combine(appPath, pluginPath);
             Bass.PluginLoad(fullPath);
-        }
-    }
-
-    /// <summary>
-    /// 初始化系统媒体传输控件
-    /// </summary>
-    private void InitializeSystemMediaTransportControls()
-    {
-        _systemControls = _tempPlayer.SystemMediaTransportControls;
-        _displayUpdater = _systemControls.DisplayUpdater;
-        _displayUpdater.Type = MediaPlaybackType.Music;
-        _displayUpdater.AppMediaId = "AppDisplayName".GetLocalized();
-        _systemControls.IsEnabled = true;
-        _systemControls.ButtonPressed += SystemControls_ButtonPressed;
-        _timelineProperties.StartTime = TimeSpan.Zero;
-        _timelineProperties.MinSeekTime = TimeSpan.Zero;
-    }
-
-    public void Receive(FontSizeChangeMessage message)
-    {
-        foreach (var slice in CurrentLyric)
-        {
-            slice.UpdateStyle();
         }
     }
 
@@ -627,6 +393,9 @@ public partial class MusicPlayer
         });
     }
 
+    /// <summary>
+    /// 处理歌曲不可用的情况
+    /// </summary>
     private void HandleSongNotAvailable()
     {
         _logger.SongPlaybackError(CurrentSong!.Title);
@@ -657,6 +426,415 @@ public partial class MusicPlayer
     }
 
     /// <summary>
+    /// WASAPI回调处理程序
+    /// </summary>
+    private int WasapiProc(nint buffer, int length, nint user)
+    {
+        if (_tempoStream == 0)
+        {
+            return 0;
+        }
+        var bytesRead = Bass.ChannelGetData(_tempoStream, buffer, length);
+        if (bytesRead == -1 || bytesRead == 0)
+        {
+            return 0;
+        }
+        return bytesRead;
+    }
+
+    /// <summary>
+    /// 清理WASAPI资源
+    /// </summary>
+    private static void CleanupWasapi()
+    {
+        try
+        {
+            if (BassWasapi.IsStarted)
+            {
+                BassWasapi.Stop(true);
+            }
+            BassWasapi.Free();
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"清理WASAPI资源时出错");
+        }
+    }
+
+    /// <summary>
+    /// 初始化WASAPI独占模式
+    /// </summary>
+    private bool InitializeWasapiExclusive()
+    {
+        try
+        {
+            if (_tempoStream == 0)
+            {
+                _logger.ZLogInformation($"没有有效的音频流，无法初始化WASAPI独占模式");
+                return false;
+            }
+
+            var result = BassWasapi.Init(
+                -1,
+                0,
+                0,
+                WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven,
+                0.05f,
+                0,
+                _wasapiProc,
+                nint.Zero
+            );
+
+            if (!result)
+            {
+                var error = Bass.LastError;
+                _logger.ZLogInformation($"WASAPI独占模式初始化失败: {error}");
+
+                if (error == Errors.Already)
+                {
+                    CleanupWasapi();
+                    result = BassWasapi.Init(
+                        -1,
+                        0,
+                        0,
+                        WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven,
+                        0.05f,
+                        0,
+                        _wasapiProc,
+                        nint.Zero
+                    );
+
+                    if (!result)
+                    {
+                        _logger.ZLogInformation($"WASAPI独占模式重试初始化失败: {Bass.LastError}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            _logger.ZLogInformation($"WASAPI独占模式初始化成功");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"初始化WASAPI独占模式时出现异常");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 启动WASAPI独占模式播放
+    /// </summary>
+    private bool StartWasapiExclusivePlayback()
+    {
+        try
+        {
+            if (!InitializeWasapiExclusive())
+            {
+                return false;
+            }
+
+            if (!BassWasapi.Start())
+            {
+                var error = Bass.LastError;
+                _logger.ZLogInformation($"WASAPI启动失败: {error}");
+                CleanupWasapi();
+                return false;
+            }
+
+            _logger.ZLogInformation($"WASAPI独占模式播放启动成功");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"启动WASAPI独占模式播放时出现异常");
+            CleanupWasapi();
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 停止WASAPI播放
+    /// </summary>
+    private void StopWasapiPlayback()
+    {
+        try
+        {
+            if (BassWasapi.IsStarted)
+            {
+                BassWasapi.Stop(true);
+            }
+            if (_wasapiDevice != -1)
+            {
+                BassWasapi.Free();
+                _wasapiDevice = -1;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"停止WASAPI播放时出错");
+        }
+    }
+
+    /// <summary>
+    /// 切换独占模式
+    /// </summary>
+    public bool SetExclusiveMode(bool isExclusiveMode)
+    {
+        if (IsExclusiveMode == isExclusiveMode)
+        {
+            return true;
+        }
+        var wasPlaying = PlayState == 1;
+        var currentTime = CurrentPlayingTime.TotalSeconds;
+        var prevMode = IsExclusiveMode;
+        try
+        {
+            if (wasPlaying)
+            {
+                InternalStop();
+            }
+            CleanupWasapi();
+            IsExclusiveMode = isExclusiveMode;
+            if (CurrentSong is not null)
+            {
+                CreateStreamFromPath(CurrentSong.Path);
+                SetVolumeValue(IsMute ? 0.0 : CurrentVolume / 100.0);
+                if (wasPlaying)
+                {
+                    InternalPlay();
+                }
+                // 在播放启动后设置播放位置，确保在独占模式下位置设置生效
+                if (currentTime > 0)
+                {
+                    SetPlaybackPositionInternal(currentTime);
+                }
+            }
+            return true;
+        }
+        catch
+        {
+            IsExclusiveMode = prevMode;
+            CleanupWasapi();
+
+            if (CurrentSong is not null)
+            {
+                try
+                {
+                    CreateStreamFromPath(CurrentSong.Path);
+                    SetVolumeValue(IsMute ? 0.0 : CurrentVolume / 100.0);
+                    if (currentTime > 0)
+                    {
+                        SetPlaybackPositionInternal(currentTime);
+                    }
+                    if (wasPlaying)
+                    {
+                        InternalPlay();
+                    }
+                }
+                catch (Exception restoreEx)
+                {
+                    _logger.ZLogInformation(restoreEx, $"恢复播放失败");
+                }
+            }
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 计时器更新事件
+    /// </summary>
+    /// <param name="timer"></param>
+    private void UpdateTimerHandler250ms(ThreadPoolTimer timer)
+    {
+        try
+        {
+            if (_tempoStream == 0 || _lockable || PlayState != 1)
+            {
+                return;
+            }
+
+            var positionBytes = Bass.ChannelGetPosition(_tempoStream);
+            var positionSeconds = Bass.ChannelBytes2Seconds(_tempoStream, positionBytes);
+            var playingTime = TimeSpan.FromSeconds(positionSeconds);
+
+            App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
+            {
+                CurrentPlayingTime = playingTime;
+                if (TotalPlayingTime.TotalMilliseconds > 0)
+                {
+                    CurrentPosition =
+                        100 * (playingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
+                }
+            });
+
+            var dispatcherQueue =
+                Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
+            if (CurrentLyric.Count > 0)
+            {
+                dispatcherQueue?.TryEnqueue(() => UpdateCurrentLyricIndex(positionSeconds * 1000));
+            }
+
+            _smtcManager.UpdateTimelinePosition(CurrentPlayingTime);
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"计时器更新失败");
+        }
+    }
+
+    /// <summary>
+    /// 播放
+    /// </summary>
+    public void Play()
+    {
+        PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(
+            UpdateTimerHandler250ms,
+            TimeSpan.FromMilliseconds(250)
+        );
+        InternalPlay();
+        PlayState = 1;
+        _smtcManager.UpdatePlaybackStatus(MediaPlaybackStatus.Playing);
+    }
+
+    /// <summary>
+    /// 暂停
+    /// </summary>
+    public void Pause()
+    {
+        InternalPause();
+        PlayState = 0;
+        _smtcManager.UpdatePlaybackStatus(MediaPlaybackStatus.Paused);
+        PositionUpdateTimer250ms?.Cancel();
+        PositionUpdateTimer250ms = null;
+    }
+
+    /// <summary>
+    /// 停止
+    /// </summary>
+    public void Stop()
+    {
+        InternalStop();
+        PlayState = 0;
+        CurrentPlayingTime = TimeSpan.Zero;
+        CurrentPosition = 0;
+        _currentLyricIndex = 0;
+        CurrentLyricContent = "";
+        PositionUpdateTimer250ms?.Cancel();
+        PositionUpdateTimer250ms = null;
+    }
+
+    /// <summary>
+    /// 内部播放实现
+    /// </summary>
+    private void InternalPlay()
+    {
+        if (_tempoStream == 0)
+        {
+            return;
+        }
+        if (IsExclusiveMode)
+        {
+            if (!StartWasapiExclusivePlayback())
+            {
+                _logger.ZLogInformation($"WASAPI独占模式失败，回退到共享模式");
+                IsExclusiveMode = false;
+
+                if (CurrentSong is not null)
+                {
+                    CreateStreamFromPath(CurrentSong.Path);
+                    SetVolumeValue(IsMute ? 0.0 : CurrentVolume / 100.0);
+                }
+                Bass.ChannelPlay(_tempoStream, false);
+            }
+        }
+        else
+        {
+            if (!Bass.ChannelPlay(_tempoStream, false))
+            {
+                var error = Bass.LastError;
+                _logger.ZLogInformation($"共享模式播放失败: {error}");
+                if (error == Errors.Start)
+                {
+                    if (Bass.Start())
+                    {
+                        Bass.ChannelPlay(_tempoStream, false);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 内部暂停实现
+    /// </summary>
+    private void InternalPause()
+    {
+        if (_tempoStream == 0)
+        {
+            return;
+        }
+        if (IsExclusiveMode)
+        {
+            if (BassWasapi.IsStarted)
+            {
+                BassWasapi.Stop(false);
+            }
+        }
+        else
+        {
+            Bass.ChannelPause(_tempoStream);
+        }
+    }
+
+    /// <summary>
+    /// 内部停止实现
+    /// </summary>
+    private void InternalStop()
+    {
+        if (_tempoStream != 0)
+        {
+            if (IsExclusiveMode)
+            {
+                CleanupWasapi();
+            }
+            Bass.ChannelStop(_tempoStream);
+        }
+    }
+
+    /// <summary>
+    /// 为播放器设置音乐源
+    /// </summary>
+    /// <param name="path"></param>
+    private async Task SetSource(string path)
+    {
+        try
+        {
+            Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Visible;
+            Data.RootPlayBarViewModel?.Availability = true;
+            CleanupWasapi();
+            CreateStreamFromPath(path);
+            SetVolumeValue(IsMute ? 0.0 : CurrentVolume / 100.0);
+            _smtcManager.UpdateMediaInfo(
+                CurrentSong!.Title,
+                CurrentSong.ArtistsStr,
+                TotalPlayingTime
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"SetSource失败");
+        }
+
+        await _smtcManager.SetCoverImageAsync(CurrentSong!);
+        _smtcManager.Update();
+    }
+
+    /// <summary>
     /// 按路径播放歌曲
     /// </summary>
     /// <param name="info"></param>
@@ -673,8 +851,7 @@ public partial class MusicPlayer
         {
             await SetSource(CurrentSong!.Path);
             _ = UpdateLyric(CurrentSong!.Lyric);
-            _systemControls.IsPlayEnabled = true;
-            _systemControls.IsPauseEnabled = true;
+            _smtcManager.SetButtonsEnabled(true, true, true, true);
             Play();
         }
         else
@@ -705,8 +882,7 @@ public partial class MusicPlayer
         {
             await SetSource(CurrentSong!.Path);
             _ = UpdateLyric(CurrentSong!.Lyric);
-            _systemControls.IsPlayEnabled = true;
-            _systemControls.IsPauseEnabled = true;
+            _smtcManager.SetButtonsEnabled(true, true, true, true);
             if (isLast)
             {
                 PlayState = 0;
@@ -732,7 +908,6 @@ public partial class MusicPlayer
         var insertIndex = PlayQueueIndex + 1;
         queue.Insert(insertIndex, new IndexedPlayQueueSong(insertIndex, info));
         _playQueueLength++;
-        // 仅更新从插入位置之后的索引
         for (var i = insertIndex + 1; i < queue.Count; i++)
         {
             queue[i].Index = i;
@@ -757,7 +932,6 @@ public partial class MusicPlayer
             insertIndex++;
         }
         _playQueueLength += songs.AsValueEnumerable().Count();
-        // 仅更新从插入位置之后的索引
         for (var i = insertIndex; i < queue.Count; i++)
         {
             queue[i].Index = i;
@@ -816,7 +990,7 @@ public partial class MusicPlayer
         var queue = ShuffleMode ? ShuffledPlayQueue : PlayQueue;
         var index = info.Index;
         int newIndex;
-        if (index == PlayQueueIndex) // 如果删除的歌曲正好是当前播放歌曲
+        if (index == PlayQueueIndex)
         {
             var playState = PlayState;
             Stop();
@@ -831,8 +1005,7 @@ public partial class MusicPlayer
                 {
                     await SetSource(CurrentSong!.Path);
                     _ = UpdateLyric(CurrentSong!.Lyric);
-                    _systemControls.IsPauseEnabled = true;
-                    _systemControls.IsPlayEnabled = true;
+                    _smtcManager.SetButtonsEnabled(true, true, true, true);
                     Play();
                 }
                 else
@@ -841,12 +1014,11 @@ public partial class MusicPlayer
                 }
             }
         }
-        else if (index < PlayQueueIndex) // 删除歌曲在当前播放歌曲之前时，当前索引前移1位
+        else if (index < PlayQueueIndex)
         {
             PlayQueueIndex--;
         }
 
-        // 从队列中移除歌曲并更新后续歌曲的索引
         queue.RemoveAt(index);
         _playQueueLength--;
         for (var i = index; i < queue.Count; i++)
@@ -911,7 +1083,6 @@ public partial class MusicPlayer
             actualIndex++;
         }
         _playQueueLength += songs.Count;
-        // 仅更新从插入位置之后的索引
         for (var i = actualIndex; i < queue.Count; i++)
         {
             queue[i].Index = i;
@@ -935,53 +1106,38 @@ public partial class MusicPlayer
     /// <param name="path">文件路径</param>
     private void CreateStreamFromPath(string path)
     {
-        FreeCurrentStreams(); // 释放之前的流
-        var flags = BassFlags.Unicode | BassFlags.Float | BassFlags.AsyncFile | BassFlags.Decode;
-        if (CurrentSong!.IsOnline) // 在线流
-        {
-            _currentStream = Bass.CreateStream(path, 0, flags, null);
-        }
-        else // 本地文件
-        {
-            _currentStream = Bass.CreateStream(path, 0, 0, flags);
-        }
+        FreeCurrentStreams();
+        const BassFlags flags =
+            BassFlags.Unicode | BassFlags.Float | BassFlags.AsyncFile | BassFlags.Decode;
 
+        _currentStream = CurrentSong!.IsOnline
+            ? Bass.CreateStream(path, 0, flags, null)
+            : Bass.CreateStream(path, 0, 0, flags);
         if (_currentStream == 0)
         {
             var error = Bass.LastError;
             _logger.ZLogInformation($"创建Bass流失败: {error}, 文件: {path}");
         }
 
-        if (IsExclusiveMode)
-        {
-            _tempoStream = BassFx.TempoCreate(_currentStream, BassFlags.Decode); // 使用BassFx创建Tempo流用于变速不变调
-        }
-        else
-        {
-            _tempoStream = BassFx.TempoCreate(_currentStream, BassFlags.FxFreeSource);
-        }
+        _tempoStream = IsExclusiveMode
+            ? BassFx.TempoCreate(_currentStream, BassFlags.Decode)
+            : BassFx.TempoCreate(_currentStream, BassFlags.FxFreeSource);
         if (_tempoStream == 0)
         {
             var error = Bass.LastError;
             _logger.ZLogInformation($"创建Tempo流失败: {error}");
             Bass.StreamFree(_currentStream);
             _currentStream = 0;
-            throw new InvalidOperationException($"创建Tempo流失败: {error}");
         }
 
-        // 设置播放速度
         SetPlaybackSpeed(PlaySpeed);
 
-        // 设置同步回调
         Bass.ChannelSetSync(_tempoStream, SyncFlags.End, 0, _syncEndCallback);
         Bass.ChannelSetSync(_tempoStream, SyncFlags.Stalled, 0, _syncFailCallback);
 
-        // 获取歌曲时长
         var lengthBytes = Bass.ChannelGetLength(_tempoStream);
         var lengthSeconds = Bass.ChannelBytes2Seconds(_tempoStream, lengthBytes);
         TotalPlayingTime = TimeSpan.FromSeconds(lengthSeconds);
-
-        _logger.ZLogInformation($"成功创建音频流，时长: {TotalPlayingTime}");
     }
 
     /// <summary>
@@ -1002,137 +1158,25 @@ public partial class MusicPlayer
     }
 
     /// <summary>
-    /// 为播放器设置音乐源
+    /// 更新循环模式
     /// </summary>
-    /// <param name="path"></param>
-    private async Task SetSource(string path)
+    public void RepeatModeUpdate(object _1, RoutedEventArgs _2)
     {
-        try
-        {
-            Data.RootPlayBarViewModel!.ButtonVisibility = Visibility.Visible;
-            Data.RootPlayBarViewModel!.Availability = true;
-
-            // 停止WASAPI播放
-            CleanupWasapi();
-
-            // 保存当前源路径
-            _currentSourcePath = path;
-
-            // 创建音频流
-            CreateStreamFromPath(path);
-
-            // 设置音量
-            SetVolumeValue(IsMute ? 0.0 : CurrentVolume / 100.0);
-
-            _displayUpdater.MusicProperties.Title = CurrentSong!.Title;
-            _displayUpdater.MusicProperties.Artist =
-                CurrentSong.ArtistsStr == "SongInfo_UnknownArtist".GetLocalized()
-                    ? ""
-                    : CurrentSong.ArtistsStr;
-            _timelineProperties.MaxSeekTime = TotalPlayingTime;
-            _timelineProperties.EndTime = TotalPlayingTime;
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"SetSource失败");
-            throw;
-        }
-
-        // 设置封面图片
-        await SetCoverImage();
-        _displayUpdater.Update();
+        RepeatMode = (byte)((RepeatMode + 1) % 3);
     }
 
     /// <summary>
-    /// 设置封面图片
+    /// 静音按钮点击事件
     /// </summary>
-    private async Task SetCoverImage()
+    public void MuteButton_Click(object _1, RoutedEventArgs _2)
     {
-        if (CurrentSong!.Cover is not null)
-        {
-            if (CurrentSong.IsOnline)
-            {
-                try
-                {
-                    var info = (IDetailedOnlineSongInfo)CurrentSong;
-                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
-                        new Uri(info.CoverPath!)
-                    );
-                }
-                catch { }
-            }
-            else
-            {
-                try
-                {
-                    var info = (DetailedLocalSongInfo)CurrentSong;
-                    _currentCoverStream?.Dispose();
-                    _currentCoverStream = new InMemoryRandomAccessStream();
-                    await _currentCoverStream.WriteAsync(info.CoverBuffer.AsBuffer());
-                    _currentCoverStream.Seek(0);
-                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromStream(
-                        _currentCoverStream
-                    );
-                }
-                catch
-                {
-                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
-                        new Uri("ms-appx:///Assets/NoCover.png")
-                    );
-                }
-            }
-        }
-        else
-        {
-            _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
-                new Uri("ms-appx:///Assets/NoCover.png")
-            );
-        }
+        IsMute = !IsMute;
     }
 
     /// <summary>
-    /// 内部播放实现
+    /// 设置音量
     /// </summary>
-    private void InternalPlay()
-    {
-        if (_tempoStream == 0)
-        {
-            return;
-        }
-        if (IsExclusiveMode) // 独占模式：启动WASAPI独占播放
-        {
-            if (!StartWasapiExclusivePlayback())
-            {
-                // 如果独占模式失败，回退到共享模式
-                _logger.ZLogInformation($"WASAPI独占模式失败，回退到共享模式");
-                IsExclusiveMode = false;
-
-                // 重新创建流（去掉DECODE标志）
-                if (!string.IsNullOrEmpty(_currentSourcePath))
-                {
-                    CreateStreamFromPath(_currentSourcePath);
-                    SetVolumeValue(IsMute ? 0.0 : CurrentVolume / 100.0);
-                }
-                Bass.ChannelPlay(_tempoStream, false);
-            }
-        }
-        else // 共享模式：直接播放
-        {
-            if (!Bass.ChannelPlay(_tempoStream, false))
-            {
-                var error = Bass.LastError;
-                _logger.ZLogInformation($"共享模式播放失败: {error}");
-                if (error == Errors.Start) // 处理播放错误
-                {
-                    if (Bass.Start()) // 设备需要启动
-                    {
-                        Bass.ChannelPlay(_tempoStream, false);
-                    }
-                }
-            }
-        }
-    }
-
+    /// <param name="volume"></param>
     private void SetVolumeValue(double volume)
     {
         if (_tempoStream != 0)
@@ -1162,7 +1206,6 @@ public partial class MusicPlayer
             if (ShuffleMode)
             {
                 UpdateShufflePlayQueue();
-                // 更新随机播放队列中每首歌曲的 Index 为实际位置
                 for (var i = 0; i < ShuffledPlayQueue.Count; i++)
                 {
                     ShuffledPlayQueue[i].Index = i;
@@ -1199,81 +1242,6 @@ public partial class MusicPlayer
     }
 
     /// <summary>
-    /// 计时器更新事件
-    /// </summary>
-    /// <param name="timer"></param>
-    private void UpdateTimerHandler250ms(ThreadPoolTimer timer)
-    {
-        try
-        {
-            if (_tempoStream == 0 || _lockable || PlayState != 1)
-            {
-                return;
-            }
-
-            // 获取播放位置
-            var positionBytes = Bass.ChannelGetPosition(_tempoStream);
-            if (positionBytes == -1)
-            {
-                // 如果获取位置失败，尝试重新启动播放
-                var error = Bass.LastError;
-                _logger.ZLogInformation($"获取播放位置失败: {error}");
-
-                if (IsExclusiveMode)
-                {
-                    // 在独占模式下，检查WASAPI状态
-                    if (!BassWasapi.IsStarted)
-                    {
-                        _logger.ZLogInformation($"WASAPI已停止，尝试重新启动");
-                        if (StartWasapiExclusivePlayback())
-                        {
-                            BassWasapi.Start();
-                        }
-                        else
-                        {
-                            // 如果重启失败，回退到共享模式
-                            _logger.ZLogInformation($"WASAPI重启失败，回退到共享模式");
-                            Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(() =>
-                            {
-                                IsExclusiveMode = false;
-                                Bass.ChannelPlay(_tempoStream, false);
-                            });
-                        }
-                    }
-                }
-                return;
-            }
-
-            var positionSeconds = Bass.ChannelBytes2Seconds(_tempoStream, positionBytes);
-            var playingTime = TimeSpan.FromSeconds(positionSeconds);
-
-            App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
-            {
-                CurrentPlayingTime = playingTime;
-                if (TotalPlayingTime.TotalMilliseconds > 0)
-                {
-                    CurrentPosition =
-                        100 * (playingTime.TotalMilliseconds / TotalPlayingTime.TotalMilliseconds);
-                }
-            });
-
-            var dispatcherQueue =
-                Data.LyricPage?.DispatcherQueue ?? Data.DesktopLyricWindow?.DispatcherQueue;
-            if (CurrentLyric.Count > 0)
-            {
-                dispatcherQueue?.TryEnqueue(() => UpdateCurrentLyricIndex(positionSeconds * 1000));
-            }
-
-            _timelineProperties.Position = CurrentPlayingTime;
-            _systemControls.UpdateTimelineProperties(_timelineProperties);
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"计时器更新失败");
-        }
-    }
-
-    /// <summary>
     /// 获取当前歌词切片索引
     /// </summary>
     /// <param name="currentTime"></param>
@@ -1303,14 +1271,12 @@ public partial class MusicPlayer
         var newIndex = GetCurrentLyricIndex(currentTime);
         if (newIndex != _currentLyricIndex)
         {
-            // 更新旧歌词状态
             if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyric.Count)
             {
                 CurrentLyric[_currentLyricIndex].IsCurrent = false;
             }
             _currentLyricIndex = newIndex;
 
-            // 更新新歌词状态
             if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyric.Count)
             {
                 CurrentLyric[_currentLyricIndex].IsCurrent = true;
@@ -1319,136 +1285,11 @@ public partial class MusicPlayer
         }
     }
 
-    private void SystemControls_ButtonPressed(
-        SystemMediaTransportControls sender,
-        SystemMediaTransportControlsButtonPressedEventArgs args
-    )
-    {
-        switch (args.Button)
-        {
-            case SystemMediaTransportControlsButton.Play:
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
-                    DispatcherQueuePriority.Low,
-                    PlayPauseUpdate
-                );
-                break;
-            case SystemMediaTransportControlsButton.Pause:
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
-                    DispatcherQueuePriority.Low,
-                    PlayPauseUpdate
-                );
-                break;
-            case SystemMediaTransportControlsButton.Previous: // 注意: 必须在UI线程中调用
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
-                    DispatcherQueuePriority.Low,
-                    PlayPreviousSong
-                );
-                break;
-            case SystemMediaTransportControlsButton.Next:
-                Data.RootPlayBarView?.DispatcherQueue.TryEnqueue(
-                    DispatcherQueuePriority.Low,
-                    PlayNextSong
-                );
-                break;
-            default:
-                break;
-        }
-    }
-
-    /// <summary>
-    /// 静音按钮点击事件
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public void MuteButton_Click(object sender, RoutedEventArgs e)
-    {
-        IsMute = !IsMute;
-    }
-
-    /// <summary>
-    /// 播放
-    /// </summary>
-    public void Play()
-    {
-        PositionUpdateTimer250ms = ThreadPoolTimer.CreatePeriodicTimer(
-            UpdateTimerHandler250ms,
-            TimeSpan.FromMilliseconds(250)
-        );
-        InternalPlay();
-        PlayState = 1;
-        _systemControls.PlaybackStatus = MediaPlaybackStatus.Playing;
-    }
-
-    /// <summary>
-    /// 内部暂停实现
-    /// </summary>
-    private void InternalPause()
-    {
-        if (_tempoStream == 0)
-        {
-            return;
-        }
-
-        if (IsExclusiveMode) // 独占模式：停止WASAPI但保持数据
-        {
-            if (BassWasapi.IsStarted)
-            {
-                BassWasapi.Stop(false);
-            }
-        }
-        else // 共享模式：暂停通道
-        {
-            Bass.ChannelPause(_tempoStream);
-        }
-    }
-
-    /// <summary>
-    /// 暂停
-    /// </summary>
-    public void Pause()
-    {
-        InternalPause();
-        PlayState = 0;
-        _systemControls.PlaybackStatus = MediaPlaybackStatus.Paused;
-        PositionUpdateTimer250ms?.Cancel();
-        PositionUpdateTimer250ms = null;
-    }
-
-    /// <summary>
-    /// 内部停止实现
-    /// </summary>
-    private void InternalStop()
-    {
-        if (_tempoStream != 0)
-        {
-            if (IsExclusiveMode)
-            {
-                CleanupWasapi();
-            }
-            Bass.ChannelStop(_tempoStream);
-        }
-    }
-
-    /// <summary>
-    /// 停止
-    /// </summary>
-    public void Stop()
-    {
-        InternalStop();
-        PlayState = 0;
-        CurrentPlayingTime = TimeSpan.Zero;
-        CurrentPosition = 0;
-        _currentLyricIndex = 0;
-        CurrentLyricContent = "";
-        PositionUpdateTimer250ms?.Cancel();
-        PositionUpdateTimer250ms = null;
-    }
-
     /// <summary>
     /// 设置播放位置的内部实现
     /// </summary>
     /// <param name="targetTimeSeconds">目标时间(秒)</param>
-    private void SetPlaybackPositionInternal(double targetTimeSeconds)
+    private async void SetPlaybackPositionInternal(double targetTimeSeconds)
     {
         if (_tempoStream != 0)
         {
@@ -1456,8 +1297,19 @@ public partial class MusicPlayer
             var result = Bass.ChannelSetPosition(_tempoStream, targetBytes);
             if (!result)
             {
-                _logger.ZLogInformation($"设置播放位置失败: {Bass.LastError}");
+                var error = Bass.LastError;
+                if (error == Errors.Position)
+                {
+                    var retryCount = 0;
+                    while (!result && retryCount < 10) // 最多重试10次
+                    {
+                        await Task.Delay(100);
+                        result = Bass.ChannelSetPosition(_tempoStream, targetBytes);
+                        retryCount++;
+                    }
+                }
             }
+
             CurrentPlayingTime = TimeSpan.FromSeconds(targetTimeSeconds);
             if (TotalPlayingTime.TotalMilliseconds > 0)
             {
@@ -1478,7 +1330,7 @@ public partial class MusicPlayer
         {
             var newIndex = PlayQueueIndex > 0 ? PlayQueueIndex - 1 : PlayQueueIndex;
 
-            if (RepeatMode == 1) // 列表循环
+            if (RepeatMode == 1)
             {
                 newIndex = (PlayQueueIndex + _playQueueLength - 1) % _playQueueLength;
             }
@@ -1501,7 +1353,7 @@ public partial class MusicPlayer
             var newIndex = PlayQueueIndex < _playQueueLength - 1 ? PlayQueueIndex + 1 : 0;
             var isLast = PlayQueueIndex >= _playQueueLength - 1;
 
-            if (RepeatMode == 1) // 列表循环
+            if (RepeatMode == 1)
             {
                 newIndex = (PlayQueueIndex + 1) % _playQueueLength;
                 isLast = false;
@@ -1575,14 +1427,6 @@ public partial class MusicPlayer
     }
 
     /// <summary>
-    /// 循環播放模式更新
-    /// </summary>
-    public void RepeatModeUpdate()
-    {
-        RepeatMode = (byte)((RepeatMode + 1) % 3);
-    }
-
-    /// <summary>
     /// 设置播放速度
     /// </summary>
     /// <param name="speed"></param>
@@ -1590,7 +1434,6 @@ public partial class MusicPlayer
     {
         if (_tempoStream != 0)
         {
-            // 使用Tempo属性来改变播放速度而不改变音调, Tempo属性的值以百分比表示: 0=正常速度, 100=2倍速度, -50=0.5倍速度
             var tempoPercent = (speed - 1.0) * 100.0;
             Bass.ChannelSetAttribute(_tempoStream, ChannelAttribute.Tempo, (float)tempoPercent);
         }
@@ -1599,7 +1442,6 @@ public partial class MusicPlayer
     /// <summary>
     /// 随机播放队列更新
     /// </summary>
-    /// <returns></returns>
     public void UpdateShufflePlayQueue()
     {
         ShuffledPlayQueue = [.. PlayQueue.AsValueEnumerable().OrderBy(x => Guid.NewGuid())];
@@ -1617,26 +1459,21 @@ public partial class MusicPlayer
         TotalPlayingTime = TimeSpan.Zero;
         PlayQueue.Clear();
         ShuffledPlayQueue.Clear();
-        OnPropertyChanged(nameof(PlayQueue)); // 不能删,用于通知按钮是否禁用
+        OnPropertyChanged(nameof(PlayQueue));
         CurrentLyric.Clear();
         PlayQueueName = "";
         PlayQueueIndex = 0;
         _playQueueLength = 0;
         Data.RootPlayBarViewModel!.ButtonVisibility = Visibility.Collapsed;
         Data.RootPlayBarViewModel!.Availability = false;
-        _systemControls.IsPlayEnabled = false;
-        _systemControls.IsPauseEnabled = false;
-        _systemControls.IsPreviousEnabled = false;
-        _systemControls.IsNextEnabled = false;
+        _smtcManager.SetButtonsEnabled(false, false, false, false);
         _ = FileManager.SavePlayQueueDataAsync(PlayQueue, ShuffledPlayQueue);
     }
 
     /// <summary>
     /// 按下滑动条事件
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public void ProgressLock(object sender, PointerRoutedEventArgs e)
+    public void ProgressLock(object sender, PointerRoutedEventArgs _)
     {
         _lockable = true;
         CurrentPlayingTime = TimeSpan.FromMilliseconds(
@@ -1647,8 +1484,6 @@ public partial class MusicPlayer
     /// <summary>
     /// 键盘按下移动滑动条事件
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     public void ProgressLock(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key != VirtualKey.Left && e.Key != VirtualKey.Right)
@@ -1665,9 +1500,7 @@ public partial class MusicPlayer
     /// <summary>
     /// 滑动滑动条事件
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public void SliderUpdate(object sender, PointerRoutedEventArgs e)
+    public void SliderUpdate(object sender, PointerRoutedEventArgs _)
     {
         CurrentPlayingTime = TimeSpan.FromMilliseconds(
             ((Slider)sender).Value * TotalPlayingTime.TotalMilliseconds / 100
@@ -1678,9 +1511,7 @@ public partial class MusicPlayer
     /// <summary>
     /// 松开滑动条更新播放进度
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public void ProgressUpdate(object sender, PointerRoutedEventArgs e)
+    public void ProgressUpdate(object sender, PointerRoutedEventArgs _)
     {
         var targetTimeSeconds = ((Slider)sender).Value * TotalPlayingTime.TotalSeconds / 100;
         SetPlaybackPosition(targetTimeSeconds, false);
@@ -1689,8 +1520,6 @@ public partial class MusicPlayer
     /// <summary>
     /// 键盘松开移动滑动条事件
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     public void ProgressUpdate(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key != VirtualKey.Left && e.Key != VirtualKey.Right)
@@ -1707,7 +1536,7 @@ public partial class MusicPlayer
         SetPlaybackPosition(targetTimeSeconds);
     }
 
-    public void SkipBack10sButton_Click(object sender, RoutedEventArgs e)
+    public void SkipBack10sButton_Click(object _1, RoutedEventArgs _2)
     {
         if (_tempoStream == 0)
         {
@@ -1719,7 +1548,7 @@ public partial class MusicPlayer
         SetPlaybackPosition(newPositionSeconds);
     }
 
-    public void SkipForw30sButton_Click(object sender, RoutedEventArgs e)
+    public void SkipForw30sButton_Click(object _1, RoutedEventArgs _2)
     {
         if (_tempoStream == 0)
         {
@@ -1749,7 +1578,7 @@ public partial class MusicPlayer
         _lockable = false;
     }
 
-    public void SpeedListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public void SpeedListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
     {
         if (sender is ListView listview && listview.SelectedIndex is int selectedIndex)
         {
@@ -1765,7 +1594,7 @@ public partial class MusicPlayer
         }
     }
 
-    public void SpeedListView_Loaded(object sender, RoutedEventArgs e)
+    public void SpeedListView_Loaded(object sender, RoutedEventArgs _)
     {
         if (sender is ListView listview)
         {
@@ -1808,7 +1637,7 @@ public partial class MusicPlayer
     }
 
     /// <summary>
-    /// 保存當前播放狀態至設置存儲
+    /// 保存当前播放状态至设置存储
     /// </summary>
     public async Task SaveCurrentStateAsync()
     {
@@ -1824,7 +1653,7 @@ public partial class MusicPlayer
     }
 
     /// <summary>
-    /// 從設置存儲中讀取當前播放狀態
+    /// 从设置存储中读取当前播放状态
     /// </summary>
     public async void LoadCurrentStateAsync()
     {
@@ -1842,11 +1671,10 @@ public partial class MusicPlayer
                 PlaySpeed = await _localSettingsService.ReadSettingAsync<double>("PlaySpeed");
             }
 
-            // 如果是文件激活启动，跳过播放队列和当前歌曲的加载
             if (Data.IsFileActivationLaunch)
             {
-                Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Visible;
-                Data.RootPlayBarViewModel?.Availability = true;
+                Data.RootPlayBarViewModel!.ButtonVisibility = Visibility.Visible;
+                Data.RootPlayBarViewModel!.Availability = true;
                 HasLoaded = true;
                 return;
             }
@@ -1879,15 +1707,14 @@ public partial class MusicPlayer
                     );
                     await SetSource(CurrentSong!.Path);
                     _ = UpdateLyric(CurrentSong!.Lyric);
-                    _systemControls.IsPlayEnabled = true;
-                    _systemControls.IsPauseEnabled = true;
+                    _smtcManager.SetButtonsEnabled(true, true, true, true);
                 }
             }
-            Data.RootPlayBarViewModel?.ButtonVisibility =
+            Data.RootPlayBarViewModel!.ButtonVisibility =
                 CurrentSong is not null && _playQueueLength > 0
                     ? Visibility.Visible
                     : Visibility.Collapsed;
-            Data.RootPlayBarViewModel?.Availability =
+            Data.RootPlayBarViewModel!.Availability =
                 CurrentSong is not null && _playQueueLength > 0;
             HasLoaded = true;
         }
@@ -1897,8 +1724,8 @@ public partial class MusicPlayer
             CurrentSong = null;
             PlayQueue = [];
             ShuffledPlayQueue = [];
-            Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Collapsed;
-            Data.RootPlayBarViewModel?.Availability = false;
+            Data.RootPlayBarViewModel!.ButtonVisibility = Visibility.Collapsed;
+            Data.RootPlayBarViewModel!.Availability = false;
             HasLoaded = true;
             _logger.ZLogInformation(ex, $"初始化播放状态失败");
         }
@@ -1908,10 +1735,7 @@ public partial class MusicPlayer
     {
         Stop();
         Messenger.Unregister<FontSizeChangeMessage>(this);
-
-        // 释放WASAPI资源
         StopWasapiPlayback();
-
         if (_tempoStream != 0)
         {
             Bass.StreamFree(_tempoStream);
@@ -1924,8 +1748,8 @@ public partial class MusicPlayer
         }
         Bass.Free();
         BassWasapi.Free();
-        _currentCoverStream?.Dispose();
-        _tempPlayer?.Dispose();
+        _smtcManager?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
 

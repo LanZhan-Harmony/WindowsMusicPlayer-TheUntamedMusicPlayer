@@ -61,7 +61,7 @@ public partial class PlayQueueViewModel : ObservableObject
         Data.MusicPlayer.AddSongsToPlayQueue(songList);
     }
 
-    public void PlayQueueListView_ItemClick(object sender, ItemClickEventArgs e)
+    public void PlayQueueListView_ItemClick(object _, ItemClickEventArgs e)
     {
         if (e.ClickedItem is IndexedPlayQueueSong info)
         {
@@ -164,7 +164,7 @@ public partial class PlayQueueViewModel : ObservableObject
         }
     }
 
-    public void ClearButton_Click(object sender, RoutedEventArgs e)
+    public void ClearButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.MusicPlayer.ClearPlayQueue();
     }
@@ -230,7 +230,7 @@ public partial class PlayQueueViewModel : ObservableObject
         IsButtonEnabled = PlayQueue.Count > 0;
     }
 
-    public void PlayQueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+    public void PlayQueueListView_DragItemsStarting(object _, DragItemsStartingEventArgs e)
     {
         _currentSong = PlayQueue[Data.MusicPlayer.PlayQueueIndex];
         if (e.Items.Count > 0)
@@ -239,7 +239,7 @@ public partial class PlayQueueViewModel : ObservableObject
         }
     }
 
-    public void PlayQueueListView_DragOver(object sender, DragEventArgs e)
+    public void PlayQueueListView_DragOver(object _, DragEventArgs e)
     {
         if (e.DataView.Contains(StandardDataFormats.StorageItems))
         {
@@ -252,7 +252,7 @@ public partial class PlayQueueViewModel : ObservableObject
     }
 
     public void PlayQueueListView_DragItemsCompleted(
-        object sender,
+        object _,
         DragItemsCompletedEventArgs args
     )
     {

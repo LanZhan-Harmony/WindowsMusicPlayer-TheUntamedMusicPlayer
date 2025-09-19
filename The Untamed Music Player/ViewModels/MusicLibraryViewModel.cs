@@ -58,7 +58,7 @@ public partial class MusicLibraryViewModel
             : Visibility.Visible;
     }
 
-    public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
+    public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs _)
     {
         (sender as Button)!.IsEnabled = false;
         var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
