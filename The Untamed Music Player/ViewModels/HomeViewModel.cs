@@ -67,7 +67,7 @@ public partial class HomeViewModel : ObservableObject
     }
 
     public async void SuggestBox_QuerySubmitted(
-        AutoSuggestBox sender,
+        AutoSuggestBox _,
         AutoSuggestBoxQuerySubmittedEventArgs args
     )
     {
@@ -97,7 +97,7 @@ public partial class HomeViewModel : ObservableObject
         }
     }
 
-    public void SelectorBar_Loaded(object sender, RoutedEventArgs e)
+    public void SelectorBar_Loaded(object sender, RoutedEventArgs _)
     {
         if (sender is SelectorBar selectorBar)
         {
@@ -109,7 +109,7 @@ public partial class HomeViewModel : ObservableObject
 
     public void SelectorBar_SelectionChanged(
         SelectorBar sender,
-        SelectorBarSelectionChangedEventArgs args
+        SelectorBarSelectionChangedEventArgs _
     )
     {
         var selectedItem = sender.SelectedItem;

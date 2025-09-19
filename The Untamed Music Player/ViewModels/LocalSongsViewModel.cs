@@ -260,7 +260,7 @@ public partial class LocalSongsViewModel
 
     public object GetSongListViewSource(
         ICollectionView grouped,
-        List<BriefLocalSongInfo> notgrouped
+        List<BriefLocalSongInfo> _
     )
     {
         return _isGrouped ? grouped : NotGroupedSongList;
@@ -492,7 +492,7 @@ public partial class LocalSongsViewModel
         });
     }
 
-    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
     {
         var currentsortmode = SortMode;
         SortMode = (byte)(sender as ListView)!.SelectedIndex;
@@ -507,12 +507,12 @@ public partial class LocalSongsViewModel
         }
     }
 
-    public void SortByListView_Loaded(object sender, RoutedEventArgs e)
+    public void SortByListView_Loaded(object sender, RoutedEventArgs _)
     {
         (sender as ListView)!.SelectedIndex = SortMode;
     }
 
-    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
     {
         var currentGenreMode = GenreMode;
         GenreMode = (byte)(sender as ListView)!.SelectedIndex;
@@ -527,18 +527,18 @@ public partial class LocalSongsViewModel
         }
     }
 
-    public void GenreListView_Loaded(object sender, RoutedEventArgs e)
+    public void GenreListView_Loaded(object sender, RoutedEventArgs _)
     {
         (sender as ListView)!.SelectedIndex = GenreMode;
     }
 
-    public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void ShuffledPlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.MusicPlayer.SetShuffledPlayQueue("ShuffledLocalSongs:All", ConvertGroupedToFlatList());
         Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
     }
 
-    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         if (e.ClickedItem is BriefLocalSongInfo info)
         {

@@ -158,7 +158,7 @@ public partial class SettingsViewModel
 
     partial void OnIsFallBackChanged(bool value)
     {
-        _materialSelectorService.SetIsFallBack(value);
+        _materialSelectorService.IsFallBack = value;
     }
 
     /// <summary>
@@ -167,11 +167,21 @@ public partial class SettingsViewModel
     [ObservableProperty]
     public partial byte LuminosityOpacity { get; set; }
 
+    partial void OnLuminosityOpacityChanged(byte value)
+    {
+        _materialSelectorService.SetLuminosityOpacity(value, false);
+    }
+
     /// <summary>
     /// 背景颜色
     /// </summary>
     [ObservableProperty]
     public partial Color TintColor { get; set; }
+
+    partial void OnTintColorChanged(Color value)
+    {
+        _materialSelectorService.SetTintColor(value, false);
+    }
 
     /// <summary>
     /// 是否显示歌词背景
@@ -215,7 +225,7 @@ public partial class SettingsViewModel
         IsExportPlaylistsButtonEnabled = message.HasPlaylist;
     }
 
-    public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs e)
+    public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs _)
     {
         (sender as Button)!.IsEnabled = false;
         var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
@@ -247,7 +257,7 @@ public partial class SettingsViewModel
         await Data.MusicLibrary.LoadLibraryAgainAsync();
     }
 
-    public async void RefreshButton_Click(object sender, RoutedEventArgs e)
+    public async void RefreshButton_Click(object sender, RoutedEventArgs _)
     {
         var senderButton = sender as Button;
         senderButton!.IsEnabled = false;
@@ -255,12 +265,12 @@ public partial class SettingsViewModel
         senderButton!.IsEnabled = true;
     }
 
-    public void SongDownloadLocationButton_Click(object sender, RoutedEventArgs e)
+    public void SongDownloadLocationButton_Click(object _1, RoutedEventArgs _2)
     {
         Process.Start("explorer.exe", SongDownloadLocation);
     }
 
-    public async void ChangeSongDownloadLocationButton_Click(object sender, RoutedEventArgs e)
+    public async void ChangeSongDownloadLocationButton_Click(object sender, RoutedEventArgs _)
     {
         (sender as Button)!.IsEnabled = false;
         try
@@ -282,7 +292,7 @@ public partial class SettingsViewModel
         }
     }
 
-    public async void ImportFromM3u8Button_Click(object sender, RoutedEventArgs e)
+    public async void ImportFromM3u8Button_Click(object sender, RoutedEventArgs _)
     {
         (sender as Button)!.IsEnabled = false;
         try
@@ -328,7 +338,7 @@ public partial class SettingsViewModel
         }
     }
 
-    public async void ImportFromBinButton_Click(object sender, RoutedEventArgs e)
+    public async void ImportFromBinButton_Click(object sender, RoutedEventArgs _)
     {
         (sender as Button)!.IsEnabled = false;
         try
@@ -371,7 +381,7 @@ public partial class SettingsViewModel
         }
     }
 
-    public async void ExportToM3u8Button_Click(object sender, RoutedEventArgs e)
+    public async void ExportToM3u8Button_Click(object sender, RoutedEventArgs _)
     {
         (sender as Button)!.IsEnabled = false;
         try
@@ -408,7 +418,7 @@ public partial class SettingsViewModel
         }
     }
 
-    public async void ExportToBinButton_Click(object sender, RoutedEventArgs e)
+    public async void ExportToBinButton_Click(object sender, RoutedEventArgs _)
     {
         (sender as Button)!.IsEnabled = false;
         try
@@ -456,7 +466,7 @@ public partial class SettingsViewModel
         }
     }
 
-    public async void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public async void MaterialComboBox_SelectionChanged(object _1, SelectionChangedEventArgs _2)
     {
         var (opacity, color) = await _materialSelectorService.SetMaterial(
             (MaterialType)SelectedMaterial,
@@ -467,7 +477,7 @@ public partial class SettingsViewModel
         TintColor = color;
     }
 
-    public async void ResetMaterialButton_Click(object sender, RoutedEventArgs e)
+    public async void ResetMaterialButton_Click(object _1, RoutedEventArgs _2)
     {
         IsFallBack = true;
         SelectedMaterial = (byte)MaterialType.DesktopAcrylic;
@@ -481,20 +491,7 @@ public partial class SettingsViewModel
         OnPropertyChanged(nameof(SelectedMaterial));
     }
 
-    public void LuminosityOpacitySlider_ValueChanged(
-        object sender,
-        RangeBaseValueChangedEventArgs e
-    )
-    {
-        _materialSelectorService.SetLuminosityOpacity(LuminosityOpacity, false);
-    }
-
-    public void TintColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-    {
-        _materialSelectorService.SetTintColor(args.NewColor, false);
-    }
-
-    public void FontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public void FontFamilyComboBox_SelectionChanged(object _, SelectionChangedEventArgs e)
     {
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontInfo selectedFont)
         {
@@ -502,7 +499,7 @@ public partial class SettingsViewModel
         }
     }
 
-    public void FontSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public void FontSizeComboBox_SelectionChanged(object _, SelectionChangedEventArgs e)
     {
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is double fontSize)
         {
@@ -522,7 +519,7 @@ public partial class SettingsViewModel
         }
     }
 
-    public void MaterialComboBox_Loaded(object sender, RoutedEventArgs e)
+    public void MaterialComboBox_Loaded(object sender, RoutedEventArgs _)
     {
         (sender as ComboBox)!.SelectedIndex = SelectedMaterial;
     }
@@ -547,7 +544,7 @@ public partial class SettingsViewModel
         FontFamilies = [.. list.AsValueEnumerable().OrderBy(f => f.Name)];
     }
 
-    public void FontFamilyComboBox_Loaded(object sender, RoutedEventArgs e)
+    public void FontFamilyComboBox_Loaded(object sender, RoutedEventArgs _)
     {
         var selectedFontName = SelectedFontFamily.Source;
         var index = FontFamilies.FindIndex(f => f.Name == selectedFontName);
@@ -557,7 +554,7 @@ public partial class SettingsViewModel
         }
     }
 
-    public void FontSizeComboBox_Loaded(object sender, RoutedEventArgs e)
+    public void FontSizeComboBox_Loaded(object sender, RoutedEventArgs _)
     {
         var selectedItem = FontSizes.FirstOrDefault(f => f == SelectedCurrentFontSize);
         if (selectedItem != 0.0)
@@ -570,7 +567,7 @@ public partial class SettingsViewModel
         }
     }
 
-    public void OpenLoggingFolderButton_Click(object sender, RoutedEventArgs e)
+    public void OpenLoggingFolderButton_Click(object _1, RoutedEventArgs _2)
     {
         var logFolder = LoggingService.GetLogFolderPath();
         Directory.CreateDirectory(logFolder);

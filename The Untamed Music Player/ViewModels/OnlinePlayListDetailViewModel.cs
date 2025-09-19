@@ -76,7 +76,7 @@ public partial class OnlinePlayListDetailViewModel : ObservableObject
         IsSearchProgressRingActive = false;
     }
 
-    public void PlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void PlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         if (Playlist.SongList.Count == 0)
         {
@@ -111,7 +111,7 @@ public partial class OnlinePlayListDetailViewModel : ObservableObject
         }
     }
 
-    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Playlist:{Playlist.Name}", Playlist.SongList);
         if (e.ClickedItem is IBriefOnlineSongInfo info)

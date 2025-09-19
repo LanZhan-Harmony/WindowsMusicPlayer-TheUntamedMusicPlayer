@@ -18,13 +18,13 @@ public class LocalAlbumDetailViewModel
         SongList = [.. Data.MusicLibrary.GetSongsByAlbum(Album)];
     }
 
-    public void PlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void PlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
         Data.MusicPlayer.PlaySongByInfo(SongList[0]);
     }
 
-    public void ShuffledPlayAllButton_Click(object sender, RoutedEventArgs e)
+    public void ShuffledPlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.MusicPlayer.SetShuffledPlayQueue($"ShuffledLocalSongs:Album:{Album.Name}", SongList);
         Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
@@ -48,7 +48,7 @@ public class LocalAlbumDetailViewModel
         }
     }
 
-    public void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
         if (e.ClickedItem is BriefLocalSongInfo info)

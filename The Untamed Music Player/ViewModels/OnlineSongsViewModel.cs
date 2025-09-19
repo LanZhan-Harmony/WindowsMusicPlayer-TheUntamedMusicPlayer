@@ -10,7 +10,7 @@ public class OnlineSongsViewModel
 {
     public OnlineSongsViewModel() { }
 
-    public void OnlineSongsSongListView_ItemClick(object sender, ItemClickEventArgs e)
+    public void OnlineSongsSongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         Data.MusicPlayer.SetPlayQueue(
             $"OnlineSongs:{Data.OnlineMusicLibrary.SearchKeyWords}",

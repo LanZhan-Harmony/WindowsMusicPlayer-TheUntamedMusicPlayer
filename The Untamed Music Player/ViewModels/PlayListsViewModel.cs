@@ -145,12 +145,12 @@ public partial class PlayListsViewModel
         });
     }
 
-    public void SortByListView_Loaded(object sender, RoutedEventArgs e)
+    public void SortByListView_Loaded(object sender, RoutedEventArgs _)
     {
         (sender as ListView)!.SelectedIndex = SortMode;
     }
 
-    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
     {
         var currentsortmode = SortMode;
         SortMode = (byte)(sender as ListView)!.SelectedIndex;

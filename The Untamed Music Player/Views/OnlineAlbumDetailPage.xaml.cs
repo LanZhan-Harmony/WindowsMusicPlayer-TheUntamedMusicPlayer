@@ -411,7 +411,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         }
     }
 
-    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs e)
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs _)
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
@@ -419,7 +419,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         }
     }
 
-    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs _)
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {

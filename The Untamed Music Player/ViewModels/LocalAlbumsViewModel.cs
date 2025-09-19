@@ -309,7 +309,7 @@ public partial class LocalAlbumsViewModel
         });
     }
 
-    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
     {
         var currentsortmode = SortMode;
         SortMode = (byte)(sender as ListView)!.SelectedIndex;
@@ -323,12 +323,12 @@ public partial class LocalAlbumsViewModel
         }
     }
 
-    public void SortByListView_Loaded(object sender, RoutedEventArgs e)
+    public void SortByListView_Loaded(object sender, RoutedEventArgs _)
     {
         (sender as ListView)!.SelectedIndex = SortMode;
     }
 
-    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
     {
         var currentGenreMode = GenreMode;
         GenreMode = (byte)(sender as ListView)!.SelectedIndex;
@@ -342,7 +342,7 @@ public partial class LocalAlbumsViewModel
         }
     }
 
-    public void GenreListView_Loaded(object sender, RoutedEventArgs e)
+    public void GenreListView_Loaded(object sender, RoutedEventArgs _)
     {
         (sender as ListView)!.SelectedIndex = GenreMode;
     }

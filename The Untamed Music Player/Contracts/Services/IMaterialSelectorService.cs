@@ -4,10 +4,10 @@ namespace The_Untamed_Music_Player.Contracts.Services;
 
 public interface IMaterialSelectorService : IDisposable
 {
-    MaterialType Material { get; }
-    bool IsFallBack { get; }
-    byte LuminosityOpacity { get; }
-    Color TintColor { get; }
+    MaterialType Material { get; set; }
+    bool IsFallBack { get; set; }
+    byte LuminosityOpacity { get; set; }
+    Color TintColor { get; set; }
     void InitializeSettings();
     Task InitializeMaterialAsync();
     Task<(byte, Color)> SetMaterial(
@@ -15,7 +15,6 @@ public interface IMaterialSelectorService : IDisposable
         bool firstStart = false,
         bool forced = false
     );
-    void SetIsFallBack(bool isFallBack);
     void SetLuminosityOpacity(byte opacity, bool firstStart = false);
     void SetTintColor(Color color, bool firstStart = false);
 }

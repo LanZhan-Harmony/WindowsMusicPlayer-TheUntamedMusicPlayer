@@ -272,12 +272,10 @@
                             <toolkit:SettingsCard x:Uid="Settings_LuminosityOpacity">
                                 <Slider Width="312"
                                         Maximum="100" Minimum="0"
-                                        ValueChanged="{x:Bind ViewModel.LuminosityOpacitySlider_ValueChanged}"
                                         Value="{x:Bind ViewModel.LuminosityOpacity, Mode=TwoWay}"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundColor">
-                                <ColorPicker ColorChanged="{x:Bind ViewModel.TintColorPicker_ColorChanged}"
-                                             ColorSpectrumShape="Ring" IsAlphaEnabled="True"
+                                <ColorPicker ColorSpectrumShape="Ring" IsAlphaEnabled="True"
                                              IsAlphaSliderVisible="True"
                                              IsAlphaTextInputVisible="True"
                                              IsColorChannelTextInputVisible="True"
