@@ -10,6 +10,7 @@ public static class Settings
     private static readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
 
+    #region 设置属性
     /// <summary>
     /// 是否是第一次使用本软件
     /// </summary>
@@ -203,6 +204,39 @@ public static class Settings
             }
         }
     }
+    #endregion
+
+    /// <summary>
+    /// 是否启用均衡器
+    /// </summary>
+    public static bool IsEqualizerOn
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                _localSettingsService.SaveSettingAsync(nameof(IsEqualizerOn), value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 使用一起移动附近的滑块
+    /// </summary>
+    public static bool IsMoveNearby
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                _localSettingsService.SaveSettingAsync(nameof(IsMoveNearby), value);
+            }
+        }
+    }
 
     public static async Task InitializeAsync()
     {
@@ -232,6 +266,7 @@ public static class Settings
             IsWindowBackgroundFollowsCover = await _localSettingsService.ReadSettingAsync<bool>(
                 nameof(IsWindowBackgroundFollowsCover)
             );
+
             if (NotFirstUsed)
             {
                 var lyricPageCurrentFontSize = await _localSettingsService.ReadSettingAsync<double>(
@@ -259,7 +294,19 @@ public static class Settings
                 TintColor =
                     App.Current.RequestedTheme == ApplicationTheme.Dark ? darkColor : lightColor;
             }
+            InitializedLaterAsync();
         }
         catch { }
+    }
+
+    public static void InitializedLaterAsync()
+    {
+        _ = Task.Run(async () =>
+        {
+            IsEqualizerOn = await _localSettingsService.ReadSettingAsync<bool>(
+                nameof(IsEqualizerOn)
+            );
+            IsMoveNearby = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsMoveNearby));
+        });
     }
 }

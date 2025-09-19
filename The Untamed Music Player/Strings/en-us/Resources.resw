@@ -214,7 +214,7 @@
     <value>Refresh libraries</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>Exclusive mode (Comming soon)</value>
+    <value>Exclusive mode</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
     <value>If you are on the music library's song page with folder sorting enabled, clicking a song will only add songs from that same folder to the playback queue</value>
@@ -654,8 +654,35 @@
   <data name="PropertiesDialog.Title" xml:space="preserve">
     <value>Properties</value>
   </data>
-  <data name="EqualizerDialog.Title" xml:space="preserve">
+  <data name="EqualizerDialog_Title.Text" xml:space="preserve">
     <value>Equalizer</value>
+  </data>
+  <data name="EqualizerDialog_On" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="EqualizerDialog_Decibel" xml:space="preserve">
+    <value>dB</value>
+  </data>
+  <data name="EqualizerDialog_Decibel1.Text" xml:space="preserve">
+    <value>dB</value>
+  </data>
+  <data name="EqualizerDialog_Preset.Text" xml:space="preserve">
+    <value>Preset</value>
+  </data>
+  <data name="EqualizerDialog_Presets" xml:space="preserve">
+    <value>Flat, Treble boost, Bass boost, Headphones, Laptop, Portable speakers, Home stereo, TV, Car, Custom</value>
+  </data>
+  <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
+    <value>Move nearby sliders together</value>
+  </data>
+  <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
+    <value>Hz</value>
+  </data>
+  <data name="EqualizerDialog_kHz.Text" xml:space="preserve">
+    <value>kHz</value>
+  </data>
+  <data name="EqualizerDialog_Off" xml:space="preserve">
+    <value>Off</value>
   </data>
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
     <value>Edit song info</value>

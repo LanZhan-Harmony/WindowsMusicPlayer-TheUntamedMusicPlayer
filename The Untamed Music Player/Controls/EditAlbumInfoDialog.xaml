@@ -6,6 +6,7 @@
                xmlns:local="using:The_Untamed_Music_Player.Controls"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+               CloseButtonClick="CloseButtonClick"
                DefaultButton="Primary"
                PrimaryButtonClick="SaveButtonClick"
                Style="{StaticResource DefaultContentDialogStyle}"
