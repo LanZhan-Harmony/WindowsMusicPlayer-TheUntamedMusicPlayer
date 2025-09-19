@@ -19,10 +19,15 @@ using ZLogger;
 
 namespace The_Untamed_Music_Player.Controls;
 
-public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropertyChanged
+public sealed partial class ImportPlaylistDialog
+    : ContentDialog,
+        INotifyPropertyChanged,
+        IRecipient<ThemeChangeMessage>
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<ImportPlaylistDialog>();
+
     private ObservableCollection<DisplaySongInfo> Songs { get; set; } = [];
+
     private int SongCount
     {
         get;
@@ -33,6 +38,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
             OnPropertyChanged(nameof(SongCount));
         }
     }
+
     private Visibility SongListViewVisibility
     {
         get;
@@ -96,8 +102,14 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
 
     public ImportPlaylistDialog()
     {
+        StrongReferenceMessenger.Default.Register(this);
         RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
+    }
+
+    public void Receive(ThemeChangeMessage message)
+    {
+        RequestedTheme = message.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
     }
 
     private void PlaylistNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -384,6 +396,7 @@ public sealed partial class ImportPlaylistDialog : ContentDialog, INotifyPropert
                 catch { }
             }
         }
+        StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
 

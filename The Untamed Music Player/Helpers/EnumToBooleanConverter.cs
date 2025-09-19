@@ -13,12 +13,9 @@ public partial class EnumToBooleanConverter : IValueConverter
             {
                 throw new ArgumentException("ExceptionEnumToBooleanConverterValueMustBeAnEnum");
             }
-
             var enumValue = Enum.Parse<ElementTheme>(enumString);
-
             return enumValue.Equals(value);
         }
-
         throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName");
     }
 
@@ -28,7 +25,6 @@ public partial class EnumToBooleanConverter : IValueConverter
         {
             return Enum.Parse<ElementTheme>(enumString);
         }
-
         throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName");
     }
 }

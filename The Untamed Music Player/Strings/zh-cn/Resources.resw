@@ -214,7 +214,7 @@
     <value>刷新库</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>独占模式 (敬请期待)</value>
+    <value>独占模式</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
     <value>如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列</value>
@@ -654,8 +654,35 @@
   <data name="PropertiesDialog.Title" xml:space="preserve">
     <value>属性</value>
   </data>
-  <data name="EqualizerDialog.Title" xml:space="preserve">
+  <data name="EqualizerDialog_Title.Text" xml:space="preserve">
     <value>均衡器</value>
+  </data>
+  <data name="EqualizerDialog_On" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="EqualizerDialog_Decibel" xml:space="preserve">
+    <value>分贝</value>
+  </data>
+  <data name="EqualizerDialog_Decibel1.Text" xml:space="preserve">
+    <value>分贝</value>
+  </data>
+  <data name="EqualizerDialog_Preset.Text" xml:space="preserve">
+    <value>预设</value>
+  </data>
+  <data name="EqualizerDialog_Presets" xml:space="preserve">
+    <value>平直, 高音增强, 低音增强, 头戴式耳机, 笔记本电脑, 便携式扬声器, 家庭立体声, 电视, 汽车, 自定义</value>
+  </data>
+  <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
+    <value>一起移动附近的滑块</value>
+  </data>
+  <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
+    <value>赫兹</value>
+  </data>
+  <data name="EqualizerDialog_kHz.Text" xml:space="preserve">
+    <value>千赫兹</value>
+  </data>
+  <data name="EqualizerDialog_Off" xml:space="preserve">
+    <value>关</value>
   </data>
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
     <value>编辑歌曲信息</value>

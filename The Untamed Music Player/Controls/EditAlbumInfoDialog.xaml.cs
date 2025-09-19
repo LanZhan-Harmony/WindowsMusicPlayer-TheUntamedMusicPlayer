@@ -1,11 +1,13 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
 using The_Untamed_Music_Player.Helpers;
+using The_Untamed_Music_Player.Messages;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
 using Windows.Storage;
@@ -14,7 +16,10 @@ using ZLogger;
 
 namespace The_Untamed_Music_Player.Controls;
 
-public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyPropertyChanged
+public sealed partial class EditAlbumInfoDialog
+    : ContentDialog,
+        INotifyPropertyChanged,
+        IRecipient<ThemeChangeMessage>
 {
     private static readonly string[] _supportedEditTypes = [".mp3", ".flac"];
     private readonly ILogger _logger = LoggingService.CreateLogger<EditAlbumInfoDialog>();
@@ -45,6 +50,7 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
 
     public EditAlbumInfoDialog(LocalAlbumInfo info)
     {
+        StrongReferenceMessenger.Default.Register(this);
         _album = info;
         var songs = Data.MusicLibrary.GetSongsByAlbum(info);
         _tempSongs = [.. songs.AsValueEnumerable().Select(song => new TempSongInfo(song))];
@@ -56,6 +62,11 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
         _isSaveCoverButtonEnabled = Cover is not null;
         RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
+    }
+
+    public void Receive(ThemeChangeMessage message)
+    {
+        RequestedTheme = message.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
     }
 
     private void TextBox_LostFocus(object sender, RoutedEventArgs e)
@@ -206,6 +217,11 @@ public sealed partial class EditAlbumInfoDialog : ContentDialog, INotifyProperty
         {
             (sender as Button)!.IsEnabled = true;
         }
+    }
+
+    private new void CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
 
