@@ -64,16 +64,12 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         }
     }
 
-    public void InitializeSettings()
+    public async Task InitializeAsync()
     {
         Material = Settings.Material;
         IsFallBack = Settings.IsFallBack;
         LuminosityOpacity = Settings.LuminosityOpacity;
         TintColor = Settings.TintColor;
-    }
-
-    public async Task InitializeMaterialAsync()
-    {
         _mainWindow = App.MainWindow!;
         _mainWindow.Activated += MainWindow_Activated;
         ((FrameworkElement)_mainWindow.Content).ActualThemeChanged += Window_ThemeChanged;

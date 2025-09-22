@@ -33,7 +33,6 @@ public partial class PlaylistLibrary : ObservableRecipient
         {
             playlist.GetCover();
         }
-        GC.Collect(2, GCCollectionMode.Forced, true, true);
     }
 
     public PlaylistInfo? NewPlaylist(string? name)

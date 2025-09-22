@@ -8,8 +8,7 @@ public interface IMaterialSelectorService : IDisposable
     bool IsFallBack { get; set; }
     byte LuminosityOpacity { get; set; }
     Color TintColor { get; set; }
-    void InitializeSettings();
-    Task InitializeMaterialAsync();
+    Task InitializeAsync();
     Task<(byte, Color)> SetMaterial(
         MaterialType material,
         bool firstStart = false,
