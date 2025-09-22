@@ -180,7 +180,6 @@ public partial class MusicLibrary : ObservableRecipient
                 _ = Task.Run(LoadCovers);
                 _ = Task.Run(AddFolderWatcher);
                 _librarySemaphore.Release();
-                GC.Collect(2, GCCollectionMode.Forced, true, true);
             }
         });
     }
@@ -236,7 +235,6 @@ public partial class MusicLibrary : ObservableRecipient
             {
                 _dispatcherQueue.TryEnqueue(() => IsProgressRingActive = false);
                 _librarySemaphore.Release();
-                GC.Collect(2, GCCollectionMode.Forced, true, true);
             }
         });
     }

@@ -75,7 +75,6 @@ public class CloudArtistSearchHelper
         finally
         {
             _searchSemaphore.Release();
-            GC.Collect(2, GCCollectionMode.Forced, true, true);
         }
     }
 
@@ -118,7 +117,6 @@ public class CloudArtistSearchHelper
         finally
         {
             _searchSemaphore.Release();
-            GC.Collect(2, GCCollectionMode.Forced, true, true);
         }
     }
 

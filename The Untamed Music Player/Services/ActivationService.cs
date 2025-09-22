@@ -18,17 +18,18 @@ public class ActivationService(IEnumerable<IActivationHandler> activationHandler
 
     public async Task ActivateAsync(object activationArgs)
     {
+        await Settings.InitializeAsync(); // 初始化设置
+        App.MainWindow = new MainWindow();
         await InitializeAsync(); // 在激活之前执行的任务
         await HandleActivationAsync(activationArgs); // 通过 ActivationHandlers 处理激活
-        App.MainWindow?.Activate(); // 打开 MainWindow
+        App.MainWindow.Activate(); // 打开 MainWindow
         await StartupAsync(); // 在激活之后执行的任务
     }
 
     private async Task InitializeAsync()
     {
-        await Settings.InitializeAsync().ConfigureAwait(false);
         _themeSelectorService.Initialize();
-        _materialSelectorService.InitializeSettings();
+        await _materialSelectorService.InitializeAsync();
     }
 
     private async Task HandleActivationAsync(object activationArgs)
@@ -45,8 +46,6 @@ public class ActivationService(IEnumerable<IActivationHandler> activationHandler
 
     private async Task StartupAsync()
     {
-        _themeSelectorService.SetRequestedThemeAsync();
-        await _materialSelectorService.InitializeMaterialAsync();
         await _dynamicBackgroundService.InitializeAsync();
     }
 }

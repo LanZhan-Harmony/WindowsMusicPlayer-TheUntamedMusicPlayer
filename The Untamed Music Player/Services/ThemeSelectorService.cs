@@ -27,6 +27,7 @@ public class ThemeSelectorService : IThemeSelectorService
     public void Initialize()
     {
         Theme = Settings.Theme;
+        SetRequestedThemeAsync();
     }
 
     public void SetThemeAsync(ElementTheme theme)
