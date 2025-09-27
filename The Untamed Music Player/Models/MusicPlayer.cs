@@ -268,6 +268,7 @@ public partial class MusicPlayer
             _logger.ZLogInformation($"Bass初始化失败: {Bass.LastError}");
             return;
         }
+
         LoadBassPlugins(); // 加载Bass插件
 
         // 设置同步回调
@@ -685,6 +686,11 @@ public partial class MusicPlayer
         {
             _logger.ZLogInformation(ex, $"计时器更新失败");
         }
+    }
+
+    public void NotifyLyricContentChanged()
+    {
+        OnPropertyChanged(nameof(CurrentLyricContent));
     }
 
     /// <summary>
@@ -1262,7 +1268,7 @@ public partial class MusicPlayer
     /// 更新当前歌词索引和状态
     /// </summary>
     /// <param name="currentTime">当前播放时间（毫秒）</param>
-    private void UpdateCurrentLyricIndex(double currentTime)
+    public void UpdateCurrentLyricIndex(double currentTime)
     {
         if (CurrentLyric.Count == 0)
         {
@@ -1749,6 +1755,8 @@ public partial class MusicPlayer
         Bass.Free();
         BassWasapi.Free();
         _smtcManager?.Dispose();
+        _syncEndCallback -= OnPlayBackEnded;
+        _syncFailCallback -= OnPlaybackFailed;
         GC.SuppressFinalize(this);
     }
 }
