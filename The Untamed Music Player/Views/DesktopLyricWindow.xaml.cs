@@ -1,16 +1,13 @@
-using CommunityToolkit.Labs.WinUI.MarqueeTextRns;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
 using The_Untamed_Music_Player.Services;
-using The_Untamed_Music_Player.ViewModels;
 using Windows.Foundation;
-using Windows.System;
+using Windows.UI.WindowManagement;
 using WinRT.Interop;
 using WinUIEx;
 using ZLogger;
@@ -23,10 +20,8 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private readonly ILogger _logger = LoggingService.CreateLogger<DesktopLyricWindow>();
     private readonly nint _hWnd;
 
-    private bool _isDragging = false; // 检测是否在拖动的变量
+    private readonly int _maxTextBlockWidth;
     private bool _isMouseOverBorder = false; // 检测鼠标是否在窗口上的变量
-
-    private POINT _lastPointerPosition;
     private DispatcherTimer? _updateTimer250ms; // 用于周期性检查鼠标位置和置顶的计时器
 
     private Storyboard? _currentStoryboard;
@@ -34,24 +29,43 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     {
         FontSize = 32,
         FontFamily = Settings.FontFamily,
+        MaxLines = 2,
     };
-
-    public DesktopLyricViewModel ViewModel { get; }
 
     public DesktopLyricWindow()
     {
-        ViewModel = App.GetService<DesktopLyricViewModel>();
-        InitializeComponent();
         Title = "DesktopLyricWindowTitle".GetLocalized();
+        ExtendsContentIntoTitleBar = true;
+        InitializeComponent();
+        SetTitleBar(AnimatedBorder);
 
         _hWnd = WindowNative.GetWindowHandle(this); // 获取窗口句柄
 
-        var presenter = OverlappedPresenter.Create();
-        presenter.SetBorderAndTitleBar(false, false);
-        AppWindow.SetPresenter(presenter);
-
         MakeWindowClickThrough(true);
+        SetWindowProperty();
+        SetTopmost(true);
 
+        var workArea = DisplayArea
+            .GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest)
+            .WorkArea; // 获取屏幕工作区大小
+        var screenWidth = workArea.Width;
+        _maxTextBlockWidth = screenWidth - 50;
+        var screenHeight = workArea.Height;
+        var y = screenHeight - screenHeight * 140 / 1080; // 计算窗口位置，使其位于屏幕下方
+        this.SetWindowSize(screenWidth, 60);
+        this.CenterOnScreen(null, null); // 设置窗口位置
+        var currentPosition = AppWindow.Position;
+
+        // 将窗口移动到新的位置
+        this.Move(currentPosition.X, y);
+
+        InitMousePositionTimer();
+        Closed += Window_Closed;
+        Data.MusicPlayer.NotifyLyricContentChanged();
+    }
+
+    private void SetWindowProperty()
+    {
         const int GWL_EXSTYLE = -20;
         const int WS_EX_TOOLWINDOW = 0x00000080;
         const int WS_EX_APPWINDOW = 0x00040000;
@@ -60,24 +74,19 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         exStyle &= ~WS_EX_APPWINDOW; // 移除应用窗口样式
         SetWindowLong(_hWnd, GWL_EXSTYLE, exStyle);
 
-        SetTopmost(true);
-
-        var workArea = DisplayArea
-            .GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest)
-            .WorkArea; // 获取屏幕工作区大小
-        var screenHeight = workArea.Height;
-        var y = screenHeight - screenHeight * 140 / 1080; // 计算窗口位置，使其位于屏幕下方
-
-        this.SetWindowSize(1000, 100);
-        this.CenterOnScreen(null, null); // 设置窗口位置
-
-        var currentPosition = AppWindow.Position;
-
-        // 将窗口移动到新的位置
-        this.Move(currentPosition.X, y);
-
-        InitMousePositionTimer();
-        Closed += Window_Closed;
+        const int GWL_STYLE = -16;
+        const int WS_CAPTION = 0x00C00000;
+        const int WS_SYSMENU = 0x00080000;
+        const int WS_MINIMIZEBOX = 0x00020000;
+        const int WS_MAXIMIZEBOX = 0x00010000;
+        const int WS_THICKFRAME = 0x00040000;
+        var style = GetWindowLong(_hWnd, GWL_STYLE);
+        style &= ~WS_CAPTION; // 去掉标题栏
+        style &= ~WS_SYSMENU; // 去掉系统菜单（包含关闭菜单）
+        style &= ~WS_MINIMIZEBOX; // 去掉最小化按钮
+        style &= ~WS_MAXIMIZEBOX; // 去掉最大化按钮
+        style &= ~WS_THICKFRAME; // 去掉可调整大小的边框（如果不需要保留调整大小）
+        SetWindowLong(_hWnd, GWL_STYLE, style);
     }
 
     private void InitMousePositionTimer()
@@ -93,7 +102,6 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
         // 获取当前鼠标位置
         GetCursorPos(out var mousePoint);
-
         // 获取AnimatedBorder在屏幕上的位置
         var borderRect = GetElementScreenRect(AnimatedBorder);
 
@@ -104,8 +112,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
             && mousePoint.Y >= borderRect.Top
             && mousePoint.Y <= borderRect.Bottom;
 
-        // 如果鼠标状态改变
-        if (isOverBorder != _isMouseOverBorder)
+        if (isOverBorder != _isMouseOverBorder) // 如果鼠标状态改变
         {
             _isMouseOverBorder = isOverBorder;
             MakeWindowClickThrough(!isOverBorder);
@@ -167,75 +174,28 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         SetWindowPos(_hWnd, position, 0, 0, 0, 0, flags);
     }
 
-    private void AnimatedBorder_PointerPressed(object sender, PointerRoutedEventArgs e)
-    {
-        _isDragging = true;
-        GetCursorPos(out var point);
-        _lastPointerPosition = point;
-        (sender as Border)!.CapturePointer(e.Pointer);
-    }
-
-    private void AnimatedBorder_PointerMoved(object sender, PointerRoutedEventArgs e)
-    {
-        if (!_isDragging)
-        {
-            return;
-        }
-
-        GetCursorPos(out var point);
-
-        // 计算移动差值
-        var deltaX = point.X - _lastPointerPosition.X;
-        var deltaY = point.Y - _lastPointerPosition.Y;
-
-        // 更新窗口位置
-        this.Move(AppWindow.Position.X + deltaX, AppWindow.Position.Y + deltaY);
-
-        _lastPointerPosition = point;
-    }
-
-    private void AnimatedBorder_PointerReleased(object sender, PointerRoutedEventArgs e)
-    {
-        if (_isDragging)
-        {
-            _isDragging = false;
-            (sender as Border)!.ReleasePointerCapture(e.Pointer);
-        }
-    }
-
-    private void LyricContent_Loaded(object sender, RoutedEventArgs e)
-    {
-        var textBlock = new TextBlock
-        {
-            Text = "TEST测试",
-            FontSize = 32,
-            FontFamily = Settings.FontFamily,
-        };
-        textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        (sender as MarqueeText)!.Height = textBlock.DesiredSize.Height;
-    }
-
     private double GetTextBlockWidth(string currentLyricContent)
     {
-        LyricContent.StopMarquee();
         if (currentLyricContent == "")
         {
-            return 140;
+            return 100;
         }
         _measureTextBlock.Text = currentLyricContent;
         _measureTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         var width = _measureTextBlock.DesiredSize.Width;
-        if (width > 700)
+        return Math.Min(width, _maxTextBlockWidth);
+    }
+
+    private double GetTextBlockHeight(string currentLyricContent)
+    {
+        if (currentLyricContent == "")
         {
-            // 在UI线程上延迟0.5秒后调用 StartMarquee
-            Task.Delay(500)
-                .ContinueWith(_ =>
-                {
-                    // 确保在UI线程上下文中执行
-                    DispatcherQueue.TryEnqueue(() => LyricContent.StartMarquee());
-                });
+            return 37;
         }
-        return Math.Min(width, 700);
+        _measureTextBlock.Text = currentLyricContent;
+        _measureTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var height = _measureTextBlock.DesiredSize.Height;
+        return height;
     }
 
     private void LyricContentTextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -244,25 +204,63 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         {
             _currentStoryboard?.Stop();
             _currentStoryboard?.Children.Clear();
-            var newWidth = e.NewSize.Width;
-            var widthAnimation = new DoubleAnimation
-            {
-                From = e.PreviousSize.Width + 50,
-                To = newWidth > 140 ? newWidth + 50 : 190,
-                Duration = TimeSpan.FromMilliseconds(300),
-                EnableDependentAnimation = true,
-                EasingFunction = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.8 },
-            };
-            Storyboard.SetTarget(widthAnimation, AnimatedBorder);
-            Storyboard.SetTargetProperty(widthAnimation, "Width");
             _currentStoryboard = new Storyboard();
-            _currentStoryboard.Children.Add(widthAnimation);
-            _currentStoryboard.Begin();
+
+            var oldWidth = e.PreviousSize.Width + 50;
+            var newWidth = Math.Max(e.NewSize.Width + 50, 150);
+            var oldHeight = e.PreviousSize.Height + 20;
+            var newHeight = e.NewSize.Height + 20;
+
+            if (Math.Abs(oldWidth - newWidth) > 1e-3)
+            {
+                var widthAmplitude = oldWidth - newWidth > 800 ? 0.1 : 0.8; // 避免宽度减小到负数
+                var widthAnimation = CreateDoubleAnimation(oldWidth, newWidth, widthAmplitude);
+                Storyboard.SetTarget(widthAnimation, AnimatedBorder);
+                Storyboard.SetTargetProperty(widthAnimation, "Width");
+                _currentStoryboard.Children.Add(widthAnimation);
+            }
+
+            if (Math.Abs(oldHeight - newHeight) > 1e-3)
+            {
+                var heightAnimation = CreateDoubleAnimation(oldHeight, newHeight, 0.8);
+                Storyboard.SetTarget(heightAnimation, AnimatedBorder);
+                Storyboard.SetTargetProperty(heightAnimation, "Height");
+                _currentStoryboard.Children.Add(heightAnimation);
+            }
+
+            if (_currentStoryboard.Children.Count > 0)
+            {
+                if (newHeight - oldHeight > 1e-3) // 如果新高度更大, 先调整高度, 再启动动画
+                {
+                    this.SetWindowSize(_maxTextBlockWidth, newHeight + 5);
+                }
+                _currentStoryboard.Begin();
+                if (oldHeight - newHeight > 1e-3) // 如果新高度更小, 动画结束后再调整高度
+                {
+                    this.SetWindowSize(_maxTextBlockWidth, newHeight + 5);
+                }
+            }
         }
         catch (Exception ex)
         {
             _logger.ZLogInformation(ex, $"调整灵动词岛宽度时发生错误");
         }
+    }
+
+    private static DoubleAnimation CreateDoubleAnimation(double from, double to, double amplitude)
+    {
+        return new DoubleAnimation
+        {
+            From = from,
+            To = to,
+            Duration = TimeSpan.FromMilliseconds(300),
+            EnableDependentAnimation = true,
+            EasingFunction = new BackEase
+            {
+                EasingMode = EasingMode.EaseOut,
+                Amplitude = amplitude,
+            },
+        };
     }
 
     private void Window_Closed(object sender, WindowEventArgs args)

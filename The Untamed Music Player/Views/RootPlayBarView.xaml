@@ -338,7 +338,6 @@
             <Button x:Name="FullScreenButton" x:Uid="PlayBar_FullScreen"
                     AccessKey="U"
                     Click="{x:Bind ViewModel.FullScreenButton_Click}"
-                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="F11"/>
@@ -352,7 +351,6 @@
             <Button x:Uid="PlayBar_DesktopLyric"
                     AccessKey="M"
                     Click="{x:Bind ViewModel.DesktopLyricButton_Click}"
-                    IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="M" Modifiers="Control"/>
@@ -554,7 +552,6 @@
                                         AccessKey="U"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE740;}"
-                                        IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                                         KeyTipPlacementMode="Left">
                             <MenuFlyoutItem.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="F11"/>

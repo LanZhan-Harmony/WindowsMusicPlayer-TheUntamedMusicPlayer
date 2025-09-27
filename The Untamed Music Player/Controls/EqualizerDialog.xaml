@@ -42,7 +42,7 @@
     </ContentDialog.Resources>
 
     <ContentDialog.Title>
-        <Grid Width="490">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -54,12 +54,11 @@
             <ToggleSwitch x:Name="IsEqualizerOnSwitch"
                           Grid.Column="2"
                           Margin="0,-4,0,0"
-                          FlowDirection="RightToLeft"
                           IsOn="{x:Bind IsEqualizerOn, Mode=TwoWay}"/>
         </Grid>
     </ContentDialog.Title>
 
-    <StackPanel Width="486" Spacing="8">
+    <StackPanel Spacing="8">
         <StackPanel Orientation="Horizontal" Spacing="8">
             <TextBlock x:Uid="EqualizerDialog_Preset" VerticalAlignment="Center"/>
             <ComboBox IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"/>

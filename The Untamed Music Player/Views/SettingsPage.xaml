@@ -65,15 +65,13 @@
 
                 <!--  动画  -->
                 <StackPanel.ChildrenTransitions>
-                    <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
-                    <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                    <RepositionThemeTransition/>
                 </StackPanel.ChildrenTransitions>
 
                 <!--  库  -->
                 <StackPanel Spacing="2">
                     <StackPanel.ChildrenTransitions>
-                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        <RepositionThemeTransition/>
                     </StackPanel.ChildrenTransitions>
 
                     <TextBlock x:Uid="Settings_Library"
@@ -162,8 +160,7 @@
                 <!--  播放  -->
                 <StackPanel Spacing="2">
                     <StackPanel.ChildrenTransitions>
-                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        <RepositionThemeTransition/>
                     </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_Play"
                                Margin="0,12,0,5"
@@ -179,8 +176,7 @@
                 <!--  歌词  -->
                 <StackPanel Spacing="2">
                     <StackPanel.ChildrenTransitions>
-                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        <RepositionThemeTransition/>
                     </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_Lyric"
                                Margin="0,12,0,5"
@@ -218,8 +214,7 @@
                 <!--  个性化  -->
                 <StackPanel Spacing="2">
                     <StackPanel.ChildrenTransitions>
-                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True"/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        <RepositionThemeTransition/>
                     </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_Personalization"
                                Margin="0,12,0,5"
