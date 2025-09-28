@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using ManagedBass;
@@ -516,8 +515,6 @@ public partial class MusicPlayer
                     return false;
                 }
             }
-
-            _logger.ZLogInformation($"WASAPI独占模式初始化成功");
             return true;
         }
         catch (Exception ex)
@@ -546,8 +543,6 @@ public partial class MusicPlayer
                 CleanupWasapi();
                 return false;
             }
-
-            _logger.ZLogInformation($"WASAPI独占模式播放启动成功");
             return true;
         }
         catch (Exception ex)

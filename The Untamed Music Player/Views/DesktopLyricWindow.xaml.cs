@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -19,18 +20,18 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<DesktopLyricWindow>();
     private readonly nint _hWnd;
-
     private readonly int _maxTextBlockWidth;
-    private bool _isMouseOverBorder = false; // 检测鼠标是否在窗口上的变量
-    private DispatcherTimer? _updateTimer250ms; // 用于周期性检查鼠标位置和置顶的计时器
-
-    private Storyboard? _currentStoryboard;
     private readonly TextBlock _measureTextBlock = new()
     {
         FontSize = 32,
         FontFamily = Settings.FontFamily,
         MaxLines = 2,
     };
+    private bool _isMouseOverBorder = false; // 检测鼠标是否在窗口上的变量
+    private DispatcherTimer? _updateTimer250ms; // 用于周期性检查鼠标位置和置顶的计时器
+    private Storyboard? _currentStoryboard;
+    private delegate nint WndProcDelegate(nint hwnd, uint msg, nint wParam, nint lParam);
+    private WndProcDelegate? _wndProcDelegate;
 
     public DesktopLyricWindow()
     {
@@ -85,8 +86,37 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         style &= ~WS_SYSMENU; // 去掉系统菜单（包含关闭菜单）
         style &= ~WS_MINIMIZEBOX; // 去掉最小化按钮
         style &= ~WS_MAXIMIZEBOX; // 去掉最大化按钮
-        style &= ~WS_THICKFRAME; // 去掉可调整大小的边框（如果不需要保留调整大小）
+        style &= ~WS_THICKFRAME; // 去掉可调整大小的边框
         SetWindowLong(_hWnd, GWL_STYLE, style);
+
+        DisableMaximize();
+    }
+
+    private void DisableMaximize()
+    {
+        const int WM_NCLBUTTONDBLCLK = 0x00A3; // 非客户区左键双击
+        const int WM_SYSCOMMAND = 0x0112; // 系统命令
+        const int SC_MAXIMIZE = 0xF030; // 最大化命令
+        const int GWLP_WNDPROC = -4; // 窗口过程指针
+
+        var originalWndProc = GetWindowLong(_hWnd, GWLP_WNDPROC); // 获取原始窗口过程
+        _wndProcDelegate = (hwnd, msg, wParam, lParam) => // 创建新的窗口过程委托
+        {
+            if (msg == WM_NCLBUTTONDBLCLK) // 阻止双击标题栏最大化
+            {
+                return nint.Zero; // 不处理双击事件
+            }
+            if (msg == WM_SYSCOMMAND && (wParam.ToInt32() & 0xFFF0) == SC_MAXIMIZE) // 阻止系统最大化命令（如Win+上箭头等）
+            {
+                return nint.Zero; // 不处理最大化命令
+            }
+            return CallWindowProc(originalWndProc, hwnd, msg, wParam, lParam); // 调用原始窗口过程处理其他消息
+        };
+
+        // 设置新的窗口过程
+        var funcPtr = Marshal.GetFunctionPointerForDelegate(_wndProcDelegate);
+        SetWindowLong(_hWnd, GWLP_WNDPROC, funcPtr);
+        GC.KeepAlive(_wndProcDelegate); // 防止委托被垃圾回收
     }
 
     private void InitMousePositionTimer()
@@ -100,17 +130,18 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     {
         SetTopmost(true);
 
-        // 获取当前鼠标位置
-        GetCursorPos(out var mousePoint);
+        // 获取当前输入位置
+        GetCursorPos(out var inputPoint);
+
         // 获取AnimatedBorder在屏幕上的位置
         var borderRect = GetElementScreenRect(AnimatedBorder);
 
-        // 检查鼠标是否在AnimatedBorder上
+        // 检查输入点是否在AnimatedBorder上
         var isOverBorder =
-            mousePoint.X >= borderRect.Left
-            && mousePoint.X <= borderRect.Right
-            && mousePoint.Y >= borderRect.Top
-            && mousePoint.Y <= borderRect.Bottom;
+            inputPoint.X >= borderRect.Left
+            && inputPoint.X <= borderRect.Right
+            && inputPoint.Y >= borderRect.Top
+            && inputPoint.Y <= borderRect.Bottom;
 
         if (isOverBorder != _isMouseOverBorder) // 如果鼠标状态改变
         {
@@ -142,7 +173,10 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         };
     }
 
-    // 设置窗口是否点击穿透
+    /// <summary>
+    /// 设置窗口是否点击穿透
+    /// </summary>
+    /// <param name="isClickThrough"></param>
     private void MakeWindowClickThrough(bool isClickThrough)
     {
         const int GWL_EXSTYLE = -20;
@@ -163,7 +197,10 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         }
     }
 
-    // 设置窗口置顶
+    /// <summary>
+    /// 设置窗口置顶
+    /// </summary>
+    /// <param name="value"></param>
     private void SetTopmost(bool value)
     {
         const uint SWP_NOMOVE = 0x0002;
@@ -213,7 +250,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
             if (Math.Abs(oldWidth - newWidth) > 1e-3)
             {
-                var widthAmplitude = oldWidth - newWidth > 800 ? 0.1 : 0.8; // 避免宽度减小到负数
+                var widthAmplitude = newWidth - (oldWidth - newWidth) * 0.275 > 0 ? 0.8 : 0.1; // 避免宽度减小到负数
                 var widthAnimation = CreateDoubleAnimation(oldWidth, newWidth, widthAmplitude);
                 Storyboard.SetTarget(widthAnimation, AnimatedBorder);
                 Storyboard.SetTargetProperty(widthAnimation, "Width");
