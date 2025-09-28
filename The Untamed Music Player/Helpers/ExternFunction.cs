@@ -60,6 +60,15 @@ public static partial class ExternFunction
     [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
     public static partial nint SendMessage(nint hWnd, int msg, int wParam, nint lParam);
 
+    [LibraryImport("user32.dll", EntryPoint = "CallWindowProcW")]
+    public static partial nint CallWindowProc(
+        nint lpPrevWndFunc,
+        nint hWnd,
+        uint msg,
+        nint wParam,
+        nint lParam
+    );
+
     public static nint GetWindowLong(nint hWnd, int nIndex)
     {
         return _is64BitProcess ? GetWindowLong64(hWnd, nIndex) : GetWindowLong32(hWnd, nIndex);
