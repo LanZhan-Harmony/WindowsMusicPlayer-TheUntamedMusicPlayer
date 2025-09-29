@@ -36,7 +36,6 @@
         </Style>
         <Style x:Key="dbTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Grid.Column" Value="0"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
         </Style>
     </ContentDialog.Resources>
@@ -53,36 +52,31 @@
                        FontWeight="Normal"/>
             <ToggleSwitch x:Name="IsEqualizerOnSwitch"
                           Grid.Column="2"
-                          Margin="0,-4,0,0"
+                          Margin="50,-4,0,0"
                           IsOn="{x:Bind IsEqualizerOn, Mode=TwoWay}"/>
         </Grid>
     </ContentDialog.Title>
 
-    <StackPanel Spacing="8">
+    <StackPanel Margin="0,12,0,0" Spacing="8">
         <StackPanel Orientation="Horizontal" Spacing="8">
             <TextBlock x:Uid="EqualizerDialog_Preset" VerticalAlignment="Center"/>
             <ComboBox IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"/>
         </StackPanel>
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="8"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.1*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="1.1*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Row="0" Grid.Column="0"
-                        Spacing="10">
+            <Grid Grid.Column="0"
+                  Height="128"
+                  VerticalAlignment="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Style="{StaticResource dbTextStyle}">
                     <Run Text="+12"/>
                     <Run x:Uid="EqualizerDialog_Decibel1"/>
@@ -103,73 +97,98 @@
                     <Run Text="-12"/>
                     <Run x:Uid="EqualizerDialog_Decibel1"/>
                 </TextBlock>
-            </StackPanel>
-            <Slider Grid.Column="1"
-                    IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
-                    Style="{StaticResource SliderStyle}"/>
-            <TextBlock Grid.Column="1" Style="{StaticResource HzTextStyle}">
-                <Run Text="62"/>
-                <Run x:Uid="EqualizerDialog_Hz"/>
-            </TextBlock>
-            <Slider Grid.Column="2"
-                    IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
-                    Style="{StaticResource SliderStyle}"/>
-            <TextBlock Grid.Column="2" Style="{StaticResource HzTextStyle}">
-                <Run Text="125"/>
-                <Run x:Uid="EqualizerDialog_Hz"/>
-            </TextBlock>
-            <Slider Grid.Column="3"
-                    IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
-                    Style="{StaticResource SliderStyle}"/>
-            <TextBlock Grid.Column="3" Style="{StaticResource HzTextStyle}">
-                <Run Text="250"/>
-                <Run x:Uid="EqualizerDialog_Hz"/>
-            </TextBlock>
-            <Slider Grid.Column="4"
-                    IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
-                    Style="{StaticResource SliderStyle}"/>
-            <TextBlock Grid.Column="4" Style="{StaticResource HzTextStyle}">
-                <Run Text="500"/>
-                <Run x:Uid="EqualizerDialog_Hz"/>
-            </TextBlock>
-            <Slider Grid.Column="5"
-                    IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
-                    Style="{StaticResource SliderStyle}"/>
-            <TextBlock Grid.Column="5" Style="{StaticResource HzTextStyle}">
-                <Run Text="1"/>
-                <Run x:Uid="EqualizerDialog_kHz"/>
-            </TextBlock>
-            <Slider Grid.Column="6"
-                    IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
-                    Style="{StaticResource SliderStyle}"/>
-            <TextBlock Grid.Column="6" Style="{StaticResource HzTextStyle}">
-                <Run Text="2"/>
-                <Run x:Uid="EqualizerDialog_kHz"/>
-            </TextBlock>
-            <Slider Grid.Column="7"
-                    IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
-                    Style="{StaticResource SliderStyle}"/>
-            <TextBlock Grid.Column="7" Style="{StaticResource HzTextStyle}">
-                <Run Text="4"/>
-                <Run x:Uid="EqualizerDialog_kHz"/>
-            </TextBlock>
-            <Slider Grid.Column="8"
-                    IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
-                    Style="{StaticResource SliderStyle}"/>
-            <TextBlock Grid.Column="8" Style="{StaticResource HzTextStyle}">
-                <Run Text="8"/>
-                <Run x:Uid="EqualizerDialog_kHz"/>
-            </TextBlock>
-            <Slider Grid.Column="9"
-                    IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
-                    Style="{StaticResource SliderStyle}"/>
-            <TextBlock Grid.Column="9" Style="{StaticResource HzTextStyle}">
-                <Run Text="16"/>
-                <Run x:Uid="EqualizerDialog_kHz"/>
-            </TextBlock>
+
+            </Grid>
+            <ScrollViewer Grid.Column="1"
+                          Padding="0,0,0,16"
+                          HorizontalScrollBarVisibility="Auto"
+                          HorizontalScrollMode="Enabled"
+                          VerticalScrollBarVisibility="Disabled"
+                          VerticalScrollMode="Disabled">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Slider Grid.Column="0"
+                            IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
+                            Style="{StaticResource SliderStyle}"/>
+                    <TextBlock Grid.Column="0" Style="{StaticResource HzTextStyle}">
+                        <Run Text="62"/>
+                        <Run x:Uid="EqualizerDialog_Hz"/>
+                    </TextBlock>
+                    <Slider Grid.Column="1"
+                            IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
+                            Style="{StaticResource SliderStyle}"/>
+                    <TextBlock Grid.Column="1" Style="{StaticResource HzTextStyle}">
+                        <Run Text="125"/>
+                        <Run x:Uid="EqualizerDialog_Hz"/>
+                    </TextBlock>
+                    <Slider Grid.Column="2"
+                            IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
+                            Style="{StaticResource SliderStyle}"/>
+                    <TextBlock Grid.Column="2" Style="{StaticResource HzTextStyle}">
+                        <Run Text="250"/>
+                        <Run x:Uid="EqualizerDialog_Hz"/>
+                    </TextBlock>
+                    <Slider Grid.Column="3"
+                            IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
+                            Style="{StaticResource SliderStyle}"/>
+                    <TextBlock Grid.Column="3" Style="{StaticResource HzTextStyle}">
+                        <Run Text="500"/>
+                        <Run x:Uid="EqualizerDialog_Hz"/>
+                    </TextBlock>
+                    <Slider Grid.Column="4"
+                            IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
+                            Style="{StaticResource SliderStyle}"/>
+                    <TextBlock Grid.Column="4" Style="{StaticResource HzTextStyle}">
+                        <Run Text="1"/>
+                        <Run x:Uid="EqualizerDialog_kHz"/>
+                    </TextBlock>
+                    <Slider Grid.Column="5"
+                            IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
+                            Style="{StaticResource SliderStyle}"/>
+                    <TextBlock Grid.Column="5" Style="{StaticResource HzTextStyle}">
+                        <Run Text="2"/>
+                        <Run x:Uid="EqualizerDialog_kHz"/>
+                    </TextBlock>
+                    <Slider Grid.Column="6"
+                            IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
+                            Style="{StaticResource SliderStyle}"/>
+                    <TextBlock Grid.Column="6" Style="{StaticResource HzTextStyle}">
+                        <Run Text="4"/>
+                        <Run x:Uid="EqualizerDialog_kHz"/>
+                    </TextBlock>
+                    <Slider Grid.Column="7"
+                            IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
+                            Style="{StaticResource SliderStyle}"/>
+                    <TextBlock Grid.Column="7" Style="{StaticResource HzTextStyle}">
+                        <Run Text="8"/>
+                        <Run x:Uid="EqualizerDialog_kHz"/>
+                    </TextBlock>
+                    <Slider Grid.Column="8"
+                            IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"
+                            Style="{StaticResource SliderStyle}"/>
+                    <TextBlock Grid.Column="8" Style="{StaticResource HzTextStyle}">
+                        <Run Text="16"/>
+                        <Run x:Uid="EqualizerDialog_kHz"/>
+                    </TextBlock>
+                </Grid>
+            </ScrollViewer>
         </Grid>
         <CheckBox x:Uid="EqualizerDialog_MoveNearby"
-                  Margin="0,16,0,0"
                   IsChecked="{x:Bind _isMoveNearby, Mode=TwoWay}"
                   IsEnabled="{x:Bind IsEqualizerOn, Mode=OneWay}"/>
     </StackPanel>
