@@ -1,125 +1,125 @@
-# Rules in this file were initially inferred by Visual Studio IntelliCode from the Template Studio codebase.
-# You can modify the rules from these initially generated values to suit your own policies.
-# You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference.
+# 此文件中的规则最初由 Visual Studio IntelliCode 从 Template Studio 代码库中推断得出。
+# 您可以修改这些初始生成的值以适应您自己的策略。
+# 您可以在此处了解有关 editorconfig 的更多信息：https://learn.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/code-style-rule-options。
 
 [*.cs]
 
-#Core editorconfig formatting - indentation
+# 核心 editorconfig 格式设置 - 缩进
 
-#use soft tabs (spaces) for indentation
+# 使用软制表符（空格）进行缩进
 indent_style = space
 
-#Formatting - new line options
+# 格式设置 - 换行选项
 
-#place else statements on a new line
+# 将 else 语句放在新行上
 csharp_new_line_before_else = true
-#require braces to be on a new line for lambdas, methods, control_blocks, types, properties, and accessors (also known as "Allman" style)
+# 要求 lambdas、方法、控制块、类型、属性和访问器的大括号在新行上（也称为 "Allman" 样式）
 csharp_new_line_before_open_brace = all
 
-#Formatting - organize using options
+# 格式设置 - 组织 using 选项
 
-#sort System.* using directives alphabetically, and place them before other usings
+# 按字母顺序对 System.* using 指令进行排序，并将其放在其他 usings 之前
 dotnet_sort_system_directives_first = true
 
-#Formatting - spacing options
+# 格式设置 - 间距选项
 
-#require NO space between a cast and the value
+# 要求在类型转换（cast）和值之间没有空格
 csharp_space_after_cast = false
-#require a space before the colon for bases or interfaces in a type declaration
+# 要求在类型声明中基类或接口的冒号前有一个空格
 csharp_space_after_colon_in_inheritance_clause = true
-#require a space after a keyword in a control flow statement such as a for loop
+# 要求在控制流语句（例如 for 循环）中的关键字后有一个空格
 csharp_space_after_keywords_in_control_flow_statements = true
-#require a space before the colon for bases or interfaces in a type declaration
+# 要求在类型声明中基类或接口的冒号前有一个空格
 csharp_space_before_colon_in_inheritance_clause = true
-#remove space within empty argument list parentheses
+# 移除空参数列表括号内的空格
 csharp_space_between_method_call_empty_parameter_list_parentheses = false
-#remove space between method call name and opening parenthesis
+# 移除方法调用名称和左括号之间的空格
 csharp_space_between_method_call_name_and_opening_parenthesis = false
-#do not place space characters after the opening parenthesis and before the closing parenthesis of a method call
+# 不要在方法调用的左括号后和右括号前放置空格字符
 csharp_space_between_method_call_parameter_list_parentheses = false
-#remove space within empty parameter list parentheses for a method declaration
+# 移除方法声明中空参数列表括号内的空格
 csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
-#place a space character after the opening parenthesis and before the closing parenthesis of a method declaration parameter list.
+# 在方法声明参数列表的左括号后和右括号前放置一个空格字符。
 csharp_space_between_method_declaration_parameter_list_parentheses = false
 
-#Formatting - wrapping options
+# 格式设置 - 换行选项
 
-#leave code block on separate lines
+# 将代码块保留在单独的行上
 csharp_preserve_single_line_blocks = true
 
-#Style - Code block preferences
+# 样式 - 代码块偏好
 
-#prefer curly braces even for one line of code
+# 即使对于一行代码，也首选花括号
 csharp_prefer_braces = true:suggestion
 
-#Style - expression bodied member options
+# 样式 - 表达式主体成员选项
 
-#prefer expression bodies for accessors
+# 访问器首选表达式主体
 csharp_style_expression_bodied_accessors = true:warning
-#prefer block bodies for constructors
+# 构造函数首选块主体
 csharp_style_expression_bodied_constructors = false:suggestion
-#prefer expression bodies for methods
+# 方法首选表达式主体
 csharp_style_expression_bodied_methods = when_on_single_line:silent
-#prefer expression-bodied members for properties
+# 属性首选表达式主体成员
 csharp_style_expression_bodied_properties = true:warning
 
-#Style - expression level options
+# 样式 - 表达式级别选项
 
-#prefer out variables to be declared before the method call
+# 首选在方法调用之前声明 out 变量
 csharp_style_inlined_variable_declaration = false:suggestion
-#prefer the language keyword for member access expressions, instead of the type name, for types that have a keyword to represent them
+# 对于具有相应关键字表示的类型，成员访问表达式首选语言关键字而非类型名称
 dotnet_style_predefined_type_for_member_access = true:suggestion
 
-#Style - Expression-level  preferences
+# 样式 - 表达式级别偏好
 
-#prefer default over default(T)
+# 首选 default 而非 default(T)
 csharp_prefer_simple_default_expression = true:suggestion
-#prefer objects to be initialized using object initializers when possible
+# 在可能的情况下，首选使用对象初始化器来初始化对象
 dotnet_style_object_initializer = true:suggestion
 
-#Style - implicit and explicit types
+# 样式 - 隐式和显式类型
 
-#prefer var over explicit type in all cases, unless overridden by another code style rule
+# 在所有情况下都首选 var 而非显式类型，除非被其他代码样式规则覆盖
 csharp_style_var_elsewhere = true:suggestion
-#prefer var is used to declare variables with built-in system types such as int
+# 首选使用 var 来声明内置系统类型（如 int）的变量
 csharp_style_var_for_built_in_types = true:suggestion
-#prefer var when the type is already mentioned on the right-hand side of a declaration expression
+# 当声明表达式的右侧已提及类型时，首选 var
 csharp_style_var_when_type_is_apparent = true:suggestion
 
-#Style - language keyword and framework type options
+# 样式 - 语言关键字和框架类型选项
 
-#prefer the language keyword for local variables, method parameters, and class members, instead of the type name, for types that have a keyword to represent them
+# 对于具有相应关键字表示的类型，本地变量、方法参数和类成员首选语言关键字而非类型名称
 dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
 
-#Style - Language rules
+# 样式 - 语言规则
 csharp_style_implicit_object_creation_when_type_is_apparent = true:warning
 csharp_style_var_for_built_in_types = true:warning
 
-#Style - modifier options
+# 样式 - 修饰符选项
 
-#prefer accessibility modifiers to be declared except for public interface members. This will currently not differ from always and will act as future proofing for if C# adds default interface methods.
+# 首选声明可访问性修饰符，公共接口成员除外。目前这与 always 没有区别，但作为 C# 引入默认接口方法时的未来保障。
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
 
-#Style - Modifier preferences
+# 样式 - 修饰符偏好
 
-#when this rule is set to a list of modifiers, prefer the specified ordering.
+# 当此规则设置为修饰符列表时，首选指定的顺序。
 csharp_preferred_modifier_order = public,private,protected,internal,static,async,readonly,override,sealed,abstract,virtual:warning
 dotnet_style_readonly_field = true:warning
 
-#Style - Pattern matching
+# 样式 - 模式匹配
 
-#prefer pattern matching instead of is expression with type casts
+# 首选模式匹配而不是带有类型转换的 is 表达式
 csharp_style_pattern_matching_over_as_with_null_check = true:warning
 
-#Style - qualification options
+# 样式 - 限定选项
 
-#prefer events not to be prefaced with this. or Me. in Visual Basic
+# 首选事件不使用 this. 或 Visual Basic 中的 Me. 作为前缀
 dotnet_style_qualification_for_event = false:suggestion
-#prefer fields not to be prefaced with this. or Me. in Visual Basic
+# 首选字段不使用 this. 或 Visual Basic 中的 Me. 作为前缀
 dotnet_style_qualification_for_field = false:suggestion
-#prefer methods not to be prefaced with this. or Me. in Visual Basic
+# 首选方法不使用 this. 或 Visual Basic 中的 Me. 作为前缀
 dotnet_style_qualification_for_method = false:suggestion
-#prefer properties not to be prefaced with this. or Me. in Visual Basic
+# 首选属性不使用 this. 或 Visual Basic 中的 Me. 作为前缀
 dotnet_style_qualification_for_property = false:suggestion
 csharp_indent_labels = one_less_than_current
 csharp_using_directive_placement = outside_namespace:silent
@@ -146,12 +146,12 @@ dotnet_style_prefer_conditional_expression_over_assignment = true:silent
 dotnet_style_prefer_conditional_expression_over_return = true:silent
 [*.{cs,vb}]
 
-#Style - Unnecessary code rules
+# 样式 - 不必要的代码规则
 csharp_style_unused_value_assignment_preference = discard_variable:warning
 
 #### Naming styles ####
 
-# Naming rules
+# 命名规则
 
 dotnet_naming_rule.interface_should_be_begins_with_i.severity = suggestion
 dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
@@ -165,7 +165,7 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = suggestion
 dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
 dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
-# Symbol specifications
+# 符号规范
 
 dotnet_naming_symbols.interface.applicable_kinds = interface
 dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
@@ -179,7 +179,7 @@ dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, meth
 dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
 dotnet_naming_symbols.non_field_members.required_modifiers =
 
-# Naming styles
+# 命名样式
 
 dotnet_naming_style.begins_with_i.required_prefix = I
 dotnet_naming_style.begins_with_i.required_suffix =
