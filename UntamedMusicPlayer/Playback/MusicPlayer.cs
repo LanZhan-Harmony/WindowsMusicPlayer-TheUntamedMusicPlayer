@@ -1,10 +1,9 @@
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using UntamedMusicPlayer.Contracts.Models;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using Windows.Media;
@@ -18,10 +17,11 @@ namespace UntamedMusicPlayer.Playback;
 public partial class MusicPlayer : ObservableRecipient, IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<MusicPlayer>();
-    private readonly PlaybackState _state;
+    private readonly SharedPlaybackState _state;
     private readonly PlayQueueManager _queueManager;
     private readonly AudioEngine _audioEngine;
     private readonly SMTCManager _smtcManager;
+    private readonly LyricManager _lyricManager;
 
     /// <summary>
     /// 线程计时器
@@ -29,36 +29,25 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     private ThreadPoolTimer? _positionUpdateTimer;
 
     /// <summary>
-    /// 当前歌词切片在集合中的索引
+    /// 是否已经加载完成
     /// </summary>
-    private int _currentLyricIndex = 0;
-
-    /// <summary>
-    /// 当前歌词内容
-    /// </summary>
-    [ObservableProperty]
-    public partial string CurrentLyricContent { get; set; } = "";
-
-    /// <summary>
-    /// 当前歌词切片集合
-    /// </summary>
-    [ObservableProperty]
-    public partial List<LyricSlice> CurrentLyric { get; set; } = [];
+    public bool HasLoaded { get; private set; } = false;
 
     public MusicPlayer()
         : base(StrongReferenceMessenger.Default)
     {
-        _state = new PlaybackState();
+        _state = new SharedPlaybackState();
         _queueManager = new PlayQueueManager(_state);
         _audioEngine = new AudioEngine(_state);
         _smtcManager = new SMTCManager(_state);
+        _lyricManager = new LyricManager(_state);
 
         // 设置事件处理
         _audioEngine.PlaybackEnded += OnPlaybackEnded;
         _audioEngine.PlaybackFailed += OnPlaybackFailed;
 
         InitializeSmtc();
-        LoadCurrentStateAsync();
+        LoadStateAsync();
     }
 
     private void InitializeSmtc()
@@ -107,7 +96,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         if (_state.CurrentSong!.IsPlayAvailable)
         {
             await SetSource();
-            UpdateLyric(_state.CurrentSong!.Lyric);
+            _lyricManager.GetSongLyric();
             _smtcManager.SetButtonsEnabled(true, true, true, true);
             if (shouldStop)
             {
@@ -140,66 +129,6 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         finally
         {
             await _smtcManager.SetCoverImageAndUpdateAsync();
-        }
-    }
-
-    public async void UpdateLyric(string lyric)
-    {
-        CurrentLyric = await LyricHelper.GetLyricSlices(lyric);
-        _currentLyricIndex = 0;
-
-        if (CurrentLyric.Count > 0)
-        {
-            CurrentLyric[0].IsCurrent = true;
-            CurrentLyricContent = CurrentLyric[0].Content;
-        }
-        else
-        {
-            CurrentLyricContent = "";
-        }
-    }
-
-    /// <summary>
-    /// 获取当前歌词切片索引
-    /// </summary>
-    /// <param name="currentTime"></param>
-    /// <returns></returns>
-    public int GetCurrentLyricIndex(double currentTime)
-    {
-        for (var i = 0; i < CurrentLyric.Count; i++)
-        {
-            if (CurrentLyric[i].Time > currentTime)
-            {
-                return i > 0 ? i - 1 : 0;
-            }
-        }
-        return CurrentLyric.Count - 1;
-    }
-
-    /// <summary>
-    /// 更新当前歌词索引和状态
-    /// </summary>
-    /// <param name="currentTime">当前播放时间（毫秒）</param>
-    public void UpdateCurrentLyricIndex(double currentTime)
-    {
-        if (CurrentLyric.Count == 0)
-        {
-            return;
-        }
-        var newIndex = GetCurrentLyricIndex(currentTime);
-        if (newIndex != _currentLyricIndex)
-        {
-            if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyric.Count)
-            {
-                CurrentLyric[_currentLyricIndex].IsCurrent = false;
-            }
-            _currentLyricIndex = newIndex;
-
-            if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyric.Count)
-            {
-                CurrentLyric[_currentLyricIndex].IsCurrent = true;
-                CurrentLyricContent = CurrentLyric[_currentLyricIndex].Content;
-            }
         }
     }
 
@@ -262,13 +191,54 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     {
         _audioEngine.Stop();
         _state.PlayState = MediaPlaybackState.Paused;
-        _currentLyricIndex = 0;
-        CurrentLyricContent = "";
+        _lyricManager.Reset();
         _positionUpdateTimer?.Cancel();
         _positionUpdateTimer = null;
     }
 
-    public async void LoadCurrentStateAsync() => throw new NotImplementedException();
+    public async void LoadStateAsync()
+    {
+        try
+        {
+            await _state.LoadStateAsync();
+            if (Data.IsFileActivationLaunch)
+            {
+                Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Visible;
+                Data.RootPlayBarViewModel?.Availability = true;
+                return;
+            }
+            await _queueManager.LoadStateAsync();
+            if (_state.CurrentSong is not null)
+            {
+                await SetSource();
+                _lyricManager.GetSongLyric();
+                _smtcManager.SetButtonsEnabled(true, true, true, true);
+            }
+            Data.RootPlayBarViewModel?.ButtonVisibility =
+                _state.CurrentSong is not null && _state.PlayQueueCount > 0
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            Data.RootPlayBarViewModel?.Availability =
+                _state.CurrentSong is not null && _state.PlayQueueCount > 0;
+            HasLoaded = true;
+        }
+        catch
+        {
+            _state.CurrentSong = null;
+            Data.RootPlayBarViewModel?.ButtonVisibility = Visibility.Collapsed;
+            Data.RootPlayBarViewModel?.Availability = false;
+        }
+        finally
+        {
+            HasLoaded = true;
+        }
+    }
+
+    public async Task SaveStateAsync()
+    {
+        await _state.SaveStateAsync();
+        await _queueManager.SaveStateAsync();
+    }
 
     public void Dispose()
     {

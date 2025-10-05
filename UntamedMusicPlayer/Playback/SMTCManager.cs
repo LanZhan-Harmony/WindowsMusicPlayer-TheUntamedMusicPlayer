@@ -14,7 +14,7 @@ namespace UntamedMusicPlayer.Playback;
 /// </summary>
 public partial class SMTCManager : IDisposable
 {
-    private readonly PlaybackState _state;
+    private readonly SharedPlaybackState _state;
 
     /// <summary>
     /// 用于获取SMTC的临时播放器
@@ -46,7 +46,7 @@ public partial class SMTCManager : IDisposable
     /// </summary>
     public event Action<SystemMediaTransportControlsButton>? ButtonPressed;
 
-    public SMTCManager(PlaybackState state)
+    public SMTCManager(SharedPlaybackState state)
     {
         _state = state;
         _systemControls = _tempPlayer.SystemMediaTransportControls;

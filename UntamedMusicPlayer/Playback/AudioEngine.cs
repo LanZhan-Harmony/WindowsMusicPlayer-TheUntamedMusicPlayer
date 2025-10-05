@@ -3,7 +3,6 @@ using ManagedBass;
 using ManagedBass.Fx;
 using ManagedBass.Wasapi;
 using Microsoft.Extensions.Logging;
-using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using ZLogger;
 
@@ -12,7 +11,7 @@ namespace UntamedMusicPlayer.Playback;
 public partial class AudioEngine : IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<AudioEngine>();
-    private readonly PlaybackState _state;
+    private readonly SharedPlaybackState _state;
     private int _currentStream = 0;
     private int _fxStream = 0;
     private int _wasapiDevice = -1;
@@ -23,12 +22,10 @@ public partial class AudioEngine : IDisposable
     public event Action? PlaybackEnded;
     public event Action? PlaybackFailed;
 
-    public AudioEngine(PlaybackState state)
+    public AudioEngine(SharedPlaybackState state)
     {
         _state = state;
         InitializeBass();
-
-        // 监听状态变化
         _state.PropertyChanged += OnStateChanged;
     }
 
@@ -36,17 +33,17 @@ public partial class AudioEngine : IDisposable
     {
         switch (e.PropertyName)
         {
-            case nameof(PlaybackState.CurrentVolume):
+            case nameof(SharedPlaybackState.Volume):
                 if (!_state.IsMute)
                 {
-                    SetVolume(_state.CurrentVolume / 100.0);
+                    SetVolume(_state.Volume / 100.0);
                 }
                 break;
-            case nameof(PlaybackState.IsMute):
-                SetVolume(_state.IsMute ? 0.0 : _state.CurrentVolume / 100.0);
+            case nameof(SharedPlaybackState.IsMute):
+                SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0);
                 break;
-            case nameof(PlaybackState.PlaySpeed):
-                SetSpeed(_state.PlaySpeed);
+            case nameof(SharedPlaybackState.Speed):
+                SetSpeed(_state.Speed);
                 break;
         }
     }
@@ -125,7 +122,7 @@ public partial class AudioEngine : IDisposable
         {
             FreeStreams();
             CreateStream();
-            SetVolume(_state.IsMute ? 0.0 : _state.CurrentVolume / 100.0);
+            SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0);
             return true;
         }
         catch
@@ -165,7 +162,7 @@ public partial class AudioEngine : IDisposable
             _currentStream = 0;
         }
 
-        SetSpeed(_state.PlaySpeed);
+        SetSpeed(_state.Speed);
 
         Bass.ChannelSetSync(_fxStream, SyncFlags.End, 0, _syncEndCallback);
         Bass.ChannelSetSync(_fxStream, SyncFlags.Stalled, 0, _syncFailCallback);
@@ -262,6 +259,7 @@ public partial class AudioEngine : IDisposable
         Bass.Free();
         _syncEndCallback -= OnPlaybackEnded;
         _syncFailCallback -= OnPlaybackFailed;
+        _state.PropertyChanged -= OnStateChanged;
         GC.SuppressFinalize(this);
     }
 }

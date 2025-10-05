@@ -1,7 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
+using UntamedMusicPlayer.Models;
 
-namespace UntamedMusicPlayer.Models;
+namespace UntamedMusicPlayer.LyricRenderer;
 
 public partial class LyricSlice(double time, string content) : ObservableObject
 {

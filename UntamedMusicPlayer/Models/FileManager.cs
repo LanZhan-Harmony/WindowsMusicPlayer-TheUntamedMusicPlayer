@@ -86,10 +86,10 @@ public class FileManager
     /// <summary>
     /// 保存播放队列数据到文件
     /// </summary>
-    /// <param name="playQueue"></param>
+    /// <param name="normalPlayQueue"></param>
     /// <param name="shuffledPlayQueue"></param>
     public static async Task SavePlayQueueDataAsync(
-        ObservableCollection<IndexedPlayQueueSong> playQueue,
+        ObservableCollection<IndexedPlayQueueSong> normalPlayQueue,
         ObservableCollection<IndexedPlayQueueSong> shuffledPlayQueue
     )
     {
@@ -103,7 +103,7 @@ public class FileManager
                     CreationCollisionOption.OpenIfExists
                 );
 
-                await SaveObjectToFileAsync(playQueueFolder, "PlayQueue", playQueue); // 保存播放队列
+                await SaveObjectToFileAsync(playQueueFolder, "NormalPlayQueue", normalPlayQueue); // 保存播放队列
                 await SaveObjectToFileAsync(
                     playQueueFolder,
                     "ShuffledPlayQueue",
@@ -288,7 +288,7 @@ public class FileManager
     /// </summary>
     /// <returns></returns>
     public static async Task<(
-        ObservableCollection<IndexedPlayQueueSong> playQueue,
+        ObservableCollection<IndexedPlayQueueSong> normalPlayQueue,
         ObservableCollection<IndexedPlayQueueSong> shuffledPlayQueue
     )> LoadPlayQueueDataAsync()
     {
@@ -305,20 +305,19 @@ public class FileManager
                 return ([], []);
             }
 
-            var playQueuetask = LoadObjectFromFileAsync<ObservableCollection<IndexedPlayQueueSong>>(
-                playQueueFolder,
-                "PlayQueue"
-            );
+            var normalPlayQueuetask = LoadObjectFromFileAsync<
+                ObservableCollection<IndexedPlayQueueSong>
+            >(playQueueFolder, "NormalPlayQueue");
             var shuffledPlayQueuetask = LoadObjectFromFileAsync<
                 ObservableCollection<IndexedPlayQueueSong>
             >(playQueueFolder, "ShuffledPlayQueue");
 
-            await Task.WhenAll(playQueuetask, shuffledPlayQueuetask);
+            await Task.WhenAll(normalPlayQueuetask, shuffledPlayQueuetask);
 
-            var playQueueList = playQueuetask.Result ?? [];
+            var normalPlayQueueList = normalPlayQueuetask.Result ?? [];
             var shuffledPlayQueueList = shuffledPlayQueuetask.Result ?? [];
 
-            return (playQueueList, shuffledPlayQueueList);
+            return (normalPlayQueueList, shuffledPlayQueueList);
         }
         catch (Exception ex)
         {

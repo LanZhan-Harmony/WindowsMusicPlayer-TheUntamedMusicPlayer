@@ -50,10 +50,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.250402" />
-    <PackageReference
-      Include="CommunityToolkit.WinUI.Controls.SettingsControls"
-      Version="8.2.250402"
-    />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.250402" />
     <PackageReference Include="hyjiacan.pinyin4net" Version="4.1.1" />
@@ -70,9 +67,9 @@
     <PackageReference Include="ZLinq" Version="1.5.3" />
     <PackageReference Include="ZLogger" Version="2.5.10" />
   </ItemGroup>
-  <ItemGroup>
+  <!--<ItemGroup>
     <TrimmerRootAssembly Include="TagLibSharp" />
-  </ItemGroup>
+  </ItemGroup>-->
   <PropertyGroup Label="Globals">
     <DefaultLanguage>en-us</DefaultLanguage>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>

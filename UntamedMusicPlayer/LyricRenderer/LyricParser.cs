@@ -1,10 +1,9 @@
 using System.Text.RegularExpressions;
-using UntamedMusicPlayer.Models;
 using ZLinq;
 
-namespace UntamedMusicPlayer.Helpers;
+namespace UntamedMusicPlayer.LyricRenderer;
 
-public partial class LyricHelper
+public partial class LyricParser
 {
     [GeneratedRegex(@".*\](.*)", RegexOptions.Compiled)]
     private static partial Regex RegexWord();
