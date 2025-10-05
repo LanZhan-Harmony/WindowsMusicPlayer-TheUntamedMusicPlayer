@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Input;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
 using UntamedMusicPlayer.Services;
@@ -1613,7 +1614,7 @@ public partial class MusicPlayer
 
     public async Task UpdateLyric(string lyric)
     {
-        CurrentLyric = await LyricHelper.GetLyricSlices(lyric);
+        CurrentLyric = await LyricParser.GetLyricSlices(lyric);
         _currentLyricIndex = 0;
         CurrentLyricContent = "";
 
