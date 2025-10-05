@@ -1,0 +1,221 @@
+<Page x:Class="UntamedMusicPlayer.Views.LyricPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helper="using:UntamedMusicPlayer.Helpers"
+      xmlns:local="using:UntamedMusicPlayer.Views"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:media="using:CommunityToolkit.WinUI.Media"
+      xmlns:model="using:UntamedMusicPlayer.Models"
+      xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
+      xmlns:ui="using:CommunityToolkit.WinUI"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
+                                                        EmptyValue="Visible" NotEmptyValue="Collapsed"/>
+
+        <DataTemplate x:Key="LyricViewTemplate" x:DataType="model:LyricSlice">
+            <UserControl>
+                <Grid>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup>
+                            <VisualState x:Name="Narrow">
+                                <VisualState.StateTriggers>
+                                    <AdaptiveTrigger MinWindowWidth="0"/>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="LyricTextBlock.TextAlignment" Value="Center"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Normal">
+                                <VisualState.StateTriggers>
+                                    <AdaptiveTrigger MinWindowWidth="820"/>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="LyricTextBlock.TextAlignment" Value="Left"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+
+                    <TextBlock x:Name="LyricTextBlock"
+                               Margin="{x:Bind Margin, Mode=OneWay}"
+                               FontFamily="{x:Bind model:Settings.FontFamily}"
+                               FontSize="{x:Bind FontSize, Mode=OneWay}"
+                               Opacity="{x:Bind Opacity, Mode=OneWay}"
+                               SizeChanged="TextBlock_SizeChanged"
+                               Text="{x:Bind Content}"
+                               TextWrapping="WrapWholeWords"/>
+                </Grid>
+            </UserControl>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ReferenceGrid.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="ReferenceGrid.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="CoverBorder.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="CoverBorder.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="ControllerCoverFontIcon.FontSize" Value="100"/>
+                        <Setter Target="DropShadow.Offset" Value="10,10"/>
+                        <Setter Target="LyricViewer.(Grid.Row)" Value="1"/>
+                        <Setter Target="LyricViewer.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="LyricViewer.(Grid.Column)" Value="0"/>
+                        <Setter Target="LyricViewer.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="LyricViewer.Margin" Value="30,0,30,0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Normal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="820"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ReferenceGrid.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="ReferenceGrid.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="CoverBorder.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="CoverBorder.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="ControllerCoverFontIcon.FontSize" Value="100"/>
+                        <Setter Target="DropShadow.Offset" Value="20,20"/>
+                        <Setter Target="LyricViewer.(Grid.Row)" Value="0"/>
+                        <Setter Target="LyricViewer.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="LyricViewer.(Grid.Column)" Value="1"/>
+                        <Setter Target="LyricViewer.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="LyricViewer.Margin" Value="20,20,50,20"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid x:Name="AppTitleBar"
+              Grid.Row="0"
+              Height="33"
+              VerticalAlignment="Center"
+              Canvas.ZIndex="1" IsHitTestVisible="True">
+            <StackPanel Orientation="Horizontal">
+                <Button Width="48" Height="39"
+                        AccessKey="A" Click="CoverBtnClickToDetail"
+                        FontSize="12"
+                        Style="{StaticResource NavigationBackButtonNormalStyle}"/>
+                <Image Width="16" Height="16"
+                       Margin="12,0,0,0" HorizontalAlignment="Left"
+                       Source="/Assets/AppIcon/Icon.png"/>
+                <TextBlock x:Name="AppTitleBarText"
+                           Margin="12,0,0,0" VerticalAlignment="Center"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Text="{x:Bind model:Data.AppDisplayName}"
+                           TextWrapping="NoWrap"/>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="ContentGrid"
+              Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.7*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1.2*"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="ShadowTarget"/>
+            <ScrollViewer x:Name="LyricViewer" VerticalScrollBarVisibility="Hidden">
+                <StackPanel>
+                    <StackPanel Height="600"/>
+                    <ListView x:Name="LyricView"
+                              helper:ListViewExtensions.ItemCornerRadius="15"
+                              IsItemClickEnabled="True"
+                              ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
+                              ItemTemplate="{StaticResource LyricViewTemplate}"
+                              ItemsSource="{x:Bind model:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
+                              SelectionMode="None"/>
+                    <StackPanel Height="600"/>
+                </StackPanel>
+            </ScrollViewer>
+            <Grid x:Name="ReferenceGrid"
+                  Grid.Row="0" Grid.Column="0"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  SizeChanged="ReferenceGrid_SizeChanged"/>
+            <Border x:Name="CoverBorder"
+                    Grid.Row="0" Grid.Column="0"
+                    Padding="0"
+                    CornerRadius="10">
+                <Border.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Uid="Songs_Play"
+                                        Width="216"
+                                        Click="{x:Bind ViewModel.PlayButton_Click}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE768;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_PlayNext"
+                                        Click="{x:Bind ViewModel.PlayNextButton_Click}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xF5EB;}"/>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutSubItem x:Uid="Songs_AddTo"
+                                           Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                              Glyph=&#xE710;}"
+                                           Loaded="AddToSubItem_Loaded">
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
+                                            Width="216"
+                                            Click="{x:Bind ViewModel.AddToPlayQueueButton_Click}"
+                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                               Glyph=&#xE93F;}"/>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem x:Uid="Songs_AddTo_NewPlaylist"
+                                            Click="AddToNewPlaylistButton_Click"
+                                            Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                               Glyph=&#xE710;}"/>
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutItem x:Uid="Songs_ShowAlbum"
+                                        Click="{x:Bind ViewModel.ShowAlbumButton_Click}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE93C;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_ShowArtist"
+                                        Click="{x:Bind ViewModel.ShowArtistButton_Click}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE77B;}"/>
+                        <MenuFlyoutItem x:Uid="Songs_Properties"
+                                        Click="PropertiesButton_Click"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE946;}"/>
+                    </MenuFlyout>
+                </Border.ContextFlyout>
+                <Grid>
+                    <Image x:Name="ControllerCover"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Canvas.ZIndex="1"
+                           Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"/>
+                    <Grid x:Name="ControllerCoverGrid"
+                          Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
+                          Canvas.ZIndex="0"
+                          Visibility="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                        <FontIcon x:Name="ControllerCoverFontIcon"
+                                  Canvas.ZIndex="0"
+                                  FontFamily="{StaticResource UntamedFontFamily}"
+                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                  Glyph="&#xE940;"/>
+                    </Grid>
+                </Grid>
+                <ui:Effects.Shadow>
+                    <ui:AttachedDropShadow x:Name="DropShadow"
+                                           BlurRadius="15"
+                                           CastTo="{x:Bind ShadowTarget}"
+                                           CornerRadius="10" Opacity="0.2"
+                                           Offset="20,20"/>
+                </ui:Effects.Shadow>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

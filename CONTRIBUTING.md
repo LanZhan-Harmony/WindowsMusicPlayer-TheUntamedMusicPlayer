@@ -9,7 +9,7 @@
     git clone https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer.git
     ```
   
-- 在 Visual Studio 中打开 The Untamed Music Player.sln。
+- 在 Visual Studio 中打开 UntamedMusicPlayer.sln。
 - 在 Visual Studio 中点击“工具”→”选项“→”NuGet包管理器“→”程序包源“→右上角+号。新建一个名称为Community Toolkit Labs，源为https://pkgs.dev.azure.com/dotnet/CommunityToolkit/_packaging/CommunityToolkit-Labs/nuget/v3/index.json 的包源。
 <img width="1453" height="777" alt="image" src="https://github.com/user-attachments/assets/b2aee828-7ad5-4a59-a60c-bffb50699c80" />
 

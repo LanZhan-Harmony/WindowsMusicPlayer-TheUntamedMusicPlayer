@@ -1,0 +1,119 @@
+<ContentDialog x:Uid="PropertiesDialog"
+               x:Class="UntamedMusicPlayer.Controls.PropertiesDialog"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+               xmlns:local="using:UntamedMusicPlayer.Controls"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               CloseButtonClick="CloseButtonClick"
+               Style="{StaticResource DefaultContentDialogStyle}"
+               mc:Ignorable="d">
+    <ContentDialog.Resources>
+        <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
+    </ContentDialog.Resources>
+    <ScrollViewer Margin="-24,0,-24,0">
+        <StackPanel>
+            <Grid Width="625">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="Column0" Width="*"/>
+                    <ColumnDefinition x:Name="Column1" Width="17"/>
+                    <ColumnDefinition x:Name="Column2" Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0"
+                            Padding="24,0,0,0">
+                    <StackPanel>
+                        <TextBlock x:Uid="PropertiesDialog_Title"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True"
+                                   Text="{x:Bind _song.Title}"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,30,0,0">
+                        <TextBlock x:Uid="PropertiesDialog_Album"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True"
+                                   Text="{x:Bind _song.Album}"
+                                   TextWrapping="WrapWholeWords"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,18,0,0">
+                        <TextBlock x:Uid="PropertiesDialog_Track"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind _song.TrackStr}"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,18,0,0">
+                        <TextBlock x:Uid="PropertiesDialog_Genre"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True"
+                                   Text="{x:Bind _song.GenreStr}"
+                                   TextWrapping="WrapWholeWords"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,18,0,0">
+                        <TextBlock x:Uid="PropertiesDialog_Bitrate"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind _song.BitRate}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="2"
+                            Padding="0,0,24,0">
+                    <StackPanel>
+                        <TextBlock x:Uid="PropertiesDialog_ContributingArtists"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True"
+                                   Text="{x:Bind _song.ArtistsStr}"
+                                   TextWrapping="WrapWholeWords"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,30,0,0">
+                        <TextBlock x:Uid="PropertiesDialog_AlbumArtist"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True"
+                                   Text="{x:Bind _song.AlbumArtistsStr}"
+                                   TextWrapping="WrapWholeWords"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,18,0,0">
+                        <TextBlock x:Uid="PropertiesDialog_Length"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind _song.DurationStr}"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,18,0,0">
+                        <TextBlock x:Uid="PropertiesDialog_Year"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind _song.YearStr}"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,18,0,0">
+                        <TextBlock x:Uid="PropertiesDialog_ItemType"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind _song.ItemType}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="3"
+                            Padding="24,0,24,0">
+                    <StackPanel Margin="0,18,0,0">
+                        <TextBlock x:Uid="PropertiesDialog_FileLocation"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock IsTextSelectionEnabled="True"
+                                   Text="{x:Bind _song.Path}"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <HyperlinkButton x:Uid="PropertiesDialog_OpenFileLocation"
+                             Margin="12,18,0,0"
+                             Click="OpenFileLocationButton_Click"/>
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>
