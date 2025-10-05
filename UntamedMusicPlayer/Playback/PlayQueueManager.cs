@@ -2,14 +2,20 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
 using ZLinq;
 
 namespace UntamedMusicPlayer.Playback;
 
 public partial class PlayQueueManager : ObservableObject
 {
-    private readonly PlaybackState _state;
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
+    private readonly SharedPlaybackState _state;
+
+    private string _playQueueName = "";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CurrentQueue))]
@@ -22,10 +28,7 @@ public partial class PlayQueueManager : ObservableObject
     public ObservableCollection<IndexedPlayQueueSong> CurrentQueue =>
         _state.ShuffleMode == ShuffleState.Normal ? NormalPlayQueue : ShuffledPlayQueue;
 
-    [ObservableProperty]
-    public partial string PlayQueueName { get; set; } = "";
-
-    public PlayQueueManager(PlaybackState state)
+    public PlayQueueManager(SharedPlaybackState state)
     {
         _state = state;
         _state.PropertyChanged += OnStateChanged;
@@ -33,15 +36,19 @@ public partial class PlayQueueManager : ObservableObject
 
     private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(PlaybackState.ShuffleMode))
+        if (e.PropertyName == nameof(SharedPlaybackState.ShuffleMode))
         {
             UpdateQueueIndexes();
         }
     }
 
-    public void SetPlayQueue(string name, IList<IBriefSongInfoBase> list)
+    public void SetNormalPlayQueue(string name, IList<IBriefSongInfoBase> list)
     {
-        PlayQueueName = name;
+        if (_state.PlayQueueCount == list.Count && _playQueueName == name)
+        {
+            return;
+        }
+        _playQueueName = name;
         NormalPlayQueue =
         [
             .. list.AsValueEnumerable()
@@ -53,8 +60,36 @@ public partial class PlayQueueManager : ObservableObject
             UpdateShufflePlayQueue();
             UpdateQueueIndexes();
         }
+        _ = FileManager.SavePlayQueueDataAsync(NormalPlayQueue, ShuffledPlayQueue);
     }
 
+    public void SetShuffledPlayQueue(string name, IList<IBriefSongInfoBase> list)
+    {
+        if (
+            _state.ShuffleMode == ShuffleState.Shuffled
+            && _state.PlayQueueCount == list.Count
+            && _playQueueName == name
+        )
+        {
+            return;
+        }
+        _state.ShuffleMode = ShuffleState.Shuffled;
+        _playQueueName = name;
+        NormalPlayQueue =
+        [
+            .. list.AsValueEnumerable()
+                .Select((song, index) => new IndexedPlayQueueSong(index, song)),
+        ];
+        _state.PlayQueueCount = NormalPlayQueue.Count;
+        UpdateShufflePlayQueue();
+        UpdateQueueIndexes();
+        _ = FileManager.SavePlayQueueDataAsync(NormalPlayQueue, ShuffledPlayQueue);
+    }
+
+    /// <summary>
+    /// 将单个歌曲添加到下一首播放
+    /// </summary>
+    /// <param name="info"></param>
     public void AddSongToNextPlay(IBriefSongInfoBase info)
     {
         var insertIndex = _state.PlayQueueIndex + 1;
@@ -64,6 +99,139 @@ public partial class PlayQueueManager : ObservableObject
         if (_state.ShuffleMode == ShuffleState.Shuffled)
         {
             NormalPlayQueue.Add(new IndexedPlayQueueSong(NormalPlayQueue.Count, info));
+        }
+    }
+
+    /// <summary>
+    /// 将歌曲列表添加到下一首播放
+    /// </summary>
+    /// <param name="songs"></param>
+    public void AddSongsToNextPlay(IList<IBriefSongInfoBase> songs)
+    {
+        var insertIndex = _state.PlayQueueIndex + 1;
+        foreach (var song in songs)
+        {
+            CurrentQueue.Insert(insertIndex, new IndexedPlayQueueSong(insertIndex, song));
+            insertIndex++;
+        }
+        _state.PlayQueueCount += songs.Count;
+        UpdateQueueIndexes(insertIndex);
+        if (_state.ShuffleMode == ShuffleState.Shuffled)
+        {
+            foreach (var song in songs)
+            {
+                NormalPlayQueue.Add(new IndexedPlayQueueSong(NormalPlayQueue.Count, song));
+            }
+        }
+    }
+
+    /// <summary>
+    /// 将单个歌曲添加到播放队列
+    /// </summary>
+    /// <param name="info"></param>
+    public void AddSongToEnd(IBriefSongInfoBase info)
+    {
+        CurrentQueue.Add(new IndexedPlayQueueSong(CurrentQueue.Count, info));
+        _state.PlayQueueCount++;
+        if (_state.ShuffleMode == ShuffleState.Shuffled)
+        {
+            NormalPlayQueue.Add(new IndexedPlayQueueSong(NormalPlayQueue.Count, info));
+        }
+    }
+
+    /// <summary>
+    /// 将歌曲列表添加到播放队列
+    /// </summary>
+    /// <param name="songs"></param>
+    public void AddSongsToEnd(IList<IBriefSongInfoBase> songs)
+    {
+        foreach (var song in songs)
+        {
+            CurrentQueue.Add(new IndexedPlayQueueSong(CurrentQueue.Count, song));
+        }
+        _state.PlayQueueCount += songs.Count;
+        if (_state.ShuffleMode == ShuffleState.Shuffled)
+        {
+            foreach (var song in songs)
+            {
+                NormalPlayQueue.Add(new IndexedPlayQueueSong(NormalPlayQueue.Count, song));
+            }
+        }
+    }
+
+    /// <summary>
+    /// 将歌曲列表插入到指定位置
+    /// </summary>
+    /// <param name="songs"></param>
+    /// <param name="index"></param>
+    public void InsertSongsAt(IList<IBriefSongInfoBase> songs, int index)
+    {
+        var insertIndex = Math.Clamp(index, 0, _state.PlayQueueCount);
+        foreach (var song in songs)
+        {
+            CurrentQueue.Insert(insertIndex, new IndexedPlayQueueSong(insertIndex, song));
+            insertIndex++;
+        }
+        _state.PlayQueueCount += songs.Count;
+        UpdateQueueIndexes(insertIndex);
+        if (insertIndex <= _state.PlayQueueIndex)
+        {
+            _state.PlayQueueIndex += songs.Count;
+        }
+        if (_state.ShuffleMode == ShuffleState.Shuffled)
+        {
+            foreach (var song in songs)
+            {
+                NormalPlayQueue.Add(new IndexedPlayQueueSong(NormalPlayQueue.Count, song));
+            }
+        }
+    }
+
+    /// <summary>
+    /// 上移歌曲
+    /// </summary>
+    /// <param name="info"></param>
+    public void MoveUpSong(IndexedPlayQueueSong info)
+    {
+        var currentIndex = info.Index;
+        if (currentIndex <= 0)
+        {
+            return;
+        }
+        var targetIndex = currentIndex - 1;
+        CurrentQueue.Move(currentIndex, targetIndex);
+        UpdateQueueIndexes(targetIndex);
+        if (_state.PlayQueueIndex == currentIndex)
+        {
+            _state.PlayQueueIndex = targetIndex;
+        }
+        else if (_state.PlayQueueIndex == targetIndex)
+        {
+            _state.PlayQueueIndex = currentIndex;
+        }
+    }
+
+    /// <summary>
+    /// 下移歌曲
+    /// </summary>
+    /// <returns></returns>
+    public void MoveDownSong(IndexedPlayQueueSong info)
+    {
+        var currentIndex = info.Index;
+        if (currentIndex >= _state.PlayQueueCount - 1)
+        {
+            return;
+        }
+        var targetIndex = currentIndex + 1;
+        CurrentQueue.Move(currentIndex, targetIndex);
+        UpdateQueueIndexes(currentIndex);
+        if (_state.PlayQueueIndex == currentIndex)
+        {
+            _state.PlayQueueIndex = targetIndex;
+        }
+        else if (_state.PlayQueueIndex == targetIndex)
+        {
+            _state.PlayQueueIndex = currentIndex;
         }
     }
 
@@ -89,13 +257,6 @@ public partial class PlayQueueManager : ObservableObject
         return (newIndex, isLast);
     }
 
-    public IndexedPlayQueueSong? GetCurrentSong()
-    {
-        return _state.PlayQueueIndex < CurrentQueue.Count
-            ? CurrentQueue[_state.PlayQueueIndex]
-            : null;
-    }
-
     private void UpdateShufflePlayQueue()
     {
         ShuffledPlayQueue = [.. NormalPlayQueue.AsValueEnumerable().OrderBy(x => Guid.NewGuid())];
@@ -107,5 +268,77 @@ public partial class PlayQueueManager : ObservableObject
         {
             CurrentQueue[i].Index = i;
         }
+    }
+
+    public async Task LoadStateAsync()
+    {
+        try
+        {
+            (NormalPlayQueue, ShuffledPlayQueue) = await FileManager.LoadPlayQueueDataAsync();
+            _state.PlayQueueCount = NormalPlayQueue.Count;
+            if (_state.PlayQueueCount == 0)
+            {
+                return;
+            }
+
+            _state.PlayQueueIndex = await _localSettingsService.ReadSettingAsync<int>(
+                nameof(_state.PlayQueueIndex)
+            );
+            var sourceModeName = await _localSettingsService.ReadSettingAsync<string>(
+                nameof(SourceMode)
+            );
+            if (!Enum.TryParse<SourceMode>(sourceModeName, out var cacheMode))
+            {
+                return;
+            }
+
+            _state.CurrentBriefSong = cacheMode switch
+            {
+                SourceMode.Local =>
+                    await _localSettingsService.ReadSettingAsync<BriefLocalSongInfo>(
+                        nameof(_state.CurrentBriefSong)
+                    ),
+                SourceMode.Unknown =>
+                    await _localSettingsService.ReadSettingAsync<BriefUnknownSongInfo>(
+                        nameof(_state.CurrentBriefSong)
+                    ),
+                SourceMode.Netease =>
+                    await _localSettingsService.ReadSettingAsync<BriefCloudOnlineSongInfo>(
+                        nameof(_state.CurrentBriefSong)
+                    ),
+                _ => null,
+            };
+            if (_state.CurrentBriefSong is not null)
+            {
+                _state.CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
+                    _state.CurrentBriefSong
+                );
+            }
+        }
+        catch
+        {
+            NormalPlayQueue = [];
+            ShuffledPlayQueue = [];
+            _state.CurrentBriefSong = null;
+        }
+    }
+
+    public async Task SaveStateAsync()
+    {
+        try
+        {
+            await FileManager.SavePlayQueueDataAsync(NormalPlayQueue, ShuffledPlayQueue);
+            await _localSettingsService.SaveSettingAsync(
+                nameof(_state.PlayQueueIndex),
+                _state.PlayQueueIndex
+            );
+            var sourceMode = SourceModeHelper.GetSourceMode(_state.CurrentBriefSong);
+            await _localSettingsService.SaveSettingAsync(
+                nameof(_state.CurrentBriefSong),
+                _state.CurrentBriefSong
+            );
+            await _localSettingsService.SaveSettingAsync(nameof(SourceMode), $"{sourceMode}");
+        }
+        catch { }
     }
 }
