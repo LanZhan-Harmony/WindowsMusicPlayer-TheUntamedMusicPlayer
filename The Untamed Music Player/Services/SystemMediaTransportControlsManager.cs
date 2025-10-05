@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices.WindowsRuntime;
+using Microsoft.UI.Dispatching;
 using The_Untamed_Music_Player.Contracts.Models;
 using The_Untamed_Music_Player.Helpers;
 using The_Untamed_Music_Player.Models;
@@ -58,8 +59,6 @@ public partial class SystemMediaTransportControlsManager : IDisposable
     /// </summary>
     public event Action<SystemMediaTransportControlsButton>? ButtonPressed;
 
-    public SystemMediaTransportControls Controls => _systemControls;
-
     public SystemMediaTransportControlsManager()
     {
         _systemControls = _tempPlayer.SystemMediaTransportControls;
@@ -80,7 +79,10 @@ public partial class SystemMediaTransportControlsManager : IDisposable
         SystemMediaTransportControlsButtonPressedEventArgs args
     )
     {
-        ButtonPressed?.Invoke(args.Button);
+        App.MainWindow?.DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () => ButtonPressed?.Invoke(args.Button)
+        );
     }
 
     /// <summary>
