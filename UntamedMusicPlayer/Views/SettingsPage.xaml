@@ -307,7 +307,7 @@
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
                     <toolkit:SettingsExpander x:Name="About" x:Uid="Settings_AboutDescription"
                                               Header="{x:Bind model:Data.AppDisplayName}"
-                                              HeaderIcon="{ui:BitmapIcon Source=ms-appx:///Assets/AppIcon/Icon.png}">
+                                              HeaderIcon="{ui:BitmapIcon Source=ms-appx:///Assets/AppIcon/Icon.ico}">
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}"/>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard x:Uid="Settings_Thanks"/>
@@ -319,7 +319,7 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
                 </StackPanel>
-                <TextBlock Height="20"/>
+                <StackPanel Height="20"/>
             </StackPanel>
         </ScrollViewer>
 

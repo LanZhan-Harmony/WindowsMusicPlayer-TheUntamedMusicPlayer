@@ -1,11 +1,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Models;
 using Windows.Media.Playback;
 
 namespace UntamedMusicPlayer.Playback;
 
-public partial class PlaybackState : ObservableObject
+public partial class SharedPlaybackState : ObservableObject
 {
+    private readonly ILocalSettingsService _localSettingsService =
+        App.GetService<ILocalSettingsService>();
+
     [ObservableProperty]
     public partial ShuffleState ShuffleMode { get; set; } = ShuffleState.Normal;
 
@@ -16,16 +21,16 @@ public partial class PlaybackState : ObservableObject
     public partial MediaPlaybackState PlayState { get; set; } = MediaPlaybackState.Paused;
 
     [ObservableProperty]
-    public partial double CurrentVolume { get; set; } = 100;
+    public partial double Volume { get; set; } = 100;
 
     [ObservableProperty]
     public partial bool IsMute { get; set; } = false;
 
     [ObservableProperty]
-    public partial bool IsExclusiveMode { get; set; } = false;
+    public partial double Speed { get; set; } = 1.0;
 
     [ObservableProperty]
-    public partial double PlaySpeed { get; set; } = 1.0;
+    public partial bool IsExclusiveMode { get; set; } = false;
 
     [ObservableProperty]
     public partial TimeSpan CurrentPlayingTime { get; set; } = TimeSpan.Zero;
@@ -44,6 +49,48 @@ public partial class PlaybackState : ObservableObject
 
     [ObservableProperty]
     public partial IDetailedSongInfoBase? CurrentSong { get; set; }
+
+    public async Task LoadStateAsync()
+    {
+        try
+        {
+            var shuffleModeName = await _localSettingsService.ReadSettingAsync<string>(
+                nameof(ShuffleMode)
+            );
+            ShuffleMode = Enum.TryParse<ShuffleState>(shuffleModeName, out var cacheShuffleMode)
+                ? cacheShuffleMode
+                : ShuffleState.Normal;
+            var repeatModeName = await _localSettingsService.ReadSettingAsync<string>(
+                nameof(RepeatMode)
+            );
+            RepeatMode = Enum.TryParse<RepeatState>(repeatModeName, out var cacheRepeatMode)
+                ? cacheRepeatMode
+                : RepeatState.NoRepeat;
+            IsMute = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsMute));
+            IsExclusiveMode = await _localSettingsService.ReadSettingAsync<bool>(
+                nameof(IsExclusiveMode)
+            );
+            if (Settings.NotFirstUsed)
+            {
+                Volume = await _localSettingsService.ReadSettingAsync<double>(nameof(Volume));
+                Speed = await _localSettingsService.ReadSettingAsync<double>(nameof(Speed));
+            }
+        }
+        catch { }
+    }
+
+    public async Task SaveStateAsync()
+    {
+        try
+        {
+            await _localSettingsService.SaveSettingAsync(nameof(ShuffleMode), $"{ShuffleMode}");
+            await _localSettingsService.SaveSettingAsync(nameof(RepeatMode), $"{RepeatMode}");
+            await _localSettingsService.SaveSettingAsync(nameof(Volume), Volume);
+            await _localSettingsService.SaveSettingAsync(nameof(IsMute), IsMute);
+            await _localSettingsService.SaveSettingAsync(nameof(Speed), Speed);
+        }
+        catch { }
+    }
 }
 
 public enum ShuffleState

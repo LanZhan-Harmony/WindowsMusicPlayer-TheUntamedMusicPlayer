@@ -4,6 +4,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:local="using:UntamedMusicPlayer.Views"
+      xmlns:lyricRenderer="using:UntamedMusicPlayer.LyricRenderer"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:media="using:CommunityToolkit.WinUI.Media"
       xmlns:model="using:UntamedMusicPlayer.Models"
@@ -15,7 +16,7 @@
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
 
-        <DataTemplate x:Key="LyricViewTemplate" x:DataType="model:LyricSlice">
+        <DataTemplate x:Key="LyricViewTemplate" x:DataType="lyricRenderer:LyricSlice">
             <UserControl>
                 <Grid>
                     <VisualStateManager.VisualStateGroups>
