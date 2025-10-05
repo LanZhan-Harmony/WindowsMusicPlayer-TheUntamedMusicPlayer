@@ -1,0 +1,62 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
+using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
+using Windows.UI;
+
+namespace UntamedMusicPlayer.Helpers;
+
+[JsonSerializable(typeof(bool))]
+[JsonSerializable(typeof(char))]
+[JsonSerializable(typeof(byte))]
+[JsonSerializable(typeof(short))]
+[JsonSerializable(typeof(ushort))]
+[JsonSerializable(typeof(int))]
+[JsonSerializable(typeof(uint))]
+[JsonSerializable(typeof(long))]
+[JsonSerializable(typeof(ulong))]
+[JsonSerializable(typeof(float))]
+[JsonSerializable(typeof(double))]
+[JsonSerializable(typeof(string))]
+[JsonSerializable(typeof(Color))]
+[JsonSerializable(typeof(List<string>))]
+[JsonSerializable(typeof(BriefLocalSongInfo))]
+[JsonSerializable(typeof(BriefUnknownSongInfo))]
+[JsonSerializable(typeof(BriefCloudOnlineSongInfo))]
+[JsonSerializable(typeof(IDictionary<string, object>))]
+[JsonSerializable(typeof(Dictionary<string, object>))]
+public partial class JsonContext : JsonSerializerContext;
+
+public static class Json
+{
+    public static async Task<T?> ToObjectAsync<T>(string value)
+    {
+        return await Task.Run(() =>
+        {
+            if (JsonContext.Default.GetTypeInfo(typeof(T)) is not JsonTypeInfo<T> jsonTypeInfo)
+            {
+                throw new ArgumentNullException(
+                    nameof(T),
+                    $"JsonSerializable特性中未声明 {typeof(T)}."
+                );
+            }
+            return JsonSerializer.Deserialize(value, jsonTypeInfo);
+        });
+    }
+
+    public static async Task<string> StringifyAsync(object value)
+    {
+        return await Task.Run(() =>
+        {
+            var type = value.GetType();
+            var jsonTypeInfo = JsonContext.Default.GetTypeInfo(type);
+            return jsonTypeInfo is null
+                ? throw new ArgumentNullException(
+                    nameof(value),
+                    $"JsonSerializable特性中未声明 {type}."
+                )
+                : JsonSerializer.Serialize(value, jsonTypeInfo);
+        });
+    }
+}

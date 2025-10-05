@@ -1,0 +1,153 @@
+using System.ComponentModel;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.ViewModels;
+using Windows.Foundation;
+
+namespace UntamedMusicPlayer.Views;
+
+public sealed partial class LyricPage : Page, IDisposable
+{
+    public LyricViewModel ViewModel { get; }
+
+    public LyricPage()
+    {
+        ViewModel = App.GetService<LyricViewModel>();
+        InitializeComponent();
+
+        Data.MusicPlayer.PropertyChanged += MusicPlayer_PropertyChanged;
+    }
+
+    private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
+    {
+        Data.RootPlayBarViewModel!.DetailModeUpdate();
+    }
+
+    private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutSubItem menuItem)
+        {
+            while (menuItem.Items.Count > 3)
+            {
+                menuItem.Items.RemoveAt(3);
+            }
+            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            {
+                var playlistMenuItem = new MenuFlyoutItem
+                {
+                    Text = playlist.Name,
+                    DataContext = playlist,
+                };
+                playlistMenuItem.Click += PlaylistMenuItem_Click;
+                menuItem.Items.Add(playlistMenuItem);
+            }
+        }
+    }
+
+    private void PlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
+        {
+            ViewModel.AddToPlaylistButton_Click(playlist);
+        }
+    }
+
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new NewPlaylistInfoDialog() { XamlRoot = XamlRoot };
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
+        {
+            ViewModel.AddToPlaylistButton_Click(dialog.CreatedPlaylist);
+        }
+    }
+
+    private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
+    {
+        var currentSong = Data.MusicPlayer.CurrentSong;
+        var dialog = new PropertiesDialog(currentSong!) { XamlRoot = XamlRoot };
+        await dialog.ShowAsync();
+    }
+
+    private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Data.MusicPlayer.CurrentSong))
+        {
+            if (ReferenceGrid.ActualWidth > 0 && ReferenceGrid.ActualHeight > 0)
+            {
+                ChangeCoverSize(ReferenceGrid.ActualWidth, ReferenceGrid.ActualHeight);
+            }
+        }
+    }
+
+    private void ReferenceGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        ChangeCoverSize(e.NewSize.Width, e.NewSize.Height);
+    }
+
+    private void ChangeCoverSize(double width, double height)
+    {
+        if (width <= 0 || height <= 0)
+        {
+            return;
+        }
+
+        // 计算可用空间
+        var baseNum = Math.Min(width, height);
+        var scalingMargin = baseNum < 300 ? 50 : baseNum * 0.4;
+        var availableWidth = Math.Max(0, width - scalingMargin);
+        var availableHeight = Math.Max(0, height - scalingMargin);
+
+        var currentCover = Data.MusicPlayer.CurrentSong?.Cover;
+        double coverWidth,
+            coverHeight;
+
+        if (currentCover?.PixelWidth > 0 && currentCover?.PixelHeight > 0)
+        {
+            var aspectRatio = (double)currentCover.PixelWidth / currentCover.PixelHeight;
+
+            var widthBasedHeight = availableWidth / aspectRatio;
+            var heightBasedWidth = availableHeight * aspectRatio;
+
+            (coverWidth, coverHeight) =
+                widthBasedHeight <= availableHeight
+                    ? (availableWidth, widthBasedHeight)
+                    : (heightBasedWidth, availableHeight);
+        }
+        else // 默认正方形
+        {
+            coverWidth = coverHeight = Math.Min(availableWidth, availableHeight);
+        }
+
+        CoverBorder.Width = coverWidth;
+        CoverBorder.Height = coverHeight;
+    }
+
+    private void TextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        var textblock = (sender as TextBlock)!;
+        if (Math.Abs(textblock.FontSize - Settings.LyricPageCurrentFontSize) < 1e-3)
+        {
+            var currentScrollPosition = LyricViewer.VerticalOffset;
+            var point = new Point(0, currentScrollPosition);
+
+            // 计算出目标位置并滚动
+            var targetPosition = textblock.TransformToVisual(LyricViewer).TransformPoint(point);
+
+            LyricViewer.ChangeView(
+                null,
+                targetPosition.Y - LyricViewer.ActualHeight / 2 + 40,
+                null,
+                false
+            );
+        }
+    }
+
+    public void Dispose()
+    {
+        Data.MusicPlayer.PropertyChanged -= MusicPlayer_PropertyChanged;
+    }
+}
