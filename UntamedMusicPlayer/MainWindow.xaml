@@ -1,0 +1,68 @@
+<windowex:WindowEx x:Class="UntamedMusicPlayer.MainWindow"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:local="using:UntamedMusicPlayer"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:ui="using:CommunityToolkit.WinUI"
+                   xmlns:view="using:UntamedMusicPlayer.Views"
+                   xmlns:windowex="using:WinUIEx"
+                   MinWidth="500" MinHeight="500"
+                   Closed="MainWindow_Closed"
+                   PersistenceId="MainWindow"
+                   mc:Ignorable="d">
+
+    <Grid x:Name="RootGrid">
+        <Grid.Resources>
+            <Storyboard x:Name="ShowInfoBarStoryboard">
+                <DoubleAnimation Storyboard.TargetName="ErrorInfoBar"
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)"
+                                 From="100" To="0"
+                                 Duration="0:0:0.1"/>
+                <DoubleAnimation Storyboard.TargetName="ErrorInfoBar"
+                                 Storyboard.TargetProperty="Opacity" From="0"
+                                 To="1" Duration="0:0:0.1"/>
+            </Storyboard>
+            <Storyboard x:Name="HideInfoBarStoryboard">
+                <DoubleAnimation Storyboard.TargetName="ErrorInfoBar"
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)"
+                                 From="0" To="100"
+                                 Duration="0:0:0.1"/>
+                <DoubleAnimation Storyboard.TargetName="ErrorInfoBar"
+                                 Storyboard.TargetProperty="Opacity" From="1"
+                                 To="0" Duration="0:0:0.1"/>
+            </Storyboard>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="117"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="BackgroundGrid"
+              Grid.Row="0" Grid.RowSpan="2"
+              Canvas.ZIndex="0"/>
+        <Frame x:Name="ShellFrame"
+               Grid.Row="0"
+               Canvas.ZIndex="1"/>
+        <Border x:Name="ShadowTarget"/>
+        <InfoBar x:Name="ErrorInfoBar"
+                 Grid.Row="0"
+                 MaxWidth="482"
+                 Margin="16" HorizontalAlignment="Right"
+                 VerticalAlignment="Bottom"
+                 Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                 Canvas.ZIndex="2" IsClosable="True"
+                 IsIconVisible="False" Opacity="1"
+                 Severity="Informational" Visibility="Collapsed">
+            <HyperlinkButton x:Name="SendFeedbackButton" x:Uid="Main_SendFeedback"
+                             Margin="-12,-10,0,9"
+                             NavigateUri="https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer/issues"/>
+            <InfoBar.Shadow>
+                <ThemeShadow/>
+            </InfoBar.Shadow>
+            <InfoBar.RenderTransform>
+                <CompositeTransform/>
+            </InfoBar.RenderTransform>
+        </InfoBar>
+        <view:RootPlayBarView Grid.Row="1" Canvas.ZIndex="1"/>
+    </Grid>
+</windowex:WindowEx>
