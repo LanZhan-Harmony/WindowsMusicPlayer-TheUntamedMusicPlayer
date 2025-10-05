@@ -7,13 +7,15 @@ using Windows.Media;
 using Windows.Media.Playback;
 using Windows.Storage.Streams;
 
-namespace The_Untamed_Music_Player.Services;
+namespace The_Untamed_Music_Player.Playback;
 
 /// <summary>
 /// 系统媒体传输控件管理器
 /// </summary>
-public partial class SystemMediaTransportControlsManager : IDisposable
+public partial class SMTCManager : IDisposable
 {
+    private readonly PlaybackState _state;
+
     /// <summary>
     /// 用于获取SMTC的临时播放器
     /// </summary>
@@ -40,27 +42,13 @@ public partial class SystemMediaTransportControlsManager : IDisposable
     private readonly SystemMediaTransportControlsTimelineProperties _timelineProperties = new();
 
     /// <summary>
-    /// 播放队列歌曲数量
-    /// </summary>
-    private int _playQueueLength = 0;
-
-    /// <summary>
-    /// 当前歌曲在播放队列中的索引
-    /// </summary>
-    private int _playQueueIndex = 0;
-
-    /// <summary>
-    /// 循环播放模式
-    /// </summary>
-    private byte _repeatMode = 0;
-
-    /// <summary>
     /// 播放状态变化事件
     /// </summary>
     public event Action<SystemMediaTransportControlsButton>? ButtonPressed;
 
-    public SystemMediaTransportControlsManager()
+    public SMTCManager(PlaybackState state)
     {
+        _state = state;
         _systemControls = _tempPlayer.SystemMediaTransportControls;
         _displayUpdater = _systemControls.DisplayUpdater;
         _displayUpdater.Type = MediaPlaybackType.Music;
@@ -117,26 +105,12 @@ public partial class SystemMediaTransportControlsManager : IDisposable
     /// <summary>
     /// 更新播放队列信息以计算按钮状态
     /// </summary>
-    /// <param name="playQueueIndex">当前播放索引</param>
-    /// <param name="playQueueLength">播放队列长度</param>
-    /// <param name="repeatMode">循环模式</param>
-    public void UpdatePlayQueueInfo(int playQueueIndex, int playQueueLength, byte repeatMode)
+    public void UpdateButtonState()
     {
-        _playQueueIndex = playQueueIndex;
-        _playQueueLength = playQueueLength;
-        _repeatMode = repeatMode;
-
-        UpdateNavigationButtonsState();
-    }
-
-    /// <summary>
-    /// 更新导航按钮状态
-    /// </summary>
-    private void UpdateNavigationButtonsState()
-    {
-        var isFirstSong = _playQueueIndex == 0;
-        var isLastSong = _playQueueIndex == _playQueueLength - 1;
-        var isRepeatOffOrSingle = _repeatMode == 0 || _repeatMode == 2;
+        var isFirstSong = _state.PlayQueueIndex == 0;
+        var isLastSong = _state.PlayQueueIndex == _state.PlayQueueCount - 1;
+        var isRepeatOffOrSingle =
+            _state.RepeatMode == RepeatState.NoRepeat || _state.RepeatMode == RepeatState.RepeatOne;
 
         _systemControls.IsPreviousEnabled = !(isFirstSong && isRepeatOffOrSingle);
         _systemControls.IsNextEnabled = !(isLastSong && isRepeatOffOrSingle);
@@ -145,62 +119,70 @@ public partial class SystemMediaTransportControlsManager : IDisposable
     /// <summary>
     /// 更新媒体信息
     /// </summary>
-    /// <param name="title">歌曲标题</param>
-    /// <param name="artist">艺术家</param>
-    /// <param name="totalDuration">总时长</param>
-    public void UpdateMediaInfo(string title, string artist, TimeSpan totalDuration)
+    public void UpdateMediaInfo()
     {
-        _displayUpdater.MusicProperties.Title = title;
+        _displayUpdater.MusicProperties.Title = _state.CurrentSong!.Title;
         _displayUpdater.MusicProperties.Artist =
-            artist == "SongInfo_UnknownArtist".GetLocalized() ? "" : artist;
-        _timelineProperties.MaxSeekTime = totalDuration;
-        _timelineProperties.EndTime = totalDuration;
+            _state.CurrentSong.ArtistsStr == "SongInfo_UnknownArtist".GetLocalized()
+                ? ""
+                : _state.CurrentSong.ArtistsStr;
+        _timelineProperties.MaxSeekTime = _state.TotalPlayingTime;
+        _timelineProperties.EndTime = _state.TotalPlayingTime;
     }
 
     /// <summary>
     /// 设置封面图片
     /// </summary>
     /// <param name="song">当前歌曲</param>
-    public async Task SetCoverImageAsync(IDetailedSongInfoBase song)
+    public async Task SetCoverImageAndUpdateAsync()
     {
-        if (song.Cover is null)
+        var song = _state.CurrentSong!;
+        var defaultCoverUri = new Uri("ms-appx:///Assets/NoCover.png");
+
+        if (song.Cover is null) // 没有封面时使用默认图片
         {
-            _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
-                new Uri("ms-appx:///Assets/NoCover.png")
-            );
+            _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(defaultCoverUri);
+            _displayUpdater.Update();
             return;
         }
 
-        if (song.IsOnline)
+        try
         {
-            try
+            if (song.IsOnline) // 在线歌曲:直接使用 URL
             {
-                var info = (IDetailedOnlineSongInfo)song;
-                _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
-                    new Uri(info.CoverPath!)
-                );
+                var coverPath = (song as IDetailedOnlineSongInfo)?.CoverPath;
+                _displayUpdater.Thumbnail = coverPath is not null
+                    ? RandomAccessStreamReference.CreateFromUri(new Uri(coverPath))
+                    : RandomAccessStreamReference.CreateFromUri(defaultCoverUri);
             }
-            catch { }
+            else // 本地歌曲:从byte[]加载
+            {
+                var localSong = song as DetailedLocalSongInfo;
+                if (localSong?.CoverBuffer is not null)
+                {
+                    _currentCoverStream?.Dispose();
+                    _currentCoverStream = new InMemoryRandomAccessStream();
+                    await _currentCoverStream.WriteAsync(localSong.CoverBuffer.AsBuffer());
+                    _currentCoverStream.Seek(0);
+                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromStream(
+                        _currentCoverStream
+                    );
+                }
+                else
+                {
+                    _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
+                        defaultCoverUri
+                    );
+                }
+            }
         }
-        else
+        catch
         {
-            try
-            {
-                var info = (DetailedLocalSongInfo)song;
-                _currentCoverStream?.Dispose();
-                _currentCoverStream = new InMemoryRandomAccessStream();
-                await _currentCoverStream.WriteAsync(info.CoverBuffer.AsBuffer());
-                _currentCoverStream.Seek(0);
-                _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromStream(
-                    _currentCoverStream
-                );
-            }
-            catch
-            {
-                _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
-                    new Uri("ms-appx:///Assets/NoCover.png")
-                );
-            }
+            _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(defaultCoverUri);
+        }
+        finally
+        {
+            _displayUpdater.Update();
         }
     }
 
@@ -212,14 +194,6 @@ public partial class SystemMediaTransportControlsManager : IDisposable
     {
         _timelineProperties.Position = currentTime;
         _systemControls.UpdateTimelineProperties(_timelineProperties);
-    }
-
-    /// <summary>
-    /// 应用所有更改
-    /// </summary>
-    public void Update()
-    {
-        _displayUpdater.Update();
     }
 
     public void Dispose()

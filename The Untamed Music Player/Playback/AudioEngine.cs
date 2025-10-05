@@ -9,7 +9,7 @@ using ZLogger;
 
 namespace The_Untamed_Music_Player.Playback;
 
-public class AudioEngine : IDisposable
+public partial class AudioEngine : IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<AudioEngine>();
     private readonly PlaybackState _state;
@@ -39,14 +39,14 @@ public class AudioEngine : IDisposable
             case nameof(PlaybackState.CurrentVolume):
                 if (!_state.IsMute)
                 {
-                    SetVolumeValue(_state.CurrentVolume / 100.0);
+                    SetVolume(_state.CurrentVolume / 100.0);
                 }
                 break;
             case nameof(PlaybackState.IsMute):
-                SetVolumeValue(_state.IsMute ? 0.0 : _state.CurrentVolume / 100.0);
+                SetVolume(_state.IsMute ? 0.0 : _state.CurrentVolume / 100.0);
                 break;
             case nameof(PlaybackState.PlaySpeed):
-                SetPlaybackSpeed(_state.PlaySpeed);
+                SetSpeed(_state.PlaySpeed);
                 break;
         }
     }
@@ -65,8 +65,8 @@ public class AudioEngine : IDisposable
         LoadBassPlugins();
 
         // 设置同步回调
-        _syncEndCallback += (_, _, _, _) => PlaybackEnded?.Invoke();
-        _syncFailCallback += (_, _, _, _) => PlaybackFailed?.Invoke();
+        _syncEndCallback += OnPlaybackEnded;
+        _syncFailCallback += OnPlaybackFailed;
 
         // 设置WASAPI回调
         _wasapiProc = WasapiProc;
@@ -98,6 +98,10 @@ public class AudioEngine : IDisposable
         }
     }
 
+    private void OnPlaybackEnded(int _1, int _2, int _3, nint _4) => PlaybackEnded?.Invoke();
+
+    private void OnPlaybackFailed(int _1, int _2, int _3, nint _4) => PlaybackFailed?.Invoke();
+
     /// <summary>
     /// WASAPI回调处理程序
     /// </summary>
@@ -115,13 +119,13 @@ public class AudioEngine : IDisposable
         return bytesRead;
     }
 
-    public bool LoadSong(string path)
+    public bool LoadSong()
     {
         try
         {
-            FreeCurrentStreams();
-            CreateStreamFromPath(path);
-            SetVolumeValue(_state.IsMute ? 0.0 : _state.CurrentVolume / 100.0);
+            FreeStreams();
+            CreateStream();
+            SetVolume(_state.IsMute ? 0.0 : _state.CurrentVolume / 100.0);
             return true;
         }
         catch
@@ -134,13 +138,14 @@ public class AudioEngine : IDisposable
     /// 从文件路径创建音频流
     /// </summary>
     /// <param name="path">文件路径</param>
-    private void CreateStreamFromPath(string path)
+    private void CreateStream()
     {
-        FreeCurrentStreams();
+        FreeStreams();
         const BassFlags flags =
             BassFlags.Unicode | BassFlags.Float | BassFlags.AsyncFile | BassFlags.Decode;
 
-        _currentStream = _state.CurrentSong!.IsOnline
+        var path = _state.CurrentSong!.Path;
+        _currentStream = _state.CurrentSong.IsOnline
             ? Bass.CreateStream(path, 0, flags, null)
             : Bass.CreateStream(path, 0, 0, flags);
         if (_currentStream == 0)
@@ -160,7 +165,7 @@ public class AudioEngine : IDisposable
             _currentStream = 0;
         }
 
-        SetPlaybackSpeed(_state.PlaySpeed);
+        SetSpeed(_state.PlaySpeed);
 
         Bass.ChannelSetSync(_fxStream, SyncFlags.End, 0, _syncEndCallback);
         Bass.ChannelSetSync(_fxStream, SyncFlags.Stalled, 0, _syncFailCallback);
@@ -171,10 +176,19 @@ public class AudioEngine : IDisposable
     }
 
     /// <summary>
-    /// 释放当前音频流
+    /// 释放音频流
     /// </summary>
-    private void FreeCurrentStreams()
+    private void FreeStreams()
     {
+        if (BassWasapi.IsStarted)
+        {
+            BassWasapi.Stop(true);
+        }
+        if (_wasapiDevice != -1)
+        {
+            BassWasapi.Free();
+            _wasapiDevice = -1;
+        }
         if (_fxStream != 0)
         {
             Bass.StreamFree(_fxStream);
@@ -221,7 +235,7 @@ public class AudioEngine : IDisposable
     /// 设置播放速度
     /// </summary>
     /// <param name="speed"></param>
-    private void SetPlaybackSpeed(double speed)
+    private void SetSpeed(double speed)
     {
         if (_fxStream != 0)
         {
@@ -234,7 +248,7 @@ public class AudioEngine : IDisposable
     /// 设置音量
     /// </summary>
     /// <param name="volume"></param>
-    private void SetVolumeValue(double volume)
+    private void SetVolume(double volume)
     {
         if (_fxStream != 0)
         {
@@ -242,5 +256,12 @@ public class AudioEngine : IDisposable
         }
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        FreeStreams();
+        Bass.Free();
+        _syncEndCallback -= OnPlaybackEnded;
+        _syncFailCallback -= OnPlaybackFailed;
+        GC.SuppressFinalize(this);
+    }
 }
