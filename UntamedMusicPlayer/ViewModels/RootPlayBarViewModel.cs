@@ -115,8 +115,7 @@ public partial class RootPlayBarViewModel : ObservableObject
 
             fadeOutStoryboard.Begin();
 
-            // 强制调用 Dispose 方法
-            Data.LyricPage?.Dispose();
+            Data.LyricPage?.Dispose(); // 强制调用 Dispose 方法
 
             IsDetail = false;
         }

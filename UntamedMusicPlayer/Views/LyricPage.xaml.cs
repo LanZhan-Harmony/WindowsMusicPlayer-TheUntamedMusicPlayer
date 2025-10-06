@@ -149,5 +149,6 @@ public sealed partial class LyricPage : Page, IDisposable
     public void Dispose()
     {
         Data.MusicPlayer.PropertyChanged -= MusicPlayer_PropertyChanged;
+        Data.LyricPage = null;
     }
 }
