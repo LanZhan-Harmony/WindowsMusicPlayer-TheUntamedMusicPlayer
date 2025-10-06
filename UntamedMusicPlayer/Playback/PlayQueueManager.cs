@@ -28,13 +28,16 @@ public partial class PlayQueueManager : ObservableObject
     public ObservableCollection<IndexedPlayQueueSong> CurrentQueue =>
         _state.ShuffleMode == ShuffleState.Normal ? NormalPlayQueue : ShuffledPlayQueue;
 
+    public event Action? OnPlayQueueEmpty;
+    public event Action? OnCurrentSongRemoved;
+
     public PlayQueueManager(SharedPlaybackState state)
     {
         _state = state;
         _state.PropertyChanged += OnStateChanged;
     }
 
-    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnStateChanged(object? _, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(SharedPlaybackState.ShuffleMode))
         {
@@ -87,23 +90,7 @@ public partial class PlayQueueManager : ObservableObject
     }
 
     /// <summary>
-    /// 将单个歌曲添加到下一首播放
-    /// </summary>
-    /// <param name="info"></param>
-    public void AddSongToNextPlay(IBriefSongInfoBase info)
-    {
-        var insertIndex = _state.PlayQueueIndex + 1;
-        CurrentQueue.Insert(insertIndex, new IndexedPlayQueueSong(insertIndex, info));
-        _state.PlayQueueCount++;
-        UpdateQueueIndexes(insertIndex + 1);
-        if (_state.ShuffleMode == ShuffleState.Shuffled)
-        {
-            NormalPlayQueue.Add(new IndexedPlayQueueSong(NormalPlayQueue.Count, info));
-        }
-    }
-
-    /// <summary>
-    /// 将歌曲列表添加到下一首播放
+    /// 将歌曲添加到下一首播放
     /// </summary>
     /// <param name="songs"></param>
     public void AddSongsToNextPlay(IList<IBriefSongInfoBase> songs)
@@ -126,21 +113,7 @@ public partial class PlayQueueManager : ObservableObject
     }
 
     /// <summary>
-    /// 将单个歌曲添加到播放队列
-    /// </summary>
-    /// <param name="info"></param>
-    public void AddSongToEnd(IBriefSongInfoBase info)
-    {
-        CurrentQueue.Add(new IndexedPlayQueueSong(CurrentQueue.Count, info));
-        _state.PlayQueueCount++;
-        if (_state.ShuffleMode == ShuffleState.Shuffled)
-        {
-            NormalPlayQueue.Add(new IndexedPlayQueueSong(NormalPlayQueue.Count, info));
-        }
-    }
-
-    /// <summary>
-    /// 将歌曲列表添加到播放队列
+    /// 将歌曲添加到播放队列
     /// </summary>
     /// <param name="songs"></param>
     public void AddSongsToEnd(IList<IBriefSongInfoBase> songs)
@@ -160,7 +133,7 @@ public partial class PlayQueueManager : ObservableObject
     }
 
     /// <summary>
-    /// 将歌曲列表插入到指定位置
+    /// 将歌曲插入到指定位置
     /// </summary>
     /// <param name="songs"></param>
     /// <param name="index"></param>
@@ -235,6 +208,36 @@ public partial class PlayQueueManager : ObservableObject
         }
     }
 
+    /// <summary>
+    /// 移除歌曲
+    /// </summary>
+    /// <returns></returns>
+    public void RemoveSong()
+    {
+        var removingIndex = _state.PlayQueueIndex;
+        CurrentQueue.RemoveAt(removingIndex);
+        _state.PlayQueueCount--;
+        if (_state.PlayQueueCount == 0)
+        {
+            OnPlayQueueEmpty?.Invoke();
+            return;
+        }
+        if (removingIndex < _state.PlayQueueIndex)
+        {
+            _state.PlayQueueIndex--;
+        }
+        else if (removingIndex == _state.PlayQueueIndex)
+        {
+            if (removingIndex == _state.PlayQueueCount)
+            {
+                _state.PlayQueueIndex = 0;
+            }
+            // 保持当前索引不变，下一首歌会自动补上
+            OnCurrentSongRemoved?.Invoke();
+        }
+        UpdateQueueIndexes(removingIndex);
+    }
+
     public int GetPreviousSongIndex()
     {
         if (_state.RepeatMode == RepeatState.RepeatAll)
@@ -270,6 +273,18 @@ public partial class PlayQueueManager : ObservableObject
         }
     }
 
+    public void Reset()
+    {
+        NormalPlayQueue.Clear();
+        ShuffledPlayQueue.Clear();
+        _state.PlayQueueIndex = -1;
+        _state.PlayQueueCount = 0;
+        _state.CurrentBriefSong = null;
+        _state.CurrentSong = null;
+        _playQueueName = "";
+        _ = FileManager.SavePlayQueueDataAsync(NormalPlayQueue, ShuffledPlayQueue);
+    }
+
     public async Task LoadStateAsync()
     {
         try
@@ -292,7 +307,7 @@ public partial class PlayQueueManager : ObservableObject
                 return;
             }
 
-            _state.CurrentBriefSong = cacheMode switch
+            IBriefSongInfoBase? currentBriefSong = cacheMode switch
             {
                 SourceMode.Local =>
                     await _localSettingsService.ReadSettingAsync<BriefLocalSongInfo>(
@@ -308,10 +323,14 @@ public partial class PlayQueueManager : ObservableObject
                     ),
                 _ => null,
             };
-            if (_state.CurrentBriefSong is not null)
+            if (
+                currentBriefSong is not null
+                && NormalPlayQueue.FirstOrDefault(song => song.Song == currentBriefSong) is not null
+            )
             {
+                _state.CurrentBriefSong = currentBriefSong;
                 _state.CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-                    _state.CurrentBriefSong
+                    currentBriefSong
                 );
             }
         }
