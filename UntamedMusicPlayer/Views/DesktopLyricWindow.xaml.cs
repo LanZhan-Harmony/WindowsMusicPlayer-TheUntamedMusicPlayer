@@ -307,5 +307,8 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         _updateTimer250ms = null;
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        Data.DesktopLyricWindow = null;
+    }
 }

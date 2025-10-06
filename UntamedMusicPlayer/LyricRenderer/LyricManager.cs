@@ -1,17 +1,20 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Dispatching;
 using UntamedMusicPlayer.Messages;
+using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
 
 namespace UntamedMusicPlayer.LyricRenderer;
 
-public partial class LyricManager
-    : ObservableRecipient,
+public partial class LyricManager(SharedPlaybackState state)
+    : ObservableRecipient(StrongReferenceMessenger.Default),
         IRecipient<FontSizeChangeMessage>,
         IDisposable
 {
-    private readonly SharedPlaybackState _state;
+    private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
+    private readonly SharedPlaybackState _state = state;
 
     /// <summary>
     /// 当前歌词切片在集合中的索引
@@ -29,23 +32,6 @@ public partial class LyricManager
     /// </summary>
     [ObservableProperty]
     public partial List<LyricSlice> CurrentLyricSlices { get; set; } = [];
-
-    public LyricManager(SharedPlaybackState state)
-        : base(StrongReferenceMessenger.Default)
-    {
-        _state = state;
-        _state.PropertyChanged += OnStateChanged;
-    }
-
-    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        switch (e.PropertyName)
-        {
-            case nameof(SharedPlaybackState.CurrentPlayingTime):
-                UpdateCurrentLyric();
-                break;
-        }
-    }
 
     public void Receive(FontSizeChangeMessage message)
     {
@@ -94,27 +80,34 @@ public partial class LyricManager
     /// <summary>
     /// 更新当前歌词状态
     /// </summary>
-    /// <param name="currentTime">当前播放时间（毫秒）</param>
     public void UpdateCurrentLyric()
     {
-        var currentTime = _state.CurrentPlayingTime.TotalMilliseconds;
-        if (CurrentLyricSlices.Count == 0)
+        if (
+            CurrentLyricSlices.Count == 0
+            || Data.LyricPage is null && Data.DesktopLyricWindow is null
+        )
         {
             return;
         }
-        var newIndex = GetCurrentLyricIndex(currentTime);
+
+        var newIndex = GetCurrentLyricIndex(_state.CurrentPlayingTime.TotalMilliseconds);
         if (newIndex != _currentLyricIndex)
         {
             if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyricSlices.Count)
             {
-                CurrentLyricSlices[_currentLyricIndex].IsCurrent = false;
+                _dispatcher.TryEnqueue(() =>
+                    CurrentLyricSlices[_currentLyricIndex].IsCurrent = false
+                );
             }
             _currentLyricIndex = newIndex;
 
             if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyricSlices.Count)
             {
-                CurrentLyricSlices[_currentLyricIndex].IsCurrent = true;
-                CurrentLyricContent = CurrentLyricSlices[_currentLyricIndex].Content;
+                _dispatcher.TryEnqueue(() =>
+                {
+                    CurrentLyricSlices[_currentLyricIndex].IsCurrent = true;
+                    CurrentLyricContent = CurrentLyricSlices[_currentLyricIndex].Content;
+                });
             }
         }
     }
@@ -132,7 +125,6 @@ public partial class LyricManager
     public void Dispose()
     {
         Messenger.Unregister<FontSizeChangeMessage>(this);
-        _state.PropertyChanged -= OnStateChanged;
         GC.SuppressFinalize(this);
     }
 }

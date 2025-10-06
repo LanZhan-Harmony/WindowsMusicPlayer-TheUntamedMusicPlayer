@@ -3,6 +3,7 @@ using ManagedBass;
 using ManagedBass.Fx;
 using ManagedBass.Wasapi;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Dispatching;
 using UntamedMusicPlayer.Services;
 using ZLogger;
 
@@ -11,6 +12,7 @@ namespace UntamedMusicPlayer.Playback;
 public partial class AudioEngine : IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<AudioEngine>();
+    private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
     private readonly SharedPlaybackState _state;
     private int _currentStream = 0;
     private int _fxStream = 0;
@@ -29,7 +31,7 @@ public partial class AudioEngine : IDisposable
         _state.PropertyChanged += OnStateChanged;
     }
 
-    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnStateChanged(object? _, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {
@@ -95,9 +97,11 @@ public partial class AudioEngine : IDisposable
         }
     }
 
-    private void OnPlaybackEnded(int _1, int _2, int _3, nint _4) => PlaybackEnded?.Invoke();
+    private void OnPlaybackEnded(int _1, int _2, int _3, nint _4) =>
+        _dispatcher.TryEnqueue(() => PlaybackEnded?.Invoke());
 
-    private void OnPlaybackFailed(int _1, int _2, int _3, nint _4) => PlaybackFailed?.Invoke();
+    private void OnPlaybackFailed(int _1, int _2, int _3, nint _4) =>
+        _dispatcher.TryEnqueue(() => PlaybackFailed?.Invoke());
 
     /// <summary>
     /// WASAPI回调处理程序
@@ -116,19 +120,11 @@ public partial class AudioEngine : IDisposable
         return bytesRead;
     }
 
-    public bool LoadSong()
+    public void LoadSong()
     {
-        try
-        {
-            FreeStreams();
-            CreateStream();
-            SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+        FreeStreams();
+        CreateStream();
+        SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0);
     }
 
     /// <summary>
@@ -250,6 +246,80 @@ public partial class AudioEngine : IDisposable
         if (_fxStream != 0)
         {
             Bass.ChannelSetAttribute(_fxStream, ChannelAttribute.Volume, (float)volume);
+        }
+    }
+
+    public async Task UpdatePosition()
+    {
+        var position = GetPositionSeconds();
+        if (position >= 0)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            _dispatcher.TryEnqueue(() =>
+            {
+                _state.CurrentPlayingTime = TimeSpan.FromSeconds(position);
+                tcs.SetResult(true);
+            });
+            await tcs.Task;
+        }
+    }
+
+    public void SkipBack10s()
+    {
+        var currentPosition = GetPositionSeconds();
+        if (currentPosition >= 0)
+        {
+            var newPosition = Math.Max(0, currentPosition - 10);
+            SetPosition(newPosition);
+        }
+    }
+
+    public void SkipForward30s()
+    {
+        var currentPosition = GetPositionSeconds();
+        if (currentPosition >= 0)
+        {
+            var newPosition = Math.Min(_state.TotalPlayingTime.TotalSeconds, currentPosition + 30);
+            SetPosition(newPosition);
+        }
+    }
+
+    /// <summary>
+    /// 获取当前播放位置（秒）
+    /// </summary>
+    /// <returns></returns>
+    public double GetPositionSeconds()
+    {
+        if (_fxStream != 0)
+        {
+            var positionBytes = Bass.ChannelGetPosition(_fxStream);
+            var positionSeconds = Bass.ChannelBytes2Seconds(_fxStream, positionBytes);
+            return positionSeconds;
+        }
+        return -1;
+    }
+
+    public async void SetPosition(double targetSeconds)
+    {
+        if (_fxStream != 0)
+        {
+            var targetBytes = Bass.ChannelSeconds2Bytes(_fxStream, targetSeconds);
+            var result = Bass.ChannelSetPosition(_fxStream, targetBytes);
+            if (!result)
+            {
+                var error = Bass.LastError;
+                if (error == Errors.Position)
+                {
+                    var retryCount = 0;
+                    while (!result && retryCount < 20) // 最多重试20次
+                    {
+                        await Task.Delay(100);
+                        result = Bass.ChannelSetPosition(_fxStream, targetBytes);
+                        retryCount++;
+                    }
+                }
+            }
+            _state.CurrentPlayingTime = TimeSpan.FromSeconds(targetSeconds);
         }
     }
 

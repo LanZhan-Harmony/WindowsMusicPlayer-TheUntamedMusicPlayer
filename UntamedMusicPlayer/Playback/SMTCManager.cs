@@ -189,10 +189,9 @@ public partial class SMTCManager : IDisposable
     /// <summary>
     /// 更新时间轴属性
     /// </summary>
-    /// <param name="currentTime">当前播放时间</param>
-    public void UpdateTimelinePosition(TimeSpan currentTime)
+    public void UpdateTimelinePosition()
     {
-        _timelineProperties.Position = currentTime;
+        _timelineProperties.Position = _state.CurrentPlayingTime;
         _systemControls.UpdateTimelineProperties(_timelineProperties);
     }
 
