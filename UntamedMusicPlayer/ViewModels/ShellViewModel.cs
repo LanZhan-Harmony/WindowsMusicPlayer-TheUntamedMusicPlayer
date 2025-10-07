@@ -197,7 +197,7 @@ public partial class ShellViewModel : ObservableObject
         });
         if (newSongs.Count > 0)
         {
-            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", newSongs);
+            Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
             Data.MusicPlayer.PlaySongByInfo(newSongs[0]);
         }
     }

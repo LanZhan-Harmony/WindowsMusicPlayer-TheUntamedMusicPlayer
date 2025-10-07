@@ -37,11 +37,8 @@ public static class LoggingService
     /// </summary>
     public static void Initialize()
     {
-        // 触发日志工厂创建
-        _ = LoggerFactory;
-
-        // 启动定期清理任务
-        StartPeriodicCleanup();
+        _ = LoggerFactory; // 触发日志工厂创建
+        _ = Task.Run(CleanupOldLogFiles); // 启动定期清理任务
     }
 
     /// <summary>
@@ -58,10 +55,7 @@ public static class LoggingService
     /// <summary>
     /// 关闭日志服务
     /// </summary>
-    public static void Shutdown()
-    {
-        _loggerFactory?.Dispose();
-    }
+    public static void Shutdown() => _loggerFactory?.Dispose();
 
     /// <summary>
     /// 创建日志工厂
@@ -117,23 +111,6 @@ public static class LoggingService
     }
 
     /// <summary>
-    /// 启动定期清理任务
-    /// </summary>
-    private static void StartPeriodicCleanup()
-    {
-        // 立即执行一次清理
-        _ = Task.Run(CleanupOldLogFiles);
-
-        // 每天执行一次清理
-        var timer = new Timer(
-            _ => Task.Run(CleanupOldLogFiles),
-            null,
-            TimeSpan.FromHours(24),
-            TimeSpan.FromHours(24)
-        );
-    }
-
-    /// <summary>
     /// 清理7天前的日志文件
     /// </summary>
     private static void CleanupOldLogFiles()
@@ -158,17 +135,11 @@ public static class LoggingService
                     {
                         File.Delete(file);
                     }
-                    catch
-                    {
-                        // 忽略删除失败的文件
-                    }
+                    catch { } // 忽略删除失败的文件
                 }
             }
         }
-        catch
-        {
-            // 忽略清理过程中的异常
-        }
+        catch { } // 忽略清理过程中的异常
     }
 }
 

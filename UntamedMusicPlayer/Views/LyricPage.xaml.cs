@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Foundation;
 
@@ -17,7 +18,7 @@ public sealed partial class LyricPage : Page, IDisposable
         ViewModel = App.GetService<LyricViewModel>();
         InitializeComponent();
 
-        Data.MusicPlayer.PropertyChanged += MusicPlayer_PropertyChanged;
+        Data.PlayState.PropertyChanged += OnStateChanged;
     }
 
     private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
@@ -67,14 +68,14 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        var currentSong = Data.MusicPlayer.CurrentSong;
+        var currentSong = Data.PlayState.CurrentSong;
         var dialog = new PropertiesDialog(currentSong!) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
     }
 
-    private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(Data.MusicPlayer.CurrentSong))
+        if (e.PropertyName == nameof(SharedPlaybackState.CurrentSong))
         {
             if (ReferenceGrid.ActualWidth > 0 && ReferenceGrid.ActualHeight > 0)
             {
@@ -101,7 +102,7 @@ public sealed partial class LyricPage : Page, IDisposable
         var availableWidth = Math.Max(0, width - scalingMargin);
         var availableHeight = Math.Max(0, height - scalingMargin);
 
-        var currentCover = Data.MusicPlayer.CurrentSong?.Cover;
+        var currentCover = Data.PlayState.CurrentSong?.Cover;
         double coverWidth,
             coverHeight;
 
@@ -148,7 +149,7 @@ public sealed partial class LyricPage : Page, IDisposable
 
     public void Dispose()
     {
-        Data.MusicPlayer.PropertyChanged -= MusicPlayer_PropertyChanged;
+        Data.PlayState.PropertyChanged -= OnStateChanged;
         Data.LyricPage = null;
     }
 }

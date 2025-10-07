@@ -6,6 +6,7 @@ using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using ZLinq;
@@ -98,7 +99,7 @@ public sealed partial class PlayQueuePage : Page
 
     private void PlayQueuePage_Loaded(object sender, RoutedEventArgs e)
     {
-        var currentSong = Data.MusicPlayer.CurrentBriefSong;
+        var currentSong = Data.PlayState.CurrentBriefSong;
         if (currentSong is null)
         {
             return;
@@ -145,7 +146,7 @@ public sealed partial class PlayQueuePage : Page
             && grid.DataContext is IndexedPlayQueueSong songInfo
         )
         {
-            var isCurrentlyPlaying = Data.MusicPlayer.PlayQueueIndex == songInfo.Index;
+            var isCurrentlyPlaying = Data.PlayState.PlayQueueIndex == songInfo.Index;
             playingFontIcon.Visibility = isCurrentlyPlaying
                 ? Visibility.Visible
                 : Visibility.Collapsed;

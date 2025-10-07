@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI.Dispatching;
 using UntamedMusicPlayer.Contracts.Models;
@@ -57,6 +58,20 @@ public partial class SMTCManager : IDisposable
         _systemControls.ButtonPressed += OnSystemControlsButtonPressed;
         _timelineProperties.StartTime = TimeSpan.Zero;
         _timelineProperties.MinSeekTime = TimeSpan.Zero;
+
+        _state.PropertyChanged += OnStateChanged;
+    }
+
+    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (
+            e.PropertyName
+            is nameof(SharedPlaybackState.RepeatMode)
+                or nameof(SharedPlaybackState.PlayQueueIndex)
+        )
+        {
+            UpdateButtonState();
+        }
     }
 
     /// <summary>
@@ -77,10 +92,8 @@ public partial class SMTCManager : IDisposable
     /// 更新播放状态
     /// </summary>
     /// <param name="playbackStatus">播放状态</param>
-    public void UpdatePlaybackStatus(MediaPlaybackStatus playbackStatus)
-    {
+    public void UpdatePlaybackStatus(MediaPlaybackStatus playbackStatus) =>
         _systemControls.PlaybackStatus = playbackStatus;
-    }
 
     /// <summary>
     /// 设置按钮是否可用
