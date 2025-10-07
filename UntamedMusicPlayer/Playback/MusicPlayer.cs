@@ -1,5 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.LyricRenderer;
@@ -11,7 +9,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.Playback;
 
-public partial class MusicPlayer : ObservableRecipient, IDisposable
+public partial class MusicPlayer : IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<MusicPlayer>();
     private readonly AudioEngine _audioEngine;
@@ -37,7 +35,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// <summary>
     /// 播放器共享状态
     /// </summary>
-    public SharedPlaybackState State { get; } = new();
+    public SharedPlaybackState State { get; set; }
 
     /// <summary>
     /// 是否已经加载完成
@@ -50,12 +48,12 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     public event Action<bool>? BarViewAvailabilityChanged;
 
     public MusicPlayer()
-        : base(StrongReferenceMessenger.Default)
     {
-        _audioEngine = new AudioEngine(State);
-        _queueManager = new PlayQueueManager(State);
-        _smtcManager = new SMTCManager(State);
-        _lyricManager = new LyricManager(State);
+        State = Data.PlayState = new();
+        _audioEngine = new(State);
+        _queueManager = Data.PlayQueueManager = new(State);
+        _smtcManager = new(State);
+        _lyricManager = Data.LyricManager = new(State);
 
         // 设置事件处理
         _audioEngine.PlaybackEnded += OnPlaybackEnded;
@@ -148,6 +146,15 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
                 .FirstOrDefault(song => song.Song == info)
                 ?.Index ?? 0;
         PlaySongByIndex(index, false);
+    }
+
+    /// <summary>
+    /// 按索引歌曲信息播放歌曲
+    /// </summary>
+    /// <param name="info"></param>
+    public void PlaySongByIndexedInfo(IndexedPlayQueueSong info)
+    {
+        PlaySongByIndex(info.Index);
     }
 
     /// <summary>
@@ -254,19 +261,26 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     }
 
     /// <summary>
+    /// 切换静音状态
+    /// </summary>
+    public void MuteUnmuteUpdate() => State.IsMute = !State.IsMute;
+
+    /// <summary>
     /// 播放
     /// </summary>
     public void Play()
     {
-        _positionUpdateTimer = new Timer(
-            UpdateTimerHandler,
-            null,
-            TimeSpan.FromMilliseconds(0),
-            TimeSpan.FromMilliseconds(250)
-        );
-        _audioEngine.Play();
-        State.PlayState = MediaPlaybackState.Playing;
-        _smtcManager.UpdatePlaybackStatus(MediaPlaybackStatus.Playing);
+        if (_audioEngine.Play())
+        {
+            _positionUpdateTimer = new Timer(
+                UpdateTimerHandler,
+                null,
+                TimeSpan.FromMilliseconds(0),
+                TimeSpan.FromMilliseconds(250)
+            );
+            State.PlayState = MediaPlaybackState.Playing;
+            _smtcManager.UpdatePlaybackStatus(MediaPlaybackStatus.Playing);
+        }
     }
 
     /// <summary>
@@ -288,6 +302,7 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     {
         _audioEngine.Stop();
         State.PlayState = MediaPlaybackState.Paused;
+        _smtcManager.UpdatePlaybackStatus(MediaPlaybackStatus.Paused);
         _lyricManager.Reset();
         _positionUpdateTimer?.Dispose();
         _positionUpdateTimer = null;
@@ -296,7 +311,6 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// <summary>
     /// 计时器更新回调
     /// </summary>
-    /// <param name="_"></param>
     private async void UpdateTimerHandler(object? _)
     {
         if (!_updatable || State.PlayState != MediaPlaybackState.Playing)
@@ -306,6 +320,21 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
         await _audioEngine.UpdatePosition();
         _lyricManager.UpdateCurrentLyric();
         _smtcManager.UpdateTimelinePosition();
+    }
+
+    /// <summary>
+    /// 设置独占模式
+    /// </summary>
+    /// <param name="isExclusive"></param>
+    public void SetExclusiveMode(bool isExclusive)
+    {
+        if (State.IsExclusiveMode == isExclusive)
+        {
+            return;
+        }
+        _updatable = false;
+        _audioEngine.SetExclusiveMode(isExclusive, State.PlayState == MediaPlaybackState.Playing);
+        _updatable = true;
     }
 
     /// <summary>
@@ -334,10 +363,15 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// 鼠标或键盘拖动进度条时调用, 仅更新歌词
     /// </summary>
     /// <param name="time"></param>
-    public void PositionUpdate(TimeSpan time)
+    public void LyricUpdateByPercentage(double sliderValue, bool stopUpdate)
     {
-        _updatable = false;
-        State.CurrentPlayingTime = time;
+        if (stopUpdate)
+        {
+            _updatable = false;
+        }
+        State.CurrentPlayingTime = TimeSpan.FromMilliseconds(
+            sliderValue * State.TotalPlayingTime.TotalMilliseconds / 100
+        );
         _lyricManager.UpdateCurrentLyric();
     }
 
@@ -345,10 +379,25 @@ public partial class MusicPlayer : ObservableRecipient, IDisposable
     /// 鼠标或键盘拖动进度条完成后调用, 设置播放位置
     /// </summary>
     /// <param name="time"></param>
-    public void SetPosition(TimeSpan time)
+    public void SetPositionByPercentage(double sliderValue)
     {
-        State.CurrentPlayingTime = time;
-        _audioEngine.SetPosition(time.TotalSeconds);
+        State.CurrentPlayingTime = TimeSpan.FromMilliseconds(
+            sliderValue * State.TotalPlayingTime.TotalMilliseconds / 100
+        );
+        _audioEngine.SetPosition(State.CurrentPlayingTime.TotalSeconds);
+        _lyricManager.UpdateCurrentLyric();
+        _updatable = true;
+    }
+
+    /// <summary>
+    /// 点击歌词时调用, 设置播放位置
+    /// </summary>
+    /// <param name="time"></param>
+    public void LyricPositionUpdate(double time)
+    {
+        _updatable = false;
+        State.CurrentPlayingTime = TimeSpan.FromMilliseconds(time);
+        _audioEngine.SetPosition(time / 1000);
         _lyricManager.UpdateCurrentLyric();
         _updatable = true;
     }

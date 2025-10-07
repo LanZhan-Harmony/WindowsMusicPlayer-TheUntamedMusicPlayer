@@ -93,23 +93,26 @@ public partial class LyricManager(SharedPlaybackState state)
         var newIndex = GetCurrentLyricIndex(_state.CurrentPlayingTime.TotalMilliseconds);
         if (newIndex != _currentLyricIndex)
         {
-            if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyricSlices.Count)
+            _dispatcher.TryEnqueue(() =>
             {
-                _dispatcher.TryEnqueue(() =>
-                    CurrentLyricSlices[_currentLyricIndex].IsCurrent = false
-                );
-            }
-            _currentLyricIndex = newIndex;
+                if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyricSlices.Count)
+                {
+                    CurrentLyricSlices[_currentLyricIndex].IsCurrent = false;
+                }
+                _currentLyricIndex = newIndex;
 
-            if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyricSlices.Count)
-            {
-                _dispatcher.TryEnqueue(() =>
+                if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyricSlices.Count)
                 {
                     CurrentLyricSlices[_currentLyricIndex].IsCurrent = true;
                     CurrentLyricContent = CurrentLyricSlices[_currentLyricIndex].Content;
-                });
-            }
+                }
+            });
         }
+    }
+
+    public void NotifyLyricContentChanged()
+    {
+        OnPropertyChanged(nameof(CurrentLyricContent));
     }
 
     /// <summary>

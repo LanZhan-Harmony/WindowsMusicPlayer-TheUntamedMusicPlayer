@@ -112,7 +112,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         try
         {
             args.Cancel = true;
-            await Data.MusicPlayer.SaveCurrentStateAsync();
+            await Data.MusicPlayer.SaveStateAsync();
             await Data.PlaylistLibrary.SaveLibraryAsync();
         }
         catch (Exception ex)

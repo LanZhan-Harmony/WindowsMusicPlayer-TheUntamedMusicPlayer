@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Hosting;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
 using Windows.UI;
 using ZLogger;
 
@@ -55,7 +56,7 @@ public partial class DynamicBackgroundService(IColorExtractionService colorExtra
         _compositor = ElementCompositionPreview.GetElementVisual(_targetElement).Compositor;
 
         // 监听当前歌曲变化
-        Data.MusicPlayer.PropertyChanged += OnMusicPlayerPropertyChanged;
+        Data.PlayState.PropertyChanged += OnStateChanged;
         await UpdateBackgroundAsync();
     }
 
@@ -64,12 +65,12 @@ public partial class DynamicBackgroundService(IColorExtractionService colorExtra
     /// </summary>
     public async Task UpdateBackgroundAsync()
     {
-        if (!IsEnabled || Data.MusicPlayer?.CurrentSong is null)
+        if (!IsEnabled || Data.PlayState.CurrentSong is null)
         {
             return;
         }
 
-        await UpdateBackgroundFromSongAsync(Data.MusicPlayer.CurrentSong);
+        await UpdateBackgroundFromSongAsync(Data.PlayState.CurrentSong);
     }
 
     /// <summary>
@@ -240,9 +241,9 @@ public partial class DynamicBackgroundService(IColorExtractionService colorExtra
         _currentGradientBrush = null;
     }
 
-    private void OnMusicPlayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(MusicPlayer.CurrentSong))
+        if (e.PropertyName == nameof(SharedPlaybackState.CurrentSong))
         {
             _ = Task.Run(UpdateBackgroundAsync);
         }
@@ -352,7 +353,7 @@ public partial class DynamicBackgroundService(IColorExtractionService colorExtra
     /// </summary>
     public void Dispose()
     {
-        Data.MusicPlayer.PropertyChanged -= OnMusicPlayerPropertyChanged;
+        Data.PlayState.PropertyChanged -= OnStateChanged;
         _backgroundVisual?.Dispose();
         _currentGradientBrush?.Dispose();
         _targetElement?.SizeChanged -= OnTargetElementSizeChanged;

@@ -6,13 +6,13 @@
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:model="using:UntamedMusicPlayer.Models"
+      xmlns:playback="using:UntamedMusicPlayer.Playback"
       xmlns:ui="using:CommunityToolkit.WinUI"
       Loaded="PlayQueuePage_Loaded"
       mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="model:IndexedPlayQueueSong">
+        <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="playback:IndexedPlayQueueSong">
             <Grid Height="52"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"

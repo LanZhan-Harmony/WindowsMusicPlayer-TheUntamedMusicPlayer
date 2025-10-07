@@ -82,7 +82,7 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
     /// </summary>
     private static void PlayMusicFiles(List<BriefLocalSongInfo> musicFiles)
     {
-        Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", musicFiles);
+        Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", musicFiles);
         Data.MusicPlayer.PlaySongByInfo(musicFiles[0]);
         Data.RootPlayBarViewModel?.DetailModeUpdate();
     }

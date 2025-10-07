@@ -1,5 +1,7 @@
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.LyricRenderer;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.ViewModels;
 using UntamedMusicPlayer.Views;
 
@@ -71,6 +73,9 @@ public static class Data
     public static MusicLibrary MusicLibrary { get; set; } = new();
     public static OnlineMusicLibrary OnlineMusicLibrary { get; set; } = new();
     public static PlaylistLibrary PlaylistLibrary { get; set; } = new();
+    public static PlayQueueManager PlayQueueManager { get; set; } = null!;
+    public static LyricManager LyricManager { get; set; } = null!;
+    public static SharedPlaybackState PlayState { get; set; } = null!;
     public static MusicPlayer MusicPlayer { get; set; } = new();
 
     #region Views

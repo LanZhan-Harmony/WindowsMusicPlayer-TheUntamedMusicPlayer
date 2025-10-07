@@ -73,6 +73,9 @@ public static class ZLoggerExtensions
             $"{"Error_SongPlayback".GetLocalizedWithReplace("{title}", title)}"
         );
 
+    public static void PlaybackDeviceBusy(this ILogger logger, Exception? exception = null) =>
+        logger.ZLogError(exception, $"{"Error_PlaybackDeviceBusy".GetLocalized()}");
+
     public static void SongPlaybackPosition(this ILogger logger, string title, long positionMs) =>
         logger.ZLogTrace($"歌曲播放位置更新: {title}, 位置: {positionMs}ms");
 

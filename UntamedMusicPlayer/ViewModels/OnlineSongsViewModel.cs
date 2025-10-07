@@ -12,7 +12,7 @@ public class OnlineSongsViewModel
 
     public void OnlineSongsSongListView_ItemClick(object _, ItemClickEventArgs e)
     {
-        Data.MusicPlayer.SetPlayQueue(
+        Data.PlayQueueManager.SetNormalPlayQueue(
             $"OnlineSongs:{Data.OnlineMusicLibrary.SearchKeyWords}",
             Data.OnlineMusicLibrary.OnlineSongInfoList
         );
@@ -24,7 +24,7 @@ public class OnlineSongsViewModel
 
     public void OnlineSongsPlayButton_Click(IBriefOnlineSongInfo info)
     {
-        Data.MusicPlayer.SetPlayQueue(
+        Data.PlayQueueManager.SetNormalPlayQueue(
             $"OnlineSongs:{Data.OnlineMusicLibrary.SearchKeyWords}",
             Data.OnlineMusicLibrary.OnlineSongInfoList
         );
@@ -33,29 +33,29 @@ public class OnlineSongsViewModel
 
     public void OnlineSongsPlayNextButton_Click(IBriefOnlineSongInfo info)
     {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue("OnlineSongs:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue("OnlineSongs:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            Data.MusicPlayer.AddSongToNextPlay(info);
+            Data.PlayQueueManager.AddSongsToNextPlay([info]);
         }
     }
 
     public void AddToPlayQueueButton_Click(IBriefOnlineSongInfo info)
     {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue("OnlineSongs:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue("OnlineSongs:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            Data.MusicPlayer.AddSongToPlayQueue(info);
+            Data.PlayQueueManager.AddSongsToEnd([info]);
         }
     }
 

@@ -8,6 +8,7 @@ using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -21,9 +22,7 @@ public partial class PlayQueueViewModel : ObservableObject
 
     [ObservableProperty]
     public partial ObservableCollection<IndexedPlayQueueSong> PlayQueue { get; set; } =
-        Data.MusicPlayer.ShuffleMode
-            ? Data.MusicPlayer.ShuffledPlayQueue
-            : Data.MusicPlayer.PlayQueue;
+        Data.PlayQueueManager.CurrentQueue;
 
     [ObservableProperty]
     public partial bool IsButtonEnabled { get; set; } = false;
@@ -31,20 +30,14 @@ public partial class PlayQueueViewModel : ObservableObject
     public PlayQueueViewModel()
     {
         IsButtonEnabled = PlayQueue.Count > 0;
-        Data.MusicPlayer.PropertyChanged += MusicPlayer_PropertyChanged;
+        Data.PlayQueueManager.PropertyChanged += PlayQueueManager_PropertyChanged;
     }
 
-    private void MusicPlayer_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void PlayQueueManager_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (
-            e.PropertyName == nameof(Data.MusicPlayer.ShuffleMode)
-            || e.PropertyName == nameof(Data.MusicPlayer.PlayQueue)
-            || e.PropertyName == nameof(Data.MusicPlayer.ShuffledPlayQueue)
-        )
+        if (e.PropertyName == nameof(Data.PlayQueueManager.CurrentQueue))
         {
-            PlayQueue = Data.MusicPlayer.ShuffleMode
-                ? Data.MusicPlayer.ShuffledPlayQueue
-                : Data.MusicPlayer.PlayQueue;
+            PlayQueue = Data.PlayQueueManager.CurrentQueue;
             IsButtonEnabled = PlayQueue.Count > 0;
         }
     }
@@ -58,7 +51,7 @@ public partial class PlayQueueViewModel : ObservableObject
     public void AddToPlayQueueFlyoutButton_Click()
     {
         var songList = PlayQueue.AsValueEnumerable().Select(song => song.Song).ToArray();
-        Data.MusicPlayer.AddSongsToPlayQueue(songList);
+        Data.PlayQueueManager.AddSongsToEnd(songList);
     }
 
     public void PlayQueueListView_ItemClick(object _, ItemClickEventArgs e)
@@ -76,12 +69,12 @@ public partial class PlayQueueViewModel : ObservableObject
 
     public void PlayNextButton_Click(IBriefSongInfoBase info)
     {
-        Data.MusicPlayer.AddSongToNextPlay(info);
+        Data.PlayQueueManager.AddSongsToNextPlay([info]);
     }
 
     public void AddToPlayQueueButton_Click(IBriefSongInfoBase info)
     {
-        Data.MusicPlayer.AddSongToPlayQueue(info);
+        Data.PlayQueueManager.AddSongsToEnd([info]);
     }
 
     public async void AddToPlaylistButton_Click(IBriefSongInfoBase info, PlaylistInfo playlist)
@@ -89,19 +82,19 @@ public partial class PlayQueueViewModel : ObservableObject
         await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
     }
 
-    public async void RemoveButton_Click(IndexedPlayQueueSong info)
+    public void RemoveButton_Click(IndexedPlayQueueSong info)
     {
-        await Data.MusicPlayer.RemoveSong(info);
+        Data.PlayQueueManager.RemoveSong(info);
     }
 
     public void MoveUpButton_Click(IndexedPlayQueueSong info)
     {
-        Data.MusicPlayer.MoveUpSong(info);
+        Data.PlayQueueManager.MoveUpSong(info);
     }
 
     public void MoveDownButton_Click(IndexedPlayQueueSong info)
     {
-        Data.MusicPlayer.MoveDownSong(info);
+        Data.PlayQueueManager.MoveDownSong(info);
     }
 
     public async void ShowAlbumButton_Click(IBriefSongInfoBase info)
@@ -220,11 +213,11 @@ public partial class PlayQueueViewModel : ObservableObject
         }
         if (PlayQueue.Count > 0)
         {
-            Data.MusicPlayer.AddSongToPlayQueue(songInfo);
+            Data.PlayQueueManager.AddSongsToEnd([songInfo]);
         }
         else
         {
-            Data.MusicPlayer.SetPlayQueue("UnknownOnlineSongs:Part", [songInfo]);
+            Data.PlayQueueManager.SetNormalPlayQueue("UnknownOnlineSongs:Part", [songInfo]);
             Data.MusicPlayer.PlaySongByInfo(songInfo);
         }
         IsButtonEnabled = PlayQueue.Count > 0;
@@ -232,7 +225,7 @@ public partial class PlayQueueViewModel : ObservableObject
 
     public void PlayQueueListView_DragItemsStarting(object _, DragItemsStartingEventArgs e)
     {
-        _currentSong = PlayQueue[Data.MusicPlayer.PlayQueueIndex];
+        _currentSong = PlayQueue[Data.PlayState.PlayQueueIndex];
         if (e.Items.Count > 0)
         {
             e.Data.RequestedOperation = DataPackageOperation.Move;
@@ -251,10 +244,7 @@ public partial class PlayQueueViewModel : ObservableObject
         }
     }
 
-    public void PlayQueueListView_DragItemsCompleted(
-        object _,
-        DragItemsCompletedEventArgs args
-    )
+    public void PlayQueueListView_DragItemsCompleted(object _, DragItemsCompletedEventArgs args)
     {
         // 检查是否是重排序操作（Move操作且在同一个ListView内）
         if (args.DropResult == DataPackageOperation.Move && args.Items.Count > 0)
@@ -274,7 +264,7 @@ public partial class PlayQueueViewModel : ObservableObject
             {
                 PlayQueue[i].Index = i;
             }
-            Data.MusicPlayer.PlayQueueIndex = _currentSong!.Index;
+            Data.PlayState.PlayQueueIndex = _currentSong!.Index;
         }
     }
 
@@ -386,11 +376,11 @@ public partial class PlayQueueViewModel : ObservableObject
         {
             if (PlayQueue.Count > 0)
             {
-                Data.MusicPlayer.InsertSongsToPlayQueue(newSongs, insertIndex);
+                Data.PlayQueueManager.InsertSongsAt(newSongs, insertIndex);
             }
             else
             {
-                Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", newSongs);
+                Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
                 Data.MusicPlayer.PlaySongByInfo(newSongs[0]);
             }
         }

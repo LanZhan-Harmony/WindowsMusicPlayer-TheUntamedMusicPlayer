@@ -534,15 +534,15 @@ public partial class LocalSongsViewModel
 
     public void ShuffledPlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
-        Data.MusicPlayer.SetShuffledPlayQueue("ShuffledLocalSongs:All", ConvertGroupedToFlatList());
-        Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+        Data.PlayQueueManager.SetShuffledPlayQueue("ShuffledLocalSongs:All", ConvertGroupedToFlatList());
+        Data.MusicPlayer.PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
     }
 
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         if (e.ClickedItem is BriefLocalSongInfo info)
         {
-            Data.MusicPlayer.SetPlayQueue(
+            Data.PlayQueueManager.SetNormalPlayQueue(
                 $"LocalSongs:All:{SortByStr}",
                 ConvertGroupedToFlatList(info)
             );
@@ -552,7 +552,7 @@ public partial class LocalSongsViewModel
 
     public void PlayButton_Click(BriefLocalSongInfo info)
     {
-        Data.MusicPlayer.SetPlayQueue(
+        Data.PlayQueueManager.SetNormalPlayQueue(
             $"LocalSongs:All:{SortByStr}",
             ConvertGroupedToFlatList(info)
         );
@@ -561,15 +561,15 @@ public partial class LocalSongsViewModel
 
     public void PlayNextButton_Click(BriefLocalSongInfo info)
     {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            Data.MusicPlayer.AddSongToNextPlay(info);
+            Data.PlayQueueManager.AddSongsToNextPlay([info]);
         }
     }
 
@@ -578,15 +578,15 @@ public partial class LocalSongsViewModel
     /// </summary>
     public void AddToPlayQueueButton_Click(BriefLocalSongInfo info)
     {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue("LocalSongs:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            Data.MusicPlayer.AddSongToPlayQueue(info);
+            Data.PlayQueueManager.AddSongsToEnd([info]);
         }
     }
 

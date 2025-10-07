@@ -5,6 +5,7 @@ using System.Globalization;
 using MemoryPack;
 using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using Windows.Storage.Streams;

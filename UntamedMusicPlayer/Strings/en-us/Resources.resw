@@ -918,6 +918,9 @@
   <data name="Error_SongPlayback" xml:space="preserve">
     <value>We can't open {title}. This may be because the file type is unsupported, the file extension is incorrect, the file is corrupted, or the network is abnormal.</value>
   </data>
+  <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
+    <value>The audio playback device is currently in use.</value>
+  </data>
   <data name="Error_SamePlaylistName" xml:space="preserve">
     <value>A playlist with this name already exists in this folder. Enter another name then try again.</value>
   </data>

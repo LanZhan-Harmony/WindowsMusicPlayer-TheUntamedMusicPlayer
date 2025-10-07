@@ -17,38 +17,38 @@ public class LyricViewModel
         if (e.ClickedItem is LyricSlice lyricSlice)
         {
             var time = lyricSlice.Time;
-            Data.MusicPlayer.LyricProgressUpdate(time);
+            Data.MusicPlayer.LyricPositionUpdate(time);
         }
     }
 
     public void PlayButton_Click(object _1, RoutedEventArgs _2)
     {
-        var currentSong = Data.MusicPlayer.CurrentBriefSong;
+        var currentSong = Data.PlayState.CurrentBriefSong;
         Data.MusicPlayer.PlaySongByInfo(currentSong!);
     }
 
     public void PlayNextButton_Click(object _1, RoutedEventArgs _2)
     {
-        var currentSong = Data.MusicPlayer.CurrentBriefSong;
-        Data.MusicPlayer.AddSongToNextPlay(currentSong!);
+        var currentSong = Data.PlayState.CurrentBriefSong;
+        Data.PlayQueueManager.AddSongsToNextPlay([currentSong!]);
     }
 
     public void AddToPlayQueueButton_Click(object _1, RoutedEventArgs _2)
     {
-        var currentSong = Data.MusicPlayer.CurrentBriefSong;
-        Data.MusicPlayer.AddSongToPlayQueue(currentSong!);
+        var currentSong = Data.PlayState.CurrentBriefSong;
+        Data.PlayQueueManager.AddSongsToEnd([currentSong!]);
     }
 
     public async void AddToPlaylistButton_Click(PlaylistInfo playlist)
     {
-        var currentSong = Data.MusicPlayer.CurrentBriefSong;
+        var currentSong = Data.PlayState.CurrentBriefSong;
         await Data.PlaylistLibrary.AddToPlaylist(playlist, currentSong!);
     }
 
     public async void ShowAlbumButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.RootPlayBarViewModel!.DetailModeUpdate();
-        var info = Data.MusicPlayer.CurrentBriefSong;
+        var info = Data.PlayState.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
             var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(localInfo.Album);
@@ -80,7 +80,7 @@ public class LyricViewModel
     public async void ShowArtistButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.RootPlayBarViewModel!.DetailModeUpdate();
-        var info = Data.MusicPlayer.CurrentBriefSong;
+        var info = Data.PlayState.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
             var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(localInfo.Artists[0]);

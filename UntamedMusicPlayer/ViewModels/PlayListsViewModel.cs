@@ -170,7 +170,7 @@ public partial class PlayListsViewModel
         {
             return;
         }
-        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{info.Name}", songList);
+        Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -181,14 +181,14 @@ public partial class PlayListsViewModel
         {
             return;
         }
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{info.Name}", songList);
+            Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToNextPlay(songList);
+            Data.PlayQueueManager.AddSongsToNextPlay(songList);
         }
     }
 
@@ -199,14 +199,14 @@ public partial class PlayListsViewModel
         {
             return;
         }
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{info.Name}", songList);
+            Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToNextPlay(songList);
+            Data.PlayQueueManager.AddSongsToNextPlay(songList);
         }
     }
 
