@@ -95,7 +95,7 @@ public sealed partial class OnlineSongsPage : Page
         };
 
         if (
-            Data.MusicPlayer.CurrentBriefSong is IBriefOnlineSongInfo currentSong
+            Data.PlayState.CurrentBriefSong is IBriefOnlineSongInfo currentSong
             && SongListView.ItemsSource is IEnumerable<IBriefOnlineSongInfo> songs
         )
         {

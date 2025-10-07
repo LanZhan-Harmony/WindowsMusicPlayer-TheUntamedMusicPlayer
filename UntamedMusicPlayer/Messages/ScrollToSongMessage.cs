@@ -9,6 +9,6 @@ namespace UntamedMusicPlayer.Messages;
 /// </summary>
 public sealed class ScrollToSongMessage
 {
-    public IBriefSongInfoBase? Song { get; } = Data.MusicPlayer.CurrentBriefSong;
+    public IBriefSongInfoBase? Song { get; } = Data.PlayState.CurrentBriefSong;
     public ScrollIntoViewAlignment Alignment { get; } = ScrollIntoViewAlignment.Leading;
 }

@@ -27,8 +27,9 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         FontFamily = Settings.FontFamily,
         MaxLines = 2,
     };
+    private readonly Timer _updateTimer; // 用于周期性检查鼠标位置和置顶的计时器
+    private readonly double _scaleFactor;
     private bool _isMouseOverBorder = false; // 检测鼠标是否在窗口上的变量
-    private DispatcherTimer? _updateTimer250ms; // 用于周期性检查鼠标位置和置顶的计时器
     private Storyboard? _currentStoryboard;
     private delegate nint WndProcDelegate(nint hwnd, uint msg, nint wParam, nint lParam);
     private WndProcDelegate? _wndProcDelegate;
@@ -60,9 +61,12 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         // 将窗口移动到新的位置
         this.Move(currentPosition.X, y);
 
-        InitMousePositionTimer();
+        _scaleFactor = this.GetDpiForWindow() / 96.0;
+
+        _updateTimer = new Timer(MousePositionTimer_Tick, null, 0, 250);
+
         Closed += Window_Closed;
-        Data.MusicPlayer.NotifyLyricContentChanged();
+        Data.LyricManager.NotifyLyricContentChanged();
     }
 
     private void SetWindowProperty()
@@ -88,7 +92,6 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         style &= ~WS_MAXIMIZEBOX; // 去掉最大化按钮
         style &= ~WS_THICKFRAME; // 去掉可调整大小的边框
         SetWindowLong(_hWnd, GWL_STYLE, style);
-
         DisableMaximize();
     }
 
@@ -119,22 +122,13 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         GC.KeepAlive(_wndProcDelegate); // 防止委托被垃圾回收
     }
 
-    private void InitMousePositionTimer()
-    {
-        _updateTimer250ms = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
-        _updateTimer250ms.Tick += MousePositionTimer_Tick;
-        _updateTimer250ms.Start();
-    }
-
-    private void MousePositionTimer_Tick(object? sender, object e)
+    private async void MousePositionTimer_Tick(object? _)
     {
         SetTopmost(true);
 
-        // 获取当前输入位置
-        GetCursorPos(out var inputPoint);
+        GetCursorPos(out var inputPoint); // 获取当前输入位置
 
-        // 获取AnimatedBorder在屏幕上的位置
-        var borderRect = GetElementScreenRect(AnimatedBorder);
+        var borderRect = await GetElementScreenRect(); // 获取AnimatedBorder在屏幕上的位置
 
         // 检查输入点是否在AnimatedBorder上
         var isOverBorder =
@@ -150,27 +144,33 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         }
     }
 
-    private RECT GetElementScreenRect(FrameworkElement element)
+    private async Task<RECT> GetElementScreenRect()
     {
-        // 获取DPI缩放因子
-        var dpi = this.GetDpiForWindow();
-        var scaleFactor = dpi / 96.0; // 96是标准DPI
-
-        // 获取元素在窗口中的位置
-        var transform = element.TransformToVisual(null);
-        var position = transform.TransformPoint(new Point(0, 0));
-
         // 获取窗口在屏幕上的位置
         GetWindowRect(_hWnd, out var windowRect);
 
-        // 考虑DPI缩放
-        return new RECT
+        var tcs = new TaskCompletionSource<RECT>();
+        DispatcherQueue.TryEnqueue(() =>
         {
-            Left = windowRect.Left + (int)(position.X * scaleFactor),
-            Top = windowRect.Top + (int)(position.Y * scaleFactor),
-            Right = windowRect.Left + (int)((position.X + element.ActualWidth) * scaleFactor),
-            Bottom = windowRect.Top + (int)((position.Y + element.ActualHeight) * scaleFactor),
-        };
+            // 获取元素在窗口中的位置
+            var position = AnimatedBorder.TransformToVisual(null).TransformPoint(new Point(0, 0));
+
+            // 考虑DPI缩放
+            tcs.SetResult(
+                new RECT
+                {
+                    Left = windowRect.Left + (int)(position.X * _scaleFactor),
+                    Top = windowRect.Top + (int)(position.Y * _scaleFactor),
+                    Right =
+                        windowRect.Left
+                        + (int)((position.X + AnimatedBorder.ActualWidth) * _scaleFactor),
+                    Bottom =
+                        windowRect.Top
+                        + (int)((position.Y + AnimatedBorder.ActualHeight) * _scaleFactor),
+                }
+            );
+        });
+        return await tcs.Task;
     }
 
     /// <summary>
@@ -187,13 +187,11 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
         if (isClickThrough)
         {
-            // 添加 WS_EX_TRANSPARENT 使窗口点击穿透
-            SetWindowLong(_hWnd, GWL_EXSTYLE, currentStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT);
+            SetWindowLong(_hWnd, GWL_EXSTYLE, currentStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT); // 添加 WS_EX_TRANSPARENT 使窗口点击穿透
         }
         else
         {
-            // 移除 WS_EX_TRANSPARENT 使窗口可接收点击
-            SetWindowLong(_hWnd, GWL_EXSTYLE, (currentStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT);
+            SetWindowLong(_hWnd, GWL_EXSTYLE, (currentStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT); // 移除 WS_EX_TRANSPARENT 使窗口可接收点击
         }
     }
 
@@ -303,8 +301,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private void Window_Closed(object sender, WindowEventArgs args)
     {
         Data.RootPlayBarViewModel?.IsDesktopLyricWindowStarted = false;
-        _updateTimer250ms?.Stop();
-        _updateTimer250ms = null;
+        _updateTimer.Dispose();
     }
 
     public void Dispose()

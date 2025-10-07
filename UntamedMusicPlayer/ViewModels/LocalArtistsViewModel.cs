@@ -133,35 +133,35 @@ public partial class LocalArtistsViewModel
     public void PlayButton_Click(LocalArtistInfo info)
     {
         var songList = Data.MusicLibrary.GetSongsByArtist(info);
-        Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
+        Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
     public void PlayNextButton_Click(LocalArtistInfo info)
     {
         var songList = Data.MusicLibrary.GetSongsByArtist(info);
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
+            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToNextPlay(songList);
+            Data.PlayQueueManager.AddSongsToNextPlay(songList);
         }
     }
 
     public void AddToPlayQueueButton_Click(LocalArtistInfo info)
     {
         var songList = Data.MusicLibrary.GetSongsByArtist(info);
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
+            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToPlayQueue(songList);
+            Data.PlayQueueManager.AddSongsToEnd(songList);
         }
     }
 

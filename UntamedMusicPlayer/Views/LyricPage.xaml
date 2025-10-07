@@ -137,7 +137,7 @@
                               IsItemClickEnabled="True"
                               ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
                               ItemTemplate="{StaticResource LyricViewTemplate}"
-                              ItemsSource="{x:Bind model:Data.MusicPlayer.CurrentLyric, Mode=OneWay}"
+                              ItemsSource="{x:Bind model:Data.LyricManager.CurrentLyricSlices, Mode=OneWay}"
                               SelectionMode="None"/>
                     <StackPanel Height="600"/>
                 </StackPanel>
@@ -197,11 +197,11 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            Canvas.ZIndex="1"
-                           Source="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay}"/>
+                           Source="{x:Bind model:Data.PlayState.CurrentSong.Cover, Mode=OneWay}"/>
                     <Grid x:Name="ControllerCoverGrid"
                           Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                           Canvas.ZIndex="0"
-                          Visibility="{x:Bind model:Data.MusicPlayer.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                          Visibility="{x:Bind model:Data.PlayState.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="ControllerCoverFontIcon"
                                   Canvas.ZIndex="0"
                                   FontFamily="{StaticResource UntamedFontFamily}"
