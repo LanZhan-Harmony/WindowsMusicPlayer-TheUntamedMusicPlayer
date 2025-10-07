@@ -74,7 +74,7 @@ public partial class PlayListDetailViewModel
             return;
         }
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
-        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
+        Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -91,14 +91,14 @@ public partial class PlayListDetailViewModel
             return;
         }
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
+            Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToPlayQueue(songList);
+            Data.PlayQueueManager.AddSongsToEnd(songList);
         }
     }
 
@@ -112,7 +112,7 @@ public partial class PlayListDetailViewModel
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
-        Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
+        Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
         if (e.ClickedItem is IndexedPlaylistSong indexedInfo)
         {
             Data.MusicPlayer.PlaySongByInfo(indexedInfo.Song);
@@ -121,7 +121,7 @@ public partial class PlayListDetailViewModel
 
     public void PlayButton_Click(IBriefSongInfoBase info)
     {
-        Data.MusicPlayer.SetPlayQueue(
+        Data.PlayQueueManager.SetNormalPlayQueue(
             $"Songs:Playlist:{Playlist.Name}",
             SongList.AsValueEnumerable().Select(s => s.Song).ToArray()
         );
@@ -130,29 +130,29 @@ public partial class PlayListDetailViewModel
 
     public void PlayNextButton_Click(IBriefSongInfoBase info)
     {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefSongInfoBase> { info };
-            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            Data.MusicPlayer.AddSongToNextPlay(info);
+            Data.PlayQueueManager.AddSongsToNextPlay([info]);
         }
     }
 
     public void AddToPlayQueueButton_Click(IBriefSongInfoBase info)
     {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefSongInfoBase> { info };
-            Data.MusicPlayer.SetPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            Data.MusicPlayer.AddSongToPlayQueue(info);
+            Data.PlayQueueManager.AddSongsToEnd([info]);
         }
     }
 

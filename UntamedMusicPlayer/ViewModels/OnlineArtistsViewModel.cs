@@ -14,7 +14,7 @@ public class OnlineArtistsViewModel
         {
             return;
         }
-        Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Artist:{info.Name}", songList);
+        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{info.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -25,14 +25,14 @@ public class OnlineArtistsViewModel
         {
             return;
         }
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Artist:{info.Name}", songList);
+            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToNextPlay(songList);
+            Data.PlayQueueManager.AddSongsToNextPlay(songList);
         }
     }
 
@@ -43,14 +43,14 @@ public class OnlineArtistsViewModel
         {
             return;
         }
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Artist:{info.Name}", songList);
+            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToPlayQueue(songList);
+            Data.PlayQueueManager.AddSongsToEnd(songList);
         }
     }
 

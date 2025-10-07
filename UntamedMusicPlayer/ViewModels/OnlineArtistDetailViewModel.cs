@@ -143,7 +143,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
             return;
         }
         var allSongs = ConvertAllSongsToFlatList();
-        Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
+        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
         Data.MusicPlayer.PlaySongByInfo(allSongs[0]);
     }
 
@@ -153,11 +153,11 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         {
             return;
         }
-        Data.MusicPlayer.SetShuffledPlayQueue(
+        Data.PlayQueueManager.SetShuffledPlayQueue(
             $"ShuffledOnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList()
         );
-        Data.MusicPlayer.PlaySongByIndexedInfo(Data.MusicPlayer.ShuffledPlayQueue[0]);
+        Data.MusicPlayer.PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
     }
 
     public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
@@ -172,20 +172,20 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
             return;
         }
         var allSongs = ConvertAllSongsToFlatList();
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
+            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
             Data.MusicPlayer.PlaySongByInfo(allSongs[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToPlayQueue(allSongs);
+            Data.PlayQueueManager.AddSongsToEnd(allSongs);
         }
     }
 
     public void SongListView_ItemClick(IBriefOnlineSongInfo info)
     {
-        Data.MusicPlayer.SetPlayQueue(
+        Data.PlayQueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList()
         );
@@ -194,7 +194,7 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
 
     public void SongListViewPlayButton_Click(IBriefOnlineSongInfo info)
     {
-        Data.MusicPlayer.SetPlayQueue(
+        Data.PlayQueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatList()
         );
@@ -203,29 +203,29 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
 
     public void SongListViewPlayNextButton_Click(IBriefOnlineSongInfo info)
     {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Artist:{Artist.Name}:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            Data.MusicPlayer.AddSongToNextPlay(info);
+            Data.PlayQueueManager.AddSongsToNextPlay([info]);
         }
     }
 
     public void SongListViewAddToPlayQueueButton_Click(IBriefOnlineSongInfo info)
     {
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Artist:{Artist.Name}:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}:Part", list);
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            Data.MusicPlayer.AddSongToPlayQueue(info);
+            Data.PlayQueueManager.AddSongsToEnd([info]);
         }
     }
 
@@ -254,35 +254,35 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
     public void AlbumGridViewPlayButton_Click(IOnlineArtistAlbumInfo info)
     {
         var songList = info.SongList;
-        Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
         Data.MusicPlayer.PlaySongByInfo(songList[0]);
     }
 
     public void AlbumGridViewPlayNextButton_Click(IOnlineArtistAlbumInfo info)
     {
         var songList = info.SongList;
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToNextPlay(songList);
+            Data.PlayQueueManager.AddSongsToNextPlay(songList);
         }
     }
 
     public void AlbumGridViewAddToPlayQueueButton_Click(IOnlineArtistAlbumInfo info)
     {
         var songList = info.SongList;
-        if (Data.MusicPlayer.PlayQueue.Count == 0)
+        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.MusicPlayer.SetPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
             Data.MusicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.MusicPlayer.AddSongsToPlayQueue(songList);
+            Data.PlayQueueManager.AddSongsToEnd(songList);
         }
     }
 

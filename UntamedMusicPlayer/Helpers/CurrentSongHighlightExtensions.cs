@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
 using ZLinq;
 
 namespace UntamedMusicPlayer.Helpers;
@@ -97,7 +98,7 @@ public static class CurrentSongHighlightExtensions
         // 注册事件处理器
         listView.ContainerContentChanging += OnContainerContentChanging;
         listView.Unloaded += OnListViewUnloaded;
-        Data.MusicPlayer.PropertyChanged += OnMusicPlayerPropertyChanged;
+        Data.PlayState.PropertyChanged += OnStateChanged;
 
         // 记录已注册的 ListView
         _registeredListViews[listView] = new object();
@@ -174,7 +175,7 @@ public static class CurrentSongHighlightExtensions
         // 如果没有注册的 ListView 了，移除全局事件监听
         if (_registeredListViews.Count == 0)
         {
-            Data.MusicPlayer.PropertyChanged -= OnMusicPlayerPropertyChanged;
+            Data.PlayState.PropertyChanged -= OnStateChanged;
         }
     }
 
@@ -186,11 +187,12 @@ public static class CurrentSongHighlightExtensions
         }
     }
 
-    private static void OnMusicPlayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private static void OnStateChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (
-            e.PropertyName == nameof(MusicPlayer.CurrentSong)
-            || e.PropertyName == nameof(MusicPlayer.PlayQueueIndex)
+            e.PropertyName
+            is nameof(SharedPlaybackState.CurrentSong)
+                or nameof(SharedPlaybackState.PlayQueueIndex)
         )
         {
             // 当前歌曲或播放队列索引变化时，更新所有注册的 ListView
@@ -243,7 +245,7 @@ public static class CurrentSongHighlightExtensions
         }
 
         // 判断是否为当前播放歌曲
-        var currentSong = Data.MusicPlayer.CurrentSong;
+        var currentSong = Data.PlayState.CurrentSong;
         var isPlayQueue = GetIsPlayQueue(listView);
         var isCurrentlyPlaying = IsCurrentlyPlaying(currentSong, songInfo, isPlayQueue);
 
@@ -270,7 +272,7 @@ public static class CurrentSongHighlightExtensions
         // 如果是播放队列模式，直接比较包装对象和索引
         if (isPlayQueue && songInfo is IndexedPlayQueueSong indexedPlayQueueSong)
         {
-            return indexedPlayQueueSong.Index == Data.MusicPlayer.PlayQueueIndex;
+            return indexedPlayQueueSong.Index == Data.PlayState.PlayQueueIndex;
         }
 
         // 获取实际的歌曲对象进行比较
@@ -280,7 +282,7 @@ public static class CurrentSongHighlightExtensions
             return false;
         }
 
-        return IsSameSong(currentSong, actualSong);
+        return SongComparer.CurrentIsSameSong(currentSong, actualSong);
     }
 
     /// <summary>
@@ -296,33 +298,6 @@ public static class CurrentSongHighlightExtensions
             IndexedPlayQueueSong indexedSong => indexedSong.Song,
             IndexedPlaylistSong indexedSong => indexedSong.Song,
             _ => null,
-        };
-    }
-
-    /// <summary>
-    /// 比较两首歌曲是否相同
-    /// </summary>
-    /// <param name="currentSong">当前播放的歌曲</param>
-    /// <param name="compareSong">要比较的歌曲</param>
-    /// <returns>如果是同一首歌曲则返回 true，否则返回 false</returns>
-    public static bool IsSameSong(IDetailedSongInfoBase currentSong, IBriefSongInfoBase compareSong)
-    {
-        return (currentSong, compareSong) switch
-        {
-            // 本地歌曲比较：通过路径比较
-            (DetailedLocalSongInfo detailedLocalSong, BriefLocalSongInfo localSong) =>
-                detailedLocalSong.Path == localSong.Path,
-
-            // 在线未知歌曲比较：通过路径比较
-            (DetailedUnknownSongInfo detailedUnknownSong, BriefUnknownSongInfo unknownSong) =>
-                detailedUnknownSong.Path == unknownSong.Path,
-
-            // 在线歌曲比较：通过 ID 比较
-            (IDetailedOnlineSongInfo detailedOnlineInfo, IBriefOnlineSongInfo onlineSong) =>
-                detailedOnlineInfo.ID == onlineSong.ID,
-
-            // 类型不匹配
-            _ => false,
         };
     }
 

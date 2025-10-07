@@ -29,6 +29,17 @@ public partial class RootPlayBarViewModel : ObservableObject
     public RootPlayBarViewModel()
     {
         Data.RootPlayBarViewModel = this;
+        ButtonVisibility = Data.PlayState.CurrentSong is null
+            ? Visibility.Collapsed
+            : Visibility.Visible;
+        Availability = Data.PlayState is not null;
+        Data.MusicPlayer.BarViewAvailabilityChanged += OnBarViewAvailabilityChanged;
+    }
+
+    private void OnBarViewAvailabilityChanged(bool value)
+    {
+        ButtonVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+        Availability = value;
     }
 
     public void DetailModeUpdate()
