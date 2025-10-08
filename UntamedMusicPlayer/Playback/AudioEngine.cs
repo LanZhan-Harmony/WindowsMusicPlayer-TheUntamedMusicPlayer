@@ -1,10 +1,13 @@
+using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using ManagedBass;
 using ManagedBass.Fx;
 using ManagedBass.Wasapi;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using UntamedMusicPlayer.Services;
+using Windows.Media.Playback;
 using ZLogger;
 
 namespace UntamedMusicPlayer.Playback;
@@ -21,14 +24,105 @@ public partial class AudioEngine : IDisposable
     private SyncProcedure? _syncFailCallback;
     private WasapiProcedure? _wasapiProc;
 
+    // 专用播放线程相关
+    private readonly Thread _playbackThread;
+    private readonly BlockingCollection<Action> _taskQueue;
+    private readonly CancellationTokenSource _cancellationTokenSource;
+    private volatile bool _isDisposed = false;
+
     public event Action? PlaybackEnded;
     public event Action? PlaybackFailed;
 
     public AudioEngine(SharedPlaybackState state)
     {
         _state = state;
-        InitializeBass();
+
+        // 初始化任务队列和取消令牌
+        _taskQueue = new BlockingCollection<Action>(new ConcurrentQueue<Action>());
+        _cancellationTokenSource = new CancellationTokenSource();
+
+        // 创建并启动专用播放线程
+        _playbackThread = new Thread(PlaybackThreadProc)
+        {
+            Name = "Bass Playback Thread",
+            IsBackground = true,
+            Priority = ThreadPriority.AboveNormal, // 提高线程优先级以确保播放流畅
+        };
+        _playbackThread.Start();
+
+        ExecuteOnPlaybackThread(InitializeBass);
+
         _state.PropertyChanged += OnStateChanged;
+    }
+
+    /// <summary>
+    /// 播放线程处理过程
+    /// </summary>
+    private void PlaybackThreadProc()
+    {
+        try
+        {
+            foreach (var task in _taskQueue.GetConsumingEnumerable(_cancellationTokenSource.Token))
+            {
+                try
+                {
+                    task.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    _logger.ZLogError(ex, $"播放线程任务执行失败");
+                }
+            }
+        }
+        catch (OperationCanceledException) { } // 正常退出
+    }
+
+    /// <summary>
+    /// 在播放线程上执行操作
+    /// </summary>
+    private void ExecuteOnPlaybackThread(Action action)
+    {
+        if (_isDisposed)
+        {
+            return;
+        }
+        if (Thread.CurrentThread == _playbackThread) // 已经在播放线程上，直接执行
+        {
+            action();
+        }
+        else // 将任务添加到队列
+        {
+            _taskQueue.Add(action);
+        }
+    }
+
+    /// <summary>
+    /// 在播放线程上执行操作并等待结果
+    /// </summary>
+    private T ExecuteOnPlaybackThread<T>(Func<T> func)
+    {
+        if (_isDisposed)
+        {
+            return default!;
+        }
+        if (Thread.CurrentThread == _playbackThread) // 已经在播放线程上，直接执行
+        {
+            return func();
+        }
+        var tcs = new TaskCompletionSource<T>();
+        _taskQueue.Add(() =>
+        {
+            try
+            {
+                var result = func();
+                tcs.SetResult(result);
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        return tcs.Task.Result;
     }
 
     private void OnStateChanged(object? _, PropertyChangedEventArgs e)
@@ -38,14 +132,16 @@ public partial class AudioEngine : IDisposable
             case nameof(SharedPlaybackState.Volume):
                 if (!_state.IsMute)
                 {
-                    SetVolume(_state.Volume / 100.0);
+                    ExecuteOnPlaybackThread(() => SetVolume(_state.Volume / 100.0));
                 }
                 break;
             case nameof(SharedPlaybackState.IsMute):
-                SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0);
+                ExecuteOnPlaybackThread(() =>
+                    SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0)
+                );
                 break;
             case nameof(SharedPlaybackState.Speed):
-                SetSpeed(_state.Speed);
+                ExecuteOnPlaybackThread(() => SetSpeed(_state.Speed));
                 break;
         }
     }
@@ -96,7 +192,6 @@ public partial class AudioEngine : IDisposable
             "basswebm.dll",
             "basswv.dll",
         };
-
         foreach (var pluginPath in pluginPaths)
         {
             var fullPath = Path.Combine(appPath, pluginPath);
@@ -104,38 +199,39 @@ public partial class AudioEngine : IDisposable
         }
     }
 
+    /// <summary>
+    /// 播放结束回调
+    /// </summary>
     private void OnPlaybackEnded(int _1, int _2, int _3, nint _4) =>
         _dispatcher.TryEnqueue(() => PlaybackEnded?.Invoke());
 
+    /// <summary>
+    /// 播放失败回调
+    /// </summary>
     private void OnPlaybackFailed(int _1, int _2, int _3, nint _4) =>
         _dispatcher.TryEnqueue(() => PlaybackFailed?.Invoke());
 
     /// <summary>
-    /// WASAPI回调处理程序
+    /// WASAPI回调
     /// </summary>
-    private int WasapiProc(nint buffer, int length, nint user)
-    {
-        if (_fxHandle != 0)
-        {
-            return Bass.ChannelGetData(_fxHandle, buffer, length);
-        }
-        return 0;
-    }
+    private int WasapiProc(nint buffer, int length, nint user) =>
+        _fxHandle == 0 ? 0 : Bass.ChannelGetData(_fxHandle, buffer, length);
 
     /// <summary>
     /// 载入要播放的歌曲
     /// </summary>
-    public bool LoadSong()
-    {
-        FreeStreams();
-        if (!CreateStreams())
+    public bool LoadSong() =>
+        ExecuteOnPlaybackThread(() =>
         {
-            return false;
-        }
-        SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0);
-        SetSpeed(_state.Speed);
-        return true;
-    }
+            FreeStreams();
+            if (!CreateStreams())
+            {
+                return false;
+            }
+            SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0);
+            SetSpeed(_state.Speed);
+            return true;
+        });
 
     /// <summary>
     /// 创建音频流
@@ -179,7 +275,7 @@ public partial class AudioEngine : IDisposable
 
         var lengthBytes = Bass.ChannelGetLength(_fxHandle);
         var lengthSeconds = Bass.ChannelBytes2Seconds(_fxHandle, lengthBytes);
-        _state.TotalPlayingTime = TimeSpan.FromSeconds(lengthSeconds);
+        _dispatcher.TryEnqueue(() => _state.TotalPlayingTime = TimeSpan.FromSeconds(lengthSeconds));
 
         return true;
     }
@@ -210,99 +306,118 @@ public partial class AudioEngine : IDisposable
         }
     }
 
-    public bool Play()
-    {
-        if (_fxHandle == 0)
+    /// <summary>
+    /// 播放
+    /// </summary>
+    /// <returns></returns>
+    public bool Play() =>
+        ExecuteOnPlaybackThread(() =>
         {
-            return false;
-        }
-        if (_state.IsExclusiveMode) // 独占模式
-        {
-            if (_isWasapiInitialized) // 从暂停恢复
+            if (_fxHandle == 0)
             {
+                return false;
+            }
+            if (_state.IsExclusiveMode) // 独占模式
+            {
+                if (_isWasapiInitialized) // 从暂停恢复
+                {
+                    if (!BassWasapi.Start())
+                    {
+                        _logger.ZLogInformation($"独占从暂停恢复播放失败: {Bass.LastError}");
+                        return false;
+                    }
+                    return true;
+                }
+                if (!Bass.ChannelGetInfo(_fxHandle, out var channelInfo))
+                {
+                    _logger.ZLogInformation($"无法获取流信息: {Bass.LastError}");
+                    return false;
+                }
+                if (
+                    !BassWasapi.Init(
+                        -1,
+                        channelInfo.Frequency,
+                        channelInfo.Channels,
+                        WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven,
+                        0.05f,
+                        0,
+                        _wasapiProc,
+                        nint.Zero
+                    )
+                )
+                {
+                    if (Bass.LastError == Errors.Busy)
+                    {
+                        _logger.PlaybackDeviceBusy();
+                        return false;
+                    }
+                    _logger.SongPlaybackError(_state.CurrentSong!.Title);
+                    _logger.ZLogInformation($"独占初始化失败: {Bass.LastError}");
+                    return false;
+                }
+                _isWasapiInitialized = true;
                 if (!BassWasapi.Start())
                 {
-                    _logger.ZLogInformation($"独占从暂停恢复播放失败: {Bass.LastError}");
+                    _logger.ZLogInformation($"独占播放失败: {Bass.LastError}");
                     return false;
                 }
                 return true;
             }
-            if (!Bass.ChannelGetInfo(_fxHandle, out var channelInfo))
+            // 共享模式：先尝试直接播放，失败时在 Start() 后重试一次
+            if (Bass.ChannelPlay(_fxHandle, false))
             {
-                _logger.ZLogInformation($"无法获取流信息: {Bass.LastError}");
-                return false;
+                return true;
             }
-            if (
-                !BassWasapi.Init(
-                    -1,
-                    channelInfo.Frequency,
-                    channelInfo.Channels,
-                    WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven,
-                    0.05f,
-                    0,
-                    _wasapiProc,
-                    nint.Zero
-                )
-            )
+            if (Bass.LastError == Errors.Start && Bass.Start())
             {
-                if (Bass.LastError == Errors.Busy)
-                {
-                    _logger.PlaybackDeviceBusy();
-                    return false;
-                }
-                _logger.SongPlaybackError(_state.CurrentSong!.Title);
-                _logger.ZLogInformation($"独占初始化失败: {Bass.LastError}");
-                return false;
+                return Bass.ChannelPlay(_fxHandle, false);
             }
-            _isWasapiInitialized = true;
-            if (!BassWasapi.Start())
-            {
-                _logger.ZLogInformation($"独占播放失败: {Bass.LastError}");
-                return false;
-            }
-            return true;
-        }
-        if (!Bass.ChannelPlay(_fxHandle, false)) // 共享模式
-        {
+
             _logger.ZLogInformation($"共享播放失败: {Bass.LastError}");
             return false;
-        }
-        return true;
-    }
+        });
 
-    public void Pause()
-    {
-        if (_fxHandle != 0)
+    /// <summary>
+    /// 暂停
+    /// </summary>
+    public void Pause() =>
+        ExecuteOnPlaybackThread(() =>
         {
-            if (_state.IsExclusiveMode)
+            if (_fxHandle != 0)
             {
-                if (BassWasapi.IsStarted)
+                if (_state.IsExclusiveMode)
                 {
-                    BassWasapi.Stop(false);
+                    if (BassWasapi.IsStarted)
+                    {
+                        BassWasapi.Stop(false);
+                    }
+                    return;
                 }
-                return;
+                Bass.ChannelPause(_fxHandle);
             }
-            Bass.ChannelPause(_fxHandle);
-        }
-    }
+        });
 
-    public void Stop()
-    {
-        if (_fxHandle != 0)
+    /// <summary>
+    /// 停止
+    /// </summary>
+    public void Stop() =>
+        ExecuteOnPlaybackThread(() =>
         {
-            if (_state.IsExclusiveMode)
+            if (_fxHandle != 0)
             {
-                if (BassWasapi.IsStarted)
+                if (_state.IsExclusiveMode)
                 {
-                    BassWasapi.Stop(true);
+                    if (BassWasapi.IsStarted)
+                    {
+                        BassWasapi.Stop(true);
+                    }
+                    BassWasapi.Free();
+                    _isWasapiInitialized = false;
+                    return;
                 }
-                BassWasapi.Free();
-                _isWasapiInitialized = false;
-                return;
+                Bass.ChannelStop(_fxHandle);
             }
-            Bass.ChannelStop(_fxHandle);
-        }
-    }
+        });
 
     /// <summary>
     /// 设置播放速度
@@ -334,17 +449,23 @@ public partial class AudioEngine : IDisposable
     /// </summary>
     /// <param name="isExclusive"></param>
     /// <param name="isPlaying"></param>
-    public void SetExclusiveMode(bool isExclusive, bool isPlaying)
+    public async Task SetExclusiveMode(bool isExclusive, bool isPlaying)
     {
-        _state.IsExclusiveMode = isExclusive;
-        var position = GetPositionSeconds();
-        Stop();
-        LoadSong();
-        if (isPlaying)
+        await ExecuteOnPlaybackThread(async () =>
         {
-            Play();
-        }
-        SetPosition(position);
+            _state.IsExclusiveMode = isExclusive;
+            var position = GetPositionSeconds();
+            Stop();
+            LoadSong();
+            if (isPlaying)
+            {
+                if (!Play())
+                {
+                    _dispatcher.TryEnqueue(() => _state.PlayState = MediaPlaybackState.Paused);
+                }
+            }
+            await SetPositionInternal(position);
+        });
     }
 
     /// <summary>
@@ -352,7 +473,7 @@ public partial class AudioEngine : IDisposable
     /// </summary>
     public async Task UpdatePosition()
     {
-        var position = GetPositionSeconds();
+        var position = ExecuteOnPlaybackThread(GetPositionSeconds);
         if (position >= 0)
         {
             var tcs = new TaskCompletionSource<bool>();
@@ -365,31 +486,41 @@ public partial class AudioEngine : IDisposable
         }
     }
 
-    public void SkipBack10s()
-    {
-        var currentPosition = GetPositionSeconds();
-        if (currentPosition >= 0)
+    /// <summary>
+    /// 快退10秒
+    /// </summary>
+    public void SkipBack10s() =>
+        ExecuteOnPlaybackThread(() =>
         {
-            var newPosition = Math.Max(0, currentPosition - 10);
-            SetPosition(newPosition);
-        }
-    }
+            var currentPosition = GetPositionSeconds();
+            if (currentPosition >= 0)
+            {
+                var newPosition = Math.Max(0, currentPosition - 10);
+                _ = SetPositionInternal(newPosition);
+            }
+        });
 
-    public void SkipForward30s()
-    {
-        var currentPosition = GetPositionSeconds();
-        if (currentPosition >= 0)
+    /// <summary>
+    /// 快进30秒
+    /// </summary>
+    public void SkipForward30s() =>
+        ExecuteOnPlaybackThread(() =>
         {
-            var newPosition = Math.Min(_state.TotalPlayingTime.TotalSeconds, currentPosition + 30);
-            SetPosition(newPosition);
-        }
-    }
+            var currentPosition = GetPositionSeconds();
+            if (currentPosition >= 0)
+            {
+                var newPosition = Math.Min(
+                    _state.TotalPlayingTime.TotalSeconds,
+                    currentPosition + 30
+                );
+                _ = SetPositionInternal(newPosition);
+            }
+        });
 
     /// <summary>
     /// 获取当前播放位置（秒）
     /// </summary>
-    /// <returns></returns>
-    public double GetPositionSeconds()
+    private double GetPositionSeconds()
     {
         if (_fxHandle != 0)
         {
@@ -400,7 +531,18 @@ public partial class AudioEngine : IDisposable
         return -1;
     }
 
-    public async void SetPosition(double targetSeconds)
+    /// <summary>
+    /// 设置播放位置（秒）
+    /// </summary>
+    /// <param name="targetSeconds"></param>
+    public void SetPosition(double targetSeconds) =>
+        ExecuteOnPlaybackThread(() => SetPositionInternal(targetSeconds));
+
+    /// <summary>
+    /// 设置播放位置（秒）- 内部方法
+    /// </summary>
+    /// <param name="targetSeconds"></param>
+    private async Task SetPositionInternal(double targetSeconds)
     {
         if (_fxHandle != 0)
         {
@@ -420,17 +562,44 @@ public partial class AudioEngine : IDisposable
                     }
                 }
             }
-            _state.CurrentPlayingTime = TimeSpan.FromSeconds(targetSeconds);
+            _dispatcher.TryEnqueue(() =>
+                _state.CurrentPlayingTime = TimeSpan.FromSeconds(targetSeconds)
+            );
         }
     }
 
     public void Dispose()
     {
-        FreeStreams();
-        Bass.Free();
-        _syncEndCallback -= OnPlaybackEnded;
-        _syncFailCallback -= OnPlaybackFailed;
+        if (_isDisposed)
+        {
+            return;
+        }
+
+        _isDisposed = true;
         _state.PropertyChanged -= OnStateChanged;
+
+        // 在播放线程上执行清理
+        ExecuteOnPlaybackThread(() =>
+        {
+            FreeStreams();
+            Bass.Free();
+            _syncEndCallback -= OnPlaybackEnded;
+            _syncFailCallback -= OnPlaybackFailed;
+        });
+
+        // 停止播放线程
+        _cancellationTokenSource.Cancel();
+        _taskQueue.CompleteAdding();
+
+        // 等待线程完成（最多等待2秒）
+        if (!_playbackThread.Join(TimeSpan.FromSeconds(2)))
+        {
+            _logger.ZLogWarning($"播放线程未能在2秒内完成");
+        }
+
+        _taskQueue.Dispose();
+        _cancellationTokenSource.Dispose();
+
         GC.SuppressFinalize(this);
     }
 }
