@@ -53,12 +53,17 @@ public partial class AudioEngine : IDisposable
     /// <summary>
     /// 初始化Bass音频库
     /// </summary>
-    private void InitializeBass()
+    private bool InitializeBass()
     {
         if (!Bass.Init()) // 初始化Bass - 使用默认设备
         {
+            if (Bass.LastError == Errors.Busy)
+            {
+                _logger.PlaybackDeviceBusy();
+                return false;
+            }
             _logger.ZLogInformation($"Bass初始化失败: {Bass.LastError}");
-            return;
+            return false;
         }
 
         LoadBassPlugins();
@@ -69,6 +74,8 @@ public partial class AudioEngine : IDisposable
 
         // 设置WASAPI回调
         _wasapiProc = WasapiProc;
+
+        return true;
     }
 
     /// <summary>
@@ -118,18 +125,22 @@ public partial class AudioEngine : IDisposable
     /// <summary>
     /// 载入要播放的歌曲
     /// </summary>
-    public void LoadSong()
+    public bool LoadSong()
     {
         FreeStreams();
-        CreateStreams();
+        if (!CreateStreams())
+        {
+            return false;
+        }
         SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0);
         SetSpeed(_state.Speed);
+        return true;
     }
 
     /// <summary>
     /// 创建音频流
     /// </summary>
-    private void CreateStreams()
+    private bool CreateStreams()
     {
         const BassFlags flags =
             BassFlags.Unicode | BassFlags.Float | BassFlags.AsyncFile | BassFlags.Decode;
@@ -140,8 +151,15 @@ public partial class AudioEngine : IDisposable
             : Bass.CreateStream(path, 0, 0, flags);
         if (_mainHandle == 0)
         {
-            var error = Bass.LastError;
-            _logger.ZLogInformation($"创建Bass流失败: {error}, 文件: {path}");
+            if (Bass.LastError == Errors.Init)
+            {
+                if (InitializeBass())
+                {
+                    return CreateStreams();
+                }
+                return false;
+            }
+            _logger.ZLogInformation($"创建Bass流失败: {Bass.LastError}, 文件: {path}");
         }
 
         _fxHandle = _state.IsExclusiveMode
@@ -153,6 +171,7 @@ public partial class AudioEngine : IDisposable
             _logger.ZLogInformation($"创建Tempo流失败: {error}");
             Bass.StreamFree(_mainHandle);
             _mainHandle = 0;
+            return false;
         }
 
         Bass.ChannelSetSync(_fxHandle, SyncFlags.End, 0, _syncEndCallback);
@@ -161,6 +180,8 @@ public partial class AudioEngine : IDisposable
         var lengthBytes = Bass.ChannelGetLength(_fxHandle);
         var lengthSeconds = Bass.ChannelBytes2Seconds(_fxHandle, lengthBytes);
         _state.TotalPlayingTime = TimeSpan.FromSeconds(lengthSeconds);
+
+        return true;
     }
 
     /// <summary>
@@ -318,7 +339,11 @@ public partial class AudioEngine : IDisposable
         _state.IsExclusiveMode = isExclusive;
         var position = GetPositionSeconds();
         Stop();
-        Play();
+        LoadSong();
+        if (isPlaying)
+        {
+            Play();
+        }
         SetPosition(position);
     }
 
