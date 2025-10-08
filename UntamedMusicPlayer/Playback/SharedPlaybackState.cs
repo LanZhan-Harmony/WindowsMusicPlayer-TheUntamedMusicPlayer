@@ -30,9 +30,6 @@ public partial class SharedPlaybackState : ObservableObject
     public partial double Speed { get; set; } = 1.0;
 
     [ObservableProperty]
-    public partial bool IsExclusiveMode { get; set; } = false;
-
-    [ObservableProperty]
     public partial TimeSpan CurrentPlayingTime { get; set; } = TimeSpan.Zero;
 
     [ObservableProperty]
@@ -41,14 +38,15 @@ public partial class SharedPlaybackState : ObservableObject
     [ObservableProperty]
     public partial int PlayQueueIndex { get; set; } = -1;
 
-    [ObservableProperty]
-    public partial int PlayQueueCount { get; set; } = 0;
+    public int PlayQueueCount { get; set; } = 0;
 
     [ObservableProperty]
     public partial IBriefSongInfoBase? CurrentBriefSong { get; set; }
 
     [ObservableProperty]
     public partial IDetailedSongInfoBase? CurrentSong { get; set; }
+
+    public bool IsExclusiveMode { get; set; } = false;
 
     public async Task LoadStateAsync()
     {
