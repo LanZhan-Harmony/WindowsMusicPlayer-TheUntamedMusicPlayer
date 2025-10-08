@@ -40,9 +40,16 @@ public partial class PlayQueueManager : ObservableObject
 
     private void OnStateChanged(object? _, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(SharedPlaybackState.ShuffleMode))
+        switch (e.PropertyName)
         {
-            UpdateQueueIndexes();
+            case nameof(SharedPlaybackState.PlayQueueIndex):
+                UpdateQueueIndexes();
+                break;
+            case nameof(SharedPlaybackState.CurrentBriefSong):
+                _ = SaveCurrentBriefSongAsync();
+                break;
+            default:
+                break;
         }
     }
 
@@ -386,11 +393,20 @@ public partial class PlayQueueManager : ObservableObject
                 nameof(SharedPlaybackState.PlayQueueIndex),
                 _state.PlayQueueIndex
             );
-            var sourceMode = SourceModeHelper.GetSourceMode(_state.CurrentBriefSong);
+            await SaveCurrentBriefSongAsync();
+        }
+        catch { }
+    }
+
+    public async Task SaveCurrentBriefSongAsync()
+    {
+        try
+        {
             await _localSettingsService.SaveSettingAsync(
                 nameof(SharedPlaybackState.CurrentBriefSong),
                 _state.CurrentBriefSong
             );
+            var sourceMode = SourceModeHelper.GetSourceMode(_state.CurrentBriefSong);
             await _localSettingsService.SaveSettingAsync(nameof(SourceMode), $"{sourceMode}");
         }
         catch { }
