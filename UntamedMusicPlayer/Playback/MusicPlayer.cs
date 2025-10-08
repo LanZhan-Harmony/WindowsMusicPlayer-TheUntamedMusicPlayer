@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.LyricRenderer;
@@ -284,6 +285,10 @@ public partial class MusicPlayer : IDisposable
             State.PlayState = MediaPlaybackState.Playing;
             _smtcManager.UpdatePlaybackStatus(MediaPlaybackStatus.Playing);
         }
+        else
+        {
+            State.PlayState = MediaPlaybackState.Paused;
+        }
     }
 
     /// <summary>
@@ -329,14 +334,17 @@ public partial class MusicPlayer : IDisposable
     /// 设置独占模式
     /// </summary>
     /// <param name="isExclusive"></param>
-    public void SetExclusiveMode(bool isExclusive)
+    public async void SetExclusiveMode(bool isExclusive)
     {
         if (State.IsExclusiveMode == isExclusive)
         {
             return;
         }
         _updatable = false;
-        _audioEngine.SetExclusiveMode(isExclusive, State.PlayState == MediaPlaybackState.Playing);
+        await _audioEngine.SetExclusiveMode(
+            isExclusive,
+            State.PlayState == MediaPlaybackState.Playing
+        );
         _updatable = true;
     }
 
