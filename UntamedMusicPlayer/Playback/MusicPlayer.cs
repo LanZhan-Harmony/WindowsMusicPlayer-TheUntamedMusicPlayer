@@ -175,18 +175,19 @@ public partial class MusicPlayer : IDisposable
         if (!State.CurrentSong.IsPlayAvailable)
         {
             HandleSongNotAvailable();
+            State.PlayState = MediaPlaybackState.Paused;
             return;
         }
-        await SetSource();
+        var couldPlay = await SetSource();
         _lyricManager.GetSongLyric();
         _smtcManager.SetButtonsEnabled(true, true, true, true);
-        if (shouldStop)
+        if (!shouldStop && couldPlay)
         {
-            State.PlayState = MediaPlaybackState.Paused;
+            Play();
         }
         else
         {
-            Play();
+            State.PlayState = MediaPlaybackState.Paused;
         }
     }
 
@@ -194,12 +195,16 @@ public partial class MusicPlayer : IDisposable
     /// 设置播放源
     /// </summary>
     /// <returns></returns>
-    private async Task SetSource()
+    private async Task<bool> SetSource()
     {
         BarViewAvailabilityChanged?.Invoke(true);
-        _audioEngine.LoadSong();
+        if (!_audioEngine.LoadSong())
+        {
+            return false;
+        }
         _smtcManager.UpdateMediaInfo();
         await _smtcManager.SetCoverImageAndUpdateAsync();
+        return true;
     }
 
     /// <summary>
@@ -226,8 +231,6 @@ public partial class MusicPlayer : IDisposable
     public void ClearPlayQueue()
     {
         Stop();
-        State.CurrentSong = null;
-        State.CurrentBriefSong = null;
         State.CurrentPlayingTime = TimeSpan.Zero;
         State.TotalPlayingTime = TimeSpan.Zero;
         _queueManager.Reset();
