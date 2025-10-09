@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
@@ -102,7 +103,7 @@ public static class DownloadHelper
     )
     {
         var location = await LoadSongDownloadLocationAsync();
-        var fileName = $"{detailedInfo.Title}{detailedInfo.ItemType}";
+        var fileName = SanitizeFileName($"{detailedInfo.Title}{detailedInfo.ItemType}");
         var finalPath = GetUniqueFilePath(Path.Combine(location, fileName));
 
         // 创建临时文件路径，添加 .crdownload 后缀
@@ -489,6 +490,45 @@ public static class DownloadHelper
                 return uniquePath;
             }
         }
+    }
+
+    /// <summary>
+    /// 规范化文件名
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="replacement"></param>
+    /// <returns></returns>
+    private static string SanitizeFileName(string name, char replacement = '_')
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return "Untitled";
+        }
+
+        char[] invalids =
+        [
+            .. Path.GetInvalidFileNameChars()
+                .Concat([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar])
+                .Distinct(),
+        ];
+
+        var sb = new StringBuilder(name.Length);
+        foreach (var ch in name)
+        {
+            sb.Append(invalids.Contains(ch) ? replacement : ch);
+        }
+        var result = sb.ToString().Trim();
+
+        // 避免文件名以点开头或尾部包含空白，限制长度
+        if (result.Length == 0)
+        {
+            result = "Untitled";
+        }
+        else if (result.Length > 200)
+        {
+            result = result[..200];
+        }
+        return result;
     }
 
     private static async Task<string> LoadSongDownloadLocationAsync()

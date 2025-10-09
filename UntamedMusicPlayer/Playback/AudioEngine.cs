@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using ManagedBass;
 using ManagedBass.Fx;
 using ManagedBass.Wasapi;

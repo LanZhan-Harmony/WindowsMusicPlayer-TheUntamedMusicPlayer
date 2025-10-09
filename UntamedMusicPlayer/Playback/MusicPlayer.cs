@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.LyricRenderer;
