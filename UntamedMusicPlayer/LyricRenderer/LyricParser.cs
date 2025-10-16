@@ -29,7 +29,10 @@ public partial class LyricParser
         var lyricSlices = new List<LyricSlice>();
         await Task.Run(() =>
         {
-            var lines = lyric.Split('\n');
+            var lines = lyric.Split(
+                ['\r', '\n'],
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+            );
             var offset = 0.0; // 时间偏移量（毫秒）
             double? lastTime = null; // 上一条歌词的时间
             var emptyStartTime = 0.0; // 空白歌词块的开始时间
@@ -38,11 +41,6 @@ public partial class LyricParser
 
             foreach (var line in lines) // 解析所有歌词行并按时间分组
             {
-                if (string.IsNullOrEmpty(line))
-                {
-                    continue;
-                }
-
                 if (line.StartsWith("[offset:")) // 处理偏移量标签 [offset:±毫秒数]
                 {
                     var offsetMatch = RegexOffset().Match(line);
