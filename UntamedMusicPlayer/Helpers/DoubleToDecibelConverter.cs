@@ -2,7 +2,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace UntamedMusicPlayer.Helpers;
 
-public partial class DoubleToDecibelConverter : IValueConverter
+public sealed partial class DoubleToDecibelConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {

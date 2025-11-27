@@ -10,9 +10,7 @@ using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
-using UntamedMusicPlayer.ViewModels;
 using UntamedMusicPlayer.Views;
-using Windows.UI.ViewManagement;
 using WinUIEx;
 using ZLogger;
 
@@ -20,26 +18,17 @@ namespace UntamedMusicPlayer;
 
 public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 {
-    private readonly DispatcherQueue dispatcherQueue;
-    private readonly UISettings settings;
     private readonly ILogger _logger = LoggingService.CreateLogger<MainWindow>();
     private readonly InfoBarManager? _infoBarManager;
-
-    public MainViewModel ViewModel { get; }
 
     public MainWindow()
     {
         InitializeComponent();
         Data.MainWindow = this;
-        ViewModel = App.GetService<MainViewModel>();
 
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppIcon/Icon.ico"));
         Title = "AppDisplayName".GetLocalized();
         ExtendsContentIntoTitleBar = true;
-
-        dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        settings = new UISettings();
-        settings.ColorValuesChanged += Settings_ColorValuesChanged;
 
         ShellFrame.Navigate(typeof(ShellPage));
 
@@ -70,7 +59,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         if (message.Level >= LogLevel.Error)
         {
             // 确保在UI线程上执行
-            dispatcherQueue.TryEnqueue(() =>
+            DispatcherQueue.TryEnqueue(() =>
             {
                 _infoBarManager?.ShowMessage(message);
             });
@@ -89,17 +78,6 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     public Grid GetBackgroundGrid()
     {
         return BackgroundGrid;
-    }
-
-    /// <summary>
-    /// 处理在应用程序打开时主题改变时正确更新标题按钮颜色
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
-    private void Settings_ColorValuesChanged(UISettings sender, object args)
-    {
-        // 这个调用来自线程外，因此我们需要将其调度到当前应用程序的线程
-        dispatcherQueue.TryEnqueue(TitleBarHelper.ApplySystemThemeToCaptionButtons);
     }
 
     /// <summary>

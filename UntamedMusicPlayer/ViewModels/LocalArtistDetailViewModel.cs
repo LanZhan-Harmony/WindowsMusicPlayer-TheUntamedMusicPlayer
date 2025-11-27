@@ -7,7 +7,7 @@ using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public class LocalArtistDetailViewModel
+public sealed class LocalArtistDetailViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();

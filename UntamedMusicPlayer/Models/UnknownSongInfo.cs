@@ -35,7 +35,7 @@ public partial class BriefUnknownSongInfo : IBriefSongInfoBase
     }
 }
 
-public class DetailedUnknownSongInfo : BriefUnknownSongInfo, IDetailedSongInfoBase
+public sealed class DetailedUnknownSongInfo : BriefUnknownSongInfo, IDetailedSongInfoBase
 {
     public string ItemType { get; set; } = null!;
     public string AlbumArtistsStr { get; set; } = null!;

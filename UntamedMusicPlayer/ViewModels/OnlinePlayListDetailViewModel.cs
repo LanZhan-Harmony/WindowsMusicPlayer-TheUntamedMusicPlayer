@@ -9,7 +9,7 @@ using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class OnlinePlayListDetailViewModel : ObservableObject
+public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
 {
     private IBriefOnlinePlaylistInfo? _cachedBriefPlaylist = null;
     public IBriefOnlinePlaylistInfo BriefPlaylist { get; set; } = Data.SelectedOnlinePlaylist!;
@@ -82,7 +82,10 @@ public partial class OnlinePlayListDetailViewModel : ObservableObject
         {
             return;
         }
-        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{Playlist.Name}", Playlist.SongList);
+        Data.PlayQueueManager.SetNormalPlayQueue(
+            $"OnlineSongs:Playlist:{Playlist.Name}",
+            Playlist.SongList
+        );
         Data.MusicPlayer.PlaySongByInfo(Playlist.SongList[0]);
     }
 
@@ -113,7 +116,10 @@ public partial class OnlinePlayListDetailViewModel : ObservableObject
 
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
-        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{Playlist.Name}", Playlist.SongList);
+        Data.PlayQueueManager.SetNormalPlayQueue(
+            $"OnlineSongs:Playlist:{Playlist.Name}",
+            Playlist.SongList
+        );
         if (e.ClickedItem is IBriefOnlineSongInfo info)
         {
             Data.MusicPlayer.PlaySongByInfo(info);
@@ -122,7 +128,10 @@ public partial class OnlinePlayListDetailViewModel : ObservableObject
 
     public void PlayButton_Click(IBriefOnlineSongInfo info)
     {
-        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{Playlist.Name}", Playlist.SongList);
+        Data.PlayQueueManager.SetNormalPlayQueue(
+            $"OnlineSongs:Playlist:{Playlist.Name}",
+            Playlist.SongList
+        );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
 
@@ -131,7 +140,10 @@ public partial class OnlinePlayListDetailViewModel : ObservableObject
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{Playlist.Name}:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Playlist:{Playlist.Name}:Part",
+                list
+            );
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
@@ -145,7 +157,10 @@ public partial class OnlinePlayListDetailViewModel : ObservableObject
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{Playlist.Name}:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Playlist:{Playlist.Name}:Part",
+                list
+            );
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else

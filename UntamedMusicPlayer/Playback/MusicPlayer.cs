@@ -9,7 +9,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.Playback;
 
-public partial class MusicPlayer : IDisposable
+public sealed partial class MusicPlayer : IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<MusicPlayer>();
     private readonly AudioEngine _audioEngine;

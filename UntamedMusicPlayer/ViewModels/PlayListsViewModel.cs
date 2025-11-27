@@ -11,7 +11,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class PlayListsViewModel
+public sealed partial class PlayListsViewModel
     : ObservableRecipient,
         IRecipient<HavePlaylistMessage>,
         IDisposable

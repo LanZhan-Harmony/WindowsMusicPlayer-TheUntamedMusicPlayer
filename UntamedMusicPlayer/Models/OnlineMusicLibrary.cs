@@ -12,7 +12,7 @@ using ZLogger;
 
 namespace UntamedMusicPlayer.Models;
 
-public partial class OnlineMusicLibrary : ObservableObject
+public sealed partial class OnlineMusicLibrary : ObservableObject
 {
     private static readonly ILogger _logger = LoggingService.CreateLogger<OnlineMusicLibrary>();
     private bool _isSearchingMore = false;

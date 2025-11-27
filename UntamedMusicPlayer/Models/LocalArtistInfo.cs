@@ -6,7 +6,7 @@ using UntamedMusicPlayer.Helpers;
 namespace UntamedMusicPlayer.Models;
 
 [MemoryPackable]
-public partial class LocalArtistInfo : IArtistInfoBase
+public sealed partial class LocalArtistInfo : IArtistInfoBase
 {
     public HashSet<string> Albums { get; set; } = [];
 

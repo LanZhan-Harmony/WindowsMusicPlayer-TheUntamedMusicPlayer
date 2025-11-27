@@ -8,7 +8,7 @@ using Windows.Foundation.Collections;
 
 namespace UntamedMusicPlayer.Helpers;
 
-public class AlternatingListViewBehavior : Behavior<ListViewBase>
+public sealed class AlternatingListViewBehavior : Behavior<ListViewBase>
 {
     public static readonly DependencyProperty AlternateBackgroundProperty =
         DependencyProperty.Register(
