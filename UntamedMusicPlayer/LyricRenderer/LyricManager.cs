@@ -2,12 +2,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Dispatching;
 using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
 
 namespace UntamedMusicPlayer.LyricRenderer;
 
-public partial class LyricManager(SharedPlaybackState state)
+public sealed partial class LyricManager(SharedPlaybackState state)
     : ObservableRecipient(StrongReferenceMessenger.Default),
         IRecipient<FontSizeChangeMessage>,
         IDisposable
@@ -81,37 +80,27 @@ public partial class LyricManager(SharedPlaybackState state)
     /// </summary>
     public void UpdateCurrentLyric()
     {
-        if (
-            CurrentLyricSlices.Count == 0
-            || Data.LyricPage is null && Data.DesktopLyricWindow is null
-        )
+        if (CurrentLyricSlices.Count == 0)
         {
             return;
         }
 
         var newIndex = GetCurrentLyricIndex(_state.CurrentPlayingTime.TotalMilliseconds);
-        if (newIndex != _currentLyricIndex)
+        if (newIndex == _currentLyricIndex)
         {
-            _dispatcher.TryEnqueue(() =>
-            {
-                if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyricSlices.Count)
-                {
-                    CurrentLyricSlices[_currentLyricIndex].IsCurrent = false;
-                }
-                _currentLyricIndex = newIndex;
-
-                if (_currentLyricIndex >= 0 && _currentLyricIndex < CurrentLyricSlices.Count)
-                {
-                    CurrentLyricSlices[_currentLyricIndex].IsCurrent = true;
-                    CurrentLyricContent = CurrentLyricSlices[_currentLyricIndex].Content;
-                }
-            });
+            return;
         }
-    }
 
-    public void NotifyLyricContentChanged()
-    {
-        OnPropertyChanged(nameof(CurrentLyricContent));
+        var oldSlice = CurrentLyricSlices[_currentLyricIndex];
+        var newSlice = CurrentLyricSlices[newIndex];
+        var newContent = newSlice.Content;
+        _dispatcher.TryEnqueue(() =>
+        {
+            oldSlice.IsCurrent = false;
+            newSlice.IsCurrent = true;
+            CurrentLyricContent = newContent;
+        });
+        _currentLyricIndex = newIndex;
     }
 
     /// <summary>

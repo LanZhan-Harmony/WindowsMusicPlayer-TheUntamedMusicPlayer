@@ -3,7 +3,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.LyricRenderer;
 
-public partial class LyricParser
+public static partial class LyricParser
 {
     [GeneratedRegex(@".*\](.*)", RegexOptions.Compiled)]
     private static partial Regex RegexWord();
