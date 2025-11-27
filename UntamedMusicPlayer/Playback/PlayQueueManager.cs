@@ -10,7 +10,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.Playback;
 
-public partial class PlayQueueManager : ObservableObject
+public sealed partial class PlayQueueManager : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();

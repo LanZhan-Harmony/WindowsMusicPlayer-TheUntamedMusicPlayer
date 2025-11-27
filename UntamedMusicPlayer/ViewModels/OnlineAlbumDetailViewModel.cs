@@ -110,7 +110,10 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         }
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
+            Data.PlayQueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Album:{Album.Name}",
+                Album.SongList
+            );
             Data.MusicPlayer.PlaySongByInfo(Album.SongList[0]);
         }
         else

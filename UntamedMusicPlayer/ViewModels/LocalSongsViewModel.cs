@@ -16,7 +16,7 @@ using ZLogger;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class LocalSongsViewModel
+public sealed partial class LocalSongsViewModel
     : ObservableRecipient,
         IRecipient<HaveMusicMessage>,
         IDisposable
@@ -258,10 +258,7 @@ public partial class LocalSongsViewModel
         }
     }
 
-    public object GetSongListViewSource(
-        ICollectionView grouped,
-        List<BriefLocalSongInfo> _
-    )
+    public object GetSongListViewSource(ICollectionView grouped, List<BriefLocalSongInfo> _)
     {
         return _isGrouped ? grouped : NotGroupedSongList;
     }
@@ -534,7 +531,10 @@ public partial class LocalSongsViewModel
 
     public void ShuffledPlayAllButton_Click(object _1, RoutedEventArgs _2)
     {
-        Data.PlayQueueManager.SetShuffledPlayQueue("ShuffledLocalSongs:All", ConvertGroupedToFlatList());
+        Data.PlayQueueManager.SetShuffledPlayQueue(
+            "ShuffledLocalSongs:All",
+            ConvertGroupedToFlatList()
+        );
         Data.MusicPlayer.PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
     }
 

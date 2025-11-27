@@ -2,7 +2,7 @@ using Microsoft.UI.Xaml.Media;
 
 namespace UntamedMusicPlayer.Models;
 
-public class FontInfo
+public sealed class FontInfo
 {
     public string Name { get; set; } = null!;
     public string DisplayName { get; set; } = null!;

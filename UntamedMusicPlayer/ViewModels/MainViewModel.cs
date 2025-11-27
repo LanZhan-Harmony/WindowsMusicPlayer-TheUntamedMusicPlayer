@@ -1,6 +1,3 @@
 namespace UntamedMusicPlayer.ViewModels;
 
-public class MainViewModel
-{
-    public MainViewModel() { }
-}
+public sealed class MainViewModel { }

@@ -13,7 +13,7 @@ namespace UntamedMusicPlayer.Services;
 /// <summary>
 /// 颜色提取服务，使用八叉树算法从图片中提取主色调
 /// </summary>
-public class ColorExtractionService : IColorExtractionService
+public sealed class ColorExtractionService : IColorExtractionService
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<ColorExtractionService>();
 
@@ -351,7 +351,7 @@ internal class OctreeNode
 /// <summary>
 /// 渐变配置
 /// </summary>
-public record GradientConfig(List<Color> Colors, double Angle);
+public sealed record GradientConfig(List<Color> Colors, double Angle);
 
 /// <summary>
 /// 扩展方法

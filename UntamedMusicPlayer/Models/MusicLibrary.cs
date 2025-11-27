@@ -14,7 +14,7 @@ using ZLogger;
 
 namespace UntamedMusicPlayer.Models;
 
-public partial class MusicLibrary : ObservableRecipient
+public sealed partial class MusicLibrary : ObservableRecipient
 {
     private static readonly ILogger _logger = LoggingService.CreateLogger<MusicLibrary>();
 

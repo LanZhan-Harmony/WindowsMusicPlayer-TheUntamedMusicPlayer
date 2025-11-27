@@ -13,9 +13,9 @@ using ZLogger;
 
 namespace UntamedMusicPlayer.Models;
 
-public class FileManager
+public static class FileManager
 {
-    private static readonly ILogger _logger = LoggingService.CreateLogger<FileManager>();
+    private static readonly ILogger _logger = LoggingService.CreateLogger(nameof(FileManager));
 
     /// <summary>
     /// 保存音乐库数据到文件
@@ -484,7 +484,7 @@ public class FileManager
 /// <summary>
 /// 音乐库数据容器
 /// </summary>
-public class MusicLibraryData
+public sealed class MusicLibraryData
 {
     public ConcurrentBag<BriefLocalSongInfo> Songs { get; set; } = null!;
     public ConcurrentDictionary<string, LocalAlbumInfo> Albums { get; set; } = null!;

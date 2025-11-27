@@ -3,7 +3,7 @@ using UntamedMusicPlayer.Models;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public class OnlineArtistsViewModel
+public sealed class OnlineArtistsViewModel
 {
     public OnlineArtistsViewModel() { }
 

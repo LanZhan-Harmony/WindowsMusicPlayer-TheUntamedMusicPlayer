@@ -6,7 +6,7 @@ using ZLogger;
 
 namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Helpers;
 
-public class CloudSuggestSearchHelper
+public sealed class CloudSuggestSearchHelper
 {
     private static readonly ILogger _logger =
         LoggingService.CreateLogger<CloudSuggestSearchHelper>();

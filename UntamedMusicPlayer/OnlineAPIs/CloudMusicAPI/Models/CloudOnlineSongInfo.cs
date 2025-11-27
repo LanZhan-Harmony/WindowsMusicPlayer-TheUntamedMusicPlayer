@@ -151,7 +151,7 @@ public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
     }
 }
 
-public class DetailedCloudOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOnlineSongInfo
+public sealed class DetailedCloudOnlineSongInfo : BriefCloudOnlineSongInfo, IDetailedOnlineSongInfo
 {
     public bool IsOnline { get; set; } = true;
     public string AlbumArtistsStr { get; set; } = "";

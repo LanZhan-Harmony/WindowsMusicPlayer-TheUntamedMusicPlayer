@@ -11,7 +11,7 @@ using ZLogger;
 namespace UntamedMusicPlayer.Models;
 
 [MemoryPackable]
-public partial class LocalAlbumInfo : IAlbumInfoBase
+public sealed partial class LocalAlbumInfo : IAlbumInfoBase
 {
     private static readonly ILogger _logger = LoggingService.CreateLogger<LocalAlbumInfo>();
 
