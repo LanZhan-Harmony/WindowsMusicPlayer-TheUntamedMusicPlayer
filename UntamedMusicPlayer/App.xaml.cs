@@ -13,17 +13,19 @@ using ZLogger;
 
 namespace UntamedMusicPlayer;
 
-public partial class App : Application
+public sealed partial class App : Application
 {
     // The .NET Generic Host provides dependency injection, configuration, logging, and other services.
     // https://docs.microsoft.com/dotnet/core/extensions/generic-host
     // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
     // https://docs.microsoft.com/dotnet/core/extensions/configuration
     // https://docs.microsoft.com/dotnet/core/extensions/logging
-    public IHost Host { get; }
 
     // 应用程序级日志记录器
     private static readonly ILogger<App> _logger = LoggingService.CreateLogger<App>();
+
+    public IHost Host { get; }
+    public static WindowEx? MainWindow { get; set; }
 
     public static T GetService<T>()
         where T : class
@@ -37,10 +39,6 @@ public partial class App : Application
 
         return service;
     }
-
-    public static WindowEx? MainWindow { get; set; }
-
-    public static UIElement? AppTitlebar { get; set; }
 
     public App()
     {

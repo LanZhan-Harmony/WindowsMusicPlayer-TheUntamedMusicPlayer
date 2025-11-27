@@ -11,7 +11,7 @@ namespace UntamedMusicPlayer.Helpers;
 /// <summary>
 /// InfoBar管理器，提供高级的InfoBar显示功能
 /// </summary>
-public partial class InfoBarManager : IDisposable
+public sealed partial class InfoBarManager : IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<InfoBarManager>();
     private readonly InfoBar _infoBar;

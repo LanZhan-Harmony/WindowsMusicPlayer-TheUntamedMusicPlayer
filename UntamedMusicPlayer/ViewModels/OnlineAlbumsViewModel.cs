@@ -5,7 +5,7 @@ using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public class OnlineAlbumsViewModel
+public sealed class OnlineAlbumsViewModel
 {
     public OnlineAlbumsViewModel() { }
 

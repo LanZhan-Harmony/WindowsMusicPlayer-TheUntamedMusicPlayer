@@ -4,7 +4,7 @@ using UntamedMusicPlayer.Contracts.Models;
 namespace UntamedMusicPlayer.Playback;
 
 [MemoryPackable]
-public partial class IndexedPlayQueueSong
+public sealed partial class IndexedPlayQueueSong
 {
     public int Index { get; set; }
     public IBriefSongInfoBase Song { get; set; } = null!;

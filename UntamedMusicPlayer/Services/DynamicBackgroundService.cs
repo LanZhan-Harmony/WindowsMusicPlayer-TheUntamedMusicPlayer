@@ -16,7 +16,7 @@ namespace UntamedMusicPlayer.Services;
 /// <summary>
 /// 动态背景服务，根据当前播放歌曲的封面颜色动态改变窗口背景
 /// </summary>
-public partial class DynamicBackgroundService(IColorExtractionService colorExtractionService)
+public sealed partial class DynamicBackgroundService(IColorExtractionService colorExtractionService)
     : IDynamicBackgroundService
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<DynamicBackgroundService>();
@@ -27,13 +27,19 @@ public partial class DynamicBackgroundService(IColorExtractionService colorExtra
 
     public bool IsEnabled
     {
-        get;
+        get => Settings.IsWindowBackgroundFollowsCover;
         set
         {
-            field = value;
+            if (Settings.IsWindowBackgroundFollowsCover == value)
+            {
+                return;
+            }
             Settings.IsWindowBackgroundFollowsCover = value;
-            _ = UpdateBackgroundAsync();
-            if (!value)
+            if (value)
+            {
+                _ = UpdateBackgroundAsync();
+            }
+            else
             {
                 ClearBackground();
             }
@@ -51,7 +57,6 @@ public partial class DynamicBackgroundService(IColorExtractionService colorExtra
     /// <param name="targetElement">目标元素（通常是MainWindow的根容器）</param>
     public async Task InitializeAsync(FrameworkElement? targetElement = null)
     {
-        IsEnabled = Settings.IsWindowBackgroundFollowsCover;
         _targetElement = targetElement ?? Data.MainWindow!.GetBackgroundGrid();
         _compositor = ElementCompositionPreview.GetElementVisual(_targetElement).Compositor;
 

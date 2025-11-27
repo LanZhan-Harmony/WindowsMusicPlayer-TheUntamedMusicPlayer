@@ -8,7 +8,7 @@ using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public class LyricViewModel
+public sealed class LyricViewModel
 {
     public LyricViewModel() { }
 

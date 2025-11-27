@@ -6,7 +6,7 @@ using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public class OnlineSongsViewModel
+public sealed class OnlineSongsViewModel
 {
     public OnlineSongsViewModel() { }
 

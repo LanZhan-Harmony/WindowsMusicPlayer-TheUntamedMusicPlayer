@@ -13,7 +13,7 @@ using ZLogger;
 
 namespace UntamedMusicPlayer.Playback;
 
-public partial class AudioEngine : IDisposable
+public sealed partial class AudioEngine : IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<AudioEngine>();
     private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();

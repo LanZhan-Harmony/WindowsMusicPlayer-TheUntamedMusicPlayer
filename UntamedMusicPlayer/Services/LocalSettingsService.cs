@@ -7,7 +7,7 @@ using Windows.Storage;
 
 namespace UntamedMusicPlayer.Services;
 
-public class LocalSettingsService : ILocalSettingsService
+public sealed class LocalSettingsService : ILocalSettingsService
 {
     private const string _defaultApplicationDataFolder = "UntamedMusicPlayer/ApplicationData";
     private const string _defaultLocalSettingsFile = "LocalSettings.json";

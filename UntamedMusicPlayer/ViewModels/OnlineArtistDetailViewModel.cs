@@ -12,7 +12,7 @@ using ZLogger;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class OnlineArtistDetailViewModel : ObservableObject
+public sealed partial class OnlineArtistDetailViewModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
@@ -206,7 +206,10 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Artist:{Artist.Name}:Part",
+                list
+            );
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else
@@ -220,7 +223,10 @@ public partial class OnlineArtistDetailViewModel : ObservableObject
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}:Part", list);
+            Data.PlayQueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Artist:{Artist.Name}:Part",
+                list
+            );
             Data.MusicPlayer.PlaySongByInfo(info);
         }
         else

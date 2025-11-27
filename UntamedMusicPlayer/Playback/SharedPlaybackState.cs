@@ -6,7 +6,7 @@ using Windows.Media.Playback;
 
 namespace UntamedMusicPlayer.Playback;
 
-public partial class SharedPlaybackState : ObservableObject
+public sealed partial class SharedPlaybackState : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();

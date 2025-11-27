@@ -1,6 +1,6 @@
 namespace UntamedMusicPlayer.Models;
 
-public class SuggestResult
+public sealed class SuggestResult
 {
     public string Icon { get; set; } = null!;
     public string Label { get; set; } = null!;

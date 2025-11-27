@@ -13,7 +13,7 @@ namespace UntamedMusicPlayer.Playback;
 /// <summary>
 /// 系统媒体传输控件管理器
 /// </summary>
-public partial class SMTCManager : IDisposable
+public sealed partial class SMTCManager : IDisposable
 {
     private readonly SharedPlaybackState _state;
 

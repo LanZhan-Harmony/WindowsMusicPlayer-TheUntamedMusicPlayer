@@ -14,7 +14,7 @@ public static partial class M3u8Helper
     private static partial Regex SourceModeRegex();
 
     // 用于保持顺序的歌曲项
-    private record SongItem(int Index, int Type, object Data);
+    private sealed record SongItem(int Index, int Type, object Data);
 
     public static async Task<(string, string?, List<IBriefSongInfoBase>)> GetNameAndSongsFromM3u8(
         string m3u8File
