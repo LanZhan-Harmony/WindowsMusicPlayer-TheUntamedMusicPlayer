@@ -58,15 +58,13 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         this.CenterOnScreen(null, null); // 设置窗口位置
         var currentPosition = AppWindow.Position;
 
-        // 将窗口移动到新的位置
-        this.Move(currentPosition.X, y);
+        this.Move(currentPosition.X, y); // 将窗口移动到新的位置
 
         _scaleFactor = this.GetDpiForWindow() / 96.0;
 
         _updateTimer = new Timer(MousePositionTimer_Tick, null, 0, 250);
 
         Closed += Window_Closed;
-        Data.LyricManager.NotifyLyricContentChanged();
     }
 
     private void SetWindowProperty()
@@ -233,7 +231,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         return height;
     }
 
-    private void LyricContentTextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
+    private async void LyricContentTextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         try
         {
@@ -265,13 +263,18 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
             if (_currentStoryboard.Children.Count > 0)
             {
-                if (newHeight - oldHeight > 1e-3) // 如果新高度更大, 先调整高度, 再启动动画
+                var heightDiff = newHeight - oldHeight;
+                if (heightDiff > 1e-3) // 如果新高度更大, 先预留动画回弹空间
                 {
-                    this.SetWindowSize(_maxTextBlockWidth, newHeight + 5);
+                    var maxWindowHeight = newHeight - (oldHeight - newHeight) * 0.275;
+                    this.SetWindowSize(_maxTextBlockWidth, maxWindowHeight + 5);
                 }
+
                 _currentStoryboard.Begin();
-                if (oldHeight - newHeight > 1e-3) // 如果新高度更小, 动画结束后再调整高度
+
+                if (Math.Abs(heightDiff) > 1e-3) // 无论高度变大还是变小, 都需要在动画完成后调整到最终尺寸
                 {
+                    await Task.Delay(300); // 等待动画完成
                     this.SetWindowSize(_maxTextBlockWidth, newHeight + 5);
                 }
             }
