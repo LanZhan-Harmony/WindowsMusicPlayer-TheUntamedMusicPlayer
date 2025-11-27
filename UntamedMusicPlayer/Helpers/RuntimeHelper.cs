@@ -3,7 +3,7 @@ using System.Text;
 
 namespace UntamedMusicPlayer.Helpers;
 
-public class RuntimeHelper
+public sealed class RuntimeHelper
 {
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern int GetCurrentPackageFullName(

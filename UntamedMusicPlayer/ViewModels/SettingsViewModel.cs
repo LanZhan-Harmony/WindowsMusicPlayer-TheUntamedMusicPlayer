@@ -22,7 +22,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class SettingsViewModel
+public sealed partial class SettingsViewModel
     : ObservableRecipient,
         IRecipient<HavePlaylistMessage>,
         IDisposable

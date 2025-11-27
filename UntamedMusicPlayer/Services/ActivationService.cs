@@ -5,7 +5,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.Services;
 
-public class ActivationService(IEnumerable<IActivationHandler> activationHandlers)
+public sealed class ActivationService(IEnumerable<IActivationHandler> activationHandlers)
     : IActivationService
 {
     private readonly IEnumerable<IActivationHandler> _activationHandlers = activationHandlers;

@@ -112,7 +112,9 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
     }
 }
 
-public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailedOnlineAlbumInfo
+public sealed class DetailedCloudOnlineAlbumInfo
+    : BriefCloudOnlineAlbumInfo,
+        IDetailedOnlineAlbumInfo
 {
     public int TotalNum { get; set; } = 0;
     public TimeSpan TotalDuration { get; set; } = TimeSpan.Zero;
@@ -224,7 +226,7 @@ public class DetailedCloudOnlineAlbumInfo : BriefCloudOnlineAlbumInfo, IDetailed
     }
 }
 
-public class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
+public sealed class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
 {
     private static readonly ILogger _logger =
         LoggingService.CreateLogger<CloudOnlineArtistAlbumInfo>();

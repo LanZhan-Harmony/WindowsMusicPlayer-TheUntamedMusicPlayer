@@ -7,7 +7,7 @@ namespace UntamedMusicPlayer.Messages;
 /// </summary>
 /// <param name="level"></param>
 /// <param name="message"></param>
-public class LogMessage(LogLevel level, string message)
+public sealed class LogMessage(LogLevel level, string message)
 {
     public LogLevel Level { get; init; } = level;
     public string Message { get; init; } = message;

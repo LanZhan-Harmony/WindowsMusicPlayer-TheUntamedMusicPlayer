@@ -70,7 +70,7 @@ public class BriefCloudOnlinePlaylistInfo : IBriefOnlinePlaylistInfo
     }
 }
 
-public class DetailedCloudOnlinePlaylistInfo
+public sealed class DetailedCloudOnlinePlaylistInfo
     : BriefCloudOnlinePlaylistInfo,
         IDetailedOnlinePlaylistInfo
 {

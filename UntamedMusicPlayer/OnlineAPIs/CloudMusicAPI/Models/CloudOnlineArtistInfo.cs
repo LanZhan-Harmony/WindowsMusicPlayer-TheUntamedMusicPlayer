@@ -106,7 +106,9 @@ public class BriefCloudOnlineArtistInfo : IBriefOnlineArtistInfo
     }
 }
 
-public class DetailedCloudOnlineArtistInfo : BriefCloudOnlineArtistInfo, IDetailedOnlineArtistInfo
+public sealed class DetailedCloudOnlineArtistInfo
+    : BriefCloudOnlineArtistInfo,
+        IDetailedOnlineArtistInfo
 {
     private readonly HashSet<long> ArtistAlbumIDs = [];
     public const byte Limit = 10;

@@ -16,7 +16,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class PlayQueueViewModel : ObservableObject
+public sealed partial class PlayQueueViewModel : ObservableObject
 {
     private IndexedPlayQueueSong? _currentSong;
 

@@ -148,7 +148,7 @@ public static class LoggingService
 /// </summary>
 internal partial class MessengerLoggerProvider : ILoggerProvider
 {
-    public ILogger CreateLogger(string categoryName) => new MessengerLogger(categoryName);
+    public ILogger CreateLogger(string categoryName) => new MessengerLogger();
 
     public void Dispose() { }
 }
@@ -156,10 +156,8 @@ internal partial class MessengerLoggerProvider : ILoggerProvider
 /// <summary>
 /// Messenger日志记录器
 /// </summary>
-internal class MessengerLogger(string categoryName) : ILogger
+internal class MessengerLogger() : ILogger
 {
-    private readonly string _categoryName = categoryName;
-
     public IDisposable? BeginScope<TState>(TState state)
         where TState : notnull => null;
 

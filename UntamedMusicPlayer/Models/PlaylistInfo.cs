@@ -14,7 +14,7 @@ using ZLogger;
 namespace UntamedMusicPlayer.Models;
 
 [MemoryPackable]
-public partial class PlaylistInfo
+public sealed partial class PlaylistInfo
 {
     private static readonly ILogger _logger = LoggingService.CreateLogger<PlaylistInfo>();
     public string Name { get; set; } = null!;
@@ -588,10 +588,10 @@ public partial class PlaylistInfo
     }
 }
 
-public record PictureRegion(int X, int Y, int Width, int Height);
+public sealed record PictureRegion(int X, int Y, int Width, int Height);
 
 [MemoryPackable]
-public partial class IndexedPlaylistSong
+public sealed partial class IndexedPlaylistSong
 {
     /// <summary>
     /// 在播放列表中的位置索引 (0-based)

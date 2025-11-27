@@ -8,7 +8,7 @@ namespace UntamedMusicPlayer.Activation;
 /// <summary>
 /// 处理通过文件关联启动应用程序的激活器
 /// </summary>
-public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
+public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
     protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
     {
@@ -17,7 +17,7 @@ public class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
             == ExtendedActivationKind.File;
     }
 
-    protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
+    protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
         // 设置文件激活标志
         Data.IsFileActivationLaunch = true;

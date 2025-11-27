@@ -12,7 +12,7 @@ using WinUIEx;
 
 namespace UntamedMusicPlayer.Services;
 
-public partial class MaterialSelectorService : IMaterialSelectorService
+public sealed partial class MaterialSelectorService : IMaterialSelectorService
 {
     private WindowEx _mainWindow = null!;
     private ICompositionSupportsSystemBackdrop? _backdropTarget;
@@ -29,47 +29,36 @@ public partial class MaterialSelectorService : IMaterialSelectorService
 
     public MaterialType Material
     {
-        get;
-        set
-        {
-            field = value;
-            Settings.Material = value;
-        }
+        get => Settings.Material;
+        set => Settings.Material = value;
     }
+
     public bool IsFallBack
     {
-        get;
-        set
-        {
-            field = value;
-            Settings.IsFallBack = value;
-        }
+        get => Settings.IsFallBack;
+        set => Settings.IsFallBack = value;
     }
+
     public byte LuminosityOpacity
     {
-        get;
-        set
-        {
-            field = value;
-            Settings.LuminosityOpacity = value;
-        }
+        get => Settings.LuminosityOpacity;
+        set => Settings.LuminosityOpacity = value;
     }
+
     public Color TintColor
     {
-        get;
-        set
-        {
-            field = value;
-            Settings.TintColor = value;
-        }
+        get => Settings.TintColor;
+        set => Settings.TintColor = value;
+    }
+
+    public bool PreviousIsDarkTheme
+    {
+        get => Settings.PreviousIsDarkTheme;
+        set => Settings.PreviousIsDarkTheme = value;
     }
 
     public async Task InitializeAsync()
     {
-        Material = Settings.Material;
-        IsFallBack = Settings.IsFallBack;
-        LuminosityOpacity = Settings.LuminosityOpacity;
-        TintColor = Settings.TintColor;
         _mainWindow = App.MainWindow!;
         _mainWindow.Activated += MainWindow_Activated;
         ((FrameworkElement)_mainWindow.Content).ActualThemeChanged += Window_ThemeChanged;
@@ -77,6 +66,13 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         await SetMaterial(Material, true, true);
     }
 
+    /// <summary>
+    /// 设置材质
+    /// </summary>
+    /// <param name="material"></param>
+    /// <param name="firstStart"></param>
+    /// <param name="forced"></param>
+    /// <returns></returns>
     public async Task<(byte, Color)> SetMaterial(
         MaterialType material,
         bool firstStart = false,
@@ -89,6 +85,7 @@ public partial class MaterialSelectorService : IMaterialSelectorService
             {
                 return (LuminosityOpacity, TintColor);
             }
+            var previousIsDarkTheme = PreviousIsDarkTheme; // 在SetConfigurationSourceTheme()之前执行，防止被破坏
             _mainWindow.SystemBackdrop = null;
             _currentBackdropController?.RemoveAllSystemBackdropTargets();
             _currentBackdropController?.Dispose();
@@ -128,7 +125,7 @@ public partial class MaterialSelectorService : IMaterialSelectorService
                 };
             }
 
-            if (firstStart && ThemeSelectorService.IsDarkTheme == Settings.PreviousIsDarkTheme)
+            if (firstStart && ThemeSelectorService.IsDarkTheme == previousIsDarkTheme)
             {
                 SetLuminosityOpacity(LuminosityOpacity, true);
                 SetTintColor(TintColor, true);
@@ -144,6 +141,11 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         return (LuminosityOpacity, TintColor);
     }
 
+    /// <summary>
+    /// 设置不透明度
+    /// </summary>
+    /// <param name="opacity"></param>
+    /// <param name="forced"></param>
     public void SetLuminosityOpacity(byte opacity, bool forced = false)
     {
         if (LuminosityOpacity == opacity && !forced)
@@ -189,6 +191,11 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         LuminosityOpacity = opacity;
     }
 
+    /// <summary>
+    /// 设置背景颜色
+    /// </summary>
+    /// <param name="color"></param>
+    /// <param name="forced"></param>
     public void SetTintColor(Color color, bool forced = false)
     {
         if (TintColor == color && !forced)
@@ -234,18 +241,6 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         TintColor = color;
     }
 
-    private void SetConfigurationSourceTheme()
-    {
-        _configurationSource.Theme = ((FrameworkElement)_mainWindow.Content).ActualTheme switch
-        {
-            ElementTheme.Default => SystemBackdropTheme.Default,
-            ElementTheme.Light => SystemBackdropTheme.Light,
-            ElementTheme.Dark => SystemBackdropTheme.Dark,
-            _ => SystemBackdropTheme.Default,
-        };
-        Settings.PreviousIsDarkTheme = ThemeSelectorService.IsDarkTheme;
-    }
-
     /// <summary>
     /// 获取不透明度
     /// </summary>
@@ -276,6 +271,71 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         };
     }
 
+    /// <summary>
+    /// 将十六进制颜色转换为 Color 结构
+    /// </summary>
+    /// <param name="hex"></param>
+    /// <returns></returns>
+    private static Color ColorFromHex(uint hex)
+    {
+        var a = (byte)((hex >> 24) & 0xFF);
+        var r = (byte)((hex >> 16) & 0xFF);
+        var g = (byte)((hex >> 8) & 0xFF);
+        var b = (byte)(hex & 0xFF);
+        return Color.FromArgb(a, r, g, b);
+    }
+
+    /// <summary>
+    /// 设置系统背景配置的主题，并更新 PreviousIsDarkTheme（注意！！！）
+    /// </summary>
+    private void SetConfigurationSourceTheme()
+    {
+        _configurationSource.Theme = ((FrameworkElement)_mainWindow.Content).ActualTheme switch
+        {
+            ElementTheme.Default => SystemBackdropTheme.Default,
+            ElementTheme.Light => SystemBackdropTheme.Light,
+            ElementTheme.Dark => SystemBackdropTheme.Dark,
+            _ => SystemBackdropTheme.Default,
+        };
+        PreviousIsDarkTheme = ThemeSelectorService.IsDarkTheme;
+    }
+
+    /// <summary>
+    /// 窗口焦点状态更改时调用此方法
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+    {
+        if (IsFallBack)
+        {
+            _currentBackdropController?.SetSystemBackdropConfiguration(
+                new()
+                {
+                    IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated,
+                }
+            );
+        }
+    }
+
+    /// <summary>
+    /// 窗口主题更改时调用此方法
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void Window_ThemeChanged(FrameworkElement sender, object args)
+    {
+        StrongReferenceMessenger.Default.Send(
+            new ThemeChangeMessage(ThemeSelectorService.IsDarkTheme)
+        );
+        TitleBarHelper.UpdateTitleBar(sender.ActualTheme);
+        SetConfigurationSourceTheme();
+        ChangeTheme();
+    }
+
+    /// <summary>
+    /// 窗口主题更改时调用此方法更新颜色
+    /// </summary>
     private void ChangeTheme()
     {
         Color color;
@@ -314,38 +374,6 @@ public partial class MaterialSelectorService : IMaterialSelectorService
         TintColor = color;
     }
 
-    private static Color ColorFromHex(uint hex)
-    {
-        var a = (byte)((hex >> 24) & 0xFF);
-        var r = (byte)((hex >> 16) & 0xFF);
-        var g = (byte)((hex >> 8) & 0xFF);
-        var b = (byte)(hex & 0xFF);
-        return Color.FromArgb(a, r, g, b);
-    }
-
-    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-    {
-        if (IsFallBack)
-        {
-            _currentBackdropController?.SetSystemBackdropConfiguration(
-                new()
-                {
-                    IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated,
-                }
-            );
-        }
-    }
-
-    private void Window_ThemeChanged(FrameworkElement sender, object args)
-    {
-        StrongReferenceMessenger.Default.Send(
-            new ThemeChangeMessage(ThemeSelectorService.IsDarkTheme)
-        );
-        TitleBarHelper.UpdateTitleBar(sender.ActualTheme);
-        SetConfigurationSourceTheme();
-        ChangeTheme();
-    }
-
     public void Dispose()
     {
         // 清理防抖定时器
@@ -354,13 +382,6 @@ public partial class MaterialSelectorService : IMaterialSelectorService
             _debounceTimer?.Dispose();
             _debounceTimer = null;
         }
-
-        lock (_debounceLock)
-        {
-            _debounceTimer?.Dispose();
-            _debounceTimer = null;
-        }
-
         _currentBackdropController?.RemoveAllSystemBackdropTargets();
         _currentBackdropController?.Dispose();
         _currentBackdropController = null;

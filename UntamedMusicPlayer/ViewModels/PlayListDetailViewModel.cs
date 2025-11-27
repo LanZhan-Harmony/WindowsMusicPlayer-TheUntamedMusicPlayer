@@ -14,7 +14,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class PlayListDetailViewModel
+public sealed partial class PlayListDetailViewModel
     : ObservableRecipient,
         IRecipient<PlaylistRenameMessage>,
         IRecipient<PlaylistChangeMessage>,
@@ -248,10 +248,7 @@ public partial class PlayListDetailViewModel
         }
     }
 
-    public void SongListView_DragItemsCompleted(
-        ListViewBase _1,
-        DragItemsCompletedEventArgs args
-    )
+    public void SongListView_DragItemsCompleted(ListViewBase _1, DragItemsCompletedEventArgs args)
     {
         if (args.DropResult == DataPackageOperation.Move && args.Items.Count > 0)
         {

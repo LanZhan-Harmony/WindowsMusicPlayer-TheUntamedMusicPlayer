@@ -61,6 +61,15 @@
 							<uap:FileType>.ogg</uap:FileType>
 							<uap:FileType>.m4a</uap:FileType>
 							<uap:FileType>.wav</uap:FileType>
+							<uap:FileType>.opus</uap:FileType>
+							<uap:FileType>.dsf</uap:FileType>
+							<uap:FileType>.dff</uap:FileType>
+							<uap:FileType>.mid</uap:FileType>
+							<uap:FileType>.midi</uap:FileType>
+							<uap:FileType>.cda</uap:FileType>
+							<uap:FileType>.ape</uap:FileType>
+							<uap:FileType>.webm</uap:FileType>
+							<uap:FileType>.wv</uap:FileType>
 							<uap:FileType>.mp2</uap:FileType>
 							<uap:FileType>.mp1</uap:FileType>
 							<uap:FileType>.aif</uap:FileType>

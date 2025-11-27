@@ -13,7 +13,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class LocalAlbumsViewModel
+public sealed partial class LocalAlbumsViewModel
     : ObservableRecipient,
         IRecipient<HaveMusicMessage>,
         IDisposable

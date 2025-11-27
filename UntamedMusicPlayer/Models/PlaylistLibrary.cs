@@ -8,7 +8,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.Models;
 
-public partial class PlaylistLibrary : ObservableRecipient
+public sealed partial class PlaylistLibrary : ObservableRecipient
 {
     public bool HasLoaded { get; private set; } = false;
 

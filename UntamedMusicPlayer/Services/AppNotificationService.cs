@@ -7,7 +7,7 @@ using UntamedMusicPlayer.Helpers;
 
 namespace UntamedMusicPlayer.Services;
 
-public class AppNotificationService : IAppNotificationService
+public sealed class AppNotificationService : IAppNotificationService
 {
     public AppNotificationService() { }
 

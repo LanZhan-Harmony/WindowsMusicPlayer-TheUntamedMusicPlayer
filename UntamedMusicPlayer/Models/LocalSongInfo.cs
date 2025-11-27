@@ -172,7 +172,7 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     protected static string GetGenreStr(string[] genre) => string.Join(", ", genre);
 }
 
-public class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
+public sealed class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
 {
     public bool IsOnline { get; set; } = false;
 

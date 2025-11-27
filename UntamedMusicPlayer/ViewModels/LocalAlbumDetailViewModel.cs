@@ -7,7 +7,7 @@ using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public class LocalAlbumDetailViewModel
+public sealed class LocalAlbumDetailViewModel
 {
     public LocalAlbumInfo Album { get; set; } = Data.SelectedLocalAlbum!;
 

@@ -5,28 +5,19 @@ using UntamedMusicPlayer.Models;
 
 namespace UntamedMusicPlayer.Services;
 
-public class ThemeSelectorService : IThemeSelectorService
+public sealed class ThemeSelectorService : IThemeSelectorService
 {
     public ElementTheme Theme
     {
-        get;
-        set
-        {
-            field = value;
-            Settings.Theme = value;
-        }
+        get => Settings.Theme;
+        set => Settings.Theme = value;
     }
 
     public static bool IsDarkTheme =>
-        ((FrameworkElement)App.MainWindow!.Content).ActualTheme == ElementTheme.Dark
-        || (
-            ((FrameworkElement)App.MainWindow!.Content).ActualTheme == ElementTheme.Default
-            && App.Current.RequestedTheme == ApplicationTheme.Dark
-        );
+        ((FrameworkElement)App.MainWindow!.Content).ActualTheme == ElementTheme.Dark;
 
     public void Initialize()
     {
-        Theme = Settings.Theme;
         SetRequestedThemeAsync();
     }
 

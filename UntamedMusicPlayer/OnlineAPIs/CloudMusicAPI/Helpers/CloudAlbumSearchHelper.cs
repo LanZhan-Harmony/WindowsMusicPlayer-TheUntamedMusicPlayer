@@ -6,7 +6,7 @@ using ZLogger;
 
 namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Helpers;
 
-public class CloudAlbumSearchHelper
+public sealed class CloudAlbumSearchHelper
 {
     private static readonly ILogger _logger = LoggingService.CreateLogger<CloudAlbumSearchHelper>();
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);

@@ -8,7 +8,7 @@ using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class RootPlayBarViewModel : ObservableObject
+public sealed partial class RootPlayBarViewModel : ObservableObject
 {
     public bool IsDesktopLyricWindowStarted { get; set; } = false;
 

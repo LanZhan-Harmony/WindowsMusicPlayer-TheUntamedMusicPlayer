@@ -5,7 +5,7 @@ using WinUIEx;
 
 namespace UntamedMusicPlayer.Helpers;
 
-public partial class ColorAnimatedBackdrop : CompositionBrushBackdrop
+public sealed partial class ColorAnimatedBackdrop : CompositionBrushBackdrop
 {
     protected override CompositionBrush CreateBrush(Compositor compositor)
     {

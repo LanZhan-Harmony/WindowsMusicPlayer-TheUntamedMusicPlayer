@@ -10,7 +10,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public partial class MusicLibraryViewModel
+public sealed partial class MusicLibraryViewModel
     : ObservableRecipient,
         IRecipient<HaveMusicMessage>,
         IDisposable

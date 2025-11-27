@@ -3,7 +3,7 @@ using Microsoft.Windows.AppLifecycle;
 
 namespace UntamedMusicPlayer.Activation;
 
-public class AppNotificationActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
+public sealed class AppNotificationActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
     protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
     {
