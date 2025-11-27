@@ -9,6 +9,7 @@
                 <ResourceDictionary Source="/Styles/Thickness.xaml"/>
                 <ResourceDictionary Source="/Styles/TextBlock.xaml"/>
                 <ResourceDictionary Source="/Styles/ButtonStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/ToggleSwitchStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/ColorStyle.xaml"/>
                 <ResourceDictionary>
                     <FontFamily x:Key="UntamedFontFamily">ms-appx:///Assets/Fonts/UntamedFluentIcons.ttf#Untamed Fluent Icons</FontFamily>

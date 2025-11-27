@@ -2,6 +2,7 @@ using System.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
@@ -25,6 +26,8 @@ public sealed partial class EqualizerDialog
     } = Settings.IsEqualizerOn;
 
     private bool _isMoveNearby = Settings.IsMoveNearby;
+
+    private readonly string[] _presets = "EqualizerDialog_Presets".GetLocalized().Split(", ");
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
