@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -30,7 +31,7 @@ public sealed partial class HomeViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    public partial byte MusicLibraryIndex { get; set; }
+    public partial byte MusicLibraryIndex { get; set; } = 0;
 
     partial void OnMusicLibraryIndexChanged(byte value)
     {
@@ -116,6 +117,19 @@ public sealed partial class HomeViewModel : ObservableObject
         var currentSelectedIndex = sender.Items.IndexOf(selectedItem);
 
         Navigate(currentSelectedIndex);
+    }
+
+    public void Segmented_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is Segmented segmented)
+        {
+            var currentSelectedIndex = segmented.SelectedIndex;
+            if (currentSelectedIndex < 0)
+            {
+                return;
+            }
+            MusicLibraryIndex = (byte)currentSelectedIndex;
+        }
     }
 
     public void Navigate(int currentSelectedIndex)
