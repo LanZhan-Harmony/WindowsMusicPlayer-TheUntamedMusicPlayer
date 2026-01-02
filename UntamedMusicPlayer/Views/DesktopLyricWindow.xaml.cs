@@ -267,7 +267,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
                 if (heightDiff > 1e-3) // 如果新高度更大, 先预留动画回弹空间
                 {
                     var maxWindowHeight = newHeight - (oldHeight - newHeight) * 0.275;
-                    this.SetWindowSize(_maxTextBlockWidth, maxWindowHeight + 5);
+                    ResizeWindowKeepingCenter(_maxTextBlockWidth, maxWindowHeight + 5);
                 }
 
                 _currentStoryboard.Begin();
@@ -275,7 +275,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
                 if (Math.Abs(heightDiff) > 1e-3) // 无论高度变大还是变小, 都需要在动画完成后调整到最终尺寸
                 {
                     await Task.Delay(300); // 等待动画完成
-                    this.SetWindowSize(_maxTextBlockWidth, newHeight + 5);
+                    ResizeWindowKeepingCenter(_maxTextBlockWidth, newHeight + 5);
                 }
             }
         }
@@ -283,6 +283,32 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         {
             _logger.ZLogInformation(ex, $"调整灵动词岛宽度时发生错误");
         }
+    }
+
+    /// <summary>
+    /// 调整窗口大小并保持中心点位置不变
+    /// </summary>
+    /// <param name="newWidth">新宽度</param>
+    /// <param name="newHeight">新高度</param>
+    private void ResizeWindowKeepingCenter(double newWidth, double newHeight)
+    {
+        // 获取当前窗口位置和大小
+        GetWindowRect(_hWnd, out var currentRect);
+        var currentWidth = currentRect.Right - currentRect.Left;
+        var currentHeight = currentRect.Bottom - currentRect.Top;
+
+        // 计算当前窗口中心点
+        var centerX = currentRect.Left + currentWidth / 2;
+        var centerY = currentRect.Top + currentHeight / 2;
+
+        // 计算新的左上角位置，使中心点保持不变
+        var newLeft = centerX - (int)(newWidth / 2);
+        var newTop = centerY - (int)(newHeight / 2);
+
+        // 使用 SetWindowPos 同时设置位置和大小
+        const uint SWP_NOZORDER = 0x0004;
+        const uint SWP_NOACTIVATE = 0x0010;
+        SetWindowPos(_hWnd, nint.Zero, newLeft, newTop, (int)newWidth, (int)newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
     }
 
     private static DoubleAnimation CreateDoubleAnimation(double from, double to, double amplitude)
