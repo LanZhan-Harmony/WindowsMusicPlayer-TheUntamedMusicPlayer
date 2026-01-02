@@ -127,7 +127,9 @@
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Disabled"
                       VerticalScrollMode="Disabled">
-            <controls:Segmented SelectedIndex="{x:Bind ViewModel.MusicLibraryIndex, Mode=TwoWay}" SelectionMode="Single">
+            <controls:Segmented SelectedIndex="{x:Bind ViewModel.MusicLibraryIndex, Mode=OneWay}"
+                                SelectionChanged="{x:Bind ViewModel.Segmented_SelectionChanged}"
+                                SelectionMode="Single">
                 <controls:SegmentedItem>
                     <TextBlock x:Uid="Home_MusicLibrary1"
                                Width="90"
