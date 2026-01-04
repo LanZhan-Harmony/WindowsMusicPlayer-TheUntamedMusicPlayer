@@ -11,7 +11,6 @@
       xmlns:viewmodel="using:UntamedMusicPlayer.ViewModels"
       Unloaded="LocalSongsPage_Unloaded"
       mc:Ignorable="d">
-
     <Page.Resources>
         <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
             <ListViewItem Margin="0,2,0,2">
@@ -45,6 +44,7 @@
         </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefLocalSongInfo">
             <Grid Height="52"
+                  AutomationProperties.Name="{x:Bind Title}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">

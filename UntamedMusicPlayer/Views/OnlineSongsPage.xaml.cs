@@ -20,6 +20,7 @@ public sealed partial class OnlineSongsPage : Page
     {
         ViewModel = App.GetService<OnlineSongsViewModel>();
         InitializeComponent();
+        Data.OnlineSongsPage = this;
     }
 
     private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
@@ -182,4 +183,9 @@ public sealed partial class OnlineSongsPage : Page
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
+
+    public string GetAutomationName(string album, string artistsStr, string title)
+    {
+        return $"{album}, {artistsStr}, {title}";
+    }
 }
