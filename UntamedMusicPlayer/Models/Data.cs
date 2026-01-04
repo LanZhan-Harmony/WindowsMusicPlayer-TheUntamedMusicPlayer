@@ -95,6 +95,8 @@ public static class Data
     public static RootPlayBarView? RootPlayBarView { get; set; }
     public static DesktopLyricWindow? DesktopLyricWindow { get; set; }
     public static OnlineSongsPage? OnlineSongsPage { get; set; }
+    public static OnlineAlbumsPage? OnlineAlbumsPage { get; set; }
+    public static OnlineArtistsPage? OnlineArtistsPage { get; set; }
     #endregion
 
     #region ViewModels

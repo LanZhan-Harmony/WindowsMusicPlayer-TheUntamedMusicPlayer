@@ -537,6 +537,7 @@
                             Grid.Column="1"
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
+                               IsTabStop="True"
                                Text="{x:Bind ViewModel.BriefArtist.Name}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
                                ToolTipService.ToolTip="{x:Bind ViewModel.BriefArtist.Name}"/>
@@ -552,7 +553,7 @@
                     <TextBlock x:Name="IntroductionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               MaxLines="1"
+                               IsTabStop="True" MaxLines="1"
                                Text="{x:Bind ViewModel.Artist.Introduction, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
                                ToolTipService.ToolTip="{x:Bind ViewModel.Artist.Introduction, Mode=OneWay}"/>

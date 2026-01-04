@@ -256,15 +256,17 @@
                             Grid.Column="1"
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
+                               IsTabStop="True"
                                Text="{x:Bind ViewModel.BriefAlbum.Name}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
                                ToolTipService.ToolTip="{x:Bind ViewModel.BriefAlbum.Name}"/>
                     <TextBlock x:Name="SubtitleText"
-                               FontWeight="Normal"
+                               FontWeight="Normal" IsTabStop="True"
                                Text="{x:Bind ViewModel.Album.ArtistsStr, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
                                ToolTipService.ToolTip="{x:Bind ViewModel.Album.ArtistsStr, Mode=OneWay}"/>
                     <TextBlock x:Name="CaptionText"
+                               AutomationProperties.Name="{x:Bind ViewModel.Album.DescriptionStr, Mode=OneWay}"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="{x:Bind ViewModel.Album.DescriptionStr, Mode=OneWay}"
@@ -272,7 +274,7 @@
                     <TextBlock x:Name="IntroductionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               MaxLines="1"
+                               IsTabStop="True" MaxLines="1"
                                Text="{x:Bind ViewModel.Album.Introduction, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
                                ToolTipService.ToolTip="{x:Bind ViewModel.Album.Introduction, Mode=OneWay}"/>

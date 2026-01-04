@@ -85,8 +85,6 @@
   <PropertyGroup>
     <DefaultLanguage>en-us</DefaultLanguage>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
-    <PublishSelfContained>True</PublishSelfContained>
-    <WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
     <PublishReadyToRun>True</PublishReadyToRun>
     <IsAotCompatible>True</IsAotCompatible>
     <PublishAot>True</PublishAot>

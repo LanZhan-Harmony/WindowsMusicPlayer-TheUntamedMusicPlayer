@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -7,6 +8,8 @@ using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
+using Windows.System;
+using Windows.UI.Core;
 using ZLinq;
 
 namespace UntamedMusicPlayer.Views;
@@ -187,5 +190,101 @@ public sealed partial class OnlineSongsPage : Page
     public string GetAutomationName(string album, string artistsStr, string title)
     {
         return $"{album}, {artistsStr}, {title}";
+    }
+
+    /// <summary>
+    /// 为 MenuFlyout 的所有项设置 DataContext（递归）
+    /// </summary>
+    private static void SetFlyoutItemsDataContext(MenuFlyout flyout, object? dataContext)
+    {
+        foreach (var item in flyout.Items)
+        {
+            switch (item)
+            {
+                case MenuFlyoutItem menuItem:
+                    menuItem.DataContext = dataContext;
+                    break;
+                case MenuFlyoutSubItem subItem:
+                    subItem.DataContext = dataContext;
+                    // 子项也要设置
+                    foreach (var child in subItem.Items)
+                    {
+                        if (child is MenuFlyoutItem childItem)
+                        {
+                            childItem.DataContext = dataContext;
+                        }
+                    }
+                    break;
+                case MenuFlyoutSeparator:
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 处理键盘快捷键打开上下文菜单
+    /// </summary>
+    private void ContextMenuKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        if (SongListView.SelectedItem is IBriefOnlineSongInfo selectedSong)
+        {
+            var container = SongListView.ContainerFromItem(selectedSong) as ListViewItem;
+            if (container is not null)
+            {
+                var grid = container.ContentTemplateRoot as Grid;
+                if (grid?.ContextFlyout is MenuFlyout flyout)
+                {
+                    // 将 DataContext 设置到每个子项上，MenuFlyout 本身没有 DataContext
+                    SetFlyoutItemsDataContext(flyout, selectedSong);
+
+                    // 对于可能依赖 Loaded 事件动态填充的子项，先设置 DataContext 后手动触发加载逻辑
+                    foreach (var sub in flyout.Items.OfType<MenuFlyoutSubItem>())
+                    {
+                        if (sub.Items.Count <= 3)
+                        {
+                            // 确保 sub.DataContext 已正确设置
+                            sub.DataContext = selectedSong;
+                            AddToSubItem_Loaded(sub, new RoutedEventArgs());
+                        }
+                    }
+
+                    flyout.ShowAt(container);
+                    args.Handled = true;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 处理在列表项上按键
+    /// </summary>
+    private void Grid_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        // 支持在焦点在列表项时按 Menu 键或 Shift+F10 打开上下文菜单
+        if (e.Key == VirtualKey.Application || 
+            (e.Key == VirtualKey.F10 && 
+             (InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift) & 
+              CoreVirtualKeyStates.Down) != 0))
+        {
+            if (sender is Grid grid && grid.ContextFlyout is MenuFlyout flyout)
+            {
+                // 将 DataContext 设置到每个子项上
+                SetFlyoutItemsDataContext(flyout, grid.DataContext);
+
+                foreach (var sub in flyout.Items.OfType<MenuFlyoutSubItem>())
+                {
+                    if (sub.Items.Count <= 3)
+                    {
+                        sub.DataContext = grid.DataContext;
+                        AddToSubItem_Loaded(sub, new RoutedEventArgs());
+                    }
+                }
+
+                flyout.ShowAt(grid);
+                e.Handled = true;
+            }
+        }
     }
 }

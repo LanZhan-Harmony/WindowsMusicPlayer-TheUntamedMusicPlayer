@@ -298,8 +298,8 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         var currentHeight = currentRect.Bottom - currentRect.Top;
 
         // 计算当前窗口中心点
-        var centerX = currentRect.Left + currentWidth / 2;
-        var centerY = currentRect.Top + currentHeight / 2;
+        var centerX = currentRect.Left + (currentWidth >> 1);
+        var centerY = currentRect.Top + (currentHeight >> 1);
 
         // 计算新的左上角位置，使中心点保持不变
         var newLeft = centerX - (int)(newWidth / 2);
@@ -308,7 +308,15 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         // 使用 SetWindowPos 同时设置位置和大小
         const uint SWP_NOZORDER = 0x0004;
         const uint SWP_NOACTIVATE = 0x0010;
-        SetWindowPos(_hWnd, nint.Zero, newLeft, newTop, (int)newWidth, (int)newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+        SetWindowPos(
+            _hWnd,
+            nint.Zero,
+            newLeft,
+            newTop,
+            (int)newWidth,
+            (int)newHeight,
+            SWP_NOZORDER | SWP_NOACTIVATE
+        );
     }
 
     private static DoubleAnimation CreateDoubleAnimation(double from, double to, double amplitude)

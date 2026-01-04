@@ -17,6 +17,7 @@
             <Grid Height="52"
                   AutomationProperties.Name="{x:Bind model:Data.OnlineSongsPage.GetAutomationName(Album, ArtistsStr, Title)}"
                   Background="Transparent"
+                  KeyDown="Grid_KeyDown"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
                 <Grid.ContextFlyout>
@@ -51,10 +52,12 @@
                                                                Glyph=&#xE710;}"/>
                         </MenuFlyoutSubItem>
                         <MenuFlyoutItem x:Uid="Songs_ShowAlbum"
+                                        AutomationProperties.Name="{x:Bind Album}"
                                         Click="ShowAlbumButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE93C;}"/>
                         <MenuFlyoutItem x:Uid="Songs_ShowArtist"
+                                        AutomationProperties.Name="{x:Bind ArtistsStr}"
                                         Click="ShowArtistButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE77B;}"/>
@@ -165,7 +168,11 @@
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
                   Opacity="{x:Bind model:Data.OnlineMusicLibrary.ListViewOpacity, Mode=OneWay}"
-                  SelectionMode="None">
+                  SelectionMode="Single">
+            <ListView.KeyboardAccelerators>
+                <KeyboardAccelerator Key="F10" Modifiers="Shift" Invoked="ContextMenuKeyboardAccelerator_Invoked"/>
+                <KeyboardAccelerator Key="Application" Invoked="ContextMenuKeyboardAccelerator_Invoked"/>
+            </ListView.KeyboardAccelerators>
             <interactivity:Interaction.Behaviors>
                 <helper:AlternatingListViewBehavior AlternateBackground="{ThemeResource AlternateBackgroundBrush}"
                                                     AlternateBorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"

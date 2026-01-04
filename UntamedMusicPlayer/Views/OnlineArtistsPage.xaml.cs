@@ -19,6 +19,7 @@ public sealed partial class OnlineArtistsPage : Page
     {
         ViewModel = App.GetService<OnlineArtistsViewModel>();
         InitializeComponent();
+        Data.OnlineArtistsPage = this;
     }
 
     private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)

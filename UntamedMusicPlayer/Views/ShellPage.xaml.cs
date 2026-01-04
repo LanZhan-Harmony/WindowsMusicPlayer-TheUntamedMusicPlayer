@@ -1,6 +1,9 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
@@ -23,6 +26,73 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
         Data.ShellPage = this;
         ViewModel = App.GetService<ShellViewModel>();
         Data.MainWindow!.SetTitleBar(AppTitleBar);
+
+        // 注册全局键盘事件
+        AddHandler(KeyDownEvent, new KeyEventHandler(ShellPage_KeyDown), true);
+        
+        // 注册全局鼠标事件
+        AddHandler(PointerPressedEvent, new PointerEventHandler(ShellPage_PointerPressed), true);
+    }
+
+    /// <summary>
+    /// 处理全局键盘按键事件
+    /// </summary>
+    private void ShellPage_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        // 检查是否按下 Esc 键
+        if (e.Key == Windows.System.VirtualKey.Escape)
+        {
+            // 检查当前是否有弹出窗口（如对话框、Flyout等）打开
+            // 如果有弹出窗口，不执行后退操作，让弹出窗口自己处理 Esc
+            if (!IsPopupOpen())
+            {
+                GoBack();
+                e.Handled = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 处理全局鼠标按键事件
+    /// </summary>
+    private void ShellPage_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        var properties = e.GetCurrentPoint(this).Properties;
+        
+        // 检查是否按下鼠标侧键（XButton1，通常是后退键）
+        if (properties.IsXButton1Pressed)
+        {
+            GoBack();
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>
+    /// 检查是否有弹出窗口打开
+    /// </summary>
+    private bool IsPopupOpen()
+    {
+        // 检查是否有打开的 Popup（如 ContentDialog、Flyout、MenuFlyout 等）
+        var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
+        if (popups is not null)
+        {
+            foreach (var popup in popups)
+            {
+                // 检查 Popup 的 Child 是否为 ContentDialog
+                if (popup.Child is ContentDialog)
+                {
+                    return true;
+                }
+                
+                // 检查是否有其他弹出内容（FlyoutPresenter 用于 Flyout 和 MenuFlyout）
+                if (popup.Child is FlyoutPresenter)
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     public void Receive(HavePlaylistMessage message)
@@ -48,6 +118,10 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
     private void ShellPage_Unloaded(object sender, RoutedEventArgs e)
     {
         StrongReferenceMessenger.Default.Unregister<HavePlaylistMessage>(this);
+        
+        // 移除事件处理器
+        RemoveHandler(KeyDownEvent, new KeyEventHandler(ShellPage_KeyDown));
+        RemoveHandler(PointerPressedEvent, new PointerEventHandler(ShellPage_PointerPressed));
     }
 
     public void NavigationViewControl_DisplayModeChanged(

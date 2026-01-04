@@ -64,6 +64,9 @@ public sealed partial class OnlineAlbumDetailPage : Page
                 .GetAnimation("ForwardConnectedAnimation");
             animation?.TryStart(CoverArt);
         }
+
+        // 设置焦点到页面，确保讲述人能够识别页面内容
+        _ = SetInitialFocusAsync();
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -109,6 +112,9 @@ public sealed partial class OnlineAlbumDetailPage : Page
             scrollingProperties.Translation.Y,
             ViewModel.BriefAlbum.CoverPath
         );
+
+        // 再次确保焦点设置（在页面完全加载后）
+        _ = SetInitialFocusAsync();
     }
 
     /// <summary>
@@ -455,4 +461,19 @@ public sealed partial class OnlineAlbumDetailPage : Page
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
+
+    /// <summary>
+    /// 设置初始焦点并触发讲述人朗读
+    /// </summary>
+    private async Task SetInitialFocusAsync()
+    {
+        // 等待页面元素完全渲染
+        await Task.Delay(100);
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            // 尝试将焦点设置到 TitleText，确保讲述人焦点在页面上
+            TitleText?.Focus(FocusState.Programmatic);
+        });
+    }
 }

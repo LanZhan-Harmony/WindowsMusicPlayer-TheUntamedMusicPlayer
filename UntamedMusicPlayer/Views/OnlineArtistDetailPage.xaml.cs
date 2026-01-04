@@ -81,6 +81,8 @@ public sealed partial class OnlineArtistDetailPage : Page
                 .GetAnimation("ForwardConnectedAnimation");
             animation?.TryStart(CoverArt);
         }
+
+        _ = SetInitialFocusAsync();
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -132,6 +134,8 @@ public sealed partial class OnlineArtistDetailPage : Page
                 await Task.Delay(3000);
             }
         };
+
+        _ = SetInitialFocusAsync();
     }
 
     private void CreateHeaderAnimation(
@@ -610,4 +614,19 @@ public sealed partial class OnlineArtistDetailPage : Page
     }
 
     private void AlbumGridViewSelectButton_Click(object sender, RoutedEventArgs e) { }
+
+    /// <summary>
+    /// 设置初始焦点并触发讲述人朗读
+    /// </summary>
+    private async Task SetInitialFocusAsync()
+    {
+        // 等待页面元素完全渲染
+        await Task.Delay(100);
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            // 尝试将焦点设置到 TitleText，确保讲述人焦点在页面上
+            TitleText?.Focus(FocusState.Programmatic);
+        });
+    }
 }
