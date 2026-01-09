@@ -269,6 +269,7 @@
                                AutomationProperties.Name="{x:Bind ViewModel.Album.DescriptionStr, Mode=OneWay}"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTabStop="True"
                                Text="{x:Bind ViewModel.Album.DescriptionStr, Mode=OneWay}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
                     <TextBlock x:Name="IntroductionText"
