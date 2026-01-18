@@ -114,12 +114,18 @@
                             Grid.Column="2"
                             Width="400" Height="32"
                             Margin="0,7,0,0" VerticalAlignment="Center"
+                            AccessKey="S"
                             ItemTemplate="{StaticResource SuggestResultTemplate}"
                             ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.SuggestResultList, Mode=OneWay}"
                             Loaded="{x:Bind model:Data.OnlineMusicLibrary.AutoSuggestBox_Loaded}"
                             QueryIcon="Find"
                             QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted}"
-                            TextChanged="{x:Bind ViewModel.SuggestBox_TextChanged}"/>
+                            TextChanged="{x:Bind ViewModel.SuggestBox_TextChanged}"
+                            ToolTipService.ToolTip="Ctrl+W">
+                <AutoSuggestBox.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="W" Modifiers="Control"/>
+                </AutoSuggestBox.KeyboardAccelerators>
+            </AutoSuggestBox>
         </Grid>
         <ScrollViewer x:Name="Segmented"
                       Grid.Row="1"

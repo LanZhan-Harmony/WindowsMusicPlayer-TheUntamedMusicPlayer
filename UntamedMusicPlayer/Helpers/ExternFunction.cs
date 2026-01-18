@@ -6,6 +6,19 @@ public static partial class ExternFunction
 {
     private static readonly bool _is64BitProcess = Environment.Is64BitProcess;
 
+    // 热键修饰符常量
+    public const uint MOD_ALT = 0x0001;
+    public const uint MOD_CONTROL = 0x0002;
+    public const uint MOD_SHIFT = 0x0004;
+    public const uint MOD_WIN = 0x0008;
+
+    // 虚拟键码常量
+    public const uint VK_UP = 0x26;
+    public const uint VK_DOWN = 0x28;
+
+    // 窗口消息常量
+    public const int WM_HOTKEY = 0x0312;
+
     [StructLayout(LayoutKind.Sequential)]
     public struct POINT
     {
@@ -68,6 +81,14 @@ public static partial class ExternFunction
         nint wParam,
         nint lParam
     );
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool RegisterHotKey(nint hWnd, int id, uint fsModifiers, uint vk);
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool UnregisterHotKey(nint hWnd, int id);
 
     public static nint GetWindowLong(nint hWnd, int nIndex)
     {
