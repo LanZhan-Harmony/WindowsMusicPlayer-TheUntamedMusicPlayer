@@ -334,7 +334,7 @@
     <value>否</value>
   </data>
   <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
-    <value>音量</value>
+    <value>音量 (Alt+↑/↓)</value>
   </data>
   <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
     <value>全屏 (F11)</value>
