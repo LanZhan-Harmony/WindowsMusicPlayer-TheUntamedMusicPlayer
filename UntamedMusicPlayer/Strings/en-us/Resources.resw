@@ -214,7 +214,10 @@
     <value>Refresh libraries</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>Exclusive mode</value>
+    <value>Exclusive mode (Experimental)</value>
+  </data>
+  <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
+    <value>Once enabled, in-app volume control will be unavailable. Please adjust the volume through the operating system.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
     <value>If you are on the music library's song page with folder sorting enabled, clicking a song will only add songs from that same folder to the playback queue</value>
