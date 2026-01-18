@@ -17,9 +17,10 @@
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
         <DataTemplate x:Key="AlbumListViewTemplate" x:DataType="model:LocalArtistAlbumInfo">
-            <UserControl>
+            <UserControl AutomationProperties.Name="{x:Bind Name}">
                 <Grid x:Name="AlbumListItemGrid"
                       Margin="-15,0,-10,0"
+                      AutomationProperties.Name="{x:Bind Name}"
                       Background="Transparent">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -138,6 +139,7 @@
         </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefLocalSongInfo">
             <Grid Height="52"
+                  AutomationProperties.Name="{x:Bind Title}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
@@ -252,6 +254,7 @@
 
         <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:LocalArtistAlbumInfo">
             <Grid Width="170" Height="226"
+                  AutomationProperties.Name="{x:Bind Name}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
@@ -541,18 +544,20 @@
                             Grid.Column="1"
                             Orientation="Vertical">
                     <TextBlock x:Name="TitleText"
+                               IsTabStop="True"
                                Text="{x:Bind ViewModel.Artist.Name}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"
                                ToolTipService.ToolTip="{x:Bind ViewModel.Artist.Name}"/>
                     <TextBlock x:Name="SubtitleText"
-                               FontWeight="Normal" TextTrimming="WordEllipsis"
-                               TextWrapping="NoWrap">
+                               FontWeight="Normal" IsTabStop="True"
+                               TextTrimming="WordEllipsis" TextWrapping="NoWrap">
                         <Run Text="{x:Bind ViewModel.Artist.GetCountStr()}"/>
                         <Run Foreground="{ThemeResource TextFillColorTertiaryBrush}" Text="{x:Bind ViewModel.Artist.GetDurationStr()}"/>
                     </TextBlock>
                     <TextBlock x:Name="CaptionText"
                                FontSize="14"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTabStop="True"
                                Text="{x:Bind ViewModel.Artist.GetDescriptionStr()}"
                                TextTrimming="WordEllipsis" TextWrapping="NoWrap"/>
 
@@ -562,26 +567,31 @@
                                     Orientation="Horizontal" Spacing="16">
                             <Button x:Name="PlayAllButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    AutomationProperties.LabeledBy="{x:Bind PlayAllTextBlock}"
                                     Click="{x:Bind ViewModel.PlayAllButton_Click}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                               FontSize="16" Glyph="&#xE768;"/>
-                                    <TextBlock x:Uid="AlbumDetail_PlayAll" FontSize="12"/>
+                                    <TextBlock x:Name="PlayAllTextBlock" x:Uid="AlbumDetail_PlayAll"
+                                               FontSize="12"/>
                                 </StackPanel>
                             </Button>
                             <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    AutomationProperties.LabeledBy="{x:Bind ShuffleAndPlayTextBlock}"
                                     Click="{x:Bind ViewModel.ShuffledPlayAllButton_Click}"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                               FontSize="16" Glyph="&#xE8B1;"/>
-                                    <TextBlock x:Uid="AlbumDetail_ShuffleAndPlay" FontSize="12"/>
+                                    <TextBlock x:Name="ShuffleAndPlayTextBlock" x:Uid="AlbumDetail_ShuffleAndPlay"
+                                               FontSize="12"/>
                                 </StackPanel>
                             </Button>
                             <Button x:Name="AddToButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
+                                    AutomationProperties.LabeledBy="{x:Bind AddToTextBlock}"
                                     XYFocusDown="{x:Bind AlbumListView}">
                                 <Button.Flyout>
                                     <MenuFlyout Opened="AddToFlyout_Opened" Placement="Bottom">
@@ -600,7 +610,8 @@
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                               FontSize="16" Glyph="&#xE710;"/>
-                                    <TextBlock x:Uid="Songs_AddTo" FontSize="12"/>
+                                    <TextBlock x:Name="AddToTextBlock" x:Uid="Songs_AddTo"
+                                               FontSize="12"/>
                                 </StackPanel>
                             </Button>
                             <Button x:Name="MoreButton"

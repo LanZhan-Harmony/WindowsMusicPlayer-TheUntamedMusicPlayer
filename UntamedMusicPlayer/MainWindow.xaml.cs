@@ -162,7 +162,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         }
         catch (Exception ex)
         {
-            _logger.ZLogError(ex, $"注册全局热键时出错");
+            _logger.ZLogWarning(ex, $"注册全局热键时出错");
         }
     }
 

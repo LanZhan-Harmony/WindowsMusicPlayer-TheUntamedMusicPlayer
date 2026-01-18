@@ -334,7 +334,7 @@
     <value>No</value>
   </data>
   <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Volume</value>
+    <value>Volume (Alt+↑/↓)</value>
   </data>
   <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
     <value>Full screen (F11)</value>

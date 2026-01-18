@@ -42,6 +42,7 @@
         </DataTemplate>
         <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:LocalAlbumInfo">
             <Grid Width="170" Height="228"
+                  AutomationProperties.Name="{x:Bind Name}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">

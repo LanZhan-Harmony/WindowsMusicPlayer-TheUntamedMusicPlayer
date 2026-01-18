@@ -19,6 +19,7 @@
         </DataTemplate>
         <DataTemplate x:Key="PlaylistGridViewTemplate" x:DataType="model:PlaylistInfo">
             <Grid Width="170" Height="228"
+                  AutomationProperties.Name="{x:Bind Name}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
