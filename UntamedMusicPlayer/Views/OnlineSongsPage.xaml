@@ -15,6 +15,7 @@
     <Page.Resources>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="contract:IBriefOnlineSongInfo">
             <Grid Height="52"
+                  AutomationProperties.Name="{x:Bind Title}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">

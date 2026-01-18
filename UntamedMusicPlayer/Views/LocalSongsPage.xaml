@@ -45,6 +45,7 @@
         </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefLocalSongInfo">
             <Grid Height="52"
+                  AutomationProperties.Name="{x:Bind Title}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">

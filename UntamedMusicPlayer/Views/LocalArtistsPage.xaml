@@ -36,6 +36,7 @@
         </DataTemplate>
         <DataTemplate x:Key="ArtistGridViewTemplate" x:DataType="model:LocalArtistInfo">
             <Grid Width="170" Height="226"
+                  AutomationProperties.Name="{x:Bind Name}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited">
