@@ -61,6 +61,7 @@ public sealed partial class MusicPlayer : IDisposable
         _queueManager.OnPlayQueueEmpty += ClearPlayQueue;
         _queueManager.OnCurrentSongRemoved += OnCurrentSongRemoved;
         _smtcManager.ButtonPressed += OnSMTCButtonPressed;
+        _smtcManager.PlaybackPositionChangeRequested += OnSMTCPlaybackPositionChangeRequested;
 
         LoadStateAsync();
     }
@@ -135,6 +136,21 @@ public sealed partial class MusicPlayer : IDisposable
     }
 
     /// <summary>
+    /// SMTC播放位置更改请求回调
+    /// </summary>
+    /// <param name="time"></param>
+    private void OnSMTCPlaybackPositionChangeRequested(TimeSpan time)
+    {
+        if (time > State.TotalPlayingTime)
+        {
+            time = State.TotalPlayingTime;
+        }
+        State.CurrentPlayingTime = time;
+        _audioEngine.SetPosition(time.TotalSeconds);
+        _lyricManager.UpdateCurrentLyric();
+    }
+
+    /// <summary>
     /// 按歌曲信息播放歌曲
     /// </summary>
     /// <param name="info"></param>
@@ -144,7 +160,8 @@ public sealed partial class MusicPlayer : IDisposable
             _queueManager
                 .CurrentQueue.AsValueEnumerable()
                 .FirstOrDefault(song => song.Song == info)
-                ?.Index ?? 0;
+                ?.Index
+            ?? 0;
         PlaySongByIndex(index, false);
     }
 

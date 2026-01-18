@@ -214,7 +214,10 @@
     <value>刷新库</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>独占模式</value>
+    <value>独占模式 (实验性)</value>
+  </data>
+  <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
+    <value>开启后，应用内音量调节不可用，请在操作系统调节音量</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
     <value>如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列</value>

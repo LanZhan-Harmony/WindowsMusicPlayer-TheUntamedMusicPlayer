@@ -47,6 +47,11 @@ public sealed partial class SMTCManager : IDisposable
     /// </summary>
     public event Action<SystemMediaTransportControlsButton>? ButtonPressed;
 
+    /// <summary>
+    /// 播放位置更改请求事件
+    /// </summary>
+    public event Action<TimeSpan>? PlaybackPositionChangeRequested;
+
     public SMTCManager(SharedPlaybackState state)
     {
         _state = state;
@@ -56,6 +61,7 @@ public sealed partial class SMTCManager : IDisposable
         _displayUpdater.AppMediaId = "AppDisplayName".GetLocalized();
         _systemControls.IsEnabled = true;
         _systemControls.ButtonPressed += OnSystemControlsButtonPressed;
+        _systemControls.PlaybackPositionChangeRequested += OnSystemControlsPlaybackPositionChangeRequested;
         _timelineProperties.StartTime = TimeSpan.Zero;
         _timelineProperties.MinSeekTime = TimeSpan.Zero;
 
@@ -85,6 +91,14 @@ public sealed partial class SMTCManager : IDisposable
         App.MainWindow?.DispatcherQueue.TryEnqueue(
             DispatcherQueuePriority.Low,
             () => ButtonPressed?.Invoke(args.Button)
+        );
+    }
+
+    private void OnSystemControlsPlaybackPositionChangeRequested(SystemMediaTransportControls sender, PlaybackPositionChangeRequestedEventArgs args)
+    {
+        App.MainWindow?.DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () => PlaybackPositionChangeRequested?.Invoke(args.RequestedPlaybackPosition)
         );
     }
 
