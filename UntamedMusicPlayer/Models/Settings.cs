@@ -285,7 +285,6 @@ public static class Settings
             }
             else
             {
-                NotFirstUsed = true;
                 LyricPageCurrentFontSize = 50;
                 IsFallBack = true;
                 LuminosityOpacity = 85;

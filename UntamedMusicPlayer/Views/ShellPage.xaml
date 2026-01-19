@@ -26,7 +26,7 @@
                   Canvas.ZIndex="1">
                 <Image Width="16" Height="16"
                        Margin="12,0,0,0" HorizontalAlignment="Left"
-                       Source="/Assets/AppIcon/Icon.png"/>
+                       Source="/Assets/AppIcon/Icon.ico"/>
                 <TextBlock Margin="40,0,0,0" VerticalAlignment="Center"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            Text="{x:Bind _appTitleBarText}"
