@@ -24,6 +24,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<MainWindow>();
     private readonly InfoBarManager? _infoBarManager;
+    private bool _isClosingWorkDone;
 
     // 热键 ID
     private const int HOTKEY_ID_VOLUME_UP = 1;
@@ -256,44 +257,67 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     /// <param name="args"></param>
     private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
     {
+        if (_isClosingWorkDone)
+        {
+            return;
+        }
+
         try
         {
-            await Data.MusicPlayer.SaveStateAsync();
-            await Data.PlaylistLibrary.SaveLibraryAsync();
+            args.Cancel = true;
+            sender.Hide(); // 立即隐藏窗口，提升视觉响应
+            Data.MusicPlayer.Pause(); // 立即停止音乐播放
+            Data.DesktopLyricWindow?.Close(); // 立即关闭桌面歌词
+
+            Settings.NotFirstUsed = true;
+            // 并行执行保存以缩短退出后的存活时间
+            await Task.WhenAll(
+                Data.MusicPlayer.SaveStateAsync(),
+                Data.PlaylistLibrary.SaveLibraryAsync()
+            );
         }
         catch (Exception ex)
         {
             _logger.ZLogInformation(ex, $"保存应用程序数据失败");
         }
+        finally
+        {
+            PerformFinalCleanup();
+            _isClosingWorkDone = true;
+            Close(); // 此时真正触发关闭
+        }
     }
 
     /// <summary>
-    /// 窗口关闭时的清理工作
+    /// 窗口关闭时的工作
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
+        LoggingService.Shutdown();
+    }
+
+    private void PerformFinalCleanup()
+    {
         try
         {
             Data.MusicPlayer.Dispose();
-            Data.DesktopLyricWindow?.Close(); // 关闭桌面歌词窗口
             Data.DesktopLyricWindow?.Dispose();
-            UnregisterGlobalHotKeys(); // 注销全局热键
+            UnregisterGlobalHotKeys();
+
             RootGrid.RemoveHandler(UIElement.KeyDownEvent, new KeyEventHandler(OnGlobalKeyDown));
-            RootGrid.RemoveHandler(
-                UIElement.PointerPressedEvent,
-                new PointerEventHandler(OnGlobalPointerPressed)
-            );
-            StrongReferenceMessenger.Default.Unregister<LogMessage>(this); // 清理消息接收
-            _infoBarManager?.Dispose(); // 清理InfoBar管理器
+            RootGrid.RemoveHandler(UIElement.PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed));
+
+            StrongReferenceMessenger.Default.Unregister<LogMessage>(this);
+            _infoBarManager?.Dispose();
+
             App.GetService<IMaterialSelectorService>().Dispose();
             App.GetService<IDynamicBackgroundService>().Dispose();
-            LoggingService.Shutdown(); // 关闭日志服务
         }
         catch (Exception ex)
         {
-            _logger.ZLogInformation(ex, $"清理资源失败");
+            _logger.ZLogInformation(ex, $"后期清理资源失败");
         }
     }
 }

@@ -10,7 +10,6 @@
 
     <Grid x:Name="Draggable" VerticalAlignment="Top">
         <Border x:Name="AnimatedBorder"
-                Height="55"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 Background="Black" CornerRadius="30">

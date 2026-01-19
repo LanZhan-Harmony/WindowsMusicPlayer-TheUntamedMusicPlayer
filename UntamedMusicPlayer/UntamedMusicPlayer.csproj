@@ -85,20 +85,22 @@
   <PropertyGroup>
     <DefaultLanguage>en-us</DefaultLanguage>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
-    <!--<PublishSelfContained>True</PublishSelfContained>
-    <WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>-->
+    <PublishSelfContained>True</PublishSelfContained>
+    <WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
     <PublishReadyToRun>True</PublishReadyToRun>
     <IsAotCompatible>True</IsAotCompatible>
-    <PublishAot>True</PublishAot>
-    <PublishTrimmed>True</PublishTrimmed>
+    <!--<PublishAot>True</PublishAot>
+    <PublishTrimmed>True</PublishTrimmed>-->
     <JsonSerializerIsReflectionEnabledByDefault>True</JsonSerializerIsReflectionEnabledByDefault>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
     <PackageCertificateKeyFile>UntamedMusicPlayer_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <EnableMsixTooling>True</EnableMsixTooling>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
 </Project>
