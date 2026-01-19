@@ -80,7 +80,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         }
     }
 
-    private void OnlineAlbumDetailPage_OnLoaded(object sender, RoutedEventArgs e)
+    private void OnlineAlbumDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
         var scrollViewer =
             SongListView.FindDescendant<ScrollViewer>()

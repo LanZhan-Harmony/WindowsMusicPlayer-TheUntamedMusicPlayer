@@ -25,7 +25,7 @@ public sealed class LocalArtistDetailViewModel
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList()
+            ConvertAllSongsToFlatArray()
         );
         Data.MusicPlayer.PlaySongByInfo(AlbumList[0].SongList[0]);
     }
@@ -34,19 +34,19 @@ public sealed class LocalArtistDetailViewModel
     {
         Data.PlayQueueManager.SetShuffledPlayQueue(
             $"ShuffledLocalSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList()
+            ConvertAllSongsToFlatArray()
         );
         Data.MusicPlayer.PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
     }
 
     public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
     {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, ConvertAllSongsToFlatList());
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, ConvertAllSongsToFlatArray());
     }
 
     public void AddToPlayQueueFlyoutButton_Click()
     {
-        var allSongs = ConvertAllSongsToFlatList();
+        var allSongs = ConvertAllSongsToFlatArray();
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}", allSongs);
@@ -62,7 +62,7 @@ public sealed class LocalArtistDetailViewModel
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList()
+            ConvertAllSongsToFlatArray()
         );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
@@ -71,7 +71,7 @@ public sealed class LocalArtistDetailViewModel
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList()
+            ConvertAllSongsToFlatArray()
         );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
@@ -169,7 +169,7 @@ public sealed class LocalArtistDetailViewModel
         await Data.PlaylistLibrary.AddToPlaylist(playlist, info.SongList);
     }
 
-    private List<IBriefSongInfoBase> ConvertAllSongsToFlatList()
+    private IBriefSongInfoBase[] ConvertAllSongsToFlatArray()
     {
         return [.. AlbumList.SelectMany(album => album.SongList)];
     }

@@ -1,4 +1,6 @@
+using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
@@ -15,6 +17,7 @@ using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
+using ZLinq;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace UntamedMusicPlayer.Views;
@@ -76,7 +79,7 @@ public sealed partial class OnlinePlayListDetailPage : Page
         }
     }
 
-    private void OnlinePlaylistDetailPage_OnLoaded(object sender, RoutedEventArgs e)
+    private async void OnlinePlaylistDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
         var scrollViewer =
             SongListView.FindDescendant<ScrollViewer>()
