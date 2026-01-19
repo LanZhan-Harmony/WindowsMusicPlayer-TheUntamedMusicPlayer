@@ -18,7 +18,6 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
 
     public ShellPage() //注意修改, 不能有参数
     {
-        StrongReferenceMessenger.Default.Register(this);
         InitializeComponent();
         Data.ShellPage = this;
         ViewModel = App.GetService<ShellViewModel>();
@@ -43,6 +42,11 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
             ToolTipService.SetToolTip(playlistItem, playlist.Name);
             PlaylistsNavItem.MenuItems.Add(playlistItem);
         }
+    }
+
+    private void ShellPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        StrongReferenceMessenger.Default.Register(this);
     }
 
     private void ShellPage_Unloaded(object sender, RoutedEventArgs e)

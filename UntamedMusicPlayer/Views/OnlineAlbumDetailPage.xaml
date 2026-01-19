@@ -10,7 +10,7 @@
       xmlns:model="using:UntamedMusicPlayer.Models"
       xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
       xmlns:ui="using:CommunityToolkit.WinUI"
-      Loaded="OnlineAlbumDetailPage_OnLoaded"
+      Loaded="OnlineAlbumDetailPage_Loaded"
       mc:Ignorable="d">
 
     <Page.Resources>

@@ -6,6 +6,7 @@
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ui="using:CommunityToolkit.WinUI"
+      Loaded="ShellPage_Loaded"
       Unloaded="ShellPage_Unloaded">
 
     <Page.Resources>
