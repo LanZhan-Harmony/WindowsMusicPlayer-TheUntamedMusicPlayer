@@ -107,18 +107,9 @@ public sealed partial class PlayQueuePage : Page
         var listViewSource = PlayQueueListView.ItemsSource;
         if (listViewSource is IEnumerable<IndexedPlayQueueSong> songs)
         {
-            var targetSong = currentSong switch
-            {
-                BriefLocalSongInfo localSong => songs
-                    .AsValueEnumerable()
-                    .FirstOrDefault(song => song.Song.Path == localSong.Path),
-                IBriefOnlineSongInfo onlineSong => songs
-                    .AsValueEnumerable()
-                    .FirstOrDefault(song =>
-                        song.Song is IBriefOnlineSongInfo s && s.ID == onlineSong.ID
-                    ),
-                _ => null,
-            };
+            var targetSong = songs
+                .AsValueEnumerable()
+                .FirstOrDefault(song => SongComparer.IsSameSong(song.Song, currentSong));
             if (targetSong is not null)
             {
                 PlayQueueListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);

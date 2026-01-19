@@ -76,7 +76,7 @@ public sealed partial class LocalAlbumDetailPage : Page
         }
     }
 
-    private void LocalAlbumDetailPage_OnLoaded(object sender, RoutedEventArgs e)
+    private void LocalAlbumDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
         var scrollViewer =
             SongListView.FindDescendant<ScrollViewer>()

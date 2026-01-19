@@ -142,7 +142,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         {
             return;
         }
-        var allSongs = ConvertAllSongsToFlatList();
+        var allSongs = ConvertAllSongsToFlatArray();
         Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
         Data.MusicPlayer.PlaySongByInfo(allSongs[0]);
     }
@@ -155,14 +155,14 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         }
         Data.PlayQueueManager.SetShuffledPlayQueue(
             $"ShuffledOnlineSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList()
+            ConvertAllSongsToFlatArray()
         );
         Data.MusicPlayer.PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
     }
 
     public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
     {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, ConvertAllSongsToFlatList());
+        await Data.PlaylistLibrary.AddToPlaylist(playlist, ConvertAllSongsToFlatArray());
     }
 
     public void AddToPlayQueueFlyoutButton_Click()
@@ -171,7 +171,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         {
             return;
         }
-        var allSongs = ConvertAllSongsToFlatList();
+        var allSongs = ConvertAllSongsToFlatArray();
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
@@ -187,7 +187,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList()
+            ConvertAllSongsToFlatArray()
         );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
@@ -196,7 +196,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
-            ConvertAllSongsToFlatList()
+            ConvertAllSongsToFlatArray()
         );
         Data.MusicPlayer.PlaySongByInfo(info);
     }
@@ -300,7 +300,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         await Data.PlaylistLibrary.AddToPlaylist(playlist, info.SongList);
     }
 
-    private List<IBriefSongInfoBase> ConvertAllSongsToFlatList()
+    private IBriefSongInfoBase[] ConvertAllSongsToFlatArray()
     {
         return [.. Artist.AlbumList.SelectMany(album => album.SongList)];
     }
