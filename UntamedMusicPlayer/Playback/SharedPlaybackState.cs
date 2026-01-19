@@ -73,6 +73,11 @@ public sealed partial class SharedPlaybackState : ObservableObject
                 Volume = await _localSettingsService.ReadSettingAsync<double>(nameof(Volume));
                 Speed = await _localSettingsService.ReadSettingAsync<double>(nameof(Speed));
             }
+            else
+            {
+                Volume = 100;
+                Speed = 1.0;
+            }
         }
         catch { }
     }
