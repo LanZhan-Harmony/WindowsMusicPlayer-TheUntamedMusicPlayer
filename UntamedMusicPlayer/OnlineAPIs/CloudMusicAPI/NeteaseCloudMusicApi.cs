@@ -1,5 +1,4 @@
 #pragma warning disable
-
 using System.Net;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -75,22 +74,21 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     )
     {
         ArgumentNullException.ThrowIfNull(provider);
-
         ArgumentNullException.ThrowIfNull(queries);
 
         if (provider == CloudMusicApiProviders.CheckMusic)
         {
             return HandleCheckMusicAsync(queries);
         }
-        else if (provider == CloudMusicApiProviders.Login)
+        if (provider == CloudMusicApiProviders.Login)
         {
             return HandleLoginAsync(queries);
         }
-        else if (provider == CloudMusicApiProviders.LoginStatus)
+        if (provider == CloudMusicApiProviders.LoginStatus)
         {
             return HandleLoginStatusAsync();
         }
-        else if (provider == CloudMusicApiProviders.RelatedPlaylist)
+        if (provider == CloudMusicApiProviders.RelatedPlaylist)
         {
             return HandleRelatedPlaylistAsync(queries);
         }
@@ -111,17 +109,11 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     )
     {
         ArgumentNullException.ThrowIfNull(method);
-
         ArgumentNullException.ThrowIfNull(url);
-
         ArgumentNullException.ThrowIfNull(data);
-
         ArgumentNullException.ThrowIfNull(options);
 
-        bool isOk;
-        JsonObject json;
-
-        (isOk, json) = await Request.CreateRequest(_client, method, url, data, options);
+        var (isOk, json) = await Request.CreateRequest(_client, method, url, data, options);
         json = (JsonObject)json["body"];
         if (!isOk && (int?)json["code"] == 301)
         {
@@ -131,16 +123,13 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         return (isOk, json);
     }
 
-    private async Task<(bool, JsonObject)> HandleCheckMusicAsync(Dictionary<string, string> queries)
+    private async Task<(bool, JsonObject?)> HandleCheckMusicAsync(
+        Dictionary<string, string> queries
+    )
     {
-        NeteaseCloudMusicApiProvider provider;
-        bool isOk;
-        JsonObject json;
-        JsonObject result;
-        bool playable;
+        var provider = CloudMusicApiProviders.CheckMusic;
 
-        provider = CloudMusicApiProviders.CheckMusic;
-        (isOk, json) = await RequestAsync(
+        var (isOk, json) = await RequestAsync(
             provider.Method,
             provider.Url(queries),
             provider.Data(queries),
@@ -151,12 +140,12 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
             return (false, null);
         }
 
-        playable =
+        var playable =
             (int?)json["code"] == 200
             && json["data"] is JsonArray dataArray
             && dataArray.Count > 0
             && (int?)dataArray[0]?["code"] == 200;
-        result = new JsonObject
+        var result = new JsonObject
         {
             { "success", playable },
             { "message", playable ? "ok" : "亲爱的,暂无版权" },
@@ -164,14 +153,11 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         return (true, result);
     }
 
-    private async Task<(bool, JsonObject)> HandleLoginAsync(Dictionary<string, string> queries)
+    private async Task<(bool, JsonObject?)> HandleLoginAsync(Dictionary<string, string> queries)
     {
-        NeteaseCloudMusicApiProvider provider;
-        bool isOk;
-        JsonObject json;
+        var provider = CloudMusicApiProviders.Login;
 
-        provider = CloudMusicApiProviders.Login;
-        (isOk, json) = await RequestAsync(
+        var (isOk, json) = await RequestAsync(
             provider.Method,
             provider.Url(queries),
             provider.Data(queries),
@@ -197,27 +183,21 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
 
     private async Task<(bool, JsonObject)> HandleLoginStatusAsync()
     {
-        HttpResponseMessage response;
-
-        response = null;
+        HttpResponseMessage? response = null;
         try
         {
             const string GUSER = "GUser=";
             const string GBINDS = "GBinds=";
 
-            string s;
-            int index;
-            JsonObject json;
-
             response = await _client.GetAsync("https://music.163.com");
-            s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
-            index = s.IndexOf(GUSER, StringComparison.Ordinal);
+            var s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+            var index = s.IndexOf(GUSER, StringComparison.Ordinal);
             if (index == -1)
             {
                 goto errorExit;
             }
 
-            json = new JsonObject { { "code", 200 } };
+            var json = new JsonObject { { "code", 200 } };
             var profileJson = JsonNode.Parse(s[(index + GUSER.Length)..]);
             if (profileJson is not null)
             {
@@ -246,7 +226,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         {
             response?.Dispose();
         }
-    errorExit:
+        errorExit:
         return (false, new JsonObject { { "code", 301 } });
     }
 
@@ -254,24 +234,18 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         Dictionary<string, string> queries
     )
     {
-        HttpResponseMessage response;
-
-        response = null;
+        HttpResponseMessage? response = null;
         try
         {
-            string s;
-            MatchCollection matchs;
-            JsonArray playlists;
-
             response = await _client.SendAsync(
                 HttpMethod.Get,
                 "https://music.163.com/playlist",
                 new QueryCollection { { "id", queries["id"] } },
                 new QueryCollection { { "User-Agent", Request.ChooseUserAgent("pc") } }
             );
-            s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
-            matchs = MyRegex().Matches(s);
-            playlists = new JsonArray();
+            var s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+            var matchs = MyRegex().Matches(s);
+            var playlists = new JsonArray();
             matchs
                 .Cast<Match>()
                 .Select(match => new JsonObject

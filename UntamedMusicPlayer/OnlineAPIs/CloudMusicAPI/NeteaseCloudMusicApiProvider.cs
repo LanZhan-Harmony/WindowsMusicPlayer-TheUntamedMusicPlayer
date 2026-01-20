@@ -1,6 +1,6 @@
 #pragma warning disable
-
 using System.Net;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Utils;
@@ -83,14 +83,13 @@ public sealed class NeteaseCloudMusicApiProvider
 
     private IEnumerable<KeyValuePair<string, string>> GetData(Dictionary<string, string> queries)
     {
-        QueryCollection data;
+        var data = new QueryCollection();
 
         if (_parameterInfos.Length == 0)
         {
             return _emptyData;
         }
 
-        data = [];
         foreach (var parameterInfo in _parameterInfos)
         {
             switch (parameterInfo.Type)
@@ -1903,7 +1902,10 @@ public static partial class CloudMusicApiProviders
         ],
         BuildOptions(
             "linuxapi",
-            [new("os", "pc"), new("_ntes_nuid", new Random().RandomBytes(16).ToHexStringLower())]
+            [
+                new("os", "pc"),
+                new("_ntes_nuid", RandomNumberGenerator.GetBytes(16).ToHexStringLower()),
+            ]
         )
     );
 
@@ -2321,10 +2323,10 @@ public static partial class CloudMusicApiProviders
 
         options = new Options
         {
-            crypto = crypto,
-            cookie = cookieCollection,
-            ua = ua,
-            url = url,
+            Crypto = crypto,
+            Cookie = cookieCollection,
+            UA = ua,
+            Url = url,
         };
         return options;
     }

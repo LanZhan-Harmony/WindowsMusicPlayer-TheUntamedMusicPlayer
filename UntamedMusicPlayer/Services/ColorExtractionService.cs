@@ -2,6 +2,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graphics.Canvas;
 using UntamedMusicPlayer.Contracts.Services;
+using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -145,12 +146,7 @@ public sealed class ColorExtractionService : IColorExtractionService
     {
         using var renderTarget = new CanvasRenderTarget(device, newSize.Width, newSize.Height, 96);
         using var session = renderTarget.CreateDrawingSession();
-
-        session.DrawImage(
-            original,
-            new Windows.Foundation.Rect(0, 0, newSize.Width, newSize.Height)
-        );
-
+        session.DrawImage(original, new Rect(0, 0, newSize.Width, newSize.Height));
         return CanvasBitmap.CreateFromDirect3D11Surface(device, renderTarget);
     }
 
@@ -252,7 +248,10 @@ public sealed class ColorExtractionService : IColorExtractionService
 
         foreach (var child in node.Children)
         {
-            child?.Let(c => CollectColors(c, colorStats));
+            if (child is not null)
+            {
+                CollectColors(child, colorStats);
+            }
         }
     }
 
@@ -352,11 +351,3 @@ internal class OctreeNode
 /// 渐变配置
 /// </summary>
 public sealed record GradientConfig(List<Color> Colors, double Angle);
-
-/// <summary>
-/// 扩展方法
-/// </summary>
-internal static class Extensions
-{
-    public static void Let<T>(this T obj, Action<T> action) => action(obj);
-}
