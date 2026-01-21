@@ -21,7 +21,7 @@ public static class CoverManager
     private static readonly Lock _playlistLock = new();
     private static int _accessCount;
 
-    // 定时清理（每 1 分钟）
+    // 定时清理（每 5 分钟）
     private static readonly Timer _cleanupTimer = new(
         _ => CleanupDeadReferences(),
         null,
