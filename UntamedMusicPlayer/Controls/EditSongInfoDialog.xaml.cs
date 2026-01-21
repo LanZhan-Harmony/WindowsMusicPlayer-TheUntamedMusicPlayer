@@ -270,6 +270,10 @@ public sealed partial class EditSongInfoDialog
         try
         {
             using var musicFile = TagLib.File.Create(_song.Path);
+            if (musicFile.Tag.Pictures.Length == 0)
+            {
+                return;
+            }
             var picture = musicFile.Tag.Pictures[0];
             var bytes = picture.Data.Data;
             var extension = $".{picture.MimeType.Split('/')[1]}";

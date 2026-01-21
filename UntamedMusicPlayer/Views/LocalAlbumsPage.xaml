@@ -10,6 +10,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
+        <helper:AlbumCoverConverter x:Key="AlbumCoverConverter"/>
         <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
             <ListViewItem Margin="0,2,0,2">
                 <TextBlock Text="{x:Bind}"/>
@@ -178,8 +179,8 @@
                                Width="160" Height="160"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
-                               Canvas.ZIndex="1"
-                               Source="{x:Bind Cover}"
+                               x:Phase="1" Canvas.ZIndex="1"
+                               Source="{x:Bind Converter={StaticResource AlbumCoverConverter}}"
                                Stretch="UniformToFill"/>
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"

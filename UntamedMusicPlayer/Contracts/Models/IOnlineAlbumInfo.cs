@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Models;
@@ -8,6 +9,8 @@ public interface IBriefOnlineAlbumInfo : IAlbumInfoBase
 {
     static readonly string _unknownArtist = "SongInfo_UnknownArtist".GetLocalized();
     long ID { get; set; }
+    BitmapImage? Cover { get; set; }
+    string? CoverPath { get; set; }
 
     /// <summary>
     /// 根据歌曲信息获取简要专辑信息

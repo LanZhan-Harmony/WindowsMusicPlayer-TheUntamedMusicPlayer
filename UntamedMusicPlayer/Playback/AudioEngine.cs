@@ -323,8 +323,13 @@ public sealed partial class AudioEngine : IDisposable
             {
                 return false;
             }
+
             if (_state.IsExclusiveMode) // 独占模式
             {
+                if (BassWasapi.IsStarted) // 如果已经在播放状态，直接返回 true
+                {
+                    return true;
+                }
                 if (_isWasapiInitialized) // 从暂停恢复
                 {
                     EnableSustainedLowLatencyGC();
@@ -373,7 +378,13 @@ public sealed partial class AudioEngine : IDisposable
                 }
                 return true;
             }
-            // 共享模式：先尝试直接播放，失败时在 Start() 后重试一次
+
+            // 共享模式
+            if (Bass.ChannelIsActive(_fxHandle) == PlaybackState.Playing) // 如果已经在播放状态，直接返回 true
+            {
+                return true;
+            }
+            // 先尝试直接播放，失败时在 Start() 后重试一次
             if (Bass.ChannelPlay(_fxHandle, false))
             {
                 return true;
