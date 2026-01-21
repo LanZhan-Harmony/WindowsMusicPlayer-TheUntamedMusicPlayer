@@ -58,7 +58,7 @@ public sealed partial class EditAlbumInfoDialog
         _albumArtist = info.ArtistsStr;
         _genre = info.GenreStr;
         _year = $"{info.Year}";
-        Cover = info.Cover;
+        Cover = CoverManager.GetAlbumCoverBitmap(info);
         _isSaveCoverButtonEnabled = Cover is not null;
         RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
@@ -185,14 +185,12 @@ public sealed partial class EditAlbumInfoDialog
         (sender as Button)!.IsEnabled = false;
         try
         {
-            if (string.IsNullOrEmpty(_album.CoverPath) || !File.Exists(_album.CoverPath))
+            var picture = CoverManager.GetSongCoverPicture(_album.CoverPath);
+            if (picture?.Data.Data is not { Length: > 0 } data)
             {
                 return;
             }
-            using var musicFile = TagLib.File.Create(_album.CoverPath);
-            var picture = musicFile.Tag.Pictures[0];
-            var bytes = picture.Data.Data;
-            var extension = picture.MimeType.Split('/')[1];
+            var extension = $".{picture.MimeType.Split('/')[1]}";
             var fileName = _album.Name;
             var savePicker = new FileSavePicker(App.MainWindow!.AppWindow.Id)
             {
@@ -206,7 +204,7 @@ public sealed partial class EditAlbumInfoDialog
             var file = await savePicker.PickSaveFileAsync();
             if (file is not null)
             {
-                await File.WriteAllBytesAsync(file.Path, bytes);
+                await File.WriteAllBytesAsync(file.Path, data);
             }
         }
         catch (Exception ex)

@@ -11,9 +11,7 @@ using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.ViewModels;
-using ZLinq;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace UntamedMusicPlayer.Views;

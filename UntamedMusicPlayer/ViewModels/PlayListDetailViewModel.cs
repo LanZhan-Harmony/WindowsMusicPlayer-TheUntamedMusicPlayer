@@ -30,7 +30,8 @@ public sealed partial class PlayListDetailViewModel
     public partial string TotalSongNumStr { get; set; } = Data.SelectedPlaylist!.TotalSongNumStr;
 
     [ObservableProperty]
-    public partial WriteableBitmap? Cover { get; set; } = Data.SelectedPlaylist!.Cover;
+    public partial WriteableBitmap? Cover { get; set; } =
+        CoverManager.GetPlaylistCoverBitmap(Data.SelectedPlaylist);
 
     [ObservableProperty]
     public partial ObservableCollection<IndexedPlaylistSong> SongList { get; set; }
@@ -60,8 +61,7 @@ public sealed partial class PlayListDetailViewModel
         if (PlaylistName == message.Playlist.Name)
         {
             TotalSongNumStr = Playlist.TotalSongNumStr;
-            Cover = null;
-            Cover = Playlist.Cover;
+            Cover = CoverManager.GetPlaylistCoverBitmap(Playlist);
             SongList = Playlist.SongList;
             IsPlayAllButtonEnabled = SongList.Count > 0;
         }

@@ -1,13 +1,10 @@
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.WindowsRuntime;
 using MemoryPack;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Services;
-using Windows.Graphics.Imaging;
+using Windows.Storage;
 using ZLinq;
 using ZLogger;
 
@@ -23,9 +20,6 @@ public sealed partial class PlaylistInfo
     public ObservableCollection<IndexedPlaylistSong> SongList { get; set; } = [];
     public bool IsCoverEdited { get; set; } = false;
     public List<string> CoverPaths { get; set; } = new(4);
-
-    [MemoryPackIgnore]
-    public WriteableBitmap? Cover { get; set; }
 
     [MemoryPackConstructor]
     public PlaylistInfo() { }
@@ -57,8 +51,6 @@ public sealed partial class PlaylistInfo
         }
         TotalSongNumStr = GetTotalSongNumStr(SongList.Count);
         ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
-        InitializeCover();
-        GetCover();
     }
 
     public PlaylistInfo(string name, PlaylistInfo info)
@@ -69,7 +61,6 @@ public sealed partial class PlaylistInfo
         SongList = info.SongList;
         IsCoverEdited = info.IsCoverEdited;
         CoverPaths = info.CoverPaths;
-        Cover = info.Cover;
     }
 
     /// <summary>
@@ -93,12 +84,6 @@ public sealed partial class PlaylistInfo
         SongList.Add(indexedSong);
         TotalSongNumStr = GetTotalSongNumStr(SongList.Count);
         ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
-
-        if (coverPathIndex >= 0)
-        {
-            InitializeCover();
-            GetCover();
-        }
     }
 
     /// <summary>
@@ -106,25 +91,14 @@ public sealed partial class PlaylistInfo
     /// </summary>
     public async Task AddRange(IEnumerable<IBriefSongInfoBase> songs)
     {
-        var coverUpdated = false;
         foreach (var song in songs)
         {
             var coverPathIndex = IsCoverEdited ? -1 : await TryAddCoverPath(song);
             var indexedSong = new IndexedPlaylistSong(SongList.Count, song, coverPathIndex);
             SongList.Add(indexedSong);
-
-            if (coverPathIndex >= 0)
-            {
-                coverUpdated = true;
-            }
         }
         TotalSongNumStr = GetTotalSongNumStr(SongList.Count);
         ModifiedDate = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
-        if (coverUpdated)
-        {
-            InitializeCover();
-            GetCover();
-        }
     }
 
     /// <summary>
@@ -163,8 +137,6 @@ public sealed partial class PlaylistInfo
             {
                 await RefillCoverPaths();
             }
-            InitializeCover();
-            GetCover();
         }
     }
 
@@ -269,299 +241,15 @@ public sealed partial class PlaylistInfo
         }
     }
 
-    public void InitializeCover()
-    {
-        if (CoverPaths.Count == 0)
-        {
-            Cover = null;
-        }
-        else if (Cover is null)
-        {
-            const int canvasSize = 256;
-            Cover = new WriteableBitmap(canvasSize, canvasSize);
-        }
-    }
-
-    public async void GetCover()
-    {
-        if (Cover is null)
-        {
-            return;
-        }
-        if (IsCoverEdited) // 用户自定义封面，直接从CoverPaths[0]加载图片
-        {
-            await Task.Run(async () =>
-            {
-                try
-                {
-                    var imagePath = CoverPaths[0];
-                    if (!File.Exists(imagePath))
-                    {
-                        return;
-                    }
-                    const int canvasSize = 256;
-
-                    // 读取图片文件为字节数组
-                    var imageBytes = await File.ReadAllBytesAsync(imagePath);
-
-                    // 使用ResizeImageToFitRegionAsync来正确调整图片尺寸
-                    var resizedImageBytes = await ResizeImageToFitRegionAsync(
-                        imageBytes,
-                        canvasSize,
-                        canvasSize
-                    );
-
-                    if (resizedImageBytes is null)
-                    {
-                        return;
-                    }
-
-                    // 切换到UI线程更新WriteableBitmap
-                    App.MainWindow?.DispatcherQueue.TryEnqueue(
-                        DispatcherQueuePriority.Low,
-                        async () =>
-                        {
-                            try
-                            {
-                                // 将像素数据写入WriteableBitmap
-                                using var pixelStream = Cover.PixelBuffer.AsStream();
-                                await pixelStream.WriteAsync(resizedImageBytes);
-                                Cover.Invalidate();
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.ZLogInformation(ex, $"播放列表{Name}更新自定义封面失败");
-                            }
-                        }
-                    );
-                }
-                catch (Exception ex)
-                {
-                    _logger.ZLogInformation(ex, $"播放列表{Name}加载自定义封面失败");
-                }
-            });
-            return;
-        }
-
-        // 自动组合封面
-        await Task.Run(async () =>
-        {
-            try
-            {
-                const int canvasSize = 256;
-                const int halfSize = canvasSize / 2;
-
-                // 在后台线程中处理所有图像数据
-                var processedRegions = new List<(byte[] pixels, int regionIndex)>();
-
-                for (var i = 0; i < CoverPaths.Count; i++)
-                {
-                    var coverPath = CoverPaths[i];
-                    try
-                    {
-                        byte[]? imageBytes = null;
-
-                        if (coverPath.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-                        {
-                            using var httpClient = new HttpClient();
-                            httpClient.Timeout = TimeSpan.FromSeconds(5); // 设置超时
-                            imageBytes = await httpClient.GetByteArrayAsync(coverPath);
-                        }
-                        else if (File.Exists(coverPath))
-                        {
-                            using var musicFile = TagLib.File.Create(coverPath);
-                            if (musicFile.Tag.Pictures.Length > 0)
-                            {
-                                imageBytes = musicFile.Tag.Pictures[0].Data.Data;
-                            }
-                        }
-
-                        if (imageBytes is null)
-                        {
-                            continue;
-                        }
-
-                        // 处理图像并立即释放原始数据
-                        var resizedImageBytes = await ResizeImageToFitRegionAsync(
-                            imageBytes,
-                            halfSize,
-                            halfSize
-                        );
-
-                        // 释放原始图像数据
-                        imageBytes = null;
-
-                        if (resizedImageBytes is not null)
-                        {
-                            processedRegions.Add((resizedImageBytes, i));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.ZLogInformation(ex, $"播放列表{Name}处理封面{coverPath}失败");
-                    }
-                }
-
-                // 切换回UI线程进行最终的绘制
-                App.MainWindow?.DispatcherQueue.TryEnqueue(
-                    DispatcherQueuePriority.Low,
-                    async () =>
-                    {
-                        try
-                        {
-                            var buffer = Cover.PixelBuffer;
-                            var pixels = new byte[buffer.Length];
-
-                            // 初始化为透明
-                            Array.Fill(pixels, (byte)0);
-
-                            // 定义四个区域的位置
-                            var regions = new[]
-                            {
-                                new PictureRegion(0, 0, halfSize, halfSize), // 左上
-                                new PictureRegion(halfSize, 0, halfSize, halfSize), // 右上
-                                new PictureRegion(0, halfSize, halfSize, halfSize), // 左下
-                                new PictureRegion(halfSize, halfSize, halfSize, halfSize), // 右下
-                            };
-
-                            // 绘制所有处理好的区域
-                            foreach (var (regionPixels, regionIndex) in processedRegions)
-                            {
-                                if (regionIndex < regions.Length)
-                                {
-                                    DrawImageToRegion(
-                                        pixels,
-                                        regionPixels,
-                                        regions[regionIndex],
-                                        canvasSize
-                                    );
-                                }
-                            }
-
-                            // 将像素数据写入WriteableBitmap
-                            using (var pixelStream = buffer.AsStream())
-                            {
-                                await pixelStream.WriteAsync(pixels);
-                            }
-
-                            // 使WriteableBitmap失效以更新显示
-                            Cover.Invalidate();
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.ZLogInformation(ex, $"播放列表{Name}UI线程绘制封面失败");
-                        }
-                    }
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.ZLogInformation(ex, $"播放列表{Name}创建WriteableBitmap失败");
-            }
-        });
-    }
-
-    public static async Task<byte[]?> ResizeImageToFitRegionAsync(
-        byte[] imageBytes,
-        int targetWidth,
-        int targetHeight
-    )
-    {
-        try
-        {
-            using var inputStream = new MemoryStream(imageBytes);
-            var decoder = await BitmapDecoder.CreateAsync(inputStream.AsRandomAccessStream());
-
-            var originalWidth = decoder.PixelWidth;
-            var originalHeight = decoder.PixelHeight;
-
-            // 计算UniformToFill的缩放和裁剪参数
-            var scaleX = (double)targetWidth / originalWidth;
-            var scaleY = (double)targetHeight / originalHeight;
-            var scale = Math.Max(scaleX, scaleY); // 使用较大的缩放比例以填充整个区域
-
-            var scaledWidth = (uint)(originalWidth * scale);
-            var scaledHeight = (uint)(originalHeight * scale);
-
-            // 计算居中裁剪的起始位置
-            var cropX = (uint)Math.Max(0, (scaledWidth - targetWidth) / 2);
-            var cropY = (uint)Math.Max(0, (scaledHeight - targetHeight) / 2);
-
-            // 创建变换
-            var transform = new BitmapTransform
-            {
-                ScaledWidth = scaledWidth,
-                ScaledHeight = scaledHeight,
-                Bounds = new BitmapBounds
-                {
-                    X = cropX,
-                    Y = cropY,
-                    Width = (uint)targetWidth,
-                    Height = (uint)targetHeight,
-                },
-            };
-
-            var pixelData = await decoder.GetPixelDataAsync(
-                BitmapPixelFormat.Bgra8,
-                BitmapAlphaMode.Premultiplied,
-                transform,
-                ExifOrientationMode.RespectExifOrientation,
-                ColorManagementMode.DoNotColorManage
-            );
-
-            return pixelData.DetachPixelData();
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"调整图片大小失败");
-            return null;
-        }
-    }
-
-    private static void DrawImageToRegion(
-        byte[] canvasPixels,
-        byte[] imagePixels,
-        PictureRegion region,
-        int canvasWidth
-    )
-    {
-        try
-        {
-            var regionWidth = region.Width;
-            var regionHeight = region.Height;
-            var regionX = region.X;
-            var regionY = region.Y;
-
-            for (var y = 0; y < regionHeight; y++)
-            {
-                for (var x = 0; x < regionWidth; x++)
-                {
-                    var imageIndex = (y * regionWidth + x) * 4; // BGRA
-                    var canvasIndex = ((regionY + y) * canvasWidth + (regionX + x)) * 4;
-
-                    if (
-                        imageIndex < imagePixels.Length - 3
-                        && canvasIndex < canvasPixels.Length - 3
-                    )
-                    {
-                        canvasPixels[canvasIndex] = imagePixels[imageIndex]; // B
-                        canvasPixels[canvasIndex + 1] = imagePixels[imageIndex + 1]; // G
-                        canvasPixels[canvasIndex + 2] = imagePixels[imageIndex + 2]; // R
-                        canvasPixels[canvasIndex + 3] = imagePixels[imageIndex + 3]; // A
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"绘制图片到区域失败");
-        }
-    }
-
+    /// <summary>
+    /// 清除封面(注意: 危险! 会删除封面文件)
+    /// </summary>
     public void ClearCover()
     {
         if (
             CoverPaths.Count > 0
+            && Path.Combine(ApplicationData.Current.LocalFolder.Path, "PlaylistCover")
+                == Path.GetDirectoryName(CoverPaths[0])
             && Data.SupportedCoverTypes.Contains(Path.GetExtension(CoverPaths[0]).ToLower())
         )
         {
@@ -576,8 +264,28 @@ public sealed partial class PlaylistInfo
         }
         CoverPaths.Clear();
         IsCoverEdited = true;
-        Cover = null;
         SongList.AsValueEnumerable().Select(i => i.CoverPathIndex = -1);
+    }
+
+    public void PrepareForRemoval()
+    {
+        if (
+            IsCoverEdited
+            && CoverPaths.Count > 0
+            && Path.Combine(ApplicationData.Current.LocalFolder.Path, "PlaylistCover")
+                == Path.GetDirectoryName(CoverPaths[0])
+            && Data.SupportedCoverTypes.Contains(Path.GetExtension(CoverPaths[0]).ToLower())
+        )
+        {
+            try
+            {
+                File.Delete(CoverPaths[0]);
+            }
+            catch (Exception ex)
+            {
+                _logger.ZLogInformation(ex, $"播放列表{Name}删除封面图片失败");
+            }
+        }
     }
 
     private static string GetTotalSongNumStr(int totalSongNum)
@@ -587,8 +295,6 @@ public sealed partial class PlaylistInfo
             : $"{totalSongNum} {"PlaylistInfo_Items".GetLocalized()}";
     }
 }
-
-public sealed record PictureRegion(int X, int Y, int Width, int Height);
 
 [MemoryPackable]
 public sealed partial class IndexedPlaylistSong

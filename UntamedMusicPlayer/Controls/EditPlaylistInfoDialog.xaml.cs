@@ -126,10 +126,11 @@ public sealed partial class EditPlaylistInfoDialog
             Songs.Add(new DisplaySongInfo(song.Song));
         }
         SongCount = Songs.Count;
-        if (info.Cover is not null)
+        var originalCover = CoverManager.GetPlaylistCoverBitmap(info);
+        if (originalCover is not null)
         {
-            Cover = new WriteableBitmap(info.Cover.PixelWidth, info.Cover.PixelHeight); // 注意要创建副本
-            info.Cover.PixelBuffer.CopyTo(Cover.PixelBuffer);
+            Cover = new WriteableBitmap(originalCover.PixelWidth, originalCover.PixelHeight); // 注意要创建副本
+            originalCover.PixelBuffer.CopyTo(Cover.PixelBuffer);
             Cover.Invalidate();
         }
         _isCoverEdited = info.IsCoverEdited;
@@ -348,7 +349,7 @@ public sealed partial class EditPlaylistInfoDialog
                 }
                 const int canvasSize = 256;
                 var imageBytes = await File.ReadAllBytesAsync(imagePath);
-                var resizedImageBytes = await PlaylistInfo.ResizeImageToFitRegionAsync(
+                var resizedImageBytes = await CoverManager.ResizeImageToFitRegionAsync(
                     imageBytes,
                     canvasSize,
                     canvasSize
@@ -388,9 +389,9 @@ public sealed partial class EditPlaylistInfoDialog
         }
         if (_isCoverEdited)
         {
-            _playlist.ClearCover();
+            _playlist.ClearCover(); // 会自动设置 IsCoverEdited 为 true
             _playlist.CoverPaths = _coverPaths;
-            _playlist.Cover = Cover;
+            CoverManager.ForcePlaylistCoverRefresh(_playlist);
         }
         _playlist.SongList.Clear();
         await _playlist.AddRange([.. Songs.Select(s => s.Song)]);

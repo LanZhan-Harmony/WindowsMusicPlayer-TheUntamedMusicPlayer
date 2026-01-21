@@ -7,15 +7,14 @@
       xmlns:local="using:UntamedMusicPlayer.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:UntamedMusicPlayer.Models"
-      xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
       xmlns:ui="using:CommunityToolkit.WinUI"
       Loaded="LocalAlbumDetailPage_Loaded"
       mc:Ignorable="d">
 
     <Page.Resources>
         <ThemeShadow x:Name="SharedShadow"/>
-        <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
-                                                        EmptyValue="Visible" NotEmptyValue="Collapsed"/>
+        <helper:AlbumCoverConverter x:Key="AlbumCoverConverter"/>
+        <helper:InverseAlbumCoverToVisibilityConverter x:Key="InverseAlbumCoverToVisibilityConverter"/>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefLocalSongInfo">
             <Grid Height="52"
                   AutomationProperties.Name="{x:Bind Title}"
@@ -241,11 +240,11 @@
                         SizeChanged="AlbumArt_OnSizeChanged"
                         Translation="0,0,16">
                     <Border.Background>
-                        <ImageBrush ImageSource="{x:Bind ViewModel.Album.Cover}" Stretch="UniformToFill"/>
+                        <ImageBrush ImageSource="{x:Bind ViewModel.Album, Converter={StaticResource AlbumCoverConverter}}" Stretch="UniformToFill"/>
                     </Border.Background>
                     <Border Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                             CornerRadius="{x:Bind CoverArt.CornerRadius, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.Album.Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.Album, Converter={StaticResource InverseAlbumCoverToVisibilityConverter}}">
                         <FontIcon x:Name="CoverArtIcon"
                                   FontFamily="{StaticResource UntamedFontFamily}"
                                   FontSize="64"

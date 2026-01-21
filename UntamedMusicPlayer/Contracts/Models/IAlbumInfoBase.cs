@@ -6,8 +6,6 @@ namespace UntamedMusicPlayer.Contracts.Models;
 public interface IAlbumInfoBase
 {
     string Name { get; set; }
-    BitmapImage? Cover { get; set; }
-    string? CoverPath { get; set; }
     string ArtistsStr { get; set; }
 
     /// <summary>
