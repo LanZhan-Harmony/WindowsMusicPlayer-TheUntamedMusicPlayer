@@ -78,7 +78,10 @@ public sealed partial class LocalArtistInfo : IArtistInfoBase
         if (Cover is not null)
         {
             using var musicFile = TagLib.File.Create(CoverPath);
-            return musicFile.Tag.Pictures[0].Data.Data;
+            if (musicFile.Tag.Pictures.Length > 0)
+            {
+                return musicFile.Tag.Pictures[0].Data.Data;
+            }
         }
         return [];
     }

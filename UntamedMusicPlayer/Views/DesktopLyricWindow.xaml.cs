@@ -299,7 +299,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     }
 
     /// <summary>
-    /// 调整窗口大小并保持中心点位置不变
+    /// 调整窗口大小并保持水平中心位置不变
     /// </summary>
     /// <param name="newWidthLogical">新宽度（逻辑像素）</param>
     /// <param name="newHeightLogical">新高度（逻辑像素）</param>
@@ -311,15 +311,13 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         // 获取当前窗口位置和大小
         GetWindowRect(_hWnd, out var currentRect);
         var currentWidth = currentRect.Right - currentRect.Left;
-        var currentHeight = currentRect.Bottom - currentRect.Top;
 
-        // 计算当前窗口中心点
+        // 计算当前窗口水平中心
         var centerX = currentRect.Left + (currentWidth >> 1);
-        var centerY = currentRect.Top + (currentHeight >> 1);
 
-        // 计算新的左上角位置，使中心点保持不变
+        // 计算新的左上角位置，使水平中心保持不变，垂直位置（顶部）保持不变
         var newLeft = centerX - (newWidth >> 1);
-        var newTop = centerY - (newHeight >> 1);
+        var newTop = currentRect.Top;
 
         // 使用 SetWindowPos 同时设置位置和大小
         const uint SWP_NOZORDER = 0x0004;

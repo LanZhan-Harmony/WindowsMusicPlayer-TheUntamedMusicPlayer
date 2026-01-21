@@ -307,7 +307,10 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             UnregisterGlobalHotKeys();
 
             RootGrid.RemoveHandler(UIElement.KeyDownEvent, new KeyEventHandler(OnGlobalKeyDown));
-            RootGrid.RemoveHandler(UIElement.PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed));
+            RootGrid.RemoveHandler(
+                UIElement.PointerPressedEvent,
+                new PointerEventHandler(OnGlobalPointerPressed)
+            );
 
             StrongReferenceMessenger.Default.Unregister<LogMessage>(this);
             _infoBarManager?.Dispose();

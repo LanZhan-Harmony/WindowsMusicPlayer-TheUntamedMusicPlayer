@@ -141,7 +141,7 @@ public sealed partial class SettingsViewModel
     /// 窗口材质列表
     /// </summary>
     public List<string> Materials { get; set; } =
-        [.. "Settings_Materials".GetLocalized().Split(", ")];
+    [.. "Settings_Materials".GetLocalized().Split(", ")];
 
     /// <summary>
     /// 选中的材质
@@ -351,11 +351,6 @@ public sealed partial class SettingsViewModel
             if (file is not null)
             {
                 var playlists = await FileManager.LoadPlaylistDataFromBinAsync(file.Path);
-                foreach (var playlist in playlists)
-                {
-                    playlist.InitializeCover();
-                    playlist.GetCover();
-                }
                 Data.PlaylistLibrary.NewPlaylists(playlists);
                 Messenger.Send(
                     new LogMessage(
@@ -617,10 +612,7 @@ public sealed partial class SettingsViewModel
             location = folder?.Path;
             if (string.IsNullOrWhiteSpace(location))
             {
-                location = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    "Music"
-                );
+                location = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
                 Directory.CreateDirectory(location);
             }
         }
