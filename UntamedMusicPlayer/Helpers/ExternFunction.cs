@@ -90,6 +90,18 @@ public static partial class ExternFunction
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool UnregisterHotKey(nint hWnd, int id);
 
+    [Flags]
+    public enum EXECUTION_STATE : uint
+    {
+        ES_AWAYMODE_REQUIRED = 0x00000040,
+        ES_CONTINUOUS = 0x80000000,
+        ES_DISPLAY_REQUIRED = 0x00000002,
+        ES_SYSTEM_REQUIRED = 0x00000001,
+    }
+
+    [LibraryImport("kernel32.dll")]
+    public static partial uint SetThreadExecutionState(uint esFlags);
+
     public static nint GetWindowLong(nint hWnd, int nIndex)
     {
         return _is64BitProcess ? GetWindowLong64(hWnd, nIndex) : GetWindowLong32(hWnd, nIndex);

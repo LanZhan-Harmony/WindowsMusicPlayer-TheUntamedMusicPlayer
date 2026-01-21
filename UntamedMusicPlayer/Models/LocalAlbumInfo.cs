@@ -1,30 +1,19 @@
 using MemoryPack;
-using Microsoft.Extensions.Logging;
-using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Services;
 using ZLinq;
-using ZLogger;
 
 namespace UntamedMusicPlayer.Models;
 
 [MemoryPackable]
 public sealed partial class LocalAlbumInfo : IAlbumInfoBase
 {
-    private static readonly ILogger _logger = LoggingService.CreateLogger<LocalAlbumInfo>();
-
     /// <summary>
     /// 专辑名
     /// </summary>
     public string Name { get; set; } = null!;
-
-    /// <summary>
-    /// 专辑封面
-    /// </summary>
-    [MemoryPackIgnore]
-    public BitmapImage? Cover { get; set; }
 
     /// <summary>
     /// 专辑封面来源歌曲的路径
@@ -100,20 +89,6 @@ public sealed partial class LocalAlbumInfo : IAlbumInfoBase
         ArtistsStr = IAlbumInfoBase.GetArtistsStr(Artists);
     }
 
-    public byte[] GetCoverBytes()
-    {
-        if (Cover is not null)
-        {
-            try
-            {
-                using var musicFile = TagLib.File.Create(CoverPath);
-                return musicFile.Tag.Pictures[0].Data.Data;
-            }
-            catch { }
-        }
-        return [];
-    }
-
     /// <summary>
     /// 获取专辑的简介字符串
     /// </summary>
@@ -141,65 +116,13 @@ public sealed partial class LocalAlbumInfo : IAlbumInfoBase
         );
         return string.Join(" • ", parts);
     }
-
-    public void InitializeCover()
-    {
-        if (string.IsNullOrEmpty(CoverPath))
-        {
-            return;
-        }
-        try
-        {
-            Cover = new BitmapImage { DecodePixelWidth = 160 };
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"专辑{Name}封面初始化失败");
-        }
-    }
-
-    public void LoadCover()
-    {
-        if (Cover is null)
-        {
-            return;
-        }
-        try
-        {
-            using var musicFile = TagLib.File.Create(CoverPath);
-            var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
-            var stream = new MemoryStream(coverBuffer);
-            App.MainWindow?.DispatcherQueue.TryEnqueue(
-                DispatcherQueuePriority.Low,
-                async () =>
-                {
-                    try
-                    {
-                        await Cover.SetSourceAsync(stream.AsRandomAccessStream());
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.ZLogInformation(ex, $"专辑{Name}封面加载失败");
-                    }
-                    finally
-                    {
-                        stream.Dispose();
-                    }
-                }
-            );
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"专辑{Name}封面加载失败");
-        }
-    }
 }
 
 public class LocalArtistAlbumInfo(LocalAlbumInfo localAlbumInfo) : IArtistAlbumInfoBase
 {
     public string Name { get; set; } = localAlbumInfo.Name;
     public string YearStr { get; set; } = IArtistAlbumInfoBase.GetYearStr(localAlbumInfo.Year);
-    public BitmapImage? Cover { get; set; } = localAlbumInfo.Cover;
+    public BitmapImage? Cover { get; set; } = CoverManager.GetAlbumCoverBitmap(localAlbumInfo);
     public List<IBriefSongInfoBase> SongList { get; set; } =
-        [.. Data.MusicLibrary.GetSongsByAlbum(localAlbumInfo)];
+    [.. Data.MusicLibrary.GetSongsByAlbum(localAlbumInfo)];
 }

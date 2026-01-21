@@ -134,7 +134,6 @@ public sealed partial class MusicLibrary : ObservableRecipient
                     Artists = libraryData.Artists;
                     Genres = libraryData.Genres;
                     _musicFolders = libraryData.MusicFolders;
-                    await InitializeCovers();
                     _dispatcherQueue.TryEnqueue(() =>
                         Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
                     );
@@ -161,7 +160,6 @@ public sealed partial class MusicLibrary : ObservableRecipient
                             .Concat(["SongInfo_AllGenres".GetLocalized()])
                             .OrderBy(x => x, new GenreComparer()),
                     ];
-                    await InitializeCovers();
                     _dispatcherQueue.TryEnqueue(() =>
                         Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
                     );
@@ -177,8 +175,8 @@ public sealed partial class MusicLibrary : ObservableRecipient
             }
             finally
             {
-                _ = Task.Run(LoadCovers);
                 _ = Task.Run(AddFolderWatcher);
+                CoverManager.ForceAllSongCoversRefresh();
                 _librarySemaphore.Release();
             }
         });
@@ -209,7 +207,6 @@ public sealed partial class MusicLibrary : ObservableRecipient
                     }
                 }
                 await Task.WhenAll(loadMusicTasks);
-                await InitializeCovers();
                 Genres =
                 [
                     .. _musicGenres
@@ -223,8 +220,8 @@ public sealed partial class MusicLibrary : ObservableRecipient
                 _musicGenres.Clear();
                 FolderWatchers.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
-                _ = Task.Run(LoadCovers);
                 _ = Task.Run(AddFolderWatcher);
+                CoverManager.ForceAllSongCoversRefresh();
                 FileManager.SaveLibraryDataAsync(Folders, data);
             }
             catch (Exception ex)
@@ -237,28 +234,6 @@ public sealed partial class MusicLibrary : ObservableRecipient
                 _librarySemaphore.Release();
             }
         });
-    }
-
-    public Task<bool> InitializeCovers()
-    {
-        var tcs = new TaskCompletionSource<bool>();
-        _dispatcherQueue.TryEnqueue(() =>
-        {
-            foreach (var album in Albums.Values)
-            {
-                album.InitializeCover();
-            }
-            tcs.SetResult(true);
-        });
-        return tcs.Task;
-    }
-
-    public void LoadCovers()
-    {
-        foreach (var album in Albums.Values)
-        {
-            album.LoadCover();
-        }
     }
 
     private async Task LoadMusicAsync(StorageFolder folder, string foldername)

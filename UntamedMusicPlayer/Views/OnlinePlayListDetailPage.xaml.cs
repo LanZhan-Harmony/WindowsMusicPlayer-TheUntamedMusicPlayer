@@ -1,6 +1,4 @@
-using System;
 using System.Numerics;
-using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
@@ -17,7 +15,6 @@ using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
-using ZLinq;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace UntamedMusicPlayer.Views;

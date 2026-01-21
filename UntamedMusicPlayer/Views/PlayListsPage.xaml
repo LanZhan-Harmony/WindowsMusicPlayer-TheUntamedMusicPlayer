@@ -5,13 +5,12 @@
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:UntamedMusicPlayer.Models"
-      xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
       xmlns:ui="using:CommunityToolkit.WinUI"
       mc:Ignorable="d">
 
     <Page.Resources>
-        <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
-                                                        EmptyValue="Visible" NotEmptyValue="Collapsed"/>
+        <helper:PlaylistCoverConverter x:Key="PlaylistCoverConverter"/>
+        <helper:InversePlaylistCoverToVisibilityConverter x:Key="InversePlaylistCoverToVisibilityConverter"/>
         <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
             <ListViewItem Margin="0,2,0,2">
                 <TextBlock Text="{x:Bind}"/>
@@ -147,8 +146,8 @@
                                Width="160" Height="160"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
-                               Canvas.ZIndex="1"
-                               Source="{x:Bind Cover}"
+                               x:Phase="1" Canvas.ZIndex="1"
+                               Source="{x:Bind Converter={StaticResource PlaylistCoverConverter}}"
                                Stretch="UniformToFill"/>
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
@@ -158,7 +157,7 @@
                                       FontSize="50"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xED3B;"
-                                      Visibility="{x:Bind Cover, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}"/>
+                                      Visibility="{x:Bind Converter={StaticResource InversePlaylistCoverToVisibilityConverter}}"/>
                         </Grid>
                     </Grid>
                 </Border>

@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
+using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Media;
 using Windows.Media.Playback;
 using ZLinq;
@@ -16,6 +18,11 @@ public sealed partial class MusicPlayer : IDisposable
     private readonly PlayQueueManager _queueManager;
     private readonly SMTCManager _smtcManager;
     private readonly LyricManager _lyricManager;
+
+    /// <summary>
+    /// 扩展执行会话，用于防止后台暂停
+    /// </summary>
+    private ExtendedExecutionSession? _extendedExecutionSession;
 
     /// <summary>
     /// 线程计时器
@@ -75,7 +82,10 @@ public sealed partial class MusicPlayer : IDisposable
         {
             if (State.RepeatMode == RepeatState.RepeatOne)
             {
-                PlaySongByIndex(State.PlayQueueIndex, false);
+                State.CurrentPlayingTime = TimeSpan.Zero;
+                _audioEngine.SetPosition(0);
+                Play();
+                _lyricManager.UpdateCurrentLyric();
                 return;
             }
             PlayNextSong();
@@ -292,6 +302,7 @@ public sealed partial class MusicPlayer : IDisposable
     {
         if (_audioEngine.Play())
         {
+            RequestExtendedExecution();
             _positionUpdateTimer = new Timer(
                 UpdateTimerHandler,
                 null,
@@ -313,7 +324,9 @@ public sealed partial class MusicPlayer : IDisposable
     public void Pause()
     {
         _audioEngine.Pause();
+        ClearExtendedExecution();
         State.PlayState = MediaPlaybackState.Paused;
+
         _smtcManager.UpdatePlaybackStatus(MediaPlaybackStatus.Paused);
         _positionUpdateTimer?.Change(Timeout.Infinite, Timeout.Infinite);
         _positionUpdateTimer = null;
@@ -325,7 +338,9 @@ public sealed partial class MusicPlayer : IDisposable
     public void Stop()
     {
         _audioEngine.Stop();
+        ClearExtendedExecution();
         State.PlayState = MediaPlaybackState.Paused;
+
         _smtcManager.UpdatePlaybackStatus(MediaPlaybackStatus.Paused);
         _lyricManager.Reset();
         _positionUpdateTimer?.Dispose();
@@ -466,7 +481,66 @@ public sealed partial class MusicPlayer : IDisposable
         _queueManager.OnPlayQueueEmpty -= ClearPlayQueue;
         _queueManager.OnCurrentSongRemoved -= OnCurrentSongRemoved;
         _smtcManager.ButtonPressed -= OnSMTCButtonPressed;
+        _smtcManager.PlaybackPositionChangeRequested -= OnSMTCPlaybackPositionChangeRequested;
         _smtcManager.Dispose();
+        ClearExtendedExecution();
         GC.SuppressFinalize(this);
+    }
+
+    private async void RequestExtendedExecution()
+    {
+        if (_extendedExecutionSession is not null)
+        {
+            return;
+        }
+
+        var newSession = new ExtendedExecutionSession
+        {
+            Reason = ExtendedExecutionReason.Unspecified,
+            Description = "Playing Music",
+        };
+
+        newSession.Revoked += ExtendedExecutionSession_Revoked;
+
+        var result = await newSession.RequestExtensionAsync();
+        if (result == ExtendedExecutionResult.Allowed)
+        {
+            _extendedExecutionSession = newSession;
+        }
+        else
+        {
+            newSession.Dispose();
+        }
+
+        // 同时阻止系统进入睡眠（非显示器关闭后的睡眠）
+        _ = ExternFunction.SetThreadExecutionState(
+            (uint)(
+                ExternFunction.EXECUTION_STATE.ES_SYSTEM_REQUIRED
+                | ExternFunction.EXECUTION_STATE.ES_CONTINUOUS
+            )
+        );
+    }
+
+    private void ExtendedExecutionSession_Revoked(
+        object sender,
+        ExtendedExecutionRevokedEventArgs args
+    )
+    {
+        ClearExtendedExecution();
+    }
+
+    private void ClearExtendedExecution()
+    {
+        if (_extendedExecutionSession is not null)
+        {
+            _extendedExecutionSession.Revoked -= ExtendedExecutionSession_Revoked;
+            _extendedExecutionSession.Dispose();
+            _extendedExecutionSession = null;
+        }
+
+        // 允许系统正常进入睡眠
+        _ = ExternFunction.SetThreadExecutionState(
+            (uint)ExternFunction.EXECUTION_STATE.ES_CONTINUOUS
+        );
     }
 }

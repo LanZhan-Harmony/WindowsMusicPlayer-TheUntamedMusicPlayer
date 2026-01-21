@@ -105,7 +105,7 @@ public sealed partial class LocalAlbumDetailPage : Page
         {
             return;
         }
-        var coverBytes = ViewModel.Album.GetCoverBytes();
+        var coverBytes = CoverManager.GetAlbumCoverBytes(ViewModel.Album);
         if (coverBytes.Length != 0)
         {
             CreateImageBackgroundGradientVisual(scrollingProperties.Translation.Y, coverBytes);

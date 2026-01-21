@@ -23,16 +23,9 @@ public sealed partial class PlaylistLibrary : ObservableRecipient
     public async Task LoadLibraryAsync()
     {
         Playlists = await FileManager.LoadPlaylistDataAsync();
-        foreach (var playlist in Playlists)
-        {
-            playlist.InitializeCover();
-        }
         HasLoaded = true;
+        CoverManager.ForceAllPlaylistCoversRefresh();
         Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
-        foreach (var playlist in Playlists)
-        {
-            playlist.GetCover();
-        }
     }
 
     public PlaylistInfo? NewPlaylist(string? name)
@@ -78,6 +71,8 @@ public sealed partial class PlaylistLibrary : ObservableRecipient
 
     public void DeletePlaylist(PlaylistInfo info)
     {
+        CoverManager.ForcePlaylistCoverRefresh(info);
+        info.PrepareForRemoval();
         Playlists.Remove(info);
         Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));
         Messenger.Send(
