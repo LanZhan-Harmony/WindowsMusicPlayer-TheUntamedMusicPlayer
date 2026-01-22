@@ -1,16 +1,42 @@
-先决条件：
-- 您的计算机必须运行 Windows 10 内部版本 17763 或更高版本。
-- 安装最新版本的 Visual Studio（社区版就足够了）。
-  - 安装“WinUI应用程序开发”工作负载。
-<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/d91003b0-cee6-4448-a551-4589c198dd7c" />
+<div align="center">
 
-- 获取代码:
-    ```
-    git clone https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer.git
-    ```
-  
-- 在 Visual Studio 中打开 UntamedMusicPlayer.sln。
-- 在 Visual Studio 中点击“工具”→”选项“→”NuGet包管理器“→”程序包源“→右上角+号。新建一个名称为Community Toolkit Labs，源为https://pkgs.dev.azure.com/dotnet/CommunityToolkit/_packaging/CommunityToolkit-Labs/nuget/v3/index.json 的包源。
-<img width="1453" height="777" alt="image" src="https://github.com/user-attachments/assets/b2aee828-7ad5-4a59-a60c-bffb50699c80" />
+[English](Docs/CONTRIBUTING-en.md) | [中文](CONTRIBUTING.md)
 
-- 重启项目并运行代码。
+</div>
+
+# 开发环境配置指南
+
+## 系统要求
+
+- **操作系统**：Windows 10 22H2（内部版本 19041）或更高版本
+- **开发工具**：Visual Studio 2026（社区版即可）
+
+## 开发环境设置
+
+### 1. 安装 Visual Studio 组件
+
+安装 Visual Studio 2026 时，请勾选以下工作负载：
+
+- **WinUI 应用程序开发**
+
+![Visual Studio 组件安装图](/Docs/Images/VisualStudioComponent.png)
+
+### 2. 克隆项目源码
+
+使用 Git 克隆本项目到本地：
+
+```bash
+git clone https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer.git
+```
+
+### 3. 在 Visual Studio 中打开项目
+
+在 Visual Studio 中打开 `UntamedMusicPlayer.slnx` 文件。
+
+### 4. 还原 NuGet 包
+
+等待 Visual Studio 自动还原 NuGet 依赖包。
+
+### 5. 编译并运行
+
+点击工具栏中的"**▶ Untamed Music Player (Package)**"按钮开始调试和运行应用程序。
