@@ -8,10 +8,10 @@
                   xmlns:winuiex="using:WinUIEx"
                   mc:Ignorable="d">
 
-    <Grid x:Name="Draggable" VerticalAlignment="Top">
+    <Grid x:Name="Draggable" VerticalAlignment="Center">
         <Border x:Name="AnimatedBorder"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Top"
+                VerticalAlignment="Center"
                 Background="Black" CornerRadius="30">
             <TextBlock x:Name="LyricContent"
                        Width="{x:Bind GetTextBlockWidth(model:Data.LyricManager.CurrentLyricContent), Mode=OneWay}"

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.ViewModels;
@@ -19,6 +20,12 @@ public sealed partial class LyricPage : Page, IDisposable
         InitializeComponent();
 
         Data.PlayState.PropertyChanged += OnStateChanged;
+    }
+
+    private void OnLyricLineClicked(object? sender, LyricSlice slice)
+    {
+        // 点击歌词行，更新播放进度
+        Data.MusicPlayer.LyricPositionUpdate(slice.StartTime);
     }
 
     private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)

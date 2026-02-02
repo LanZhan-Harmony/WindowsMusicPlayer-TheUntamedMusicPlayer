@@ -51,6 +51,7 @@
                 </Grid>
             </UserControl>
         </DataTemplate>
+
     </Page.Resources>
 
     <Grid>
@@ -76,6 +77,11 @@
                         <Setter Target="LyricViewer.(Grid.Column)" Value="0"/>
                         <Setter Target="LyricViewer.(Grid.ColumnSpan)" Value="2"/>
                         <Setter Target="LyricViewer.Margin" Value="30,0,30,0"/>
+                        <!--<Setter Target="AdvancedLyricViewer.(Grid.Row)" Value="1"/>
+                        <Setter Target="AdvancedLyricViewer.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="AdvancedLyricViewer.(Grid.Column)" Value="0"/>
+                        <Setter Target="AdvancedLyricViewer.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="AdvancedLyricViewer.Margin" Value="30,0,30,0"/>-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
@@ -94,6 +100,11 @@
                         <Setter Target="LyricViewer.(Grid.Column)" Value="1"/>
                         <Setter Target="LyricViewer.(Grid.ColumnSpan)" Value="1"/>
                         <Setter Target="LyricViewer.Margin" Value="20,20,50,20"/>
+                        <!--<Setter Target="AdvancedLyricViewer.(Grid.Row)" Value="0"/>
+                        <Setter Target="AdvancedLyricViewer.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="AdvancedLyricViewer.(Grid.Column)" Value="1"/>
+                        <Setter Target="AdvancedLyricViewer.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="AdvancedLyricViewer.Margin" Value="20,20,50,20"/>-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -129,6 +140,14 @@
                 <ColumnDefinition Width="1.2*"/>
             </Grid.ColumnDefinitions>
             <Border x:Name="ShadowTarget"/>
+
+            <!--  新版歌词渲染器  -->
+            <!--<lyricRenderer:AdvancedLyricRenderer x:Name="AdvancedLyricViewer"
+                                                 HorizontalAlignment="Stretch"
+                                                 VerticalAlignment="Stretch"
+                                                 Background="Transparent"
+                                                 LineClicked="OnLyricLineClicked"/>-->
+
             <ScrollViewer x:Name="LyricViewer" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
                     <StackPanel Height="600"/>
@@ -142,6 +161,7 @@
                     <StackPanel Height="600"/>
                 </StackPanel>
             </ScrollViewer>
+
             <Grid x:Name="ReferenceGrid"
                   Grid.Row="0" Grid.Column="0"
                   HorizontalAlignment="Stretch"

@@ -21,9 +21,13 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<DynamicBackgroundService>();
     private Compositor? _compositor;
-    private SpriteVisual? _backgroundVisual;
+    private SpriteVisual? _backgroundVisual1;
+    private SpriteVisual? _backgroundVisual2;
+    private ContainerVisual? _containerVisual;
     private FrameworkElement? _targetElement;
-    private CompositionLinearGradientBrush? _currentGradientBrush;
+    private CompositionLinearGradientBrush? _gradientBrush1;
+    private CompositionLinearGradientBrush? _gradientBrush2;
+    private bool _useFirstVisual = true;
 
     public bool IsEnabled
     {
@@ -142,17 +146,58 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
             // 创建渐变配置
             var gradientConfig = colorExtractionService.GenerateGradient(colors);
 
-            // 创建线性渐变画刷
-            _currentGradientBrush?.Dispose();
-            _currentGradientBrush = _compositor.CreateLinearGradientBrush();
+            // 初始化容器（仅第一次）
+            if (_containerVisual is null)
+            {
+                _containerVisual = _compositor.CreateContainerVisual();
+                ElementCompositionPreview.SetElementChildVisual(_targetElement, _containerVisual);
 
-            // 设置渐变方向（-45度）
+                // 创建两个视觉层用于交叉淡入淡出
+                _backgroundVisual1 = _compositor.CreateSpriteVisual();
+                _backgroundVisual2 = _compositor.CreateSpriteVisual();
+
+                _backgroundVisual1.Size = new Vector2(
+                    (float)_targetElement.ActualWidth,
+                    (float)_targetElement.ActualHeight
+                );
+                _backgroundVisual2.Size = new Vector2(
+                    (float)_targetElement.ActualWidth,
+                    (float)_targetElement.ActualHeight
+                );
+
+                _backgroundVisual1.Opacity = 0f;
+                _backgroundVisual2.Opacity = 0f;
+
+                _containerVisual.Children.InsertAtTop(_backgroundVisual1);
+                _containerVisual.Children.InsertAtTop(_backgroundVisual2);
+
+                // 监听窗口大小变化
+                _targetElement.SizeChanged -= OnTargetElementSizeChanged;
+                _targetElement.SizeChanged += OnTargetElementSizeChanged;
+            }
+
+            // 选择要使用的视觉层和画刷
+            var targetVisual = _useFirstVisual ? _backgroundVisual1 : _backgroundVisual2;
+            var targetBrush = _useFirstVisual ? _gradientBrush1 : _gradientBrush2;
+            var oldVisual = _useFirstVisual ? _backgroundVisual2 : _backgroundVisual1;
+
+            // 创建新的渐变画刷
+            targetBrush?.Dispose();
+            targetBrush = _compositor.CreateLinearGradientBrush();
+
+            if (_useFirstVisual)
+            {
+                _gradientBrush1 = targetBrush;
+            }
+            else
+            {
+                _gradientBrush2 = targetBrush;
+            }
+
+            // 设置渐变方向
             var angle = gradientConfig.Angle * Math.PI / 180;
-            _currentGradientBrush.StartPoint = new Vector2(0, 0);
-            _currentGradientBrush.EndPoint = new Vector2(
-                (float)Math.Cos(angle),
-                (float)Math.Sin(angle)
-            );
+            targetBrush.StartPoint = new Vector2(0, 0);
+            targetBrush.EndPoint = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
             // 添加颜色停止点
             var gradientColors = gradientConfig.Colors;
@@ -160,37 +205,29 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
             {
                 var position = (float)i / (gradientColors.Count - 1);
                 var color = AdjustColorForBackground(gradientColors[i]);
-                _currentGradientBrush.ColorStops.Add(
-                    _compositor.CreateColorGradientStop(position, color)
-                );
+                targetBrush.ColorStops.Add(_compositor.CreateColorGradientStop(position, color));
             }
 
-            // 创建或更新背景视觉元素
-            if (_backgroundVisual is null)
-            {
-                _backgroundVisual = _compositor.CreateSpriteVisual();
-                ElementCompositionPreview.SetElementChildVisual(_targetElement, _backgroundVisual);
-            }
+            // 应用画刷到目标视觉层
+            targetVisual!.Brush = targetBrush;
 
-            _backgroundVisual.Brush = _currentGradientBrush;
-            _backgroundVisual.Size = new Vector2(
-                (float)_targetElement.ActualWidth,
-                (float)_targetElement.ActualHeight
-            );
-            _backgroundVisual.Opacity = 0.5f; // 提高到50%透明度，增强视觉效果
-
-            // 添加淡入动画
+            // 创建交叉淡入淡出动画
             var fadeInAnimation = _compositor.CreateScalarKeyFrameAnimation();
             fadeInAnimation.InsertKeyFrame(0f, 0f);
-            fadeInAnimation.InsertKeyFrame(1f, 0.5f); // 与上面的透明度保持一致
+            fadeInAnimation.InsertKeyFrame(1f, 0.5f);
             fadeInAnimation.Duration = TimeSpan.FromMilliseconds(800);
-            fadeInAnimation.Target = "Opacity";
 
-            _backgroundVisual.StartAnimation("Opacity", fadeInAnimation);
+            var fadeOutAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            fadeOutAnimation.InsertKeyFrame(0f, oldVisual!.Opacity);
+            fadeOutAnimation.InsertKeyFrame(1f, 0f);
+            fadeOutAnimation.Duration = TimeSpan.FromMilliseconds(800);
 
-            // 监听窗口大小变化
-            _targetElement.SizeChanged -= OnTargetElementSizeChanged;
-            _targetElement.SizeChanged += OnTargetElementSizeChanged;
+            // 同时播放淡入和淡出动画
+            targetVisual.StartAnimation("Opacity", fadeInAnimation);
+            oldVisual.StartAnimation("Opacity", fadeOutAnimation);
+
+            // 切换视觉层标志
+            _useFirstVisual = !_useFirstVisual;
         }
         catch (Exception ex)
         {
@@ -218,32 +255,37 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
     /// </summary>
     private void ClearBackground()
     {
-        if (_backgroundVisual is not null)
+        if (_backgroundVisual1 is not null && _compositor is not null)
         {
-            var fadeOutAnimation = _compositor?.CreateScalarKeyFrameAnimation();
-            if (fadeOutAnimation is not null)
-            {
-                fadeOutAnimation.InsertKeyFrame(0f, _backgroundVisual.Opacity);
-                fadeOutAnimation.InsertKeyFrame(1f, 0f);
-                fadeOutAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-                var batch = _compositor!.CreateScopedBatch(CompositionBatchTypes.Animation);
-                batch.Completed += (s, e) =>
-                {
-                    _backgroundVisual.Brush = null;
-                };
-
-                _backgroundVisual.StartAnimation("Opacity", fadeOutAnimation);
-                batch.End();
-            }
-            else
-            {
-                _backgroundVisual.Brush = null;
-            }
+            var fadeOutAnimation1 = _compositor.CreateScalarKeyFrameAnimation();
+            fadeOutAnimation1.InsertKeyFrame(0f, _backgroundVisual1.Opacity);
+            fadeOutAnimation1.InsertKeyFrame(1f, 0f);
+            fadeOutAnimation1.Duration = TimeSpan.FromMilliseconds(400);
+            _backgroundVisual1.StartAnimation("Opacity", fadeOutAnimation1);
         }
 
-        _currentGradientBrush?.Dispose();
-        _currentGradientBrush = null;
+        if (_backgroundVisual2 is not null && _compositor is not null)
+        {
+            var fadeOutAnimation2 = _compositor.CreateScalarKeyFrameAnimation();
+            fadeOutAnimation2.InsertKeyFrame(0f, _backgroundVisual2.Opacity);
+            fadeOutAnimation2.InsertKeyFrame(1f, 0f);
+            fadeOutAnimation2.Duration = TimeSpan.FromMilliseconds(400);
+
+            var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, e) =>
+            {
+                _backgroundVisual1?.Brush = null;
+                _backgroundVisual2?.Brush = null;
+            };
+
+            _backgroundVisual2.StartAnimation("Opacity", fadeOutAnimation2);
+            batch.End();
+        }
+
+        _gradientBrush1?.Dispose();
+        _gradientBrush1 = null;
+        _gradientBrush2?.Dispose();
+        _gradientBrush2 = null;
     }
 
     private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
@@ -256,7 +298,9 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
 
     private void OnTargetElementSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        _backgroundVisual?.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+        var newSize = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+        _backgroundVisual1?.Size = newSize;
+        _backgroundVisual2?.Size = newSize;
     }
 
     private static (float Hue, float Saturation, float Value) ColorToHsv(Color color)
@@ -359,9 +403,14 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
     public void Dispose()
     {
         Data.PlayState.PropertyChanged -= OnStateChanged;
-        _backgroundVisual?.Dispose();
-        _currentGradientBrush?.Dispose();
         _targetElement?.SizeChanged -= OnTargetElementSizeChanged;
+
+        _backgroundVisual1?.Dispose();
+        _backgroundVisual2?.Dispose();
+        _containerVisual?.Dispose();
+        _gradientBrush1?.Dispose();
+        _gradientBrush2?.Dispose();
+
         GC.SuppressFinalize(this);
     }
 }

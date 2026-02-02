@@ -1,3 +1,4 @@
+#pragma warning disable
 using System.Text;
 
 namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Extensions;
