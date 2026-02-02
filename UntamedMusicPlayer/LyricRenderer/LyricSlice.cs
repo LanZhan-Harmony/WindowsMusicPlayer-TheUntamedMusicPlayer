@@ -4,10 +4,11 @@ using UntamedMusicPlayer.Models;
 
 namespace UntamedMusicPlayer.LyricRenderer;
 
-public sealed partial class LyricSlice(double time, string content) : ObservableObject
+public sealed partial class LyricSlice(double startTime, string content) : ObservableObject
 {
     public string Content { get; set; } = content;
-    public double Time { get; set; } = time;
+    public double StartTime { get; set; } = startTime;
+    public double EndTime { get; set; }
 
     /// <summary>
     /// 是否为当前播放的歌词

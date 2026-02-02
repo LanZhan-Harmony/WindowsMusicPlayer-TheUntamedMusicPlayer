@@ -16,7 +16,7 @@ public sealed class LyricViewModel
     {
         if (e.ClickedItem is LyricSlice lyricSlice)
         {
-            var time = lyricSlice.Time;
+            var time = lyricSlice.StartTime;
             Data.MusicPlayer.LyricPositionUpdate(time);
         }
     }

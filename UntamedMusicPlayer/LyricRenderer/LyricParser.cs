@@ -18,8 +18,9 @@ public static partial class LyricParser
     /// 解析歌词文本并返回歌词片段列表
     /// </summary>
     /// <param name="lyric">LRC格式的歌词文本</param>
+    /// <param name="duration">歌曲时长</param>
     /// <returns>按时间排序的歌词片段列表</returns>
-    public static async Task<List<LyricSlice>> GetLyricSlices(string lyric)
+    public static async Task<List<LyricSlice>> GetLyricSlices(string lyric, TimeSpan duration)
     {
         if (string.IsNullOrWhiteSpace(lyric))
         {
@@ -142,7 +143,24 @@ public static partial class LyricParser
             }
         });
 
-        // 按时间排序并返回
-        return [.. lyricSlices.AsValueEnumerable().OrderBy(t => t.Time)];
+        // 按时间排序
+        var sortedSlices = lyricSlices.AsValueEnumerable().OrderBy(t => t.StartTime).ToList();
+
+        // 设置每个歌词片段的EndTime
+        for (var i = 0; i < sortedSlices.Count; i++)
+        {
+            if (i < sortedSlices.Count - 1)
+            {
+                // 当前歌词的EndTime为下一个歌词的StartTime
+                sortedSlices[i].EndTime = sortedSlices[i + 1].StartTime;
+            }
+            else
+            {
+                // 最后一个歌词的EndTime为歌曲总时长
+                sortedSlices[i].EndTime = duration.TotalMilliseconds;
+            }
+        }
+
+        return sortedSlices;
     }
 }
