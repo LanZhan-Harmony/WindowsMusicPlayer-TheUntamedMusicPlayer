@@ -13,6 +13,7 @@ public partial class BriefUnknownSongInfo : IBriefSongInfoBase
     public string Title { get; set; } = null!;
     public string Album { get; set; } = null!;
     public string ArtistsStr { get; set; } = null!;
+    public TimeSpan Duration { get; set; } = TimeSpan.Zero;
     public string DurationStr { get; set; } = null!;
     public string YearStr { get; set; } = null!;
     public string GenreStr { get; set; } = null!;

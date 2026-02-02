@@ -41,6 +41,11 @@ public partial interface IBriefSongInfoBase
     string ArtistsStr { get; set; }
 
     /// <summary>
+    /// 时长
+    /// </summary>
+    TimeSpan Duration { get; set; }
+
+    /// <summary>
     /// 时长字符串
     /// </summary>
     string DurationStr { get; set; }

@@ -1,9 +1,11 @@
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Hosting;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
@@ -30,8 +32,9 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private readonly Timer _updateTimer; // 用于周期性检查鼠标位置和置顶的计时器
     private readonly double _scaleFactor;
     private bool _isMouseOverBorder = false; // 检测鼠标是否在窗口上的变量
-    private Storyboard? _currentStoryboard;
     private CancellationTokenSource? _sizeChangedCancellation;
+    private readonly Compositor? _compositor;
+    private readonly Visual? _borderVisual;
     private delegate nint WndProcDelegate(nint hwnd, uint msg, nint wParam, nint lParam);
     private WndProcDelegate? _wndProcDelegate;
 
@@ -45,6 +48,10 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         _hWnd = WindowNative.GetWindowHandle(this); // 获取窗口句柄
         _scaleFactor = this.GetDpiForWindow() / 96.0;
 
+        // 初始化 Composition API
+        _borderVisual = ElementCompositionPreview.GetElementVisual(AnimatedBorder);
+        _compositor = _borderVisual.Compositor;
+
         MakeWindowClickThrough(true);
         SetWindowProperty();
         SetTopmost(true);
@@ -55,8 +62,14 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         var screenWidth = workArea.Width;
         _maxTextBlockWidth = (int)(screenWidth / _scaleFactor) - 50;
         var screenHeight = workArea.Height;
+
+        // 测量两行文字的高度
+        _measureTextBlock.Text = "测试文字\n第二行";
+        _measureTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var windowHeight = (int)((_measureTextBlock.DesiredSize.Height + 20) * _scaleFactor); // 文字高度加上一些边距
+
         var y = screenHeight - screenHeight * 140 / 1080; // 计算窗口位置，使其位于屏幕下方
-        this.SetWindowSize(screenWidth, (int)(55 * _scaleFactor));
+        this.SetWindowSize(screenWidth, windowHeight);
         this.CenterOnScreen(null, null); // 设置窗口位置
         var currentPosition = AppWindow.Position;
 
@@ -235,16 +248,16 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     {
         _sizeChangedCancellation?.Cancel();
         _sizeChangedCancellation = new CancellationTokenSource();
-        var cts = _sizeChangedCancellation;
 
         try
         {
+            if (_compositor is null || _borderVisual is null)
+            {
+                return;
+            }
+
             var currentWidth = AnimatedBorder.ActualWidth;
             var currentHeight = AnimatedBorder.ActualHeight;
-
-            _currentStoryboard?.Stop();
-            _currentStoryboard?.Children.Clear();
-            _currentStoryboard = new Storyboard();
 
             // 使用当前实际大小作为动画起点，确保平滑过渡且不小于最小值
             var oldWidth = Math.Max(currentWidth, 150);
@@ -252,101 +265,41 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
             var oldHeight = Math.Max(currentHeight, 55);
             var newHeight = e.NewSize.Height + 20;
 
-            // 停止动画后立即设置显式大小，防止其回落到默认值
-            AnimatedBorder.Width = oldWidth;
-            AnimatedBorder.Height = oldHeight;
+            var widthDiff = Math.Abs(oldWidth - newWidth);
+            var heightDiff = Math.Abs(oldHeight - newHeight);
 
-            if (Math.Abs(oldWidth - newWidth) > 1e-3)
+            if (widthDiff < 1e-3 && heightDiff < 1e-3)
             {
-                var widthAmplitude = newWidth - (oldWidth - newWidth) * 0.275 > 0 ? 0.8 : 0.1;
-                var widthAnimation = CreateDoubleAnimation(oldWidth, newWidth, widthAmplitude);
-                Storyboard.SetTarget(widthAnimation, AnimatedBorder);
-                Storyboard.SetTargetProperty(widthAnimation, "Width");
-                _currentStoryboard.Children.Add(widthAnimation);
+                return;
             }
 
-            if (Math.Abs(oldHeight - newHeight) > 1e-3)
-            {
-                var heightAnimation = CreateDoubleAnimation(oldHeight, newHeight, 0.8);
-                Storyboard.SetTarget(heightAnimation, AnimatedBorder);
-                Storyboard.SetTargetProperty(heightAnimation, "Height");
-                _currentStoryboard.Children.Add(heightAnimation);
-            }
+            // 先设置目标大小
+            AnimatedBorder.Width = newWidth;
+            AnimatedBorder.Height = newHeight;
 
-            if (_currentStoryboard.Children.Count > 0)
-            {
-                var heightDiff = newHeight - oldHeight;
-                if (heightDiff > 1e-3)
-                {
-                    var maxWindowHeight = newHeight - (oldHeight - newHeight) * 0.275;
-                    ResizeWindowKeepingCenter(_maxTextBlockWidth, maxWindowHeight + 5);
-                }
+            // 计算缩放比例（从旧大小到新大小）
+            var scaleX = (float)(oldWidth / newWidth);
+            var scaleY = (float)(oldHeight / newHeight);
 
-                _currentStoryboard.Begin();
+            // 设置缩放中心点为元素中心
+            _borderVisual.CenterPoint = new Vector3((float)newWidth / 2, (float)newHeight / 2, 0);
 
-                if (Math.Abs(heightDiff) > 1e-3)
-                {
-                    await Task.Delay(300, cts.Token);
-                    ResizeWindowKeepingCenter(_maxTextBlockWidth, newHeight + 5);
-                }
-            }
+            // 创建弹簧动画
+            var springAnimation = _compositor.CreateSpringVector3Animation();
+            springAnimation.FinalValue = new Vector3(1, 1, 1);
+            springAnimation.InitialValue = new Vector3(scaleX, scaleY, 1);
+            springAnimation.DampingRatio = 0.5f;
+            springAnimation.Period = TimeSpan.FromMilliseconds(50);
+
+            // 停止之前的动画并启动新动画
+            _borderVisual.StopAnimation("Scale");
+            _borderVisual.StartAnimation("Scale", springAnimation);
         }
         catch (OperationCanceledException) { }
         catch (Exception ex)
         {
             _logger.ZLogInformation(ex, $"调整灵动词岛宽度时发生错误");
         }
-    }
-
-    /// <summary>
-    /// 调整窗口大小并保持水平中心位置不变
-    /// </summary>
-    /// <param name="newWidthLogical">新宽度（逻辑像素）</param>
-    /// <param name="newHeightLogical">新高度（逻辑像素）</param>
-    private void ResizeWindowKeepingCenter(double newWidthLogical, double newHeightLogical)
-    {
-        var newWidth = (int)(newWidthLogical * _scaleFactor);
-        var newHeight = (int)(newHeightLogical * _scaleFactor);
-
-        // 获取当前窗口位置和大小
-        GetWindowRect(_hWnd, out var currentRect);
-        var currentWidth = currentRect.Right - currentRect.Left;
-
-        // 计算当前窗口水平中心
-        var centerX = currentRect.Left + (currentWidth >> 1);
-
-        // 计算新的左上角位置，使水平中心保持不变，垂直位置（顶部）保持不变
-        var newLeft = centerX - (newWidth >> 1);
-        var newTop = currentRect.Top;
-
-        // 使用 SetWindowPos 同时设置位置和大小
-        const uint SWP_NOZORDER = 0x0004;
-        const uint SWP_NOACTIVATE = 0x0010;
-        SetWindowPos(
-            _hWnd,
-            nint.Zero,
-            newLeft,
-            newTop,
-            newWidth,
-            newHeight,
-            SWP_NOZORDER | SWP_NOACTIVATE
-        );
-    }
-
-    private static DoubleAnimation CreateDoubleAnimation(double from, double to, double amplitude)
-    {
-        return new DoubleAnimation
-        {
-            From = from,
-            To = to,
-            Duration = TimeSpan.FromMilliseconds(300),
-            EnableDependentAnimation = true,
-            EasingFunction = new BackEase
-            {
-                EasingMode = EasingMode.EaseOut,
-                Amplitude = amplitude,
-            },
-        };
     }
 
     private void Window_Closed(object sender, WindowEventArgs args)

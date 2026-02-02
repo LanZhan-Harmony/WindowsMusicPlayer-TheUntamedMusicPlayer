@@ -97,7 +97,7 @@ internal static class Crypto
 
     private static byte[] RsaEncrypt(byte[] buffer)
     {
-        if (_cachedPublicKey == null)
+        if (_cachedPublicKey is null)
         {
             using var rsa = RSA.Create();
             rsa.ImportFromPem(publicKey);
