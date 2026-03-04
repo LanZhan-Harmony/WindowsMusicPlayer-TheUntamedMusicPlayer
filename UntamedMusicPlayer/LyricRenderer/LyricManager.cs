@@ -45,21 +45,26 @@ public sealed partial class LyricManager(SharedPlaybackState state)
     /// </summary>
     public async void GetSongLyric()
     {
-        CurrentLyricSlices = await LyricParser.GetLyricSlices(
+        var slices = await LyricParser.GetLyricSlices(
             _state.CurrentSong!.Lyric,
             _state.CurrentSong!.Duration
         );
-        CurrentLyricIndex = 0;
 
-        if (CurrentLyricSlices.Count > 0)
+        _dispatcher.TryEnqueue(() =>
         {
-            CurrentLyricSlices[0].IsCurrent = true;
-            CurrentLyricContent = CurrentLyricSlices[0].Content;
-        }
-        else
-        {
-            CurrentLyricContent = "";
-        }
+            CurrentLyricSlices = slices;
+            CurrentLyricIndex = 0;
+
+            if (CurrentLyricSlices.Count > 0)
+            {
+                CurrentLyricSlices[0].IsCurrent = true;
+                CurrentLyricContent = CurrentLyricSlices[0].Content;
+            }
+            else
+            {
+                CurrentLyricContent = "";
+            }
+        });
     }
 
     /// <summary>
@@ -95,16 +100,23 @@ public sealed partial class LyricManager(SharedPlaybackState state)
             return;
         }
 
-        var oldSlice = CurrentLyricSlices[CurrentLyricIndex];
-        var newSlice = CurrentLyricSlices[newIndex];
-        var newContent = newSlice.Content;
         _dispatcher.TryEnqueue(() =>
         {
-            oldSlice.IsCurrent = false;
+            if (newIndex < 0 || newIndex >= CurrentLyricSlices.Count)
+            {
+                return;
+            }
+
+            if (CurrentLyricIndex >= 0 && CurrentLyricIndex < CurrentLyricSlices.Count)
+            {
+                CurrentLyricSlices[CurrentLyricIndex].IsCurrent = false;
+            }
+
+            var newSlice = CurrentLyricSlices[newIndex];
             newSlice.IsCurrent = true;
-            CurrentLyricContent = newContent;
+            CurrentLyricContent = newSlice.Content;
+            CurrentLyricIndex = newIndex;
         });
-        CurrentLyricIndex = newIndex;
     }
 
     /// <summary>
@@ -112,9 +124,12 @@ public sealed partial class LyricManager(SharedPlaybackState state)
     /// </summary>
     public void Reset()
     {
-        CurrentLyricIndex = 0;
-        CurrentLyricContent = "";
-        CurrentLyricSlices.Clear();
+        _dispatcher.TryEnqueue(() =>
+        {
+            CurrentLyricIndex = 0;
+            CurrentLyricContent = "";
+            CurrentLyricSlices.Clear();
+        });
     }
 
     public void Dispose()
