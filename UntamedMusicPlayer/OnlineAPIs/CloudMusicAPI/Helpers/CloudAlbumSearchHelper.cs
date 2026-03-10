@@ -15,61 +15,48 @@ public sealed class CloudAlbumSearchHelper
     public static async Task SearchAlbumsAsync(string keyWords, CloudOnlineAlbumInfoList list)
     {
         await _searchSemaphore.WaitAsync();
-        list.Page = 0;
-        list.ListCount = 0;
-        list.HasAllLoaded = false;
-        list.Clear();
-        list.SearchedAlbumIDs.Clear();
-        list.KeyWords = keyWords;
-
         try
         {
-            var (_, result) = await _api.RequestAsync(
-                CloudMusicApiProviders.Search,
-                new Dictionary<string, string>
-                {
-                    { "keywords", keyWords },
-                    { "type", "10" },
-                    { "limit", $"{CloudOnlineAlbumInfoList.Limit}" },
-                    { "offset", "0" },
-                }
-            );
-            using var document = JsonDocument.Parse(result.ToJsonString());
-            var root = document.RootElement;
+            list.Page = 0;
+            list.ListCount = 0;
+            list.HasAllLoaded = false;
+            list.Clear();
+            list.SearchedAlbumIDs.Clear();
+            list.KeyWords = keyWords;
 
-            // 获取albumCount
-            if (
-                root.TryGetProperty("result", out var resultElement)
-                && resultElement.TryGetProperty("albumCount", out var albumCountElement)
-            )
+            var (albums, albumCount) = await SearchInternalAsync(keyWords, 0);
+            list.AlbumCount = albumCount;
+
+            if (albumCount == 0)
             {
-                list.AlbumCount = albumCountElement.GetInt32();
+                list.HasAllLoaded = true;
+                return;
+            }
 
-                if (list.AlbumCount == 0)
-                {
-                    list.HasAllLoaded = true;
-                    return;
-                }
+            await ProcessAlbumsAsync(albums, list);
+            list.Page = 1;
 
-                // 获取albums数组
-                if (resultElement.TryGetProperty("albums", out var albumsElement))
+            // 如果加载后的数量没达到Limit且还有更多，则继续加载更多
+            while (list.Count < CloudOnlineAlbumInfoList.Limit && !list.HasAllLoaded)
+            {
+                var (moreAlbums, _) = await SearchInternalAsync(
+                    list.KeyWords,
+                    list.Page * CloudOnlineAlbumInfoList.Limit
+                );
+                if (moreAlbums.GetArrayLength() > 0)
                 {
-                    await ProcessAlbumsAsync(albumsElement, list);
-                    list.Page = 1;
+                    await ProcessAlbumsAsync(moreAlbums, list);
+                    list.Page++;
                 }
                 else
                 {
-                    throw new Exception("获取专辑列表失败");
+                    break;
                 }
             }
-            else
-            {
-                throw new Exception("获取专辑数量失败");
-            }
         }
-        catch
+        catch (Exception ex)
         {
-            throw new Exception("搜索失败");
+            throw new Exception("搜索失败", ex);
         }
         finally
         {
@@ -82,36 +69,16 @@ public sealed class CloudAlbumSearchHelper
         await _searchSemaphore.WaitAsync();
         try
         {
-            var (_, result) = await _api.RequestAsync(
-                CloudMusicApiProviders.Search,
-                new Dictionary<string, string>
-                {
-                    { "keywords", list.KeyWords },
-                    { "type", "10" },
-                    { "limit", $"{CloudOnlineAlbumInfoList.Limit}" },
-                    { "offset", $"{list.Page * CloudOnlineAlbumInfoList.Limit}" },
-                }
+            var (albums, _) = await SearchInternalAsync(
+                list.KeyWords,
+                list.Page * CloudOnlineAlbumInfoList.Limit
             );
-            using var document = JsonDocument.Parse(result.ToJsonString());
-            var root = document.RootElement;
-
-            // 获取albums数组
-            if (
-                root.TryGetProperty("result", out var resultElement)
-                && resultElement.TryGetProperty("albums", out var albumsElement)
-            )
-            {
-                await ProcessAlbumsAsync(albumsElement, list);
-                list.Page++;
-            }
-            else
-            {
-                throw new Exception("获取专辑列表失败");
-            }
+            await ProcessAlbumsAsync(albums, list);
+            list.Page++;
         }
-        catch
+        catch (Exception ex)
         {
-            throw new Exception("搜索更多失败");
+            throw new Exception("搜索更多失败", ex);
         }
         finally
         {
@@ -119,12 +86,58 @@ public sealed class CloudAlbumSearchHelper
         }
     }
 
+    private static async Task<(JsonElement Albums, int AlbumCount)> SearchInternalAsync(
+        string keyWords,
+        int offset
+    )
+    {
+        var (_, result) = await _api.RequestAsync(
+            CloudMusicApiProviders.Search,
+            new Dictionary<string, string>
+            {
+                { "keywords", keyWords },
+                { "type", "10" },
+                { "limit", $"{CloudOnlineAlbumInfoList.Limit}" },
+                { "offset", $"{offset}" },
+            }
+        );
+
+        using var document = JsonDocument.Parse(result.ToJsonString());
+        var root = document.RootElement;
+
+        if (!root.TryGetProperty("result", out var resultElement))
+        {
+            throw new Exception("获取搜索结果失败");
+        }
+
+        resultElement.TryGetProperty("albumCount", out var albumCountElement);
+        var albumCount =
+            albumCountElement.ValueKind == JsonValueKind.Number ? albumCountElement.GetInt32() : 0;
+
+        if (!resultElement.TryGetProperty("albums", out var albumsElement))
+        {
+            if (albumCount == 0)
+            {
+                return (default, 0);
+            }
+            throw new Exception("获取专辑列表失败");
+        }
+
+        return (albumsElement.Clone(), albumCount);
+    }
+
     private static async Task ProcessAlbumsAsync(
         JsonElement albumsElement,
         CloudOnlineAlbumInfoList list
     )
     {
-        var actualCount = albumsElement.GetArrayLength();
+        var actualCount =
+            albumsElement.ValueKind == JsonValueKind.Array ? albumsElement.GetArrayLength() : 0;
+        if (actualCount == 0)
+        {
+            return;
+        }
+
         var infos = new BriefCloudOnlineAlbumInfo[actualCount];
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
         await Parallel.ForEachAsync(
@@ -139,8 +152,7 @@ public sealed class CloudAlbumSearchHelper
                 try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var info = await BriefCloudOnlineAlbumInfo.CreateAsync(albumsElement[i]!);
-                    infos[i] = info;
+                    infos[i] = await BriefCloudOnlineAlbumInfo.CreateAsync(albumsElement[i]);
                 }
                 catch (Exception ex)
                 {
