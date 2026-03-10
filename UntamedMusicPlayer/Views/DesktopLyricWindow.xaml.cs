@@ -35,6 +35,9 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private CancellationTokenSource? _sizeChangedCancellation;
     private readonly Compositor? _compositor;
     private readonly Visual? _borderVisual;
+    private bool _isUserDragging;
+    private int _dragOffsetX;
+    private int _dragOffsetY;
     private delegate nint WndProcDelegate(nint hwnd, uint msg, nint wParam, nint lParam);
     private WndProcDelegate? _wndProcDelegate;
 
@@ -66,7 +69,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         // 测量两行文字的高度
         _measureTextBlock.Text = "测试文字\n第二行";
         _measureTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        var windowHeight = (int)((_measureTextBlock.DesiredSize.Height + 20) * _scaleFactor); // 文字高度加上一些边距
+        var windowHeight = (int)((_measureTextBlock.DesiredSize.Height + 30) * _scaleFactor); // 文字高度加上一些边距
 
         var y = screenHeight - screenHeight * 140 / 1080; // 计算窗口位置，使其位于屏幕下方
         this.SetWindowSize(screenWidth, windowHeight);
@@ -109,9 +112,17 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private void DisableMaximize()
     {
         const int WM_NCLBUTTONDBLCLK = 0x00A3; // 非客户区左键双击
+        const int WM_NCLBUTTONDOWN = 0x00A1; // 非客户区左键按下
+        const int HTCAPTION = 2; // 标题栏区域
+        const int WM_MOUSEMOVE = 0x0200; // 鼠标移动
+        const int WM_LBUTTONUP = 0x0202; // 左键释放
+        const int WM_CAPTURECHANGED = 0x0215; // 捕获改变
         const int WM_SYSCOMMAND = 0x0112; // 系统命令
         const int SC_MAXIMIZE = 0xF030; // 最大化命令
         const int GWLP_WNDPROC = -4; // 窗口过程指针
+        const uint SWP_NOSIZE = 0x0001;
+        const uint SWP_NOZORDER = 0x0004;
+        const uint SWP_NOACTIVATE = 0x0010;
 
         var originalWndProc = GetWindowLong(_hWnd, GWLP_WNDPROC); // 获取原始窗口过程
         _wndProcDelegate = (hwnd, msg, wParam, lParam) => // 创建新的窗口过程委托
@@ -123,6 +134,47 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
             if (msg == WM_SYSCOMMAND && (wParam.ToInt32() & 0xFFF0) == SC_MAXIMIZE) // 阻止系统最大化命令（如Win+上箭头等）
             {
                 return nint.Zero; // 不处理最大化命令
+            }
+            // 拦截标题栏左键按下，阻止系统SC_MOVE模态拖拽循环（该循环会限制窗口不能超出屏幕上沿）
+            if (msg == WM_NCLBUTTONDOWN && wParam.ToInt32() == HTCAPTION)
+            {
+                GetCursorPos(out var cursor);
+                GetWindowRect(hwnd, out var windowRect);
+                _dragOffsetX = cursor.X - windowRect.Left;
+                _dragOffsetY = cursor.Y - windowRect.Top;
+                _isUserDragging = true;
+                SetCapture(hwnd); // 捕获鼠标，使后续鼠标消息发送到此窗口
+                return nint.Zero; // 不传递给DefWindowProc，阻止SC_MOVE
+            }
+            // 自定义拖拽：鼠标移动时用SetWindowPos移动窗口（不受屏幕边缘限制）
+            if (_isUserDragging && msg == WM_MOUSEMOVE)
+            {
+                GetCursorPos(out var cursor);
+                var newX = cursor.X - _dragOffsetX;
+                var newY = cursor.Y - _dragOffsetY;
+                SetWindowPos(
+                    hwnd,
+                    nint.Zero,
+                    newX,
+                    newY,
+                    0,
+                    0,
+                    SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE
+                );
+                return nint.Zero;
+            }
+            // 自定义拖拽：左键释放时结束拖拽
+            if (_isUserDragging && msg == WM_LBUTTONUP)
+            {
+                _isUserDragging = false;
+                ReleaseCapture();
+                return nint.Zero;
+            }
+            // 自定义拖拽：捕获丢失时结束拖拽
+            if (_isUserDragging && msg == WM_CAPTURECHANGED)
+            {
+                _isUserDragging = false;
+                return nint.Zero;
             }
             return CallWindowProc(originalWndProc, hwnd, msg, wParam, lParam); // 调用原始窗口过程处理其他消息
         };
@@ -138,7 +190,6 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         SetTopmost(true);
 
         GetCursorPos(out var inputPoint); // 获取当前输入位置
-
         var borderRect = await GetElementScreenRect(); // 获取AnimatedBorder在屏幕上的位置
 
         // 检查输入点是否在AnimatedBorder上
