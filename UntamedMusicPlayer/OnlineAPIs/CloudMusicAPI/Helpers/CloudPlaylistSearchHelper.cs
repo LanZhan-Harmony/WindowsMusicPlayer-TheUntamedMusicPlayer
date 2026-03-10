@@ -37,7 +37,6 @@ public sealed class CloudPlaylistSearchHelper
             await ProcessPlaylistsAsync(playlists, list);
             list.Page = 1;
 
-            // 如果加载后的数量没达到Limit且还有更多，则继续加载更多
             while (list.Count < CloudOnlinePlaylistInfoList.Limit && !list.HasAllLoaded)
             {
                 var (morePlaylists, _) = await SearchInternalAsync(
