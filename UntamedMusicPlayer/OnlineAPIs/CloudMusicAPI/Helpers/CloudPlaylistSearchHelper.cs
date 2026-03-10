@@ -16,61 +16,48 @@ public sealed class CloudPlaylistSearchHelper
     public static async Task SearchPlaylistsAsync(string keyWords, CloudOnlinePlaylistInfoList list)
     {
         await _searchSemaphore.WaitAsync();
-        list.Page = 0;
-        list.ListCount = 0;
-        list.HasAllLoaded = false;
-        list.Clear();
-        list.SearchedPlaylistIDs.Clear();
-        list.KeyWords = keyWords;
-
         try
         {
-            var (_, result) = await _api.RequestAsync(
-                CloudMusicApiProviders.Search,
-                new Dictionary<string, string>
-                {
-                    { "keywords", keyWords },
-                    { "type", "1000" },
-                    { "limit", $"{CloudOnlinePlaylistInfoList.Limit}" },
-                    { "offset", "0" },
-                }
-            );
-            using var document = JsonDocument.Parse(result.ToJsonString());
-            var root = document.RootElement;
+            list.Page = 0;
+            list.ListCount = 0;
+            list.HasAllLoaded = false;
+            list.Clear();
+            list.SearchedPlaylistIDs.Clear();
+            list.KeyWords = keyWords;
 
-            // 获取PlaylistCount
-            if (
-                root.TryGetProperty("result", out var resultElement)
-                && resultElement.TryGetProperty("playlistCount", out var playlistCountElement)
-            )
+            var (playlists, playlistCount) = await SearchInternalAsync(keyWords, 0);
+            list.PlaylistCount = playlistCount;
+
+            if (playlistCount == 0)
             {
-                list.PlaylistCount = playlistCountElement.GetInt32();
+                list.HasAllLoaded = true;
+                return;
+            }
 
-                if (list.PlaylistCount == 0)
-                {
-                    list.HasAllLoaded = true;
-                    return;
-                }
+            await ProcessPlaylistsAsync(playlists, list);
+            list.Page = 1;
 
-                // 获取Playlists数组
-                if (resultElement.TryGetProperty("playlists", out var playlistsElement))
+            // 如果加载后的数量没达到Limit且还有更多，则继续加载更多
+            while (list.Count < CloudOnlinePlaylistInfoList.Limit && !list.HasAllLoaded)
+            {
+                var (morePlaylists, _) = await SearchInternalAsync(
+                    list.KeyWords,
+                    list.Page * CloudOnlinePlaylistInfoList.Limit
+                );
+                if (morePlaylists.GetArrayLength() > 0)
                 {
-                    await ProcessPlaylistsAsync(playlistsElement, list);
-                    list.Page = 1;
+                    await ProcessPlaylistsAsync(morePlaylists, list);
+                    list.Page++;
                 }
                 else
                 {
-                    throw new Exception("获取歌单列表失败");
+                    break;
                 }
             }
-            else
-            {
-                throw new Exception("获取歌单数量失败");
-            }
         }
-        catch
+        catch (Exception ex)
         {
-            throw new Exception("搜索失败");
+            throw new Exception("搜索失败", ex);
         }
         finally
         {
@@ -83,36 +70,16 @@ public sealed class CloudPlaylistSearchHelper
         await _searchSemaphore.WaitAsync();
         try
         {
-            var (_, result) = await _api.RequestAsync(
-                CloudMusicApiProviders.Search,
-                new Dictionary<string, string>
-                {
-                    { "keywords", list.KeyWords },
-                    { "type", "1000" },
-                    { "limit", $"{CloudOnlinePlaylistInfoList.Limit}" },
-                    { "offset", $"{list.Page * CloudOnlinePlaylistInfoList.Limit}" },
-                }
+            var (playlists, _) = await SearchInternalAsync(
+                list.KeyWords,
+                list.Page * CloudOnlinePlaylistInfoList.Limit
             );
-            using var document = JsonDocument.Parse(result.ToJsonString());
-            var root = document.RootElement;
-
-            // 获取Playlists数组
-            if (
-                root.TryGetProperty("result", out var resultElement)
-                && resultElement.TryGetProperty("playlists", out var playlistsElement)
-            )
-            {
-                await ProcessPlaylistsAsync(playlistsElement, list);
-                list.Page++;
-            }
-            else
-            {
-                throw new Exception("获取歌单列表失败");
-            }
+            await ProcessPlaylistsAsync(playlists, list);
+            list.Page++;
         }
-        catch
+        catch (Exception ex)
         {
-            throw new Exception("搜索更多失败");
+            throw new Exception("搜索更多失败", ex);
         }
         finally
         {
@@ -120,12 +87,63 @@ public sealed class CloudPlaylistSearchHelper
         }
     }
 
+    private static async Task<(JsonElement Playlists, int PlaylistCount)> SearchInternalAsync(
+        string keyWords,
+        int offset
+    )
+    {
+        var (_, result) = await _api.RequestAsync(
+            CloudMusicApiProviders.Search,
+            new Dictionary<string, string>
+            {
+                { "keywords", keyWords },
+                { "type", "1000" },
+                { "limit", $"{CloudOnlinePlaylistInfoList.Limit}" },
+                { "offset", $"{offset}" },
+            }
+        );
+
+        using var document = JsonDocument.Parse(result.ToJsonString());
+        var root = document.RootElement;
+
+        if (!root.TryGetProperty("result", out var resultElement))
+        {
+            throw new Exception("获取搜索结果失败");
+        }
+
+        resultElement.TryGetProperty("playlistCount", out var playlistCountElement);
+        var playlistCount =
+            playlistCountElement.ValueKind == JsonValueKind.Number
+                ? playlistCountElement.GetInt32()
+                : 0;
+
+        if (!resultElement.TryGetProperty("playlists", out var playlistsElement))
+        {
+            if (playlistCount == 0)
+            {
+                return (default, 0);
+            }
+
+            throw new Exception("获取歌单列表失败");
+        }
+
+        return (playlistsElement.Clone(), playlistCount);
+    }
+
     private static async Task ProcessPlaylistsAsync(
         JsonElement playlistsElement,
         CloudOnlinePlaylistInfoList list
     )
     {
-        var actualCount = playlistsElement.GetArrayLength();
+        var actualCount =
+            playlistsElement.ValueKind == JsonValueKind.Array
+                ? playlistsElement.GetArrayLength()
+                : 0;
+        if (actualCount == 0)
+        {
+            return;
+        }
+
         var infos = new BriefCloudOnlinePlaylistInfo[actualCount];
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
         await Parallel.ForEachAsync(
@@ -140,8 +158,7 @@ public sealed class CloudPlaylistSearchHelper
                 try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var info = await BriefCloudOnlinePlaylistInfo.CreateAsync(playlistsElement[i]!);
-                    infos[i] = info;
+                    infos[i] = await BriefCloudOnlinePlaylistInfo.CreateAsync(playlistsElement[i]);
                 }
                 catch (Exception ex)
                 {
