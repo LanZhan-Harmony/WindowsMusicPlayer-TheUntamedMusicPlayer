@@ -124,7 +124,7 @@
                               helper:CurrentSongHighlightExtensions.PlayingBrush="{ThemeResource AccentTextFillColorTertiaryBrush}"
                               helper:ListViewExtensions.ItemCornerRadius="8"
                               helper:ListViewExtensions.ItemMargin="0,3,0,3"
-                              IsItemClickEnabled="True"
+                              x:Phase="1" IsItemClickEnabled="True"
                               ItemClick="SongListView_ItemClick"
                               ItemTemplate="{StaticResource SongListViewTemplate}"
                               ItemsSource="{x:Bind SongList}"
