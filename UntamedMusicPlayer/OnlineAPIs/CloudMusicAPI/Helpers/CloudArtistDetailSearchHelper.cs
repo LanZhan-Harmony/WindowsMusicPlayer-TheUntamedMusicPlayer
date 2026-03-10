@@ -28,45 +28,55 @@ public sealed class CloudArtistDetailSearchHelper
         };
         try
         {
-            var albumTask = _api.RequestAsync(
-                CloudMusicApiProviders.ArtistAlbum,
-                new Dictionary<string, string>
-                {
-                    { "id", $"{briefInfo.ID}" },
-                    { "limit", $"{DetailedCloudOnlineArtistInfo.Limit}" },
-                    { "offset", "0" },
-                }
-            );
             var artistTask = _api.RequestAsync(
                 CloudMusicApiProviders.ArtistDesc,
                 new Dictionary<string, string> { { "id", $"{briefInfo.ID}" } }
             );
-            await Task.WhenAll(albumTask, artistTask);
-            var (_, albumResult) = albumTask.Result;
-            var (_, artistResult) = artistTask.Result;
-            info.Introduction = artistResult["briefDesc"]?.ToString();
 
-            using var document = JsonDocument.Parse(albumResult.ToJsonString());
-            var root = document.RootElement;
-            var artistElement = root.GetProperty("artist");
-            var albumsElement = root.GetProperty("hotAlbums");
-            info.TotalAlbumNum = artistElement.GetProperty("albumSize").GetInt32();
-            info.TotalSongNum = artistElement.GetProperty("musicSize").GetInt32();
+            var (albumsElement, totalAlbumNum, totalSongNum) = await SearchAlbumsInternalAsync(
+                briefInfo.ID,
+                0
+            );
+
+            var (_, artistResult) = await artistTask;
+            info.Introduction = artistResult["briefDesc"]?.ToString();
+            info.TotalAlbumNum = totalAlbumNum;
+            info.TotalSongNum = totalSongNum;
             info.CountStr = IDetailedOnlineArtistInfo.GetCountStr(
                 info.TotalAlbumNum,
                 info.TotalSongNum
             );
-            if (info.TotalAlbumNum == 0)
+
+            if (totalAlbumNum == 0)
             {
                 info.HasAllLoaded = true;
                 return info;
             }
+
             await ProcessArtistDetailAsync(albumsElement, info);
             info.Page = 1;
+
+            // 如果加载后的数量没达到Limit且还有更多，则继续加载更多
+            while (info.AlbumList.Count < DetailedCloudOnlineArtistInfo.Limit && !info.HasAllLoaded)
+            {
+                var (moreAlbums, _, _) = await SearchAlbumsInternalAsync(
+                    info.ID,
+                    info.Page * DetailedCloudOnlineArtistInfo.Limit
+                );
+                if (moreAlbums.GetArrayLength() > 0)
+                {
+                    await ProcessArtistDetailAsync(moreAlbums, info);
+                    info.Page++;
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
         catch (Exception ex)
         {
-            _logger.ZLogInformation(ex, $"搜索网易云艺术家{briefInfo.Name}详情失败");
+            _logger.ZLogInformation(ex, $"搜索艺术家详情失败: {briefInfo.Name}");
         }
         finally
         {
@@ -80,24 +90,16 @@ public sealed class CloudArtistDetailSearchHelper
         await _searchSemaphore.WaitAsync();
         try
         {
-            var (_, result) = await _api.RequestAsync(
-                CloudMusicApiProviders.ArtistAlbum,
-                new Dictionary<string, string>
-                {
-                    { "id", $"{info.ID}" },
-                    { "limit", $"{DetailedCloudOnlineArtistInfo.Limit}" },
-                    { "offset", $"{info.Page * DetailedCloudOnlineArtistInfo.Limit}" },
-                }
+            var (albums, _, _) = await SearchAlbumsInternalAsync(
+                info.ID,
+                info.Page * DetailedCloudOnlineArtistInfo.Limit
             );
-            using var document = JsonDocument.Parse(result.ToJsonString());
-            var root = document.RootElement;
-            var albumsElement = root.GetProperty("hotAlbums");
-            await ProcessArtistDetailAsync(albumsElement, info);
+            await ProcessArtistDetailAsync(albums, info);
             info.Page++;
         }
         catch (Exception ex)
         {
-            _logger.ZLogInformation(ex, $"搜索网易云艺术家{info.Name}更多详情失败");
+            _logger.ZLogInformation(ex, $"搜索更多艺术家详情失败: {info.Name}, Page: {info.Page}");
         }
         finally
         {
@@ -105,12 +107,54 @@ public sealed class CloudArtistDetailSearchHelper
         }
     }
 
+    private static async Task<(
+        JsonElement Albums,
+        int TotalAlbumNum,
+        int TotalSongNum
+    )> SearchAlbumsInternalAsync(long artistId, int offset)
+    {
+        var (_, albumResult) = await _api.RequestAsync(
+            CloudMusicApiProviders.ArtistAlbum,
+            new Dictionary<string, string>
+            {
+                { "id", $"{artistId}" },
+                { "limit", $"{DetailedCloudOnlineArtistInfo.Limit}" },
+                { "offset", $"{offset}" },
+            }
+        );
+
+        using var document = JsonDocument.Parse(albumResult.ToJsonString());
+        var root = document.RootElement;
+
+        var artistElement = root.TryGetProperty("artist", out var artist) ? artist : default;
+        var albumsElement = root.TryGetProperty("hotAlbums", out var albums) ? albums : default;
+
+        var totalAlbumNum =
+            artist.ValueKind == JsonValueKind.Object
+            && artist.TryGetProperty("albumSize", out var albumSize)
+                ? albumSize.GetInt32()
+                : 0;
+        var totalSongNum =
+            artist.ValueKind == JsonValueKind.Object
+            && artist.TryGetProperty("musicSize", out var musicSize)
+                ? musicSize.GetInt32()
+                : 0;
+
+        return (albumsElement.Clone(), totalAlbumNum, totalSongNum);
+    }
+
     private static async Task ProcessArtistDetailAsync(
         JsonElement albumsElement,
         DetailedCloudOnlineArtistInfo info
     )
     {
-        var actualCount = albumsElement.GetArrayLength();
+        var actualCount =
+            albumsElement.ValueKind == JsonValueKind.Array ? albumsElement.GetArrayLength() : 0;
+        if (actualCount == 0)
+        {
+            return;
+        }
+
         var albumInfos = new CloudOnlineArtistAlbumInfo[actualCount];
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
         await Parallel.ForEachAsync(
@@ -125,12 +169,11 @@ public sealed class CloudArtistDetailSearchHelper
                 try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var albumInfo = await CloudOnlineArtistAlbumInfo.CreateAsync(
-                        albumsElement[i]!,
+                    albumInfos[i] = await CloudOnlineArtistAlbumInfo.CreateAsync(
+                        albumsElement[i],
                         _api,
                         true
                     );
-                    albumInfos[i] = albumInfo;
                 }
                 catch (Exception ex)
                 {
@@ -138,14 +181,17 @@ public sealed class CloudArtistDetailSearchHelper
                     {
                         info.CurrentAlbumNum++;
                     }
-                    _logger.ZLogInformation(ex, $"处理网易云艺术家详细信息失败");
+                    _logger.ZLogInformation(ex, $"处理网易云艺术家详细信息失败: {info.Name}");
                 }
             }
         );
 
         foreach (var albumInfo in albumInfos)
         {
-            info.Add(albumInfo);
+            if (albumInfo != null)
+            {
+                info.Add(albumInfo);
+            }
         }
     }
 
@@ -156,19 +202,14 @@ public sealed class CloudArtistDetailSearchHelper
         var songs = new List<IBriefSongInfoBase>();
         try
         {
-            var (_, result) = await _api.RequestAsync(
-                CloudMusicApiProviders.ArtistAlbum,
-                new Dictionary<string, string>
-                {
-                    { "id", $"{info.ID}" },
-                    { "limit", $"{DetailedCloudOnlineArtistInfo.Limit}" },
-                    { "offset", $"0" },
-                }
-            );
-            using var document = JsonDocument.Parse(result.ToJsonString());
-            var root = document.RootElement;
-            var albumsElement = root.GetProperty("hotAlbums");
-            var actualCount = albumsElement.GetArrayLength();
+            var (albumsElement, _, _) = await SearchAlbumsInternalAsync(info.ID, 0);
+            var actualCount =
+                albumsElement.ValueKind == JsonValueKind.Array ? albumsElement.GetArrayLength() : 0;
+            if (actualCount == 0)
+            {
+                return songs;
+            }
+
             var albumInfos = new CloudOnlineArtistAlbumInfo[actualCount];
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
             await Parallel.ForEachAsync(
@@ -183,22 +224,22 @@ public sealed class CloudArtistDetailSearchHelper
                     try
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-                        var albumInfo = await CloudOnlineArtistAlbumInfo.CreateAsync(
-                            albumsElement[i]!,
+                        albumInfos[i] = await CloudOnlineArtistAlbumInfo.CreateAsync(
+                            albumsElement[i],
                             _api,
                             false
                         );
-                        albumInfos[i] = albumInfo;
                     }
                     catch (Exception ex)
                     {
-                        _logger.ZLogInformation(ex, $"获取网易云艺术家{info.Name}歌曲失败");
+                        _logger.ZLogInformation(ex, $"获取网易云艺术家专辑歌曲失败: {info.Name}");
                     }
                 }
             );
+
             foreach (var album in albumInfos)
             {
-                if (album is not null && album.IsAvailable)
+                if (album is { IsAvailable: true })
                 {
                     songs.AddRange(album.SongList);
                 }
@@ -206,9 +247,8 @@ public sealed class CloudArtistDetailSearchHelper
         }
         catch (Exception ex)
         {
-            _logger.ZLogInformation(ex, $"获取网易云艺术家{info.Name}歌曲失败");
+            _logger.ZLogInformation(ex, $"获取网易云艺术家歌曲失败: {info.Name}");
         }
-
         return songs;
     }
 }
