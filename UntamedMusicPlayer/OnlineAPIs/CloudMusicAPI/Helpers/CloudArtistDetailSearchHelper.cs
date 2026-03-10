@@ -188,10 +188,7 @@ public sealed class CloudArtistDetailSearchHelper
 
         foreach (var albumInfo in albumInfos)
         {
-            if (albumInfo != null)
-            {
-                info.Add(albumInfo);
-            }
+            info.Add(albumInfo);
         }
     }
 

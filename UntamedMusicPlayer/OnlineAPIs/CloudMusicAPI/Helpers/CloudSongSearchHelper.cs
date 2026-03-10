@@ -122,7 +122,7 @@ public sealed class CloudSongSearchHelper
             throw new Exception("获取歌曲列表失败");
         }
 
-        return (songsElement.Clone(), songCount);
+        return (songsElement.Clone(), songCount); // 使用Clone()来确保JsonElement在外部使用时仍然有效
     }
 
     private static async Task ProcessSongsAsync(
@@ -153,7 +153,8 @@ public sealed class CloudSongSearchHelper
                 .ToDictionary(
                     item => item!["id"]!.GetValue<long>(),
                     item => item!["url"] is not null
-                ) ?? [];
+                )
+            ?? [];
 
         for (var i = 0; i < actualCount; i++)
         {
@@ -195,12 +196,14 @@ public sealed class CloudSongSearchHelper
                 .ToDictionary(
                     item => item!["id"]!.GetValue<long>(),
                     item => item!["url"] is not null
-                ) ?? [];
+                )
+            ?? [];
 
         var detailsMap =
             detailsResult["songs"]
                 ?.AsArray()
-                .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item) ?? [];
+                .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item)
+            ?? [];
 
         var result = new List<BriefCloudOnlineSongInfo>();
         foreach (var songId in IDs)

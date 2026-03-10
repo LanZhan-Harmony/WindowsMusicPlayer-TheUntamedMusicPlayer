@@ -36,7 +36,6 @@ public sealed class CloudAlbumSearchHelper
             await ProcessAlbumsAsync(albums, list);
             list.Page = 1;
 
-            // 如果加载后的数量没达到Limit且还有更多，则继续加载更多
             while (list.Count < CloudOnlineAlbumInfoList.Limit && !list.HasAllLoaded)
             {
                 var (moreAlbums, _) = await SearchInternalAsync(
