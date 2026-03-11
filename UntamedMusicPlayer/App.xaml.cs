@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using UntamedMusicPlayer.Activation;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
@@ -46,6 +47,9 @@ public sealed partial class App : Application
 
         // 初始化日志服务（必须在任何日志记录之前）
         LoggingService.Initialize();
+
+        // 初始化 MemoryPack 格式化器（用于 AOT 支持）
+        MemoryPackAotHelper.RegisterFormatters();
 
         Host = Microsoft
             .Extensions.Hosting.Host.CreateDefaultBuilder()
