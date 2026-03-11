@@ -75,9 +75,9 @@
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 		<PackageCertificateKeyFile>UntamedMusicPlayer_TemporaryKey.pfx</PackageCertificateKeyFile>
-		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+		<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<EnableMsixTooling>True</EnableMsixTooling>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
