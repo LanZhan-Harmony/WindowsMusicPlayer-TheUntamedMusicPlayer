@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Services;
 using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
 using ZLogger;
 
 namespace UntamedMusicPlayer.Models;
@@ -215,10 +216,10 @@ public static class CoverManager
 
             const int canvasSize = 256;
 
-            // 在后台线程读取和调整图片大小
-            var imageBytes = await File.ReadAllBytesAsync(imagePath);
+            // 在后台线程使用流读取和调整图片大小，避免分配巨大的中间 byte[]
+            using var fileStream = File.OpenRead(imagePath);
             var resizedImageBytes = await ResizeImageToFitRegionAsync(
-                imageBytes,
+                fileStream.AsRandomAccessStream(),
                 canvasSize,
                 canvasSize
             );
@@ -273,8 +274,10 @@ public static class CoverManager
                             continue;
                         }
 
+                        // 将 byte[] 包装在流中处理
+                        using var inputStream = new MemoryStream(imageBytes);
                         var resizedImageBytes = await ResizeImageToFitRegionAsync(
-                            imageBytes,
+                            inputStream.AsRandomAccessStream(),
                             halfSize,
                             halfSize
                         );
@@ -362,20 +365,19 @@ public static class CoverManager
     /// <summary>
     /// 将图片调整为适应指定区域大小（UniformToFill）
     /// </summary>
-    /// <param name="imageBytes"></param>
+    /// <param name="inputStream"></param>
     /// <param name="targetWidth"></param>
     /// <param name="targetHeight"></param>
     /// <returns></returns>
     public static async Task<byte[]?> ResizeImageToFitRegionAsync(
-        byte[] imageBytes,
+        IRandomAccessStream inputStream,
         int targetWidth,
         int targetHeight
     )
     {
         try
         {
-            using var inputStream = new MemoryStream(imageBytes);
-            var decoder = await BitmapDecoder.CreateAsync(inputStream.AsRandomAccessStream());
+            var decoder = await BitmapDecoder.CreateAsync(inputStream);
 
             var originalWidth = decoder.PixelWidth;
             var originalHeight = decoder.PixelHeight;
