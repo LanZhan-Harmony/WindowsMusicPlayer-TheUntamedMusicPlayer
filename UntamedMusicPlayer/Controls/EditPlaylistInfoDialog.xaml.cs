@@ -348,9 +348,9 @@ public sealed partial class EditPlaylistInfoDialog
                     return;
                 }
                 const int canvasSize = 256;
-                var imageBytes = await File.ReadAllBytesAsync(imagePath);
+                using var fileStream = File.OpenRead(imagePath);
                 var resizedImageBytes = await CoverManager.ResizeImageToFitRegionAsync(
-                    imageBytes,
+                    fileStream.AsRandomAccessStream(),
                     canvasSize,
                     canvasSize
                 );

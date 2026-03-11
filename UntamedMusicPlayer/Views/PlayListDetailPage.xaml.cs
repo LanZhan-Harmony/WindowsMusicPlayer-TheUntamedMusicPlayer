@@ -1,17 +1,20 @@
+using System.Numerics;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
+using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
-using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
+using Windows.Foundation;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace UntamedMusicPlayer.Views;
@@ -32,8 +35,13 @@ public sealed partial class PlayListDetailPage : Page
     // 按钮面板在滚动时的偏移量
     private int ButtonPanelOffset => GetValue(30, 40, 40);
 
+    // 背景的高度
+    private float BackgroundVisualHeight => (float)(Header.ActualHeight * 2.5);
+
     private CompositionPropertySet? _props;
     private Compositor? _compositor;
+    private SpriteVisual? _backgroundVisual;
+    private LoadedImageSurface? _imageSurface;
 
     public PlayListDetailPage()
     {
@@ -66,6 +74,19 @@ public sealed partial class PlayListDetailPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("BackConnectedAnimation", CoverArt);
         }
+        Cleanup();
+    }
+
+    private void Cleanup()
+    {
+        if (_backgroundVisual is not null)
+        {
+            ElementCompositionPreview.SetElementChildVisual(BackgroundHost, null);
+            _backgroundVisual.Dispose();
+            _backgroundVisual = null;
+        }
+        _imageSurface?.Dispose();
+        _imageSurface = null;
     }
 
     private void PlayListDetailPage_Loaded(object sender, RoutedEventArgs e)
@@ -92,6 +113,13 @@ public sealed partial class PlayListDetailPage : Page
             scrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>(); // 获取属性集的引用节点，以便在表达式动画中使用
 
         CreateHeaderAnimation(_props, scrollingProperties.Translation.Y);
+        if (ViewModel.Playlist.IsCoverEdited && ViewModel.Playlist.CoverPaths.Count != 0)
+        {
+            CreateImageBackgroundGradientVisual(
+                scrollingProperties.Translation.Y,
+                ViewModel.Playlist.CoverPaths[0]
+            );
+        }
     }
 
     private void CreateHeaderAnimation(
@@ -171,6 +199,54 @@ public sealed partial class PlayListDetailPage : Page
         // 创建并启动一个表达式动画，以滚动位置移动按钮面板
         ExpressionNode buttonTranslationAnimation = progressNode * (-buttonPanelOffsetNode);
         buttonVisual.StartAnimation("Translation.Y", buttonTranslationAnimation);
+    }
+
+    private void CreateImageBackgroundGradientVisual(
+        ScalarNode scrollVerticalOffset,
+        string imagePath
+    )
+    {
+        if (_compositor is null)
+        {
+            return;
+        }
+        _imageSurface = LoadedImageSurface.StartLoadFromUri(
+            new Uri(imagePath),
+            new Size(1000, 1000)
+        );
+        var imageBrush = _compositor.CreateSurfaceBrush(_imageSurface);
+        imageBrush.HorizontalAlignmentRatio = 0.5f;
+        imageBrush.VerticalAlignmentRatio = 0.25f;
+        imageBrush.Stretch = CompositionStretch.UniformToFill;
+
+        var gradientBrush = _compositor.CreateLinearGradientBrush();
+        gradientBrush.EndPoint = new Vector2(0, 1);
+        gradientBrush.MappingMode = CompositionMappingMode.Relative;
+        gradientBrush.ColorStops.Add(_compositor.CreateColorGradientStop(0.4f, Colors.White));
+        gradientBrush.ColorStops.Add(_compositor.CreateColorGradientStop(1, Colors.Transparent));
+
+        var maskBrush = _compositor.CreateMaskBrush();
+        maskBrush.Source = imageBrush;
+        maskBrush.Mask = gradientBrush;
+
+        var visual = _backgroundVisual = _compositor.CreateSpriteVisual();
+        visual.Size = new Vector2((float)BackgroundHost.ActualWidth, BackgroundVisualHeight);
+        visual.Opacity = 0.15f;
+        visual.Brush = maskBrush;
+
+        visual.StartAnimation("Offset.Y", scrollVerticalOffset);
+        imageBrush.StartAnimation("Offset.Y", -scrollVerticalOffset * 0.8f);
+
+        ElementCompositionPreview.SetElementChildVisual(BackgroundHost, visual);
+    }
+
+    private void BackgroundHost_OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (_backgroundVisual is null)
+        {
+            return;
+        }
+        _backgroundVisual.Size = new Vector2((float)e.NewSize.Width, BackgroundVisualHeight);
     }
 
     private void PlaylistArt_OnSizeChanged(object sender, SizeChangedEventArgs e)
