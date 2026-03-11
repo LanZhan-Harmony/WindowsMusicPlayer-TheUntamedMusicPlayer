@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
+using Windows.Foundation;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
 namespace UntamedMusicPlayer.Views;
@@ -40,6 +41,7 @@ public sealed partial class LocalAlbumDetailPage : Page
     private CompositionPropertySet? _props;
     private Compositor? _compositor;
     private SpriteVisual? _backgroundVisual;
+    private LoadedImageSurface? _imageSurface;
 
     public LocalAlbumDetailPage()
     {
@@ -74,6 +76,19 @@ public sealed partial class LocalAlbumDetailPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("BackConnectedAnimation", CoverArt);
         }
+        Cleanup();
+    }
+
+    private void Cleanup()
+    {
+        if (_backgroundVisual is not null)
+        {
+            ElementCompositionPreview.SetElementChildVisual(BackgroundHost, null);
+            _backgroundVisual.Dispose();
+            _backgroundVisual = null;
+        }
+        _imageSurface?.Dispose();
+        _imageSurface = null;
     }
 
     private void LocalAlbumDetailPage_Loaded(object sender, RoutedEventArgs e)
@@ -208,8 +223,11 @@ public sealed partial class LocalAlbumDetailPage : Page
             return;
         }
         using var stream = new MemoryStream(imageBytes);
-        var imageSurface = LoadedImageSurface.StartLoadFromStream(stream.AsRandomAccessStream());
-        var imageBrush = _compositor.CreateSurfaceBrush(imageSurface);
+        _imageSurface = LoadedImageSurface.StartLoadFromStream(
+            stream.AsRandomAccessStream(),
+            new Size(1000, 1000)
+        );
+        var imageBrush = _compositor.CreateSurfaceBrush(_imageSurface);
         imageBrush.HorizontalAlignmentRatio = 0.5f;
         imageBrush.VerticalAlignmentRatio = 0.25f;
         imageBrush.Stretch = CompositionStretch.UniformToFill;
