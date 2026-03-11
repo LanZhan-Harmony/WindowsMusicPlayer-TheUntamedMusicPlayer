@@ -43,6 +43,7 @@
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
 		<PackageReference Include="TagLibSharp" Version="2.3.0" />
+		<PackageReference Include="TagLibSharp2" Version="0.6.0" />
 		<PackageReference Include="WinUIEx" Version="2.9.0" />
 		<PackageReference Include="ZLinq" Version="1.5.5" />
 		<PackageReference Include="ZLogger" Version="2.5.10" />

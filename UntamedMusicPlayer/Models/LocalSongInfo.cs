@@ -1,7 +1,8 @@
+using System.Text.RegularExpressions;
 using MemoryPack;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
-using TagLib;
+using TagLibSharp2.Core;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Services;
@@ -127,26 +128,32 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
 
         try
         {
-            using var musicFile = TagLib.File.Create(path);
-            Album = musicFile.Tag.Album ?? IBriefSongInfoBase._unknownAlbum;
-            Title = string.IsNullOrEmpty(musicFile.Tag.Title)
+            var result = MediaFile.Read(path);
+            if (!result.IsSuccess)
+            {
+                IsPlayAvailable = false;
+                return;
+            }
+            using var file = (IMediaFile)result.File!;
+            Album = result.Tag!.Album ?? IBriefSongInfoBase._unknownAlbum;
+            Title = string.IsNullOrEmpty(result.Tag!.Title)
                 ? System.IO.Path.GetFileNameWithoutExtension(path)
-                : musicFile.Tag.Title;
-            string[] combinedArtists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
+                : result.Tag!.Title;
+            string[] combinedArtists = [.. result.Tag!.AlbumArtists, .. result.Tag!.Performers];
             Artists =
                 combinedArtists.Length != 0 ? combinedArtists : [IBriefSongInfoBase._unknownArtist];
             ArtistsStr = IBriefSongInfoBase.GetArtistsStr(Artists);
-            Year = (ushort)musicFile.Tag.Year;
+            Year = ParseYearFromString(result.Tag!.Year);
             YearStr = IBriefSongInfoBase.GetYearStr(Year);
-            var genres = musicFile.Tag.Genres;
+            var genres = result.Tag!.Genres;
             Genre = genres.Length != 0 ? genres : [_unknownGenre];
             GenreStr = GetGenreStr(Genre);
-            TrackStr = musicFile.Tag.Track == 0 ? "" : $"{musicFile.Tag.Track}";
-            Duration = musicFile.Properties.Duration;
+            TrackStr = result.Tag!.Track == 0 ? "" : $"{result.Tag!.Track}";
+            Duration = file.AudioProperties!.Duration;
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
-            HasCover = musicFile.Tag.Pictures.Length != 0;
+            HasCover = result.Tag!.Pictures.Length != 0;
         }
-        catch (Exception ex) when (ex is CorruptFileException or UnsupportedFormatException)
+        catch (Exception ex) when (ex is NullReferenceException)
         {
             // 设置默认值
             Title = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -170,6 +177,46 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
     /// </summary>
     /// <returns></returns>
     protected static string GetGenreStr(string[] genre) => string.Join(", ", genre);
+
+    private static ushort ParseYearFromString(string? s)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            return 0;
+        }
+
+        // 优先匹配开头的数字（常见 "2024" 或 "2024-12-25"）
+        var m = ParseBeginNumberRegex().Match(s);
+        if (m.Success && int.TryParse(m.Value, out var y) && y >= 0 && y <= ushort.MaxValue)
+        {
+            return (ushort)y;
+        }
+
+        // 尝试解析为完整日期字符串（例如 "2024-12-25"）
+        if (DateTime.TryParse(s, out var dt))
+        {
+            var yy = dt.Year;
+            if (yy >= 0 && yy <= ushort.MaxValue)
+            {
+                return (ushort)yy;
+            }
+        }
+
+        // 回退：在字符串中查找四位数年份
+        m = SearchYearRegex().Match(s);
+        if (m.Success && int.TryParse(m.Value, out var y2) && y2 >= 0 && y2 <= ushort.MaxValue)
+        {
+            return (ushort)y2;
+        }
+
+        return 0;
+    }
+
+    [GeneratedRegex(@"^\d{1,4}")]
+    private static partial Regex ParseBeginNumberRegex();
+
+    [GeneratedRegex(@"\d{4}")]
+    private static partial Regex SearchYearRegex();
 }
 
 public sealed class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInfoBase
@@ -240,45 +287,48 @@ public sealed class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInf
         TrackStr = info.TrackStr;
         try
         {
-            using var musicFile = TagLib.File.Create(Path);
-            Album = musicFile.Tag.Album ?? "";
-            Artists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
+            var result = MediaFile.Read(Path);
+            if (!result.IsSuccess)
+            {
+                IsPlayAvailable = false;
+                return;
+            }
+            using var file = (IMediaFile)result.File!;
+            Album = result.Tag!.Album ?? "";
+            Artists = [.. result.Tag!.AlbumArtists, .. result.Tag!.Performers];
             ArtistsStr = IBriefSongInfoBase.GetArtistsStr(Artists);
-            AlbumArtistsStr = IDetailedSongInfoBase.GetAlbumArtistsStr(
-                [
-                    .. musicFile
-                        .Tag.AlbumArtists.AsValueEnumerable()
-                        .SelectMany(artist =>
-                            artist.Split(
-                                Delimiters,
-                                StringSplitOptions.RemoveEmptyEntries
-                                    | StringSplitOptions.TrimEntries
-                            )
+            AlbumArtistsStr = IDetailedSongInfoBase.GetAlbumArtistsStr([
+                .. result
+                    .Tag!.AlbumArtists.AsValueEnumerable()
+                    .SelectMany(artist =>
+                        artist.Split(
+                            Delimiters,
+                            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
                         )
-                        .Distinct(),
-                ]
-            );
+                    )
+                    .Distinct(),
+            ]);
             ArtistAndAlbumStr = IDetailedSongInfoBase.GetArtistAndAlbumStr(Album, ArtistsStr);
             Year = info.Year;
             YearStr = info.YearStr;
-            Genre = musicFile.Tag.Genres;
+            Genre = result.Tag!.Genres;
             GenreStr = GetGenreStr(Genre);
             Duration = info.Duration;
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
-            Lyric = musicFile.Tag.Lyrics ?? "";
-            BitRate = $"{musicFile.Properties.AudioBitrate} kbps";
+            Lyric = result.Tag!.Lyrics ?? "";
+            BitRate = $"{file.AudioProperties!.Bitrate} kbps";
             ModifiedDate = info.ModifiedDate;
             ItemType = System.IO.Path.GetExtension(Path).ToLower();
-            if (musicFile.Tag.Pictures.Length != 0)
+            if (result.Tag!.Pictures.Length != 0)
             {
-                var coverBuffer = musicFile.Tag.Pictures[0].Data.Data;
+                var coverBuffer = result.Tag!.Pictures[0].PictureData.ToArray();
                 CoverBuffer = coverBuffer;
                 using var stream = new MemoryStream(coverBuffer);
                 Cover = new BitmapImage();
                 Cover.SetSource(stream.AsRandomAccessStream());
             }
         }
-        catch (Exception ex) when (ex is CorruptFileException or UnsupportedFormatException) { }
+        catch (Exception ex) when (ex is NullReferenceException) { }
         catch (Exception ex) when (ex is FileNotFoundException)
         {
             IsPlayAvailable = false;
