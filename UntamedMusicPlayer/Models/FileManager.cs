@@ -41,8 +41,7 @@ public static class FileManager
             try
             {
                 // 创建音乐库数据目录
-                var localFolder = ApplicationData.Current.LocalFolder;
-                var libraryFolder = await localFolder.CreateFolderAsync(
+                var libraryFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
                     "LibraryData",
                     CreationCollisionOption.OpenIfExists
                 );
@@ -98,8 +97,7 @@ public static class FileManager
         {
             try
             {
-                var localFolder = ApplicationData.Current.LocalFolder;
-                var playQueueFolder = await localFolder.CreateFolderAsync(
+                var playQueueFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
                     "PlayQueueData",
                     CreationCollisionOption.OpenIfExists
                 );
@@ -128,8 +126,7 @@ public static class FileManager
         {
             try
             {
-                var localFolder = ApplicationData.Current.LocalFolder;
-                var playlistFolder = await localFolder.CreateFolderAsync(
+                var playlistFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
                     "PlaylistData",
                     CreationCollisionOption.OpenIfExists
                 );
@@ -149,8 +146,7 @@ public static class FileManager
         {
             try
             {
-                var localFolder = ApplicationData.Current.LocalFolder;
-                var playlistFolder = await localFolder.CreateFolderAsync(
+                var playlistFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
                     "PlaylistM3u8Data",
                     CreationCollisionOption.OpenIfExists
                 );
@@ -185,18 +181,16 @@ public static class FileManager
 
         try
         {
-            // 获取本地文件夹
-            var localFolder = ApplicationData.Current.LocalFolder;
-
             // 尝试打开音乐库数据目录
             StorageFolder libraryFolder;
             try
             {
-                libraryFolder = await localFolder.GetFolderAsync("LibraryData");
+                libraryFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync(
+                    "LibraryData"
+                );
             }
-            catch
+            catch // 文件夹不存在，需要重新扫描
             {
-                // 文件夹不存在，需要重新扫描
                 return (true, data);
             }
 
@@ -295,11 +289,12 @@ public static class FileManager
     {
         try
         {
-            var localFolder = ApplicationData.Current.LocalFolder;
             StorageFolder playQueueFolder;
             try
             {
-                playQueueFolder = await localFolder.GetFolderAsync("PlayQueueData");
+                playQueueFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync(
+                    "PlayQueueData"
+                );
             }
             catch
             {
@@ -335,11 +330,12 @@ public static class FileManager
     {
         try
         {
-            var localFolder = ApplicationData.Current.LocalFolder;
             StorageFolder playlistFolder;
             try
             {
-                playlistFolder = await localFolder.GetFolderAsync("PlaylistData");
+                playlistFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync(
+                    "PlaylistData"
+                );
             }
             catch
             {
@@ -366,8 +362,18 @@ public static class FileManager
     {
         try
         {
-            var localFolder = ApplicationData.Current.LocalFolder;
-            var playlistFolder = await localFolder.GetFolderAsync("PlaylistM3u8Data");
+            StorageFolder playlistFolder;
+            try
+            {
+                playlistFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync(
+                    "PlaylistM3u8Data"
+                );
+            }
+            catch
+            {
+                return [];
+            }
+
             var files = await playlistFolder.GetFilesAsync();
             var playlists = new List<PlaylistInfo>();
             foreach (var file in files)
