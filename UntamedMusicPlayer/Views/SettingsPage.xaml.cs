@@ -46,6 +46,7 @@ public sealed partial class SettingsPage : Page
                 CloseButtonText = "Settings_RemoveFolderDialogClose".GetLocalized(),
                 DefaultButton = ContentDialogButton.Primary,
             };
+            dialog.EnableLightDismiss();
 
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
@@ -75,6 +76,7 @@ public sealed partial class SettingsPage : Page
             CloseButtonText = "Settings_OpenSettingDialogClose".GetLocalized(),
             DefaultButton = ContentDialogButton.Close,
         };
+        dialog.EnableLightDismiss();
 
         var result = await dialog.ShowAsync();
 
@@ -113,6 +115,7 @@ public sealed partial class SettingsPage : Page
             CloseButtonText = "Settings_ResetSoftwareDialogClose".GetLocalized(),
             DefaultButton = ContentDialogButton.Close,
         };
+        dialog.EnableLightDismiss();
 
         var result = await dialog.ShowAsync();
 

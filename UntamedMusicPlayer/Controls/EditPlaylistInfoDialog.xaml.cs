@@ -117,6 +117,7 @@ public sealed partial class EditPlaylistInfoDialog
 
     public EditPlaylistInfoDialog(PlaylistInfo info)
     {
+        this.EnableLightDismiss();
         StrongReferenceMessenger.Default.Register(this);
         _playlist = info;
         _originalName = info.Name;
