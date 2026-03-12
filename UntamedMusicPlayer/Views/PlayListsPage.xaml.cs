@@ -230,6 +230,7 @@ public sealed partial class PlayListsPage : Page
                 CloseButtonText = "PlayLists_DeleteDialogClose".GetLocalized(),
                 DefaultButton = ContentDialogButton.Close,
             };
+            dialog.EnableLightDismiss();
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
