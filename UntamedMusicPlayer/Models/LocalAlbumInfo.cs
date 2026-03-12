@@ -2,7 +2,6 @@ using MemoryPack;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Services;
 using ZLinq;
 
 namespace UntamedMusicPlayer.Models;
