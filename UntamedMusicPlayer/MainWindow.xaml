@@ -12,8 +12,26 @@
                    PersistenceId="MainWindow"
                    mc:Ignorable="d">
 
-    <Grid x:Name="RootGrid">
+    <Grid x:Name="RootGrid" Background="Transparent">
         <Grid.Resources>
+            <Storyboard x:Name="ShowPlayBarStoryboard">
+                <DoubleAnimation Storyboard.TargetName="RootPlayBar"
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                                 From="117" To="0"
+                                 Duration="0:0:0.2"/>
+                <DoubleAnimation Storyboard.TargetName="RootPlayBar"
+                                 Storyboard.TargetProperty="Opacity" From="0"
+                                 To="1" Duration="0:0:0.2"/>
+            </Storyboard>
+            <Storyboard x:Name="HidePlayBarStoryboard">
+                <DoubleAnimation Storyboard.TargetName="RootPlayBar"
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                                 From="0" To="117"
+                                 Duration="0:0:0.2"/>
+                <DoubleAnimation Storyboard.TargetName="RootPlayBar"
+                                 Storyboard.TargetProperty="Opacity" From="1"
+                                 To="0" Duration="0:0:0.2"/>
+            </Storyboard>
             <Storyboard x:Name="ShowInfoBarStoryboard">
                 <DoubleAnimation Storyboard.TargetName="ErrorInfoBar"
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)"
@@ -35,13 +53,14 @@
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="117"/>
+            <RowDefinition x:Name="PlayBarRow" Height="117"/>
         </Grid.RowDefinitions>
         <Grid x:Name="BackgroundGrid"
               Grid.Row="0" Grid.RowSpan="2"
               Canvas.ZIndex="0"/>
         <Frame x:Name="ShellFrame"
-               Grid.Row="0"
+               Grid.Row="0" Grid.RowSpan="2"
+               Margin="0,0,0,117"
                Canvas.ZIndex="1"/>
         <Border x:Name="ShadowTarget"/>
         <InfoBar x:Name="ErrorInfoBar"
@@ -63,6 +82,12 @@
                 <CompositeTransform/>
             </InfoBar.RenderTransform>
         </InfoBar>
-        <view:RootPlayBarView Grid.Row="1" Canvas.ZIndex="1"/>
+        <view:RootPlayBarView x:Name="RootPlayBar"
+                              Grid.Row="1"
+                              Canvas.ZIndex="1">
+            <view:RootPlayBarView.RenderTransform>
+                <CompositeTransform/>
+            </view:RootPlayBarView.RenderTransform>
+        </view:RootPlayBarView>
     </Grid>
 </windowex:WindowEx>

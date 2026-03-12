@@ -51,12 +51,29 @@
                 </Grid>
             </UserControl>
         </DataTemplate>
-
+        <Storyboard x:Name="ShowTitleBarStoryboard">
+            <DoubleAnimation Storyboard.TargetName="AppTitleBar"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                             From="-33" To="0"
+                             Duration="0:0:0.2"/>
+            <DoubleAnimation Storyboard.TargetName="AppTitleBar"
+                             Storyboard.TargetProperty="Opacity" From="0"
+                             To="1" Duration="0:0:0.2"/>
+        </Storyboard>
+        <Storyboard x:Name="HideTitleBarStoryboard">
+            <DoubleAnimation Storyboard.TargetName="AppTitleBar"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                             From="0" To="-33"
+                             Duration="0:0:0.2"/>
+            <DoubleAnimation Storyboard.TargetName="AppTitleBar"
+                             Storyboard.TargetProperty="Opacity" From="1"
+                             To="0" Duration="0:0:0.2"/>
+        </Storyboard>
     </Page.Resources>
 
-    <Grid>
+    <Grid x:Name="RootGrid" Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="33"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
@@ -114,6 +131,9 @@
               Height="33"
               VerticalAlignment="Center"
               Canvas.ZIndex="1" IsHitTestVisible="True">
+            <Grid.RenderTransform>
+                <CompositeTransform/>
+            </Grid.RenderTransform>
             <StackPanel Orientation="Horizontal">
                 <Button Width="48" Height="39"
                         AccessKey="A" Click="CoverBtnClickToDetail"

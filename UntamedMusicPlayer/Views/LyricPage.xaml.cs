@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
@@ -18,6 +19,10 @@ public sealed partial class LyricPage : Page, IDisposable
     private bool _isManualScrolling;
     private bool _isProgrammaticScroll;
 
+    private readonly Timer _titleBarTimer;
+    private bool _titleBarTimerEnabled = false;
+    private bool _isTitleBarHidden = false;
+
     public LyricPage()
     {
         ViewModel = App.GetService<LyricViewModel>();
@@ -31,6 +36,96 @@ public sealed partial class LyricPage : Page, IDisposable
             Timeout.Infinite,
             Timeout.Infinite
         );
+
+        _titleBarTimer = new Timer(TimerTick, null, Timeout.Infinite, Timeout.Infinite);
+
+        Data.RootPlayBarViewModel?.PropertyChanged += RootPlayBarViewModelPropertyChanged;
+    }
+
+    private void RootPlayBarViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (
+            e.PropertyName
+            is nameof(RootPlayBarViewModel.IsDetail)
+                or nameof(RootPlayBarViewModel.IsFullScreen)
+        )
+        {
+            if (Data.RootPlayBarViewModel!.IsDetail && Data.RootPlayBarViewModel.IsFullScreen)
+            {
+                RootGrid.PointerMoved += RootGrid_PointerMoved;
+            }
+            else
+            {
+                RootGrid.PointerMoved -= RootGrid_PointerMoved;
+                if (_isTitleBarHidden)
+                {
+                    ContentGrid.Margin = new Thickness(0);
+                    ShowTitleBarStoryboard.Begin();
+                    _isTitleBarHidden = false;
+                    StopTitleBarTimer();
+                }
+            }
+        }
+    }
+
+    private void RootGrid_PointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        var pointerPoint = e.GetCurrentPoint(RootGrid);
+        var position = pointerPoint.Position;
+
+        if (position.Y < 33) // 如果鼠标在顶部 33 像素范围内
+        {
+            if (_isTitleBarHidden)
+            {
+                ContentGrid.Margin = new Thickness(0);
+                ShowTitleBarStoryboard.Begin();
+                _isTitleBarHidden = false;
+            }
+            StopTitleBarTimer();
+        }
+        else if (!_isTitleBarHidden) // 鼠标离开了底部，开始定时器
+        {
+            StartTitleBarTimer();
+        }
+    }
+
+    private void TimerTick(object? state)
+    {
+        StopTitleBarTimer();
+        DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () =>
+            {
+                if (
+                    Data.RootPlayBarViewModel!.IsDetail
+                    && Data.RootPlayBarViewModel.IsFullScreen
+                    && !_isTitleBarHidden
+                )
+                {
+                    ContentGrid.Margin = new Thickness(0, -33, 0, 0);
+                    HideTitleBarStoryboard.Begin();
+                    _isTitleBarHidden = true;
+                }
+            }
+        );
+    }
+
+    private void StartTitleBarTimer()
+    {
+        if (!_titleBarTimerEnabled)
+        {
+            _titleBarTimer.Change(TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
+            _titleBarTimerEnabled = true;
+        }
+    }
+
+    private void StopTitleBarTimer()
+    {
+        if (_titleBarTimerEnabled)
+        {
+            _titleBarTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            _titleBarTimerEnabled = false;
+        }
     }
 
     private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
