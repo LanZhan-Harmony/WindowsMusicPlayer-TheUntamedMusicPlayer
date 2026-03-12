@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Services;
 
@@ -14,6 +15,7 @@ public sealed partial class PropertiesDialog : ContentDialog, IRecipient<ThemeCh
 
     public PropertiesDialog(IDetailedSongInfoBase info)
     {
+        this.EnableLightDismiss();
         StrongReferenceMessenger.Default.Register(this);
         _song = info;
         RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
