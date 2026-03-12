@@ -11,7 +11,7 @@ namespace UntamedMusicPlayer.Helpers;
 
 /// <summary>
 /// 封装桌面歌词窗口的所有 Win32 窗口管理逻辑：
-/// 点击穿透、置顶、WndProc 子类化、低级鼠标钩子、Raw Input 触摸拖拽。
+/// 点击穿透、置顶、WndProc 子类化、Raw Input 触摸拖拽。
 /// </summary>
 public sealed partial class DesktopLyricWindowHelper : IDisposable
 {
@@ -27,22 +27,16 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
     private int _dragOffsetX;
     private int _dragOffsetY;
     private bool _isWndProcDragging; // WndProc 鼠标拖拽（窗口可交互时）
-    private bool _isHookDragging; // 低级钩子鼠标拖拽（窗口穿透时）
     private bool _isTouchDragging; // Raw Input 触摸拖拽
     private int _touchContactId = -1;
 
     // ── 穿透 / 钩子 ──
     private bool _isMouseOverBorder;
     private RECT _cachedBorderRect;
-    private nint _mouseHook;
 
     // ── WndProc ──
     private delegate nint WndProcDelegate(nint hwnd, uint msg, nint wParam, nint lParam);
     private WndProcDelegate? _wndProcDelegate;
-
-    // ── 钩子委托 ──
-    private delegate nint LowLevelMouseProcDelegate(int nCode, nint wParam, nint lParam);
-    private LowLevelMouseProcDelegate? _mouseHookDelegate;
 
     // ── 定时器 ──
     private readonly Timer _updateTimer;
@@ -77,7 +71,6 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
         SetWindowStyles();
         SetupWndProc();
         SetTopmost(true);
-        InstallMouseHook();
         RegisterRawInput();
         _updateTimer.Change(0, 250);
     }
@@ -227,106 +220,6 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
     }
 
     // ═══════════════════════════════════════════════════
-    //  低级鼠标钩子（穿透切换 + 穿透状态下鼠标拖拽）
-    // ═══════════════════════════════════════════════════
-
-    private void InstallMouseHook()
-    {
-        const int WH_MOUSE_LL = 14;
-        const int WM_LBUTTONDOWN = 0x0201;
-        const int WM_MOUSEMOVE = 0x0200;
-        const int WM_LBUTTONUP = 0x0202;
-        const uint SWP_NOSIZE = 0x0001;
-        const uint SWP_NOZORDER = 0x0004;
-        const uint SWP_NOACTIVATE = 0x0010;
-        const uint MoveFlags = SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE;
-
-        _mouseHookDelegate = (nCode, wParam, lParam) =>
-        {
-            if (nCode >= 0)
-            {
-                var x = Marshal.ReadInt32(lParam);
-                var y = Marshal.ReadInt32(lParam + 4);
-
-                // Raw Input 触摸拖拽期间，吞掉触摸产生的合成鼠标消息
-                if (_isTouchDragging)
-                {
-                    if (wParam is WM_MOUSEMOVE or WM_LBUTTONUP or WM_LBUTTONDOWN)
-                    {
-                        return 1;
-                    }
-                    return CallNextHookEx(_mouseHook, nCode, wParam, lParam);
-                }
-
-                // 钩子鼠标拖拽进行中
-                if (_isHookDragging)
-                {
-                    if (wParam == WM_MOUSEMOVE)
-                    {
-                        SetWindowPos(
-                            _hWnd,
-                            nint.Zero,
-                            x - _dragOffsetX,
-                            y - _dragOffsetY,
-                            0,
-                            0,
-                            MoveFlags
-                        );
-                        return 1;
-                    }
-                    if (wParam == WM_LBUTTONUP)
-                    {
-                        _isHookDragging = false;
-                        return 1;
-                    }
-                    return CallNextHookEx(_mouseHook, nCode, wParam, lParam);
-                }
-
-                var rect = _cachedBorderRect;
-                var isOnBorder =
-                    x >= rect.Left && x <= rect.Right && y >= rect.Top && y <= rect.Bottom;
-
-                // 窗口穿透时，鼠标在 Border 上按下 → 开始钩子拖拽
-                if (wParam == WM_LBUTTONDOWN && isOnBorder && !_isMouseOverBorder)
-                {
-                    _isMouseOverBorder = true;
-                    MakeClickThrough(false);
-                    GetWindowRect(_hWnd, out var windowRect);
-                    _dragOffsetX = x - windowRect.Left;
-                    _dragOffsetY = y - windowRect.Top;
-                    _isHookDragging = true;
-                    return 1;
-                }
-
-                // 穿透切换（WndProc 拖拽期间不切换）
-                if (!_isWndProcDragging && isOnBorder != _isMouseOverBorder)
-                {
-                    _isMouseOverBorder = isOnBorder;
-                    MakeClickThrough(!isOnBorder);
-                }
-            }
-            return CallNextHookEx(_mouseHook, nCode, wParam, lParam);
-        };
-
-        _mouseHook = SetWindowsHookEx(
-            WH_MOUSE_LL,
-            Marshal.GetFunctionPointerForDelegate(_mouseHookDelegate),
-            GetModuleHandle(null),
-            0
-        );
-        GC.KeepAlive(_mouseHookDelegate);
-    }
-
-    private void UninstallMouseHook()
-    {
-        if (_mouseHook != nint.Zero)
-        {
-            UnhookWindowsHookEx(_mouseHook);
-            _mouseHook = nint.Zero;
-        }
-    }
-
-    // ═══════════════════════════════════════════════════
     //  Raw Input 触摸拖拽
     // ═══════════════════════════════════════════════════
 
@@ -437,7 +330,22 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
     private async void TimerTick(object? _)
     {
         SetTopmost(true);
-        _cachedBorderRect = await GetElementScreenRect();
+
+        GetCursorPos(out var inputPoint); // 获取当前输入位置
+        _cachedBorderRect = await GetElementScreenRect(); // 获取AnimatedBorder在屏幕上的位置
+
+        // 检查输入点是否在AnimatedBorder上
+        var isOverBorder =
+            inputPoint.X >= _cachedBorderRect.Left
+            && inputPoint.X <= _cachedBorderRect.Right
+            && inputPoint.Y >= _cachedBorderRect.Top
+            && inputPoint.Y <= _cachedBorderRect.Bottom;
+
+        if (isOverBorder != _isMouseOverBorder) // 如果鼠标状态改变
+        {
+            _isMouseOverBorder = isOverBorder;
+            MakeWindowClickThrough(!isOverBorder);
+        }
     }
 
     private async Task<RECT> GetElementScreenRect()
@@ -465,6 +373,28 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
         return await tcs.Task;
     }
 
+    /// <summary>
+    /// 设置窗口是否点击穿透
+    /// </summary>
+    /// <param name="isClickThrough"></param>
+    private void MakeWindowClickThrough(bool isClickThrough)
+    {
+        const int GWL_EXSTYLE = -20;
+        const int WS_EX_LAYERED = 0x00080000;
+        const int WS_EX_TRANSPARENT = 0x00000020;
+
+        var currentStyle = GetWindowLong(_hWnd, GWL_EXSTYLE);
+
+        if (isClickThrough)
+        {
+            SetWindowLong(_hWnd, GWL_EXSTYLE, currentStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT); // 添加 WS_EX_TRANSPARENT 使窗口点击穿透
+        }
+        else
+        {
+            SetWindowLong(_hWnd, GWL_EXSTYLE, (currentStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT); // 移除 WS_EX_TRANSPARENT 使窗口可接收点击
+        }
+    }
+
     // ═══════════════════════════════════════════════════
     //  Dispose
     // ═══════════════════════════════════════════════════
@@ -472,6 +402,5 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
     public void Dispose()
     {
         _updateTimer.Dispose();
-        UninstallMouseHook();
     }
 }
