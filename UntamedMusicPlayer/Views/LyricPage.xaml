@@ -148,7 +148,9 @@
                                                  Background="Transparent"
                                                  LineClicked="OnLyricLineClicked"/>-->
 
-            <ScrollViewer x:Name="LyricViewer" VerticalScrollBarVisibility="Hidden">
+            <ScrollViewer x:Name="LyricViewer"
+                          VerticalScrollBarVisibility="Hidden"
+                          ViewChanged="LyricViewer_ViewChanged">
                 <StackPanel>
                     <StackPanel Height="600"/>
                     <ListView x:Name="LyricView"

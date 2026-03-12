@@ -21,7 +21,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
     /// <summary>
     /// 调度器队列
     /// </summary>
-    private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
 
     /// <summary>
     /// 信号量, 只允许一个线程访问
@@ -134,7 +134,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
                     Artists = libraryData.Artists;
                     Genres = libraryData.Genres;
                     _musicFolders = libraryData.MusicFolders;
-                    _dispatcherQueue.TryEnqueue(() =>
+                    _dispatcher.TryEnqueue(() =>
                         Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
                     );
                 }
@@ -160,7 +160,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
                             .Concat(["SongInfo_AllGenres".GetLocalized()])
                             .OrderBy(x => x, new GenreComparer()),
                     ];
-                    _dispatcherQueue.TryEnqueue(() =>
+                    _dispatcher.TryEnqueue(() =>
                         Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
                     );
                     _musicGenres.Clear();
@@ -189,7 +189,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
             await _librarySemaphore.WaitAsync();
             try
             {
-                _dispatcherQueue.TryEnqueue(() => IsProgressRingActive = true);
+                _dispatcher.TryEnqueue(() => IsProgressRingActive = true);
                 Songs.Clear();
                 Artists.Clear();
                 Albums.Clear();
@@ -214,9 +214,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
                         .Concat(["SongInfo_AllGenres".GetLocalized()])
                         .OrderBy(x => x, new GenreComparer()),
                 ];
-                _dispatcherQueue.TryEnqueue(() =>
-                    Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
-                );
+                _dispatcher.TryEnqueue(() => Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty)));
                 _musicGenres.Clear();
                 FolderWatchers.Clear();
                 var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
@@ -230,7 +228,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
             }
             finally
             {
-                _dispatcherQueue.TryEnqueue(() => IsProgressRingActive = false);
+                _dispatcher.TryEnqueue(() => IsProgressRingActive = false);
                 _librarySemaphore.Release();
             }
         });
