@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -14,13 +15,14 @@ namespace UntamedMusicPlayer.Helpers;
 public sealed partial class InfoBarManager : IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<InfoBarManager>();
+    private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
     private readonly InfoBar _infoBar;
     private readonly HyperlinkButton _sendFeedbackButton;
     private readonly Storyboard _showInfoBarStoryboard;
     private readonly Storyboard _hideInfoBarStoryboard;
     private readonly Queue<LogMessage> _messageQueue = [];
     private bool _isDisplaying = false;
-    private DispatcherTimer? _autoCloseTimer;
+    private Timer? _autoCloseTimer;
 
     public InfoBarManager(
         InfoBar infoBar,
@@ -58,7 +60,7 @@ public sealed partial class InfoBarManager : IDisposable
         try
         {
             _isDisplaying = true;
-            _autoCloseTimer?.Stop();
+            _autoCloseTimer?.Change(Timeout.Infinite, Timeout.Infinite);
             _sendFeedbackButton.Visibility =
                 logMessage.Level == LogLevel.None ? Visibility.Collapsed : Visibility.Visible;
             _infoBar.Title = logMessage.Message;
@@ -68,18 +70,21 @@ public sealed partial class InfoBarManager : IDisposable
             _showInfoBarStoryboard.Begin();
             if (autoCloseSeconds > 0)
             {
-                _autoCloseTimer = new DispatcherTimer
-                {
-                    Interval = TimeSpan.FromSeconds(autoCloseSeconds),
-                };
+                _autoCloseTimer ??= new Timer(
+                    _ =>
+                        _dispatcher.TryEnqueue(
+                            DispatcherQueuePriority.Low,
+                            async () => await HideInfoBar()
+                        ),
+                    null,
+                    Timeout.Infinite,
+                    Timeout.Infinite
+                );
 
-                _autoCloseTimer.Tick += async (_, _) =>
-                {
-                    _autoCloseTimer.Stop();
-                    await HideInfoBar();
-                };
-
-                _autoCloseTimer.Start();
+                _autoCloseTimer.Change(
+                    TimeSpan.FromSeconds(autoCloseSeconds),
+                    Timeout.InfiniteTimeSpan
+                );
             }
         }
         catch (Exception ex)
@@ -121,7 +126,7 @@ public sealed partial class InfoBarManager : IDisposable
 
     public void Dispose()
     {
-        _autoCloseTimer?.Stop();
+        _autoCloseTimer?.Dispose();
         _autoCloseTimer = null;
         _infoBar.Closed -= OnInfoBarClosed;
         _messageQueue.Clear();
