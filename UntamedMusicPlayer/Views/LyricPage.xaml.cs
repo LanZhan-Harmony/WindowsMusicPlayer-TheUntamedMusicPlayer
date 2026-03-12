@@ -1,8 +1,8 @@
 using System.ComponentModel;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Controls;
-using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.ViewModels;
@@ -14,18 +14,23 @@ public sealed partial class LyricPage : Page, IDisposable
 {
     public LyricViewModel ViewModel { get; }
 
+    private readonly Timer _autoScrollDelayTimer;
+    private bool _isManualScrolling;
+    private bool _isProgrammaticScroll;
+
     public LyricPage()
     {
         ViewModel = App.GetService<LyricViewModel>();
         InitializeComponent();
 
         Data.PlayState.PropertyChanged += OnStateChanged;
-    }
 
-    private void OnLyricLineClicked(object? sender, LyricSlice slice)
-    {
-        // 点击歌词行，更新播放进度
-        Data.MusicPlayer.LyricPositionUpdate(slice.StartTime);
+        _autoScrollDelayTimer = new Timer(
+            _ => DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, ScrollToCurrentLyric),
+            null,
+            Timeout.Infinite,
+            Timeout.Infinite
+        );
     }
 
     private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
@@ -136,6 +141,11 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private void TextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
     {
+        if (_isManualScrolling)
+        {
+            return;
+        }
+
         var textblock = (sender as TextBlock)!;
         if (Math.Abs(textblock.FontSize - Settings.LyricPageCurrentFontSize) < 1e-3)
         {
@@ -145,6 +155,7 @@ public sealed partial class LyricPage : Page, IDisposable
             // 计算出目标位置并滚动
             var targetPosition = textblock.TransformToVisual(LyricViewer).TransformPoint(point);
 
+            _isProgrammaticScroll = true;
             LyricViewer.ChangeView(
                 null,
                 targetPosition.Y - LyricViewer.ActualHeight / 2 + 40,
@@ -154,8 +165,56 @@ public sealed partial class LyricPage : Page, IDisposable
         }
     }
 
+    private void LyricViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if (_isProgrammaticScroll) // 如果是自动滚动
+        {
+            if (!e.IsIntermediate) // 自动滚动完成后重置标志
+            {
+                _isProgrammaticScroll = false;
+            }
+            return;
+        }
+
+        _isManualScrolling = true;
+        _autoScrollDelayTimer.Change(Timeout.Infinite, Timeout.Infinite);
+        if (!e.IsIntermediate) // 用户停止滚动，启动5秒倒计时
+        {
+            _autoScrollDelayTimer.Change(5000, Timeout.Infinite);
+        }
+    }
+
+    private void ScrollToCurrentLyric()
+    {
+        _isManualScrolling = false;
+        var currentSlice = Data.LyricManager.CurrentLyricSlices.FirstOrDefault(s => s.IsCurrent);
+        if (
+            currentSlice is null
+            || LyricView.ContainerFromItem(currentSlice) is not UIElement container
+        )
+        {
+            return;
+        }
+
+        var currentScrollPosition = LyricViewer.VerticalOffset;
+        var point = new Point(0, currentScrollPosition);
+
+        // 获取容器相对于 ScrollViewer 的位置
+        // 容器位置 + 歌词顶部的 Margin (40) 约等于 TextBlock 的位置
+        var targetPosition = container.TransformToVisual(LyricViewer).TransformPoint(point);
+
+        _isProgrammaticScroll = true;
+        LyricViewer.ChangeView(
+            null,
+            targetPosition.Y - LyricViewer.ActualHeight / 2 + 80, // 40 (Margin) + 40 (Offset)
+            null,
+            false
+        );
+    }
+
     public void Dispose()
     {
+        _autoScrollDelayTimer.Dispose();
         Data.PlayState.PropertyChanged -= OnStateChanged;
         Data.LyricPage = null;
     }
