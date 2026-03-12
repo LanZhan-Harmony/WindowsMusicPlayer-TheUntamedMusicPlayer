@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.Messaging;
@@ -12,6 +13,7 @@ using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
+using UntamedMusicPlayer.ViewModels;
 using UntamedMusicPlayer.Views;
 using Windows.System;
 using WinRT.Interop;
@@ -25,6 +27,9 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private readonly ILogger _logger = LoggingService.CreateLogger<MainWindow>();
     private readonly InfoBarManager? _infoBarManager;
     private bool _isClosingWorkDone;
+    private readonly Timer _playBarTimer;
+    private bool _playBarTimerEnabled = false;
+    private bool _isPlayBarHidden = false;
 
     // 热键 ID
     private const int HOTKEY_ID_VOLUME_UP = 1;
@@ -80,6 +85,98 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 
         // 注册系统级全局热键
         Activated += MainWindow_Activated;
+
+        // 初始化播放栏隐藏定时器
+        _playBarTimer = new Timer(TimerTick, null, Timeout.Infinite, Timeout.Infinite);
+
+        Data.RootPlayBarViewModel?.PropertyChanged += RootPlayBarViewModelPropertyChanged;
+    }
+
+    private void RootPlayBarViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (
+            e.PropertyName
+            is nameof(RootPlayBarViewModel.IsDetail)
+                or nameof(RootPlayBarViewModel.IsFullScreen)
+        )
+        {
+            if (Data.RootPlayBarViewModel!.IsDetail && Data.RootPlayBarViewModel.IsFullScreen)
+            {
+                RootGrid.PointerMoved += RootGrid_PointerMoved;
+            }
+            else
+            {
+                RootGrid.PointerMoved -= RootGrid_PointerMoved;
+                if (_isPlayBarHidden)
+                {
+                    ShellFrame.Margin = new Thickness(0, 0, 0, 117);
+                    ShowPlayBarStoryboard.Begin();
+                    _isPlayBarHidden = false;
+                    StopPlayBarTimer();
+                }
+            }
+        }
+    }
+
+    private void RootGrid_PointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        var pointerPoint = e.GetCurrentPoint(RootGrid);
+        var position = pointerPoint.Position;
+        var height = RootGrid.ActualHeight;
+
+        if (position.Y > height - 117) // 如果鼠标在底部 117 像素范围内
+        {
+            ShellFrame.Margin = new Thickness(0, 0, 0, 117);
+            if (_isPlayBarHidden)
+            {
+                ShowPlayBarStoryboard.Begin();
+                _isPlayBarHidden = false;
+            }
+            StopPlayBarTimer();
+        }
+        else if (!_isPlayBarHidden) // 鼠标离开了底部，开始定时器
+        {
+            StartPlayBarTimer();
+        }
+    }
+
+    private void TimerTick(object? state)
+    {
+        StopPlayBarTimer();
+        DispatcherQueue.TryEnqueue(
+            Microsoft.UI.Dispatching.DispatcherQueuePriority.Low,
+            () =>
+            {
+                if (
+                    Data.RootPlayBarViewModel!.IsDetail
+                    && Data.RootPlayBarViewModel.IsFullScreen
+                    && !_isPlayBarHidden
+                )
+                {
+                    ShellFrame.Margin = new Thickness(0);
+                    HidePlayBarStoryboard.Begin();
+                    _isPlayBarHidden = true;
+                }
+            }
+        );
+    }
+
+    private void StartPlayBarTimer()
+    {
+        if (!_playBarTimerEnabled)
+        {
+            _playBarTimer.Change(TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
+            _playBarTimerEnabled = true;
+        }
+    }
+
+    private void StopPlayBarTimer()
+    {
+        if (_playBarTimerEnabled)
+        {
+            _playBarTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            _playBarTimerEnabled = false;
+        }
     }
 
     /// <summary>
@@ -317,6 +414,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 
             App.GetService<IMaterialSelectorService>().Dispose();
             App.GetService<IDynamicBackgroundService>().Dispose();
+            _playBarTimer?.Dispose();
         }
         catch (Exception ex)
         {
