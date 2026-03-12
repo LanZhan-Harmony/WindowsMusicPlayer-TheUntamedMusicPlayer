@@ -283,6 +283,7 @@ public sealed partial class PlayQueuePage : Page
             CloseButtonText = "PlayQueue_AddUrlDialog_Cancel".GetLocalized(),
             DefaultButton = ContentDialogButton.Primary,
         };
+        dialog.EnableLightDismiss();
         contentTextBox.TextChanged += (sender, _) =>
         {
             dialog.IsPrimaryButtonEnabled = Uri.TryCreate(

@@ -102,6 +102,7 @@ public sealed partial class ImportPlaylistDialog
 
     public ImportPlaylistDialog()
     {
+        this.EnableLightDismiss();
         StrongReferenceMessenger.Default.Register(this);
         RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
