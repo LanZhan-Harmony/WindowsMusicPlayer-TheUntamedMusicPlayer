@@ -55,19 +55,27 @@
             <DoubleAnimation Storyboard.TargetName="AppTitleBar"
                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                              From="-33" To="0"
-                             Duration="0:0:0.2"/>
+                             Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
             <DoubleAnimation Storyboard.TargetName="AppTitleBar"
                              Storyboard.TargetProperty="Opacity" From="0"
-                             To="1" Duration="0:0:0.2"/>
+                             To="1" Duration="0:0:0.3"/>
         </Storyboard>
         <Storyboard x:Name="HideTitleBarStoryboard">
             <DoubleAnimation Storyboard.TargetName="AppTitleBar"
                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                              From="0" To="-33"
-                             Duration="0:0:0.2"/>
+                             Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
             <DoubleAnimation Storyboard.TargetName="AppTitleBar"
                              Storyboard.TargetProperty="Opacity" From="1"
-                             To="0" Duration="0:0:0.2"/>
+                             To="0" Duration="0:0:0.3"/>
         </Storyboard>
     </Page.Resources>
 

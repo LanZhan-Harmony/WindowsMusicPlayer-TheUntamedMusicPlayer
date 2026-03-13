@@ -27,9 +27,13 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private readonly ILogger _logger = LoggingService.CreateLogger<MainWindow>();
     private readonly InfoBarManager? _infoBarManager;
     private bool _isClosingWorkDone;
-    private readonly Timer _playBarTimer;
+    private Timer? _playBarHideTimer;
     private bool _playBarTimerEnabled = false;
     private bool _isPlayBarHidden = false;
+    private Microsoft.UI.Dispatching.DispatcherQueueTimer? _shellFrameMarginAnimationTimer;
+    private DateTimeOffset _shellFrameMarginAnimationStart;
+    private double _shellFrameMarginFrom;
+    private double _shellFrameMarginTo;
 
     // 热键 ID
     private const int HOTKEY_ID_VOLUME_UP = 1;
@@ -86,9 +90,6 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         // 注册系统级全局热键
         Activated += MainWindow_Activated;
 
-        // 初始化播放栏隐藏定时器
-        _playBarTimer = new Timer(TimerTick, null, Timeout.Infinite, Timeout.Infinite);
-
         Data.RootPlayBarViewModel?.PropertyChanged += RootPlayBarViewModelPropertyChanged;
     }
 
@@ -109,7 +110,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                 RootGrid.PointerMoved -= RootGrid_PointerMoved;
                 if (_isPlayBarHidden)
                 {
-                    ShellFrame.Margin = new Thickness(0, 0, 0, 117);
+                    AnimateShellFrameBottomMargin(117);
                     ShowPlayBarStoryboard.Begin();
                     _isPlayBarHidden = false;
                     StopPlayBarTimer();
@@ -126,9 +127,9 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 
         if (position.Y > height - 117) // 如果鼠标在底部 117 像素范围内
         {
-            ShellFrame.Margin = new Thickness(0, 0, 0, 117);
             if (_isPlayBarHidden)
             {
+                AnimateShellFrameBottomMargin(117);
                 ShowPlayBarStoryboard.Begin();
                 _isPlayBarHidden = false;
             }
@@ -140,7 +141,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         }
     }
 
-    private void TimerTick(object? state)
+    private void PlayBarHideTimerTick(object? state)
     {
         StopPlayBarTimer();
         DispatcherQueue.TryEnqueue(
@@ -153,7 +154,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                     && !_isPlayBarHidden
                 )
                 {
-                    ShellFrame.Margin = new Thickness(0);
+                    AnimateShellFrameBottomMargin(0);
                     HidePlayBarStoryboard.Begin();
                     _isPlayBarHidden = true;
                 }
@@ -165,7 +166,13 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         if (!_playBarTimerEnabled)
         {
-            _playBarTimer.Change(TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
+            _playBarHideTimer ??= new Timer(
+                PlayBarHideTimerTick,
+                null,
+                Timeout.Infinite,
+                Timeout.Infinite
+            );
+            _playBarHideTimer.Change(TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
             _playBarTimerEnabled = true;
         }
     }
@@ -174,8 +181,52 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         if (_playBarTimerEnabled)
         {
-            _playBarTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            _playBarHideTimer?.Change(Timeout.Infinite, Timeout.Infinite);
             _playBarTimerEnabled = false;
+        }
+    }
+
+    private void AnimateShellFrameBottomMargin(double targetBottom)
+    {
+        var currentBottom = ShellFrame.Margin.Bottom;
+        if (Math.Abs(currentBottom - targetBottom) < 0.1)
+        {
+            ShellFrame.Margin = new Thickness(0, 0, 0, targetBottom);
+            return;
+        }
+
+        _shellFrameMarginAnimationTimer ??= DispatcherQueue.CreateTimer();
+        _shellFrameMarginAnimationTimer.Stop();
+        _shellFrameMarginAnimationTimer.Interval = TimeSpan.FromMilliseconds(16);
+        _shellFrameMarginAnimationTimer.Tick -= ShellFrameMarginAnimationTick;
+        _shellFrameMarginAnimationTimer.Tick += ShellFrameMarginAnimationTick;
+
+        _shellFrameMarginFrom = currentBottom;
+        _shellFrameMarginTo = targetBottom;
+        _shellFrameMarginAnimationStart = DateTimeOffset.Now;
+
+        _shellFrameMarginAnimationTimer.Start();
+    }
+
+    private void ShellFrameMarginAnimationTick(
+        Microsoft.UI.Dispatching.DispatcherQueueTimer sender,
+        object args
+    )
+    {
+        const double durationMs = 300;
+        var elapsedMs = (DateTimeOffset.Now - _shellFrameMarginAnimationStart).TotalMilliseconds;
+        var progress = Math.Clamp(elapsedMs / durationMs, 0d, 1d);
+        var easedProgress = 1 - Math.Pow(1 - progress, 3);
+
+        var currentBottom =
+            _shellFrameMarginFrom + ((_shellFrameMarginTo - _shellFrameMarginFrom) * easedProgress);
+        ShellFrame.Margin = new Thickness(0, 0, 0, currentBottom);
+
+        if (progress >= 1)
+        {
+            sender.Stop();
+            sender.Tick -= ShellFrameMarginAnimationTick;
+            ShellFrame.Margin = new Thickness(0, 0, 0, _shellFrameMarginTo);
         }
     }
 
@@ -414,7 +465,10 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 
             App.GetService<IMaterialSelectorService>().Dispose();
             App.GetService<IDynamicBackgroundService>().Dispose();
-            _playBarTimer?.Dispose();
+            _playBarHideTimer?.Dispose();
+            _shellFrameMarginAnimationTimer?.Stop();
+            _shellFrameMarginAnimationTimer?.Tick -= ShellFrameMarginAnimationTick;
+            _shellFrameMarginAnimationTimer = null;
         }
         catch (Exception ex)
         {
