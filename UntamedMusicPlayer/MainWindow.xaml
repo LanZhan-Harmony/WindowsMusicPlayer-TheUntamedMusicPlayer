@@ -18,19 +18,27 @@
                 <DoubleAnimation Storyboard.TargetName="RootPlayBar"
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                                  From="117" To="0"
-                                 Duration="0:0:0.2"/>
+                                 Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="RootPlayBar"
                                  Storyboard.TargetProperty="Opacity" From="0"
-                                 To="1" Duration="0:0:0.2"/>
+                                 To="1" Duration="0:0:0.3"/>
             </Storyboard>
             <Storyboard x:Name="HidePlayBarStoryboard">
                 <DoubleAnimation Storyboard.TargetName="RootPlayBar"
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                                  From="0" To="117"
-                                 Duration="0:0:0.2"/>
+                                 Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="RootPlayBar"
                                  Storyboard.TargetProperty="Opacity" From="1"
-                                 To="0" Duration="0:0:0.2"/>
+                                 To="0" Duration="0:0:0.3"/>
             </Storyboard>
             <Storyboard x:Name="ShowInfoBarStoryboard">
                 <DoubleAnimation Storyboard.TargetName="ErrorInfoBar"

@@ -19,9 +19,14 @@ public sealed partial class LyricPage : Page, IDisposable
     private bool _isManualScrolling;
     private bool _isProgrammaticScroll;
 
-    private readonly Timer _titleBarTimer;
+    private Timer? _titleBarHideTimer;
     private bool _titleBarTimerEnabled = false;
     private bool _isTitleBarHidden = false;
+
+    private DispatcherQueueTimer? _contentGridMarginAnimationTimer;
+    private DateTimeOffset _contentGridMarginAnimationStart;
+    private double _contentGridMarginFrom;
+    private double _contentGridMarginTo;
 
     public LyricPage()
     {
@@ -36,8 +41,6 @@ public sealed partial class LyricPage : Page, IDisposable
             Timeout.Infinite,
             Timeout.Infinite
         );
-
-        _titleBarTimer = new Timer(TimerTick, null, Timeout.Infinite, Timeout.Infinite);
 
         Data.RootPlayBarViewModel?.PropertyChanged += RootPlayBarViewModelPropertyChanged;
     }
@@ -59,7 +62,7 @@ public sealed partial class LyricPage : Page, IDisposable
                 RootGrid.PointerMoved -= RootGrid_PointerMoved;
                 if (_isTitleBarHidden)
                 {
-                    ContentGrid.Margin = new Thickness(0);
+                    AnimateContentGridTopMargin(0);
                     ShowTitleBarStoryboard.Begin();
                     _isTitleBarHidden = false;
                     StopTitleBarTimer();
@@ -77,7 +80,7 @@ public sealed partial class LyricPage : Page, IDisposable
         {
             if (_isTitleBarHidden)
             {
-                ContentGrid.Margin = new Thickness(0);
+                AnimateContentGridTopMargin(0);
                 ShowTitleBarStoryboard.Begin();
                 _isTitleBarHidden = false;
             }
@@ -89,7 +92,7 @@ public sealed partial class LyricPage : Page, IDisposable
         }
     }
 
-    private void TimerTick(object? state)
+    private void TitleBarHideTimerTick(object? state)
     {
         StopTitleBarTimer();
         DispatcherQueue.TryEnqueue(
@@ -102,7 +105,7 @@ public sealed partial class LyricPage : Page, IDisposable
                     && !_isTitleBarHidden
                 )
                 {
-                    ContentGrid.Margin = new Thickness(0, -33, 0, 0);
+                    AnimateContentGridTopMargin(-33);
                     HideTitleBarStoryboard.Begin();
                     _isTitleBarHidden = true;
                 }
@@ -114,7 +117,13 @@ public sealed partial class LyricPage : Page, IDisposable
     {
         if (!_titleBarTimerEnabled)
         {
-            _titleBarTimer.Change(TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
+            _titleBarHideTimer ??= new Timer(
+                TitleBarHideTimerTick,
+                null,
+                Timeout.Infinite,
+                Timeout.Infinite
+            );
+            _titleBarHideTimer.Change(TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
             _titleBarTimerEnabled = true;
         }
     }
@@ -123,8 +132,50 @@ public sealed partial class LyricPage : Page, IDisposable
     {
         if (_titleBarTimerEnabled)
         {
-            _titleBarTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            _titleBarHideTimer?.Change(Timeout.Infinite, Timeout.Infinite);
             _titleBarTimerEnabled = false;
+        }
+    }
+
+    private void AnimateContentGridTopMargin(double targetTop)
+    {
+        var currentTop = ContentGrid.Margin.Top;
+        if (Math.Abs(currentTop - targetTop) < 0.1)
+        {
+            ContentGrid.Margin = new Thickness(0, targetTop, 0, 0);
+            return;
+        }
+
+        _contentGridMarginAnimationTimer ??= DispatcherQueue.CreateTimer();
+        _contentGridMarginAnimationTimer.Stop();
+        _contentGridMarginAnimationTimer.Interval = TimeSpan.FromMilliseconds(16);
+        _contentGridMarginAnimationTimer.Tick -= ContentGridMarginAnimationTick;
+        _contentGridMarginAnimationTimer.Tick += ContentGridMarginAnimationTick;
+
+        _contentGridMarginFrom = currentTop;
+        _contentGridMarginTo = targetTop;
+        _contentGridMarginAnimationStart = DateTimeOffset.Now;
+
+        _contentGridMarginAnimationTimer.Start();
+    }
+
+    private void ContentGridMarginAnimationTick(DispatcherQueueTimer sender, object args)
+    {
+        const double durationMs = 300;
+        var elapsedMs = (DateTimeOffset.Now - _contentGridMarginAnimationStart).TotalMilliseconds;
+        var progress = Math.Clamp(elapsedMs / durationMs, 0d, 1d);
+        var easedProgress = 1 - Math.Pow(1 - progress, 3);
+
+        var currentTop =
+            _contentGridMarginFrom
+            + ((_contentGridMarginTo - _contentGridMarginFrom) * easedProgress);
+        ContentGrid.Margin = new Thickness(0, currentTop, 0, 0);
+
+        if (progress >= 1)
+        {
+            sender.Stop();
+            sender.Tick -= ContentGridMarginAnimationTick;
+            ContentGrid.Margin = new Thickness(0, _contentGridMarginTo, 0, 0);
         }
     }
 
@@ -310,6 +361,10 @@ public sealed partial class LyricPage : Page, IDisposable
     public void Dispose()
     {
         _autoScrollDelayTimer.Dispose();
+        _titleBarHideTimer?.Dispose();
+        _contentGridMarginAnimationTimer?.Stop();
+        _contentGridMarginAnimationTimer?.Tick -= ContentGridMarginAnimationTick;
+        _contentGridMarginAnimationTimer = null;
         Data.PlayState.PropertyChanged -= OnStateChanged;
         Data.LyricPage = null;
     }
