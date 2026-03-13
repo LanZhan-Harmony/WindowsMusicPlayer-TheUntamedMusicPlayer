@@ -425,21 +425,8 @@ public sealed partial class AudioEngine : IDisposable
     public void Stop() =>
         ExecuteOnPlaybackThread(() =>
         {
-            if (_fxHandle != 0)
-            {
-                if (_state.IsExclusiveMode)
-                {
-                    if (BassWasapi.IsStarted)
-                    {
-                        BassWasapi.Stop(true);
-                    }
-                    BassWasapi.Free();
-                    _isWasapiInitialized = false;
-                    RestoreGCLatencyMode();
-                    return;
-                }
-                Bass.ChannelStop(_fxHandle);
-            }
+            FreeStreams();
+            RestoreGCLatencyMode();
         });
 
     /// <summary>
@@ -477,6 +464,10 @@ public sealed partial class AudioEngine : IDisposable
         await ExecuteOnPlaybackThread(async () =>
         {
             _state.IsExclusiveMode = isExclusive;
+            if (_fxHandle == 0)
+            {
+                return;
+            }
             var position = GetPositionSeconds();
             Stop();
             LoadSong();
