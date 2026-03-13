@@ -71,7 +71,9 @@
 		<SelfContained>True</SelfContained>
 		<WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
 		<IsAotCompatible>True</IsAotCompatible>
-		<PublishAot>True</PublishAot>
+		<!--<PublishAot>True</PublishAot>-->
+		<PublishTrimmed>True</PublishTrimmed>
+		<PublishReadyToRun>True</PublishReadyToRun>
 		<JsonSerializerIsReflectionEnabledByDefault>True</JsonSerializerIsReflectionEnabledByDefault>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
