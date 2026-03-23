@@ -61,7 +61,8 @@ public sealed partial class SMTCManager : IDisposable
         _displayUpdater.AppMediaId = "AppDisplayName".GetLocalized();
         _systemControls.IsEnabled = true;
         _systemControls.ButtonPressed += OnSystemControlsButtonPressed;
-        _systemControls.PlaybackPositionChangeRequested += OnSystemControlsPlaybackPositionChangeRequested;
+        _systemControls.PlaybackPositionChangeRequested +=
+            OnSystemControlsPlaybackPositionChangeRequested;
         _timelineProperties.StartTime = TimeSpan.Zero;
         _timelineProperties.MinSeekTime = TimeSpan.Zero;
 
@@ -94,7 +95,10 @@ public sealed partial class SMTCManager : IDisposable
         );
     }
 
-    private void OnSystemControlsPlaybackPositionChangeRequested(SystemMediaTransportControls sender, PlaybackPositionChangeRequestedEventArgs args)
+    private void OnSystemControlsPlaybackPositionChangeRequested(
+        SystemMediaTransportControls sender,
+        PlaybackPositionChangeRequestedEventArgs args
+    )
     {
         App.MainWindow?.DispatcherQueue.TryEnqueue(
             DispatcherQueuePriority.Low,
@@ -225,6 +229,7 @@ public sealed partial class SMTCManager : IDisposable
     public void Dispose()
     {
         _systemControls.ButtonPressed -= OnSystemControlsButtonPressed;
+        _state.PropertyChanged -= OnStateChanged;
         _currentCoverStream?.Dispose();
         _tempPlayer?.Dispose();
         GC.SuppressFinalize(this);

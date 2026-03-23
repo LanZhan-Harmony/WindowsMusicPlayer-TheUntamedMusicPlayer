@@ -10,7 +10,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.Playback;
 
-public sealed partial class PlayQueueManager : ObservableObject
+public sealed partial class PlayQueueManager : ObservableObject, IDisposable
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
@@ -289,7 +289,8 @@ public sealed partial class PlayQueueManager : ObservableObject
                     .FirstOrDefault(info =>
                         SongComparer.CurrentIsSameSong(_state.CurrentSong, info.Song)
                     )
-                    ?.Index ?? 0;
+                    ?.Index
+                ?? 0;
         }
     }
 
@@ -410,5 +411,10 @@ public sealed partial class PlayQueueManager : ObservableObject
             await _localSettingsService.SaveSettingAsync(nameof(SourceMode), $"{sourceMode}");
         }
         catch { }
+    }
+
+    public void Dispose()
+    {
+        _state.PropertyChanged -= OnStateChanged;
     }
 }
