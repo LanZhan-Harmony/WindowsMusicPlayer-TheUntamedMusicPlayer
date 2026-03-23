@@ -16,7 +16,7 @@ using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public sealed partial class PlayQueueViewModel : ObservableObject
+public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
 {
     private IndexedPlayQueueSong? _currentSong;
 
@@ -30,10 +30,10 @@ public sealed partial class PlayQueueViewModel : ObservableObject
     public PlayQueueViewModel()
     {
         IsButtonEnabled = PlayQueue.Count > 0;
-        Data.PlayQueueManager.PropertyChanged += PlayQueueManager_PropertyChanged;
+        Data.PlayQueueManager.PropertyChanged += OnPlayQueueChanged;
     }
 
-    private void PlayQueueManager_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnPlayQueueChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Data.PlayQueueManager.CurrentQueue))
         {
@@ -385,5 +385,10 @@ public sealed partial class PlayQueueViewModel : ObservableObject
             }
         }
         IsButtonEnabled = PlayQueue.Count > 0;
+    }
+
+    public void Dispose()
+    {
+        Data.PlayQueueManager.PropertyChanged -= OnPlayQueueChanged;
     }
 }

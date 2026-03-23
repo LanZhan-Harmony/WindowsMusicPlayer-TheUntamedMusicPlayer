@@ -90,10 +90,10 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         // 注册系统级全局热键
         Activated += MainWindow_Activated;
 
-        Data.RootPlayBarViewModel?.PropertyChanged += RootPlayBarViewModelPropertyChanged;
+        Data.RootPlayBarViewModel?.PropertyChanged += OnRootPlayBarChanged;
     }
 
-    private void RootPlayBarViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnRootPlayBarChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (
             e.PropertyName
@@ -469,6 +469,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             _shellFrameMarginAnimationTimer?.Stop();
             _shellFrameMarginAnimationTimer?.Tick -= ShellFrameMarginAnimationTick;
             _shellFrameMarginAnimationTimer = null;
+            Data.RootPlayBarViewModel?.PropertyChanged -= OnRootPlayBarChanged;
         }
         catch (Exception ex)
         {

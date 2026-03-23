@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
+      xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:local="using:UntamedMusicPlayer.Views"
       xmlns:lyricRenderer="using:UntamedMusicPlayer.LyricRenderer"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -77,6 +78,7 @@
                              Storyboard.TargetProperty="Opacity" From="1"
                              To="0" Duration="0:0:0.3"/>
         </Storyboard>
+
     </Page.Resources>
 
     <Grid x:Name="RootGrid" Background="Transparent">
@@ -246,8 +248,11 @@
                     <Image x:Name="ControllerCover"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Canvas.ZIndex="1"
-                           Source="{x:Bind model:Data.PlayState.CurrentSong.Cover, Mode=OneWay}"/>
+                           Canvas.ZIndex="1" Opacity="1">
+                        <interactivity:Interaction.Behaviors>
+                            <helper:FadeImageBehavior Source="{x:Bind model:Data.PlayState.CurrentSong.Cover, Mode=OneWay}" Duration="0:0:0.45"/>
+                        </interactivity:Interaction.Behaviors>
+                    </Image>
                     <Grid x:Name="ControllerCoverGrid"
                           Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                           Canvas.ZIndex="0"
