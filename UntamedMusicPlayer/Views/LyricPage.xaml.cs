@@ -1,8 +1,11 @@
 using System.ComponentModel;
+using System.Numerics;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
@@ -14,6 +17,8 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class LyricPage : Page, IDisposable
 {
     public LyricViewModel ViewModel { get; }
+
+    private bool isFirstLoad = true;
 
     private readonly Timer _autoScrollDelayTimer;
     private bool _isManualScrolling;
@@ -27,13 +32,7 @@ public sealed partial class LyricPage : Page, IDisposable
     private DateTimeOffset _contentGridMarginAnimationStart;
     private double _contentGridMarginFrom;
     private double _contentGridMarginTo;
-
-    private DispatcherQueueTimer? _coverSizeAnimationTimer;
-    private DateTimeOffset _coverSizeAnimationStart;
-    private double _coverSizeFromWidth;
-    private double _coverSizeFromHeight;
-    private double _coverSizeToWidth;
-    private double _coverSizeToHeight;
+    private CancellationTokenSource? _coverLoadWaitCts;
 
     public LyricPage()
     {
@@ -57,10 +56,86 @@ public sealed partial class LyricPage : Page, IDisposable
         {
             if (ReferenceGrid.ActualWidth > 0 && ReferenceGrid.ActualHeight > 0)
             {
-                ChangeCoverSize(ReferenceGrid.ActualWidth, ReferenceGrid.ActualHeight);
+                RestartWaitForCoverAndRecalculate();
             }
             _isManualScrolling = false;
             _autoScrollDelayTimer.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+    }
+
+    private void RestartWaitForCoverAndRecalculate()
+    {
+        _coverLoadWaitCts?.Cancel();
+        _coverLoadWaitCts?.Dispose();
+        _coverLoadWaitCts = new CancellationTokenSource();
+        _ = RecalculateCoverSizeWhenCoverReadyAsync(_coverLoadWaitCts.Token);
+    }
+
+    private async Task RecalculateCoverSizeWhenCoverReadyAsync(CancellationToken cancellationToken)
+    {
+        var cover = Data.PlayState.CurrentSong?.Cover;
+        if (cover is null)
+        {
+            return;
+        }
+
+        var loaded = await WaitCoverLoadedAsync(cover, cancellationToken);
+        if (!loaded || cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+
+        if (ReferenceGrid.ActualWidth > 0 && ReferenceGrid.ActualHeight > 0)
+        {
+            ChangeCoverSize(ReferenceGrid.ActualWidth, ReferenceGrid.ActualHeight);
+        }
+    }
+
+    private static async Task<bool> WaitCoverLoadedAsync(
+        BitmapImage cover,
+        CancellationToken cancellationToken
+    )
+    {
+        if (cover.PixelWidth > 0 && cover.PixelHeight > 0)
+        {
+            return true;
+        }
+
+        var tcs = new TaskCompletionSource<bool>(
+            TaskCreationOptions.RunContinuationsAsynchronously
+        );
+
+        void OnImageOpened(object sender, RoutedEventArgs args) => tcs.TrySetResult(true);
+        void OnImageFailed(object sender, ExceptionRoutedEventArgs args) => tcs.TrySetResult(false);
+
+        cover.ImageOpened += OnImageOpened;
+        cover.ImageFailed += OnImageFailed;
+
+        using var cancellationRegistration = cancellationToken.Register(() =>
+            tcs.TrySetCanceled(cancellationToken)
+        );
+
+        try
+        {
+            if (cover.PixelWidth > 0 && cover.PixelHeight > 0)
+            {
+                return true;
+            }
+            var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(1500, cancellationToken));
+            if (completedTask != tcs.Task)
+            {
+                return false;
+            }
+            return await tcs.Task;
+        }
+        catch (OperationCanceledException)
+        {
+            return false;
+        }
+        finally
+        {
+            cover.ImageOpened -= OnImageOpened;
+            cover.ImageFailed -= OnImageFailed;
         }
     }
 
@@ -308,6 +383,14 @@ public sealed partial class LyricPage : Page, IDisposable
             return;
         }
 
+        if (isFirstLoad)
+        {
+            isFirstLoad = false;
+            CoverBorder.Width = targetWidth;
+            CoverBorder.Height = targetHeight;
+            return;
+        }
+
         if (
             Math.Abs(currentWidth - targetWidth) < 0.5
             && Math.Abs(currentHeight - targetHeight) < 0.5
@@ -318,40 +401,23 @@ public sealed partial class LyricPage : Page, IDisposable
             return;
         }
 
-        _coverSizeAnimationTimer ??= DispatcherQueue.CreateTimer();
-        _coverSizeAnimationTimer.Stop();
-        _coverSizeAnimationTimer.Interval = TimeSpan.FromMilliseconds(16);
-        _coverSizeAnimationTimer.Tick -= CoverSizeAnimationTick;
-        _coverSizeAnimationTimer.Tick += CoverSizeAnimationTick;
+        CoverBorder.Width = targetWidth;
+        CoverBorder.Height = targetHeight;
 
-        _coverSizeFromWidth = currentWidth;
-        _coverSizeFromHeight = currentHeight;
-        _coverSizeToWidth = targetWidth;
-        _coverSizeToHeight = targetHeight;
-        _coverSizeAnimationStart = DateTimeOffset.Now;
+        var visual = ElementCompositionPreview.GetElementVisual(CoverBorder);
+        visual.StopAnimation("Scale");
+        visual.CenterPoint = new Vector3((float)(targetWidth / 2), (float)(targetHeight / 2), 0f);
 
-        _coverSizeAnimationTimer.Start();
-    }
+        var initialScaleX = (float)(currentWidth / targetWidth);
+        var initialScaleY = (float)(currentHeight / targetHeight);
+        visual.Scale = new Vector3(initialScaleX, initialScaleY, 1f);
 
-    private void CoverSizeAnimationTick(DispatcherQueueTimer sender, object args)
-    {
-        const double durationMs = 450;
-        var elapsedMs = (DateTimeOffset.Now - _coverSizeAnimationStart).TotalMilliseconds;
-        var progress = Math.Clamp(elapsedMs / durationMs, 0d, 1d);
-        var easedProgress = 1 - Math.Pow(1 - progress, 3);
+        var compositor = visual.Compositor;
+        var scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
+        scaleAnimation.InsertKeyFrame(1f, Vector3.One);
+        scaleAnimation.Duration = TimeSpan.FromMilliseconds(450);
 
-        CoverBorder.Width =
-            _coverSizeFromWidth + ((_coverSizeToWidth - _coverSizeFromWidth) * easedProgress);
-        CoverBorder.Height =
-            _coverSizeFromHeight + ((_coverSizeToHeight - _coverSizeFromHeight) * easedProgress);
-
-        if (progress >= 1)
-        {
-            sender.Stop();
-            sender.Tick -= CoverSizeAnimationTick;
-            CoverBorder.Width = _coverSizeToWidth;
-            CoverBorder.Height = _coverSizeToHeight;
-        }
+        visual.StartAnimation("Scale", scaleAnimation);
     }
 
     private void TextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -431,12 +497,12 @@ public sealed partial class LyricPage : Page, IDisposable
     {
         _autoScrollDelayTimer.Dispose();
         _titleBarHideTimer?.Dispose();
+        _coverLoadWaitCts?.Cancel();
+        _coverLoadWaitCts?.Dispose();
+        _coverLoadWaitCts = null;
         _contentGridMarginAnimationTimer?.Stop();
         _contentGridMarginAnimationTimer?.Tick -= ContentGridMarginAnimationTick;
         _contentGridMarginAnimationTimer = null;
-        _coverSizeAnimationTimer?.Stop();
-        _coverSizeAnimationTimer?.Tick -= CoverSizeAnimationTick;
-        _coverSizeAnimationTimer = null;
         Data.PlayState.PropertyChanged -= OnStateChanged;
         Data.RootPlayBarViewModel?.PropertyChanged -= OnRootPlayBarChanged;
         Data.LyricPage = null;
