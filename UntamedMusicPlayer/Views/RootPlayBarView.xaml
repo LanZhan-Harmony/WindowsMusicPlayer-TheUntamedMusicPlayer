@@ -2,9 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helper="using:UntamedMusicPlayer.Helpers"
+             xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:model="using:UntamedMusicPlayer.Models"
              xmlns:ui="using:CommunityToolkit.WinUI"
+             Unloaded="RootPlayBarView_Unloaded"
              mc:Ignorable="d">
 
     <Grid KeyTipPlacementMode="Top">
@@ -194,9 +197,11 @@
                                Width="70" Height="70"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
-                               Canvas.ZIndex="1"
-                               Source="{x:Bind model:Data.PlayState.CurrentSong.Cover, Mode=OneWay}"
-                               Stretch="UniformToFill"/>
+                               Canvas.ZIndex="1" Stretch="UniformToFill">
+                            <interactivity:Interaction.Behaviors>
+                                <helper:FadeImageBehavior Source="{x:Bind model:Data.PlayState.CurrentSong.Cover, Mode=OneWay}" Duration="0:0:0.45"/>
+                            </interactivity:Interaction.Behaviors>
+                        </Image>
                         <Grid Width="70" Height="70"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Canvas.ZIndex="0">
@@ -210,22 +215,41 @@
                 </Border>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Width="6" Visibility="{x:Bind GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}"/>
-                    <StackPanel Margin="0,0,4,0" HorizontalAlignment="Left"
-                                VerticalAlignment="Center">
-                        <TextBlock x:Name="SongTitleTextBlock"
-                                   Margin="10,0,0,4"
-                                   FontSize="20" FontWeight="Medium"
-                                   Text="{x:Bind model:Data.PlayState.CurrentSong.Title, Mode=OneWay}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"/>
-                        <TextBlock x:Name="ArtistAndAlbumTextBlock"
-                                   Margin="10,0,0,0"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Bind model:Data.PlayState.CurrentSong.ArtistAndAlbumStr, Mode=OneWay}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Visibility="{x:Bind GetArtistAndAlbumStrVisibility(model:Data.PlayState.CurrentSong), Mode=OneWay}"/>
-                    </StackPanel>
+                    <Grid x:Name="SongInfoTransitionHost"
+                          Margin="0,0,4,0" HorizontalAlignment="Left"
+                          VerticalAlignment="Center">
+                        <StackPanel x:Name="CurrentSongInfoPanel">
+                            <StackPanel.RenderTransform>
+                                <CompositeTransform x:Name="CurrentSongInfoTransform"/>
+                            </StackPanel.RenderTransform>
+                            <TextBlock x:Name="SongTitleTextBlock"
+                                       Margin="10,0,0,4"
+                                       FontSize="20" FontWeight="Medium"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"/>
+                            <TextBlock x:Name="ArtistAndAlbumTextBlock"
+                                       Margin="10,0,0,0"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"/>
+                        </StackPanel>
+                        <StackPanel x:Name="IncomingSongInfoPanel"
+                                    Opacity="0" Visibility="Collapsed">
+                            <StackPanel.RenderTransform>
+                                <CompositeTransform x:Name="IncomingSongInfoTransform" TranslateY="16"/>
+                            </StackPanel.RenderTransform>
+                            <TextBlock x:Name="IncomingSongTitleTextBlock"
+                                       Margin="10,0,0,4"
+                                       FontSize="20" FontWeight="Medium"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"/>
+                            <TextBlock x:Name="IncomingArtistAndAlbumTextBlock"
+                                       Margin="10,0,0,0"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"/>
+                        </StackPanel>
+                    </Grid>
                     <TextBlock Width="8" Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}"/>
                 </StackPanel>
             </StackPanel>
