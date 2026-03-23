@@ -213,6 +213,9 @@
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
     <value>刷新库</value>
   </data>
+  <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
+    <value>在全屏模式下自动隐藏播控栏</value>
+  </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
     <value>独占模式 (实验性)</value>
   </data>

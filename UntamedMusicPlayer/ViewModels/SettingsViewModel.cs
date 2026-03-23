@@ -195,6 +195,18 @@ public sealed partial class SettingsViewModel
     }
 
     /// <summary>
+    /// 是否在全屏模式下自动隐藏播放控制栏
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsAutoHidePlaybackControlBar { get; set; } =
+        Settings.IsAutoHidePlaybackControlBar;
+
+    partial void OnIsAutoHidePlaybackControlBarChanged(bool value)
+    {
+        Settings.IsAutoHidePlaybackControlBar = value;
+    }
+
+    /// <summary>
     /// 版本信息
     /// </summary>
     [ObservableProperty]
