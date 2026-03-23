@@ -1,6 +1,9 @@
+using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
@@ -15,6 +18,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class RootPlayBarView : UserControl
 {
     private bool _hasPointerPressed = false;
+    private Storyboard? _songInfoTransitionStoryboard;
 
     public RootPlayBarViewModel ViewModel { get; }
 
@@ -24,6 +28,119 @@ public sealed partial class RootPlayBarView : UserControl
         InitializeComponent();
         ViewModel = App.GetService<RootPlayBarViewModel>();
         Data.RootPlayBarView = this;
+
+        Data.PlayState.PropertyChanged += OnStateChanged;
+        UpdateSongInfoWithoutAnimation();
+    }
+
+    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(SharedPlaybackState.CurrentSong))
+        {
+            AnimateSongInfoToCurrentSong();
+        }
+    }
+
+    private void UpdateSongInfoWithoutAnimation()
+    {
+        var title = Data.PlayState.CurrentSong?.Title ?? "";
+        var artistAndAlbum = Data.PlayState.CurrentSong?.ArtistAndAlbumStr ?? "";
+
+        SongTitleTextBlock.Text = title;
+        ArtistAndAlbumTextBlock.Text = artistAndAlbum;
+        ArtistAndAlbumTextBlock.Visibility = string.IsNullOrWhiteSpace(artistAndAlbum)
+            ? Visibility.Collapsed
+            : Visibility.Visible;
+
+        CurrentSongInfoPanel.Opacity = 1;
+        IncomingSongInfoPanel.Visibility = Visibility.Collapsed;
+        IncomingSongInfoPanel.Opacity = 0;
+    }
+
+    private void AnimateSongInfoToCurrentSong()
+    {
+        var title = Data.PlayState.CurrentSong?.Title ?? "";
+        var artistAndAlbum = Data.PlayState.CurrentSong?.ArtistAndAlbumStr ?? "";
+        if (SongTitleTextBlock.Text == title && ArtistAndAlbumTextBlock.Text == artistAndAlbum)
+        {
+            return;
+        }
+
+        StopSongInfoTransition();
+
+        IncomingSongTitleTextBlock.Text = title;
+        IncomingArtistAndAlbumTextBlock.Text = artistAndAlbum;
+        IncomingArtistAndAlbumTextBlock.Visibility = string.IsNullOrWhiteSpace(artistAndAlbum)
+            ? Visibility.Collapsed
+            : Visibility.Visible;
+
+        IncomingSongInfoPanel.Visibility = Visibility.Visible;
+
+        var currentFadeOut = new DoubleAnimation
+        {
+            From = 1,
+            To = 0,
+            Duration = TimeSpan.FromMilliseconds(200),
+        };
+        Storyboard.SetTarget(currentFadeOut, CurrentSongInfoPanel);
+        Storyboard.SetTargetProperty(currentFadeOut, nameof(Opacity));
+
+        var currentSlideUp = new DoubleAnimation
+        {
+            From = 0,
+            To = -70,
+            Duration = TimeSpan.FromMilliseconds(220),
+            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn },
+        };
+        Storyboard.SetTarget(currentSlideUp, CurrentSongInfoTransform);
+        Storyboard.SetTargetProperty(currentSlideUp, nameof(CompositeTransform.TranslateY));
+
+        var incomingFadeIn = new DoubleAnimation
+        {
+            From = 0,
+            To = 1,
+            Duration = TimeSpan.FromMilliseconds(400),
+        };
+        Storyboard.SetTarget(incomingFadeIn, IncomingSongInfoPanel);
+        Storyboard.SetTargetProperty(incomingFadeIn, nameof(Opacity));
+
+        var incomingSlideIn = new DoubleAnimation
+        {
+            From = 70,
+            To = 0,
+            Duration = TimeSpan.FromMilliseconds(450),
+            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
+        };
+        Storyboard.SetTarget(incomingSlideIn, IncomingSongInfoTransform);
+        Storyboard.SetTargetProperty(incomingSlideIn, nameof(CompositeTransform.TranslateY));
+
+        _songInfoTransitionStoryboard = new Storyboard();
+        _songInfoTransitionStoryboard.Children.Add(currentFadeOut);
+        _songInfoTransitionStoryboard.Children.Add(currentSlideUp);
+        _songInfoTransitionStoryboard.Children.Add(incomingFadeIn);
+        _songInfoTransitionStoryboard.Children.Add(incomingSlideIn);
+        _songInfoTransitionStoryboard.Completed += SongInfoTransitionStoryboard_Completed;
+        _songInfoTransitionStoryboard.Begin();
+    }
+
+    private void SongInfoTransitionStoryboard_Completed(object? sender, object e)
+    {
+        ArtistAndAlbumTextBlock.Visibility = IncomingArtistAndAlbumTextBlock.Visibility;
+        IncomingSongInfoPanel.Visibility = Visibility.Collapsed;
+        StopSongInfoTransition();
+    }
+
+    private void StopSongInfoTransition()
+    {
+        SongTitleTextBlock.Text = IncomingSongTitleTextBlock.Text;
+        ArtistAndAlbumTextBlock.Text = IncomingArtistAndAlbumTextBlock.Text;
+        if (_songInfoTransitionStoryboard is null)
+        {
+            return;
+        }
+        _songInfoTransitionStoryboard.Completed -= SongInfoTransitionStoryboard_Completed;
+        _songInfoTransitionStoryboard.Stop();
+        _songInfoTransitionStoryboard = null;
     }
 
     public string GetCurrent(TimeSpan current) =>
@@ -272,5 +389,11 @@ public sealed partial class RootPlayBarView : UserControl
         var currentSong = Data.PlayState.CurrentSong;
         var dialog = new PropertiesDialog(currentSong!) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
+    }
+
+    private void RootPlayBarView_Unloaded(object sender, RoutedEventArgs e)
+    {
+        Data.PlayState.PropertyChanged -= OnStateChanged;
+        StopSongInfoTransition();
     }
 }
