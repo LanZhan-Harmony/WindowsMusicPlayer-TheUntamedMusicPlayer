@@ -28,12 +28,17 @@ public sealed partial class LyricPage : Page, IDisposable
     private double _contentGridMarginFrom;
     private double _contentGridMarginTo;
 
+    private DispatcherQueueTimer? _coverSizeAnimationTimer;
+    private DateTimeOffset _coverSizeAnimationStart;
+    private double _coverSizeFromWidth;
+    private double _coverSizeFromHeight;
+    private double _coverSizeToWidth;
+    private double _coverSizeToHeight;
+
     public LyricPage()
     {
         ViewModel = App.GetService<LyricViewModel>();
         InitializeComponent();
-
-        Data.PlayState.PropertyChanged += OnStateChanged;
 
         _autoScrollDelayTimer = new Timer(
             _ => DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, ScrollToCurrentLyric),
@@ -42,10 +47,24 @@ public sealed partial class LyricPage : Page, IDisposable
             Timeout.Infinite
         );
 
-        Data.RootPlayBarViewModel?.PropertyChanged += RootPlayBarViewModelPropertyChanged;
+        Data.PlayState.PropertyChanged += OnStateChanged;
+        Data.RootPlayBarViewModel?.PropertyChanged += OnRootPlayBarChanged;
     }
 
-    private void RootPlayBarViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SharedPlaybackState.CurrentSong))
+        {
+            if (ReferenceGrid.ActualWidth > 0 && ReferenceGrid.ActualHeight > 0)
+            {
+                ChangeCoverSize(ReferenceGrid.ActualWidth, ReferenceGrid.ActualHeight);
+            }
+            _isManualScrolling = false;
+            _autoScrollDelayTimer.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+    }
+
+    private void OnRootPlayBarChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (
             e.PropertyName
@@ -231,17 +250,6 @@ public sealed partial class LyricPage : Page, IDisposable
         await dialog.ShowAsync();
     }
 
-    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(SharedPlaybackState.CurrentSong))
-        {
-            if (ReferenceGrid.ActualWidth > 0 && ReferenceGrid.ActualHeight > 0)
-            {
-                ChangeCoverSize(ReferenceGrid.ActualWidth, ReferenceGrid.ActualHeight);
-            }
-        }
-    }
-
     private void ReferenceGrid_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         ChangeCoverSize(e.NewSize.Width, e.NewSize.Height);
@@ -281,8 +289,69 @@ public sealed partial class LyricPage : Page, IDisposable
             coverWidth = coverHeight = Math.Min(availableWidth, availableHeight);
         }
 
-        CoverBorder.Width = coverWidth;
-        CoverBorder.Height = coverHeight;
+        AnimateCoverSize(coverWidth, coverHeight);
+    }
+
+    private void AnimateCoverSize(double targetWidth, double targetHeight)
+    {
+        var currentWidth = double.IsNaN(CoverBorder.Width)
+            ? CoverBorder.ActualWidth
+            : CoverBorder.Width;
+        var currentHeight = double.IsNaN(CoverBorder.Height)
+            ? CoverBorder.ActualHeight
+            : CoverBorder.Height;
+
+        if (currentWidth <= 0 || currentHeight <= 0)
+        {
+            CoverBorder.Width = targetWidth;
+            CoverBorder.Height = targetHeight;
+            return;
+        }
+
+        if (
+            Math.Abs(currentWidth - targetWidth) < 0.5
+            && Math.Abs(currentHeight - targetHeight) < 0.5
+        )
+        {
+            CoverBorder.Width = targetWidth;
+            CoverBorder.Height = targetHeight;
+            return;
+        }
+
+        _coverSizeAnimationTimer ??= DispatcherQueue.CreateTimer();
+        _coverSizeAnimationTimer.Stop();
+        _coverSizeAnimationTimer.Interval = TimeSpan.FromMilliseconds(16);
+        _coverSizeAnimationTimer.Tick -= CoverSizeAnimationTick;
+        _coverSizeAnimationTimer.Tick += CoverSizeAnimationTick;
+
+        _coverSizeFromWidth = currentWidth;
+        _coverSizeFromHeight = currentHeight;
+        _coverSizeToWidth = targetWidth;
+        _coverSizeToHeight = targetHeight;
+        _coverSizeAnimationStart = DateTimeOffset.Now;
+
+        _coverSizeAnimationTimer.Start();
+    }
+
+    private void CoverSizeAnimationTick(DispatcherQueueTimer sender, object args)
+    {
+        const double durationMs = 450;
+        var elapsedMs = (DateTimeOffset.Now - _coverSizeAnimationStart).TotalMilliseconds;
+        var progress = Math.Clamp(elapsedMs / durationMs, 0d, 1d);
+        var easedProgress = 1 - Math.Pow(1 - progress, 3);
+
+        CoverBorder.Width =
+            _coverSizeFromWidth + ((_coverSizeToWidth - _coverSizeFromWidth) * easedProgress);
+        CoverBorder.Height =
+            _coverSizeFromHeight + ((_coverSizeToHeight - _coverSizeFromHeight) * easedProgress);
+
+        if (progress >= 1)
+        {
+            sender.Stop();
+            sender.Tick -= CoverSizeAnimationTick;
+            CoverBorder.Width = _coverSizeToWidth;
+            CoverBorder.Height = _coverSizeToHeight;
+        }
     }
 
     private void TextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -365,7 +434,11 @@ public sealed partial class LyricPage : Page, IDisposable
         _contentGridMarginAnimationTimer?.Stop();
         _contentGridMarginAnimationTimer?.Tick -= ContentGridMarginAnimationTick;
         _contentGridMarginAnimationTimer = null;
+        _coverSizeAnimationTimer?.Stop();
+        _coverSizeAnimationTimer?.Tick -= CoverSizeAnimationTick;
+        _coverSizeAnimationTimer = null;
         Data.PlayState.PropertyChanged -= OnStateChanged;
+        Data.RootPlayBarViewModel?.PropertyChanged -= OnRootPlayBarChanged;
         Data.LyricPage = null;
     }
 }
