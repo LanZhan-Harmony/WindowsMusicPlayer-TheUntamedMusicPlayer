@@ -31,14 +31,14 @@
                 <DoubleAnimation Storyboard.TargetName="RootPlayBar"
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                                  From="0" To="117"
-                                 Duration="0:0:0.3">
+                                 Duration="0:0:0.6">
                     <DoubleAnimation.EasingFunction>
-                        <CubicEase EasingMode="EaseOut"/>
+                        <CubicEase EasingMode="EaseIn"/>
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="RootPlayBar"
                                  Storyboard.TargetProperty="Opacity" From="1"
-                                 To="0" Duration="0:0:0.3"/>
+                                 To="0" Duration="0:0:0.6"/>
             </Storyboard>
             <Storyboard x:Name="ShowInfoBarStoryboard">
                 <DoubleAnimation Storyboard.TargetName="ErrorInfoBar"

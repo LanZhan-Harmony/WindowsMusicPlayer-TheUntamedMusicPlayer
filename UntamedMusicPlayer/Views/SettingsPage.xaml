@@ -285,6 +285,10 @@
                     <toolkit:SettingsCard x:Uid="Settings_WindowBackgroundFollowsCover" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE790;}">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsWindowBackgroundFollowsCover, Mode=TwoWay}"/>
                     </toolkit:SettingsCard>
+
+                    <toolkit:SettingsCard x:Uid="Settings_AutoHidePlaybackControlBar" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE745;}">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsAutoHidePlaybackControlBar, Mode=TwoWay}"/>
+                    </toolkit:SettingsCard>
                 </StackPanel>
 
                 <!--  开发者选项  -->

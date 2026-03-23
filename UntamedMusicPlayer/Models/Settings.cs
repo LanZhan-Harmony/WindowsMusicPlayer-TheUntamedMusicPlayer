@@ -204,7 +204,22 @@ public static class Settings
             }
         }
     }
-    #endregion
+
+    /// <summary>
+    /// 是否在全屏模式下自动隐藏播放控制栏
+    /// </summary>
+    public static bool IsAutoHidePlaybackControlBar
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                _localSettingsService.SaveSettingAsync(nameof(IsAutoHidePlaybackControlBar), value);
+            }
+        }
+    }
 
     /// <summary>
     /// 是否启用均衡器
@@ -237,6 +252,7 @@ public static class Settings
             }
         }
     }
+    #endregion
 
     public static async Task InitializeAsync()
     {
@@ -266,6 +282,9 @@ public static class Settings
             IsWindowBackgroundFollowsCover = await _localSettingsService.ReadSettingAsync<bool>(
                 nameof(IsWindowBackgroundFollowsCover)
             );
+            IsAutoHidePlaybackControlBar = await _localSettingsService.ReadSettingAsync<bool>(
+                nameof(IsAutoHidePlaybackControlBar)
+            );
 
             if (NotFirstUsed)
             {
@@ -292,6 +311,7 @@ public static class Settings
                 var lightColor = Color.FromArgb(255, 252, 252, 252);
                 TintColor =
                     App.Current.RequestedTheme == ApplicationTheme.Dark ? darkColor : lightColor;
+                IsAutoHidePlaybackControlBar = true;
             }
             InitializedLaterAsync();
         }

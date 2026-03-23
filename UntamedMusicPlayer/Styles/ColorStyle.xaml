@@ -1,14 +1,12 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="AccentTextFillBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
             <SolidColorBrush x:Key="AlternateBackgroundBrush"
                              Opacity="0.8"
                              Color="#FDFEFE"/>
             <SolidColorBrush x:Key="RequiredBrush" Color="#c50500"/>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="AccentTextFillBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="AlternateBackgroundBrush"
                              Opacity="0.8"
                              Color="#323232"/>

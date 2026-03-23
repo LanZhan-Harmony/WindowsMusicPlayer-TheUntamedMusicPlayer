@@ -32,6 +32,8 @@ public sealed partial class LyricPage : Page, IDisposable
     private DateTimeOffset _contentGridMarginAnimationStart;
     private double _contentGridMarginFrom;
     private double _contentGridMarginTo;
+    private double _contentGridMarginAnimationDuration;
+
     private CancellationTokenSource? _coverLoadWaitCts;
 
     public LyricPage()
@@ -142,9 +144,10 @@ public sealed partial class LyricPage : Page, IDisposable
     private void OnRootPlayBarChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (
-            e.PropertyName
-            is nameof(RootPlayBarViewModel.IsDetail)
-                or nameof(RootPlayBarViewModel.IsFullScreen)
+            Settings.IsAutoHidePlaybackControlBar
+            && e.PropertyName
+                is nameof(RootPlayBarViewModel.IsDetail)
+                    or nameof(RootPlayBarViewModel.IsFullScreen)
         )
         {
             if (Data.RootPlayBarViewModel!.IsDetail && Data.RootPlayBarViewModel.IsFullScreen)
@@ -156,7 +159,7 @@ public sealed partial class LyricPage : Page, IDisposable
                 RootGrid.PointerMoved -= RootGrid_PointerMoved;
                 if (_isTitleBarHidden)
                 {
-                    AnimateContentGridTopMargin(0);
+                    AnimateContentGridTopMargin(0, 300);
                     ShowTitleBarStoryboard.Begin();
                     _isTitleBarHidden = false;
                     StopTitleBarTimer();
@@ -174,7 +177,7 @@ public sealed partial class LyricPage : Page, IDisposable
         {
             if (_isTitleBarHidden)
             {
-                AnimateContentGridTopMargin(0);
+                AnimateContentGridTopMargin(0, 300);
                 ShowTitleBarStoryboard.Begin();
                 _isTitleBarHidden = false;
             }
@@ -199,7 +202,7 @@ public sealed partial class LyricPage : Page, IDisposable
                     && !_isTitleBarHidden
                 )
                 {
-                    AnimateContentGridTopMargin(-33);
+                    AnimateContentGridTopMargin(-33, 600);
                     HideTitleBarStoryboard.Begin();
                     _isTitleBarHidden = true;
                 }
@@ -231,7 +234,7 @@ public sealed partial class LyricPage : Page, IDisposable
         }
     }
 
-    private void AnimateContentGridTopMargin(double targetTop)
+    private void AnimateContentGridTopMargin(double targetTop, double durationMs)
     {
         var currentTop = ContentGrid.Margin.Top;
         if (Math.Abs(currentTop - targetTop) < 0.1)
@@ -248,6 +251,7 @@ public sealed partial class LyricPage : Page, IDisposable
 
         _contentGridMarginFrom = currentTop;
         _contentGridMarginTo = targetTop;
+        _contentGridMarginAnimationDuration = durationMs;
         _contentGridMarginAnimationStart = DateTimeOffset.Now;
 
         _contentGridMarginAnimationTimer.Start();
@@ -255,10 +259,15 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private void ContentGridMarginAnimationTick(DispatcherQueueTimer sender, object args)
     {
-        const double durationMs = 300;
         var elapsedMs = (DateTimeOffset.Now - _contentGridMarginAnimationStart).TotalMilliseconds;
-        var progress = Math.Clamp(elapsedMs / durationMs, 0d, 1d);
-        var easedProgress = 1 - Math.Pow(1 - progress, 3);
+        var progress = Math.Clamp(elapsedMs / _contentGridMarginAnimationDuration, 0d, 1d);
+
+        // 显示 (To > From): EaseOut
+        // 隐藏 (To < From): EaseIn
+        var easedProgress =
+            _contentGridMarginTo > _contentGridMarginFrom
+                ? 1 - Math.Pow(1 - progress, 3)
+                : Math.Pow(progress, 3);
 
         var currentTop =
             _contentGridMarginFrom
@@ -413,6 +422,7 @@ public sealed partial class LyricPage : Page, IDisposable
         visual.Scale = new Vector3(initialScaleX, initialScaleY, 1f);
 
         var compositor = visual.Compositor;
+
         var scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
         scaleAnimation.InsertKeyFrame(1f, Vector3.One);
         scaleAnimation.Duration = TimeSpan.FromMilliseconds(450);
