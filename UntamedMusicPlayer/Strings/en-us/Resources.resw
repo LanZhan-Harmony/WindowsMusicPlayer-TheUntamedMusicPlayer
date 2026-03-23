@@ -213,6 +213,9 @@
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
     <value>Refresh libraries</value>
   </data>
+  <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
+    <value>Automatically hide the playback control bar in full screen mode</value>
+  </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
     <value>Exclusive mode (Experimental)</value>
   </data>
