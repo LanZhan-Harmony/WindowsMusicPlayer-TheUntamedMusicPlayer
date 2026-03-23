@@ -69,14 +69,14 @@
             <DoubleAnimation Storyboard.TargetName="AppTitleBar"
                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                              From="0" To="-33"
-                             Duration="0:0:0.3">
+                             Duration="0:0:0.6">
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseIn"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
             <DoubleAnimation Storyboard.TargetName="AppTitleBar"
                              Storyboard.TargetProperty="Opacity" From="1"
-                             To="0" Duration="0:0:0.3"/>
+                             To="0" Duration="0:0:0.6"/>
         </Storyboard>
 
     </Page.Resources>

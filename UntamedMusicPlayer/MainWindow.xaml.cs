@@ -34,6 +34,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private DateTimeOffset _shellFrameMarginAnimationStart;
     private double _shellFrameMarginFrom;
     private double _shellFrameMarginTo;
+    private double _shellFrameMarginAnimationDuration;
 
     // 热键 ID
     private const int HOTKEY_ID_VOLUME_UP = 1;
@@ -96,9 +97,10 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private void OnRootPlayBarChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (
-            e.PropertyName
-            is nameof(RootPlayBarViewModel.IsDetail)
-                or nameof(RootPlayBarViewModel.IsFullScreen)
+            Settings.IsAutoHidePlaybackControlBar
+            && e.PropertyName
+                is nameof(RootPlayBarViewModel.IsDetail)
+                    or nameof(RootPlayBarViewModel.IsFullScreen)
         )
         {
             if (Data.RootPlayBarViewModel!.IsDetail && Data.RootPlayBarViewModel.IsFullScreen)
@@ -110,7 +112,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                 RootGrid.PointerMoved -= RootGrid_PointerMoved;
                 if (_isPlayBarHidden)
                 {
-                    AnimateShellFrameBottomMargin(117);
+                    AnimateShellFrameBottomMargin(117, 300);
                     ShowPlayBarStoryboard.Begin();
                     _isPlayBarHidden = false;
                     StopPlayBarTimer();
@@ -129,7 +131,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         {
             if (_isPlayBarHidden)
             {
-                AnimateShellFrameBottomMargin(117);
+                AnimateShellFrameBottomMargin(117, 300);
                 ShowPlayBarStoryboard.Begin();
                 _isPlayBarHidden = false;
             }
@@ -154,7 +156,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                     && !_isPlayBarHidden
                 )
                 {
-                    AnimateShellFrameBottomMargin(0);
+                    AnimateShellFrameBottomMargin(0, 600);
                     HidePlayBarStoryboard.Begin();
                     _isPlayBarHidden = true;
                 }
@@ -186,7 +188,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         }
     }
 
-    private void AnimateShellFrameBottomMargin(double targetBottom)
+    private void AnimateShellFrameBottomMargin(double targetBottom, double durationMs)
     {
         var currentBottom = ShellFrame.Margin.Bottom;
         if (Math.Abs(currentBottom - targetBottom) < 0.1)
@@ -203,6 +205,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 
         _shellFrameMarginFrom = currentBottom;
         _shellFrameMarginTo = targetBottom;
+        _shellFrameMarginAnimationDuration = durationMs;
         _shellFrameMarginAnimationStart = DateTimeOffset.Now;
 
         _shellFrameMarginAnimationTimer.Start();
@@ -213,10 +216,15 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         object args
     )
     {
-        const double durationMs = 300;
         var elapsedMs = (DateTimeOffset.Now - _shellFrameMarginAnimationStart).TotalMilliseconds;
-        var progress = Math.Clamp(elapsedMs / durationMs, 0d, 1d);
-        var easedProgress = 1 - Math.Pow(1 - progress, 3);
+        var progress = Math.Clamp(elapsedMs / _shellFrameMarginAnimationDuration, 0d, 1d);
+
+        // 显示 (To > From): EaseOut (1 - (1-x)^3)
+        // 隐藏 (To < From): EaseIn (x^3)
+        var easedProgress =
+            _shellFrameMarginTo > _shellFrameMarginFrom
+                ? 1 - Math.Pow(1 - progress, 3)
+                : Math.Pow(progress, 3);
 
         var currentBottom =
             _shellFrameMarginFrom + ((_shellFrameMarginTo - _shellFrameMarginFrom) * easedProgress);

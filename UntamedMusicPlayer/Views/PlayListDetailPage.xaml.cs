@@ -148,7 +148,7 @@ public sealed partial class PlayListDetailPage : Page
             backgroundScaleFactorNode,
             progressNode
         );
-        ExpressionNode backgroundOpacityAnimation = progressNode;
+        ExpressionNode backgroundOpacityAnimation = progressNode * 0.7f;
         backgroundVisual.StartAnimation("Scale.Y", backgroundScaleAnimation);
         backgroundVisual.StartAnimation("Opacity", backgroundOpacityAnimation);
 
