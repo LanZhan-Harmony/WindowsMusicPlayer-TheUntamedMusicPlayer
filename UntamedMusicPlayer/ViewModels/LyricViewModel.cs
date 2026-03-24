@@ -1,16 +1,35 @@
+using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public sealed class LyricViewModel
+public sealed partial class LyricViewModel : ObservableObject, IDisposable
 {
-    public LyricViewModel() { }
+    [ObservableProperty]
+    public partial bool IsShowCoverEnabled { get; set; }
+
+    public LyricViewModel()
+    {
+        IsShowCoverEnabled = Data.PlayState.CurrentSong?.Cover is not null;
+        Data.PlayState.PropertyChanged += OnStateChanged;
+    }
+
+    private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(SharedPlaybackState.CurrentSong))
+        {
+            IsShowCoverEnabled = Data.PlayState.CurrentSong?.Cover is not null;
+        }
+    }
 
     public void ListView_ItemClick(object _, ItemClickEventArgs e)
     {
@@ -107,5 +126,16 @@ public sealed class LyricViewModel
                 );
             }
         }
+    }
+
+    public async void ShowCoverButton_Click(object _1, RoutedEventArgs _2)
+    {
+        Data.ImageViewerWindows ??= [];
+        Data.ImageViewerWindows.Add(new ImageViewerWindow(Data.PlayState.CurrentSong!));
+    }
+
+    public void Dispose()
+    {
+        Data.PlayState.PropertyChanged -= OnStateChanged;
     }
 }
