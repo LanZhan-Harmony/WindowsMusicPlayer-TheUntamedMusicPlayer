@@ -20,10 +20,14 @@ public sealed partial class ImageViewerWindow : Window, IDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<ImageViewerWindow>();
 
+    private readonly Guid _windowId;
     private readonly BitmapImage _image;
     private readonly IDetailedSongInfoBase _info;
 
-    public ImageViewerWindow(IDetailedSongInfoBase info)
+    private bool _closed = false;
+    private bool _isDisposed = false;
+
+    public ImageViewerWindow(Guid windowId, IDetailedSongInfoBase info)
     {
         InitializeComponent();
         AppWindow.SetTaskbarIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppIcon/Icon.ico"));
@@ -40,6 +44,7 @@ public sealed partial class ImageViewerWindow : Window, IDisposable
             ((FrameworkElement)Content).RequestedTheme
         );
 
+        _windowId = windowId;
         _image = info.Cover!;
         _info = info;
 
@@ -200,8 +205,26 @@ public sealed partial class ImageViewerWindow : Window, IDisposable
         return ".jpeg";
     }
 
+    private void Window_Closed(object sender, WindowEventArgs args)
+    {
+        _closed = true;
+        Dispose();
+    }
+
     public void Dispose()
     {
-        Close();
+        if (_isDisposed)
+        {
+            return;
+        }
+
+        _isDisposed = true;
+
+        if (!_closed)
+        {
+            Close();
+        }
+
+        Data.ImageViewerWindows?.Remove(_windowId);
     }
 }
