@@ -74,7 +74,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         this.CenterOnScreen(null, null);
         this.Move(AppWindow.Position.X, y);
 
-        Closed += Window_Closed;
+        Activate();
     }
 
     private double GetTextBlockWidth(string? currentLyricContent)
@@ -167,6 +167,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
     public void Dispose()
     {
+        Close();
         Data.DesktopLyricWindow = null;
     }
 }

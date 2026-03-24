@@ -328,7 +328,7 @@ public sealed partial class MaterialSelectorService : IMaterialSelectorService
         StrongReferenceMessenger.Default.Send(
             new ThemeChangeMessage(ThemeSelectorService.IsDarkTheme)
         );
-        TitleBarHelper.UpdateTitleBar(sender.ActualTheme);
+        TitleBarHelper.UpdateTitleBar(App.MainWindow!.AppWindow.TitleBar, sender.ActualTheme);
         SetConfigurationSourceTheme();
         ChangeTheme();
     }

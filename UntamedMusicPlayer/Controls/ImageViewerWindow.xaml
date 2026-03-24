@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="using:UntamedMusicPlayer.Controls"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="using:CommunityToolkit.WinUI"
         mc:Ignorable="d">
 
     <Window.SystemBackdrop>
@@ -12,6 +13,7 @@
 
     <Grid>
         <Grid.Resources>
+            <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,12,0,6</Thickness>
             <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="{ThemeResource SystemAccentColor}"/>
             <SolidColorBrush x:Key="AppBarButtonForegroundPressed"
                              Opacity="0.5"
@@ -23,7 +25,6 @@
 
         <ScrollViewer x:Name="Scroll"
                       HorizontalScrollBarVisibility="Auto"
-                      Tapped="Scroll_Tapped"
                       VerticalScrollBarVisibility="Auto"
                       ZoomMode="Enabled">
             <Image x:Name="Image"
@@ -37,56 +38,43 @@
                     Orientation="Horizontal">
             <Border Background="#CC000000" CornerRadius="{ThemeResource OverlayCornerRadius}">
                 <StackPanel Orientation="Horizontal">
-                    <AppBarButton Width="40" Height="40"
+                    <AppBarButton x:Uid="ImageViewer_Save"
+                                  Width="40" Height="40"
                                   Click="SaveButton_Click" Foreground="White"
-                                  ToolTipService.ToolTip="保存">
-                        <AppBarButton.Icon>
-                            <SymbolIcon Margin="0,-4,0,4" Symbol="Save"/>
-                        </AppBarButton.Icon>
-                    </AppBarButton>
-                    <AppBarButton Width="40" Height="40"
+                                  Icon="{ui:FontIcon Glyph=&#xE74E;}"/>
+                    <AppBarButton x:Uid="ImageViewer_Copy"
+                                  Width="40" Height="40"
                                   Click="CopyButton_Click" Foreground="White"
-                                  ToolTipService.ToolTip="复制">
-                        <AppBarButton.Icon>
-                            <SymbolIcon Margin="0,-4,0,4" Symbol="Copy"/>
-                        </AppBarButton.Icon>
-                    </AppBarButton>
+                                  Icon="{ui:FontIcon Glyph=&#xE8C8;}"/>
                 </StackPanel>
             </Border>
             <Border Margin="12,0,0,0"
                     Background="#CC000000"
                     CornerRadius="{ThemeResource OverlayCornerRadius}">
                 <StackPanel Orientation="Horizontal">
-                    <AppBarButton Width="40" Height="40"
+                    <AppBarButton x:Uid="ImageViewer_OriginalSize"
+                                  Width="40" Height="40"
                                   Margin="0,0,0,0"
                                   Click="OriginButton_Click" Foreground="White"
-                                  ToolTipService.ToolTip="原始大小">
-                        <AppBarButton.Icon>
-                            <SymbolIcon Margin="0,-4,0,4" Symbol="Pictures"/>
-                        </AppBarButton.Icon>
-                    </AppBarButton>
-                    <AppBarButton Width="40" Height="40"
+                                  Icon="{ui:FontIcon Glyph=&#xE8B9;}"/>
+                    <AppBarButton x:Uid="ImageViewer_ZoomOut"
+                                  Width="40" Height="40"
                                   Click="ZoomOutButton_Click" Foreground="White"
-                                  ToolTipService.ToolTip="缩小">
-                        <AppBarButton.Icon>
-                            <SymbolIcon Margin="0,-4,0,4" Symbol="ZoomOut"/>
-                        </AppBarButton.Icon>
+                                  Icon="{ui:FontIcon Glyph=&#xE71F;}">
                         <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Down" Modifiers="None"/>
+                            <KeyboardAccelerator Key="Down"/>
                         </AppBarButton.KeyboardAccelerators>
                     </AppBarButton>
-                    <TextBlock Margin="8,0" VerticalAlignment="Center"
+                    <TextBlock Margin="8,-4,8,0" VerticalAlignment="Center"
                                FontSize="16" Foreground="White"
                                Text="{x:Bind GetZoomText(Scroll.ZoomFactor), Mode=OneWay}"/>
-                    <AppBarButton Width="40" Height="40"
+                    <AppBarButton x:Uid="ImageViewer_ZoomIn"
+                                  Width="40" Height="40"
                                   Click="ZoomInButton_Click" Foreground="White"
-                                  ToolTipService.ToolTip="放大">
+                                  Icon="{ui:FontIcon Glyph=&#xE8A3;}">
                         <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Up" Modifiers="None"/>
+                            <KeyboardAccelerator Key="Up"/>
                         </AppBarButton.KeyboardAccelerators>
-                        <AppBarButton.Icon>
-                            <SymbolIcon Margin="0,-4,0,4" Symbol="ZoomIn"/>
-                        </AppBarButton.Icon>
                     </AppBarButton>
                 </StackPanel>
             </Border>
