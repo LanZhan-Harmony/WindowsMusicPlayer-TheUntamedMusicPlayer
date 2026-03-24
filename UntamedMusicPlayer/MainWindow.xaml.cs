@@ -424,7 +424,13 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             sender.Hide(); // 立即隐藏窗口，提升视觉响应
             Data.MusicPlayer.Pause(); // 立即停止音乐播放
             Data.DesktopLyricWindow?.Dispose(); // 立即关闭桌面歌词
-            Data.ImageViewerWindows?.ForEach(w => w.Dispose()); // 立即关闭图片查看器
+            if (Data.ImageViewerWindows is not null) // 立即关闭图片查看器
+            {
+                foreach (var window in Data.ImageViewerWindows.Values)
+                {
+                    window.Dispose();
+                }
+            }
 
             Settings.NotFirstUsed = true;
             // 并行执行保存以缩短退出后的存活时间
