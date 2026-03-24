@@ -131,7 +131,11 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     public async void ShowCoverButton_Click(object _1, RoutedEventArgs _2)
     {
         Data.ImageViewerWindows ??= [];
-        Data.ImageViewerWindows.Add(new ImageViewerWindow(Data.PlayState.CurrentSong!));
+        var windowId = Guid.CreateVersion7();
+        Data.ImageViewerWindows.Add(
+            windowId,
+            new ImageViewerWindow(windowId, Data.PlayState.CurrentSong!)
+        );
     }
 
     public void Dispose()
