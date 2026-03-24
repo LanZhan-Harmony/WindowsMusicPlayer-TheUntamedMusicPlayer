@@ -153,12 +153,10 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
         if (!IsDesktopLyricWindowStarted)
         {
             Data.DesktopLyricWindow = new DesktopLyricWindow();
-            Data.DesktopLyricWindow.Activate();
             IsDesktopLyricWindowStarted = true;
         }
         else
         {
-            Data.DesktopLyricWindow?.Close();
             Data.DesktopLyricWindow?.Dispose();
             IsDesktopLyricWindowStarted = false;
         }

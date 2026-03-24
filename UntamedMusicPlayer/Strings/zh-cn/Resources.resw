@@ -999,4 +999,25 @@
   <data name="Settings_Playlist" xml:space="preserve">
     <value>播放列表</value>
   </data>
+  <data name="Lyric_ShowCover.Text" xml:space="preserve">
+    <value>显示封面</value>
+  </data>
+  <data name="ImageViewerTitle" xml:space="preserve">
+    <value>无羁 图片查看器</value>
+  </data>
+  <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
+    <value>放大 (↑ / Ctrl+鼠标滚轮向上)</value>
+  </data>
+  <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
+    <value>原始大小</value>
+  </data>
+  <data name="ImageViewer_Copy.ToolTipService.ToolTip" xml:space="preserve">
+    <value>复制到剪贴板</value>
+  </data>
+  <data name="ImageViewer_Save.ToolTipService.ToolTip" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
+    <value>缩小 (↓ / Ctrl+鼠标滚轮向下)</value>
+  </data>
 </root>

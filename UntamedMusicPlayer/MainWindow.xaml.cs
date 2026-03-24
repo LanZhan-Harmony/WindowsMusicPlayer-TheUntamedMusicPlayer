@@ -423,7 +423,8 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             args.Cancel = true;
             sender.Hide(); // 立即隐藏窗口，提升视觉响应
             Data.MusicPlayer.Pause(); // 立即停止音乐播放
-            Data.DesktopLyricWindow?.Close(); // 立即关闭桌面歌词
+            Data.DesktopLyricWindow?.Dispose(); // 立即关闭桌面歌词
+            Data.ImageViewerWindows?.ForEach(w => w.Dispose()); // 立即关闭图片查看器
 
             Settings.NotFirstUsed = true;
             // 并行执行保存以缩短退出后的存活时间
@@ -459,7 +460,6 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         try
         {
             Data.MusicPlayer.Dispose();
-            Data.DesktopLyricWindow?.Dispose();
             UnregisterGlobalHotKeys();
 
             RootGrid.RemoveHandler(UIElement.KeyDownEvent, new KeyEventHandler(OnGlobalKeyDown));
