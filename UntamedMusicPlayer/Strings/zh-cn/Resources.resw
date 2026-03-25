@@ -219,11 +219,17 @@
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
     <value>独占模式 (实验性)</value>
   </data>
+  <data name="Settings_LowLatencyMode.Header" xml:space="preserve">
+    <value>低延迟模式</value>
+  </data>
+  <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
+    <value>可降低音频延迟。建议在中高性能设备上启用。若遇到声音卡顿或播放异常，请关闭。</value>
+  </data>
   <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
-    <value>开启后，应用内音量调节不可用，请在操作系统调节音量</value>
+    <value>开启后，应用内音量调节不可用，请在操作系统调节音量。</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
-    <value>如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列</value>
+    <value>如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列。</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
     <value>仅添加歌曲所在文件夹</value>
