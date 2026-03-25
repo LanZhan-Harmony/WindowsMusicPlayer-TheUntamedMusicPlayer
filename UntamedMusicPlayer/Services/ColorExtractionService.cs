@@ -29,12 +29,9 @@ public sealed class ColorExtractionService : IColorExtractionService
         try
         {
             var device = CanvasDevice.GetSharedDevice();
-            using var stream = new InMemoryRandomAccessStream();
-
-            await stream.WriteAsync(imageBytes.AsBuffer());
-            stream.Seek(0);
-
-            using var bitmap = await CanvasBitmap.LoadAsync(device, stream);
+            using var stream = new MemoryStream(imageBytes);
+            using var randomAccessStream = stream.AsRandomAccessStream();
+            using var bitmap = await CanvasBitmap.LoadAsync(device, randomAccessStream);
 
             // 缩放图像以提高性能
             var scaledSize = GetScaledSize(
