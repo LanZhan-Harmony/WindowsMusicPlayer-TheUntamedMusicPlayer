@@ -55,7 +55,11 @@ public sealed partial class PlayQueueManager : ObservableObject, IDisposable
 
     public void SetNormalPlayQueue(string name, IReadOnlyList<IBriefSongInfoBase> list)
     {
-        if (_state.PlayQueueCount == list.Count && _playQueueName == name)
+        if (
+            _state.PlayQueueCount == list.Count
+            && _playQueueName == name
+            && IsSameSongList(NormalPlayQueue, list)
+        )
         {
             return;
         }
@@ -80,6 +84,7 @@ public sealed partial class PlayQueueManager : ObservableObject, IDisposable
             _state.ShuffleMode == ShuffleState.Shuffled
             && _state.PlayQueueCount == list.Count
             && _playQueueName == name
+            && IsSameSongList(NormalPlayQueue, list)
         )
         {
             return;
@@ -95,6 +100,29 @@ public sealed partial class PlayQueueManager : ObservableObject, IDisposable
         UpdateShufflePlayQueue();
         UpdateQueueIndexes();
         _ = FileManager.SavePlayQueueDataAsync(NormalPlayQueue, ShuffledPlayQueue);
+    }
+
+    private static bool IsSameSongList(
+        ObservableCollection<IndexedPlayQueueSong> currentQueue,
+        IReadOnlyList<IBriefSongInfoBase> targetQueue
+    )
+    {
+        if (currentQueue.Count != targetQueue.Count)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < targetQueue.Count; i++)
+        {
+            var currentSong = currentQueue[i].Song;
+            var targetSong = targetQueue[i];
+            if (!ReferenceEquals(currentSong, targetSong) && currentSong.Path != targetSong.Path)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>
