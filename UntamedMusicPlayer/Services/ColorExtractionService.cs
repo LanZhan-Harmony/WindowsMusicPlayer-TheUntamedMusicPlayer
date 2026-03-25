@@ -4,7 +4,6 @@ using Microsoft.Graphics.Canvas;
 using UntamedMusicPlayer.Contracts.Services;
 using Windows.Foundation;
 using Windows.Graphics;
-using Windows.Storage.Streams;
 using Windows.UI;
 using ZLinq;
 using ZLogger;
