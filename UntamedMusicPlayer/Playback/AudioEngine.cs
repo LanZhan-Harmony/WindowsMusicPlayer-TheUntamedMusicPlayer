@@ -7,7 +7,6 @@ using ManagedBass.Fx;
 using ManagedBass.Wasapi;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
-using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using Windows.Media.Playback;
 using ZLogger;

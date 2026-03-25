@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace UntamedMusicPlayer.Playback;
 
 public enum DevicePerformanceTier
