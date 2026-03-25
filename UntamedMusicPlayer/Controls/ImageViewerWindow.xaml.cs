@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
@@ -217,14 +216,11 @@ public sealed partial class ImageViewerWindow : Window, IDisposable
         {
             return;
         }
-
         _isDisposed = true;
-
         if (!_closed)
         {
             Close();
         }
-
         Data.ImageViewerWindows?.Remove(_windowId);
     }
 }
