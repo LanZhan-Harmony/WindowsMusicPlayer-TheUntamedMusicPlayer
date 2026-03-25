@@ -217,7 +217,7 @@
     <value>在全屏模式下自动隐藏播控栏</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>独占模式 (实验性)</value>
+    <value>独占模式</value>
   </data>
   <data name="Settings_LowLatencyMode.Header" xml:space="preserve">
     <value>低延迟模式</value>

@@ -42,11 +42,13 @@
                     <AppBarButton x:Uid="ImageViewer_Save"
                                   Width="40" Height="40"
                                   Click="SaveButton_Click" Foreground="White"
-                                  Icon="{ui:FontIcon Glyph=&#xE74E;}"/>
+                                  Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                     Glyph=&#xE74E;}"/>
                     <AppBarButton x:Uid="ImageViewer_Copy"
                                   Width="40" Height="40"
                                   Click="CopyButton_Click" Foreground="White"
-                                  Icon="{ui:FontIcon Glyph=&#xE8C8;}"/>
+                                  Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                     Glyph=&#xE8C8;}"/>
                 </StackPanel>
             </Border>
             <Border Margin="12,0,0,0"
@@ -57,11 +59,13 @@
                                   Width="40" Height="40"
                                   Margin="0,0,0,0"
                                   Click="OriginButton_Click" Foreground="White"
-                                  Icon="{ui:FontIcon Glyph=&#xE8B9;}"/>
+                                  Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                     Glyph=&#xE9A6;}"/>
                     <AppBarButton x:Uid="ImageViewer_ZoomOut"
                                   Width="40" Height="40"
                                   Click="ZoomOutButton_Click" Foreground="White"
-                                  Icon="{ui:FontIcon Glyph=&#xE71F;}">
+                                  Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                     Glyph=&#xE71F;}">
                         <AppBarButton.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Down"/>
                         </AppBarButton.KeyboardAccelerators>
@@ -72,7 +76,8 @@
                     <AppBarButton x:Uid="ImageViewer_ZoomIn"
                                   Width="40" Height="40"
                                   Click="ZoomInButton_Click" Foreground="White"
-                                  Icon="{ui:FontIcon Glyph=&#xE8A3;}">
+                                  Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                     Glyph=&#xE8A3;}">
                         <AppBarButton.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Up"/>
                         </AppBarButton.KeyboardAccelerators>
