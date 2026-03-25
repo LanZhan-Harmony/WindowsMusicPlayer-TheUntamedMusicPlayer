@@ -20,7 +20,7 @@ public static class AudioPerformanceGuardian
     {
         var (isUnderHeavyPressure, gcPauseMs) = GetRuntimePressure();
 
-        // 如果动态压力极大（正在频繁 GC 或 CPU 爆满），强行降级
+        // 如果动态压力极大，强行降级
         if (isUnderHeavyPressure)
         {
             var period = ((float)gcPauseMs + 50) / 1000;
@@ -29,8 +29,8 @@ public static class AudioPerformanceGuardian
 
         return _staticTier switch
         {
-            DevicePerformanceTier.Pro => (0.12f, 0.03f),
-            DevicePerformanceTier.Balanced => (0.2f, 0.05f),
+            DevicePerformanceTier.Pro => (0.16f, 0.04f),
+            DevicePerformanceTier.Balanced => (0.25f, 0.0625f),
             _ => (0.4f, 0.1f),
         };
     }
@@ -50,29 +50,27 @@ public static class AudioPerformanceGuardian
 
     private static (bool IsUnderHeavyPressure, double GcPauseMs) GetRuntimePressure()
     {
-        var gcInfo = GC.GetGCMemoryInfo();
+        var info = GC.GetGCMemoryInfo();
 
-        // 获取最后一次 GC 的暂停时间 (毫秒)
-        var lastPause = gcInfo.PauseDurations[0].TotalMilliseconds;
+        // 获取最后一次 GC 的总停顿时间
+        var totalPause = 0d;
+        foreach (var pause in info.PauseDurations)
+        {
+            totalPause += pause.TotalMilliseconds;
+        }
 
-        // 压力判断逻辑：
-        // 1. 如果上次 GC 暂停超过 100ms (对音频是致命的)
-        // 2. 或者当前进程内存占用过载
-        var isHeavy = lastPause > 100 || gcInfo.MemoryLoadBytes > 85;
+        // 计算内存压力百分比
+        var loadPercentage = (float)info.MemoryLoadBytes / info.TotalAvailableMemoryBytes * 100;
 
-        return (isHeavy, lastPause);
+        // 3. 判定标准
+        // - 停顿 > 100ms (音频断流风险)
+        // - 或者内存占用 > 95% (系统交换压力)
+        // - 或者全进程 GC 时间占比过高 (info.PauseTimePercentage > 5)
+        var isHeavy = totalPause > 100 || loadPercentage > 95 || info.PauseTimePercentage > 5;
+
+        return (isHeavy, totalPause);
     }
 
-    private static long GetTotalMemoryGb()
-    {
-        try
-        {
-            var gcInfo = GC.GetGCMemoryInfo();
-            return gcInfo.TotalAvailableMemoryBytes / 1024 / 1024 / 1024;
-        }
-        catch
-        {
-            return 8; // 默认保守值
-        }
-    }
+    private static long GetTotalMemoryGb() =>
+        GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / 1024 / 1024 / 1024;
 }

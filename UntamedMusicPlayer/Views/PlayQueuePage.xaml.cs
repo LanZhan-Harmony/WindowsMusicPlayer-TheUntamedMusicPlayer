@@ -120,7 +120,7 @@ public sealed partial class PlayQueuePage : Page
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         var grid = sender as Grid;
-        // (grid?.FindName("ItemCheckBox") as CheckBox)?.Visibility = Visibility.Visible;
+        (grid?.FindName("ItemCheckBox") as CheckBox)?.Visibility = Visibility.Visible;
         (grid?.FindName("PlayButton") as Button)?.Visibility = Visibility.Visible;
         (grid?.FindName("MusicFontIcon") as FontIcon)?.Visibility = Visibility.Collapsed;
         (grid?.FindName("PlayingFontIcon") as FontIcon)?.Visibility = Visibility.Collapsed;
