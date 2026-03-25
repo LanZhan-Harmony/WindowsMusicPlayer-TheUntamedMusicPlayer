@@ -217,7 +217,7 @@
     <value>Automatically hide the playback control bar in full screen mode</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>Exclusive mode (Experimental)</value>
+    <value>Exclusive mode</value>
   </data>
   <data name="Settings_LowLatencyMode.Header" xml:space="preserve">
     <value>Low latency mode</value>

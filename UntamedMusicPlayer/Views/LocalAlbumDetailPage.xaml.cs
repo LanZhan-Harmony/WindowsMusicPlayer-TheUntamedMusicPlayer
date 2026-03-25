@@ -299,7 +299,7 @@ public sealed partial class LocalAlbumDetailPage : Page
         var grid = sender as Grid;
         var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
         var playButton = grid?.FindName("PlayButton") as Button;
-        // checkBox?.Visibility = Visibility.Visible;
+        checkBox?.Visibility = Visibility.Visible;
         playButton?.Visibility = Visibility.Visible;
     }
 
