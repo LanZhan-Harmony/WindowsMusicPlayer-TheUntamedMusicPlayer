@@ -214,7 +214,7 @@
     <value>Refresh libraries</value>
   </data>
   <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
-    <value>Automatically hide the playback control bar in full screen mode</value>
+    <value>Automatically hide the playback control bar in full screen lyrics page</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
     <value>Exclusive mode</value>
