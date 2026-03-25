@@ -48,6 +48,8 @@ public sealed partial class SharedPlaybackState : ObservableObject
 
     public bool IsExclusiveMode { get; set; } = false;
 
+    public bool IsLowLatencyMode { get; set; } = false;
+
     public async Task LoadStateAsync()
     {
         try
@@ -67,6 +69,9 @@ public sealed partial class SharedPlaybackState : ObservableObject
             IsMute = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsMute));
             IsExclusiveMode = await _localSettingsService.ReadSettingAsync<bool>(
                 nameof(IsExclusiveMode)
+            );
+            IsLowLatencyMode = await _localSettingsService.ReadSettingAsync<bool>(
+                nameof(IsLowLatencyMode)
             );
             if (Settings.NotFirstUsed)
             {
