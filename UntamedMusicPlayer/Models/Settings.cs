@@ -44,6 +44,22 @@ public static class Settings
     }
 
     /// <summary>
+    /// 是否为独占模式下的低延迟模式
+    /// </summary>
+    public static bool IsLowLatencyMode
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                _localSettingsService.SaveSettingAsync(nameof(IsLowLatencyMode), value);
+            }
+        }
+    }
+
+    /// <summary>
     /// 仅添加歌曲所在文件夹
     /// </summary>
     public static bool IsOnlyAddSpecificFolder
@@ -261,6 +277,9 @@ public static class Settings
             NotFirstUsed = await _localSettingsService.ReadSettingAsync<bool>(nameof(NotFirstUsed));
             IsExclusiveMode = await _localSettingsService.ReadSettingAsync<bool>(
                 nameof(IsExclusiveMode)
+            );
+            IsLowLatencyMode = await _localSettingsService.ReadSettingAsync<bool>(
+                nameof(IsLowLatencyMode)
             );
             IsOnlyAddSpecificFolder = await _localSettingsService.ReadSettingAsync<bool>(
                 nameof(IsOnlyAddSpecificFolder)

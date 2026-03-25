@@ -7,6 +7,7 @@ using ManagedBass.Fx;
 using ManagedBass.Wasapi;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
+using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using Windows.Media.Playback;
 using ZLogger;
@@ -346,14 +347,17 @@ public sealed partial class AudioEngine : IDisposable
                     _logger.ZLogInformation($"无法获取流信息: {Bass.LastError}");
                     return false;
                 }
+                var (buffer, period) = AudioPerformanceGuardian.GetRecommendedSettings();
                 if (
                     !BassWasapi.Init(
                         -1,
                         channelInfo.Frequency,
                         channelInfo.Channels,
-                        WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven,
-                        0.1f,
-                        0,
+                        _state.IsLowLatencyMode
+                            ? WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven
+                            : WasapiInitFlags.Exclusive,
+                        _state.IsLowLatencyMode ? 0.1f : buffer,
+                        _state.IsLowLatencyMode ? 0.025f : period,
                         _wasapiProc,
                         nint.Zero
                     )
@@ -465,6 +469,34 @@ public sealed partial class AudioEngine : IDisposable
         {
             _state.IsExclusiveMode = isExclusive;
             if (_fxHandle == 0)
+            {
+                return;
+            }
+            var position = GetPositionSeconds();
+            Stop();
+            LoadSong();
+            if (isPlaying)
+            {
+                if (!Play())
+                {
+                    _dispatcher.TryEnqueue(() => _state.PlayState = MediaPlaybackState.Paused);
+                }
+            }
+            await SetPositionInternal(position);
+        });
+    }
+
+    /// <summary>
+    /// 设置低延迟模式
+    /// </summary>
+    /// <param name="isLowLatency"></param>
+    /// <param name="isPlaying"></param>
+    public async Task SetLowLatencyMode(bool isLowLatency, bool isPlaying)
+    {
+        await ExecuteOnPlaybackThread(async () =>
+        {
+            _state.IsLowLatencyMode = isLowLatency;
+            if (!_state.IsExclusiveMode || _fxHandle == 0)
             {
                 return;
             }

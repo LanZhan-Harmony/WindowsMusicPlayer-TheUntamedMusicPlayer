@@ -219,11 +219,17 @@
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
     <value>Exclusive mode (Experimental)</value>
   </data>
+  <data name="Settings_LowLatencyMode.Header" xml:space="preserve">
+    <value>Low latency mode</value>
+  </data>
+  <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
+    <value>Reduces audio latency. Recommended for mid-to-high-end devices. Disable this if you experience stuttering or playback issues.</value>
+  </data>
   <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
     <value>Once enabled, in-app volume control will be unavailable. Please adjust the volume through the operating system.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
-    <value>If you are on the music library's song page with folder sorting enabled, clicking a song will only add songs from that same folder to the playback queue</value>
+    <value>If you are on the music library's song page with folder sorting enabled, clicking a song will only add songs from that same folder to the playback queue.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
     <value>Add only the folder where the song is located</value>
