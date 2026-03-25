@@ -108,9 +108,9 @@ public sealed partial class PlayListsPage : Page
     private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
     {
         var grid = sender as Grid;
-        var checkBox = grid!.FindName("ItemCheckBox") as CheckBox;
-        var playButton = grid!.FindName("PlayButton") as Button;
-        var menuButton = grid!.FindName("MenuButton") as Button;
+        var checkBox = grid?.FindName("ItemCheckBox") as CheckBox;
+        var playButton = grid?.FindName("PlayButton") as Button;
+        var menuButton = grid?.FindName("MenuButton") as Button;
         checkBox?.Visibility = Visibility.Collapsed;
         playButton?.Visibility = Visibility.Collapsed;
         menuButton?.Visibility = Visibility.Collapsed;

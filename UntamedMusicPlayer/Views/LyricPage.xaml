@@ -240,7 +240,8 @@
                                                            Glyph=&#xE77B;}"/>
                         <MenuFlyoutItem x:Uid="Lyric_ShowCover"
                                         Click="{x:Bind ViewModel.ShowCoverButton_Click}"
-                                        Icon="{ui:FontIcon Glyph=&#xE91B;}"
+                                        Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
+                                                           Glyph=&#xE91B;}"
                                         IsEnabled="{x:Bind ViewModel.IsShowCoverEnabled, Mode=OneWay}"/>
                         <MenuFlyoutItem x:Uid="Songs_Properties"
                                         Click="PropertiesButton_Click"
