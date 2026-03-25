@@ -69,11 +69,13 @@
 		<DefaultLanguage>en-us</DefaultLanguage>
 		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 		<SelfContained>True</SelfContained>
+		<!-- 若要显示 DeploymentManagerAutoInitializer.cs、WindowsAppSDK-VersionInfo.cs，把 WindowsAppSDKSelfContained 设为 False -->
 		<WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
 		<IsAotCompatible>True</IsAotCompatible>
 		<!--<PublishAot>True</PublishAot>-->
 		<!--<PublishTrimmed>True</PublishTrimmed>-->
-		<PublishReadyToRun>True</PublishReadyToRun>
+		<!-- 若调试时无法获取本地变量或参数的值，把 PublishReadyToRun 设为 False 可以解决 -->
+		<!--<PublishReadyToRun>True</PublishReadyToRun>-->
 		<JsonSerializerIsReflectionEnabledByDefault>True</JsonSerializerIsReflectionEnabledByDefault>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
