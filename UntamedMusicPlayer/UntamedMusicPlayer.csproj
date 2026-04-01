@@ -59,14 +59,9 @@
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>True</HasPackageAndPublishMenu>
 	</PropertyGroup>
-	<ItemGroup>
-		<PRIResource Update="Strings\zh-cn\Resources.resw">
-			<Generator>ResXFileCodeGenerator</Generator>
-		</PRIResource>
-	</ItemGroup>
 	<!-- 发布属性 -->
 	<PropertyGroup>
-		<DefaultLanguage>en-us</DefaultLanguage>
+		<DefaultLanguage>en</DefaultLanguage>
 		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 		<SelfContained>True</SelfContained>
 		<!-- 若要显示 DeploymentManagerAutoInitializer.cs、WindowsAppSDK-VersionInfo.cs，把 WindowsAppSDKSelfContained 设为 False -->
