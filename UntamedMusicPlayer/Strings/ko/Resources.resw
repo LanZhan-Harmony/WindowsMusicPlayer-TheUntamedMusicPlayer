@@ -1,0 +1,1029 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>언테임드 뮤직 플레이어</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>언테임드 뮤직 플레이어</value>
+  </data>
+  <data name="Shell_MusicLibrary.Content" xml:space="preserve">
+    <value>음악 도서관</value>
+  </data>
+  <data name="Shell_PlayQueue.Content" xml:space="preserve">
+    <value>재생 대기열 (Play queue)</value>
+  </data>
+  <data name="Shell_PlayLists.Content" xml:space="preserve">
+    <value>플레이리스트</value>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>개인화</value>
+  </data>
+  <data name="Settings_ThisIsAnOrdinaryLyric.Text" xml:space="preserve">
+    <value>이건 평범한 가사야</value>
+  </data>
+  <data name="Settings_ThisIsAHighlightedLyric.Text" xml:space="preserve">
+    <value>이 가사는 강조된 부분입니다</value>
+  </data>
+  <data name="Settings_Theme.Header" xml:space="preserve">
+    <value>앱 테마</value>
+  </data>
+  <data name="Settings_ResetSoftware.Header" xml:space="preserve">
+    <value>이 소프트웨어를 초기화하세요</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>빛</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>어두운</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>시스템 설정 사용</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>이 신청서에 대하여</value>
+  </data>
+  <data name="Settings_AddFolderToMusic" xml:space="preserve">
+    <value>이 폴더를 음악에 추가하세요</value>
+  </data>
+  <data name="Settings_AboutDescription.Description" xml:space="preserve">
+    <value>© 2026 Untamed Corporation. 판권 소유.</value>
+  </data>
+  <data name="Settings_Library.Text" xml:space="preserve">
+    <value>도서관</value>
+  </data>
+  <data name="Settings_AddFolder.Text" xml:space="preserve">
+    <value>폴더 추가</value>
+  </data>
+  <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
+    <value>음악 도서관 위치</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>가사 미리보기</value>
+  </data>
+  <data name="Settings_NoFolder.Text" xml:space="preserve">
+    <value>이 라이브러리에는 폴더가 포함되어 있지 않습니다.</value>
+  </data>
+  <data name="Settings_Refresh.Content" xml:space="preserve">
+    <value>새로고침</value>
+  </data>
+  <data name="Settings_Import.Content" xml:space="preserve">
+    <value>수입</value>
+  </data>
+  <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
+    <value>개별 플레이리스트 가져오기</value>
+  </data>
+  <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
+    <value>m3u8 파일에서 재생목록을 일괄 가져오기</value>
+  </data>
+  <data name="Settings_ImportFromBin.Header" xml:space="preserve">
+    <value>이진 파일에서 재생목록을 일괄 가져오기</value>
+  </data>
+  <data name="Settings_Export.Content" xml:space="preserve">
+    <value>수출</value>
+  </data>
+  <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
+    <value>재생목록을 m3u8 파일로 배치 내보내기 (권장)</value>
+  </data>
+  <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
+    <value>호환성이 좋아지고 대부분의 음악 플레이어와 호환됩니다</value>
+  </data>
+  <data name="Settings_ExportToBin.Header" xml:space="preserve">
+    <value>재생목록을 바이너리 파일로 일괄 내보내기</value>
+  </data>
+  <data name="Settings_ExportToBin.Description" xml:space="preserve">
+    <value>더 빠르지만 이 소프트웨어에서만 사용할 수 있습니다</value>
+  </data>
+  <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
+    <value>새로고침 라이브러리</value>
+  </data>
+  <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
+    <value>전체 화면 가사 페이지에서 재생 조절 바를 자동으로 숨기기</value>
+  </data>
+  <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
+    <value>독점 모드</value>
+  </data>
+  <data name="Settings_LowLatencyMode.Header" xml:space="preserve">
+    <value>저지연 모드</value>
+  </data>
+  <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
+    <value>오디오 지연 시간을 줄여줍니다. 중고급 기기에 추천합니다. 끊김이나 재생 문제가 있으면 이 기능을 비활성화하세요.</value>
+  </data>
+  <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
+    <value>활성화되면 앱 내 볼륨 조절은 불가능해집니다. 운영체제를 통해 볼륨을 조정해 주세요.</value>
+  </data>
+  <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
+    <value>음악 라이브러리의 노래 페이지에서 폴더 정렬이 활성화되어 있다면, 노래를 클릭하면 같은 폴더의 노래만 재생 큐에 추가됩니다.</value>
+  </data>
+  <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
+    <value>노래가 있는 폴더만 추가하세요</value>
+  </data>
+  <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
+    <value>재생목록 가져오기/내보내기</value>
+  </data>
+  <data name="Settings_ReIndex.Text" xml:space="preserve">
+    <value>도서관 위치의 모든 미디어를 볼 수 없다면, 지금 도서관을 다시 인덱싱할 수 있습니다.</value>
+  </data>
+  <data name="Shell_Search.PlaceholderText" xml:space="preserve">
+    <value>서치 (곧 공개)</value>
+  </data>
+  <data name="PlayBar_Property.Text" xml:space="preserve">
+    <value>특성</value>
+  </data>
+  <data name="PlayBar_Equalizer.Text" xml:space="preserve">
+    <value>이퀄라이저 (곧 공개 예정)</value>
+  </data>
+  <data name="PlayBar_Speed.Text" xml:space="preserve">
+    <value>속도</value>
+  </data>
+  <data name="PlayBar_CastDevice.Text" xml:space="preserve">
+    <value>기기로 캐스트 (곧 출시)</value>
+  </data>
+  <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
+    <value>10초 뒤로 건너뛰기</value>
+  </data>
+  <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
+    <value>30초 건너뛰기</value>
+  </data>
+  <data name="Shell_PlayLists1.Text" xml:space="preserve">
+    <value>플레이리스트</value>
+  </data>
+  <data name="Shell_PlayQueue1.Text" xml:space="preserve">
+    <value>재생 대기열 (Play queue)</value>
+  </data>
+  <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
+    <value>음악</value>
+  </data>
+  <data name="Shell_Settings1.Text" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
+    <value>음악을 찾을 수가 없었어요</value>
+  </data>
+  <data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
+    <value>음악 라이브러리에는 음악 콘텐츠가 전혀 포함되어 있지 않습니다.</value>
+  </data>
+  <data name="HaveMusic_Songs.Text" xml:space="preserve">
+    <value>노래</value>
+  </data>
+  <data name="Home_Playlists.Text" xml:space="preserve">
+    <value>플레이리스트</value>
+  </data>
+  <data name="HaveMusic_Albums.Text" xml:space="preserve">
+    <value>앨범</value>
+  </data>
+  <data name="HaveMusic_Artists.Text" xml:space="preserve">
+    <value>예술가</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
+    <value>이 폴더를 취소해야 할까요?</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
+    <value>이 소프트웨어를 리셋할 거 확실해?</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
+    <value>Music에서 "{title}" 폴더를 제거하면 Music에는 더 이상 나타나지 않지만 삭제되지는 않습니다.</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
+    <value>이 소프트웨어의 모든 데이터, 설정, 재생 대기열, 재생목록 등은 모두 비워지므로 주의해서 진행해 주시기 바랍니다.</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
+    <value>폴더 제거</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogPrimary" xml:space="preserve">
+    <value>리셋 및 재시작</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogClose" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="PlayLists_DeleteDialogClose" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="PlayLists_DeleteDialogPrimary" xml:space="preserve">
+    <value>삭제</value>
+  </data>
+  <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
+    <value>플레이리스트를 영구적으로 삭제할 수 있나요?</value>
+  </data>
+  <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
+    <value>이 플레이리스트를 삭제할 거 확실해? '{title}'를 삭제하면 복구할 수 없습니다.</value>
+  </data>
+  <data name="Settings_SearchSetting.Content" xml:space="preserve">
+    <value>시스템 인덱싱 설정 관리</value>
+  </data>
+  <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
+    <value>앱을 바꾸려는 의도였나요?</value>
+  </data>
+  <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
+    <value> "미디어 플레이어"가 "설정"을 열려고 시도 중입니다.</value>
+  </data>
+  <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
+    <value>네</value>
+  </data>
+  <data name="Settings_OpenSettingDialogClose" xml:space="preserve">
+    <value>아니</value>
+  </data>
+  <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
+    <value>볼륨 (Alt+↑/↓)</value>
+  </data>
+  <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
+    <value>전체 화면 (F11)</value>
+  </data>
+  <data name="PlayBar_DesktopLyric.ToolTipService.ToolTip" xml:space="preserve">
+    <value>데스크톱 가사 (Ctrl+M)</value>
+  </data>
+  <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
+    <value>더 많은 선택지</value>
+  </data>
+  <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
+    <value>이전 (Ctrl+B)</value>
+  </data>
+  <data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
+    <value>다음 (Ctrl+F)</value>
+  </data>
+  <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
+    <value>NowPlaying (Ctrl+N)</value>
+  </data>
+  <data name="PlayBar_ShuffleOff" xml:space="preserve">
+    <value>셔플: 꺼짐 (Ctrl+H)</value>
+  </data>
+  <data name="PlayBar_ShuffleOn" xml:space="preserve">
+    <value>셔플: 켜기 (Ctrl+H)</value>
+  </data>
+  <data name="PlayBar_RepeatOff" xml:space="preserve">
+    <value>반복: 꺼짐 (Ctrl+T)</value>
+  </data>
+  <data name="PlayBar_RepeatAll" xml:space="preserve">
+    <value>반복: 모두 (Ctrl+T)</value>
+  </data>
+  <data name="PlayBar_RepeatOne" xml:space="preserve">
+    <value>반복: 1 (Ctrl+T)</value>
+  </data>
+  <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
+    <value>음악 라이브러리 (Ctrl+R)</value>
+  </data>
+  <data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
+    <value>재생 큐 (Ctrl+Q)</value>
+  </data>
+  <data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
+    <value>플레이리스트 (Ctrl+Y)</value>
+  </data>
+  <data name="PlayBar_Play" xml:space="preserve">
+    <value>플레이 (Ctrl+P)</value>
+  </data>
+  <data name="PlayBar_Pause" xml:space="preserve">
+    <value>일시정지 (Ctrl+P)</value>
+  </data>
+  <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
+    <value>찾으라</value>
+  </data>
+  <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
+    <value>폴더 제거</value>
+  </data>
+  <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
+    <value>음악 라이브러리에 폴더를 추가하세요</value>
+  </data>
+  <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
+    <value>셔플: 온</value>
+  </data>
+  <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
+    <value>셔플: 꺼짐</value>
+  </data>
+  <data name="PlayBar_More_RepeatAll" xml:space="preserve">
+    <value>반복: 모두</value>
+  </data>
+  <data name="PlayBar_More_RepeatOne" xml:space="preserve">
+    <value>반복: 1</value>
+  </data>
+  <data name="PlayBar_More_RepeatOff" xml:space="preserve">
+    <value>반복: 꺼짐</value>
+  </data>
+  <data name="Settings_Materials" xml:space="preserve">
+    <value>없음, 미카, 마이카 알트, 데스크탑 아크릴, 아크릴 베이스, 아크릴 씬, 블러, 투명, 애니메이션</value>
+  </data>
+  <data name="Songs_SortBy" xml:space="preserve">
+    <value>A - Z, Z - A, 아티스트 (오름차순), 아티스트 (내림차순), 앨범 (오름차순), 앨범 (내림차순), 발매 연도 (오름차순), 발매 연도 (내림차순), 날짜 추가 (오름차순), 날짜 추가 (내림차순), 폴더 (오름차순), 폴더 (내림차순)</value>
+  </data>
+  <data name="Albums_SortBy" xml:space="preserve">
+    <value>A - Z, Z - A, 출시 연도 (오름차순), 출시 연도 (내림차순), 아티스트 (오름차순), 아티스트 (내림차순), 날짜 추가 (오름차순), 날짜 추가 (내림차순)</value>
+  </data>
+  <data name="SongInfo_UnknownArtist" xml:space="preserve">
+    <value>미상의 아티스트</value>
+  </data>
+  <data name="SongInfo_UnknownGenre" xml:space="preserve">
+    <value>미지의 장르</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode0" xml:space="preserve">
+    <value>지역 노래</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
+    <value>온라인 노래</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
+    <value>뮤직 라이브러리 5의 노래</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
+    <value>뮤직 라이브러리 6의 노래</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
+    <value>뮤직 라이브러리 4의 노래</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
+    <value>뮤직 라이브러리 3의 노래</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
+    <value>뮤직 라이브러리 2의 노래</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
+    <value>음악 라이브러리 1의 노래</value>
+  </data>
+  <data name="SongInfo_UnknownAlbum" xml:space="preserve">
+    <value>미상 앨범</value>
+  </data>
+  <data name="Songs_SortByChosen.Text" xml:space="preserve">
+    <value>정렬 기준: </value>
+  </data>
+  <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
+    <value>셔플하고 플레이하세요</value>
+  </data>
+  <data name="Songs_GenreChosen.Text" xml:space="preserve">
+    <value>장르: </value>
+  </data>
+  <data name="PlayQueue_Clear.Text" xml:space="preserve">
+    <value>비켜</value>
+  </data>
+  <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
+    <value>플레이 큐에 추가</value>
+  </data>
+  <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
+    <value>재생 대기열 (Play queue)</value>
+  </data>
+  <data name="Songs_AddTo_NewPlaylist.Text" xml:space="preserve">
+    <value>새로운 플레이리스트</value>
+  </data>
+  <data name="PlayQueue_AddFiles.Text" xml:space="preserve">
+    <value>파일 추가</value>
+  </data>
+  <data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
+    <value>재생 큐에 파일 추가하기</value>
+  </data>
+  <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
+    <value>재생 큐에 추가할 파일을 찾아보세요</value>
+  </data>
+  <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
+    <value>플레이 큐에 폴더 추가하기</value>
+  </data>
+  <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
+    <value>폴더를 선택해서 그 폴더 안의 모든 미디어를 재생 큐에 추가하세요</value>
+  </data>
+  <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
+    <value>URL에서 재생 큐에 미디어 추가하기</value>
+  </data>
+  <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
+    <value>URL을 입력하고 그 주소의 미디어를 재생 대기열에 추가하세요</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
+    <value>URL 여다</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_Cancel" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
+    <value>오픈</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
+    <value>파일, 스트림, 재생목록의 URL을 입력하세요</value>
+  </data>
+  <data name="Songs_Play.Text" xml:space="preserve">
+    <value>플레이</value>
+  </data>
+  <data name="Songs_PlayNext.Text" xml:space="preserve">
+    <value>다음 플레이</value>
+  </data>
+  <data name="Songs_AddTo.Text" xml:space="preserve">
+    <value>추가</value>
+  </data>
+  <data name="Songs_EditInfo.Text" xml:space="preserve">
+    <value>정보 수정</value>
+  </data>
+  <data name="Songs_Properties.Text" xml:space="preserve">
+    <value>특성</value>
+  </data>
+  <data name="Songs_ShowAlbum.Text" xml:space="preserve">
+    <value>쇼 앨범</value>
+  </data>
+  <data name="Songs_ShowArtist.Text" xml:space="preserve">
+    <value>쇼 아티스트</value>
+  </data>
+  <data name="Songs_Select.Text" xml:space="preserve">
+    <value>선택</value>
+  </data>
+  <data name="PlayQueue_Remove.Text" xml:space="preserve">
+    <value>제거</value>
+  </data>
+  <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
+    <value>앞으로 나아가세요</value>
+  </data>
+  <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
+    <value>아래로 내려가세요</value>
+  </data>
+  <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>플레이</value>
+  </data>
+  <data name="Settings_WindowMaterial.Header" xml:space="preserve">
+    <value>창문 재질</value>
+  </data>
+  <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
+    <value>재료를 선택하세요</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>서정형 폰트 계열</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>가사 글꼴 크기</value>
+  </data>
+  <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
+    <value>폰트 계열 선택</value>
+  </data>
+  <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
+    <value>글꼴 크기 선택</value>
+  </data>
+  <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
+    <value>창문 배경은 표지 테마 색상을 따릅니다</value>
+  </data>
+  <data name="Songs_Pinyin" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="Settings_Version" xml:space="preserve">
+    <value>버전</value>
+  </data>
+  <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>지우기 (Ctrl+Shift+X)</value>
+  </data>
+  <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>재생 큐에 추가할 파일을 찾아보세요</value>
+  </data>
+  <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
+    <value>10초 뒤로 건너뛰기 (Ctrl+왼쪽)</value>
+  </data>
+  <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
+    <value>30초 앞으로 건너뛰기 (Ctrl+Right)</value>
+  </data>
+  <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
+    <value>전체 화면</value>
+  </data>
+  <data name="SongInfo_AllGenres" xml:space="preserve">
+    <value>모든 장르</value>
+  </data>
+  <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
+    <value>도서관 색인화...</value>
+  </data>
+  <data name="Artists_SortBy" xml:space="preserve">
+    <value>A - Z, Z - A</value>
+  </data>
+  <data name="Playlists_SortBy" xml:space="preserve">
+    <value>A - Z, Z - A, 날짜 수정 (오름차순), 날짜 수정 (내림차순)</value>
+  </data>
+  <data name="Settings_FallBack.Header" xml:space="preserve">
+    <value>창이 초점을 잃은 후 배경 업데이트가 멈춥니다</value>
+  </data>
+  <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
+    <value>창문 배경색</value>
+  </data>
+  <data name="Shell_Home.Content" xml:space="preserve">
+    <value>홈</value>
+  </data>
+  <data name="Shell_Home1.Text" xml:space="preserve">
+    <value>홈</value>
+  </data>
+  <data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
+    <value>홈 (Ctrl+Shift+F)</value>
+  </data>
+  <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
+    <value>온라인 콘텐츠 검색</value>
+  </data>
+  <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
+    <value>광도 불투명도</value>
+  </data>
+  <data name="Settings_Reset.Content" xml:space="preserve">
+    <value>리셋</value>
+  </data>
+  <data name="PropertiesDialog_Title.Text" xml:space="preserve">
+    <value>제목</value>
+  </data>
+  <data name="PropertiesDialog_Album.Text" xml:space="preserve">
+    <value>앨범</value>
+  </data>
+  <data name="PropertiesDialog_Track.Text" xml:space="preserve">
+    <value>트랙</value>
+  </data>
+  <data name="PropertiesDialog_Genre.Text" xml:space="preserve">
+    <value>장르</value>
+  </data>
+  <data name="PropertiesDialog_Bitrate.Text" xml:space="preserve">
+    <value>비트 레이트</value>
+  </data>
+  <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
+    <value>기여 아티스트</value>
+  </data>
+  <data name="PropertiesDialog_AlbumArtist.Text" xml:space="preserve">
+    <value>앨범 아티스트</value>
+  </data>
+  <data name="PropertiesDialog_Length.Text" xml:space="preserve">
+    <value>길이</value>
+  </data>
+  <data name="PropertiesDialog_Year.Text" xml:space="preserve">
+    <value>연도</value>
+  </data>
+  <data name="PropertiesDialog_ItemType.Text" xml:space="preserve">
+    <value>품목 유형</value>
+  </data>
+  <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
+    <value>파일 위치</value>
+  </data>
+  <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
+    <value>열린 파일 위치</value>
+  </data>
+  <data name="PropertiesDialog.Title" xml:space="preserve">
+    <value>특성</value>
+  </data>
+  <data name="EqualizerDialog_Title.Text" xml:space="preserve">
+    <value>이퀄라이저</value>
+  </data>
+  <data name="EqualizerDialog_On" xml:space="preserve">
+    <value>계속</value>
+  </data>
+  <data name="EqualizerDialog_Decibel" xml:space="preserve">
+    <value>dB</value>
+  </data>
+  <data name="EqualizerDialog_Decibel1.Text" xml:space="preserve">
+    <value>dB</value>
+  </data>
+  <data name="EqualizerDialog_Preset.Text" xml:space="preserve">
+    <value>프리셋</value>
+  </data>
+  <data name="EqualizerDialog_Presets" xml:space="preserve">
+    <value>플랫, 트레블 부스트, 베이스 부스트, 헤드폰, 노트북, 휴대용 스피커, 홈 스테레오, TV, 자동차, 커스텀</value>
+  </data>
+  <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
+    <value>근처 슬라이더를 함께 이동시키세요</value>
+  </data>
+  <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
+    <value>Hz</value>
+  </data>
+  <data name="EqualizerDialog_kHz.Text" xml:space="preserve">
+    <value>kHz</value>
+  </data>
+  <data name="EqualizerDialog_Off" xml:space="preserve">
+    <value>꺼</value>
+  </data>
+  <data name="EditSongInfoDialog.Title" xml:space="preserve">
+    <value>노래 정보 편집</value>
+  </data>
+  <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
+    <value>가사</value>
+  </data>
+  <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
+    <value>표지 이미지</value>
+  </data>
+  <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
+    <value>앨범 정보 편집</value>
+  </data>
+  <data name="EditPlaylistInfoDialog.Title" xml:space="preserve">
+    <value>재생목록 정보 편집</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
+    <value>새 플레이리스트에 추가</value>
+  </data>
+  <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
+    <value>닫습니다</value>
+  </data>
+  <data name="EqualizerDialog.CloseButtonText" xml:space="preserve">
+    <value>닫습니다</value>
+  </data>
+  <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="EditPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>저장</value>
+  </data>
+  <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
+    <value>수입</value>
+  </data>
+  <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="ImportPlaylistDialog.Title" xml:space="preserve">
+    <value>재생목록 가져오기</value>
+  </data>
+  <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
+    <value>이름</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportFromFolder.Content" xml:space="preserve">
+    <value>폴더에서 가져오기</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
+    <value>수입 곡들</value>
+  </data>
+  <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
+    <value>노래 수</value>
+  </data>
+  <data name="ImportPlaylistDialog_Type.Text" xml:space="preserve">
+    <value>유형</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportFromM3u8Files.Content" xml:space="preserve">
+    <value>m3u8 파일에서 가져오기</value>
+  </data>
+  <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>저장</value>
+  </data>
+  <data name="EditPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>저장</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>창조</value>
+  </data>
+  <data name="DesktopLyricWindowTitle" xml:space="preserve">
+    <value>데스크톱 가사</value>
+  </data>
+  <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
+    <value>모두 재생</value>
+  </data>
+  <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
+    <value>셔플하고 플레이하세요</value>
+  </data>
+  <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
+    <value>정보 수정</value>
+  </data>
+  <data name="AlbumInfo_Songs" xml:space="preserve">
+    <value>노래</value>
+  </data>
+  <data name="AlbumInfo_RunTime" xml:space="preserve">
+    <value>실행 시간</value>
+  </data>
+  <data name="ArtistInfo_Albums" xml:space="preserve">
+    <value>앨범</value>
+  </data>
+  <data name="ArtistInfo_Album" xml:space="preserve">
+    <value>앨범</value>
+  </data>
+  <data name="ArtistInfo_Hours" xml:space="preserve">
+    <value>운영 시간</value>
+  </data>
+  <data name="ArtistInfo_Hour" xml:space="preserve">
+    <value>한 시간</value>
+  </data>
+  <data name="ArtistInfo_Min" xml:space="preserve">
+    <value>민</value>
+  </data>
+  <data name="ArtistInfo_Sec" xml:space="preserve">
+    <value>SEC</value>
+  </data>
+  <data name="ArtistInfo_Secs" xml:space="preserve">
+    <value>초록</value>
+  </data>
+  <data name="ArtistInfo_Mins" xml:space="preserve">
+    <value>분들</value>
+  </data>
+  <data name="AlbumInfo_Song" xml:space="preserve">
+    <value>노래</value>
+  </data>
+  <data name="ArtistInfo_Artist" xml:space="preserve">
+    <value>예술가</value>
+  </data>
+  <data name="ArtistDetail_InYourLibrary.Text" xml:space="preserve">
+    <value>당신의 도서관에서</value>
+  </data>
+  <data name="AlbumInfo_UnknownYear" xml:space="preserve">
+    <value>연도 미상</value>
+  </data>
+  <data name="Home_MusicLibrary1.Text" xml:space="preserve">
+    <value>음악 라이브러리 1</value>
+  </data>
+  <data name="Home_MusicLibrary6.Text" xml:space="preserve">
+    <value>음악 라이브러리 6</value>
+  </data>
+  <data name="Home_MusicLibrary5.Text" xml:space="preserve">
+    <value>음악 도서관 5</value>
+  </data>
+  <data name="Home_MusicLibrary4.Text" xml:space="preserve">
+    <value>음악 라이브러리 4</value>
+  </data>
+  <data name="Home_MusicLibrary3.Text" xml:space="preserve">
+    <value>음악 라이브러리 3</value>
+  </data>
+  <data name="Home_MusicLibrary2.Text" xml:space="preserve">
+    <value>음악 라이브러리 2</value>
+  </data>
+  <data name="Home_NetworkError.Text" xml:space="preserve">
+    <value>네트워크 오류, 나중에 다시 시도해 주세요</value>
+  </data>
+  <data name="Home_Retry.Text" xml:space="preserve">
+    <value>재도전</value>
+  </data>
+  <data name="Home_SearchResult.Text" xml:space="preserve">
+    <value>의 검색 결과</value>
+  </data>
+  <data name="Settings_SourceCode.Content" xml:space="preserve">
+    <value>소스 코드</value>
+  </data>
+  <data name="Settings_Thanks.Header" xml:space="preserve">
+    <value>이 소프트웨어에 생명을 불어넣은 MoXiangTongXiu에게 감사드립니다</value>
+  </data>
+  <data name="OnlineSongs_Download.Text" xml:space="preserve">
+    <value>다운로드</value>
+  </data>
+  <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
+    <value>노래 다운로드 위치</value>
+  </data>
+  <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
+    <value>변화</value>
+  </data>
+  <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
+    <value>다운로드 시작</value>
+  </data>
+  <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="OnlineMusicLibrary_Progress" xml:space="preserve">
+    <value>진행 상황</value>
+  </data>
+  <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
+    <value>다운로드 중...</value>
+  </data>
+  <data name="OnlineMusicLibrary_Processing" xml:space="preserve">
+    <value>처리 중...</value>
+  </data>
+  <data name="OnlineMusicLibrary_OpenFolder" xml:space="preserve">
+    <value>폴더 열기</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
+    <value>다운로드 완료</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadCancelled" xml:space="preserve">
+    <value>다운로드 취소됨</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadFailed" xml:space="preserve">
+    <value>다운로드 실패</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
+    <value>노래 다운로드</value>
+  </data>
+  <data name="Shell_Settings.Content" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
+    <value>설정 (Ctrl+G)</value>
+  </data>
+  <data name="PlaylistInfo_Item" xml:space="preserve">
+    <value>항목</value>
+  </data>
+  <data name="PlaylistInfo_Items" xml:space="preserve">
+    <value>항목</value>
+  </data>
+  <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
+    <value>쇼 재생목록</value>
+  </data>
+  <data name="PlayLists_Rename.Text" xml:space="preserve">
+    <value>이름 변경</value>
+  </data>
+  <data name="PlayLists_Delete.Text" xml:space="preserve">
+    <value>삭제</value>
+  </data>
+  <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
+    <value>쇼 재생목록</value>
+  </data>
+  <data name="Main_SendFeedback.Content" xml:space="preserve">
+    <value>피드백 보내세요</value>
+  </data>
+  <data name="Shell_PlayFiles" xml:space="preserve">
+    <value>재생 파일</value>
+  </data>
+  <data name="Error_SongPlayback" xml:space="preserve">
+    <value>{title}을 열 수 없습니다. 이는 파일 형식이 지원되지 않거나, 파일 확장자가 잘못되었거나, 파일이 손상되었거나, 네트워크 상태가 이상하기 때문일 수 있습니다.</value>
+  </data>
+  <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
+    <value>오디오 재생 장치는 현재 사용 중입니다.</value>
+  </data>
+  <data name="Error_SamePlaylistName" xml:space="preserve">
+    <value>이 이름의 플레이리스트는 이미 이 폴더에 존재합니다. 다른 이름을 입력한 후 다시 시도하세요.</value>
+  </data>
+  <data name="Error_EditingSongInfoIO" xml:space="preserve">
+    <value>{title}을 편집할 수 없습니다. 이는 현재 파일이 재생 중이거나 다른 프로세스에 점유되어 있거나, 파일 형식이 지원되지 않기 때문일 수 있습니다.</value>
+  </data>
+  <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
+    <value>개발자 옵션</value>
+  </data>
+  <data name="Settings_Logging.Header" xml:space="preserve">
+    <value>벌목</value>
+  </data>
+  <data name="Settings_OpenFolder.Content" xml:space="preserve">
+    <value>폴더 열기</value>
+  </data>
+  <data name="Error_EditingSongInfoOther" xml:space="preserve">
+    <value>{title}의 일부 속성을 편집할 수 없습니다. 이는 파일 형식이 지원되지 않거나 파일이 손상되었기 때문일 수 있습니다.</value>
+  </data>
+  <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
+    <value>플레이리스트가 하나도 없잖아</value>
+  </data>
+  <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
+    <value>새 재생목록 만들기</value>
+  </data>
+  <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
+    <value>새로운 플레이리스트</value>
+  </data>
+  <data name="PlayLists_CreatePlaylist.Content" xml:space="preserve">
+    <value>재생목록 만들기</value>
+  </data>
+  <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
+    <value>제목 없는 재생목록</value>
+  </data>
+  <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
+    <value>제목 없는 재생목록</value>
+  </data>
+  <data name="PlaylistInfo_Create" xml:space="preserve">
+    <value>재생목록 '{title}' 생성됨.</value>
+  </data>
+  <data name="PlaylistInfo_Delete" xml:space="preserve">
+    <value>플레이리스트 '{title}' 삭제됨.</value>
+  </data>
+  <data name="PlaylistInfo_AddItems" xml:space="preserve">
+    <value>{num} 재생목록 '{title}'에 추가된 항목들.</value>
+  </data>
+  <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
+    <value>{num} 재생목록이 임포트되었습니다.</value>
+  </data>
+  <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
+    <value>{num} 재생목록이 내보내졌습니다.</value>
+  </data>
+  <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
+    <value>{num} 재생목록이 내보내졌습니다.</value>
+  </data>
+  <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
+    <value>{num} 플레이리스트가 임포트되었습니다.</value>
+  </data>
+  <data name="PlaylistInfo_AddItem" xml:space="preserve">
+    <value>{num} 재생목록 '{title}'에 추가된 항목.</value>
+  </data>
+  <data name="Settings_Lyric.Text" xml:space="preserve">
+    <value>가사</value>
+  </data>
+  <data name="Settings_Play.Text" xml:space="preserve">
+    <value>플레이</value>
+  </data>
+  <data name="Settings_PlaylistFile" xml:space="preserve">
+    <value>플레이리스트 파일</value>
+  </data>
+  <data name="Settings_Playlist" xml:space="preserve">
+    <value>플레이리스트</value>
+  </data>
+  <data name="Lyric_ShowCover.Text" xml:space="preserve">
+    <value>쇼 표지</value>
+  </data>
+  <data name="ImageViewerTitle" xml:space="preserve">
+    <value>언테임드 이미지 뷰어</value>
+  </data>
+  <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
+    <value>확대 (↑ / Ctrl+마우스 휠 위)</value>
+  </data>
+  <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
+    <value>원래 크기</value>
+  </data>
+  <data name="ImageViewer_Copy.ToolTipService.ToolTip" xml:space="preserve">
+    <value>클립보드에 복사함</value>
+  </data>
+  <data name="ImageViewer_Save.ToolTipService.ToolTip" xml:space="preserve">
+    <value>저장</value>
+  </data>
+  <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
+    <value>줌아웃 (↑ / Ctrl+마우스 휠 아래)</value>
+  </data>
+</root>
