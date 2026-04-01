@@ -1024,6 +1024,6 @@
     <value>Save</value>
   </data>
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Zoom out  (↑ / Ctrl+Mouse wheel down)</value>
+    <value>Zoom out (↑ / Ctrl+Mouse wheel down)</value>
   </data>
 </root>
