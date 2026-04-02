@@ -1,0 +1,3 @@
+files:
+  - source: /UntamedMusicPlayer/Strings/en/Resources.resw
+    translation: /UntamedMusicPlayer/Strings/%osx_locale%/Resources.resw
