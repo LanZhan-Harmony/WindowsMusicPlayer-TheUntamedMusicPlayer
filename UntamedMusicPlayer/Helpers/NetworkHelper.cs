@@ -8,7 +8,7 @@ public static class NetworkHelper
         {
             using var client = new HttpClient();
             client.Timeout = TimeSpan.FromSeconds(5);
-            var response = await client.GetAsync("https://www.baidu.com");
+            var response = await client.GetAsync("https://music.163.com");
             return response.IsSuccessStatusCode;
         }
         catch
