@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Дикий музыкальный плеер</value>
+    <value>Музыкальный плеер без приручения</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Дикий музыкальный плеер</value>
+    <value>Музыкальный плеер без приручения</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
-    <value>Музыкальная библиотека</value>
+    <value>Музыкальные библиотеки</value>
   </data>
   <data name="Shell_PlayQueue.Content" xml:space="preserve">
-    <value>Очередь воспроизведения</value>
+    <value>Плейлист</value>
   </data>
   <data name="Shell_PlayLists.Content" xml:space="preserve">
     <value>Плейлисты</value>
@@ -136,52 +136,52 @@
     <value>Персонализация</value>
   </data>
   <data name="Settings_ThisIsAnOrdinaryLyric.Text" xml:space="preserve">
-    <value>Это обычная строчка</value>
+    <value>Это обычная лирика</value>
   </data>
   <data name="Settings_ThisIsAHighlightedLyric.Text" xml:space="preserve">
-    <value>Это выделенный текст</value>
+    <value>Это выделенная лирика</value>
   </data>
   <data name="Settings_Theme.Header" xml:space="preserve">
     <value>Тема приложения</value>
   </data>
   <data name="Settings_ResetSoftware.Header" xml:space="preserve">
-    <value>Сбросьте это программное обеспечение</value>
+    <value>Сбросить программу</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>Свет</value>
+    <value>Светлая</value>
   </data>
   <data name="Settings_Theme_Dark.Content" xml:space="preserve">
     <value>Тёмная</value>
   </data>
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>Используйте системные настройки</value>
+    <value>Использовать системные настройки</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>Об этом приложении</value>
   </data>
   <data name="Settings_AddFolderToMusic" xml:space="preserve">
-    <value>Добавьте эту папку в Музыку</value>
+    <value>Добавить эту папку в Музыку</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
-    <value>© 2026 Untamed Corporation. Все права защищены.</value>
+    <value>©️ 2026 Untamed Corporation. Все права защищены.</value>
   </data>
   <data name="Settings_Library.Text" xml:space="preserve">
     <value>Библиотеки</value>
   </data>
   <data name="Settings_AddFolder.Text" xml:space="preserve">
-    <value>Папка «Добавить»</value>
+    <value>Добавить папку</value>
   </data>
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
-    <value>Расположение музыкальных библиотек</value>
+    <value>Местоположение музыкальной библиотеки</value>
   </data>
   <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Превью текста песен</value>
+    <value>Предпросмотр Лирика</value>
   </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
-    <value>В этой библиотеке нет папок.</value>
+    <value>В эту библиотеку нет ни одной папки.</value>
   </data>
   <data name="Settings_Refresh.Content" xml:space="preserve">
-    <value>Обновление</value>
+    <value>Обновить</value>
   </data>
   <data name="Settings_Import.Content" xml:space="preserve">
     <value>Импорт</value>
@@ -190,31 +190,31 @@
     <value>Импортировать индивидуальный плейлист</value>
   </data>
   <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
-    <value>Пакетный импорт плейлистов из файлов m3u8</value>
+    <value>Пакетный импорт плейлистов из m3u8 файлов</value>
   </data>
   <data name="Settings_ImportFromBin.Header" xml:space="preserve">
-    <value>Пакетный импорт плейлистов из двоичного файла</value>
+    <value>Пакетный импорт плейлистов из бинарного файла</value>
   </data>
   <data name="Settings_Export.Content" xml:space="preserve">
     <value>Экспорт</value>
   </data>
   <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
-    <value>Пакетный экспорт плейлистов в файлы m3u8 (рекомендую)</value>
+    <value>Экспорт плейлистов в m3u8 (рекомендуется)</value>
   </data>
   <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
-    <value>Лучшая совместимость и работа с большинством музыкальных плееров</value>
+    <value>Улучшенная совместимость и работает с большинством музыкальных плееров</value>
   </data>
   <data name="Settings_ExportToBin.Header" xml:space="preserve">
-    <value>Пакетный экспорт плейлистов в бинарный файл</value>
+    <value>Пакетные экспортировать списки воспроизведения в бинарный файл</value>
   </data>
   <data name="Settings_ExportToBin.Description" xml:space="preserve">
     <value>Быстрее, но доступно только для этого программного обеспечения</value>
   </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
-    <value>Библиотеки обновления</value>
+    <value>Обновить библиотеки</value>
   </data>
   <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
-    <value>Автоматически скрыть панель управления воспроизведением на странице с текстами песен на весь экран</value>
+    <value>Автоматически скрыть управляющую панель воспроизведения на полноэкранном экране</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
     <value>Эксклюзивный режим</value>
@@ -223,22 +223,22 @@
     <value>Режим низкой задержки</value>
   </data>
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
-    <value>Снижает задержку звука. Рекомендуется для устройств среднего и высокого класса. Отключите это, если возникают подтормаживания или воспроизведение.</value>
+    <value>Уменьшает задержку звука. Рекомендуется для средних и высоких устройств. Отключите эту опцию, если вы испытываете проблемы с заглушением или воспроизведением.</value>
   </data>
   <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
-    <value>После включения управление громкостью в приложении будет недоступно. Пожалуйста, регулируйте громкость через операционную систему.</value>
+    <value>После включения, управление громкостью в приложении будет недоступно. Пожалуйста, настройте громкость через операционную систему.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
-    <value>Если вы находитесь на странице песен музыкальной библиотеки с включенной сортировкой папок, нажатие на песню добавит в очередь воспроизведения только песни из той же папки.</value>
+    <value>Если вы находитесь на странице треков библиотеки музыки с включенной сортировкой папок, нажатие на песню добавит только треки из этой же папки в очередь на воспроизведение.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
-    <value>Добавьте только папку, где находится песня</value>
+    <value>Добавить только папку, где находится песня</value>
   </data>
   <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
-    <value>Импорт/экспорт плейлистов</value>
+    <value>Импорт/экспорт плейлиста</value>
   </data>
   <data name="Settings_ReIndex.Text" xml:space="preserve">
-    <value>Если вы не видите все медиафайлы из ваших библиотек, вы можете переиндексировать свои библиотеки уже сейчас.</value>
+    <value>Если вы не видите всех мультимедийных файлов из вашей библиотеки, вы можете переиндексировать ваши библиотеки сейчас.</value>
   </data>
   <data name="Shell_Search.PlaceholderText" xml:space="preserve">
     <value>Поиск (скоро)</value>
@@ -247,40 +247,40 @@
     <value>Свойства</value>
   </data>
   <data name="PlayBar_Equalizer.Text" xml:space="preserve">
-    <value>Equalizer (скоро выйдет)</value>
+    <value>Эквалайзер (скоро)</value>
   </data>
   <data name="PlayBar_Speed.Text" xml:space="preserve">
     <value>Скорость</value>
   </data>
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
-    <value>Трансляция на устройство (скоро появится)</value>
+    <value>Перенос на устройство (скоро)</value>
   </data>
   <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
-    <value>Вернуться на 10 секунд назад</value>
+    <value>Вернуться на 10 секунд</value>
   </data>
   <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
-    <value>Перенесёмся на 30 секунд вперёд</value>
+    <value>Пропустить вперёд 30 секунд</value>
   </data>
   <data name="Shell_PlayLists1.Text" xml:space="preserve">
     <value>Плейлисты</value>
   </data>
   <data name="Shell_PlayQueue1.Text" xml:space="preserve">
-    <value>Очередь воспроизведения</value>
+    <value>Плейлист</value>
   </data>
   <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
     <value>Музыка</value>
   </data>
   <data name="Shell_Settings1.Text" xml:space="preserve">
-    <value>Места действия</value>
+    <value>Настройки</value>
   </data>
   <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
-    <value>Мы не смогли найти никакой музыки</value>
+    <value>Мы не смогли найти какую-либо музыку</value>
   </data>
   <data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
-    <value>В вашей музыкальной библиотеке нет музыкального контента.</value>
+    <value>Ваша музыкальная библиотека не содержит музыкального контента.</value>
   </data>
   <data name="HaveMusic_Songs.Text" xml:space="preserve">
-    <value>Песни</value>
+    <value>Треки</value>
   </data>
   <data name="Home_Playlists.Text" xml:space="preserve">
     <value>Плейлисты</value>
@@ -292,22 +292,22 @@
     <value>Художники</value>
   </data>
   <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
-    <value>Вернуть эту папку?</value>
+    <value>Просмотреть эту папку?</value>
   </data>
   <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
     <value>Вы уверены, что хотите сбросить это ПО?</value>
   </data>
   <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
-    <value>Если удалить папку «{title}» из Музыки, она больше не будет отображаться в Музыке, но и не будет удаляться.</value>
+    <value>Если вы удалите папку "{title}" из музыки, она больше не будет отображаться в музыке, но не будет удалена.</value>
   </data>
   <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
-    <value>Все данные этого программного обеспечения будут опустошёны, включая настройки, очередь воспроизведения, плейлисты и т.д., пожалуйста, будьте осторожны.</value>
+    <value>Все данные этого программного обеспечения будут очищены, включая настройки, очередь воспроизведения, плейлисты и т.д., будьте осторожны.</value>
   </data>
   <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
     <value>Удалить папку</value>
   </data>
   <data name="Settings_ResetSoftwareDialogPrimary" xml:space="preserve">
-    <value>Сброс и перезапуск</value>
+    <value>Сбросить и перезапустить</value>
   </data>
   <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
     <value>Отмена</value>
@@ -322,19 +322,19 @@
     <value>Удалить</value>
   </data>
   <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
-    <value>Удалять плейлисты навсегда?</value>
+    <value>Удалить плейлисты навсегда?</value>
   </data>
   <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
-    <value>Вы уверены, что хотите удалить этот плейлист? Если вы удалите '{title}', вы не сможете его восстановить.</value>
+    <value>Вы уверены, что хотите удалить этот плейлист? Если вы удалите '{title}', вы не сможете восстановить его.</value>
   </data>
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
-    <value>Управление настройками индексации системы</value>
+    <value>Управление параметрами индексации системы</value>
   </data>
   <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
-    <value>Вы имели в виду смену приложения?</value>
+    <value>Вы намереваетесь переключить приложения?</value>
   </data>
   <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
-    <value> «Медиаплеер» пытается открыть «Настройки».</value>
+    <value> «Медиа плеер» пытается открыть «Настройки».</value>
   </data>
   <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
     <value>Да</value>
@@ -343,52 +343,52 @@
     <value>Нет</value>
   </data>
   <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Объем (Alt+↑/↓)</value>
+    <value>Громкость (Alt+&lt;unk&gt; /&lt;unk&gt; )</value>
   </data>
   <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Полноэкранный режим (F11)</value>
+    <value>Полный экран (F11)</value>
   </data>
   <data name="PlayBar_DesktopLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Текст для рабочего стола (Ctrl+M)</value>
+    <value>Настольная лирика (Ctrl+M)</value>
   </data>
   <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Больше вариантов</value>
+    <value>Больше опций</value>
   </data>
   <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Предыдущее (Ctrl+B)</value>
+    <value>Предыдущий (Ctrl+B)</value>
   </data>
   <data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Далее (Ctrl+F)</value>
+    <value>Следующий (Ctrl+F)</value>
   </data>
   <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
-    <value>NowPlaying (Ctrl+N)</value>
+    <value>Сейчас играет (Ctrl+N)</value>
   </data>
   <data name="PlayBar_ShuffleOff" xml:space="preserve">
-    <value>Тасовка: выключено (Ctrl+H)</value>
+    <value>Перемешение: Выкл (Ctrl+H)</value>
   </data>
   <data name="PlayBar_ShuffleOn" xml:space="preserve">
-    <value>Перемешивание: Включено (Ctrl+H)</value>
+    <value>Перемешение: Вкл (Ctrl+H)</value>
   </data>
   <data name="PlayBar_RepeatOff" xml:space="preserve">
-    <value>Повторяю: Выключение (Ctrl+T)</value>
+    <value>Повтор выкл. (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatAll" xml:space="preserve">
-    <value>Повторяю: все (Ctrl+T)</value>
+    <value>Повторить: Все (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatOne" xml:space="preserve">
-    <value>Повторяю: один (Ctrl+T)</value>
+    <value>Повторить: один (Ctrl+T)</value>
   </data>
   <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
     <value>Музыкальная библиотека (Ctrl+R)</value>
   </data>
   <data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Воспроизведение очереди (Ctrl+Q)</value>
+    <value>Очередь воспроизведения (Ctrl+Q)</value>
   </data>
   <data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
     <value>Плейлисты (Ctrl+Y)</value>
   </data>
   <data name="PlayBar_Play" xml:space="preserve">
-    <value>Воспроизвести (Ctrl+P)</value>
+    <value>Играть (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Pause" xml:space="preserve">
     <value>Пауза (Ctrl+P)</value>
@@ -400,82 +400,82 @@
     <value>Удалить папку</value>
   </data>
   <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Добавьте папку в свою музыкальную библиотеку</value>
+    <value>Добавить папку в свою музыкальную библиотеку</value>
   </data>
   <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
-    <value>Шаффл: Включено</value>
+    <value>Перемешение: Вкл</value>
   </data>
   <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
-    <value>Шаффл: Off</value>
+    <value>Перемешивание: Выкл</value>
   </data>
   <data name="PlayBar_More_RepeatAll" xml:space="preserve">
-    <value>Повторяю: Все</value>
+    <value>Повторить: Все</value>
   </data>
   <data name="PlayBar_More_RepeatOne" xml:space="preserve">
-    <value>Повторяю: Один</value>
+    <value>Повторить: один</value>
   </data>
   <data name="PlayBar_More_RepeatOff" xml:space="preserve">
-    <value>Повторяю: выключено</value>
+    <value>Повтор выкл.</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>Нет, Мика, Слюда Alt, Настольный акрил, Акриловая основа, Акриловая Тонкая, Размытие, Прозрачное, Анимированное</value>
+    <value>Нет, Mica, Mica Alt, Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Анимированные</value>
   </data>
   <data name="Songs_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Артист (По возрастанию), Артист (По убыванию), Альбом (По возрастанию), Альбом (По убыванию), Год выпуска (По возрастанию), Год выпуска (По возрастанию), Дата добавления (По возрастанию), Дата добавления (По возрастанию), Папка (По возрастанию), Папка (По убыванию)</value>
+    <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Альбом (Asc), Альбом (Desc), год выпуска (Asc), Год выпуска (Ос), Дата добавления (по возрастанию), Дата добавления (Desc), Папка (по возрастанию), Папка (по убыванию)</value>
   </data>
   <data name="Albums_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Год выпуска (По возрастанию), Год выпуска (По убыванию), Исполнитель (По возрастанию), Художник (По убыванию), Дата добавления (По возрастанию), Дата добавления (По возрастанию), Дата добавления (По убыванию)</value>
+    <value>A - Z, Z - A, год выпуска (Asc), год выпуска (Desc), Художник (Asc), Художник (Desc), Дата добавления (Asc), Дата добавления (Desc)</value>
   </data>
   <data name="SongInfo_UnknownArtist" xml:space="preserve">
-    <value>Неизвестный артист</value>
+    <value>Неизвестный исполнитель</value>
   </data>
   <data name="SongInfo_UnknownGenre" xml:space="preserve">
     <value>Неизвестный жанр</value>
   </data>
   <data name="DisplaySongInfo_SourceMode0" xml:space="preserve">
-    <value>Местная песня</value>
+    <value>Локальная песня</value>
   </data>
   <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
-    <value>Онлайн-песня</value>
+    <value>Онлайн песня</value>
   </data>
   <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
-    <value>Песня из Музыкальной библиотеки 5</value>
+    <value>Песня из музыкальной библиотеки 5</value>
   </data>
   <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
-    <value>Песня из Музыкальной библиотеки 6</value>
+    <value>Песня из музыкальной библиотеки 6</value>
   </data>
   <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
-    <value>Песня из Музыкальной библиотеки 4</value>
+    <value>Песня из музыкальной библиотеки 4</value>
   </data>
   <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
-    <value>Песня из Музыкальной библиотеки 3</value>
+    <value>Песня из музыкальной библиотеки 3</value>
   </data>
   <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
-    <value>Песня из Музыкальной библиотеки 2</value>
+    <value>Песня из музыкальной библиотеки 2</value>
   </data>
   <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
-    <value>Песня из Музыкальной библиотеки 1</value>
+    <value>Песня из музыкальной библиотеки 1</value>
   </data>
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
     <value>Неизвестный альбом</value>
   </data>
   <data name="Songs_SortByChosen.Text" xml:space="preserve">
-    <value>Сортировать по: </value>
+    <value>Сортировка: </value>
   </data>
   <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
-    <value>Тасуируй и играй</value>
+    <value>Перемешать и играть</value>
   </data>
   <data name="Songs_GenreChosen.Text" xml:space="preserve">
     <value>Жанр: </value>
   </data>
   <data name="PlayQueue_Clear.Text" xml:space="preserve">
-    <value>Чисто</value>
+    <value>Очистить</value>
   </data>
   <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
-    <value>Добавить в очередь на проигрывание</value>
+    <value>Добавить в очередь воспроизведения</value>
   </data>
   <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
-    <value>Очередь воспроизведения</value>
+    <value>Плейлист</value>
   </data>
   <data name="Songs_AddTo_NewPlaylist.Text" xml:space="preserve">
     <value>Новый плейлист</value>
@@ -487,22 +487,22 @@
     <value>Добавить файл(ы) в очередь воспроизведения</value>
   </data>
   <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
-    <value>Просмотрите файлы для добавления в очередь воспроизведения</value>
+    <value>Просмотр файлов, добавляемых в очередь воспроизведения</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
     <value>Добавить папку в очередь воспроизведения</value>
   </data>
   <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
-    <value>Выберите папку и добавьте все медиафайлы из неё в очередь воспроизведения</value>
+    <value>Выберите папку и добавьте все файлы в эту папку в очередь воспроизведения</value>
   </data>
   <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
-    <value>Добавить медиа с URL в очередь воспроизведения</value>
+    <value>Добавить медиа из URL в очередь воспроизведения</value>
   </data>
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
-    <value>Введите URL и добавьте медиафайл с этого адреса в очередь воспроизведения</value>
+    <value>Введите URL-адрес и добавьте медиа с этого адреса в очередь воспроизведения</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
-    <value>Откройте URL</value>
+    <value>Открыть URL</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Cancel" xml:space="preserve">
     <value>Отмена</value>
@@ -511,124 +511,124 @@
     <value>Открыть</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
-    <value>Введите URL файла, потока или плейлиста</value>
+    <value>Введите URL для файла, потока или плейлиста</value>
   </data>
   <data name="Songs_Play.Text" xml:space="preserve">
-    <value>Игра</value>
+    <value>Играть</value>
   </data>
   <data name="Songs_PlayNext.Text" xml:space="preserve">
-    <value>Играйте дальше</value>
+    <value>Играть далее</value>
   </data>
   <data name="Songs_AddTo.Text" xml:space="preserve">
-    <value>Добавить к</value>
+    <value>Добавить в</value>
   </data>
   <data name="Songs_EditInfo.Text" xml:space="preserve">
-    <value>Информация для редактирования</value>
+    <value>Изменить информацию</value>
   </data>
   <data name="Songs_Properties.Text" xml:space="preserve">
     <value>Свойства</value>
   </data>
   <data name="Songs_ShowAlbum.Text" xml:space="preserve">
-    <value>Альбом шоу</value>
+    <value>Показать альбом</value>
   </data>
   <data name="Songs_ShowArtist.Text" xml:space="preserve">
-    <value>Артист шоу</value>
+    <value>Показать художника</value>
   </data>
   <data name="Songs_Select.Text" xml:space="preserve">
-    <value>Выберите</value>
+    <value>Выбрать</value>
   </data>
   <data name="PlayQueue_Remove.Text" xml:space="preserve">
     <value>Удалить</value>
   </data>
   <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
-    <value>Двигайся вперёд</value>
+    <value>Вверх</value>
   </data>
   <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
-    <value>Двигайся вниз</value>
+    <value>Сдвинуть вниз</value>
   </data>
   <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Игра</value>
+    <value>Играть</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
-    <value>Материал для окон</value>
+    <value>Материал для окна</value>
   </data>
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>Выберите материал</value>
   </data>
   <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
-    <value>Лирическое семейство шрифтов</value>
+    <value>Семейство шрифтов Lyric</value>
   </data>
   <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Размер шрифта текста</value>
+    <value>Размер шрифта лирики</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
-    <value>Выберите семейство шрифтов</value>
+    <value>Выберите шрифт</value>
   </data>
   <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
-    <value>Выберите размер шрифта</value>
+    <value>Choose a font-size</value>
   </data>
   <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>Фон окна соответствует цвету темы обложки</value>
+    <value>Окно фона следует за цветом обложки</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="Settings_Version" xml:space="preserve">
-    <value>Версия</value>
+    <value>Версии</value>
   </data>
   <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Очистить (Ctrl+Shift+X)</value>
   </data>
   <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Просмотрите файлы для добавления в очередь воспроизведения</value>
+    <value>Просмотр файлов, добавляемых в очередь воспроизведения</value>
   </data>
   <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Перейти на 10 секунд назад (Ctrl+Left)</value>
+    <value>Вернуться на 10 секунд (Ctrl + Left)</value>
   </data>
   <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Перемещение на 30 секунд вперёд (Ctrl+Вправо)</value>
+    <value>Пропустить вперёд на 30 секунд (Ctrl+Right)</value>
   </data>
   <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
-    <value>На весь экран</value>
+    <value>Полный экран</value>
   </data>
   <data name="SongInfo_AllGenres" xml:space="preserve">
     <value>Все жанры</value>
   </data>
   <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
-    <value>Индексирующие библиотеки...</value>
+    <value>Индексирование библиотек...</value>
   </data>
   <data name="Artists_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A</value>
+    <value>А - Я, Я - А</value>
   </data>
   <data name="Playlists_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Дата изменения (По возрастанию), Дата изменения (По убыванию)</value>
+    <value>A - Z, Z - A, Дата изменения (Asc), Дата изменения (Desc)</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
-    <value>Фон перестаёт обновляться после того, как окно теряет фокус</value>
+    <value>Фон останавливает обновление после потери фокуса окна</value>
   </data>
   <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
     <value>Цвет фона окна</value>
   </data>
   <data name="Shell_Home.Content" xml:space="preserve">
-    <value>Дом</value>
+    <value>Домашний</value>
   </data>
   <data name="Shell_Home1.Text" xml:space="preserve">
-    <value>Дом</value>
+    <value>Домашний</value>
   </data>
   <data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
     <value>Главная (Ctrl+Shift+F)</value>
   </data>
   <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
-    <value>Поиск контента в интернете</value>
+    <value>Поиск сетевого контента</value>
   </data>
   <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
-    <value>Светимость непрозрачности</value>
+    <value>Непрозрачность яркости</value>
   </data>
   <data name="Settings_Reset.Content" xml:space="preserve">
-    <value>Сброс</value>
+    <value>Reset</value>
   </data>
   <data name="PropertiesDialog_Title.Text" xml:space="preserve">
-    <value>Название</value>
+    <value>Заголовок</value>
   </data>
   <data name="PropertiesDialog_Album.Text" xml:space="preserve">
     <value>Альбом</value>
@@ -643,7 +643,7 @@
     <value>Битрейт</value>
   </data>
   <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
-    <value>Артисты, участвовавшие</value>
+    <value>Содействие исполнителям</value>
   </data>
   <data name="PropertiesDialog_AlbumArtist.Text" xml:space="preserve">
     <value>Исполнитель альбома</value>
@@ -658,10 +658,10 @@
     <value>Тип предмета</value>
   </data>
   <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
-    <value>Местоположение файла</value>
+    <value>Расположение файла</value>
   </data>
   <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
-    <value>Открытое местоположение файла</value>
+    <value>Открыть расположение файла</value>
   </data>
   <data name="PropertiesDialog.Title" xml:space="preserve">
     <value>Свойства</value>
@@ -673,43 +673,43 @@
     <value>На</value>
   </data>
   <data name="EqualizerDialog_Decibel" xml:space="preserve">
-    <value>dB</value>
+    <value>дБ</value>
   </data>
   <data name="EqualizerDialog_Decibel1.Text" xml:space="preserve">
-    <value>dB</value>
+    <value>дБ</value>
   </data>
   <data name="EqualizerDialog_Preset.Text" xml:space="preserve">
-    <value>Пресет</value>
+    <value>Preset</value>
   </data>
   <data name="EqualizerDialog_Presets" xml:space="preserve">
-    <value>Плоские, высокие частоты, басовые усиления, наушники, ноутбук, портативные колонки, домашняя стерео, телевизор, автомобиль, кастомный</value>
+    <value>Плоский, Требный ускоритель, бонус баса, Headphones, Laptop, портативные динамики, стерео, ТВ, автомобиль, Пользовательский</value>
   </data>
   <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
-    <value>Двигайте рядом ползунки вместе</value>
+    <value>Сдвиньте ползунки поблизости вместе</value>
   </data>
   <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
-    <value>Hz</value>
+    <value>Гц</value>
   </data>
   <data name="EqualizerDialog_kHz.Text" xml:space="preserve">
-    <value>кГц</value>
+    <value>kHz</value>
   </data>
   <data name="EqualizerDialog_Off" xml:space="preserve">
-    <value>Выключение</value>
+    <value>Выкл</value>
   </data>
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
-    <value>Редактировать информацию о песне</value>
+    <value>Изменить информацию о песне</value>
   </data>
   <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
-    <value>Лирика</value>
+    <value>Лирик</value>
   </data>
   <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
     <value>Изображение обложки</value>
   </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
-    <value>Редактировать информацию об альбоме</value>
+    <value>Изменить информацию о альбоме</value>
   </data>
   <data name="EditPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>Редактировать информацию о плейлисте</value>
+    <value>Изменить плейлист</value>
   </data>
   <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
     <value>Добавить в новый плейлист</value>
@@ -742,16 +742,16 @@
     <value>Отмена</value>
   </data>
   <data name="ImportPlaylistDialog.Title" xml:space="preserve">
-    <value>Импортный плейлист</value>
+    <value>Импорт плейлиста</value>
   </data>
   <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
-    <value>Название</value>
+    <value>Наименование</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromFolder.Content" xml:space="preserve">
     <value>Импорт из папки</value>
   </data>
   <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
-    <value>Импортные песни</value>
+    <value>Импортировать песни</value>
   </data>
   <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
     <value>Количество песен</value>
@@ -760,7 +760,7 @@
     <value>Тип</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromM3u8Files.Content" xml:space="preserve">
-    <value>Импорт из файлов m3u8</value>
+    <value>Импортировать из m3u8 файлов</value>
   </data>
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>Сохранить</value>
@@ -769,64 +769,64 @@
     <value>Сохранить</value>
   </data>
   <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Создайте</value>
+    <value>Создать</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
-    <value>Текст для рабочего стола</value>
+    <value>Настольная лирика</value>
   </data>
   <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
-    <value>Воспроизвести все</value>
+    <value>Играть все</value>
   </data>
   <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
-    <value>Тасуируй и играй</value>
+    <value>Перемешать и играть</value>
   </data>
   <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
-    <value>Информация для редактирования</value>
+    <value>Изменить информацию</value>
   </data>
   <data name="AlbumInfo_Songs" xml:space="preserve">
-    <value>Песни</value>
+    <value>треки</value>
   </data>
   <data name="AlbumInfo_RunTime" xml:space="preserve">
-    <value>Продолжительность</value>
+    <value>время запуска</value>
   </data>
   <data name="ArtistInfo_Albums" xml:space="preserve">
-    <value>Альбомы</value>
+    <value>альбомы</value>
   </data>
   <data name="ArtistInfo_Album" xml:space="preserve">
-    <value>Альбом</value>
+    <value>альбом</value>
   </data>
   <data name="ArtistInfo_Hours" xml:space="preserve">
-    <value>Часы работы</value>
+    <value>часов</value>
   </data>
   <data name="ArtistInfo_Hour" xml:space="preserve">
     <value>час</value>
   </data>
   <data name="ArtistInfo_Min" xml:space="preserve">
-    <value>Мин</value>
+    <value>мин</value>
   </data>
   <data name="ArtistInfo_Sec" xml:space="preserve">
-    <value>SEC</value>
+    <value>сек</value>
   </data>
   <data name="ArtistInfo_Secs" xml:space="preserve">
-    <value>SECS</value>
+    <value>сек</value>
   </data>
   <data name="ArtistInfo_Mins" xml:space="preserve">
-    <value>mins</value>
+    <value>мин</value>
   </data>
   <data name="AlbumInfo_Song" xml:space="preserve">
-    <value>Песня</value>
+    <value>песня</value>
   </data>
   <data name="ArtistInfo_Artist" xml:space="preserve">
     <value>Художник</value>
   </data>
   <data name="ArtistDetail_InYourLibrary.Text" xml:space="preserve">
-    <value>В твоей библиотеке</value>
+    <value>В вашей библиотеке</value>
   </data>
   <data name="AlbumInfo_UnknownYear" xml:space="preserve">
-    <value>Год неизвестен</value>
+    <value>Неизвестный год</value>
   </data>
   <data name="Home_MusicLibrary1.Text" xml:space="preserve">
-    <value>Музыкальная библиотека 1</value>
+    <value>Музыкальные библиотеки 1</value>
   </data>
   <data name="Home_MusicLibrary6.Text" xml:space="preserve">
     <value>Музыкальная библиотека 6</value>
@@ -841,13 +841,13 @@
     <value>Музыкальная библиотека 3</value>
   </data>
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
-    <value>Музыкальная библиотека 2</value>
+    <value>Музыкальные библиотеки 2</value>
   </data>
   <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>Ошибка сети, пожалуйста, попробуйте позже</value>
+    <value>Ошибка сети, повторите попытку позже</value>
   </data>
   <data name="Home_Retry.Text" xml:space="preserve">
-    <value>Повторная попытка</value>
+    <value>Повторить</value>
   </data>
   <data name="Home_SearchResult.Text" xml:space="preserve">
     <value>результаты поиска</value>
@@ -856,19 +856,19 @@
     <value>Исходный код</value>
   </data>
   <data name="Settings_Thanks.Header" xml:space="preserve">
-    <value>Спасибо MoXiangTongXiu за то, что вдохнул жизнь в это программное обеспечение</value>
+    <value>Спасибо MoXiangTongXiu за дыхание жизни в этом программном обеспечении</value>
   </data>
   <data name="OnlineSongs_Download.Text" xml:space="preserve">
     <value>Скачать</value>
   </data>
   <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
-    <value>Место скачивания песни</value>
+    <value>Местоположение загрузки песни</value>
   </data>
   <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
-    <value>Перемены</value>
+    <value>Изменить</value>
   </data>
   <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
-    <value>Начинайте скачивание</value>
+    <value>Начать загрузку</value>
   </data>
   <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
     <value>Отмена</value>
@@ -877,7 +877,7 @@
     <value>Прогресс</value>
   </data>
   <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
-    <value>Скачиваю...</value>
+    <value>Загрузка...</value>
   </data>
   <data name="OnlineMusicLibrary_Processing" xml:space="preserve">
     <value>Обработка...</value>
@@ -889,70 +889,70 @@
     <value>Загрузка завершена</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCancelled" xml:space="preserve">
-    <value>Скачивание отменено</value>
+    <value>Загрузка отменена</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadFailed" xml:space="preserve">
-    <value>Скачивание не удалось</value>
+    <value>Ошибка загрузки</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
     <value>Скачивание песни</value>
   </data>
   <data name="Shell_Settings.Content" xml:space="preserve">
-    <value>Места действия</value>
+    <value>Настройки</value>
   </data>
   <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
     <value>Настройки (Ctrl+G)</value>
   </data>
   <data name="PlaylistInfo_Item" xml:space="preserve">
-    <value>Предмет</value>
+    <value>элемент</value>
   </data>
   <data name="PlaylistInfo_Items" xml:space="preserve">
-    <value>Предметы</value>
+    <value>элементы</value>
   </data>
   <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>Плейлист шоу</value>
+    <value>Показать плейлист</value>
   </data>
   <data name="PlayLists_Rename.Text" xml:space="preserve">
-    <value>Переименование</value>
+    <value>Переименовать</value>
   </data>
   <data name="PlayLists_Delete.Text" xml:space="preserve">
     <value>Удалить</value>
   </data>
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>Плейлист шоу</value>
+    <value>Показать плейлист</value>
   </data>
   <data name="Main_SendFeedback.Content" xml:space="preserve">
-    <value>Отправьте обратную связь</value>
+    <value>Отправить отзыв</value>
   </data>
   <data name="Shell_PlayFiles" xml:space="preserve">
     <value>Воспроизвести файл(ы)</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value>Мы не можем открыть {title}. Это может быть связано с тем, что тип файла не поддерживается, расширение файла неправильно, файл повреждён или сеть ненормальная.</value>
+    <value>Мы не можем открыть {title}. Это может быть связано с тем, что тип файла не поддерживается, расширение файла неверно, файл повреждён или сеть неправильна.</value>
   </data>
   <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
-    <value>В настоящее время используется устройство воспроизведения звука.</value>
+    <value>Устройство воспроизведения аудио в настоящее время используется.</value>
   </data>
   <data name="Error_SamePlaylistName" xml:space="preserve">
-    <value>Плейлист с таким именем уже существует в этой папке. Введите другое имя и попробуйте снова.</value>
+    <value>Плейлист с таким именем уже существует в этой папке. Введите другое имя, затем повторите попытку.</value>
   </data>
   <data name="Error_EditingSongInfoIO" xml:space="preserve">
-    <value>Мы не можем редактировать {title}. Это может быть связано с тем, что текущий файл воспроизводится, занят другим процессом или тип файла не поддерживается.</value>
+    <value>Мы не можем редактировать {title}. Это может быть потому, что текущий файл воспроизводится, занят другим процессом, или тип файла не поддерживается.</value>
   </data>
   <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
-    <value>Варианты для разработчиков</value>
+    <value>Параметры разработчика</value>
   </data>
   <data name="Settings_Logging.Header" xml:space="preserve">
-    <value>Лесозаготовка</value>
+    <value>Ведение журнала</value>
   </data>
   <data name="Settings_OpenFolder.Content" xml:space="preserve">
     <value>Открыть папку</value>
   </data>
   <data name="Error_EditingSongInfoOther" xml:space="preserve">
-    <value>Мы не можем редактировать некоторые свойства {title}. Это может быть связано с тем, что тип файла не поддерживается или он повреждён.</value>
+    <value>Мы не можем редактировать некоторые свойства {title}. Это может быть потому, что тип файла не поддерживается, или файл поврежден.</value>
   </data>
   <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
-    <value>У тебя нет плейлистов</value>
+    <value>У вас нет плейлистов</value>
   </data>
   <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
     <value>Создать новый плейлист</value>
@@ -964,40 +964,40 @@
     <value>Создать плейлист</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
-    <value>Безымянный плейлист</value>
+    <value>Плейлист без названия</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
-    <value>Безымянный плейлист</value>
+    <value>Плейлист без названия</value>
   </data>
   <data name="PlaylistInfo_Create" xml:space="preserve">
-    <value>Создан плейлист '{title}'.</value>
+    <value>Плейлист '{title}' создан.</value>
   </data>
   <data name="PlaylistInfo_Delete" xml:space="preserve">
     <value>Плейлист '{title}' удален.</value>
   </data>
   <data name="PlaylistInfo_AddItems" xml:space="preserve">
-    <value>{num} элементы добавлены в плейлист '{title}'.</value>
+    <value>{num} элементов добавлено в плейлист '{title}'.</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
-    <value>Плейлист {num} импортирован.</value>
+    <value>Импортирован плейлист {num}.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
     <value>Плейлист {num} экспортирован.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
-    <value>{num} плейлисты экспортированы.</value>
+    <value>Плейлисты {num} были экспортированы.</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
-    <value>{num} были импортированы плейлисты.</value>
+    <value>Импортированы плейлисты {num}.</value>
   </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
     <value>{num} элемент добавлен в плейлист '{title}'.</value>
   </data>
   <data name="Settings_Lyric.Text" xml:space="preserve">
-    <value>Лирика</value>
+    <value>Лирик</value>
   </data>
   <data name="Settings_Play.Text" xml:space="preserve">
-    <value>Игра</value>
+    <value>Играть</value>
   </data>
   <data name="Settings_PlaylistFile" xml:space="preserve">
     <value>Файл плейлиста</value>
@@ -1006,24 +1006,24 @@
     <value>Плейлист</value>
   </data>
   <data name="Lyric_ShowCover.Text" xml:space="preserve">
-    <value>Обложка шоу</value>
+    <value>Показать обложку</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
-    <value>Дикий просмотрщик изображений</value>
+    <value>Неприрученный просмотрщик изображений</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Увеличение (↑ / Ctrl+Колесо мыши вверх)</value>
+    <value>Увеличить (&lt;unk&gt; / Ctrl+Mouse колесо вверх)</value>
   </data>
   <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Оригинальный размер</value>
+    <value>Исходный размер</value>
   </data>
   <data name="ImageViewer_Copy.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Скопировать в буфер обмена</value>
+    <value>Копировать в буфер обмена</value>
   </data>
   <data name="ImageViewer_Save.ToolTipService.ToolTip" xml:space="preserve">
     <value>Сохранить</value>
   </data>
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Уменьшение масштаба (↑ / Ctrl+Колесо мыши вниз)</value>
+    <value>Уменьшить (&lt;unk&gt; / Ctrl+Mouse колесо вниз)</value>
   </data>
 </root>
