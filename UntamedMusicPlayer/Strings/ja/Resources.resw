@@ -118,103 +118,103 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>アンテイムド・ミュージック・プレーヤー</value>
+    <value>Untamed Music Player</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>アンテイムド・ミュージック・プレーヤー</value>
+    <value>Untamed Music Player</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
-    <value>音楽ライブラリー</value>
+    <value>音楽ライブラリ</value>
   </data>
   <data name="Shell_PlayQueue.Content" xml:space="preserve">
-    <value>プレイキュー</value>
+    <value>再生キュー</value>
   </data>
   <data name="Shell_PlayLists.Content" xml:space="preserve">
     <value>プレイリスト</value>
   </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
-    <value>パーソナライズ</value>
+    <value>個人設定</value>
   </data>
   <data name="Settings_ThisIsAnOrdinaryLyric.Text" xml:space="preserve">
     <value>これは普通の歌詞です</value>
   </data>
   <data name="Settings_ThisIsAHighlightedLyric.Text" xml:space="preserve">
-    <value>これはハイライトされた歌詞です</value>
+    <value>これは強調表示された歌詞です</value>
   </data>
   <data name="Settings_Theme.Header" xml:space="preserve">
     <value>アプリのテーマ</value>
   </data>
   <data name="Settings_ResetSoftware.Header" xml:space="preserve">
-    <value>このソフトウェアをリセットしてください</value>
+    <value>このソフトウェアをリセット</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>光</value>
+    <value>ライト</value>
   </data>
   <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>暗い</value>
+    <value>ダーク</value>
   </data>
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>システム設定を使います</value>
+    <value>システム設定を使用</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>この申請について</value>
+    <value>このアプリケーションについて</value>
   </data>
   <data name="Settings_AddFolderToMusic" xml:space="preserve">
-    <value>このフォルダを音楽に追加する</value>
+    <value>このフォルダを音楽に追加</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
-    <value>© 2026 Untamed Corporation。無断転載を禁じます。</value>
+    <value>©️ 2026 Untamed Corporation. All rights reserved.</value>
   </data>
   <data name="Settings_Library.Text" xml:space="preserve">
-    <value>図書館</value>
+    <value>ライブラリ</value>
   </data>
   <data name="Settings_AddFolder.Text" xml:space="preserve">
-    <value>フォルダ追加</value>
+    <value>フォルダを追加</value>
   </data>
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
-    <value>音楽ライブラリーの所在地</value>
+    <value>音楽ライブラリの場所</value>
   </data>
   <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>歌詞プレビュー</value>
+    <value>歌詞のプレビュー</value>
   </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
-    <value>このライブラリにはフォルダは含まれていません。</value>
+    <value>このライブラリにはフォルダが含まれていません。</value>
   </data>
   <data name="Settings_Refresh.Content" xml:space="preserve">
-    <value>リフレッシュ</value>
+    <value>更新</value>
   </data>
   <data name="Settings_Import.Content" xml:space="preserve">
-    <value>輸入</value>
+    <value>インポート</value>
   </data>
   <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
-    <value>個別プレイリストのインポート</value>
+    <value>個々のプレイリストをインポート</value>
   </data>
   <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
-    <value>m3u8ファイルからプレイリストをバッチインポートする</value>
+    <value>m3u8ファイルからの一括インポートのプレイリスト</value>
   </data>
   <data name="Settings_ImportFromBin.Header" xml:space="preserve">
-    <value>バイナリファイルからプレイリストをバッチインポートする</value>
+    <value>バイナリファイルから一括インポートのプレイリスト</value>
   </data>
   <data name="Settings_Export.Content" xml:space="preserve">
-    <value>輸出</value>
+    <value>エクスポート</value>
   </data>
   <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
-    <value>プレイリストをm3u8ファイルにバッチエクスポートする (推奨)</value>
+    <value>一括でプレイリストをm3u8ファイルにエクスポートする（推奨）</value>
   </data>
   <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
-    <value>互換性が高く、ほとんどの音楽プレーヤーで動作します</value>
+    <value>互換性が向上し、ほとんどの音楽プレーヤーと連携します</value>
   </data>
   <data name="Settings_ExportToBin.Header" xml:space="preserve">
-    <value>プレイリストをバイナリファイルにバッチエクスポートする</value>
+    <value>バッチでのプレイリストのバイナリファイルへのエクスポート</value>
   </data>
   <data name="Settings_ExportToBin.Description" xml:space="preserve">
-    <value>高速ですが、このソフトウェア専用です</value>
+    <value>より速く、しかし、このソフトウェアでのみ利用可能です</value>
   </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
-    <value>リフレッシュライブラリ</value>
+    <value>ライブラリを更新</value>
   </data>
   <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
-    <value>全画面の歌詞ページで再生コントロールバーを自動で非表示にします</value>
+    <value>再生コントロールバーを全画面歌詞ページで自動的に非表示にする</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
     <value>排他モード</value>
@@ -223,64 +223,64 @@
     <value>低遅延モード</value>
   </data>
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
-    <value>音声遅延を減らします。中〜高価格帯のデバイスにおすすめです。カクつきや再生の問題がある場合は、これを無効にしてください。</value>
+    <value>オーディオレイテンシーを低減します。中級からハイエンドのデバイスに推奨します。吃音や再生の問題が発生した場合は無効にしてください。</value>
   </data>
   <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
-    <value>一度有効になると、アプリ内の音量コントロールは使えなくなります。OSを通じて音量を調整してください。</value>
+    <value>有効にすると、アプリ内の音量コントロールは利用できなくなります。オペレーティングシステムから音量を調整してください。</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
-    <value>もし音楽ライブラリの曲のページでフォルダのソートが有効なら、曲をクリックすると同じフォルダの曲だけが再生キューに追加されます。</value>
+    <value>フォルダのソートが有効な音楽ライブラリのソングページにいる場合 曲をクリックすると、再生キューに同じフォルダの曲のみが追加されます。</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
-    <value>曲があるフォルダだけを追加してください</value>
+    <value>曲のあるフォルダのみ追加</value>
   </data>
   <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
     <value>プレイリストのインポート/エクスポート</value>
   </data>
   <data name="Settings_ReIndex.Text" xml:space="preserve">
-    <value>図書館のメディアがすべて見えない場合は、今すぐ図書館を再インデックスできます。</value>
+    <value>ライブラリの場所からすべてのメディアが表示されない場合は、今すぐライブラリのインデックスを再作成できます。</value>
   </data>
   <data name="Shell_Search.PlaceholderText" xml:space="preserve">
-    <value>サーチ (近日公開)</value>
+    <value>検索 (近日公開予定)</value>
   </data>
   <data name="PlayBar_Property.Text" xml:space="preserve">
-    <value>性質</value>
+    <value>プロパティー</value>
   </data>
   <data name="PlayBar_Equalizer.Text" xml:space="preserve">
-    <value>イコライザー (近日公開)</value>
+    <value>イコライザ（近日公開予定）</value>
   </data>
   <data name="PlayBar_Speed.Text" xml:space="preserve">
     <value>速度</value>
   </data>
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
-    <value>デバイスにキャスト (近日公開予定)</value>
+    <value>デバイスにキャスト(近日公開)</value>
   </data>
   <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
-    <value>10秒戻る</value>
+    <value>10秒後にスキップ</value>
   </data>
   <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
-    <value>30秒飛ばす</value>
+    <value>30秒前にスキップする</value>
   </data>
   <data name="Shell_PlayLists1.Text" xml:space="preserve">
     <value>プレイリスト</value>
   </data>
   <data name="Shell_PlayQueue1.Text" xml:space="preserve">
-    <value>プレイキュー</value>
+    <value>再生キュー</value>
   </data>
   <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
     <value>音楽</value>
   </data>
   <data name="Shell_Settings1.Text" xml:space="preserve">
-    <value>舞台設定</value>
+    <value>設定</value>
   </data>
   <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
-    <value>音楽が見つからなかった</value>
+    <value>音楽が見つかりませんでした</value>
   </data>
   <data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
-    <value>あなたの音楽ライブラリには音楽コンテンツは一切含まれていません。</value>
+    <value>ライブラリに音楽コンテンツが含まれていません。</value>
   </data>
   <data name="HaveMusic_Songs.Text" xml:space="preserve">
-    <value>楽曲</value>
+    <value>曲</value>
   </data>
   <data name="Home_Playlists.Text" xml:space="preserve">
     <value>プレイリスト</value>
@@ -292,22 +292,22 @@
     <value>アーティスト</value>
   </data>
   <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
-    <value>このフォルダを取り消す?</value>
+    <value>このフォルダを削除しますか？</value>
   </data>
   <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
-    <value>本当にこのソフトウェアをリセットしたいのですか?</value>
+    <value>このソフトウェアをリセットしてもよろしいですか？</value>
   </data>
   <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
-    <value>Musicから「{title}」フォルダを削除すると、Musicには表示されませんが、削除はされません。</value>
+    <value>「{title}」フォルダを音楽から削除すると、音楽には表示されなくなりますが、削除されません。</value>
   </data>
   <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
-    <value>このソフトウェアのすべてのデータは、設定、再生キュー、プレイリストなどすべて消去されますので、ご注意ください。</value>
+    <value>このソフトウェアのすべてのデータは、設定、再生キュー、プレイリストなどを含む、空になりますので、ご注意ください。</value>
   </data>
   <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
-    <value>フォルダ削除</value>
+    <value>フォルダを削除</value>
   </data>
   <data name="Settings_ResetSoftwareDialogPrimary" xml:space="preserve">
-    <value>リセットして再起動してください</value>
+    <value>リセットして再起動</value>
   </data>
   <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
     <value>キャンセル</value>
@@ -322,19 +322,19 @@
     <value>削除</value>
   </data>
   <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
-    <value>プレイリストを完全に削除する?</value>
+    <value>プレイリストを完全に削除しますか？</value>
   </data>
   <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
-    <value>本当にこのプレイリストを削除したいのですか?「{title}」を削除すると復元できません。</value>
+    <value>このプレイリストを削除してもよろしいですか？'{title}'を削除すると、再生できなくなります。</value>
   </data>
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
     <value>システムインデックス設定の管理</value>
   </data>
   <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
-    <value>アプリを変えるつもりでしたか?</value>
+    <value>アプリを切り替えるつもりでしたか？</value>
   </data>
   <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
-    <value>「メディアプレーヤー」が「設定」を開こうとしています。</value>
+    <value> 「メディア プレーヤー」は「設定」を開こうとしています。</value>
   </data>
   <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
     <value>はい</value>
@@ -343,49 +343,49 @@
     <value>いいえ</value>
   </data>
   <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ボリューム (Alt+↑/↓)</value>
+    <value>ボリューム (Alt+Enter/&lt;unk&gt; )</value>
   </data>
   <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
-    <value>フルスクリーン (F11)</value>
+    <value>全画面表示（F11）</value>
   </data>
   <data name="PlayBar_DesktopLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>デスクトップ歌詞 (Ctrl+M)</value>
+    <value>デスクトップの歌詞（Ctrl+M）</value>
   </data>
   <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
-    <value>さらに多くの選択肢があります</value>
+    <value>その他のオプション</value>
   </data>
   <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
-    <value>前回 (Ctrl+B)</value>
+    <value>前 (Ctrl+B)</value>
   </data>
   <data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
-    <value>次 (Ctrl+F)</value>
+    <value>Next (Ctrl+F)</value>
   </data>
   <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
-    <value>NowPlaying (Ctrl+N)</value>
+    <value>再生中 (Ctrl + N)</value>
   </data>
   <data name="PlayBar_ShuffleOff" xml:space="preserve">
-    <value>シャッフル:オフ (Ctrl+H)</value>
+    <value>シャッフル: オフ (Ctrl+H)</value>
   </data>
   <data name="PlayBar_ShuffleOn" xml:space="preserve">
-    <value>シャッフル:オン (Ctrl+H)</value>
+    <value>シャッフル: オン (Ctrl+H)</value>
   </data>
   <data name="PlayBar_RepeatOff" xml:space="preserve">
-    <value>繰り返します:オフ (Ctrl+T)</value>
+    <value>Repeat: Off (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatAll" xml:space="preserve">
-    <value>繰り返し:全て (Ctrl+T)</value>
+    <value>Repeat: All (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatOne" xml:space="preserve">
-    <value>繰り返し:1回 (Ctrl+T)</value>
+    <value>リピート: 1 (Ctrl+T)</value>
   </data>
   <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ミュージックライブラリ (Ctrl+R)</value>
+    <value>音楽ライブラリ (Ctrl+R)</value>
   </data>
   <data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
-    <value>プレイキュー (Ctrl+Q)</value>
+    <value>キューを再生 (Ctrl+Q)</value>
   </data>
   <data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
-    <value>プレイリスト (Ctrl+Y)</value>
+    <value>プレイリスト (Ctrl + Y)</value>
   </data>
   <data name="PlayBar_Play" xml:space="preserve">
     <value>再生 (Ctrl+P)</value>
@@ -394,76 +394,76 @@
     <value>一時停止 (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
-    <value>シーク</value>
+    <value>Seek</value>
   </data>
   <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
     <value>フォルダを削除</value>
   </data>
   <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>音楽ライブラリにフォルダを追加しましょう</value>
+    <value>ライブラリにフォルダを追加</value>
   </data>
   <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
-    <value>シャッフル:オン</value>
+    <value>シャッフル: オン</value>
   </data>
   <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
-    <value>シャッフル:外して</value>
+    <value>シャッフル: オフ</value>
   </data>
   <data name="PlayBar_More_RepeatAll" xml:space="preserve">
-    <value>繰り返します:すべて</value>
+    <value>リピート: すべて</value>
   </data>
   <data name="PlayBar_More_RepeatOne" xml:space="preserve">
-    <value>繰り返し:1</value>
+    <value>リピート: 1</value>
   </data>
   <data name="PlayBar_More_RepeatOff" xml:space="preserve">
-    <value>繰り返し:オフ</value>
+    <value>繰り返し：オフ</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>なし, ミカ, ミカオルタ, デスクトップアクリル, アクリルベース, アクリル薄, ぼかし, 透明, アニメーション</value>
+    <value>なし, マイカアルト, デスクトップアクリル, アクリルベース, アクリル薄い, ぼかし, 透明, アニメーション</value>
   </data>
   <data name="Songs_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, アーティスト (昇順), アーティスト (降順), アルバム (昇順), アルバム (降順), リリース年 (昇順), リリース年 (降順), 日付追加 (昇順), 日付追加 (降順), フォルダー (昇順), フォルダー (降順)</value>
+    <value>A - Z - A, Artist (Asc), Artist (Desc), Album (Desc), Album (Desc), Release year (Asc), リリース年 (降順)、追加日時(昇順)、追加日時(降順)、フォルダ (降順)</value>
   </data>
   <data name="Albums_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, リリース年 (昇順), リリース年 (降順), アーティスト (昇順), アーティスト (降順), 日付追加 (昇順), 日付追加 (降順)</value>
+    <value>A - Z, Z - A, Release year (Asc), Release year (Desc), Artist (Asc), Artist (Desc), Date added (Desc)</value>
   </data>
   <data name="SongInfo_UnknownArtist" xml:space="preserve">
-    <value>不明のアーティスト</value>
+    <value>不明なアーティスト</value>
   </data>
   <data name="SongInfo_UnknownGenre" xml:space="preserve">
-    <value>未知のジャンル</value>
+    <value>不明なジャンル</value>
   </data>
   <data name="DisplaySongInfo_SourceMode0" xml:space="preserve">
-    <value>地元の歌</value>
+    <value>ローカルの曲</value>
   </data>
   <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
-    <value>オンラインソング</value>
+    <value>オンラインの曲</value>
   </data>
   <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
-    <value>ミュージックライブラリー5の曲</value>
+    <value>音楽ライブラリ5からの曲</value>
   </data>
   <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
-    <value>ミュージックライブラリー6の曲</value>
+    <value>音楽ライブラリ6からの曲</value>
   </data>
   <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
-    <value>ミュージックライブラリー4の曲</value>
+    <value>音楽ライブラリ4からの曲</value>
   </data>
   <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
-    <value>ミュージックライブラリー3の曲</value>
+    <value>音楽ライブラリからの曲 3</value>
   </data>
   <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
-    <value>ミュージックライブラリー2の曲</value>
+    <value>音楽ライブラリからの曲 2</value>
   </data>
   <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
-    <value>ミュージックライブラリー1の曲</value>
+    <value>音楽ライブラリからの曲 1</value>
   </data>
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
-    <value>不明アルバム</value>
+    <value>不明なアルバム</value>
   </data>
   <data name="Songs_SortByChosen.Text" xml:space="preserve">
     <value>並べ替え: </value>
   </data>
   <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
-    <value>シャッフルしてプレイ</value>
+    <value>シャッフルして再生</value>
   </data>
   <data name="Songs_GenreChosen.Text" xml:space="preserve">
     <value>ジャンル: </value>
@@ -472,34 +472,34 @@
     <value>クリア</value>
   </data>
   <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
-    <value>プレイキューに追加</value>
+    <value>再生キューに追加</value>
   </data>
   <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
-    <value>プレイキュー</value>
+    <value>再生キュー</value>
   </data>
   <data name="Songs_AddTo_NewPlaylist.Text" xml:space="preserve">
-    <value>新しいプレイリスト</value>
+    <value>新規プレイリスト</value>
   </data>
   <data name="PlayQueue_AddFiles.Text" xml:space="preserve">
-    <value>ファイル追加</value>
+    <value>ファイルを追加</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
-    <value>プレイキューにファイルを追加する</value>
+    <value>キューを再生するファイルを追加</value>
   </data>
   <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
-    <value>再生キューに追加するファイルを閲覧してください</value>
+    <value>再生キューに追加するファイルを参照します</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
-    <value>プレイキューにフォルダを追加</value>
+    <value>キューを再生するフォルダを追加</value>
   </data>
   <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
-    <value>フォルダを選び、そのフォルダ内のすべてのメディアを再生キューに追加します</value>
+    <value>フォルダを選択し、そのフォルダ内のすべてのメディアを再生キューに追加します</value>
   </data>
   <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
-    <value>URLから再生キューにメディアを追加する</value>
+    <value>再生キューにURLからメディアを追加</value>
   </data>
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
-    <value>URLを入力し、そのアドレスのメディアを再生キューに追加します</value>
+    <value>URL を入力し、そのアドレスから再生キューにメディアを追加します</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
     <value>URLを開く</value>
@@ -508,67 +508,67 @@
     <value>キャンセル</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
-    <value>開けて</value>
+    <value>開く</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
     <value>ファイル、ストリーム、プレイリストのURLを入力してください</value>
   </data>
   <data name="Songs_Play.Text" xml:space="preserve">
-    <value>プレイ</value>
+    <value>再生</value>
   </data>
   <data name="Songs_PlayNext.Text" xml:space="preserve">
-    <value>次にプレイ</value>
+    <value>次に再生</value>
   </data>
   <data name="Songs_AddTo.Text" xml:space="preserve">
-    <value>追加</value>
+    <value>追加先</value>
   </data>
   <data name="Songs_EditInfo.Text" xml:space="preserve">
-    <value>編集情報</value>
+    <value>情報を編集</value>
   </data>
   <data name="Songs_Properties.Text" xml:space="preserve">
-    <value>性質</value>
+    <value>プロパティー</value>
   </data>
   <data name="Songs_ShowAlbum.Text" xml:space="preserve">
-    <value>ショーアルバム</value>
+    <value>アルバムを表示</value>
   </data>
   <data name="Songs_ShowArtist.Text" xml:space="preserve">
-    <value>ショーアーティスト</value>
+    <value>アーティストを表示</value>
   </data>
   <data name="Songs_Select.Text" xml:space="preserve">
-    <value>セレクト</value>
+    <value>選択</value>
   </data>
   <data name="PlayQueue_Remove.Text" xml:space="preserve">
     <value>削除</value>
   </data>
   <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
-    <value>前進しろ</value>
+    <value>上へ移動</value>
   </data>
   <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
-    <value>下に降りて</value>
+    <value>下に移動</value>
   </data>
   <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>プレイ</value>
+    <value>再生</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
-    <value>窓の素材</value>
+    <value>窓の材料</value>
   </data>
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
-    <value>素材を選びましょう</value>
+    <value>材料を選択</value>
   </data>
   <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
-    <value>リリックフォントファミリー</value>
+    <value>Lyric font-family</value>
   </data>
   <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>リリックフォントサイズ</value>
+    <value>歌詞のフォントサイズ</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
-    <value>フォントファミリーを選ぶ</value>
+    <value>フォントファミリーを選択</value>
   </data>
   <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
-    <value>フォントサイズを選ぶ</value>
+    <value>Choose a font-size</value>
   </data>
   <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>窓の背景はカバーテーマの色に従った</value>
+    <value>カバーテーマの色に合わせてウィンドウの背景を表示します</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
@@ -577,37 +577,37 @@
     <value>バージョン</value>
   </data>
   <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>クリア (Ctrl+Shift+X)</value>
+    <value>クリア (Ctrl + Shift + X)</value>
   </data>
   <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>再生キューに追加するファイルを閲覧してください</value>
+    <value>再生キューに追加するファイルを参照します</value>
   </data>
   <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>10秒戻る (Ctrl+Left)</value>
+    <value>10 秒後にスキップ (Ctrl+Left)</value>
   </data>
   <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>30秒スキップ (Ctrl+Right)</value>
+    <value>30秒前にスキップ (Ctrl+Right)</value>
   </data>
   <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
-    <value>フルスクリーン</value>
+    <value>全画面</value>
   </data>
   <data name="SongInfo_AllGenres" xml:space="preserve">
     <value>すべてのジャンル</value>
   </data>
   <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
-    <value>ライブラリのインデックス作成...</value>
+    <value>ライブラリのインデックス作成中...</value>
   </data>
   <data name="Artists_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A</value>
+    <value>A - Z - A</value>
   </data>
   <data name="Playlists_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, 日付修正 (昇順), 日付修正 (降順)</value>
+    <value>A - Z - A, Date modified (Asc), Date modified (Desc)</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
-    <value>ウィンドウのピントが合わないと背景の更新が止まる</value>
+    <value>ウィンドウがフォーカスを失った後バックグラウンドで更新を停止します。</value>
   </data>
   <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
-    <value>窓の背景色</value>
+    <value>ウィンドウの背景色</value>
   </data>
   <data name="Shell_Home.Content" xml:space="preserve">
     <value>ホーム</value>
@@ -616,7 +616,7 @@
     <value>ホーム</value>
   </data>
   <data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ホーム (Ctrl+Shift+F)</value>
+    <value>ホーム (Ctrl + Shift + F)</value>
   </data>
   <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
     <value>オンラインコンテンツを検索</value>
@@ -625,7 +625,7 @@
     <value>光度不透明度</value>
   </data>
   <data name="Settings_Reset.Content" xml:space="preserve">
-    <value>リセット</value>
+    <value>Reset</value>
   </data>
   <data name="PropertiesDialog_Title.Text" xml:space="preserve">
     <value>タイトル</value>
@@ -634,7 +634,7 @@
     <value>アルバム</value>
   </data>
   <data name="PropertiesDialog_Track.Text" xml:space="preserve">
-    <value>陸上競技</value>
+    <value>トラック</value>
   </data>
   <data name="PropertiesDialog_Genre.Text" xml:space="preserve">
     <value>ジャンル</value>
@@ -643,7 +643,7 @@
     <value>ビットレート</value>
   </data>
   <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
-    <value>寄稿アーティスト</value>
+    <value>コントリビューションアーティスト</value>
   </data>
   <data name="PropertiesDialog_AlbumArtist.Text" xml:space="preserve">
     <value>アルバムアーティスト</value>
@@ -655,16 +655,16 @@
     <value>年</value>
   </data>
   <data name="PropertiesDialog_ItemType.Text" xml:space="preserve">
-    <value>アイテムの種類</value>
+    <value>アイテムタイプ</value>
   </data>
   <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
-    <value>ファイルの所在地</value>
+    <value>ファイルの場所</value>
   </data>
   <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
-    <value>オープンファイル位置</value>
+    <value>ファイルの場所を開く</value>
   </data>
   <data name="PropertiesDialog.Title" xml:space="preserve">
-    <value>性質</value>
+    <value>プロパティー</value>
   </data>
   <data name="EqualizerDialog_Title.Text" xml:space="preserve">
     <value>イコライザー</value>
@@ -679,13 +679,13 @@
     <value>dB</value>
   </data>
   <data name="EqualizerDialog_Preset.Text" xml:space="preserve">
-    <value>プリセット</value>
+    <value>Preset</value>
   </data>
   <data name="EqualizerDialog_Presets" xml:space="preserve">
-    <value>フラット, トレブルブースト, 低音ブースト, ヘッドホン, ノートパソコン, ポータブルスピーカー, ホームステレオ, テレビ, 車, カスタム</value>
+    <value>フラット、トレブルブースト、バスブースト、ヘッドフォン、ラップトップ、ポータブルスピーカー、ホームステレオ、テレビ、車、カスタム</value>
   </data>
   <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
-    <value>近くのスライダーを一緒に動かす</value>
+    <value>近くのスライダーを一緒に移動</value>
   </data>
   <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
     <value>Hz</value>
@@ -694,22 +694,22 @@
     <value>kHz</value>
   </data>
   <data name="EqualizerDialog_Off" xml:space="preserve">
-    <value>消えろ</value>
+    <value>オフ</value>
   </data>
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
-    <value>曲情報の編集</value>
+    <value>曲情報を編集</value>
   </data>
   <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
     <value>歌詞</value>
   </data>
   <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
-    <value>表紙画像</value>
+    <value>カバー画像</value>
   </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
-    <value>アルバム情報編集</value>
+    <value>アルバム情報を編集</value>
   </data>
   <data name="EditPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>プレイリスト情報の編集</value>
+    <value>プレイリスト情報を編集</value>
   </data>
   <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
     <value>新しいプレイリストに追加</value>
@@ -733,61 +733,61 @@
     <value>キャンセル</value>
   </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>セーブ</value>
+    <value>保存</value>
   </data>
   <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
-    <value>輸入</value>
+    <value>インポート</value>
   </data>
   <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
     <value>キャンセル</value>
   </data>
   <data name="ImportPlaylistDialog.Title" xml:space="preserve">
-    <value>インポートプレイリスト</value>
+    <value>プレイリストをインポート</value>
   </data>
   <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
-    <value>名称</value>
+    <value>名前</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromFolder.Content" xml:space="preserve">
     <value>フォルダからインポート</value>
   </data>
   <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
-    <value>輸入曲</value>
+    <value>曲をインポート</value>
   </data>
   <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
     <value>曲数</value>
   </data>
   <data name="ImportPlaylistDialog_Type.Text" xml:space="preserve">
-    <value>種類</value>
+    <value>タイプ</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromM3u8Files.Content" xml:space="preserve">
-    <value>m3u8ファイルからのインポート</value>
+    <value>m3u8ファイルからインポート</value>
   </data>
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>セーブ</value>
+    <value>保存</value>
   </data>
   <data name="EditPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>セーブ</value>
+    <value>保存</value>
   </data>
   <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>作成</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
-    <value>デスクトップ歌詞</value>
+    <value>デスクトップの歌詞</value>
   </data>
   <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
-    <value>全て再生</value>
+    <value>すべて再生</value>
   </data>
   <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
-    <value>シャッフルしてプレイ</value>
+    <value>シャッフルして再生</value>
   </data>
   <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
-    <value>編集情報</value>
+    <value>情報を編集</value>
   </data>
   <data name="AlbumInfo_Songs" xml:space="preserve">
-    <value>楽曲</value>
+    <value>曲</value>
   </data>
   <data name="AlbumInfo_RunTime" xml:space="preserve">
-    <value>ランタイム</value>
+    <value>実行時間</value>
   </data>
   <data name="ArtistInfo_Albums" xml:space="preserve">
     <value>アルバム</value>
@@ -796,85 +796,85 @@
     <value>アルバム</value>
   </data>
   <data name="ArtistInfo_Hours" xml:space="preserve">
-    <value>営業時間</value>
-  </data>
-  <data name="ArtistInfo_Hour" xml:space="preserve">
     <value>時間</value>
   </data>
+  <data name="ArtistInfo_Hour" xml:space="preserve">
+    <value>時</value>
+  </data>
   <data name="ArtistInfo_Min" xml:space="preserve">
-    <value>ミン</value>
+    <value>分</value>
   </data>
   <data name="ArtistInfo_Sec" xml:space="preserve">
-    <value>SEC</value>
+    <value>秒</value>
   </data>
   <data name="ArtistInfo_Secs" xml:space="preserve">
-    <value>セク</value>
+    <value>秒</value>
   </data>
   <data name="ArtistInfo_Mins" xml:space="preserve">
     <value>分</value>
   </data>
   <data name="AlbumInfo_Song" xml:space="preserve">
-    <value>歌</value>
+    <value>曲</value>
   </data>
   <data name="ArtistInfo_Artist" xml:space="preserve">
     <value>アーティスト</value>
   </data>
   <data name="ArtistDetail_InYourLibrary.Text" xml:space="preserve">
-    <value>君の図書館で</value>
+    <value>ライブラリ内で</value>
   </data>
   <data name="AlbumInfo_UnknownYear" xml:space="preserve">
-    <value>不明の年数</value>
+    <value>不明な年</value>
   </data>
   <data name="Home_MusicLibrary1.Text" xml:space="preserve">
-    <value>音楽ライブラリー 1</value>
+    <value>ミュージックライブラリ1</value>
   </data>
   <data name="Home_MusicLibrary6.Text" xml:space="preserve">
-    <value>音楽ライブラリー 6</value>
+    <value>ミュージックライブラリ6</value>
   </data>
   <data name="Home_MusicLibrary5.Text" xml:space="preserve">
-    <value>音楽ライブラリー 5</value>
+    <value>ミュージックライブラリ5</value>
   </data>
   <data name="Home_MusicLibrary4.Text" xml:space="preserve">
-    <value>ミュージックライブラリー 4</value>
+    <value>ミュージックライブラリ4</value>
   </data>
   <data name="Home_MusicLibrary3.Text" xml:space="preserve">
-    <value>音楽ライブラリー 3</value>
+    <value>ミュージックライブラリ3</value>
   </data>
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
-    <value>音楽ライブラリー 2</value>
+    <value>ミュージックライブラリ2</value>
   </data>
   <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>ネットワークエラーです。後で再試しください</value>
+    <value>ネットワークエラーが発生しました。後ほど再試行してください。</value>
   </data>
   <data name="Home_Retry.Text" xml:space="preserve">
-    <value>再挑戦</value>
+    <value>再試行する</value>
   </data>
   <data name="Home_SearchResult.Text" xml:space="preserve">
     <value>の検索結果</value>
   </data>
   <data name="Settings_SourceCode.Content" xml:space="preserve">
-    <value>ソースコード</value>
+    <value>ソースコード：</value>
   </data>
   <data name="Settings_Thanks.Header" xml:space="preserve">
-    <value>このソフトウェアに命を吹き込んでくれたMoXiangTongXiuに感謝します</value>
+    <value>このソフトウェアに命を吹き込むためのMoXiangTongXiuのおかげで。</value>
   </data>
   <data name="OnlineSongs_Download.Text" xml:space="preserve">
     <value>ダウンロード</value>
   </data>
   <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
-    <value>楽曲ダウンロードの場所</value>
+    <value>曲のダウンロード場所</value>
   </data>
   <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
-    <value>変化</value>
+    <value>変更</value>
   </data>
   <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
-    <value>ダウンロードを始めてください</value>
+    <value>ダウンロードを開始</value>
   </data>
   <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
     <value>キャンセル</value>
   </data>
   <data name="OnlineMusicLibrary_Progress" xml:space="preserve">
-    <value>進展</value>
+    <value>進捗状況</value>
   </data>
   <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
     <value>ダウンロード中...</value>
@@ -886,97 +886,97 @@
     <value>フォルダを開く</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
-    <value>ダウンロード完了</value>
+    <value>ダウンロードが完了しました</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCancelled" xml:space="preserve">
-    <value>ダウンロードキャンセル</value>
+    <value>ダウンロードがキャンセルされました</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadFailed" xml:space="preserve">
-    <value>ダウンロード失敗</value>
+    <value>ダウンロードに失敗しました</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
     <value>曲をダウンロード中</value>
   </data>
   <data name="Shell_Settings.Content" xml:space="preserve">
-    <value>舞台設定</value>
+    <value>設定</value>
   </data>
   <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
     <value>設定 (Ctrl+G)</value>
   </data>
   <data name="PlaylistInfo_Item" xml:space="preserve">
-    <value>アイテム</value>
+    <value>項目</value>
   </data>
   <data name="PlaylistInfo_Items" xml:space="preserve">
-    <value>アイテム</value>
+    <value>項目</value>
   </data>
   <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>ショープレイリスト</value>
+    <value>プレイリストを表示</value>
   </data>
   <data name="PlayLists_Rename.Text" xml:space="preserve">
-    <value>名称変更</value>
+    <value>名前の変更</value>
   </data>
   <data name="PlayLists_Delete.Text" xml:space="preserve">
     <value>削除</value>
   </data>
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>ショープレイリスト</value>
+    <value>プレイリストを表示</value>
   </data>
   <data name="Main_SendFeedback.Content" xml:space="preserve">
-    <value>フィードバックを送ってください</value>
+    <value>フィードバックを送信</value>
   </data>
   <data name="Shell_PlayFiles" xml:space="preserve">
-    <value>再生ファイル</value>
+    <value>ファイルを再生</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value>{title}は開けません。これはファイル形式がサポートされていない、拡張子が正しくない、ファイルが破損している、またはネットワークが異常な場合などが原因です。</value>
+    <value>{title}を開くことができません。 これは、ファイルの種類がサポートされていない、ファイル拡張子が正しくない、ファイルが破損している、またはネットワークが異常であるためです。</value>
   </data>
   <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
-    <value>音声再生装置は現在使用されています。</value>
+    <value>オーディオ再生デバイスは現在使用中です。</value>
   </data>
   <data name="Error_SamePlaylistName" xml:space="preserve">
-    <value>この名前のプレイリストはすでにこのフォルダ内に存在しています。別の名前を入力してからもう一度試す。</value>
+    <value>この名前のプレイリストは既にこのフォルダに存在します。別の名前を入力して再度お試し下さい。</value>
   </data>
   <data name="Error_EditingSongInfoIO" xml:space="preserve">
-    <value>{title}は編集できません。これは、現在のファイルが再生中、他のプロセスに占有されている、またはファイル形式がサポートされていない場合などです。</value>
+    <value>{title}を編集できません。現在のファイルが再生されているか、別のプロセスによって占有されているか、ファイルの種類がサポートされていない可能性があります。</value>
   </data>
   <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
-    <value>開発者の選択肢</value>
+    <value>開発者向けオプション</value>
   </data>
   <data name="Settings_Logging.Header" xml:space="preserve">
-    <value>伐採</value>
+    <value>ログ</value>
   </data>
   <data name="Settings_OpenFolder.Content" xml:space="preserve">
     <value>フォルダを開く</value>
   </data>
   <data name="Error_EditingSongInfoOther" xml:space="preserve">
-    <value>{title}の一部のプロパティは編集できません。これはファイル形式がサポートされていないか、ファイルが破損している場合もあります。</value>
+    <value>{title}のプロパティの一部を編集できません。これはファイルの種類がサポートされていないか、ファイルが破損している可能性があります。</value>
   </data>
   <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
-    <value>プレイリストなんてないよ</value>
+    <value>プレイリストがありません</value>
   </data>
   <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
-    <value>新しいプレイリストを作成する</value>
+    <value>新しいプレイリストを作成</value>
   </data>
   <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
-    <value>新しいプレイリスト</value>
+    <value>新規プレイリスト</value>
   </data>
   <data name="PlayLists_CreatePlaylist.Content" xml:space="preserve">
     <value>プレイリストを作成</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
-    <value>タイトル未定プレイリスト</value>
+    <value>無題のプレイリスト</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
-    <value>タイトル未定プレイリスト</value>
+    <value>無題のプレイリスト</value>
   </data>
   <data name="PlaylistInfo_Create" xml:space="preserve">
-    <value>プレイリスト「{title}」が作成されました。</value>
+    <value>プレイリスト '{title}' 作成しました。</value>
   </data>
   <data name="PlaylistInfo_Delete" xml:space="preserve">
-    <value>プレイリスト「{title}」が削除されました。</value>
+    <value>プレイリスト「{title}」を削除しました。</value>
   </data>
   <data name="PlaylistInfo_AddItems" xml:space="preserve">
-    <value>{num} プレイリストに追加された項目 '{title}'</value>
+    <value>{num} アイテムがプレイリストの{title} 'に追加されました。</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
     <value>{num} プレイリストがインポートされました。</value>
@@ -985,19 +985,19 @@
     <value>{num} プレイリストがエクスポートされました。</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
-    <value>{num} プレイリストはエクスポート済みです。</value>
+    <value>{num} プレイリストがエクスポートされました。</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
     <value>{num} プレイリストがインポートされました。</value>
   </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
-    <value>{num} プレイリストに追加された項目 '{title}'</value>
+    <value>{num} アイテムがプレイリストの{title} 'に追加されました。</value>
   </data>
   <data name="Settings_Lyric.Text" xml:space="preserve">
     <value>歌詞</value>
   </data>
   <data name="Settings_Play.Text" xml:space="preserve">
-    <value>プレイ</value>
+    <value>再生</value>
   </data>
   <data name="Settings_PlaylistFile" xml:space="preserve">
     <value>プレイリストファイル</value>
@@ -1006,24 +1006,24 @@
     <value>プレイリスト</value>
   </data>
   <data name="Lyric_ShowCover.Text" xml:space="preserve">
-    <value>番組の表紙</value>
+    <value>カバーを表示</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
-    <value>アンテイムドイメージビューア</value>
+    <value>Untamed Image Viewer</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ズームイン (↑ / Ctrl+マウスホイールアップ)</value>
+    <value>ズームイン（&lt;unk&gt; / Ctrl+マウスホイールアップ）</value>
   </data>
   <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
-    <value>元の大きさ</value>
+    <value>元のサイズ</value>
   </data>
   <data name="ImageViewer_Copy.ToolTipService.ToolTip" xml:space="preserve">
     <value>クリップボードにコピー</value>
   </data>
   <data name="ImageViewer_Save.ToolTipService.ToolTip" xml:space="preserve">
-    <value>セーブ</value>
+    <value>保存</value>
   </data>
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ズームアウト (↑ / Ctrl+マウスホイール下)</value>
+    <value>ズームアウト (&lt;unk&gt; / Ctrl+マウスホイールダウン)</value>
   </data>
 </root>
