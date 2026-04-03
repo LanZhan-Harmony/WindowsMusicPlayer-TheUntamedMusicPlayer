@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
-namespace UntamedMusicPlayer.Helpers;
+namespace UntamedMusicPlayer.Converters;
 
 public sealed partial class EnumToBooleanConverter : IValueConverter
 {

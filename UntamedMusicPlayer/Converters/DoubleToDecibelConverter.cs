@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml.Data;
+using UntamedMusicPlayer.Helpers;
 
-namespace UntamedMusicPlayer.Helpers;
+namespace UntamedMusicPlayer.Converters;
 
 public sealed partial class DoubleToDecibelConverter : IValueConverter
 {

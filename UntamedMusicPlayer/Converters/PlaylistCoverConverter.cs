@@ -1,16 +1,14 @@
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using UntamedMusicPlayer.Models;
 
-namespace UntamedMusicPlayer.Helpers;
+namespace UntamedMusicPlayer.Converters;
 
-public partial class InversePlaylistCoverToVisibilityConverter : IValueConverter
+public partial class PlaylistCoverConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         var playlist = (PlaylistInfo)value;
-        var cover = CoverManager.GetPlaylistCoverBitmap(playlist);
-        return cover is null ? Visibility.Visible : Visibility.Collapsed;
+        return CoverManager.GetPlaylistCoverBitmap(playlist)!;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
