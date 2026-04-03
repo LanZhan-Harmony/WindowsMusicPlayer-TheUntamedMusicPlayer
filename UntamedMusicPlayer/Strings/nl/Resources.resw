@@ -118,559 +118,559 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Untamed Music Player</value>
+    <value>Ongetemde muziekspeler</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Untamed Music Player</value>
+    <value>Ongetemde muziekspeler</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
-    <value>Music library</value>
+    <value>Muziek bibliotheek</value>
   </data>
   <data name="Shell_PlayQueue.Content" xml:space="preserve">
-    <value>Play queue</value>
+    <value>Speel wachtrij</value>
   </data>
   <data name="Shell_PlayLists.Content" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Afspeellijsten</value>
   </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
-    <value>Personalization</value>
+    <value>Personalisatie</value>
   </data>
   <data name="Settings_ThisIsAnOrdinaryLyric.Text" xml:space="preserve">
-    <value>This is an ordinary lyric</value>
+    <value>Dit is een gewone lyrisch</value>
   </data>
   <data name="Settings_ThisIsAHighlightedLyric.Text" xml:space="preserve">
-    <value>This is a highlighted lyric</value>
+    <value>Dit is een gemarkeerde lyric</value>
   </data>
   <data name="Settings_Theme.Header" xml:space="preserve">
-    <value>App theme</value>
+    <value>App thema</value>
   </data>
   <data name="Settings_ResetSoftware.Header" xml:space="preserve">
-    <value>Reset this software</value>
+    <value>Reset deze software</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>Light</value>
+    <value>Licht</value>
   </data>
   <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>Dark</value>
+    <value>Donker</value>
   </data>
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>Use system setting</value>
+    <value>Systeeminstelling gebruiken</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>About this application</value>
+    <value>Over deze toepassing</value>
   </data>
   <data name="Settings_AddFolderToMusic" xml:space="preserve">
-    <value>Add this folder to Music</value>
+    <value>Voeg deze map toe aan Muziek</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
-    <value>© 2026 Untamed Corporation. All rights reserved.</value>
+    <value>©️ 2026 Untemmed Corporation. Alle rechten voorbehouden.</value>
   </data>
   <data name="Settings_Library.Text" xml:space="preserve">
-    <value>Libraries</value>
+    <value>Bibliotheken</value>
   </data>
   <data name="Settings_AddFolder.Text" xml:space="preserve">
-    <value>Add folder</value>
+    <value>Map toevoegen</value>
   </data>
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
-    <value>Music library locations</value>
+    <value>Locaties in muziekbibliotheek</value>
   </data>
   <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Lyric preview</value>
+    <value>Lyrische preview</value>
   </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
-    <value>No folders are included in this library.</value>
+    <value>Er zijn geen mappen opgenomen in deze bibliotheek.</value>
   </data>
   <data name="Settings_Refresh.Content" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Vernieuwen</value>
   </data>
   <data name="Settings_Import.Content" xml:space="preserve">
-    <value>Import</value>
+    <value>Importeren</value>
   </data>
   <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
-    <value>Import individual playlist</value>
+    <value>Importeer individuele afspeellijst</value>
   </data>
   <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
-    <value>Batch import playlists from m3u8 files</value>
+    <value>Afspeellijsten importeren uit m3u8 bestanden</value>
   </data>
   <data name="Settings_ImportFromBin.Header" xml:space="preserve">
-    <value>Batch import playlists from binary file</value>
+    <value>Batchimport afspeellijsten uit binair bestand</value>
   </data>
   <data name="Settings_Export.Content" xml:space="preserve">
-    <value>Export</value>
+    <value>Exporteren</value>
   </data>
   <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
-    <value>Batch export playlists to m3u8 files (Recommend)</value>
+    <value>Batchexport afspeellijsten naar m3u8 bestanden (Aanbeveling)</value>
   </data>
   <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
-    <value>Better compatibility and works with most music players</value>
+    <value>Betere compatibiliteit en werkt met de meeste muziekspelers</value>
   </data>
   <data name="Settings_ExportToBin.Header" xml:space="preserve">
-    <value>Batch export playlists to binary file</value>
+    <value>Batchexport afspeellijsten naar binair bestand</value>
   </data>
   <data name="Settings_ExportToBin.Description" xml:space="preserve">
-    <value>Faster but only available for this software</value>
+    <value>Sneller maar alleen beschikbaar voor deze software</value>
   </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
-    <value>Refresh libraries</value>
+    <value>Bibliotheken vernieuwen</value>
   </data>
   <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
-    <value>Automatically hide the playback control bar in full screen lyrics page</value>
+    <value>Automatisch de bedieningsbalk van de afspeelbalk op volledig scherm verbergen</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>Exclusive mode</value>
+    <value>Exclusieve modus</value>
   </data>
   <data name="Settings_LowLatencyMode.Header" xml:space="preserve">
-    <value>Low latency mode</value>
+    <value>Lage latency modus</value>
   </data>
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
-    <value>Reduces audio latency. Recommended for mid-to-high-end devices. Disable this if you experience stuttering or playback issues.</value>
+    <value>Vermindert de audiolatentie. Aanbevolen voor high-end apparaten. Schakel dit uit als je problemen ervaart of afspeelproblemen.</value>
   </data>
   <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
-    <value>Once enabled, in-app volume control will be unavailable. Please adjust the volume through the operating system.</value>
+    <value>Eenmaal ingeschakeld, zal in-app volume controle niet beschikbaar zijn. Pas het volume aan via het besturingssysteem.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
-    <value>If you are on the music library's song page with folder sorting enabled, clicking a song will only add songs from that same folder to the playback queue.</value>
+    <value>Als u in de muziekbibliotheek zit met sortering van mappen ingeschakeld Het klikken op een nummer voegt alleen nummers van dezelfde map toe aan de afspeelwachtrij.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
-    <value>Add only the folder where the song is located</value>
+    <value>Voeg alleen de map toe waar het nummer zich bevindt</value>
   </data>
   <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
-    <value>Playlist import/export</value>
+    <value>Afspeellijst import/export</value>
   </data>
   <data name="Settings_ReIndex.Text" xml:space="preserve">
-    <value>If you're not seeing all the media from your library locations, you can re-index your libraries now.</value>
+    <value>Als je niet alle media van de locaties van je bibliotheek ziet, kun je nu je bibliotheken herindexeren.</value>
   </data>
   <data name="Shell_Search.PlaceholderText" xml:space="preserve">
-    <value>Search (Coming soon)</value>
+    <value>Zoeken (binnenkort beschikbaar)</value>
   </data>
   <data name="PlayBar_Property.Text" xml:space="preserve">
-    <value>Properties</value>
+    <value>Eigenschappen</value>
   </data>
   <data name="PlayBar_Equalizer.Text" xml:space="preserve">
-    <value>Equalizer (Coming soon)</value>
+    <value>Equalizer (binnenkort beschikbaar)</value>
   </data>
   <data name="PlayBar_Speed.Text" xml:space="preserve">
-    <value>Speed</value>
+    <value>Snelheid</value>
   </data>
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
-    <value>Cast to device (Coming soon)</value>
+    <value>Casten naar apparaat (binnenkort beschikbaar)</value>
   </data>
   <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
-    <value>Skip back 10 seconds</value>
+    <value>Sla 10 seconden terug over</value>
   </data>
   <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
-    <value>Skip forward 30 seconds</value>
+    <value>30 seconden vooruit springen</value>
   </data>
   <data name="Shell_PlayLists1.Text" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Afspeellijsten</value>
   </data>
   <data name="Shell_PlayQueue1.Text" xml:space="preserve">
-    <value>Play queue</value>
+    <value>Speel wachtrij</value>
   </data>
   <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
-    <value>Music</value>
+    <value>Muziek</value>
   </data>
   <data name="Shell_Settings1.Text" xml:space="preserve">
-    <value>Settings</value>
+    <value>Instellingen</value>
   </data>
   <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
-    <value>We couldn't find any music</value>
+    <value>We konden geen muziek vinden</value>
   </data>
   <data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
-    <value>Your music library doesn't contain any music content.</value>
+    <value>Je muziekbibliotheek bevat geen muziekinhoud.</value>
   </data>
   <data name="HaveMusic_Songs.Text" xml:space="preserve">
-    <value>Songs</value>
+    <value>Nummers</value>
   </data>
   <data name="Home_Playlists.Text" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Afspeellijsten</value>
   </data>
   <data name="HaveMusic_Albums.Text" xml:space="preserve">
     <value>Albums</value>
   </data>
   <data name="HaveMusic_Artists.Text" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artiesten</value>
   </data>
   <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
-    <value>Revome this folder?</value>
+    <value>Deze map onthullen?</value>
   </data>
   <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
-    <value>Are you sure you want to reset this software?</value>
+    <value>Weet u zeker dat u deze software wilt resetten?</value>
   </data>
   <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
-    <value>If you remove the "{title}" folder from Music, it won't appear in Music anymore, but won't be deleted.</value>
+    <value>Als je de "{title}" map van muziek verwijdert, zal deze niet meer in Muziek verschijnen, maar niet worden verwijderd.</value>
   </data>
   <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
-    <value>All data of this software will be emptied, including settings, play queue, playlists, etc., please proceed with caution.</value>
+    <value>Alle data van deze software zal worden leeggemaakt, inclusief instellingen, wachtrij, afspeellijsten, enz., ga voorzichtig verder.</value>
   </data>
   <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
-    <value>Remove Folder</value>
+    <value>Map verwijderen</value>
   </data>
   <data name="Settings_ResetSoftwareDialogPrimary" xml:space="preserve">
-    <value>Reset and restart</value>
+    <value>Reset en herstart</value>
   </data>
   <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="Settings_ResetSoftwareDialogClose" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="PlayLists_DeleteDialogClose" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="PlayLists_DeleteDialogPrimary" xml:space="preserve">
-    <value>Delete</value>
+    <value>Verwijderen</value>
   </data>
   <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
-    <value>Delete playlists permanently?</value>
+    <value>Verwijder afspeellijsten permanent?</value>
   </data>
   <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
-    <value>Are you sure you want to delete this playlist? If you delete '{title}', you won't be able to recover it.</value>
+    <value>Weet je zeker dat je deze afspeellijst wilt verwijderen? Als je '{title}' verwijdert, kun je het niet meer herstellen.</value>
   </data>
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
-    <value>Manage system indexing settings</value>
+    <value>Beheer systeem indexeringsinstellingen</value>
   </data>
   <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
-    <value>Did you mean to switch apps?</value>
+    <value>Wenst u van app te wisselen?</value>
   </data>
   <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
-    <value> “Media Player” is trying to open “Settings”.</value>
+    <value> “Media Player” probeert “Instellingen” te openen.</value>
   </data>
   <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
-    <value>Yes</value>
+    <value>ja</value>
   </data>
   <data name="Settings_OpenSettingDialogClose" xml:space="preserve">
-    <value>No</value>
+    <value>Neen</value>
   </data>
   <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Volume (Alt+↑/↓)</value>
+    <value>Volume (Alt+★/verige)</value>
   </data>
   <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Full screen (F11)</value>
+    <value>Volledig scherm (F11)</value>
   </data>
   <data name="PlayBar_DesktopLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>Desktop lyric (Ctrl+M)</value>
   </data>
   <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
-    <value>More options</value>
+    <value>Meer opties</value>
   </data>
   <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Previous (Ctrl+B)</value>
+    <value>Vorige (Ctrl+B)</value>
   </data>
   <data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Next (Ctrl+F)</value>
+    <value>Volgende (Ctrl+F)</value>
   </data>
   <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
     <value>NowPlaying (Ctrl+N)</value>
   </data>
   <data name="PlayBar_ShuffleOff" xml:space="preserve">
-    <value>Shuffle: Off (Ctrl+H)</value>
+    <value>Shuffle: Uit (Ctrl+H)</value>
   </data>
   <data name="PlayBar_ShuffleOn" xml:space="preserve">
-    <value>Shuffle: On (Ctrl+H)</value>
+    <value>Shuffle: Aan (Ctrl+H)</value>
   </data>
   <data name="PlayBar_RepeatOff" xml:space="preserve">
-    <value>Repeat: Off (Ctrl+T)</value>
+    <value>Herhaal: Uit (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatAll" xml:space="preserve">
-    <value>Repeat: All (Ctrl+T)</value>
+    <value>Herhaal: Alles (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatOne" xml:space="preserve">
-    <value>Repeat: One (Ctrl+T)</value>
+    <value>Herhaal: Eén (Ctrl+T)</value>
   </data>
   <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Music library (Ctrl+R)</value>
+    <value>Muziekbibliotheek (Ctrl+R)</value>
   </data>
   <data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Play queue (Ctrl+Q)</value>
+    <value>Wachtrij (Ctrl+Q)</value>
   </data>
   <data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Playlists (Ctrl+Y)</value>
+    <value>Afspeellijsten (Ctrl+Y)</value>
   </data>
   <data name="PlayBar_Play" xml:space="preserve">
-    <value>Play (Ctrl+P)</value>
+    <value>Afspelen (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Pause" xml:space="preserve">
-    <value>Pause (Ctrl+P)</value>
+    <value>Pauze (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Seek</value>
+    <value>Zoeken</value>
   </data>
   <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Remove folder</value>
+    <value>Map verwijderen</value>
   </data>
   <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Add a folder to your music library</value>
+    <value>Een map aan uw muziekbibliotheek toevoegen</value>
   </data>
   <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
-    <value>Shuffle: On</value>
+    <value>Shuffle: Aan</value>
   </data>
   <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
-    <value>Shuffle: Off</value>
+    <value>Shuffle: Uit</value>
   </data>
   <data name="PlayBar_More_RepeatAll" xml:space="preserve">
-    <value>Repeat: All</value>
+    <value>Herhaal: Alles</value>
   </data>
   <data name="PlayBar_More_RepeatOne" xml:space="preserve">
-    <value>Repeat: One</value>
+    <value>Herhaal: Een</value>
   </data>
   <data name="PlayBar_More_RepeatOff" xml:space="preserve">
-    <value>Repeat: Off</value>
+    <value>Herhaal: uit</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>None, Mica, Mica Alt, Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
+    <value>Geen: Mica, Mica Alt, Desktop Akrilic, krilische basis, acrylic Thin, Blur, Transparent, Geanimeerd</value>
   </data>
   <data name="Songs_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Album (Asc), Album (Desc), Release year (Asc), Release year (Desc), Date added (Asc), Date added (Desc), Folder (Asc), Folder (Desc)</value>
+    <value>A - Z, Z - A, Artiest (Asc), Artiest (Aflopen), Album (Asc), Album (Omsch), Vrijgave jaar (Asc), Release jaar (aflopen), datum toegevoegd (Asc), datum toegevoegd (aflopend), map (Asc), map (aflopend)</value>
   </data>
   <data name="Albums_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Release year (Asc), Release year (Desc), Artist (Asc), Artist (Desc), Date added (Asc), Date added (Desc)</value>
+    <value>A - Z, Z - A, release-jaar (Asc), release-jaar (aflopend), Artiest (Asc), Artiest (Omsch), Datum toegevoegd (Asc), Datum toegevoegd (aflopend)</value>
   </data>
   <data name="SongInfo_UnknownArtist" xml:space="preserve">
-    <value>Unknown artist</value>
+    <value>Onbekende artiest</value>
   </data>
   <data name="SongInfo_UnknownGenre" xml:space="preserve">
-    <value>Unknown genre</value>
+    <value>Onbekend genre</value>
   </data>
   <data name="DisplaySongInfo_SourceMode0" xml:space="preserve">
-    <value>Local song</value>
+    <value>Lokaal nummer</value>
   </data>
   <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
-    <value>Online song</value>
+    <value>Online nummer</value>
   </data>
   <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
-    <value>Song from Music Library 5</value>
+    <value>Nummer van Muziekbibliotheek 5</value>
   </data>
   <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
-    <value>Song from Music Library 6</value>
+    <value>Nummer van Muziekbibliotheek 6</value>
   </data>
   <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
-    <value>Song from Music Library 4</value>
+    <value>Nummer van Muziekbibliotheek 4</value>
   </data>
   <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
-    <value>Song from Music Library 3</value>
+    <value>Nummer van Muziekbibliotheek 3</value>
   </data>
   <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
-    <value>Song from Music Library 2</value>
+    <value>Nummer van Muziekbibliotheek 2</value>
   </data>
   <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
-    <value>Song from Music Library 1</value>
+    <value>Nummer van Muziekbibliotheek 1</value>
   </data>
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
-    <value>Unknown album</value>
+    <value>Onbekend album</value>
   </data>
   <data name="Songs_SortByChosen.Text" xml:space="preserve">
-    <value>Sort by: </value>
+    <value>Sorteren op: </value>
   </data>
   <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
-    <value>Shuffle and play</value>
+    <value>Shuffle en spelen</value>
   </data>
   <data name="Songs_GenreChosen.Text" xml:space="preserve">
     <value>Genre: </value>
   </data>
   <data name="PlayQueue_Clear.Text" xml:space="preserve">
-    <value>Clear</value>
+    <value>Verwijderen</value>
   </data>
   <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
-    <value>Add to play queue</value>
+    <value>Toevoegen aan afspeelwachtrij</value>
   </data>
   <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
-    <value>Play queue</value>
+    <value>Speel wachtrij</value>
   </data>
   <data name="Songs_AddTo_NewPlaylist.Text" xml:space="preserve">
-    <value>New playlist</value>
+    <value>Nieuwe afspeellijst</value>
   </data>
   <data name="PlayQueue_AddFiles.Text" xml:space="preserve">
-    <value>Add file(s)</value>
+    <value>Bestand(en) toevoegen</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
-    <value>Add file(s) to play queue</value>
+    <value>Voeg bestand(en) toe om wachtrij af te spelen</value>
   </data>
   <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
-    <value>Browse for files to add to the play queue</value>
+    <value>Blader naar bestanden om toe te voegen aan de afspeelwachtrij</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
-    <value>Add folder to play queue</value>
+    <value>Voeg map toe aan wachtrij</value>
   </data>
   <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
-    <value>Choose a folder, and add all the media in that folder to the play queue</value>
+    <value>Kies een map en voeg alle media in die map toe aan de afspeelwachtrij</value>
   </data>
   <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
-    <value>Add media from URL to play queue</value>
+    <value>Voeg media toe vanaf URL om wachtrij af te spelen</value>
   </data>
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
-    <value>Enter a URL, and add the media from that address to the play queue</value>
+    <value>Voer een URL in en voeg de media van dat adres toe aan de wachtrij</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
-    <value>Open a URL</value>
+    <value>Open een URL</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
     <value>Open</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
-    <value>Enter the URL for a file, stream, or playlist</value>
+    <value>Voer de URL in voor een bestand, stream of afspeellijst</value>
   </data>
   <data name="Songs_Play.Text" xml:space="preserve">
-    <value>Play</value>
+    <value>Afspelen</value>
   </data>
   <data name="Songs_PlayNext.Text" xml:space="preserve">
-    <value>Play next</value>
+    <value>Volgende afspelen</value>
   </data>
   <data name="Songs_AddTo.Text" xml:space="preserve">
-    <value>Add to</value>
+    <value>Toevoegen aan</value>
   </data>
   <data name="Songs_EditInfo.Text" xml:space="preserve">
-    <value>Edit info</value>
+    <value>Info bewerken</value>
   </data>
   <data name="Songs_Properties.Text" xml:space="preserve">
-    <value>Properties</value>
+    <value>Eigenschappen</value>
   </data>
   <data name="Songs_ShowAlbum.Text" xml:space="preserve">
-    <value>Show album</value>
+    <value>Album weergeven</value>
   </data>
   <data name="Songs_ShowArtist.Text" xml:space="preserve">
-    <value>Show Artist</value>
+    <value>Toon Artiest</value>
   </data>
   <data name="Songs_Select.Text" xml:space="preserve">
-    <value>Select</value>
+    <value>Selecteren</value>
   </data>
   <data name="PlayQueue_Remove.Text" xml:space="preserve">
-    <value>Remove</value>
+    <value>Verwijderen</value>
   </data>
   <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
-    <value>Move up</value>
+    <value>Verplaats omhoog</value>
   </data>
   <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
-    <value>Move down</value>
+    <value>Verplaats naar beneden</value>
   </data>
   <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Afspelen</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
-    <value>Window material</value>
+    <value>Raam materiaal</value>
   </data>
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
-    <value>Choose a material</value>
+    <value>Kies het materiaal</value>
   </data>
   <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
-    <value>Lyric font-family</value>
+    <value>Lyrische lettertype</value>
   </data>
   <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Lyric font-size</value>
+    <value>Lyrische lettergrootte</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
-    <value>Choose a font-family</value>
+    <value>Kies een font-familie</value>
   </data>
   <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
     <value>Choose a font-size</value>
   </data>
   <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>Window background follows cover theme color</value>
+    <value>Venster achtergrond volgt thema kleur</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="Settings_Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Versie</value>
   </data>
   <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Clear (Ctrl+Shift+X)</value>
+    <value>Wis (Ctrl+Shift+X)</value>
   </data>
   <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Browse for files to add to the play queue</value>
+    <value>Blader naar bestanden om toe te voegen aan de afspeelwachtrij</value>
   </data>
   <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Skip back 10 seconds (Ctrl+Left)</value>
+    <value>Sla 10 seconden over (Ctrl+Left)</value>
   </data>
   <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Skip forward 30 seconds (Ctrl+Right)</value>
+    <value>Sla 30 seconden vooruit (Ctrl+Right)</value>
   </data>
   <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
-    <value>Full screen</value>
+    <value>Volledig scherm</value>
   </data>
   <data name="SongInfo_AllGenres" xml:space="preserve">
-    <value>All genres</value>
+    <value>Alle genres</value>
   </data>
   <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
-    <value>Indexing libraries...</value>
+    <value>Bibliotheken indexeren...</value>
   </data>
   <data name="Artists_SortBy" xml:space="preserve">
     <value>A - Z, Z - A</value>
   </data>
   <data name="Playlists_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Date modified (Asc), Date modified (Desc)</value>
+    <value>A - Z, Z - A, Datum gewijzigd (Asc), Datum gewijzigd (aflopend)</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
-    <value>Background stops updating after window loses focus</value>
+    <value>Achtergrond stopt updaten na focus vensterverlies</value>
   </data>
   <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
-    <value>Window background color</value>
+    <value>Achtergrondkleur van venster</value>
   </data>
   <data name="Shell_Home.Content" xml:space="preserve">
-    <value>Home</value>
+    <value>Startpagina</value>
   </data>
   <data name="Shell_Home1.Text" xml:space="preserve">
-    <value>Home</value>
+    <value>Startpagina</value>
   </data>
   <data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
     <value>Home (Ctrl+Shift+F)</value>
   </data>
   <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
-    <value>Search online content</value>
+    <value>Online inhoud zoeken</value>
   </data>
   <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
-    <value>Luminosity opacity</value>
+    <value>Transparantie lichtzinnigheid</value>
   </data>
   <data name="Settings_Reset.Content" xml:space="preserve">
     <value>Reset</value>
   </data>
   <data name="PropertiesDialog_Title.Text" xml:space="preserve">
-    <value>Title</value>
+    <value>Aanspreektitel</value>
   </data>
   <data name="PropertiesDialog_Album.Text" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="PropertiesDialog_Track.Text" xml:space="preserve">
-    <value>Track</value>
+    <value>Bijhouden</value>
   </data>
   <data name="PropertiesDialog_Genre.Text" xml:space="preserve">
-    <value>Genre</value>
+    <value>genre</value>
   </data>
   <data name="PropertiesDialog_Bitrate.Text" xml:space="preserve">
-    <value>Bit rate</value>
+    <value>Bit tarief</value>
   </data>
   <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
-    <value>Contributing artists</value>
+    <value>Bijdragen aan artiesten</value>
   </data>
   <data name="PropertiesDialog_AlbumArtist.Text" xml:space="preserve">
-    <value>Album artist</value>
+    <value>Album artiest</value>
   </data>
   <data name="PropertiesDialog_Length.Text" xml:space="preserve">
-    <value>Length</value>
+    <value>longueur</value>
   </data>
   <data name="PropertiesDialog_Year.Text" xml:space="preserve">
-    <value>Year</value>
+    <value>jaar</value>
   </data>
   <data name="PropertiesDialog_ItemType.Text" xml:space="preserve">
     <value>Item type</value>
   </data>
   <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
-    <value>File location</value>
+    <value>Locatie van bestand</value>
   </data>
   <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
-    <value>Open file location</value>
+    <value>Open bestandslocatie</value>
   </data>
   <data name="PropertiesDialog.Title" xml:space="preserve">
-    <value>Properties</value>
+    <value>Eigenschappen</value>
   </data>
   <data name="EqualizerDialog_Title.Text" xml:space="preserve">
     <value>Equalizer</value>
   </data>
   <data name="EqualizerDialog_On" xml:space="preserve">
-    <value>On</value>
+    <value>op</value>
   </data>
   <data name="EqualizerDialog_Decibel" xml:space="preserve">
     <value>dB</value>
@@ -682,10 +682,10 @@
     <value>Preset</value>
   </data>
   <data name="EqualizerDialog_Presets" xml:space="preserve">
-    <value>Flat, Treble boost, Bass boost, Headphones, Laptop, Portable speakers, Home stereo, TV, Car, Custom</value>
+    <value>Flat, treble boost, Bass boost, koptelefoon, Laptop, Portable speakers Home stereo, TV, Car, Aangepast</value>
   </data>
   <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
-    <value>Move nearby sliders together</value>
+    <value>Verplaats schuifregelaars in de buurt samen</value>
   </data>
   <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
     <value>Hz</value>
@@ -694,100 +694,100 @@
     <value>kHz</value>
   </data>
   <data name="EqualizerDialog_Off" xml:space="preserve">
-    <value>Off</value>
+    <value>UIT</value>
   </data>
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
-    <value>Edit song info</value>
+    <value>Bewerk nummerinfo</value>
   </data>
   <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
-    <value>Lyric</value>
+    <value>Lyrisch</value>
   </data>
   <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
-    <value>Cover image</value>
+    <value>Omslag afbeelding</value>
   </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
-    <value>Edit album info</value>
+    <value>Bewerk albumgegevens</value>
   </data>
   <data name="EditPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>Edit playlist info</value>
+    <value>Bewerk afspeellijst informatie</value>
   </data>
   <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>Add to new playlist</value>
+    <value>Toevoegen aan nieuwe afspeellijst</value>
   </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
-    <value>Close</value>
+    <value>Afsluiten</value>
   </data>
   <data name="EqualizerDialog.CloseButtonText" xml:space="preserve">
-    <value>Close</value>
+    <value>Afsluiten</value>
   </data>
   <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="EditPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Opslaan</value>
   </data>
   <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Import</value>
+    <value>Importeren</value>
   </data>
   <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="ImportPlaylistDialog.Title" xml:space="preserve">
-    <value>Import playlist</value>
+    <value>Afspeellijst importeren</value>
   </data>
   <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
-    <value>Name</value>
+    <value>naam</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromFolder.Content" xml:space="preserve">
-    <value>Import from folder</value>
+    <value>Importeren uit map</value>
   </data>
   <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
-    <value>Import songs</value>
+    <value>Nummers importeren</value>
   </data>
   <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
-    <value>Number of songs</value>
+    <value>Nummers aantal</value>
   </data>
   <data name="ImportPlaylistDialog_Type.Text" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromM3u8Files.Content" xml:space="preserve">
-    <value>Import from m3u8 files</value>
+    <value>Importeren uit m3u8 bestanden</value>
   </data>
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Opslaan</value>
   </data>
   <data name="EditPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Opslaan</value>
   </data>
   <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Create</value>
+    <value>Aanmaken</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
-    <value>Desktop lyric</value>
+    <value>Desktop lyrisch</value>
   </data>
   <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
-    <value>Play all</value>
+    <value>Alles afspelen</value>
   </data>
   <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
-    <value>Shuffle and play</value>
+    <value>Shuffle en spelen</value>
   </data>
   <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
-    <value>Edit info</value>
+    <value>Info bewerken</value>
   </data>
   <data name="AlbumInfo_Songs" xml:space="preserve">
-    <value>songs</value>
+    <value>nummers</value>
   </data>
   <data name="AlbumInfo_RunTime" xml:space="preserve">
-    <value>run time</value>
+    <value>looptijd</value>
   </data>
   <data name="ArtistInfo_Albums" xml:space="preserve">
     <value>albums</value>
@@ -796,234 +796,234 @@
     <value>album</value>
   </data>
   <data name="ArtistInfo_Hours" xml:space="preserve">
-    <value>hours</value>
+    <value>Uren</value>
   </data>
   <data name="ArtistInfo_Hour" xml:space="preserve">
-    <value>hour</value>
+    <value>uur</value>
   </data>
   <data name="ArtistInfo_Min" xml:space="preserve">
-    <value>min</value>
+    <value>min.</value>
   </data>
   <data name="ArtistInfo_Sec" xml:space="preserve">
-    <value>sec</value>
+    <value>sec.</value>
   </data>
   <data name="ArtistInfo_Secs" xml:space="preserve">
-    <value>secs</value>
+    <value>seconden</value>
   </data>
   <data name="ArtistInfo_Mins" xml:space="preserve">
-    <value>mins</value>
+    <value>minuten</value>
   </data>
   <data name="AlbumInfo_Song" xml:space="preserve">
-    <value>song</value>
+    <value>nummer</value>
   </data>
   <data name="ArtistInfo_Artist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Kunstenaar</value>
   </data>
   <data name="ArtistDetail_InYourLibrary.Text" xml:space="preserve">
-    <value>In your library</value>
+    <value>In uw bibliotheek</value>
   </data>
   <data name="AlbumInfo_UnknownYear" xml:space="preserve">
-    <value>Unknown year</value>
+    <value>Onbekend jaar</value>
   </data>
   <data name="Home_MusicLibrary1.Text" xml:space="preserve">
-    <value>Music library 1</value>
+    <value>Muziekbibliotheek 1</value>
   </data>
   <data name="Home_MusicLibrary6.Text" xml:space="preserve">
-    <value>Music library 6</value>
+    <value>Muziekbibliotheek 6</value>
   </data>
   <data name="Home_MusicLibrary5.Text" xml:space="preserve">
-    <value>Music library 5</value>
+    <value>Muziekbibliotheek 5</value>
   </data>
   <data name="Home_MusicLibrary4.Text" xml:space="preserve">
-    <value>Music library 4</value>
+    <value>Muziekbibliotheek 4</value>
   </data>
   <data name="Home_MusicLibrary3.Text" xml:space="preserve">
-    <value>Music library 3</value>
+    <value>Muziekbibliotheek 3</value>
   </data>
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
-    <value>Music library 2</value>
+    <value>Muziekbibliotheek 2</value>
   </data>
   <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>Network error, please retry later</value>
+    <value>Netwerk fout, probeer het later opnieuw</value>
   </data>
   <data name="Home_Retry.Text" xml:space="preserve">
-    <value>Retry</value>
+    <value>Opnieuw</value>
   </data>
   <data name="Home_SearchResult.Text" xml:space="preserve">
-    <value>'s search results</value>
+    <value>'s zoekresultaten</value>
   </data>
   <data name="Settings_SourceCode.Content" xml:space="preserve">
-    <value>Source Code</value>
+    <value>Bron code</value>
   </data>
   <data name="Settings_Thanks.Header" xml:space="preserve">
-    <value>Thanks to MoXiangTongXiu for breathing life into this software</value>
+    <value>Dankzij MoXiangTongXiu voor het leven in deze software</value>
   </data>
   <data name="OnlineSongs_Download.Text" xml:space="preserve">
-    <value>Download</value>
+    <value>downloaden</value>
   </data>
   <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
-    <value>Song download location</value>
+    <value>Download locatie voor nummers</value>
   </data>
   <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
-    <value>Change</value>
+    <value>Veranderen</value>
   </data>
   <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
-    <value>Start downloading</value>
+    <value>Downloaden starten</value>
   </data>
   <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuleren</value>
   </data>
   <data name="OnlineMusicLibrary_Progress" xml:space="preserve">
-    <value>Progress</value>
+    <value>Vooruitgang</value>
   </data>
   <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
-    <value>Downloading...</value>
+    <value>Downloadenchar@@0</value>
   </data>
   <data name="OnlineMusicLibrary_Processing" xml:space="preserve">
-    <value>Processing...</value>
+    <value>Verwerken...</value>
   </data>
   <data name="OnlineMusicLibrary_OpenFolder" xml:space="preserve">
-    <value>Open folder</value>
+    <value>Map openen</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
-    <value>Download completed</value>
+    <value>Download voltooid</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCancelled" xml:space="preserve">
-    <value>Download cancelled</value>
+    <value>Download geannuleerd</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadFailed" xml:space="preserve">
-    <value>Download failed</value>
+    <value>Downloaden mislukt</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
-    <value>Downloading song</value>
+    <value>Nummer downloaden</value>
   </data>
   <data name="Shell_Settings.Content" xml:space="preserve">
-    <value>Settings</value>
+    <value>Instellingen</value>
   </data>
   <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Settings (Ctrl+G)</value>
+    <value>Instellingen (Ctrl+G)</value>
   </data>
   <data name="PlaylistInfo_Item" xml:space="preserve">
-    <value>item</value>
+    <value>artikel</value>
   </data>
   <data name="PlaylistInfo_Items" xml:space="preserve">
-    <value>items</value>
+    <value>artikelen</value>
   </data>
   <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>Show playlist</value>
+    <value>Toon afspeellijst</value>
   </data>
   <data name="PlayLists_Rename.Text" xml:space="preserve">
-    <value>Rename</value>
+    <value>Hernoem</value>
   </data>
   <data name="PlayLists_Delete.Text" xml:space="preserve">
-    <value>Delete</value>
+    <value>Verwijderen</value>
   </data>
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>Show playlist</value>
+    <value>Toon afspeellijst</value>
   </data>
   <data name="Main_SendFeedback.Content" xml:space="preserve">
-    <value>Send feedback</value>
+    <value>Feedback verzenden</value>
   </data>
   <data name="Shell_PlayFiles" xml:space="preserve">
-    <value>Play file(s)</value>
+    <value>Bestanden afspelen</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value>We can't open {title}. This may be because the file type is unsupported, the file extension is incorrect, the file is corrupted, or the network is abnormal.</value>
+    <value>We kunnen {title}niet openen. Dit kan komen doordat het bestandstype niet wordt ondersteund, de bestandsextensie onjuist is, het bestand is beschadigd of het netwerk abnormaal is.</value>
   </data>
   <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
-    <value>The audio playback device is currently in use.</value>
+    <value>Het audioapparaat is momenteel in gebruik.</value>
   </data>
   <data name="Error_SamePlaylistName" xml:space="preserve">
-    <value>A playlist with this name already exists in this folder. Enter another name then try again.</value>
+    <value>Er bestaat al een afspeellijst met deze naam in deze map. Voer een andere naam in en probeer het opnieuw.</value>
   </data>
   <data name="Error_EditingSongInfoIO" xml:space="preserve">
-    <value>We can't edit {title}. This may be because the current file is playing, being occupied by another process, or the file type is unsupported.</value>
+    <value>We kunnen {title}niet bewerken. Dit kan zijn omdat het huidige bestand aan het spelen is, bezet door een ander proces, of het bestandstype wordt niet ondersteund.</value>
   </data>
   <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
-    <value>Developer options</value>
+    <value>Opties voor ontwikkelaars</value>
   </data>
   <data name="Settings_Logging.Header" xml:space="preserve">
-    <value>Logging</value>
+    <value>Logboekregistratie</value>
   </data>
   <data name="Settings_OpenFolder.Content" xml:space="preserve">
-    <value>Open folder</value>
+    <value>Map openen</value>
   </data>
   <data name="Error_EditingSongInfoOther" xml:space="preserve">
-    <value>We can't edit some of the properties of {title}. This may be because the file type is unsupported, or the file is corrupted.</value>
+    <value>We kunnen sommige eigenschappen van {title}niet bewerken. Dit kan zijn omdat het bestandstype niet wordt ondersteund, of omdat het bestand beschadigd is.</value>
   </data>
   <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
-    <value>You don't have any playlists</value>
+    <value>Je hebt geen afspeellijsten</value>
   </data>
   <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
-    <value>Create a new playlist</value>
+    <value>Nieuwe afspeellijst aanmaken</value>
   </data>
   <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
-    <value>New playlist</value>
+    <value>Nieuwe afspeellijst</value>
   </data>
   <data name="PlayLists_CreatePlaylist.Content" xml:space="preserve">
-    <value>Create playlist</value>
+    <value>Afspeellijst maken</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
-    <value>Untitled playlist</value>
+    <value>Naamloze afspeellijst</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
-    <value>Untitled playlist</value>
+    <value>Naamloze afspeellijst</value>
   </data>
   <data name="PlaylistInfo_Create" xml:space="preserve">
-    <value>Playlist '{title}' created.</value>
+    <value>Afspeellijst '{title}' aangemaakt.</value>
   </data>
   <data name="PlaylistInfo_Delete" xml:space="preserve">
-    <value>Playlist '{title}' deleted.</value>
+    <value>Afspeellijst '{title}' verwijderd.</value>
   </data>
   <data name="PlaylistInfo_AddItems" xml:space="preserve">
-    <value>{num} items added to playlist '{title}'.</value>
+    <value>{num} items toegevoegd aan afspeellijst '{title}'.</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
-    <value>{num} playlist has been imported.</value>
+    <value>{num} afspeellijst is geïmporteerd.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
-    <value>{num} playlist has been exported.</value>
+    <value>{num} afspeellijst is geëxporteerd.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
-    <value>{num} playlists have been exported.</value>
+    <value>{num} afspeellijsten zijn geëxporteerd.</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
-    <value>{num} playlists have been imported.</value>
+    <value>{num} afspeellijsten zijn geïmporteerd.</value>
   </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
-    <value>{num} item added to playlist '{title}'.</value>
+    <value>{num} item toegevoegd aan afspeellijst '{title}'.</value>
   </data>
   <data name="Settings_Lyric.Text" xml:space="preserve">
-    <value>Lyric</value>
+    <value>Lyrisch</value>
   </data>
   <data name="Settings_Play.Text" xml:space="preserve">
-    <value>Play</value>
+    <value>Afspelen</value>
   </data>
   <data name="Settings_PlaylistFile" xml:space="preserve">
-    <value>Playlist file</value>
+    <value>Afspeellijst bestand</value>
   </data>
   <data name="Settings_Playlist" xml:space="preserve">
-    <value>Playlist</value>
+    <value>Afspeellijst</value>
   </data>
   <data name="Lyric_ShowCover.Text" xml:space="preserve">
-    <value>Show cover</value>
+    <value>Toon omslag</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
-    <value>Untamed Image Viewer</value>
+    <value>Niet getemde afbeeldingsweergave</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Zoom in (↑ / Ctrl+Mouse wheel up)</value>
+    <value>Zoom in (×/ Ctrl+Mouse wiel omhoog)</value>
   </data>
   <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Original size</value>
+    <value>Oorspronkelijke grootte</value>
   </data>
   <data name="ImageViewer_Copy.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Copy to clipboard</value>
+    <value>Kopiëren naar klembord</value>
   </data>
   <data name="ImageViewer_Save.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Save</value>
+    <value>Opslaan</value>
   </data>
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Zoom out (↑ / Ctrl+Mouse wheel down)</value>
+    <value>Uitzoomen (×/ Ctrl+Mouse wiel omlaag)</value>
   </data>
 </root>
