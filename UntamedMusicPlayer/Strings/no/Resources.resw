@@ -118,559 +118,559 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Untamed Music Player</value>
+    <value>Navnløs musikkspiller</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Untamed Music Player</value>
+    <value>Navnløs musikkspiller</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
-    <value>Music library</value>
+    <value>Musikk bibliotek</value>
   </data>
   <data name="Shell_PlayQueue.Content" xml:space="preserve">
-    <value>Play queue</value>
+    <value>Spill av kø</value>
   </data>
   <data name="Shell_PlayLists.Content" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Spillelister</value>
   </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
-    <value>Personalization</value>
+    <value>Personalisering</value>
   </data>
   <data name="Settings_ThisIsAnOrdinaryLyric.Text" xml:space="preserve">
-    <value>This is an ordinary lyric</value>
+    <value>Dette er en vanlig sangtekst</value>
   </data>
   <data name="Settings_ThisIsAHighlightedLyric.Text" xml:space="preserve">
-    <value>This is a highlighted lyric</value>
+    <value>Dette er en fremhevet lyrisk</value>
   </data>
   <data name="Settings_Theme.Header" xml:space="preserve">
-    <value>App theme</value>
+    <value>App tema</value>
   </data>
   <data name="Settings_ResetSoftware.Header" xml:space="preserve">
-    <value>Reset this software</value>
+    <value>Tilbakestill denne programvaren</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>Light</value>
+    <value>Lys</value>
   </data>
   <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>Dark</value>
+    <value>Mørk</value>
   </data>
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>Use system setting</value>
+    <value>Bruk systeminnstillinger</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>About this application</value>
+    <value>Om denne applikasjonen</value>
   </data>
   <data name="Settings_AddFolderToMusic" xml:space="preserve">
-    <value>Add this folder to Music</value>
+    <value>Legg til denne mappen i musikken</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
-    <value>© 2026 Untamed Corporation. All rights reserved.</value>
+    <value>©️ 2026 Untamed Corporation. Alle rettigheter reservert.</value>
   </data>
   <data name="Settings_Library.Text" xml:space="preserve">
-    <value>Libraries</value>
+    <value>Biblioteker</value>
   </data>
   <data name="Settings_AddFolder.Text" xml:space="preserve">
-    <value>Add folder</value>
+    <value>Legg til mappe</value>
   </data>
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
-    <value>Music library locations</value>
+    <value>Musikk bibliotek lokasjoner</value>
   </data>
   <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Lyric preview</value>
+    <value>Forhåndsvisning av sangen</value>
   </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
-    <value>No folders are included in this library.</value>
+    <value>Ingen mapper er inkludert i dette biblioteket.</value>
   </data>
   <data name="Settings_Refresh.Content" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Oppdater</value>
   </data>
   <data name="Settings_Import.Content" xml:space="preserve">
-    <value>Import</value>
+    <value>Importer</value>
   </data>
   <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
-    <value>Import individual playlist</value>
+    <value>Importer individuell spilleliste</value>
   </data>
   <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
-    <value>Batch import playlists from m3u8 files</value>
+    <value>Batch importspillelister fra m3u8 filer</value>
   </data>
   <data name="Settings_ImportFromBin.Header" xml:space="preserve">
-    <value>Batch import playlists from binary file</value>
+    <value>Batch import spillelister fra binær fil</value>
   </data>
   <data name="Settings_Export.Content" xml:space="preserve">
-    <value>Export</value>
+    <value>Eksporter</value>
   </data>
   <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
-    <value>Batch export playlists to m3u8 files (Recommend)</value>
+    <value>Batch eksport spillelister til m3u8 filer (Anbefal)</value>
   </data>
   <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
-    <value>Better compatibility and works with most music players</value>
+    <value>Bedre kompatibilitet og fungerer med de fleste musikkspillere</value>
   </data>
   <data name="Settings_ExportToBin.Header" xml:space="preserve">
-    <value>Batch export playlists to binary file</value>
+    <value>Batch eksport spillelister til binær fil</value>
   </data>
   <data name="Settings_ExportToBin.Description" xml:space="preserve">
-    <value>Faster but only available for this software</value>
+    <value>Raskere, men bare tilgjengelig for denne programvaren</value>
   </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
-    <value>Refresh libraries</value>
+    <value>Oppdater biblioteker</value>
   </data>
   <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
-    <value>Automatically hide the playback control bar in full screen lyrics page</value>
+    <value>Skjul automatisk avspillingskontrolllinjen på fullskjerm med sangtekst side</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>Exclusive mode</value>
+    <value>Eksklusiv modus</value>
   </data>
   <data name="Settings_LowLatencyMode.Header" xml:space="preserve">
-    <value>Low latency mode</value>
+    <value>Low latency modus</value>
   </data>
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
-    <value>Reduces audio latency. Recommended for mid-to-high-end devices. Disable this if you experience stuttering or playback issues.</value>
+    <value>Reduserer lydforsinkelse. Anbefalt for høy-end enheter. Deaktiver dette hvis du opplever problemer med å avbryte eller avspilling.</value>
   </data>
   <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
-    <value>Once enabled, in-app volume control will be unavailable. Please adjust the volume through the operating system.</value>
+    <value>Når skrudd på vil volumkontrollen i appen være utilgjengelig. Juster volumet via operativsystemet.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
-    <value>If you are on the music library's song page with folder sorting enabled, clicking a song will only add songs from that same folder to the playback queue.</value>
+    <value>Hvis du er på musikkbibliotekets sangside med mappesortering aktivert. Klikk på en sang vil bare legge til sanger fra den samme mappen i avspillingskøen.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
-    <value>Add only the folder where the song is located</value>
+    <value>Legg til kun mappen hvor sangen ligger</value>
   </data>
   <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
-    <value>Playlist import/export</value>
+    <value>Spilleliste import/eksport</value>
   </data>
   <data name="Settings_ReIndex.Text" xml:space="preserve">
-    <value>If you're not seeing all the media from your library locations, you can re-index your libraries now.</value>
+    <value>Hvis du ikke ser alle mediene fra bibliotekets steder, kan du reindeksere bibliotekene nå.</value>
   </data>
   <data name="Shell_Search.PlaceholderText" xml:space="preserve">
-    <value>Search (Coming soon)</value>
+    <value>Søk (Kommer snart)</value>
   </data>
   <data name="PlayBar_Property.Text" xml:space="preserve">
-    <value>Properties</value>
+    <value>Egenskaper</value>
   </data>
   <data name="PlayBar_Equalizer.Text" xml:space="preserve">
-    <value>Equalizer (Coming soon)</value>
+    <value>Equalizer (Kommer snart)</value>
   </data>
   <data name="PlayBar_Speed.Text" xml:space="preserve">
-    <value>Speed</value>
+    <value>Hastighet</value>
   </data>
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
-    <value>Cast to device (Coming soon)</value>
+    <value>Kast enheten (Kommer snart)</value>
   </data>
   <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
-    <value>Skip back 10 seconds</value>
+    <value>Hopp over 10 sekunder igjen</value>
   </data>
   <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
-    <value>Skip forward 30 seconds</value>
+    <value>Hopp over 30 sekunder</value>
   </data>
   <data name="Shell_PlayLists1.Text" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Spillelister</value>
   </data>
   <data name="Shell_PlayQueue1.Text" xml:space="preserve">
-    <value>Play queue</value>
+    <value>Spill av kø</value>
   </data>
   <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
-    <value>Music</value>
+    <value>Musikk</value>
   </data>
   <data name="Shell_Settings1.Text" xml:space="preserve">
-    <value>Settings</value>
+    <value>Innstillinger</value>
   </data>
   <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
-    <value>We couldn't find any music</value>
+    <value>Vi kunne ikke finne noe musikk</value>
   </data>
   <data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
-    <value>Your music library doesn't contain any music content.</value>
+    <value>Musikkbiblioteket ditt inneholder ikke noe musikkinnhold.</value>
   </data>
   <data name="HaveMusic_Songs.Text" xml:space="preserve">
-    <value>Songs</value>
+    <value>Sanger</value>
   </data>
   <data name="Home_Playlists.Text" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Spillelister</value>
   </data>
   <data name="HaveMusic_Albums.Text" xml:space="preserve">
-    <value>Albums</value>
+    <value>Album</value>
   </data>
   <data name="HaveMusic_Artists.Text" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artister</value>
   </data>
   <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
-    <value>Revome this folder?</value>
+    <value>Helt denne mappen?</value>
   </data>
   <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
-    <value>Are you sure you want to reset this software?</value>
+    <value>Er du sikker på at du vil tilbakestille denne programvaren?</value>
   </data>
   <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
-    <value>If you remove the "{title}" folder from Music, it won't appear in Music anymore, but won't be deleted.</value>
+    <value>Hvis du fjerner "{title}" mappen fra Musikk, vises den ikke lenger i musikken, men vil ikke slettes.</value>
   </data>
   <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
-    <value>All data of this software will be emptied, including settings, play queue, playlists, etc., please proceed with caution.</value>
+    <value>Alle data fra denne programvaren vil bli tømt, inkludert innstillinger, spillekøer, spillelister etc., vennligst fortsett med forsiktighet.</value>
   </data>
   <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
-    <value>Remove Folder</value>
+    <value>Fjern mappe</value>
   </data>
   <data name="Settings_ResetSoftwareDialogPrimary" xml:space="preserve">
-    <value>Reset and restart</value>
+    <value>Tilbakestill og start på nytt</value>
   </data>
   <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="Settings_ResetSoftwareDialogClose" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="PlayLists_DeleteDialogClose" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="PlayLists_DeleteDialogPrimary" xml:space="preserve">
-    <value>Delete</value>
+    <value>Slett</value>
   </data>
   <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
-    <value>Delete playlists permanently?</value>
+    <value>Slett spillelister permanent?</value>
   </data>
   <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
-    <value>Are you sure you want to delete this playlist? If you delete '{title}', you won't be able to recover it.</value>
+    <value>Er du sikker på at du vil slette denne spillelisten? Hvis du sletter{title}vil du ikke kunne gjenopprette den.</value>
   </data>
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
-    <value>Manage system indexing settings</value>
+    <value>Administrer innstillinger for systemindeksering</value>
   </data>
   <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
-    <value>Did you mean to switch apps?</value>
+    <value>Mente du å bytte apper?</value>
   </data>
   <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
-    <value> “Media Player” is trying to open “Settings”.</value>
+    <value> "Media Player" prøver å åpne "Innstillinger".</value>
   </data>
   <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
-    <value>Yes</value>
+    <value>Ja</value>
   </data>
   <data name="Settings_OpenSettingDialogClose" xml:space="preserve">
-    <value>No</value>
+    <value>Nei</value>
   </data>
   <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Volume (Alt+↑/↓)</value>
+    <value>Volum (Alt+↑/↓)</value>
   </data>
   <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Full screen (F11)</value>
+    <value>Fullskjerm (F11)</value>
   </data>
   <data name="PlayBar_DesktopLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Desktop lyric (Ctrl+M)</value>
+    <value>Skrivebord lyrisk (Ctrl+M)</value>
   </data>
   <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
-    <value>More options</value>
+    <value>Flere alternativer</value>
   </data>
   <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Previous (Ctrl+B)</value>
+    <value>Forrige (Ctrl+B)</value>
   </data>
   <data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Next (Ctrl+F)</value>
+    <value>Neste (Ctrl+F)</value>
   </data>
   <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
     <value>NowPlaying (Ctrl+N)</value>
   </data>
   <data name="PlayBar_ShuffleOff" xml:space="preserve">
-    <value>Shuffle: Off (Ctrl+H)</value>
+    <value>Shuffle: Av (Ctrl+H)</value>
   </data>
   <data name="PlayBar_ShuffleOn" xml:space="preserve">
-    <value>Shuffle: On (Ctrl+H)</value>
+    <value>Shuffle: På (Ctrl+H)</value>
   </data>
   <data name="PlayBar_RepeatOff" xml:space="preserve">
-    <value>Repeat: Off (Ctrl+T)</value>
+    <value>Gjenta: Av (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatAll" xml:space="preserve">
-    <value>Repeat: All (Ctrl+T)</value>
+    <value>Gjenta: Alt (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatOne" xml:space="preserve">
-    <value>Repeat: One (Ctrl+T)</value>
+    <value>Gjenta: En (Ctrl+T)</value>
   </data>
   <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Music library (Ctrl+R)</value>
+    <value>Musikkbiblioteket (Ctrl+R)</value>
   </data>
   <data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Play queue (Ctrl+Q)</value>
+    <value>Spill kø (Ctrl+Q)</value>
   </data>
   <data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Playlists (Ctrl+Y)</value>
+    <value>Spillelister (Ctrl+Y)</value>
   </data>
   <data name="PlayBar_Play" xml:space="preserve">
-    <value>Play (Ctrl+P)</value>
+    <value>Spill (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Pause" xml:space="preserve">
     <value>Pause (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Seek</value>
+    <value>Søke</value>
   </data>
   <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Remove folder</value>
+    <value>Fjern mappe</value>
   </data>
   <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Add a folder to your music library</value>
+    <value>Legg til en mappe i ditt musikkbibliotek</value>
   </data>
   <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
-    <value>Shuffle: On</value>
+    <value>Bland på:</value>
   </data>
   <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
-    <value>Shuffle: Off</value>
+    <value>Stoff: Av</value>
   </data>
   <data name="PlayBar_More_RepeatAll" xml:space="preserve">
-    <value>Repeat: All</value>
+    <value>Gjenta: Alle</value>
   </data>
   <data name="PlayBar_More_RepeatOne" xml:space="preserve">
-    <value>Repeat: One</value>
+    <value>Gjenta: En</value>
   </data>
   <data name="PlayBar_More_RepeatOff" xml:space="preserve">
-    <value>Repeat: Off</value>
+    <value>Gjenta: Av</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>None, Mica, Mica Alt, Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
+    <value>None, Mica, Mica Alt, Skrivebord akryl, akrylisk base, akryltisk tynn, Blur, Gjennomsiktig, Animert</value>
   </data>
   <data name="Songs_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Album (Asc), Album (Desc), Release year (Asc), Release year (Desc), Date added (Asc), Date added (Desc), Folder (Asc), Folder (Desc)</value>
+    <value>A - Z, Z - A, Artist (Asc), Artist (Desc), Album (Asc), Album (Desc), Utgivelsesår (Asc), Utgivelsesår (Desc), dato lagt til (Asc), dato lagt til (Desc), Mappe (Desc)</value>
   </data>
   <data name="Albums_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Release year (Asc), Release year (Desc), Artist (Asc), Artist (Desc), Date added (Asc), Date added (Desc)</value>
+    <value>A - Z, Z - A, utgivelsesår (Asc), Artist (Asc), Artist (Desc), Dato lagt til (Asc), Dato tilføyd (Desc)</value>
   </data>
   <data name="SongInfo_UnknownArtist" xml:space="preserve">
-    <value>Unknown artist</value>
+    <value>Ukjent artist</value>
   </data>
   <data name="SongInfo_UnknownGenre" xml:space="preserve">
-    <value>Unknown genre</value>
+    <value>Ukjent sjanger</value>
   </data>
   <data name="DisplaySongInfo_SourceMode0" xml:space="preserve">
-    <value>Local song</value>
+    <value>Lokal sang</value>
   </data>
   <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
-    <value>Online song</value>
+    <value>Online sang</value>
   </data>
   <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
-    <value>Song from Music Library 5</value>
+    <value>Sang fra musikkbiblioteket 5</value>
   </data>
   <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
-    <value>Song from Music Library 6</value>
+    <value>Sang fra musikkbibliotek 6</value>
   </data>
   <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
-    <value>Song from Music Library 4</value>
+    <value>Sang fra musikkbiblioteket 4</value>
   </data>
   <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
-    <value>Song from Music Library 3</value>
+    <value>Sang fra musikkbiblioteket 3</value>
   </data>
   <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
-    <value>Song from Music Library 2</value>
+    <value>Sang fra musikkbibliotek 2</value>
   </data>
   <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
-    <value>Song from Music Library 1</value>
+    <value>Sang fra musikkbibliotek 1</value>
   </data>
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
-    <value>Unknown album</value>
+    <value>Ukjent album</value>
   </data>
   <data name="Songs_SortByChosen.Text" xml:space="preserve">
-    <value>Sort by: </value>
+    <value>Sorter etter: </value>
   </data>
   <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
-    <value>Shuffle and play</value>
+    <value>Bland og spill</value>
   </data>
   <data name="Songs_GenreChosen.Text" xml:space="preserve">
-    <value>Genre: </value>
+    <value>Sjanger: </value>
   </data>
   <data name="PlayQueue_Clear.Text" xml:space="preserve">
-    <value>Clear</value>
+    <value>Tøm</value>
   </data>
   <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
-    <value>Add to play queue</value>
+    <value>Legg til avspillingskø</value>
   </data>
   <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
-    <value>Play queue</value>
+    <value>Spill av kø</value>
   </data>
   <data name="Songs_AddTo_NewPlaylist.Text" xml:space="preserve">
-    <value>New playlist</value>
+    <value>Ny spilleliste</value>
   </data>
   <data name="PlayQueue_AddFiles.Text" xml:space="preserve">
-    <value>Add file(s)</value>
+    <value>Legg til fil(er)</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
-    <value>Add file(s) to play queue</value>
+    <value>Legg til fil(er) for å spille køen</value>
   </data>
   <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
-    <value>Browse for files to add to the play queue</value>
+    <value>Bla gjennom filer for å legge til i avspillingskøen</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
-    <value>Add folder to play queue</value>
+    <value>Legg til mappe i avspillingskøen</value>
   </data>
   <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
-    <value>Choose a folder, and add all the media in that folder to the play queue</value>
+    <value>Velg en mappe, og legg til alle medier i mappen i avspillingskøen</value>
   </data>
   <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
-    <value>Add media from URL to play queue</value>
+    <value>Legg til media fra URL for å spille køen</value>
   </data>
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
-    <value>Enter a URL, and add the media from that address to the play queue</value>
+    <value>Skriv inn en URL, og legg til media fra den adressen i avspillingskøen</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
-    <value>Open a URL</value>
+    <value>Åpne URL</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
-    <value>Open</value>
+    <value>Åpne</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
-    <value>Enter the URL for a file, stream, or playlist</value>
+    <value>Skriv inn URL for en fil, en stråle eller en spilleliste</value>
   </data>
   <data name="Songs_Play.Text" xml:space="preserve">
-    <value>Play</value>
+    <value>Spill</value>
   </data>
   <data name="Songs_PlayNext.Text" xml:space="preserve">
-    <value>Play next</value>
+    <value>Spill neste</value>
   </data>
   <data name="Songs_AddTo.Text" xml:space="preserve">
-    <value>Add to</value>
+    <value>Legg til i</value>
   </data>
   <data name="Songs_EditInfo.Text" xml:space="preserve">
-    <value>Edit info</value>
+    <value>Rediger info</value>
   </data>
   <data name="Songs_Properties.Text" xml:space="preserve">
-    <value>Properties</value>
+    <value>Egenskaper</value>
   </data>
   <data name="Songs_ShowAlbum.Text" xml:space="preserve">
-    <value>Show album</value>
+    <value>Vis album</value>
   </data>
   <data name="Songs_ShowArtist.Text" xml:space="preserve">
-    <value>Show Artist</value>
+    <value>Vis Artist</value>
   </data>
   <data name="Songs_Select.Text" xml:space="preserve">
-    <value>Select</value>
+    <value>Velg</value>
   </data>
   <data name="PlayQueue_Remove.Text" xml:space="preserve">
-    <value>Remove</value>
+    <value>Fjern</value>
   </data>
   <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
-    <value>Move up</value>
+    <value>Flytt opp</value>
   </data>
   <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
-    <value>Move down</value>
+    <value>Flytt ned</value>
   </data>
   <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Spill</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
-    <value>Window material</value>
+    <value>Vindusmateriale</value>
   </data>
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
-    <value>Choose a material</value>
+    <value>Velg et materiale</value>
   </data>
   <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
-    <value>Lyric font-family</value>
+    <value>Lyrisk font-familie</value>
   </data>
   <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Lyric font-size</value>
+    <value>Lyrisk fontstørrelse</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
-    <value>Choose a font-family</value>
+    <value>Velg en font-familie</value>
   </data>
   <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
     <value>Choose a font-size</value>
   </data>
   <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>Window background follows cover theme color</value>
+    <value>Vindu bakgrunn omsider temafarge</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="Settings_Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Versjon</value>
   </data>
   <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Clear (Ctrl+Shift+X)</value>
+    <value>Tøm (Ctrl+Shift+X)</value>
   </data>
   <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Browse for files to add to the play queue</value>
+    <value>Bla gjennom filer for å legge til i avspillingskøen</value>
   </data>
   <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Skip back 10 seconds (Ctrl+Left)</value>
+    <value>Hopp over 10 sekunder (Ctrl+Left)</value>
   </data>
   <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Skip forward 30 seconds (Ctrl+Right)</value>
+    <value>Hopp over 30 sekunder (Ctrl+Right)</value>
   </data>
   <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
-    <value>Full screen</value>
+    <value>Full skjerm</value>
   </data>
   <data name="SongInfo_AllGenres" xml:space="preserve">
-    <value>All genres</value>
+    <value>Alle sjangere</value>
   </data>
   <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
-    <value>Indexing libraries...</value>
+    <value>Indekserer biblioteker...</value>
   </data>
   <data name="Artists_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A</value>
+    <value>A - Z, Å - A</value>
   </data>
   <data name="Playlists_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Date modified (Asc), Date modified (Desc)</value>
+    <value>A - Z, Z - A, Dato endret (Asc), Dato endret (Desc)</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
-    <value>Background stops updating after window loses focus</value>
+    <value>Bakgrunnsstopping etter at vinduet mister fokus</value>
   </data>
   <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
-    <value>Window background color</value>
+    <value>Vindu bakgrunnsfarge</value>
   </data>
   <data name="Shell_Home.Content" xml:space="preserve">
-    <value>Home</value>
+    <value>Hjem</value>
   </data>
   <data name="Shell_Home1.Text" xml:space="preserve">
-    <value>Home</value>
+    <value>Hjem</value>
   </data>
   <data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Home (Ctrl+Shift+F)</value>
+    <value>Hjem (Ctrl+Shift+F)</value>
   </data>
   <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
-    <value>Search online content</value>
+    <value>Søk i online innhold</value>
   </data>
   <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
-    <value>Luminosity opacity</value>
+    <value>Lysstyrke gjennomsiktighet</value>
   </data>
   <data name="Settings_Reset.Content" xml:space="preserve">
     <value>Reset</value>
   </data>
   <data name="PropertiesDialog_Title.Text" xml:space="preserve">
-    <value>Title</value>
+    <value>Tittel</value>
   </data>
   <data name="PropertiesDialog_Album.Text" xml:space="preserve">
-    <value>Album</value>
+    <value>album</value>
   </data>
   <data name="PropertiesDialog_Track.Text" xml:space="preserve">
-    <value>Track</value>
+    <value>Spor</value>
   </data>
   <data name="PropertiesDialog_Genre.Text" xml:space="preserve">
-    <value>Genre</value>
+    <value>Sjanger</value>
   </data>
   <data name="PropertiesDialog_Bitrate.Text" xml:space="preserve">
     <value>Bit rate</value>
   </data>
   <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
-    <value>Contributing artists</value>
+    <value>Medvirkende kunstnere</value>
   </data>
   <data name="PropertiesDialog_AlbumArtist.Text" xml:space="preserve">
     <value>Album artist</value>
   </data>
   <data name="PropertiesDialog_Length.Text" xml:space="preserve">
-    <value>Length</value>
+    <value>Lengde</value>
   </data>
   <data name="PropertiesDialog_Year.Text" xml:space="preserve">
-    <value>Year</value>
+    <value>År</value>
   </data>
   <data name="PropertiesDialog_ItemType.Text" xml:space="preserve">
-    <value>Item type</value>
+    <value>Element type</value>
   </data>
   <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
-    <value>File location</value>
+    <value>Fil plassering</value>
   </data>
   <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
-    <value>Open file location</value>
+    <value>Åpne filplassering</value>
   </data>
   <data name="PropertiesDialog.Title" xml:space="preserve">
-    <value>Properties</value>
+    <value>Egenskaper</value>
   </data>
   <data name="EqualizerDialog_Title.Text" xml:space="preserve">
     <value>Equalizer</value>
   </data>
   <data name="EqualizerDialog_On" xml:space="preserve">
-    <value>On</value>
+    <value>På</value>
   </data>
   <data name="EqualizerDialog_Decibel" xml:space="preserve">
     <value>dB</value>
@@ -682,10 +682,10 @@
     <value>Preset</value>
   </data>
   <data name="EqualizerDialog_Presets" xml:space="preserve">
-    <value>Flat, Treble boost, Bass boost, Headphones, Laptop, Portable speakers, Home stereo, TV, Car, Custom</value>
+    <value>Flat, Treble boost, Bass boost, Hodetelefoner, Laptop, Portable høyttalere, Hjem-stereo, TV, Car, Egendefinerte</value>
   </data>
   <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
-    <value>Move nearby sliders together</value>
+    <value>Flytt glidebrytere i nærheten sammen</value>
   </data>
   <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
     <value>Hz</value>
@@ -694,336 +694,336 @@
     <value>kHz</value>
   </data>
   <data name="EqualizerDialog_Off" xml:space="preserve">
-    <value>Off</value>
+    <value>Av</value>
   </data>
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
-    <value>Edit song info</value>
+    <value>Rediger sanginformasjon</value>
   </data>
   <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
-    <value>Lyric</value>
+    <value>Lyrisk</value>
   </data>
   <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
-    <value>Cover image</value>
+    <value>Omslagsbilde</value>
   </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
-    <value>Edit album info</value>
+    <value>Rediger albuminformasjon</value>
   </data>
   <data name="EditPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>Edit playlist info</value>
+    <value>Rediger info for spilleliste</value>
   </data>
   <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>Add to new playlist</value>
+    <value>Legg til i ny spilleliste</value>
   </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
-    <value>Close</value>
+    <value>Lukk</value>
   </data>
   <data name="EqualizerDialog.CloseButtonText" xml:space="preserve">
-    <value>Close</value>
+    <value>Lukk</value>
   </data>
   <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="EditPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Lagre</value>
   </data>
   <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Import</value>
+    <value>Importer</value>
   </data>
   <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="ImportPlaylistDialog.Title" xml:space="preserve">
-    <value>Import playlist</value>
+    <value>Importer spilleliste</value>
   </data>
   <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
-    <value>Name</value>
+    <value>Navn</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromFolder.Content" xml:space="preserve">
-    <value>Import from folder</value>
+    <value>Importer fra mappe</value>
   </data>
   <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
-    <value>Import songs</value>
+    <value>Importer sanger</value>
   </data>
   <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
-    <value>Number of songs</value>
+    <value>Antall sanger</value>
   </data>
   <data name="ImportPlaylistDialog_Type.Text" xml:space="preserve">
-    <value>Type</value>
+    <value>Type:</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromM3u8Files.Content" xml:space="preserve">
-    <value>Import from m3u8 files</value>
+    <value>Importer fra m3u8 filer</value>
   </data>
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Lagre</value>
   </data>
   <data name="EditPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Lagre</value>
   </data>
   <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Create</value>
+    <value>Opprett</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
-    <value>Desktop lyric</value>
+    <value>Skrivebord lyrisk</value>
   </data>
   <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
-    <value>Play all</value>
+    <value>Spill alle</value>
   </data>
   <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
-    <value>Shuffle and play</value>
+    <value>Bland og spill</value>
   </data>
   <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
-    <value>Edit info</value>
+    <value>Rediger info</value>
   </data>
   <data name="AlbumInfo_Songs" xml:space="preserve">
-    <value>songs</value>
+    <value>sanger</value>
   </data>
   <data name="AlbumInfo_RunTime" xml:space="preserve">
-    <value>run time</value>
+    <value>kjøres tid</value>
   </data>
   <data name="ArtistInfo_Albums" xml:space="preserve">
-    <value>albums</value>
+    <value>albumer</value>
   </data>
   <data name="ArtistInfo_Album" xml:space="preserve">
     <value>album</value>
   </data>
   <data name="ArtistInfo_Hours" xml:space="preserve">
-    <value>hours</value>
+    <value>timer</value>
   </data>
   <data name="ArtistInfo_Hour" xml:space="preserve">
-    <value>hour</value>
+    <value>time</value>
   </data>
   <data name="ArtistInfo_Min" xml:space="preserve">
-    <value>min</value>
+    <value>min.</value>
   </data>
   <data name="ArtistInfo_Sec" xml:space="preserve">
-    <value>sec</value>
+    <value>sek</value>
   </data>
   <data name="ArtistInfo_Secs" xml:space="preserve">
-    <value>secs</value>
+    <value>sek</value>
   </data>
   <data name="ArtistInfo_Mins" xml:space="preserve">
-    <value>mins</value>
+    <value>min</value>
   </data>
   <data name="AlbumInfo_Song" xml:space="preserve">
-    <value>song</value>
+    <value>sang</value>
   </data>
   <data name="ArtistInfo_Artist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Kunstner</value>
   </data>
   <data name="ArtistDetail_InYourLibrary.Text" xml:space="preserve">
-    <value>In your library</value>
+    <value>I biblioteket ditt</value>
   </data>
   <data name="AlbumInfo_UnknownYear" xml:space="preserve">
-    <value>Unknown year</value>
+    <value>Ukjent år</value>
   </data>
   <data name="Home_MusicLibrary1.Text" xml:space="preserve">
-    <value>Music library 1</value>
+    <value>Musikk bibliotek 1</value>
   </data>
   <data name="Home_MusicLibrary6.Text" xml:space="preserve">
-    <value>Music library 6</value>
+    <value>Musikk bibliotek 6</value>
   </data>
   <data name="Home_MusicLibrary5.Text" xml:space="preserve">
-    <value>Music library 5</value>
+    <value>Musikk bibliotek 5</value>
   </data>
   <data name="Home_MusicLibrary4.Text" xml:space="preserve">
-    <value>Music library 4</value>
+    <value>Musikk bibliotek 4</value>
   </data>
   <data name="Home_MusicLibrary3.Text" xml:space="preserve">
-    <value>Music library 3</value>
+    <value>Musikk bibliotek 3</value>
   </data>
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
-    <value>Music library 2</value>
+    <value>Musikk bibliotek 2</value>
   </data>
   <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>Network error, please retry later</value>
+    <value>Nettverksfeil, prøv på nytt senere</value>
   </data>
   <data name="Home_Retry.Text" xml:space="preserve">
-    <value>Retry</value>
+    <value>Prøv igjen</value>
   </data>
   <data name="Home_SearchResult.Text" xml:space="preserve">
-    <value>'s search results</value>
+    <value>'s søkeresultat</value>
   </data>
   <data name="Settings_SourceCode.Content" xml:space="preserve">
-    <value>Source Code</value>
+    <value>Kildekode</value>
   </data>
   <data name="Settings_Thanks.Header" xml:space="preserve">
-    <value>Thanks to MoXiangTongXiu for breathing life into this software</value>
+    <value>Takk til MoXiangTongXu, for pusteliv i denne programvaren</value>
   </data>
   <data name="OnlineSongs_Download.Text" xml:space="preserve">
-    <value>Download</value>
+    <value>Nedlasting</value>
   </data>
   <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
-    <value>Song download location</value>
+    <value>Sang nedlastingssted</value>
   </data>
   <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
-    <value>Change</value>
+    <value>Endre</value>
   </data>
   <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
-    <value>Start downloading</value>
+    <value>Start nedlasting</value>
   </data>
   <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="OnlineMusicLibrary_Progress" xml:space="preserve">
-    <value>Progress</value>
+    <value>Fremdrift</value>
   </data>
   <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
-    <value>Downloading...</value>
+    <value>Laster ned...</value>
   </data>
   <data name="OnlineMusicLibrary_Processing" xml:space="preserve">
-    <value>Processing...</value>
+    <value>Behandler...</value>
   </data>
   <data name="OnlineMusicLibrary_OpenFolder" xml:space="preserve">
-    <value>Open folder</value>
+    <value>Åpne mappe</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
-    <value>Download completed</value>
+    <value>Nedlasting fullført</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCancelled" xml:space="preserve">
-    <value>Download cancelled</value>
+    <value>Nedlasting avbrutt</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadFailed" xml:space="preserve">
-    <value>Download failed</value>
+    <value>Nedlasting mislyktes</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
-    <value>Downloading song</value>
+    <value>Laster ned sang</value>
   </data>
   <data name="Shell_Settings.Content" xml:space="preserve">
-    <value>Settings</value>
+    <value>Innstillinger</value>
   </data>
   <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Settings (Ctrl+G)</value>
+    <value>Innstillinger (Ctrl+G)</value>
   </data>
   <data name="PlaylistInfo_Item" xml:space="preserve">
-    <value>item</value>
+    <value>element</value>
   </data>
   <data name="PlaylistInfo_Items" xml:space="preserve">
-    <value>items</value>
+    <value>elementer</value>
   </data>
   <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>Show playlist</value>
+    <value>Vis spilleliste</value>
   </data>
   <data name="PlayLists_Rename.Text" xml:space="preserve">
-    <value>Rename</value>
+    <value>Omdøp</value>
   </data>
   <data name="PlayLists_Delete.Text" xml:space="preserve">
-    <value>Delete</value>
+    <value>Slett</value>
   </data>
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>Show playlist</value>
+    <value>Vis spilleliste</value>
   </data>
   <data name="Main_SendFeedback.Content" xml:space="preserve">
-    <value>Send feedback</value>
+    <value>Send tilbakemelding</value>
   </data>
   <data name="Shell_PlayFiles" xml:space="preserve">
-    <value>Play file(s)</value>
+    <value>Spill av fil(er)</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value>We can't open {title}. This may be because the file type is unsupported, the file extension is incorrect, the file is corrupted, or the network is abnormal.</value>
+    <value>Vi kan ikke åpne {title}. Dette kan skyldes at filtypen ikke støttes, at filtypen er feil, at filen er skadet, eller at nettverket er unormalt.</value>
   </data>
   <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
-    <value>The audio playback device is currently in use.</value>
+    <value>Lydavspilling enheten er for øyeblikket i bruk.</value>
   </data>
   <data name="Error_SamePlaylistName" xml:space="preserve">
-    <value>A playlist with this name already exists in this folder. Enter another name then try again.</value>
+    <value>En spilleliste med dette navnet finnes allerede i denne mappen. Angi et annet navn, og prøv igjen.</value>
   </data>
   <data name="Error_EditingSongInfoIO" xml:space="preserve">
-    <value>We can't edit {title}. This may be because the current file is playing, being occupied by another process, or the file type is unsupported.</value>
+    <value>Vi kan ikke redigere {title}. Dette kan være fordi gjeldende fil spilles, blir okkupert av en annen prosess, eller filtypen støttes ikke.</value>
   </data>
   <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
-    <value>Developer options</value>
+    <value>Alternativer for utviklere</value>
   </data>
   <data name="Settings_Logging.Header" xml:space="preserve">
-    <value>Logging</value>
+    <value>Logger</value>
   </data>
   <data name="Settings_OpenFolder.Content" xml:space="preserve">
-    <value>Open folder</value>
+    <value>Åpne mappe</value>
   </data>
   <data name="Error_EditingSongInfoOther" xml:space="preserve">
-    <value>We can't edit some of the properties of {title}. This may be because the file type is unsupported, or the file is corrupted.</value>
+    <value>Vi kan ikke redigere noen av egenskapene for {title}. Dette kan være fordi filtypen er ikke støttet eller filen er ødelagt.</value>
   </data>
   <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
-    <value>You don't have any playlists</value>
+    <value>Du har ingen spillelister</value>
   </data>
   <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
-    <value>Create a new playlist</value>
+    <value>Lag en ny spilleliste</value>
   </data>
   <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
-    <value>New playlist</value>
+    <value>Ny spilleliste</value>
   </data>
   <data name="PlayLists_CreatePlaylist.Content" xml:space="preserve">
-    <value>Create playlist</value>
+    <value>Lag spilleliste</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
-    <value>Untitled playlist</value>
+    <value>Spilleliste uten navn</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
-    <value>Untitled playlist</value>
+    <value>Spilleliste uten navn</value>
   </data>
   <data name="PlaylistInfo_Create" xml:space="preserve">
-    <value>Playlist '{title}' created.</value>
+    <value>Spilleliste '{title}' opprettet.</value>
   </data>
   <data name="PlaylistInfo_Delete" xml:space="preserve">
-    <value>Playlist '{title}' deleted.</value>
+    <value>Spilleliste '{title}' slettet.</value>
   </data>
   <data name="PlaylistInfo_AddItems" xml:space="preserve">
-    <value>{num} items added to playlist '{title}'.</value>
+    <value>{num} elementer lagt til i spillelisten '{title}'.</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
-    <value>{num} playlist has been imported.</value>
+    <value>{num} spilleliste har blitt importert.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
-    <value>{num} playlist has been exported.</value>
+    <value>{num} spilleliste har blitt eksportert.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
-    <value>{num} playlists have been exported.</value>
+    <value>{num} spillelister er eksportert.</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
-    <value>{num} playlists have been imported.</value>
+    <value>{num} spillelister er importert.</value>
   </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
-    <value>{num} item added to playlist '{title}'.</value>
+    <value>{num} element lagt til i spillelisten '{title}'.</value>
   </data>
   <data name="Settings_Lyric.Text" xml:space="preserve">
-    <value>Lyric</value>
+    <value>Lyrisk</value>
   </data>
   <data name="Settings_Play.Text" xml:space="preserve">
-    <value>Play</value>
+    <value>Spill</value>
   </data>
   <data name="Settings_PlaylistFile" xml:space="preserve">
-    <value>Playlist file</value>
+    <value>Spilleliste fil</value>
   </data>
   <data name="Settings_Playlist" xml:space="preserve">
-    <value>Playlist</value>
+    <value>Spilleliste</value>
   </data>
   <data name="Lyric_ShowCover.Text" xml:space="preserve">
-    <value>Show cover</value>
+    <value>Vis omslag</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
-    <value>Untamed Image Viewer</value>
+    <value>Visning av untamed Image Viewer</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Zoom in (↑ / Ctrl+Mouse wheel up)</value>
+    <value>Zoom inn (↑ / Ctrl+musehjul opp)</value>
   </data>
   <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Original size</value>
+    <value>Opprinnelig størrelse</value>
   </data>
   <data name="ImageViewer_Copy.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Copy to clipboard</value>
+    <value>Kopier til utklippstavlen</value>
   </data>
   <data name="ImageViewer_Save.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Save</value>
+    <value>Lagre</value>
   </data>
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Zoom out (↑ / Ctrl+Mouse wheel down)</value>
+    <value>Zoom ut (↑ / Ctrl+musehjul ned)</value>
   </data>
 </root>
