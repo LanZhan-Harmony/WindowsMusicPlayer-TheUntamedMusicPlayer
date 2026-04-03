@@ -381,22 +381,22 @@
     <value>Chanson en ligne</value>
   </data>
   <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
-    <value>Chanson tirée de Music Library 5</value>
+    <value>Chanson de la bibliothèque musicale 5</value>
   </data>
   <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
-    <value>Chanson tirée de Music Library 6</value>
+    <value>Chanson de la bibliothèque musicale 6</value>
   </data>
   <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
-    <value>Chanson tirée de la Bibliothèque musicale 4</value>
+    <value>Chanson de la bibliothèque musicale 4</value>
   </data>
   <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
-    <value>Chanson tirée de Music Library 3</value>
+    <value>Chanson de la bibliothèque musicale 3</value>
   </data>
   <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
-    <value>Chanson tirée de Music Library 2</value>
+    <value>Chanson de la bibliothèque musicale 2</value>
   </data>
   <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
-    <value>Chanson de Music Library 1</value>
+    <value>Chanson de la bibliothèque musicale 1</value>
   </data>
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
     <value>Album inconnu</value>
