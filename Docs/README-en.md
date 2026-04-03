@@ -44,7 +44,7 @@ A modern music player for online and local music streaming
 ## 📥 Download & Installation
 
 | Method              | Link                                                                                             | Notes                         |
-|---------------------|--------------------------------------------------------------------------------------------------|-------------------------------|
+| ------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------- |
 | **Microsoft Store** | [Download](https://apps.microsoft.com/detail/9ncfn17f3lxj)                                       | **Recommended**, auto updates |
 | **GitHub Release**  | [Download](https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer/releases) | Manual installation           |
 | **123 Cloud Drive** | [Download](https://www.123865.com/s/yvXSVv-j2mFd)                                                | Mirror source for China users |
@@ -60,7 +60,7 @@ A modern music player for online and local music streaming
 <div align="center">
 
 | Preview Screenshots               |
-|-----------------------------------|
+| --------------------------------- |
 | ![Preview 1](Images/Preview1.png) |
 | ![Preview 2](Images/Preview2.png) |
 | ![Preview 3](Images/Preview3.png) |
@@ -83,6 +83,29 @@ We welcome any form of contribution! If you have the following needs, feel free 
 For
 detailed [contribution guidelines](https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer?tab=contributing-ov-file),
 please refer to our project page.
+
+## 🌍 Translation
+
+We welcome community translation contributions! If you wish to help with translation or proofreading, please submit a Pull Request.
+
+Current translation status:
+
+| Language                       | Language Code | Translated | Proofread | Contributor         |
+| :----------------------------- | :-----------: | :--------: | :-------: | :------------------ |
+| Arabic (العربية)               |      ar       |     ✅     |     -     | Machine Translation |
+| Bengali (বাংলা)                |      bn       |     ✅     |     -     | Machine Translation |
+| German (Deutsch)               |      de       |     ✅     |     -     | Machine Translation |
+| English                        |      en       |     ✅     |    ✅     | LanZhan-Harmony     |
+| Spanish (Español)              |      es       |     ✅     |     -     | Machine Translation |
+| French (Français)              |      fr       |     ✅     |     -     | Machine Translation |
+| Hindi (हिन्दी)                 |      hi       |     ✅     |     -     | Machine Translation |
+| Indonesian (Bahasa Indonesia)  |      id       |     ✅     |     -     | Machine Translation |
+| Japanese (日本語)              |      ja       |     ✅     |     -     | Machine Translation |
+| Korean (한국어)                |      ko       |     ✅     |     -     | Machine Translation |
+| Portuguese (Português)         |      pt       |     ✅     |     -     | Machine Translation |
+| Russian (Русский)              |      ru       |     ✅     |     -     | Machine Translation |
+| Simplified Chinese (简体中文)  |    zh-Hans    |     ✅     |    ✅     | LanZhan-Harmony     |
+| Traditional Chinese (繁體中文) |    zh-Hant    |     ✅     |     -     | Machine Translation |
 
 ## 🙏 Acknowledgments
 
