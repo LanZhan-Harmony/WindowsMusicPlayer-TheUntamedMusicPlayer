@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Numerics;
 using Microsoft.UI.Dispatching;
@@ -35,6 +36,9 @@ public sealed partial class LyricPage : Page, IDisposable
     private double _contentGridMarginAnimationDuration;
 
     private CancellationTokenSource? _coverLoadWaitCts;
+    private CancellationTokenSource? _ensureLyricScrollCts;
+
+    private bool _isLyricViewLoaded;
 
     public LyricPage()
     {
@@ -42,11 +46,16 @@ public sealed partial class LyricPage : Page, IDisposable
         InitializeComponent();
 
         _autoScrollDelayTimer = new Timer(
-            _ => DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, ScrollToCurrentLyric),
+            _ => RestartEnsureScrollToCurrentLyric(),
             null,
             Timeout.Infinite,
             Timeout.Infinite
         );
+
+        if (Data.LyricManager.CurrentLyricSlices is INotifyCollectionChanged collectionChanged)
+        {
+            collectionChanged.CollectionChanged += CurrentLyricSlices_CollectionChanged;
+        }
 
         Data.PlayState.PropertyChanged += OnStateChanged;
         Data.RootPlayBarViewModel?.PropertyChanged += OnRootPlayBarChanged;
@@ -62,7 +71,81 @@ public sealed partial class LyricPage : Page, IDisposable
             }
             _isManualScrolling = false;
             _autoScrollDelayTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            RestartEnsureScrollToCurrentLyric();
         }
+    }
+
+    private void LyricView_Loaded(object sender, RoutedEventArgs e)
+    {
+        _isLyricViewLoaded = true;
+        RestartEnsureScrollToCurrentLyric();
+    }
+
+    private void CurrentLyricSlices_CollectionChanged(
+        object? sender,
+        NotifyCollectionChangedEventArgs e
+    )
+    {
+        if (!_isManualScrolling)
+        {
+            RestartEnsureScrollToCurrentLyric();
+        }
+    }
+
+    private void RestartEnsureScrollToCurrentLyric()
+    {
+        _ensureLyricScrollCts?.Cancel();
+        _ensureLyricScrollCts?.Dispose();
+        _ensureLyricScrollCts = new CancellationTokenSource();
+        _ = EnsureScrollToCurrentLyricWhenReadyAsync(_ensureLyricScrollCts.Token);
+    }
+
+    private async Task EnsureScrollToCurrentLyricWhenReadyAsync(CancellationToken cancellationToken)
+    {
+        const int maxRetryCount = 10;
+        for (var i = 0; i < maxRetryCount; i++)
+        {
+            if (
+                cancellationToken.IsCancellationRequested
+                || await TryScrollToCurrentLyricOnUiThreadAsync(cancellationToken)
+            )
+            {
+                return;
+            }
+            try
+            {
+                await Task.Delay(200, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+        }
+    }
+
+    private Task<bool> TryScrollToCurrentLyricOnUiThreadAsync(CancellationToken cancellationToken)
+    {
+        var tcs = new TaskCompletionSource<bool>(
+            TaskCreationOptions.RunContinuationsAsynchronously
+        );
+        var enqueued = DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () =>
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    tcs.TrySetResult(false);
+                    return;
+                }
+                tcs.TrySetResult(TryScrollToCurrentLyric());
+            }
+        );
+
+        if (!enqueued)
+        {
+            tcs.TrySetResult(false);
+        }
+        return tcs.Task;
     }
 
     private void RestartWaitForCoverAndRecalculate()
@@ -469,24 +552,29 @@ public sealed partial class LyricPage : Page, IDisposable
 
         _isManualScrolling = true;
         _autoScrollDelayTimer.Change(Timeout.Infinite, Timeout.Infinite);
-        if (!e.IsIntermediate) // 用户停止滚动，启动5秒倒计时
+        if (!e.IsIntermediate) // 用户停止滚动，启动3秒倒计时
         {
-            _autoScrollDelayTimer.Change(5000, Timeout.Infinite);
+            _autoScrollDelayTimer.Change(3000, Timeout.Infinite);
         }
     }
 
-    private void ScrollToCurrentLyric()
+    private bool TryScrollToCurrentLyric()
     {
-        _isManualScrolling = false;
+        if (!_isLyricViewLoaded || LyricView.Items.Count == 0)
+        {
+            return false;
+        }
+
         var currentSlice = Data.LyricManager.CurrentLyricSlices.FirstOrDefault(s => s.IsCurrent);
         if (
             currentSlice is null
             || LyricView.ContainerFromItem(currentSlice) is not UIElement container
         )
         {
-            return;
+            return false;
         }
 
+        _isManualScrolling = false;
         var currentScrollPosition = LyricViewer.VerticalOffset;
         var point = new Point(0, currentScrollPosition);
 
@@ -501,6 +589,8 @@ public sealed partial class LyricPage : Page, IDisposable
             null,
             false
         );
+
+        return true;
     }
 
     public void Dispose()
@@ -510,9 +600,16 @@ public sealed partial class LyricPage : Page, IDisposable
         _coverLoadWaitCts?.Cancel();
         _coverLoadWaitCts?.Dispose();
         _coverLoadWaitCts = null;
+        _ensureLyricScrollCts?.Cancel();
+        _ensureLyricScrollCts?.Dispose();
+        _ensureLyricScrollCts = null;
         _contentGridMarginAnimationTimer?.Stop();
         _contentGridMarginAnimationTimer?.Tick -= ContentGridMarginAnimationTick;
         _contentGridMarginAnimationTimer = null;
+        if (Data.LyricManager.CurrentLyricSlices is INotifyCollectionChanged collectionChanged)
+        {
+            collectionChanged.CollectionChanged -= CurrentLyricSlices_CollectionChanged;
+        }
         Data.PlayState.PropertyChanged -= OnStateChanged;
         Data.RootPlayBarViewModel?.PropertyChanged -= OnRootPlayBarChanged;
         Data.LyricPage = null;

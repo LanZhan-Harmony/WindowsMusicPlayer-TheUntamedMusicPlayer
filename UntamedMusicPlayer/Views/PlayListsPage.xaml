@@ -1,6 +1,7 @@
 <Page x:Class="UntamedMusicPlayer.Views.PlayListsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:converter="using:UntamedMusicPlayer.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,8 +10,8 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <helper:PlaylistCoverConverter x:Key="PlaylistCoverConverter"/>
-        <helper:InversePlaylistCoverToVisibilityConverter x:Key="InversePlaylistCoverToVisibilityConverter"/>
+        <converter:PlaylistCoverConverter x:Key="PlaylistCoverConverter"/>
+        <converter:InversePlaylistCoverToVisibilityConverter x:Key="InversePlaylistCoverToVisibilityConverter"/>
         <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
             <ListViewItem Margin="0,2,0,2">
                 <TextBlock Text="{x:Bind}"/>

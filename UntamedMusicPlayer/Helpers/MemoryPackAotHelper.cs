@@ -9,7 +9,7 @@ using UntamedMusicPlayer.Playback;
 
 namespace UntamedMusicPlayer.Helpers;
 
-public class MemoryPackAotHelper
+public sealed class MemoryPackAotHelper
 {
     public static void RegisterFormatters()
     {

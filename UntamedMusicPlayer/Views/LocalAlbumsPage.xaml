@@ -1,6 +1,7 @@
 <Page x:Class="UntamedMusicPlayer.Views.LocalAlbumsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:converter="using:UntamedMusicPlayer.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:local="using:UntamedMusicPlayer.Views"
@@ -10,7 +11,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <helper:AlbumCoverConverter x:Key="AlbumCoverConverter"/>
+        <converter:AlbumCoverConverter x:Key="AlbumCoverConverter"/>
         <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
             <ListViewItem Margin="0,2,0,2">
                 <TextBlock Text="{x:Bind}"/>

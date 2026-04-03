@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml.Data;
 using UntamedMusicPlayer.Models;
 
-namespace UntamedMusicPlayer.Helpers;
+namespace UntamedMusicPlayer.Converters;
 
 public partial class AlbumCoverConverter : IValueConverter
 {

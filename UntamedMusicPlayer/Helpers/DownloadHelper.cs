@@ -430,13 +430,14 @@ public static class DownloadHelper
     {
         await AppNotificationManager.Default.RemoveAllAsync();
 
+        var directoryPath = Path.GetDirectoryName(savePath) ?? savePath;
         var notification = new AppNotificationBuilder()
             .AddText("OnlineMusicLibrary_DownloadCompleted".GetLocalized())
             .AddText(title)
             .AddButton(
                 new AppNotificationButton(
                     "OnlineMusicLibrary_OpenFolder".GetLocalized()
-                ).AddArgument("OpenFolderAction", savePath)
+                ).SetInvokeUri(new Uri($"file:///{directoryPath}"))
             )
             .BuildNotification();
 
