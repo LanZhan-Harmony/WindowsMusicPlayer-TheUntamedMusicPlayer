@@ -1,5 +1,4 @@
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Web;
 using Microsoft.Windows.AppNotifications;
 using UntamedMusicPlayer.Contracts.Services;
@@ -34,16 +33,6 @@ public sealed class AppNotificationService : IAppNotificationService
     )
     {
         var arguments = args.Arguments;
-        if (arguments.TryGetValue("OpenFolderAction", out var savePath))
-        {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = "explorer.exe",
-                Arguments = $"/select,\"{savePath}\"",
-                UseShellExecute = true,
-            };
-            Process.Start(startInfo);
-        }
 
         if (arguments.TryGetValue("CancelAction", out var cancelValue) && cancelValue == "Cancel")
         {

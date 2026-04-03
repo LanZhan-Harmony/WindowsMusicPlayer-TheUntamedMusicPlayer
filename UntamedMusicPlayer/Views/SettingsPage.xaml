@@ -1,8 +1,8 @@
 <Page x:Class="UntamedMusicPlayer.Views.SettingsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:converter="using:UntamedMusicPlayer.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:UntamedMusicPlayer.Models"
       xmlns:storage="using:Windows.Storage"
@@ -12,7 +12,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <helper:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+        <converter:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
         <DataTemplate x:Key="MusicFolderTemplate" x:DataType="x:String">
             <toolkit:SettingsCard Header="{x:Bind}">
                 <Button x:Uid="Settings_RemoveFolder"
