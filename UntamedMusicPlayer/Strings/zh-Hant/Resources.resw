@@ -1,0 +1,1029 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>無羈 音樂播放機</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>無羈 音樂播放機</value>
+  </data>
+  <data name="Shell_MusicLibrary.Content" xml:space="preserve">
+    <value>音樂庫</value>
+  </data>
+  <data name="Shell_PlayQueue.Content" xml:space="preserve">
+    <value>播放佇列</value>
+  </data>
+  <data name="Shell_PlayLists.Content" xml:space="preserve">
+    <value>播放清單</value>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>個人化</value>
+  </data>
+  <data name="Settings_ThisIsAnOrdinaryLyric.Text" xml:space="preserve">
+    <value>這是一句普通歌詞</value>
+  </data>
+  <data name="Settings_ThisIsAHighlightedLyric.Text" xml:space="preserve">
+    <value>這是一句高亮歌詞</value>
+  </data>
+  <data name="Settings_Theme.Header" xml:space="preserve">
+    <value>應用主題</value>
+  </data>
+  <data name="Settings_ResetSoftware.Header" xml:space="preserve">
+    <value>重置本軟體</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>淺色</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>使用系統設置</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>關於</value>
+  </data>
+  <data name="Settings_AddFolderToMusic" xml:space="preserve">
+    <value>將此資料夾添加到音樂</value>
+  </data>
+  <data name="Settings_AboutDescription.Description" xml:space="preserve">
+    <value>© 2026 Untamed Corporation。 保留所有權利。</value>
+  </data>
+  <data name="Settings_Library.Text" xml:space="preserve">
+    <value>庫</value>
+  </data>
+  <data name="Settings_AddFolder.Text" xml:space="preserve">
+    <value>添加資料夾</value>
+  </data>
+  <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
+    <value>音樂庫位置</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>歌詞預覽</value>
+  </data>
+  <data name="Settings_NoFolder.Text" xml:space="preserve">
+    <value>此庫中不包含任何資料夾</value>
+  </data>
+  <data name="Settings_Refresh.Content" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="Settings_Import.Content" xml:space="preserve">
+    <value>導入</value>
+  </data>
+  <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
+    <value>匯入單個播放清單</value>
+  </data>
+  <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
+    <value>從 m3u8 檔批量導入播放清單</value>
+  </data>
+  <data name="Settings_ImportFromBin.Header" xml:space="preserve">
+    <value>從二進位檔批量導入播放清單</value>
+  </data>
+  <data name="Settings_Export.Content" xml:space="preserve">
+    <value>匯出</value>
+  </data>
+  <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
+    <value>大量導出播放清單至 m3u8 檔 (推薦)</value>
+  </data>
+  <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
+    <value>相容性更好，適用於大多數音樂播放機</value>
+  </data>
+  <data name="Settings_ExportToBin.Header" xml:space="preserve">
+    <value>批量匯出播放清單至二進位檔</value>
+  </data>
+  <data name="Settings_ExportToBin.Description" xml:space="preserve">
+    <value>速度更快，但僅適用於此軟體</value>
+  </data>
+  <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
+    <value>刷新庫</value>
+  </data>
+  <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
+    <value>歌詞頁全屏模式下自動隱藏播控欄</value>
+  </data>
+  <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
+    <value>獨佔模式</value>
+  </data>
+  <data name="Settings_LowLatencyMode.Header" xml:space="preserve">
+    <value>低延遲模式</value>
+  </data>
+  <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
+    <value>可降低音訊延遲。 建議在中高性能設備上啟用。 若遇到聲音卡頓或播放異常，請關閉。</value>
+  </data>
+  <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
+    <value>開啟后，應用內音量調節不可用，請在操作系統調節音量。</value>
+  </data>
+  <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
+    <value>如果當前位於音樂庫歌曲頁面且使用資料夾排序方式，點擊歌曲僅會將其所在資料夾內的歌曲加入播放佇列。</value>
+  </data>
+  <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
+    <value>僅添加歌曲所在資料夾</value>
+  </data>
+  <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
+    <value>播放清單導入/匯出</value>
+  </data>
+  <data name="Settings_ReIndex.Text" xml:space="preserve">
+    <value>如果看不到庫位置中的所有媒體，可以立即重新索引庫。</value>
+  </data>
+  <data name="Shell_Search.PlaceholderText" xml:space="preserve">
+    <value>搜尋 (敬請期待)</value>
+  </data>
+  <data name="PlayBar_Property.Text" xml:space="preserve">
+    <value>屬性</value>
+  </data>
+  <data name="PlayBar_Equalizer.Text" xml:space="preserve">
+    <value>均衡器 (敬請期待)</value>
+  </data>
+  <data name="PlayBar_Speed.Text" xml:space="preserve">
+    <value>速度</value>
+  </data>
+  <data name="PlayBar_CastDevice.Text" xml:space="preserve">
+    <value>投放到裝置 (敬請期待)</value>
+  </data>
+  <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
+    <value>快退10秒</value>
+  </data>
+  <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
+    <value>快進30秒</value>
+  </data>
+  <data name="Shell_PlayLists1.Text" xml:space="preserve">
+    <value>播放清單</value>
+  </data>
+  <data name="Shell_PlayQueue1.Text" xml:space="preserve">
+    <value>播放佇列</value>
+  </data>
+  <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
+    <value>音樂</value>
+  </data>
+  <data name="Shell_Settings1.Text" xml:space="preserve">
+    <value>設置</value>
+  </data>
+  <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
+    <value>找不到任何音樂</value>
+  </data>
+  <data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
+    <value>你的音樂庫不包含任何音樂內容</value>
+  </data>
+  <data name="HaveMusic_Songs.Text" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="Home_Playlists.Text" xml:space="preserve">
+    <value>歌單</value>
+  </data>
+  <data name="HaveMusic_Albums.Text" xml:space="preserve">
+    <value>專輯</value>
+  </data>
+  <data name="HaveMusic_Artists.Text" xml:space="preserve">
+    <value>藝術家</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
+    <value>刪除此資料夾嗎？</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
+    <value>確定要重置此軟體嗎？</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
+    <value>如果將“{title}”資料夾從音樂中移除，則該資料夾不會再出現在音樂中，但不會被刪除。</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
+    <value>將清空此軟體的所有數據，包括設置、播放佇列、播放清單等，請謹慎操作。</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
+    <value>刪除資料夾</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogPrimary" xml:space="preserve">
+    <value>重置並重啟</value>
+  </data>
+  <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Settings_ResetSoftwareDialogClose" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="PlayLists_DeleteDialogClose" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="PlayLists_DeleteDialogPrimary" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
+    <value>是否永久刪除播放清單？</value>
+  </data>
+  <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
+    <value>是否確實要刪除此播放清單？ 如果刪除“{title}”，將無法恢復它。</value>
+  </data>
+  <data name="Settings_SearchSetting.Content" xml:space="preserve">
+    <value>管理系統索引設置</value>
+  </data>
+  <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
+    <value>你指的是要切換應用嗎？</value>
+  </data>
+  <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
+    <value>“媒體播放機”正在嘗試打開“設置”。</value>
+  </data>
+  <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="Settings_OpenSettingDialogClose" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
+    <value>音量 (Alt+↑/↓)</value>
+  </data>
+  <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
+    <value>全螢幕 (F11)</value>
+  </data>
+  <data name="PlayBar_DesktopLyric.ToolTipService.ToolTip" xml:space="preserve">
+    <value>桌面歌詞 (Ctrl+M)</value>
+  </data>
+  <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
+    <value>更多選項</value>
+  </data>
+  <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
+    <value>上一個 (Ctrl+B)</value>
+  </data>
+  <data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
+    <value>下一個 (Ctrl+F)</value>
+  </data>
+  <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
+    <value>正在播放 (Ctrl+N)</value>
+  </data>
+  <data name="PlayBar_ShuffleOff" xml:space="preserve">
+    <value>隨機播放： 關 (Ctrl+H)</value>
+  </data>
+  <data name="PlayBar_ShuffleOn" xml:space="preserve">
+    <value>隨機播放： 開 (Ctrl+H)</value>
+  </data>
+  <data name="PlayBar_RepeatOff" xml:space="preserve">
+    <value>重複： 關 (Ctrl+T)</value>
+  </data>
+  <data name="PlayBar_RepeatAll" xml:space="preserve">
+    <value>重複： 全部 (Ctrl+T)</value>
+  </data>
+  <data name="PlayBar_RepeatOne" xml:space="preserve">
+    <value>重複： 單曲 (Ctrl+T)</value>
+  </data>
+  <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
+    <value>音樂庫 (Ctrl+R)</value>
+  </data>
+  <data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放佇列 (Ctrl+Q)</value>
+  </data>
+  <data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放清單 (Ctrl+Y)</value>
+  </data>
+  <data name="PlayBar_Play" xml:space="preserve">
+    <value>播放 (Ctrl+P)</value>
+  </data>
+  <data name="PlayBar_Pause" xml:space="preserve">
+    <value>暫停 (Ctrl+P)</value>
+  </data>
+  <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
+    <value>定位</value>
+  </data>
+  <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
+    <value>刪除資料夾</value>
+  </data>
+  <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
+    <value>將資料夾添加到音樂庫</value>
+  </data>
+  <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
+    <value>隨機播放： 開</value>
+  </data>
+  <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
+    <value>隨機播放： 關</value>
+  </data>
+  <data name="PlayBar_More_RepeatAll" xml:space="preserve">
+    <value>重複： 全部</value>
+  </data>
+  <data name="PlayBar_More_RepeatOne" xml:space="preserve">
+    <value>重複： 單曲</value>
+  </data>
+  <data name="PlayBar_More_RepeatOff" xml:space="preserve">
+    <value>重複： 關</value>
+  </data>
+  <data name="Settings_Materials" xml:space="preserve">
+    <value>白雪觀,  雲萍城,  蓮花塢,  雲深不知處,  金鱗台,  彩衣鎮,  義城,  冷泉,  亂葬崗</value>
+  </data>
+  <data name="Songs_SortBy" xml:space="preserve">
+    <value>A-Z,  Z-A,  歌手 (升序),  歌手 (降序),  專輯 (升序),  專輯 (降序),  發行年份 (升序),  發行年份 (降序),  已添加日期 (升序),  已添加日期 (降序),  資料夾 (升序),  資料夾 (降序)</value>
+  </data>
+  <data name="Albums_SortBy" xml:space="preserve">
+    <value>A-Z,  Z-A,  發行年份 (升序),  發行年份 (降序),  歌手 (升序),  歌手 (降序),  已添加日期 (升序),  已添加日期 (降序)</value>
+  </data>
+  <data name="SongInfo_UnknownArtist" xml:space="preserve">
+    <value>未知藝術家</value>
+  </data>
+  <data name="SongInfo_UnknownGenre" xml:space="preserve">
+    <value>未知流派</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode0" xml:space="preserve">
+    <value>本地歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
+    <value>在線歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
+    <value>來自樂庫5的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
+    <value>來自樂庫6的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
+    <value>來自樂庫4的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
+    <value>來自樂庫3的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
+    <value>來自樂庫2的歌曲</value>
+  </data>
+  <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
+    <value>來自樂庫1的歌曲</value>
+  </data>
+  <data name="SongInfo_UnknownAlbum" xml:space="preserve">
+    <value>未知專輯</value>
+  </data>
+  <data name="Songs_SortByChosen.Text" xml:space="preserve">
+    <value>排序方式：</value>
+  </data>
+  <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
+    <value>隨機播放</value>
+  </data>
+  <data name="Songs_GenreChosen.Text" xml:space="preserve">
+    <value>流派：</value>
+  </data>
+  <data name="PlayQueue_Clear.Text" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
+    <value>添加到播放佇列</value>
+  </data>
+  <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
+    <value>播放佇列</value>
+  </data>
+  <data name="Songs_AddTo_NewPlaylist.Text" xml:space="preserve">
+    <value>新建播放清單</value>
+  </data>
+  <data name="PlayQueue_AddFiles.Text" xml:space="preserve">
+    <value>添加檔</value>
+  </data>
+  <data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
+    <value>添加檔到播放佇列</value>
+  </data>
+  <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
+    <value>流覽要添加到播放佇列的檔</value>
+  </data>
+  <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
+    <value>添加資料夾到播放佇列</value>
+  </data>
+  <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
+    <value>選擇一個資料夾，並將該資料夾中的所有媒體添加到播放佇列</value>
+  </data>
+  <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
+    <value>從URL將媒體添加到播放佇列</value>
+  </data>
+  <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
+    <value>輸入URL，並將該位址中的媒體添加到播放佇列</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
+    <value>打開 URL</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
+    <value>打開</value>
+  </data>
+  <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
+    <value>打開檔案、流或播放清單的URL</value>
+  </data>
+  <data name="Songs_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="Songs_PlayNext.Text" xml:space="preserve">
+    <value>加入播放佇列</value>
+  </data>
+  <data name="Songs_AddTo.Text" xml:space="preserve">
+    <value>添加到</value>
+  </data>
+  <data name="Songs_EditInfo.Text" xml:space="preserve">
+    <value>編輯資訊</value>
+  </data>
+  <data name="Songs_Properties.Text" xml:space="preserve">
+    <value>屬性</value>
+  </data>
+  <data name="Songs_ShowAlbum.Text" xml:space="preserve">
+    <value>顯示專輯</value>
+  </data>
+  <data name="Songs_ShowArtist.Text" xml:space="preserve">
+    <value>顯示藝術家</value>
+  </data>
+  <data name="Songs_Select.Text" xml:space="preserve">
+    <value>選擇</value>
+  </data>
+  <data name="PlayQueue_Remove.Text" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
+    <value>上移</value>
+  </data>
+  <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
+    <value>下移</value>
+  </data>
+  <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="Settings_WindowMaterial.Header" xml:space="preserve">
+    <value>視窗材質</value>
+  </data>
+  <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
+    <value>選擇一個材質</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>歌詞字體</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>歌詞字型大小</value>
+  </data>
+  <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
+    <value>選擇一種字體</value>
+  </data>
+  <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
+    <value>選擇一個字型大小</value>
+  </data>
+  <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
+    <value>視窗背景跟隨封面主題色</value>
+  </data>
+  <data name="Songs_Pinyin" xml:space="preserve">
+    <value>拼音</value>
+  </data>
+  <data name="Settings_Version" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>清除 (Ctrl+Shift+X)</value>
+  </data>
+  <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>流覽要添加到播放佇列的檔</value>
+  </data>
+  <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
+    <value>後退10秒 (Ctrl+向左鍵)</value>
+  </data>
+  <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
+    <value>快進30秒 (Ctrl+向右鍵)</value>
+  </data>
+  <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
+    <value>全屏</value>
+  </data>
+  <data name="SongInfo_AllGenres" xml:space="preserve">
+    <value>所有流派</value>
+  </data>
+  <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
+    <value>正在編制庫索引...</value>
+  </data>
+  <data name="Artists_SortBy" xml:space="preserve">
+    <value>A-Z, Z-A</value>
+  </data>
+  <data name="Playlists_SortBy" xml:space="preserve">
+    <value>A-Z,  Z-A,  修改日期 (升序),  修改日期 (降序)</value>
+  </data>
+  <data name="Settings_FallBack.Header" xml:space="preserve">
+    <value>視窗失去焦點後背景停止更新</value>
+  </data>
+  <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
+    <value>視窗背景顏色</value>
+  </data>
+  <data name="Shell_Home.Content" xml:space="preserve">
+    <value>主頁</value>
+  </data>
+  <data name="Shell_Home1.Text" xml:space="preserve">
+    <value>主頁</value>
+  </data>
+  <data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
+    <value>主頁 (Ctrl+Shift+F)</value>
+  </data>
+  <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
+    <value>搜索在線內容</value>
+  </data>
+  <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
+    <value>不透明度</value>
+  </data>
+  <data name="Settings_Reset.Content" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="PropertiesDialog_Title.Text" xml:space="preserve">
+    <value>標題</value>
+  </data>
+  <data name="PropertiesDialog_Album.Text" xml:space="preserve">
+    <value>專輯</value>
+  </data>
+  <data name="PropertiesDialog_Track.Text" xml:space="preserve">
+    <value>曲目</value>
+  </data>
+  <data name="PropertiesDialog_Genre.Text" xml:space="preserve">
+    <value>流派</value>
+  </data>
+  <data name="PropertiesDialog_Bitrate.Text" xml:space="preserve">
+    <value>比特率</value>
+  </data>
+  <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
+    <value>參與創作的藝術家</value>
+  </data>
+  <data name="PropertiesDialog_AlbumArtist.Text" xml:space="preserve">
+    <value>專輯藝術家</value>
+  </data>
+  <data name="PropertiesDialog_Length.Text" xml:space="preserve">
+    <value>時長</value>
+  </data>
+  <data name="PropertiesDialog_Year.Text" xml:space="preserve">
+    <value>年份</value>
+  </data>
+  <data name="PropertiesDialog_ItemType.Text" xml:space="preserve">
+    <value>項目類型</value>
+  </data>
+  <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
+    <value>檔位置</value>
+  </data>
+  <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
+    <value>打開檔案位置</value>
+  </data>
+  <data name="PropertiesDialog.Title" xml:space="preserve">
+    <value>屬性</value>
+  </data>
+  <data name="EqualizerDialog_Title.Text" xml:space="preserve">
+    <value>均衡器</value>
+  </data>
+  <data name="EqualizerDialog_On" xml:space="preserve">
+    <value>開</value>
+  </data>
+  <data name="EqualizerDialog_Decibel" xml:space="preserve">
+    <value>分貝</value>
+  </data>
+  <data name="EqualizerDialog_Decibel1.Text" xml:space="preserve">
+    <value>分貝</value>
+  </data>
+  <data name="EqualizerDialog_Preset.Text" xml:space="preserve">
+    <value>預設</value>
+  </data>
+  <data name="EqualizerDialog_Presets" xml:space="preserve">
+    <value>平直,  高音增強,  低音增強,  頭戴式耳機,  筆記型電腦,  便攜式揚聲器,  家庭立體聲,  電視,  汽車,  自定義</value>
+  </data>
+  <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
+    <value>一起移動附近的滑塊</value>
+  </data>
+  <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
+    <value>赫茲</value>
+  </data>
+  <data name="EqualizerDialog_kHz.Text" xml:space="preserve">
+    <value>千赫茲</value>
+  </data>
+  <data name="EqualizerDialog_Off" xml:space="preserve">
+    <value>關</value>
+  </data>
+  <data name="EditSongInfoDialog.Title" xml:space="preserve">
+    <value>編輯歌曲資訊</value>
+  </data>
+  <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
+    <value>歌詞</value>
+  </data>
+  <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
+    <value>封面圖片</value>
+  </data>
+  <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
+    <value>編輯專輯資訊</value>
+  </data>
+  <data name="EditPlaylistInfoDialog.Title" xml:space="preserve">
+    <value>編輯播放清單資訊</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
+    <value>添加到新建播放清單</value>
+  </data>
+  <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="EqualizerDialog.CloseButtonText" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="EditPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
+    <value>導入</value>
+  </data>
+  <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ImportPlaylistDialog.Title" xml:space="preserve">
+    <value>匯入播放清單</value>
+  </data>
+  <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportFromFolder.Content" xml:space="preserve">
+    <value>從資料夾匯入</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
+    <value>導入歌曲</value>
+  </data>
+  <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
+    <value>歌曲數量</value>
+  </data>
+  <data name="ImportPlaylistDialog_Type.Text" xml:space="preserve">
+    <value>類型</value>
+  </data>
+  <data name="ImportPlaylistDialog_ImportFromM3u8Files.Content" xml:space="preserve">
+    <value>從 m3u8 檔導入</value>
+  </data>
+  <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="EditPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
+    <value>創建</value>
+  </data>
+  <data name="DesktopLyricWindowTitle" xml:space="preserve">
+    <value>桌面歌詞</value>
+  </data>
+  <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
+    <value>全部播放</value>
+  </data>
+  <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
+    <value>隨機播放</value>
+  </data>
+  <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
+    <value>編輯資訊</value>
+  </data>
+  <data name="AlbumInfo_Songs" xml:space="preserve">
+    <value>首歌曲</value>
+  </data>
+  <data name="AlbumInfo_RunTime" xml:space="preserve">
+    <value>歌曲長度</value>
+  </data>
+  <data name="ArtistInfo_Albums" xml:space="preserve">
+    <value>個專輯</value>
+  </data>
+  <data name="ArtistInfo_Album" xml:space="preserve">
+    <value>個專輯</value>
+  </data>
+  <data name="ArtistInfo_Hours" xml:space="preserve">
+    <value>小時</value>
+  </data>
+  <data name="ArtistInfo_Hour" xml:space="preserve">
+    <value>小時</value>
+  </data>
+  <data name="ArtistInfo_Min" xml:space="preserve">
+    <value>分鐘</value>
+  </data>
+  <data name="ArtistInfo_Sec" xml:space="preserve">
+    <value>秒</value>
+  </data>
+  <data name="ArtistInfo_Secs" xml:space="preserve">
+    <value>秒</value>
+  </data>
+  <data name="ArtistInfo_Mins" xml:space="preserve">
+    <value>分鐘</value>
+  </data>
+  <data name="AlbumInfo_Song" xml:space="preserve">
+    <value>首歌曲</value>
+  </data>
+  <data name="ArtistInfo_Artist" xml:space="preserve">
+    <value>藝術家</value>
+  </data>
+  <data name="ArtistDetail_InYourLibrary.Text" xml:space="preserve">
+    <value>在庫中</value>
+  </data>
+  <data name="AlbumInfo_UnknownYear" xml:space="preserve">
+    <value>未知年份</value>
+  </data>
+  <data name="Home_MusicLibrary1.Text" xml:space="preserve">
+    <value>樂庫1</value>
+  </data>
+  <data name="Home_MusicLibrary6.Text" xml:space="preserve">
+    <value>樂庫6</value>
+  </data>
+  <data name="Home_MusicLibrary5.Text" xml:space="preserve">
+    <value>樂庫5</value>
+  </data>
+  <data name="Home_MusicLibrary4.Text" xml:space="preserve">
+    <value>樂庫4</value>
+  </data>
+  <data name="Home_MusicLibrary3.Text" xml:space="preserve">
+    <value>樂庫3</value>
+  </data>
+  <data name="Home_MusicLibrary2.Text" xml:space="preserve">
+    <value>樂庫2</value>
+  </data>
+  <data name="Home_NetworkError.Text" xml:space="preserve">
+    <value>網路異常，請稍後再試</value>
+  </data>
+  <data name="Home_Retry.Text" xml:space="preserve">
+    <value>重試</value>
+  </data>
+  <data name="Home_SearchResult.Text" xml:space="preserve">
+    <value>的搜尋結果</value>
+  </data>
+  <data name="Settings_SourceCode.Content" xml:space="preserve">
+    <value>原始程式碼</value>
+  </data>
+  <data name="Settings_Thanks.Header" xml:space="preserve">
+    <value>感謝 墨香銅臭 賦予本軟體生命</value>
+  </data>
+  <data name="OnlineSongs_Download.Text" xml:space="preserve">
+    <value>下載</value>
+  </data>
+  <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
+    <value>歌曲下載位置</value>
+  </data>
+  <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
+    <value>更改</value>
+  </data>
+  <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
+    <value>開始下載</value>
+  </data>
+  <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="OnlineMusicLibrary_Progress" xml:space="preserve">
+    <value>進度</value>
+  </data>
+  <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
+    <value>下載下載......</value>
+  </data>
+  <data name="OnlineMusicLibrary_Processing" xml:space="preserve">
+    <value>處理......</value>
+  </data>
+  <data name="OnlineMusicLibrary_OpenFolder" xml:space="preserve">
+    <value>打開資料夾</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
+    <value>下載完成</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadCancelled" xml:space="preserve">
+    <value>下載已取消</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadFailed" xml:space="preserve">
+    <value>下載失敗</value>
+  </data>
+  <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
+    <value>下載歌曲中</value>
+  </data>
+  <data name="Shell_Settings.Content" xml:space="preserve">
+    <value>設置</value>
+  </data>
+  <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
+    <value>設定 (Ctrl+G)</value>
+  </data>
+  <data name="PlaylistInfo_Item" xml:space="preserve">
+    <value>個專案</value>
+  </data>
+  <data name="PlaylistInfo_Items" xml:space="preserve">
+    <value>個專案</value>
+  </data>
+  <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
+    <value>顯示播放清單</value>
+  </data>
+  <data name="PlayLists_Rename.Text" xml:space="preserve">
+    <value>重新命名</value>
+  </data>
+  <data name="PlayLists_Delete.Text" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
+    <value>顯示歌單</value>
+  </data>
+  <data name="Main_SendFeedback.Content" xml:space="preserve">
+    <value>發送反饋</value>
+  </data>
+  <data name="Shell_PlayFiles" xml:space="preserve">
+    <value>播放檔案</value>
+  </data>
+  <data name="Error_SongPlayback" xml:space="preserve">
+    <value>我們無法打開 {title}。 這可能是因為檔類型不受支援、檔擴展名不正確、檔已損壞或網路異常。</value>
+  </data>
+  <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
+    <value>音訊播放設備當前正在使用。</value>
+  </data>
+  <data name="Error_SamePlaylistName" xml:space="preserve">
+    <value>此資料夾中已存在具有此名稱的播放清單。 請輸入其他名稱，然後重試。</value>
+  </data>
+  <data name="Error_EditingSongInfoIO" xml:space="preserve">
+    <value>我們無法編輯 {title}。 這可能是因為當前檔正在播放、被其他進程佔用或檔類型不受支援。</value>
+  </data>
+  <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
+    <value>開發者選項</value>
+  </data>
+  <data name="Settings_Logging.Header" xml:space="preserve">
+    <value>日誌記錄</value>
+  </data>
+  <data name="Settings_OpenFolder.Content" xml:space="preserve">
+    <value>打開資料夾</value>
+  </data>
+  <data name="Error_EditingSongInfoOther" xml:space="preserve">
+    <value>我們無法編輯 {title} 的部分屬性。 這可能是因為檔類型不受支援或檔已損壞。</value>
+  </data>
+  <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
+    <value>你沒有任何播放清單</value>
+  </data>
+  <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
+    <value>創建一個新的播放清單</value>
+  </data>
+  <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
+    <value>新建播放清單</value>
+  </data>
+  <data name="PlayLists_CreatePlaylist.Content" xml:space="preserve">
+    <value>創建播放清單</value>
+  </data>
+  <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
+    <value>無標題播放清單</value>
+  </data>
+  <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
+    <value>無標題播放清單</value>
+  </data>
+  <data name="PlaylistInfo_Create" xml:space="preserve">
+    <value>已創建播放清單“{title}”。</value>
+  </data>
+  <data name="PlaylistInfo_Delete" xml:space="preserve">
+    <value>已刪除播放清單“{title}”。</value>
+  </data>
+  <data name="PlaylistInfo_AddItems" xml:space="preserve">
+    <value>{num} 項已添加到播放列表“{title}”。</value>
+  </data>
+  <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
+    <value>已導入 {num} 個播放列表。</value>
+  </data>
+  <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
+    <value>已匯出 {num} 個播放列表。</value>
+  </data>
+  <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
+    <value>已匯出 {num} 個播放列表。</value>
+  </data>
+  <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
+    <value>已導入 {num} 個播放列表。</value>
+  </data>
+  <data name="PlaylistInfo_AddItem" xml:space="preserve">
+    <value>{num} 項已添加到播放列表“{title}”。</value>
+  </data>
+  <data name="Settings_Lyric.Text" xml:space="preserve">
+    <value>歌詞</value>
+  </data>
+  <data name="Settings_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="Settings_PlaylistFile" xml:space="preserve">
+    <value>播放清單檔</value>
+  </data>
+  <data name="Settings_Playlist" xml:space="preserve">
+    <value>播放清單</value>
+  </data>
+  <data name="Lyric_ShowCover.Text" xml:space="preserve">
+    <value>顯示封面</value>
+  </data>
+  <data name="ImageViewerTitle" xml:space="preserve">
+    <value>無羈 圖片查看器</value>
+  </data>
+  <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
+    <value>放大 (↑ / Ctrl+滑鼠滾輪向上)</value>
+  </data>
+  <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
+    <value>原始大小</value>
+  </data>
+  <data name="ImageViewer_Copy.ToolTipService.ToolTip" xml:space="preserve">
+    <value>複製到剪貼板</value>
+  </data>
+  <data name="ImageViewer_Save.ToolTipService.ToolTip" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
+    <value>縮小 (↓ / Ctrl+滑鼠滾輪向下)</value>
+  </data>
+</root>
