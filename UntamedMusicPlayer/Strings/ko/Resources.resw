@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>언테임드 뮤직 플레이어</value>
+    <value>얽매이지 않는 뮤직 플레이어</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>언테임드 뮤직 플레이어</value>
+    <value>얽매이지 않는 뮤직 플레이어</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
     <value>음악 도서관</value>
@@ -1009,7 +1009,7 @@
     <value>쇼 표지</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
-    <value>언테임드 이미지 뷰어</value>
+    <value>얽매이지 않는 이미지 뷰어</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
     <value>확대 (↑ / Ctrl+마우스 휠 위)</value>
