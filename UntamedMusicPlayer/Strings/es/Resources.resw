@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Reproductor de música indómita</value>
+    <value>Reproductor de Música Libre</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Reproductor de música indómita</value>
+    <value>Reproductor de Música Libre</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
     <value>Biblioteca musical</value>
@@ -1009,7 +1009,7 @@
     <value>Portada del programa</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
-    <value>Visor de imágenes indómitas</value>
+    <value>Visor de Imágenes Libre</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
     <value>Haz zoom (↑ / Ctrl+Mouse rueda hacia arriba)</value>
