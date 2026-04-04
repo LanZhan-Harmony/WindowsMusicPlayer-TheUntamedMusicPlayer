@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>আনটেমড মিউজিক প্লেয়ার</value>
+    <value>বন্ধনহীন মিউজিক প্লেয়ার</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>আনটেমড মিউজিক প্লেয়ার</value>
+    <value>বন্ধনহীন মিউজিক প্লেয়ার</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
     <value>সঙ্গীত গ্রন্থাগার</value>
@@ -1009,7 +1009,7 @@
     <value>প্রচ্ছদ দেখান</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
-    <value>আনটেমড ইমেজ ভিউয়ার</value>
+    <value>বন্ধনহীন ইমেজ ভিউয়ার</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
     <value>জুম ইন (↑ / Ctrl+মাউস হুইল আপ)</value>
