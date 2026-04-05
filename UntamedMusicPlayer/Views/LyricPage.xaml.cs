@@ -105,11 +105,18 @@ public sealed partial class LyricPage : Page, IDisposable
         const int maxRetryCount = 10;
         for (var i = 0; i < maxRetryCount; i++)
         {
-            if (
-                cancellationToken.IsCancellationRequested
-                || await TryScrollToCurrentLyricOnUiThreadAsync(cancellationToken)
-            )
+            if (cancellationToken.IsCancellationRequested)
             {
+                return;
+            }
+            if (await TryScrollToCurrentLyricOnUiThreadAsync(cancellationToken))
+            {
+                try
+                {
+                    await Task.Delay(120, cancellationToken);
+                    await TryScrollToCurrentLyricOnUiThreadAsync(cancellationToken);
+                }
+                catch (OperationCanceledException) { }
                 return;
             }
             try
@@ -523,19 +530,16 @@ public sealed partial class LyricPage : Page, IDisposable
         var textblock = (sender as TextBlock)!;
         if (Math.Abs(textblock.FontSize - Settings.LyricPageCurrentFontSize) < 1e-3)
         {
-            var currentScrollPosition = LyricViewer.VerticalOffset;
-            var point = new Point(0, currentScrollPosition);
-
-            // 计算出目标位置并滚动
-            var targetPosition = textblock.TransformToVisual(LyricViewer).TransformPoint(point);
+            var topInViewport = textblock
+                .TransformToVisual(LyricViewer)
+                .TransformPoint(new Point(0, 0))
+                .Y;
+            var targetOffset =
+                LyricViewer.VerticalOffset + topInViewport - LyricViewer.ActualHeight / 2 + 40;
+            targetOffset = Math.Max(0, targetOffset);
 
             _isProgrammaticScroll = true;
-            LyricViewer.ChangeView(
-                null,
-                targetPosition.Y - LyricViewer.ActualHeight / 2 + 40,
-                null,
-                false
-            );
+            LyricViewer.ChangeView(null, targetOffset, null, false);
         }
     }
 
@@ -574,21 +578,28 @@ public sealed partial class LyricPage : Page, IDisposable
             return false;
         }
 
-        _isManualScrolling = false;
-        var currentScrollPosition = LyricViewer.VerticalOffset;
-        var point = new Point(0, currentScrollPosition);
+        if (LyricViewer.ActualHeight <= 0 || container.RenderSize.Height <= 0)
+        {
+            return false;
+        }
 
-        // 获取容器相对于 ScrollViewer 的位置
-        // 容器位置 + 歌词顶部的 Margin (40) 约等于 TextBlock 的位置
-        var targetPosition = container.TransformToVisual(LyricViewer).TransformPoint(point);
+        _isManualScrolling = false;
+        var topInViewport = container
+            .TransformToVisual(LyricViewer)
+            .TransformPoint(new Point(0, 0))
+            .Y;
+        var targetOffset =
+            LyricViewer.VerticalOffset + topInViewport - LyricViewer.ActualHeight / 2 + 80;
+
+        if (double.IsNaN(targetOffset) || double.IsInfinity(targetOffset))
+        {
+            return false;
+        }
+
+        targetOffset = Math.Max(0, targetOffset);
 
         _isProgrammaticScroll = true;
-        LyricViewer.ChangeView(
-            null,
-            targetPosition.Y - LyricViewer.ActualHeight / 2 + 80, // 40 (Margin) + 40 (Offset)
-            null,
-            false
-        );
+        LyricViewer.ChangeView(null, targetOffset, null, false);
 
         return true;
     }
