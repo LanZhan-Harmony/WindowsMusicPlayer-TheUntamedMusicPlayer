@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+		<TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
 		<RootNamespace>UntamedMusicPlayer</RootNamespace>
 		<ApplicationIcon>Assets/AppIcon/Icon.ico</ApplicationIcon>
@@ -14,6 +14,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<LangVersion>preview</LangVersion>
+		<Features>runtime-async=on</Features>
+		<EnablePreviewFeatures>True</EnablePreviewFeatures>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Assets\**\*" />
@@ -68,9 +70,9 @@
 		<WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
 		<IsAotCompatible>True</IsAotCompatible>
 		<!--<PublishAot>True</PublishAot>-->
-		<!--<PublishTrimmed>True</PublishTrimmed>-->
+		<PublishTrimmed>True</PublishTrimmed>
 		<!-- 若调试时无法获取本地变量或参数的值，把 PublishReadyToRun 设为 False 可以解决 -->
-		<!--<PublishReadyToRun>True</PublishReadyToRun>-->
+		<PublishReadyToRun>True</PublishReadyToRun>
 		<JsonSerializerIsReflectionEnabledByDefault>True</JsonSerializerIsReflectionEnabledByDefault>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>

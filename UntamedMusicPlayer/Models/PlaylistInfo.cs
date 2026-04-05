@@ -19,7 +19,7 @@ public sealed partial class PlaylistInfo
     public long ModifiedDate { get; set; }
     public ObservableCollection<IndexedPlaylistSong> SongList { get; set; } = [];
     public bool IsCoverEdited { get; set; } = false;
-    public List<string> CoverPaths { get; set; } = new(4);
+    public List<string> CoverPaths { get; set; } = [with(4)];
 
     [MemoryPackConstructor]
     public PlaylistInfo() { }
