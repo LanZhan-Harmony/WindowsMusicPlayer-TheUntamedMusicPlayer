@@ -83,6 +83,7 @@ public sealed partial class EditAlbumInfoDialog
         await Task.Run(async () =>
         {
             ATL.Settings.ID3v2_tagSubVersion = 3;
+            var hasChanges = false;
             foreach (var tempSong in _tempSongs)
             {
                 try
@@ -108,11 +109,19 @@ public sealed partial class EditAlbumInfoDialog
                     {
                         _logger.EditingSongInfoIO(tempSong.Title);
                     }
+                    else
+                    {
+                        hasChanges = true;
+                    }
                 }
                 catch (Exception ex)
                 {
                     _logger.EditingSongInfoOther(tempSong.Title, ex);
                 }
+            }
+            if (hasChanges)
+            {
+                _ = Data.MusicLibrary.LoadLibraryAgainAsync();
             }
         });
 

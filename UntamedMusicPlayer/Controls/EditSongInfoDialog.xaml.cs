@@ -155,14 +155,18 @@ public sealed partial class EditSongInfoDialog
                 {
                     _logger.EditingSongInfoIO(_title);
                 }
+                else
+                {
+                    _ = Data.MusicLibrary.LoadLibraryAgainAsync();
+                }
             }
             catch (Exception ex)
             {
                 _logger.EditingSongInfoOther(_title, ex);
             }
-
-            Data.IsMusicProcessing = false;
         });
+
+        Data.IsMusicProcessing = false;
     }
 
     private void OpenFileLocationButton_Click(object sender, RoutedEventArgs e)
