@@ -70,6 +70,13 @@ public static partial class ExternFunction
     [LibraryImport("user32.dll")]
     public static partial nint GetActiveWindow();
 
+    [LibraryImport("user32.dll")]
+    public static partial nint GetForegroundWindow();
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetForegroundWindow(nint hWnd);
+
     [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
     public static partial nint SendMessage(nint hWnd, int msg, int wParam, nint lParam);
 

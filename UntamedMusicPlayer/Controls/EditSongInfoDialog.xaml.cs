@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
+using ATL;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Text;
@@ -12,10 +12,8 @@ using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
-using Windows.Storage;
 using ZLinq;
 using ZLogger;
-using TextBox = Microsoft.UI.Xaml.Controls.TextBox;
 
 namespace UntamedMusicPlayer.Controls;
 
@@ -24,7 +22,6 @@ public sealed partial class EditSongInfoDialog
         INotifyPropertyChanged,
         IRecipient<ThemeChangeMessage>
 {
-    private static readonly string[] _supportedEditTypes = [".mp3", ".flac"];
     private readonly ILogger _logger = LoggingService.CreateLogger<EditSongInfoDialog>();
     private readonly DetailedLocalSongInfo _song;
     private string _title;
@@ -111,103 +108,61 @@ public sealed partial class EditSongInfoDialog
     private async void SaveButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         Data.IsMusicProcessing = true;
+        if (!Data.SupportedAudioTypesForTagEditing.Contains(_song.ItemType))
+        {
+            Data.IsMusicProcessing = false;
+            return;
+        }
+        LyricEditor.Document.GetText(TextGetOptions.None, out var updatedLyrics);
+        _lyric = updatedLyrics.TrimEnd().Replace('\r', '\n');
 
-        if (_supportedEditTypes.Contains(_song.ItemType))
+        await Task.Run(async () =>
         {
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(_song.Path);
-                var musicProperties = await file.Properties.GetMusicPropertiesAsync();
-                musicProperties.Title = _title;
-                musicProperties.Artist = string.IsNullOrWhiteSpace(_contributingArtists)
-                    ? null
-                    : _contributingArtists;
-                musicProperties.Composers.Clear();
-                foreach (
-                    var artist in _contributingArtists
-                        .Split(
-                            BriefLocalSongInfo.Delimiters,
-                            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
-                        )
-                        .AsValueEnumerable()
-                        .Distinct()
-                )
+                ATL.Settings.ID3v2_tagSubVersion = 3;
+                var musicFile = new Track(_song.Path)
                 {
-                    musicProperties.Composers.Add(artist);
+                    Title = _title,
+                    Artist = _contributingArtists,
+                    Composer = _contributingArtists,
+                    Album = _album,
+                    AlbumArtist = _albumArtist,
+                    TrackNumber = int.TryParse(_track, out var track) ? track : 0,
+                    Year = int.TryParse(_year, out var year) ? year : 0,
+                    Genre = _genre,
+                };
+                musicFile.Lyrics.Clear();
+                if (!string.IsNullOrWhiteSpace(_lyric))
+                {
+                    musicFile.Lyrics.Add(new LyricsInfo { UnsynchronizedLyrics = _lyric });
                 }
-                musicProperties.Album = string.IsNullOrWhiteSpace(_album) ? null : _album;
-                musicProperties.AlbumArtist = string.IsNullOrWhiteSpace(_albumArtist)
-                    ? null
-                    : _albumArtist;
-                if (uint.TryParse(_track, out var track))
+
+                if (_hasCoverDeleted)
                 {
-                    musicProperties.TrackNumber = track;
+                    musicFile.EmbeddedPictures.Clear();
                 }
-                else if (_song.TrackStr != "")
+                else if (_hasCoverChanged)
                 {
-                    musicProperties.TrackNumber = 0;
-                }
-                if (uint.TryParse(_year, out var year))
-                {
-                    musicProperties.Year = year;
-                }
-                else if (_song.Year != 0)
-                {
-                    musicProperties.Year = 0;
-                }
-                musicProperties.Genre.Clear();
-                if (!string.IsNullOrWhiteSpace(_genre))
-                {
-                    foreach (
-                        var genre in _genre
-                            .Split(
-                                BriefLocalSongInfo.Delimiters,
-                                StringSplitOptions.RemoveEmptyEntries
-                                    | StringSplitOptions.TrimEntries
-                            )
-                            .AsValueEnumerable()
-                            .Distinct()
-                    )
+                    if (File.Exists(_coverFilePath))
                     {
-                        musicProperties.Genre.Add(genre);
+                        musicFile.EmbeddedPictures.Clear();
+                        var picture = PictureInfo.fromBinaryData(File.ReadAllBytes(_coverFilePath));
+                        musicFile.EmbeddedPictures.Add(picture);
                     }
                 }
-                await musicProperties.SavePropertiesAsync();
-            }
-            catch (COMException)
-            {
-                _logger.EditingSongInfoIO(_title);
-                return;
+                if (!await musicFile.SaveAsync())
+                {
+                    _logger.EditingSongInfoIO(_title);
+                }
             }
             catch (Exception ex)
             {
                 _logger.EditingSongInfoOther(_title, ex);
             }
-        }
 
-        try
-        {
-            using var musicFile = TagLib.File.Create(_song.Path);
-            LyricEditor.Document.GetText(TextGetOptions.None, out var updatedLyrics);
-            _lyric = updatedLyrics.TrimEnd().Replace('\r', '\n');
-            musicFile.Tag.Lyrics = string.IsNullOrWhiteSpace(_lyric) ? null : _lyric;
-            musicFile.Tag.Pictures =
-                _hasCoverDeleted ? []
-                : _hasCoverChanged && File.Exists(_coverFilePath)
-                    ? [new TagLib.Picture(_coverFilePath)]
-                : musicFile.Tag.Pictures;
-            musicFile.Save();
-        }
-        catch (IOException)
-        {
-            _logger.EditingSongInfoIO(_title);
-        }
-        catch (Exception ex)
-        {
-            _logger.EditingSongInfoOther(_title, ex);
-        }
-
-        Data.IsMusicProcessing = false;
+            Data.IsMusicProcessing = false;
+        });
     }
 
     private void OpenFileLocationButton_Click(object sender, RoutedEventArgs e)

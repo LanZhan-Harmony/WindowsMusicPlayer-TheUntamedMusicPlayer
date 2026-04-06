@@ -1,4 +1,5 @@
 using System.Text;
+using ATL;
 using Microsoft.Extensions.Logging;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
@@ -37,65 +38,69 @@ public static class DownloadHelper
         _currentDownloadPath = null;
         _currentFinalPath = null;
 
-        try
-        {
-            await ShowStartNotificationAsync(info.Title);
+        // 在UI线程创建Progress，它会自动捕获当前同步上下文（UI线程）
+        var progress = new Progress<int>(async progressPercentage =>
+            await UpdateProgressAsync(info.Title, progressPercentage)
+        );
 
-            var detailedInfo = (IDetailedOnlineSongInfo)
-                await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+        _ = Task.Run(
+            async () =>
+            {
+                try
+                {
+                    await ShowStartNotificationAsync(info.Title);
 
-            var (tempPath, finalPath) = await PrepareDownloadPathAsync(detailedInfo);
-            _currentDownloadPath = tempPath;
-            _currentFinalPath = finalPath;
+                    var detailedInfo = (IDetailedOnlineSongInfo)
+                        await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
 
-            // 显示开始通知
+                    var (tempPath, finalPath) = await PrepareDownloadPathAsync(detailedInfo);
+                    _currentDownloadPath = tempPath;
+                    _currentFinalPath = finalPath;
 
-            // 使用 IProgress 进行进度报告
-            var progress = new Progress<int>(async progressPercentage =>
-                await UpdateProgressAsync(detailedInfo.Title, progressPercentage)
-            );
+                    // 执行下载 (最高到99%)
+                    await DownloadFileWithProgressAsync(
+                        detailedInfo.Path,
+                        tempPath,
+                        progress,
+                        _currentDownloadCts.Token
+                    );
 
-            // 执行下载 (最高到99%)
-            await DownloadFileWithProgressAsync(
-                detailedInfo.Path,
-                tempPath,
-                progress,
-                _currentDownloadCts.Token
-            );
+                    // 重命名文件到最终路径
+                    RenameToFinalPath(tempPath, finalPath);
 
-            // 重命名文件到最终路径
-            await RenameToFinalPathAsync(tempPath, finalPath);
+                    // 写入歌曲信息 (从99%到100%)
+                    await WriteSongInfoAsync(finalPath, detailedInfo, _currentDownloadCts.Token);
 
-            // 写入歌曲信息 (从99%到100%)
-            await WriteSongInfoAsync(finalPath, detailedInfo, _currentDownloadCts.Token);
+                    // 显示100%完成
+                    ((IProgress<int>)progress).Report(100);
 
-            // 显示100%完成
-            await UpdateProgressAsync(detailedInfo.Title, 100);
+                    // 显示完成通知
+                    await ShowCompletionNotificationAsync(detailedInfo.Title, finalPath);
 
-            // 显示完成通知
-            await ShowCompletionNotificationAsync(detailedInfo.Title, finalPath);
-
-            // 重新加载音乐库
-            _ = Data.MusicLibrary.LoadLibraryAgainAsync();
-        }
-        catch (OperationCanceledException)
-        {
-            // 用户取消或超时
-            await HandleDownloadCancelledAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"下载{info.Title}失败");
-            await HandleDownloadErrorAsync(info.Title);
-        }
-        finally
-        {
-            Data.IsMusicProcessing = false;
-            _currentDownloadCts?.Dispose();
-            _currentDownloadCts = null;
-            _currentDownloadPath = null;
-            _currentFinalPath = null;
-        }
+                    // 重新加载音乐库
+                    _ = Data.MusicLibrary.LoadLibraryAgainAsync();
+                }
+                catch (OperationCanceledException)
+                {
+                    // 用户取消或超时
+                    await HandleDownloadCancelledAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.ZLogInformation(ex, $"下载{info.Title}失败");
+                    await HandleDownloadErrorAsync(info.Title);
+                }
+                finally
+                {
+                    Data.IsMusicProcessing = false;
+                    _currentDownloadCts?.Dispose();
+                    _currentDownloadCts = null;
+                    _currentDownloadPath = null;
+                    _currentFinalPath = null;
+                }
+            },
+            cancellationToken
+        );
     }
 
     private static async Task<(string tempPath, string finalPath)> PrepareDownloadPathAsync(
@@ -179,7 +184,7 @@ public static class DownloadHelper
         progress.Report(99);
     }
 
-    private static async Task RenameToFinalPathAsync(string tempPath, string finalPath)
+    private static void RenameToFinalPath(string tempPath, string finalPath)
     {
         try
         {
@@ -190,7 +195,7 @@ public static class DownloadHelper
             }
 
             // 重命名临时文件到最终路径
-            await Task.Run(() => File.Move(tempPath, finalPath));
+            File.Move(tempPath, finalPath);
         }
         catch (Exception ex)
         {
@@ -202,36 +207,33 @@ public static class DownloadHelper
     /// <summary>
     /// 清理部分下载的文件
     /// </summary>
-    private static async Task CleanupPartialDownloadAsync()
+    private static void CleanupPartialDownload()
     {
-        await Task.Run(() =>
+        // 清理临时文件 (.crdownload)
+        if (!string.IsNullOrEmpty(_currentDownloadPath) && File.Exists(_currentDownloadPath))
         {
-            // 清理临时文件 (.crdownload)
-            if (!string.IsNullOrEmpty(_currentDownloadPath) && File.Exists(_currentDownloadPath))
+            try
             {
-                try
-                {
-                    File.Delete(_currentDownloadPath);
-                }
-                catch (Exception ex)
-                {
-                    _logger.ZLogInformation(ex, $"删除临时下载文件失败");
-                }
+                File.Delete(_currentDownloadPath);
             }
+            catch (Exception ex)
+            {
+                _logger.ZLogInformation(ex, $"删除临时下载文件失败");
+            }
+        }
 
-            // 清理最终文件（如果已经重命名但操作失败）
-            if (!string.IsNullOrEmpty(_currentFinalPath) && File.Exists(_currentFinalPath))
+        // 清理最终文件（如果已经重命名但操作失败）
+        if (!string.IsNullOrEmpty(_currentFinalPath) && File.Exists(_currentFinalPath))
+        {
+            try
             {
-                try
-                {
-                    File.Delete(_currentFinalPath);
-                }
-                catch (Exception ex)
-                {
-                    _logger.ZLogInformation(ex, $"删除最终下载文件失败");
-                }
+                File.Delete(_currentFinalPath);
             }
-        });
+            catch (Exception ex)
+            {
+                _logger.ZLogInformation(ex, $"删除最终下载文件失败");
+            }
+        }
     }
 
     /// <summary>
@@ -252,7 +254,7 @@ public static class DownloadHelper
             await Task.Delay(100);
 
             // 删除部分下载的文件（包括 .crdownload 和最终文件）
-            await CleanupPartialDownloadAsync();
+            CleanupPartialDownload();
         }
         catch (Exception ex)
         {
@@ -285,24 +287,32 @@ public static class DownloadHelper
     {
         try
         {
-            // 写入基本属性
-            var file = await StorageFile.GetFileFromPathAsync(savePath);
-            var musicProperties = await file.Properties.GetMusicPropertiesAsync();
-
-            musicProperties.Title = detailedInfo.Title;
-            musicProperties.Album = detailedInfo.Album;
-            musicProperties.Artist = detailedInfo.ArtistsStr;
-            musicProperties.AlbumArtist = detailedInfo.AlbumArtistsStr;
-
-            if (uint.TryParse(detailedInfo.YearStr, out var year))
+            ATL.Settings.ID3v2_tagSubVersion = 3;
+            var musicFile = new Track(savePath)
             {
-                musicProperties.Year = year;
+                Title = detailedInfo.Title,
+                Album = detailedInfo.Album,
+                Artist = detailedInfo.ArtistsStr,
+                Composer = detailedInfo.ArtistsStr,
+                AlbumArtist = detailedInfo.AlbumArtistsStr,
+                Year = int.TryParse(detailedInfo.YearStr, out var year) ? year : 0,
+            };
+            musicFile.Lyrics.Clear();
+            musicFile.Lyrics.Add(new LyricsInfo { UnsynchronizedLyrics = detailedInfo.Lyric });
+            if (!string.IsNullOrEmpty(detailedInfo.CoverPath))
+            {
+                musicFile.EmbeddedPictures.Clear();
+                var imageBytes = await _sharedHttpClient.GetByteArrayAsync(
+                    detailedInfo.CoverPath,
+                    cancellationToken
+                );
+                var picture = PictureInfo.fromBinaryData(imageBytes);
+                musicFile.EmbeddedPictures.Add(picture);
             }
-
-            await musicProperties.SavePropertiesAsync();
-
-            // 写入歌词和封面
-            await WriteTagLibInfoAsync(savePath, detailedInfo, cancellationToken);
+            if (!await musicFile.SaveAsync())
+            {
+                throw new Exception($"保存{detailedInfo.Title}歌曲信息失败");
+            }
         }
         catch (Exception ex)
         {
@@ -311,56 +321,12 @@ public static class DownloadHelper
         }
     }
 
-    private static async Task WriteTagLibInfoAsync(
-        string savePath,
-        IDetailedOnlineSongInfo detailedInfo,
-        CancellationToken cancellationToken
-    )
-    {
-        try
-        {
-            using var musicFile = TagLib.File.Create(savePath);
-            musicFile.Tag.Lyrics = detailedInfo.Lyric;
-
-            // 下载并设置封面
-            if (!string.IsNullOrEmpty(detailedInfo.CoverPath))
-            {
-                await SetAlbumCoverAsync(musicFile, detailedInfo.CoverPath, cancellationToken);
-            }
-
-            musicFile.Save();
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogError(ex, $"写入{detailedInfo.Title}TagLib信息失败");
-            throw; // 重新抛出异常以便上层处理
-        }
-    }
-
-    private static async Task SetAlbumCoverAsync(
-        TagLib.File musicFile,
-        string coverUrl,
-        CancellationToken cancellationToken
-    )
-    {
-        try
-        {
-            var imageBytes = await _sharedHttpClient.GetByteArrayAsync(coverUrl, cancellationToken);
-            var picture = new TagLib.Picture(imageBytes);
-            musicFile.Tag.Pictures = [picture];
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"设置封面失败");
-        }
-    }
-
     /// <summary>
     /// 处理下载被取消
     /// </summary>
     private static async Task HandleDownloadCancelledAsync()
     {
-        await CleanupPartialDownloadAsync();
+        CleanupPartialDownload();
         await ShowCancelNotificationAsync();
         await AppNotificationManager.Default.RemoveAllAsync();
     }
@@ -370,7 +336,7 @@ public static class DownloadHelper
     /// </summary>
     private static async Task HandleDownloadErrorAsync(string title)
     {
-        await CleanupPartialDownloadAsync();
+        CleanupPartialDownload();
         await ShowErrorNotificationAsync(title);
         await AppNotificationManager.Default.RemoveAllAsync();
     }

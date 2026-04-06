@@ -116,7 +116,7 @@ public sealed partial class PlayQueueManager : ObservableObject, IDisposable
         {
             var currentSong = currentQueue[i].Song;
             var targetSong = targetQueue[i];
-            if (!ReferenceEquals(currentSong, targetSong) && currentSong.Path != targetSong.Path)
+            if (currentSong != targetSong)
             {
                 return false;
             }

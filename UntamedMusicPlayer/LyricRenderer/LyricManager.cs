@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Dispatching;
+using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Playback;
 
@@ -62,7 +63,8 @@ public sealed partial class LyricManager(SharedPlaybackState state)
             }
             else
             {
-                CurrentLyricContent = "";
+                CurrentLyricContent =
+                    $"{_state.CurrentSong!.Title}\n{"Lyric_NoLyric".GetLocalized()}";
             }
         });
     }

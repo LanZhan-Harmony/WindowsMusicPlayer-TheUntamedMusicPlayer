@@ -54,6 +54,29 @@ public static class Data
         ".bwf",
     ];
 
+    public static readonly string[] SupportedAudioTypesForTagEditing =
+    [
+        ".mp3",
+        ".flac",
+        ".ogg",
+        ".m4a",
+        ".wav",
+        ".opus",
+        ".dsf",
+        ".dff",
+        ".ape",
+        ".webm",
+        ".wv",
+        ".mp2",
+        ".mp1",
+        ".aif",
+        ".aiff",
+        ".m2a",
+        ".m1a",
+        ".mp3pro",
+        ".bwf",
+    ];
+
     /// <summary>
     /// 支持的封面图片类型
     /// </summary>
