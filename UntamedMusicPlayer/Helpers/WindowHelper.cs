@@ -33,6 +33,9 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
     // ── 穿透 / 钩子 ──
     private bool _isMouseOverBorder;
     private RECT _cachedBorderRect;
+    private nint _previousForegroundWindow;
+    private bool _isTemporarilyHidden;
+    private CancellationTokenSource? _temporaryHideCts;
 
     // ── WndProc ──
     private delegate nint WndProcDelegate(nint hwnd, uint msg, nint wParam, nint lParam);
@@ -72,7 +75,7 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
         SetupWndProc();
         SetTopmost(true);
         RegisterRawInput();
-        _updateTimer.Change(0, 250);
+        _updateTimer.Change(0, 100);
     }
 
     // ═══════════════════════════════════════════════════
@@ -163,6 +166,7 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
 
             if (msg == WM_NCLBUTTONDBLCLK)
             {
+                _ = HideWindowTemporarilyAsync();
                 return nint.Zero;
             }
 
@@ -174,6 +178,7 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
             // 鼠标拖拽（窗口可交互时，拦截标题栏左键按下以绕过 SC_MOVE）
             if (msg == WM_NCLBUTTONDOWN && wParam.ToInt32() == HTCAPTION)
             {
+                CapturePreviousForegroundWindow();
                 GetCursorPos(out var cursor);
                 GetWindowRect(hwnd, out var windowRect);
                 _dragOffsetX = cursor.X - windowRect.Left;
@@ -344,7 +349,103 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
         if (isOverBorder != _isMouseOverBorder) // 如果鼠标状态改变
         {
             _isMouseOverBorder = isOverBorder;
+
+            if (isOverBorder)
+            {
+                CapturePreviousForegroundWindow();
+            }
+            else
+            {
+                RestorePreviousForegroundWindow();
+            }
+
             MakeWindowClickThrough(!isOverBorder);
+        }
+    }
+
+    private void CapturePreviousForegroundWindow()
+    {
+        var foregroundWindow = GetForegroundWindow();
+        if (foregroundWindow != nint.Zero && foregroundWindow != _hWnd)
+        {
+            _previousForegroundWindow = foregroundWindow;
+        }
+    }
+
+    private void RestorePreviousForegroundWindow()
+    {
+        if (_isTemporarilyHidden)
+        {
+            return;
+        }
+        if (_previousForegroundWindow == nint.Zero || _previousForegroundWindow == _hWnd)
+        {
+            return;
+        }
+
+        var currentForegroundWindow = GetForegroundWindow();
+        if (currentForegroundWindow != nint.Zero && currentForegroundWindow != _hWnd)
+        {
+            return;
+        }
+        _ = SetForegroundWindow(_previousForegroundWindow);
+    }
+
+    private async Task HideWindowTemporarilyAsync()
+    {
+        const uint SWP_NOSIZE = 0x0001;
+        const uint SWP_NOMOVE = 0x0002;
+        const uint SWP_NOZORDER = 0x0004;
+        const uint SWP_NOACTIVATE = 0x0010;
+        const uint SWP_SHOWWINDOW = 0x0040;
+        const uint SWP_HIDEWINDOW = 0x0080;
+
+        _temporaryHideCts?.Cancel();
+        _temporaryHideCts?.Dispose();
+
+        _temporaryHideCts = new CancellationTokenSource();
+        var token = _temporaryHideCts.Token;
+
+        CapturePreviousForegroundWindow();
+        _isTemporarilyHidden = true;
+        _isMouseOverBorder = false;
+        MakeWindowClickThrough(true);
+
+        _ = SetWindowPos(
+            _hWnd,
+            nint.Zero,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW
+        );
+
+        RestorePreviousForegroundWindow();
+
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3), token);
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            _ = SetWindowPos(
+                _hWnd,
+                nint.Zero,
+                0,
+                0,
+                0,
+                0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW
+            );
+            SetTopmost(true);
+        }
+        catch (OperationCanceledException) { }
+        finally
+        {
+            _isTemporarilyHidden = false;
         }
     }
 
@@ -401,6 +502,8 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
 
     public void Dispose()
     {
+        _temporaryHideCts?.Cancel();
+        _temporaryHideCts?.Dispose();
         _updateTimer.Dispose();
     }
 }

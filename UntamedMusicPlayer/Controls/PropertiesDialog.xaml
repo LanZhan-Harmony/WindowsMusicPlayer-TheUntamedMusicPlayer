@@ -6,11 +6,9 @@
                xmlns:local="using:UntamedMusicPlayer.Controls"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                CloseButtonClick="CloseButtonClick"
-               Style="{StaticResource DefaultContentDialogStyle}"
+               Style="{StaticResource NormalContentDialogStyle}"
                mc:Ignorable="d">
-    <ContentDialog.Resources>
-        <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
-    </ContentDialog.Resources>
+    
     <ScrollViewer Margin="-24,0,-24,0">
         <StackPanel>
             <Grid Width="625">

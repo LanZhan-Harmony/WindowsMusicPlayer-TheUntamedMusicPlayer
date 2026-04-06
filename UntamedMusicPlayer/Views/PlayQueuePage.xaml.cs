@@ -1,4 +1,3 @@
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -259,11 +258,6 @@ public sealed partial class PlayQueuePage : Page
     {
         AddFilesSplitButton.IsEnabled = false;
         AddFilesSplitButton.Flyout.Hide();
-        var titleTextBlock = new TextBlock
-        {
-            Text = "PlayQueue_AddUrlDialog_OpenAURL".GetLocalized(),
-            FontWeight = FontWeights.Normal,
-        };
         var contentTextBox = new TextBox
         {
             PlaceholderText = "PlayQueue_AddUrlDialog_EnterTheURL".GetLocalized(),
@@ -272,11 +266,11 @@ public sealed partial class PlayQueuePage : Page
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            Style = Application.Current.Resources["NormalContentDialogStyle"] as Style,
             RequestedTheme = ThemeSelectorService.IsDarkTheme
                 ? ElementTheme.Dark
                 : ElementTheme.Light,
-            Title = titleTextBlock,
+            Title = new TextBlock { Text = "PlayQueue_AddUrlDialog_OpenAURL".GetLocalized() },
             Content = contentTextBox,
             PrimaryButtonText = "PlayQueue_AddUrlDialog_Open".GetLocalized(),
             IsPrimaryButtonEnabled = false,

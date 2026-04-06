@@ -1,4 +1,3 @@
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Controls;
@@ -25,19 +24,14 @@ public sealed partial class SettingsPage : Page
         if (sender is FrameworkElement { DataContext: string folder })
         {
             var folderName = (await StorageFolder.GetFolderFromPathAsync(folder)).DisplayName;
-            var titleTextBlock = new TextBlock
-            {
-                Text = "Settings_RemoveFolderDialogTitle".GetLocalized(),
-                FontWeight = FontWeights.Normal,
-            };
             var dialog = new ContentDialog
             {
                 XamlRoot = XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                Style = Application.Current.Resources["NormalContentDialogStyle"] as Style,
                 RequestedTheme = ThemeSelectorService.IsDarkTheme
                     ? ElementTheme.Dark
                     : ElementTheme.Light,
-                Title = titleTextBlock,
+                Title = new TextBlock { Text = "Settings_RemoveFolderDialogTitle".GetLocalized() },
                 Content = "Settings_RemoveFolderDialogContent".GetLocalizedWithReplace(
                     "{title}",
                     folderName
@@ -58,19 +52,14 @@ public sealed partial class SettingsPage : Page
 
     public async void HyperlinkButton_Click(object sender, RoutedEventArgs e)
     {
-        var titleTextBlock = new TextBlock
-        {
-            Text = "Settings_OpenSettingDialogTitle".GetLocalized(),
-            FontWeight = FontWeights.Normal,
-        };
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            Style = Application.Current.Resources["NormalContentDialogStyle"] as Style,
             RequestedTheme = ThemeSelectorService.IsDarkTheme
                 ? ElementTheme.Dark
                 : ElementTheme.Light,
-            Title = titleTextBlock,
+            Title = new TextBlock { Text = "Settings_OpenSettingDialogTitle".GetLocalized() },
             Content = "Settings_OpenSettingDialogContent".GetLocalized(),
             PrimaryButtonText = "Settings_OpenSettingDialogPrimary".GetLocalized(),
             CloseButtonText = "Settings_OpenSettingDialogClose".GetLocalized(),
@@ -97,19 +86,14 @@ public sealed partial class SettingsPage : Page
     private async void ResetSoftwareButton_Click(object sender, RoutedEventArgs e)
     {
         (sender as Button)!.IsEnabled = false;
-        var titleTextBlock = new TextBlock
-        {
-            Text = "Settings_ResetSoftwareDialogTitle".GetLocalized(),
-            FontWeight = FontWeights.Normal,
-        };
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            Style = Application.Current.Resources["NormalContentDialogStyle"] as Style,
             RequestedTheme = ThemeSelectorService.IsDarkTheme
                 ? ElementTheme.Dark
                 : ElementTheme.Light,
-            Title = titleTextBlock,
+            Title = new TextBlock { Text = "Settings_ResetSoftwareDialogTitle".GetLocalized() },
             Content = "Settings_ResetSoftwareDialogContent".GetLocalized(),
             PrimaryButtonText = "Settings_ResetSoftwareDialogPrimary".GetLocalized(),
             CloseButtonText = "Settings_ResetSoftwareDialogClose".GetLocalized(),

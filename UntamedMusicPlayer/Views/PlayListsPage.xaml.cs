@@ -1,4 +1,3 @@
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -209,19 +208,14 @@ public sealed partial class PlayListsPage : Page
     {
         if (sender is FrameworkElement { DataContext: PlaylistInfo info })
         {
-            var titleTextBlock = new TextBlock
-            {
-                Text = "PlayLists_DeleteDialogTitle".GetLocalized(),
-                FontWeight = FontWeights.Normal,
-            };
             var dialog = new ContentDialog
             {
                 XamlRoot = XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                Style = Application.Current.Resources["NormalContentDialogStyle"] as Style,
                 RequestedTheme = ThemeSelectorService.IsDarkTheme
                     ? ElementTheme.Dark
                     : ElementTheme.Light,
-                Title = titleTextBlock,
+                Title = new TextBlock { Text = "PlayLists_DeleteDialogTitle".GetLocalized() },
                 Content = "PlayLists_DeleteDialogContent".GetLocalizedWithReplace(
                     "{title}",
                     info.Name

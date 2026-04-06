@@ -1026,4 +1026,7 @@
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
     <value>缩小 (↓ / Ctrl+鼠标滚轮向下)</value>
   </data>
+  <data name="Lyric_NoLyric" xml:space="preserve">
+    <value>暂无歌词</value>
+  </data>
 </root>

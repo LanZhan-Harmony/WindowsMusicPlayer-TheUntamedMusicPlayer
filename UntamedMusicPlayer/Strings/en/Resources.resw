@@ -1026,4 +1026,7 @@
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
     <value>Zoom out (↑ / Ctrl+Mouse wheel down)</value>
   </data>
+  <data name="Lyric_NoLyric" xml:space="preserve">
+    <value>No lyrics available</value>
+  </data>
 </root>

@@ -8,8 +8,9 @@
                CloseButtonClick="CloseButtonClick"
                DefaultButton="Primary"
                PrimaryButtonClick="CreateButtonClick"
-               Style="{StaticResource DefaultContentDialogStyle}"
+               Style="{StaticResource NormalContentDialogStyle}"
                mc:Ignorable="d">
+    
     <Grid>
         <StackPanel Spacing="16">
             <Border x:Name="CoverBorder"
