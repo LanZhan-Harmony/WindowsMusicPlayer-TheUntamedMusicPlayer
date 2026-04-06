@@ -7,12 +7,11 @@
                xmlns:local="using:UntamedMusicPlayer.Controls"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                CloseButtonClick="CloseButtonClick"
-               Style="{StaticResource DefaultContentDialogStyle}"
+               Style="{StaticResource NormalContentDialogStyle}"
                mc:Ignorable="d">
 
     <ContentDialog.Resources>
         <converter:DoubleToDecibelConverter x:Key="DoubleToDecibelConverter"/>
-        <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
         <Style x:Key="SliderStyle"
                BasedOn="{StaticResource DefaultSliderStyle}"
                TargetType="Slider">

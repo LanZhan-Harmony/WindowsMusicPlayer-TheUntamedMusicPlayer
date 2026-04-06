@@ -9,11 +9,10 @@
                CloseButtonClick="CloseButtonClick"
                DefaultButton="Primary"
                PrimaryButtonClick="SaveButtonClick"
-               Style="{StaticResource DefaultContentDialogStyle}"
+               Style="{StaticResource NormalContentDialogStyle}"
                mc:Ignorable="d">
 
     <ContentDialog.Resources>
-        <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
     </ContentDialog.Resources>

@@ -21,9 +21,10 @@
                        VerticalAlignment="Center"
                        FontFamily="{x:Bind model:Settings.FontFamily}"
                        FontSize="32" Foreground="#FDFDFD"
-                       MaxLines="2"
+                       HorizontalTextAlignment="Center" MaxLines="2"
                        SizeChanged="LyricContentTextBlock_SizeChanged"
-                       Text="{x:Bind model:Data.LyricManager.CurrentLyricContent, Mode=OneWay}"/>
+                       Text="{x:Bind model:Data.LyricManager.CurrentLyricContent, Mode=OneWay}"
+                       TextTrimming="WordEllipsis"/>
         </Border>
     </Grid>
     <Window.SystemBackdrop>

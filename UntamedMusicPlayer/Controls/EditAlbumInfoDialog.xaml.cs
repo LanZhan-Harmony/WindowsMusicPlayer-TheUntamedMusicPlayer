@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using System.Runtime.InteropServices;
+using ATL;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -10,7 +10,6 @@ using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
-using Windows.Storage;
 using ZLinq;
 using ZLogger;
 
@@ -21,7 +20,6 @@ public sealed partial class EditAlbumInfoDialog
         INotifyPropertyChanged,
         IRecipient<ThemeChangeMessage>
 {
-    private static readonly string[] _supportedEditTypes = [".mp3", ".flac"];
     private readonly ILogger _logger = LoggingService.CreateLogger<EditAlbumInfoDialog>();
     private readonly LocalAlbumInfo _album;
     private string _name;
@@ -82,101 +80,41 @@ public sealed partial class EditAlbumInfoDialog
     {
         Data.IsMusicProcessing = true;
 
-        // 保存专辑信息到专辑中的所有歌曲
-        foreach (var tempSong in _tempSongs)
+        await Task.Run(async () =>
         {
-            try
+            ATL.Settings.ID3v2_tagSubVersion = 3;
+            foreach (var tempSong in _tempSongs)
             {
-                var originalSong = tempSong.OriginalSong;
-                var itemType = Path.GetExtension(originalSong.Path).ToLower();
-
-                if (!_supportedEditTypes.Contains(itemType))
+                try
                 {
-                    continue;
-                }
-
-                var file = await StorageFile.GetFileFromPathAsync(originalSong.Path);
-                var musicProperties = await file.Properties.GetMusicPropertiesAsync();
-
-                musicProperties.Album = string.IsNullOrWhiteSpace(_name) ? null : _name;
-                musicProperties.AlbumArtist = string.IsNullOrWhiteSpace(_albumArtist)
-                    ? null
-                    : _albumArtist;
-
-                if (uint.TryParse(_year, out var year))
-                {
-                    musicProperties.Year = year;
-                }
-                else if (_album.Year != 0)
-                {
-                    musicProperties.Year = 0;
-                }
-
-                musicProperties.Genre.Clear();
-                if (!string.IsNullOrWhiteSpace(_genre))
-                {
-                    foreach (
-                        var genre in _genre
-                            .Split(
-                                BriefLocalSongInfo.Delimiters,
-                                StringSplitOptions.RemoveEmptyEntries
-                                    | StringSplitOptions.TrimEntries
-                            )
-                            .AsValueEnumerable()
-                            .Distinct()
-                    )
+                    var itemType = Path.GetExtension(tempSong.OriginalSong.Path).ToLower();
+                    if (!Data.SupportedAudioTypesForTagEditing.Contains(itemType))
                     {
-                        musicProperties.Genre.Add(genre);
+                        continue;
+                    }
+
+                    var musicFile = new Track(tempSong.OriginalSong.Path)
+                    {
+                        Album = _name,
+                        AlbumArtist = _albumArtist,
+                        Year = int.TryParse(_year, out var year) ? year : 0,
+                        Genre = _genre,
+                        TrackNumber = int.TryParse(tempSong.TrackStr, out var track) ? track : 0,
+                        Title = tempSong.Title,
+                        Artist = tempSong.ArtistsStr,
+                        Composer = tempSong.ArtistsStr,
+                    };
+                    if (!await musicFile.SaveAsync())
+                    {
+                        _logger.EditingSongInfoIO(tempSong.Title);
                     }
                 }
-
-                // 更新单一歌曲的信息
-                musicProperties.Title = string.IsNullOrWhiteSpace(tempSong.Title)
-                    ? null
-                    : tempSong.Title;
-
-                if (uint.TryParse(tempSong.TrackStr, out var track))
+                catch (Exception ex)
                 {
-                    musicProperties.TrackNumber = track;
+                    _logger.EditingSongInfoOther(tempSong.Title, ex);
                 }
-                else if (originalSong.TrackStr != "")
-                {
-                    musicProperties.TrackNumber = 0;
-                }
-
-                var artistsStr = string.IsNullOrWhiteSpace(tempSong.ArtistsStr)
-                    ? null
-                    : tempSong.ArtistsStr;
-                musicProperties.Artist = artistsStr;
-                musicProperties.Composers.Clear();
-                if (!string.IsNullOrWhiteSpace(artistsStr))
-                {
-                    foreach (
-                        var artist in artistsStr
-                            .Split(
-                                BriefLocalSongInfo.Delimiters,
-                                StringSplitOptions.RemoveEmptyEntries
-                                    | StringSplitOptions.TrimEntries
-                            )
-                            .AsValueEnumerable()
-                            .Distinct()
-                    )
-                    {
-                        musicProperties.Composers.Add(artist);
-                    }
-                }
-
-                await musicProperties.SavePropertiesAsync();
             }
-            catch (COMException)
-            {
-                _logger.EditingSongInfoIO(tempSong.Title);
-            }
-            catch (Exception ex)
-            {
-                _logger.EditingSongInfoOther(tempSong.Title, ex);
-            }
-        }
+        });
 
         Data.IsMusicProcessing = false;
     }
