@@ -102,13 +102,6 @@ public sealed partial class PlayListDetailViewModel
         }
     }
 
-    public void DeleteButton_Click(object _1, RoutedEventArgs _2)
-    {
-        Data.SelectedPlaylist = null;
-        Data.ShellPage!.GoBack();
-        Data.PlaylistLibrary.DeletePlaylist(Playlist);
-    }
-
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();

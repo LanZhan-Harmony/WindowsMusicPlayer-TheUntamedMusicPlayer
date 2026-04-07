@@ -80,6 +80,7 @@
 		<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
 		<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
 		<EnableMsixTooling>True</EnableMsixTooling>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxBundle>Never</AppxBundle>
