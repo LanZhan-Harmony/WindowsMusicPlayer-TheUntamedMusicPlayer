@@ -12,7 +12,9 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Foundation;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
@@ -370,6 +372,37 @@ public sealed partial class PlayListDetailPage : Page
     {
         var dialog = new EditPlaylistInfoDialog(ViewModel.Playlist) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
+    }
+
+    private async void DeleteButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new ContentDialog
+        {
+            XamlRoot = XamlRoot,
+            Style = Application.Current.Resources["NormalContentDialogStyle"] as Style,
+            RequestedTheme = ThemeSelectorService.IsDarkTheme
+                ? ElementTheme.Dark
+                : ElementTheme.Light,
+            Title = new TextBlock
+            {
+                Text = ResourceExtensions.GetLocalized("PlayLists_DeleteDialogTitle"),
+            },
+            Content = "PlayLists_DeleteDialogContent".GetLocalizedWithReplace(
+                "{title}",
+                ViewModel.PlaylistName
+            ),
+            PrimaryButtonText = ResourceExtensions.GetLocalized("PlayLists_DeleteDialogPrimary"),
+            CloseButtonText = ResourceExtensions.GetLocalized("PlayLists_DeleteDialogClose"),
+            DefaultButton = ContentDialogButton.Close,
+        };
+        dialog.EnableLightDismiss();
+        var result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary)
+        {
+            Data.SelectedPlaylist = null;
+            Data.ShellPage!.GoBack();
+            Data.PlaylistLibrary.DeletePlaylist(ViewModel.Playlist);
+        }
     }
 
     private void PlayButton_Click(object sender, RoutedEventArgs e)

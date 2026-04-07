@@ -341,7 +341,7 @@
                             <Button x:Name="DeleteButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     AutomationProperties.LabeledBy="{x:Bind DeleteTextBlock}"
-                                    Click="{x:Bind ViewModel.DeleteButton_Click}"
+                                    Click="DeleteButton_Click"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
@@ -361,7 +361,7 @@
                                                                            Glyph=&#xE70F;}"/>
                                         <MenuFlyoutItem x:Name="DeleteInfoFlyout" x:Uid="PlayLists_Delete"
                                                         Width="158"
-                                                        Click="{x:Bind ViewModel.DeleteButton_Click}"
+                                                        Click="DeleteButton_Click"
                                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                            Glyph=&#xE74D;}"/>
                                     </MenuFlyout>
