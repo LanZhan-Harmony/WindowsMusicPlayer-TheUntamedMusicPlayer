@@ -257,6 +257,8 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
                 return;
             }
 
+            var displayOrientation = GetCurrentDisplayOrientation();
+
             foreach (var contact in digitizerData.Contacts)
             {
                 var maxX = contact.MaxX;
@@ -266,8 +268,13 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
                     continue;
                 }
 
-                var screenX = contact.X * _screenWidth / maxX;
-                var screenY = contact.Y * _screenHeight / maxY;
+                var (screenX, screenY) = ConvertRawInputToScreenPoint(
+                    contact.X,
+                    contact.Y,
+                    maxX,
+                    maxY,
+                    displayOrientation
+                );
 
                 // 触摸拖拽进行中
                 if (_isTouchDragging && contact.Identifier == _touchContactId)
@@ -326,6 +333,38 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
         {
             _logger.ZLogInformation(ex, $"处理RawInput触摸数据时发生错误");
         }
+    }
+
+    private static uint GetCurrentDisplayOrientation()
+    {
+        var devMode = new DEVMODE { dmSize = (ushort)Marshal.SizeOf<DEVMODE>() };
+        return EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref devMode)
+            ? devMode.dmDisplayOrientation
+            : DMDO_DEFAULT;
+    }
+
+    private (int X, int Y) ConvertRawInputToScreenPoint(
+        int rawX,
+        int rawY,
+        int maxX,
+        int maxY,
+        uint displayOrientation
+    )
+    {
+        var normalizedX = Math.Clamp(rawX / (double)maxX, 0d, 1d);
+        var normalizedY = Math.Clamp(rawY / (double)maxY, 0d, 1d);
+
+        var (mappedX, mappedY) = displayOrientation switch
+        {
+            DMDO_90 => (1d - normalizedY, normalizedX),
+            DMDO_180 => (1d - normalizedX, 1d - normalizedY),
+            DMDO_270 => (normalizedY, 1d - normalizedX),
+            _ => (normalizedX, normalizedY),
+        };
+
+        var screenX = (int)Math.Round(mappedX * _screenWidth, MidpointRounding.AwayFromZero);
+        var screenY = (int)Math.Round(mappedY * _screenHeight, MidpointRounding.AwayFromZero);
+        return (Math.Clamp(screenX, 0, _screenWidth), Math.Clamp(screenY, 0, _screenHeight));
     }
 
     // ═══════════════════════════════════════════════════

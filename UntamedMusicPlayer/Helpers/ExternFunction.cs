@@ -6,6 +6,12 @@ public static partial class ExternFunction
 {
     private static readonly bool _is64BitProcess = Environment.Is64BitProcess;
 
+    public const int ENUM_CURRENT_SETTINGS = -1;
+    public const uint DMDO_DEFAULT = 0;
+    public const uint DMDO_90 = 1;
+    public const uint DMDO_180 = 2;
+    public const uint DMDO_270 = 3;
+
     // 热键修饰符常量
     public const uint MOD_ALT = 0x0001;
     public const uint MOD_CONTROL = 0x0002;
@@ -33,6 +39,41 @@ public static partial class ExternFunction
         public int Top;
         public int Right;
         public int Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public unsafe struct DEVMODE
+    {
+        public fixed char dmDeviceName[32];
+        public ushort dmSpecVersion;
+        public ushort dmDriverVersion;
+        public ushort dmSize;
+        public ushort dmDriverExtra;
+        public uint dmFields;
+        public int dmPositionX;
+        public int dmPositionY;
+        public uint dmDisplayOrientation;
+        public uint dmDisplayFixedOutput;
+        public short dmColor;
+        public short dmDuplex;
+        public short dmYResolution;
+        public short dmTTOption;
+        public short dmCollate;
+        public fixed char dmFormName[32];
+        public ushort dmLogPixels;
+        public uint dmBitsPerPel;
+        public uint dmPelsWidth;
+        public uint dmPelsHeight;
+        public uint dmDisplayFlags;
+        public uint dmDisplayFrequency;
+        public uint dmICMMethod;
+        public uint dmICMIntent;
+        public uint dmMediaType;
+        public uint dmDitherType;
+        public uint dmReserved1;
+        public uint dmReserved2;
+        public uint dmPanningWidth;
+        public uint dmPanningHeight;
     }
 
     [LibraryImport("user32.dll", EntryPoint = "GetWindowLongW")]
@@ -120,6 +161,18 @@ public static partial class ExternFunction
     [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool UnregisterHotKey(nint hWnd, int id);
+
+    [LibraryImport(
+        "user32.dll",
+        EntryPoint = "EnumDisplaySettingsW",
+        StringMarshalling = StringMarshalling.Utf16
+    )]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool EnumDisplaySettings(
+        string? lpszDeviceName,
+        int iModeNum,
+        ref DEVMODE lpDevMode
+    );
 
     [Flags]
     public enum EXECUTION_STATE : uint
