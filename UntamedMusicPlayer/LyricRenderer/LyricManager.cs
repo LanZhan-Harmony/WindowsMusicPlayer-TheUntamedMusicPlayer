@@ -7,13 +7,13 @@ using UntamedMusicPlayer.Playback;
 
 namespace UntamedMusicPlayer.LyricRenderer;
 
-public sealed partial class LyricManager(SharedPlaybackState state)
-    : ObservableRecipient(StrongReferenceMessenger.Default),
+public sealed partial class LyricManager
+    : ObservableRecipient,
         IRecipient<FontSizeChangeMessage>,
         IDisposable
 {
     private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
-    private readonly SharedPlaybackState _state = state;
+    private readonly SharedPlaybackState _state;
 
     /// <summary>
     /// 当前歌词切片在集合中的索引
@@ -32,6 +32,13 @@ public sealed partial class LyricManager(SharedPlaybackState state)
     /// </summary>
     [ObservableProperty]
     public partial List<LyricSlice> CurrentLyricSlices { get; set; } = [];
+
+    public LyricManager(SharedPlaybackState state)
+        : base(StrongReferenceMessenger.Default)
+    {
+        Messenger.Register(this);
+        _state = state;
+    }
 
     public void Receive(FontSizeChangeMessage message)
     {
