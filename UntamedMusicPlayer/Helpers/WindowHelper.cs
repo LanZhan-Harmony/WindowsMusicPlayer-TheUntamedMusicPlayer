@@ -34,7 +34,6 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
     private bool _isMouseOverBorder;
     private RECT _cachedBorderRect;
     private nint _previousForegroundWindow;
-    private bool _isTemporarilyHidden;
     private CancellationTokenSource? _temporaryHideCts;
 
     // ── WndProc ──
@@ -413,10 +412,6 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
 
     private void RestorePreviousForegroundWindow()
     {
-        if (_isTemporarilyHidden)
-        {
-            return;
-        }
         if (_previousForegroundWindow == nint.Zero || _previousForegroundWindow == _hWnd)
         {
             return;
@@ -446,7 +441,6 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
         var token = _temporaryHideCts.Token;
 
         CapturePreviousForegroundWindow();
-        _isTemporarilyHidden = true;
         _isMouseOverBorder = false;
         MakeWindowClickThrough(true);
 
@@ -482,10 +476,6 @@ public sealed partial class DesktopLyricWindowHelper : IDisposable
             SetTopmost(true);
         }
         catch (OperationCanceledException) { }
-        finally
-        {
-            _isTemporarilyHidden = false;
-        }
     }
 
     private async Task<RECT> GetElementScreenRect()
