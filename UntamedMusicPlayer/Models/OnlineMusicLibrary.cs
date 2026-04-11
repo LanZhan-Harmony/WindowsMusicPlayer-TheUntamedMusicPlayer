@@ -58,7 +58,7 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
     /// 结果列表透明度(可见性)
     /// </summary>
     [ObservableProperty]
-    public partial double ListViewOpacity { get; set; } = 0;
+    public partial Visibility ListViewVisibility { get; set; } = Visibility.Collapsed;
 
     /// <summary>
     /// 加载进度环可见性
@@ -93,7 +93,7 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
         {
             KeyWordsTextBlockVisibility = Visibility.Collapsed;
             NetworkErrorVisibility = Visibility.Collapsed;
-            ListViewOpacity = 0;
+            ListViewVisibility = Visibility.Collapsed;
             return;
         }
 
@@ -101,7 +101,7 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
         {
             KeyWordsTextBlockVisibility = Visibility.Collapsed;
             NetworkErrorVisibility = Visibility.Visible;
-            ListViewOpacity = 0;
+            ListViewVisibility = Visibility.Collapsed;
             return;
         }
 
@@ -111,13 +111,13 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
             // 直接显示现有结果
             KeyWordsTextBlockVisibility = Visibility.Visible;
             NetworkErrorVisibility = Visibility.Collapsed;
-            ListViewOpacity = 1;
+            ListViewVisibility = Visibility.Visible;
             return;
         }
 
         KeyWordsTextBlockVisibility = Visibility.Collapsed;
         NetworkErrorVisibility = Visibility.Collapsed;
-        ListViewOpacity = 0;
+        ListViewVisibility = Visibility.Collapsed;
         IsSearchProgressRingActive = true;
         try
         {
@@ -208,7 +208,7 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
             _lastMusicLibraryIndex = MusicLibraryIndex;
 
             KeyWordsTextBlockVisibility = Visibility.Visible;
-            ListViewOpacity = 1;
+            ListViewVisibility = Visibility.Visible;
         }
         catch (Exception ex)
         {

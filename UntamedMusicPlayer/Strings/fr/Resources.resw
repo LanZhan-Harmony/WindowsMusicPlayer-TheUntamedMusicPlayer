@@ -785,9 +785,6 @@
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
     <value>Bibliothèque musicale 2</value>
   </data>
-  <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>Erreur réseau, veuillez réessayer plus tard</value>
-  </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>Nouvelle tentative</value>
   </data>
@@ -970,5 +967,11 @@
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
     <value>Paroles non disponibles</value>
+  </data>
+  <data name="Home_ServerError.Text" xml:space="preserve">
+    <value>Impossible de se connecter au serveur</value>
+  </data>
+  <data name="Home_UnableToAccess.Text" xml:space="preserve">
+    <value>Les utilisateurs hors de la Chine continentale peuvent ne pas avoir accès à cette bibliothèque musicale.</value>
   </data>
 </root>

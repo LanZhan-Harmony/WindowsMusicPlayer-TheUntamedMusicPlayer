@@ -785,9 +785,6 @@
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
     <value>संगीत पुस्तकालय 2</value>
   </data>
-  <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>नेटवर्क त्रुटि, कृपया बाद में पुन: प्रयास करें</value>
-  </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>पुनः प्रयास करें</value>
   </data>
@@ -970,5 +967,11 @@
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
     <value>कोई गीत उपलब्ध नहीं है</value>
+  </data>
+  <data name="Home_ServerError.Text" xml:space="preserve">
+    <value>सर्वर से कनेक्ट करने में असमर्थ</value>
+  </data>
+  <data name="Home_UnableToAccess.Text" xml:space="preserve">
+    <value>मुख्य भूमि चीन के बाहर के उपयोगकर्ता इस संगीत लाइब्रेरी तक पहुंचने में सक्षम नहीं हो सकते हैं।</value>
   </data>
 </root>

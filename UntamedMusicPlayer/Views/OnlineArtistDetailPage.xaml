@@ -682,7 +682,6 @@
                               IsItemClickEnabled="False"
                               ItemTemplate="{StaticResource AlbumListViewTemplate}"
                               ItemsSource="{x:Bind ViewModel.Artist.AlbumList, Mode=OneWay}"
-                              Opacity="{x:Bind ViewModel.ListViewOpacity, Mode=OneWay}"
                               SelectionMode="None"
                               XYFocusUp="{x:Bind PlayAllButton}">
                         <ListView.Header>
@@ -700,7 +699,6 @@
                               ItemClick="AlbumGridView_ItemClick"
                               ItemTemplate="{StaticResource AlbumGridViewTemplate}"
                               ItemsSource="{x:Bind ViewModel.Artist.AlbumList, Mode=OneWay}"
-                              Opacity="{x:Bind ViewModel.ListViewOpacity, Mode=OneWay}"
                               SelectionMode="None">
                         <GridView.Header>
                             <Border x:Name="AlbumGridHeaderPadding"/>

@@ -182,9 +182,9 @@ public sealed partial class LocalArtistsViewModel
         await _localSettingsService.SaveSettingAsync("ArtistSortMode", SortMode);
     }
 
-    public double GetArtistGridViewOpacity(bool isActive)
+    public Visibility GetArtistGridViewVisibility(bool isActive)
     {
-        return isActive ? 0 : 1;
+        return isActive ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);

@@ -843,9 +843,6 @@
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
     <value>乐库2</value>
   </data>
-  <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>网络异常，请稍后再试</value>
-  </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>重试</value>
   </data>
@@ -1028,5 +1025,11 @@
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
     <value>暂无歌词</value>
+  </data>
+  <data name="Home_ServerError.Text" xml:space="preserve">
+    <value>无法连接至服务器</value>
+  </data>
+  <data name="Home_UnableToAccess.Text" xml:space="preserve">
+    <value>中国大陆以外的用户可能无法访问此乐库。</value>
   </data>
 </root>

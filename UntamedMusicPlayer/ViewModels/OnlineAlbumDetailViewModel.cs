@@ -21,9 +21,6 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
     public partial bool IsPlayAllButtonEnabled { get; set; } = false;
 
     [ObservableProperty]
-    public partial double ListViewOpacity { get; set; } = 0;
-
-    [ObservableProperty]
     public partial bool IsSearchProgressRingActive { get; set; } = true;
 
     public OnlineAlbumDetailViewModel() { }
@@ -38,7 +35,6 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         }
         else
         {
-            ListViewOpacity = 1;
             IsSearchProgressRingActive = false;
         }
     }
@@ -59,7 +55,6 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
     private async Task LoadAlbumAsync()
     {
         Album = null!;
-        ListViewOpacity = 0;
         IsSearchProgressRingActive = true;
 
         if (!await NetworkHelper.IsInternetAvailableAsync())
@@ -70,7 +65,6 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
 
         Album = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(BriefAlbum);
         IsPlayAllButtonEnabled = Album.SongList.Count > 0;
-        ListViewOpacity = 1;
         IsSearchProgressRingActive = false;
     }
 

@@ -427,9 +427,9 @@ public sealed partial class LocalAlbumsViewModel
         await _localSettingsService.SaveSettingAsync("AlbumGenreMode", GenreMode);
     }
 
-    public double GetAlbumGridViewOpacity(bool isActive)
+    public Visibility GetAlbumGridViewVisibility(bool isActive)
     {
-        return isActive ? 0 : 1;
+        return isActive ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public double GetZoomedOutViewGridWidth(byte sortmode)

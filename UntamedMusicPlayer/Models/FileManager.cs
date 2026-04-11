@@ -50,7 +50,7 @@ public static class FileManager
                 var folderFingerprints = new Dictionary<string, string>();
                 foreach (var folder in folders)
                 {
-                    folderFingerprints[folder] = GetFolderFingerprintFastAsync(folder);
+                    folderFingerprints[folder] = GetFolderFingerprintFast(folder);
                 }
                 await SaveObjectToFileAsync(
                     libraryFolder,
@@ -218,7 +218,7 @@ public static class FileManager
                     return (true, data); // 找不到保存的指纹，需要重新扫描
                 }
 
-                var currentFingerprint = GetFolderFingerprintFastAsync(folder);
+                var currentFingerprint = GetFolderFingerprintFast(folder);
                 if (currentFingerprint != savedFingerprint)
                 {
                     return (true, data); // 指纹不匹配，需要重新扫描
@@ -459,30 +459,38 @@ public static class FileManager
     }
 
     /// <summary>
-    /// 超快速文件夹变化检测，使用缓存和最简单的检测方法
-    /// 仅检查文件夹修改时间，不完全准确但极快
+    /// 超快速文件夹变化检测，使用递归目录信息作为指纹
     /// </summary>
-    private static string GetFolderFingerprintFastAsync(string folder)
+    private static string GetFolderFingerprintFast(string folder)
     {
         try
         {
             var dirInfo = new DirectoryInfo(folder);
             if (!dirInfo.Exists)
             {
-                var guid = $"{Guid.NewGuid()}";
-                return guid;
+                return Guid.CreateVersion7().ToString();
             }
 
-            // 只使用文件夹的最后写入时间和语言作为指纹，这是最快的方法
+            // 初始累加根目录的 Ticks
+            var totalTicks = dirInfo.LastWriteTime.Ticks;
+            var dirCount = 0;
+
+            // 递归遍历所有子目录以检测深层变化
+            var subDirs = dirInfo.EnumerateDirectories("*", SearchOption.AllDirectories);
+            foreach (var subDir in subDirs)
+            {
+                totalTicks += subDir.LastWriteTime.Ticks;
+                dirCount++;
+            }
+
             var fingerprint =
-                $"{dirInfo.LastWriteTime.Ticks}-{CultureInfo.CurrentUICulture.Name.ToLowerInvariant()}";
+                $"{totalTicks}-{dirCount}-{CultureInfo.CurrentUICulture.Name.ToLowerInvariant()}";
             return fingerprint;
         }
         catch (Exception ex)
         {
-            _logger.ZLogInformation(ex, $"快速计算文件夹指纹错误");
-            var guid = $"{Guid.NewGuid()}";
-            return guid;
+            _logger.ZLogInformation(ex, $"快速计算文件夹指纹失败");
+            return Guid.CreateVersion7().ToString();
         }
     }
 }

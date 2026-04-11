@@ -75,12 +75,15 @@ public sealed partial class OnlineSongsPage : Page
         playButton?.Visibility = Visibility.Collapsed;
     }
 
-    private void OnlineSongsPage_Loaded(object sender, RoutedEventArgs e)
+    private void SongListView_Loaded(object sender, RoutedEventArgs e)
     {
-        _scrollViewer =
-            SongListView.FindDescendant<ScrollViewer>()
-            ?? throw new Exception("Cannot find ScrollViewer in ListView"); // 检索 ListView 内部使用的 ScrollViewer
+        var listView = (sender as ListView)!;
+        if (listView.Visibility == Visibility.Collapsed)
+        {
+            return;
+        }
 
+        _scrollViewer = listView.FindDescendant<ScrollViewer>()!;
         _scrollViewer.ViewChanged += async (s, e) =>
         {
             if (
@@ -96,7 +99,7 @@ public sealed partial class OnlineSongsPage : Page
 
         if (
             Data.PlayState.CurrentBriefSong is IBriefOnlineSongInfo currentSong
-            && SongListView.ItemsSource is IEnumerable<IBriefOnlineSongInfo> songs
+            && listView.ItemsSource is IEnumerable<IBriefOnlineSongInfo> songs
         )
         {
             var targetSong = songs
@@ -104,7 +107,7 @@ public sealed partial class OnlineSongsPage : Page
                 .FirstOrDefault(song => song.ID == currentSong.ID);
             if (targetSong is not null)
             {
-                SongListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
+                listView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
             }
         }
     }

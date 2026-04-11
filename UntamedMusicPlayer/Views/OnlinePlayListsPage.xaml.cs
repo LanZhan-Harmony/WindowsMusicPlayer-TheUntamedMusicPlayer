@@ -56,26 +56,6 @@ public sealed partial class OnlinePlayListsPage : Page
         }
     }
 
-    private void OnlinePlaylistsPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        _scrollViewer =
-            PlaylistGridView.FindDescendant<ScrollViewer>()
-            ?? throw new Exception("Cannot find ScrollViewer in GridView");
-
-        _scrollViewer.ViewChanged += async (s, e) =>
-        {
-            if (
-                !Data.OnlineMusicLibrary.OnlinePlaylistInfoList.HasAllLoaded
-                && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
-                    >= _scrollViewer.ExtentHeight - 50
-            )
-            {
-                await Data.OnlineMusicLibrary.SearchMore();
-                await Task.Delay(3000);
-            }
-        };
-    }
-
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         var grid = sender as Grid;
@@ -100,7 +80,27 @@ public sealed partial class OnlinePlayListsPage : Page
 
     private async void PlaylistGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedOnlinePlaylist is not null && sender is GridView gridView)
+        var gridView = (sender as GridView)!;
+        if (gridView.Visibility == Visibility.Collapsed)
+        {
+            return;
+        }
+
+        _scrollViewer = PlaylistGridView.FindDescendant<ScrollViewer>()!;
+        _scrollViewer.ViewChanged += async (s, e) =>
+        {
+            if (
+                !Data.OnlineMusicLibrary.OnlinePlaylistInfoList.HasAllLoaded
+                && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
+                    >= _scrollViewer.ExtentHeight - 50
+            )
+            {
+                await Data.OnlineMusicLibrary.SearchMore();
+                await Task.Delay(3000);
+            }
+        };
+
+        if (Data.SelectedOnlinePlaylist is not null)
         {
             gridView.ScrollIntoView(Data.SelectedOnlinePlaylist, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
