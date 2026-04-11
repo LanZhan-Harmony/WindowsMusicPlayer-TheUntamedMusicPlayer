@@ -785,9 +785,6 @@
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
     <value>مكتبة الموسيقى 2</value>
   </data>
-  <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>خطأ في الشبكة، يرجى إعادة المحاولة لاحقا</value>
-  </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>إعادة المحاولة</value>
   </data>
@@ -970,5 +967,11 @@
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
     <value>لا توجد كلمات متاحة</value>
+  </data>
+  <data name="Home_ServerError.Text" xml:space="preserve">
+    <value>غير قادر على الاتصال بالخادم</value>
+  </data>
+  <data name="Home_UnableToAccess.Text" xml:space="preserve">
+    <value>قد لا يتمكن المستخدمون خارج الصين القارية من الوصول إلى هذه المكتبة الموسيقية.</value>
   </data>
 </root>
