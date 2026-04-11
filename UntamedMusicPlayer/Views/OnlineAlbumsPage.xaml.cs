@@ -56,26 +56,6 @@ public sealed partial class OnlineAlbumsPage : Page
         }
     }
 
-    private void OnlineAlbumsPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        _scrollViewer =
-            AlbumGridView.FindDescendant<ScrollViewer>()
-            ?? throw new Exception("Cannot find ScrollViewer in GridView");
-
-        _scrollViewer.ViewChanged += async (s, e) =>
-        {
-            if (
-                !Data.OnlineMusicLibrary.OnlineAlbumInfoList.HasAllLoaded
-                && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
-                    >= _scrollViewer.ExtentHeight - 50
-            )
-            {
-                await Data.OnlineMusicLibrary.SearchMore();
-                await Task.Delay(3000);
-            }
-        };
-    }
-
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         var grid = sender as Grid;
@@ -100,7 +80,27 @@ public sealed partial class OnlineAlbumsPage : Page
 
     private async void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedOnlineAlbum is not null && sender is GridView gridView)
+        var gridView = (sender as GridView)!;
+        if (gridView.Visibility == Visibility.Collapsed)
+        {
+            return;
+        }
+
+        _scrollViewer = gridView.FindDescendant<ScrollViewer>()!;
+        _scrollViewer.ViewChanged += async (s, e) =>
+        {
+            if (
+                !Data.OnlineMusicLibrary.OnlineAlbumInfoList.HasAllLoaded
+                && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
+                    >= _scrollViewer.ExtentHeight - 50
+            )
+            {
+                await Data.OnlineMusicLibrary.SearchMore();
+                await Task.Delay(3000);
+            }
+        };
+
+        if (Data.SelectedOnlineAlbum is not null)
         {
             gridView.ScrollIntoView(Data.SelectedOnlineAlbum, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();

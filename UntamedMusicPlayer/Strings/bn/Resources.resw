@@ -785,9 +785,6 @@
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
     <value>সঙ্গীত লাইব্রেরি 2</value>
   </data>
-  <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>নেটওয়ার্ক ত্রুটি, অনুগ্রহ করে পরে আবার চেষ্টা করুন</value>
-  </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>আবার চেষ্টা করুন</value>
   </data>
@@ -970,5 +967,11 @@
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
     <value>কোনও গানের কথা সুলভ নেই</value>
+  </data>
+  <data name="Home_ServerError.Text" xml:space="preserve">
+    <value>সার্ভারের সাথে সংযোগ করতে অক্ষম</value>
+  </data>
+  <data name="Home_UnableToAccess.Text" xml:space="preserve">
+    <value>মূল ভূখণ্ড চীনের বাইরের ব্যবহারকারীরা এই সঙ্গীত লাইব্রেরিতে অ্যাক্সেস করতে সক্ষম নাও হতে পারে।</value>
   </data>
 </root>

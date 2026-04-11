@@ -785,9 +785,6 @@
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
     <value>Музыкальная библиотека 2</value>
   </data>
-  <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>Ошибка сети, пожалуйста, попробуйте позже</value>
-  </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>Повторная попытка</value>
   </data>
@@ -970,5 +967,11 @@
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
     <value>Текст песен отсутствует</value>
+  </data>
+  <data name="Home_ServerError.Text" xml:space="preserve">
+    <value>Не удаётся подключиться к серверу</value>
+  </data>
+  <data name="Home_UnableToAccess.Text" xml:space="preserve">
+    <value>Пользователи за пределами материкового Китая могут не иметь доступа к этой музыкальной библиотеке.</value>
   </data>
 </root>

@@ -785,9 +785,6 @@
   <data name="Home_MusicLibrary2.Text" xml:space="preserve">
     <value>Perpustakaan musik 2</value>
   </data>
-  <data name="Home_NetworkError.Text" xml:space="preserve">
-    <value>Kesalahan jaringan, silakan coba lagi nanti</value>
-  </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>Coba lagi</value>
   </data>
@@ -970,5 +967,11 @@
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
     <value>Tidak ada lirik yang tersedia</value>
+  </data>
+  <data name="Home_ServerError.Text" xml:space="preserve">
+    <value>Tidak dapat terhubung ke server</value>
+  </data>
+  <data name="Home_UnableToAccess.Text" xml:space="preserve">
+    <value>Pengguna di luar Tiongkok daratan mungkin tidak dapat mengakses perpustakaan musik ini.</value>
   </data>
 </root>
