@@ -93,9 +93,7 @@ public sealed partial class OnlinePlayListDetailPage : Page
 
     private async void OnlinePlaylistDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
-        var scrollViewer =
-            SongListView.FindDescendant<ScrollViewer>()
-            ?? throw new Exception("Cannot find ScrollViewer in ListView"); // 检索 ListView 内部使用的 ScrollViewer
+        var scrollViewer = SongListView.FindDescendant<ScrollViewer>();
 
         var scrollerPropertySet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(
             scrollViewer

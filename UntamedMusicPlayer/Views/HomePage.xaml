@@ -181,7 +181,9 @@
                       FontFamily="{StaticResource UntamedFontFamily}"
                       Glyph="&#xEB56;"/>
             <StackPanel VerticalAlignment="Center" Spacing="8">
-                <TextBlock x:Uid="Home_NetworkError" FontSize="29"/>
+                <TextBlock x:Uid="Home_ServerError"
+                           FontSize="29" FontWeight="Bold"/>
+                <TextBlock x:Uid="Home_UnableToAccess" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 <Button Click="{x:Bind model:Data.OnlineMusicLibrary.RetryButton_Click}" Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon FontFamily="{StaticResource UntamedFontFamily}"

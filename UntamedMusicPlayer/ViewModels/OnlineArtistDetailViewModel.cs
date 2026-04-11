@@ -29,9 +29,6 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     public bool IsPlayAllButtonEnabled => Artist is not null && Artist.AlbumList.Count > 0;
 
     [ObservableProperty]
-    public partial double ListViewOpacity { get; set; } = 0;
-
-    [ObservableProperty]
     public partial bool IsSearchProgressRingActive { get; set; } = true;
 
     [ObservableProperty]
@@ -56,7 +53,6 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         else
         {
             await Task.Delay(150); // 给 UI 线程一个喘息的机会，先完成页面导航
-            ListViewOpacity = 1;
             IsSearchProgressRingActive = false;
         }
     }
@@ -85,7 +81,6 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     private async Task LoadArtistAsync()
     {
         Artist = null!;
-        ListViewOpacity = 0;
         IsSearchProgressRingActive = true;
 
         if (!await NetworkHelper.IsInternetAvailableAsync())
@@ -97,7 +92,6 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         try
         {
             Artist = await IDetailedOnlineArtistInfo.SearchArtistDetailAsync(BriefArtist);
-            ListViewOpacity = 1;
         }
         catch (Exception ex)
         {

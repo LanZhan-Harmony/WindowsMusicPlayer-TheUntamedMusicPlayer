@@ -93,9 +93,7 @@ public sealed partial class LocalAlbumDetailPage : Page
 
     private void LocalAlbumDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
-        var scrollViewer =
-            SongListView.FindDescendant<ScrollViewer>()
-            ?? throw new Exception("Cannot find ScrollViewer in ListView"); // 检索 ListView 内部使用的 ScrollViewer
+        var scrollViewer = SongListView.FindDescendant<ScrollViewer>(); // 检索 ListView 内部使用的 ScrollViewer
 
         var scrollerPropertySet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(
             scrollViewer

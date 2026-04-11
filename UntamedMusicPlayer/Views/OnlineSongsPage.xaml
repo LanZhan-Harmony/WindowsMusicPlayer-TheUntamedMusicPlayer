@@ -9,7 +9,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:UntamedMusicPlayer.Models"
       xmlns:ui="using:CommunityToolkit.WinUI"
-      Loaded="OnlineSongsPage_Loaded"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -164,8 +163,8 @@
                   ItemClick="{x:Bind ViewModel.OnlineSongsSongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
-                  Opacity="{x:Bind model:Data.OnlineMusicLibrary.ListViewOpacity, Mode=OneWay}"
-                  SelectionMode="None">
+                  Loaded="SongListView_Loaded" SelectionMode="None"
+                  Visibility="{x:Bind model:Data.OnlineMusicLibrary.ListViewVisibility, Mode=OneWay}">
             <interactivity:Interaction.Behaviors>
                 <helper:AlternatingListViewBehavior AlternateBackground="{ThemeResource AlternateBackgroundBrush}"
                                                     AlternateBorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"

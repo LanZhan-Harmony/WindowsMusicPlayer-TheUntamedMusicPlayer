@@ -275,8 +275,8 @@
                           ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
                           ItemTemplate="{StaticResource SongListViewTemplate}"
                           ItemsSource="{x:Bind ViewModel.GetSongListViewSource(GroupedSongList.View, ViewModel.NotGroupedSongList), Mode=OneWay}"
-                          Opacity="{x:Bind ViewModel.GetSongListViewOpacity(ViewModel.IsProgressRingActive), Mode=OneWay}"
-                          SelectionMode="None">
+                          SelectionMode="None"
+                          Visibility="{x:Bind ViewModel.GetSongListViewVisibility(ViewModel.IsProgressRingActive), Mode=OneWay}">
                     <interactivity:Interaction.Behaviors>
                         <helper:AlternatingListViewBehavior AlternateBackground="{ThemeResource AlternateBackgroundBrush}"
                                                             AlternateBorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
