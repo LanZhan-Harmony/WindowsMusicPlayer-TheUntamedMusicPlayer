@@ -48,6 +48,8 @@ public sealed partial class OnlineArtistDetailPage : Page
     private SpriteVisual? _backgroundVisual;
     private LoadedImageSurface? _imageSurface;
 
+    private bool _isSearching;
+
     private int SelectionBarSelectedIndex
     {
         get;
@@ -135,18 +137,7 @@ public sealed partial class OnlineArtistDetailPage : Page
             ViewModel.BriefArtist.CoverPath
         );
 
-        _scrollViewer.ViewChanged += async (s, e) =>
-        {
-            if (
-                !ViewModel.Artist.HasAllLoaded
-                && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
-                    >= _scrollViewer.ExtentHeight - 50
-            )
-            {
-                await ViewModel.SearchMore();
-                await Task.Delay(3000);
-            }
-        };
+        _scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
     }
 
     private void CreateHeaderAnimation(
@@ -274,6 +265,21 @@ public sealed partial class OnlineArtistDetailPage : Page
         else
         {
             return large;
+        }
+    }
+
+    private async void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if (
+            !_isSearching
+            && !ViewModel.Artist.HasAllLoaded
+            && _scrollViewer!.VerticalOffset + _scrollViewer.ViewportHeight
+                >= _scrollViewer.ExtentHeight - 50
+        )
+        {
+            _isSearching = true;
+            await ViewModel.SearchMore();
+            _isSearching = false;
         }
     }
 
@@ -628,4 +634,9 @@ public sealed partial class OnlineArtistDetailPage : Page
     }
 
     private void AlbumGridViewSelectButton_Click(object sender, RoutedEventArgs e) { }
+
+    private void OnlineArtistDetailPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
+    }
 }

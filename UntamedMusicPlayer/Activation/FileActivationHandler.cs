@@ -67,11 +67,7 @@ public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEve
     private static async Task WaitForInitializationAsync()
     {
         // 等待数据对象初始化
-        var timeout = DateTime.Now.AddSeconds(10); // 10秒超时
-        while ((Data.MusicPlayer is null || !Data.MusicPlayer.HasLoaded) && DateTime.Now < timeout)
-        {
-            await Task.Delay(100);
-        }
+        await Data.MusicPlayer.WhenLoadedAsync();
 
         // 再等待一小段时间确保UI完全加载
         await Task.Delay(500);

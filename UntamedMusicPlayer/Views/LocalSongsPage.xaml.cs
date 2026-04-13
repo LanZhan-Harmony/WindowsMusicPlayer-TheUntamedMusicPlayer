@@ -28,11 +28,23 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         StrongReferenceMessenger.Default.Unregister<ScrollToSongMessage>(this);
     }
 
-    public void Receive(ScrollToSongMessage message)
+    public async void Receive(ScrollToSongMessage message)
     {
         if (message.Song is null)
         {
             return;
+        }
+
+        if (!SongListView.IsLoaded)
+        {
+            var tcs = new TaskCompletionSource();
+            void handler(object s, RoutedEventArgs e)
+            {
+                SongListView.Loaded -= handler;
+                tcs.TrySetResult();
+            }
+            SongListView.Loaded += handler;
+            await tcs.Task;
         }
 
         var listViewSource = SongListView.ItemsSource;

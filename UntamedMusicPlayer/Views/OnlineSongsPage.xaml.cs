@@ -15,6 +15,7 @@ public sealed partial class OnlineSongsPage : Page
 {
     public OnlineSongsViewModel ViewModel { get; set; }
     private ScrollViewer? _scrollViewer;
+    private bool _isSearching;
 
     public OnlineSongsPage()
     {
@@ -84,18 +85,7 @@ public sealed partial class OnlineSongsPage : Page
         }
 
         _scrollViewer = listView.FindDescendant<ScrollViewer>()!;
-        _scrollViewer.ViewChanged += async (s, e) =>
-        {
-            if (
-                !Data.OnlineMusicLibrary.OnlineSongInfoList.HasAllLoaded
-                && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
-                    >= _scrollViewer.ExtentHeight - 50
-            )
-            {
-                await Data.OnlineMusicLibrary.SearchMore();
-                await Task.Delay(3000);
-            }
-        };
+        _scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
 
         if (
             Data.PlayState.CurrentBriefSong is IBriefOnlineSongInfo currentSong
@@ -109,6 +99,21 @@ public sealed partial class OnlineSongsPage : Page
             {
                 listView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
             }
+        }
+    }
+
+    private async void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if (
+            !_isSearching
+            && !Data.OnlineMusicLibrary.OnlineSongInfoList.HasAllLoaded
+            && _scrollViewer!.VerticalOffset + _scrollViewer.ViewportHeight
+                >= _scrollViewer.ExtentHeight - 50
+        )
+        {
+            _isSearching = true;
+            await Data.OnlineMusicLibrary.SearchMore();
+            _isSearching = false;
         }
     }
 
@@ -185,4 +190,9 @@ public sealed partial class OnlineSongsPage : Page
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
+
+    private void OnlineSongsPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
+    }
 }
