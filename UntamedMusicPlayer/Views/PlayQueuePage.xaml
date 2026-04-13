@@ -8,7 +8,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:playback="using:UntamedMusicPlayer.Playback"
       xmlns:ui="using:CommunityToolkit.WinUI"
-      Loaded="PlayQueuePage_Loaded"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -360,6 +359,7 @@
                   ItemClick="{x:Bind ViewModel.PlayQueueListView_ItemClick}"
                   ItemTemplate="{StaticResource PlayQueueListViewTemplate}"
                   ItemsSource="{x:Bind ViewModel.PlayQueue, Mode=OneWay}"
+                  Loaded="PlayQueueListView_Loaded"
                   SelectionMode="None">
             <interactivity:Interaction.Behaviors>
                 <helper:AlternatingListViewBehavior AlternateBackground="{ThemeResource AlternateBackgroundBrush}"
