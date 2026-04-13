@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
@@ -43,6 +45,34 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
         Availability = value;
     }
 
+    private static void RunCompositionFadeTransition(UIElement target, Action onFadeOutCompleted)
+    {
+        var visual = ElementCompositionPreview.GetElementVisual(target);
+        var compositor = visual.Compositor;
+
+        var fadeOutAnimation = compositor.CreateScalarKeyFrameAnimation();
+        fadeOutAnimation.InsertKeyFrame(1f, 0f);
+        fadeOutAnimation.Duration = TimeSpan.FromSeconds(0.1);
+
+        var fadeInAnimation = compositor.CreateScalarKeyFrameAnimation();
+        fadeInAnimation.InsertKeyFrame(1f, 1f);
+        fadeInAnimation.Duration = TimeSpan.FromSeconds(0.2);
+
+        var fadeOutBatch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        fadeOutBatch.Completed += (_, _) =>
+        {
+            onFadeOutCompleted();
+            visual.Opacity = 0f;
+
+            var fadeInBatch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            visual.StartAnimation(nameof(Visual.Opacity), fadeInAnimation);
+            fadeInBatch.End();
+        };
+
+        visual.StartAnimation(nameof(Visual.Opacity), fadeOutAnimation);
+        fadeOutBatch.End();
+    }
+
     public void DetailModeUpdate()
     {
         if (!IsDetail)
@@ -50,39 +80,13 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
             Data.LyricPage = new LyricPage();
             var frame = Data.MainWindow!.GetShellFrame();
 
-            // 创建渐变动画
-            var fadeOutAnimation = new DoubleAnimation
-            {
-                From = 1.0,
-                To = 0,
-                Duration = new Duration(TimeSpan.FromSeconds(0.1)),
-            };
-
-            var fadeInAnimation = new DoubleAnimation
-            {
-                From = 0,
-                To = 1.0,
-                Duration = new Duration(TimeSpan.FromSeconds(0.2)),
-            };
-
-            var fadeOutStoryboard = new Storyboard();
-            fadeOutStoryboard.Children.Add(fadeOutAnimation);
-            Storyboard.SetTarget(fadeOutAnimation, frame);
-            Storyboard.SetTargetProperty(fadeOutAnimation, "Opacity");
-
-            var fadeInStoryboard = new Storyboard();
-            fadeInStoryboard.Children.Add(fadeInAnimation);
-            Storyboard.SetTarget(fadeInAnimation, frame);
-            Storyboard.SetTargetProperty(fadeInAnimation, "Opacity");
-
-            // 动画完成后设置新内容
-            fadeOutAnimation.Completed += (_, _) =>
-            {
-                fadeInStoryboard.Begin();
-                frame.Content = Data.LyricPage;
-            };
-
-            fadeOutStoryboard.Begin();
+            RunCompositionFadeTransition(
+                frame,
+                () =>
+                {
+                    frame.Content = Data.LyricPage;
+                }
+            );
 
             IsDetail = true;
         }
@@ -91,41 +95,14 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
             var mainPage = Data.ShellPage;
             var frame = Data.MainWindow!.GetShellFrame();
 
-            // 创建渐变动画
-            var fadeOutAnimation = new DoubleAnimation
-            {
-                From = 1.0,
-                To = 0,
-                Duration = new Duration(TimeSpan.FromSeconds(0.1)),
-            };
-
-            var fadeInAnimation = new DoubleAnimation
-            {
-                From = 0,
-                To = 1.0,
-                Duration = new Duration(TimeSpan.FromSeconds(0.2)),
-            };
-
-            var fadeOutStoryboard = new Storyboard();
-            fadeOutStoryboard.Children.Add(fadeOutAnimation);
-            Storyboard.SetTarget(fadeOutAnimation, frame);
-            Storyboard.SetTargetProperty(fadeOutAnimation, "Opacity");
-
-            var fadeInStoryboard = new Storyboard();
-            fadeInStoryboard.Children.Add(fadeInAnimation);
-            Storyboard.SetTarget(fadeInAnimation, frame);
-            Storyboard.SetTargetProperty(fadeInAnimation, "Opacity");
-
-            // 动画完成后设置新内容
-            fadeOutAnimation.Completed += (_, _) =>
-            {
-                fadeInStoryboard.Begin();
-                frame.Content = mainPage;
-
-                CurrentSongHighlightExtensions.ReactivateHighlightForPage(mainPage);
-            };
-
-            fadeOutStoryboard.Begin();
+            RunCompositionFadeTransition(
+                frame,
+                () =>
+                {
+                    frame.Content = mainPage;
+                    CurrentSongHighlightExtensions.ReactivateHighlightForPage(mainPage);
+                }
+            );
 
             Data.LyricPage?.Dispose(); // 强制调用 Dispose 方法
 
