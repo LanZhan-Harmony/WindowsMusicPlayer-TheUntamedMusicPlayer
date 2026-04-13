@@ -1,14 +1,18 @@
+using System.Numerics;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMusicPlayer.Helpers;
 
 public sealed class FadeImageBehavior : Behavior<Image>
 {
-    private Storyboard? _currentTransitionStoryboard;
+    private CompositionScopedBatch? _currentTransitionBatch;
+    private Visual? _associatedVisual;
+    private Visual? _overlayVisual;
     private Image? _tempOverlayImage;
 
     public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
@@ -87,22 +91,8 @@ public sealed class FadeImageBehavior : Behavior<Image>
         if (oldSource is null)
         {
             AssociatedObject.Source = newSource;
-            AssociatedObject.Opacity = 0;
 
-            var fadeIn = new DoubleAnimation
-            {
-                From = 0,
-                To = 1,
-                Duration = Duration,
-                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
-            };
-
-            _currentTransitionStoryboard = new Storyboard();
-            _currentTransitionStoryboard.Children.Add(fadeIn);
-            Storyboard.SetTarget(fadeIn, AssociatedObject);
-            Storyboard.SetTargetProperty(fadeIn, nameof(UIElement.Opacity));
-            _currentTransitionStoryboard.Completed += OnTransitionCompleted;
-            _currentTransitionStoryboard.Begin();
+            StartSingleFadeInTransition();
             return;
         }
 
@@ -132,52 +122,101 @@ public sealed class FadeImageBehavior : Behavior<Image>
         parent.Children.Add(_tempOverlayImage);
 
         AssociatedObject.Source = newSource;
-        AssociatedObject.Opacity = 0;
 
-        var oldFadeOut = new DoubleAnimation
-        {
-            From = 1,
-            To = 0,
-            Duration = Duration,
-            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
-        };
-
-        var newFadeIn = new DoubleAnimation
-        {
-            From = 0,
-            To = 1,
-            Duration = Duration,
-            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
-        };
-
-        _currentTransitionStoryboard = new Storyboard();
-        _currentTransitionStoryboard.Children.Add(oldFadeOut);
-        _currentTransitionStoryboard.Children.Add(newFadeIn);
-
-        Storyboard.SetTarget(oldFadeOut, _tempOverlayImage);
-        Storyboard.SetTargetProperty(oldFadeOut, nameof(UIElement.Opacity));
-
-        Storyboard.SetTarget(newFadeIn, AssociatedObject);
-        Storyboard.SetTargetProperty(newFadeIn, nameof(UIElement.Opacity));
-
-        _currentTransitionStoryboard.Completed += OnTransitionCompleted;
-        _currentTransitionStoryboard.Begin();
+        StartCrossFadeTransition();
     }
 
-    private void OnTransitionCompleted(object? sender, object e)
+    private void StartSingleFadeInTransition()
     {
+        if (AssociatedObject is null)
+        {
+            return;
+        }
+
+        _associatedVisual = ElementCompositionPreview.GetElementVisual(AssociatedObject);
+        var compositor = _associatedVisual.Compositor;
+        var duration = GetAnimationDuration();
+        var easing = compositor.CreateCubicBezierEasingFunction(
+            new Vector2(0.215f, 0.61f),
+            new Vector2(0.355f, 1f)
+        );
+
+        var fadeIn = compositor.CreateScalarKeyFrameAnimation();
+        fadeIn.InsertKeyFrame(0f, 0f);
+        fadeIn.InsertKeyFrame(1f, 1f, easing);
+        fadeIn.Duration = duration;
+
+        _currentTransitionBatch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        _currentTransitionBatch.Completed += OnCompositionTransitionCompleted;
+        _associatedVisual.Opacity = 0f;
+        _associatedVisual.StartAnimation(nameof(Visual.Opacity), fadeIn);
+        _currentTransitionBatch.End();
+    }
+
+    private void StartCrossFadeTransition()
+    {
+        if (AssociatedObject is null || _tempOverlayImage is null)
+        {
+            return;
+        }
+
+        _associatedVisual = ElementCompositionPreview.GetElementVisual(AssociatedObject);
+        _overlayVisual = ElementCompositionPreview.GetElementVisual(_tempOverlayImage);
+
+        var compositor = _associatedVisual.Compositor;
+        var duration = GetAnimationDuration();
+        var easing = compositor.CreateCubicBezierEasingFunction(
+            new Vector2(0.215f, 0.61f),
+            new Vector2(0.355f, 1f)
+        );
+
+        var oldFadeOut = compositor.CreateScalarKeyFrameAnimation();
+        oldFadeOut.InsertKeyFrame(0f, 1f);
+        oldFadeOut.InsertKeyFrame(1f, 0f, easing);
+        oldFadeOut.Duration = duration;
+
+        var newFadeIn = compositor.CreateScalarKeyFrameAnimation();
+        newFadeIn.InsertKeyFrame(0f, 0f);
+        newFadeIn.InsertKeyFrame(1f, 1f, easing);
+        newFadeIn.Duration = duration;
+
+        _currentTransitionBatch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        _currentTransitionBatch.Completed += OnCompositionTransitionCompleted;
+
+        _associatedVisual.Opacity = 0f;
+        _overlayVisual.Opacity = 1f;
+        _overlayVisual.StartAnimation(nameof(Visual.Opacity), oldFadeOut);
+        _associatedVisual.StartAnimation(nameof(Visual.Opacity), newFadeIn);
+
+        _currentTransitionBatch.End();
+    }
+
+    private TimeSpan GetAnimationDuration()
+    {
+        return Duration.HasTimeSpan ? Duration.TimeSpan : TimeSpan.FromMilliseconds(450);
+    }
+
+    private void OnCompositionTransitionCompleted(
+        object? sender,
+        CompositionBatchCompletedEventArgs args
+    )
+    {
+        if (_associatedVisual is not null)
+        {
+            _associatedVisual.StopAnimation(nameof(Visual.Opacity));
+            _associatedVisual.Opacity = 1f;
+        }
         StopAndCleanup();
-        AssociatedObject?.Opacity = 1;
     }
 
     private void StopAndCleanup()
     {
-        if (_currentTransitionStoryboard is not null)
-        {
-            _currentTransitionStoryboard.Completed -= OnTransitionCompleted;
-            _currentTransitionStoryboard.Stop();
-            _currentTransitionStoryboard = null;
-        }
+        _currentTransitionBatch?.Completed -= OnCompositionTransitionCompleted;
+        _currentTransitionBatch = null;
+        _associatedVisual?.StopAnimation(nameof(Visual.Opacity));
+        _associatedVisual = null;
+        _overlayVisual?.StopAnimation(nameof(Visual.Opacity));
+        _overlayVisual = null;
 
         if (_tempOverlayImage is not null)
         {
