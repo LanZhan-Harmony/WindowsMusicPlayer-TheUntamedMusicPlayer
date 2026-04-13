@@ -14,6 +14,7 @@ public sealed partial class OnlineAlbumsPage : Page
 {
     public OnlineAlbumsViewModel ViewModel { get; set; }
     private ScrollViewer? _scrollViewer;
+    private bool _isSearching;
 
     public OnlineAlbumsPage()
     {
@@ -87,18 +88,7 @@ public sealed partial class OnlineAlbumsPage : Page
         }
 
         _scrollViewer = gridView.FindDescendant<ScrollViewer>()!;
-        _scrollViewer.ViewChanged += async (s, e) =>
-        {
-            if (
-                !Data.OnlineMusicLibrary.OnlineAlbumInfoList.HasAllLoaded
-                && _scrollViewer.VerticalOffset + _scrollViewer.ViewportHeight
-                    >= _scrollViewer.ExtentHeight - 50
-            )
-            {
-                await Data.OnlineMusicLibrary.SearchMore();
-                await Task.Delay(3000);
-            }
-        };
+        _scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
 
         if (Data.SelectedOnlineAlbum is not null)
         {
@@ -117,6 +107,21 @@ public sealed partial class OnlineAlbumsPage : Page
                 );
             }
             gridView.Focus(FocusState.Programmatic);
+        }
+    }
+
+    private async void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if (
+            !_isSearching
+            && !Data.OnlineMusicLibrary.OnlineAlbumInfoList.HasAllLoaded
+            && _scrollViewer!.VerticalOffset + _scrollViewer.ViewportHeight
+                >= _scrollViewer.ExtentHeight - 50
+        )
+        {
+            _isSearching = true;
+            await Data.OnlineMusicLibrary.SearchMore();
+            _isSearching = false;
         }
     }
 
@@ -207,4 +212,9 @@ public sealed partial class OnlineAlbumsPage : Page
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
+
+    private void OnlineAlbumsPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
+    }
 }
