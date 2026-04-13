@@ -44,10 +44,13 @@ public sealed partial class MusicPlayer : IDisposable
     /// </summary>
     public SharedPlaybackState State { get; set; }
 
+    private readonly TaskCompletionSource _loadTcs = new();
+
     /// <summary>
-    /// 是否已经加载完成
+    /// 等待加载完成
     /// </summary>
-    public bool HasLoaded { get; private set; } = false;
+    /// <returns></returns>
+    public Task WhenLoadedAsync() => _loadTcs.Task;
 
     /// <summary>
     /// 通知底部播放栏按钮状态变更事件
@@ -468,7 +471,7 @@ public sealed partial class MusicPlayer : IDisposable
         if (Data.IsFileActivationLaunch)
         {
             BarViewAvailabilityChanged?.Invoke(true);
-            HasLoaded = true;
+            _loadTcs.TrySetResult();
             return;
         }
         await _queueManager.LoadStateAsync();
@@ -481,7 +484,7 @@ public sealed partial class MusicPlayer : IDisposable
         BarViewAvailabilityChanged?.Invoke(
             State.CurrentSong is not null && State.PlayQueueCount > 0
         );
-        HasLoaded = true;
+        _loadTcs.TrySetResult();
     }
 
     public async Task SaveStateAsync()

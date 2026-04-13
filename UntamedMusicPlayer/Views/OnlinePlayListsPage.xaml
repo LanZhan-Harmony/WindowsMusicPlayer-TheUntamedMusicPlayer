@@ -8,6 +8,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:UntamedMusicPlayer.Models"
       xmlns:ui="using:CommunityToolkit.WinUI"
+      Unloaded="OnlinePlaylistPage_Unloaded"
       mc:Ignorable="d">
 
     <Page.Resources>

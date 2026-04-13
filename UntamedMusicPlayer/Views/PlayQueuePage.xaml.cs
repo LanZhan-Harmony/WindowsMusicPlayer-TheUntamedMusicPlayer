@@ -96,14 +96,17 @@ public sealed partial class PlayQueuePage : Page
         }
     }
 
-    private void PlayQueuePage_Loaded(object sender, RoutedEventArgs e)
+    private async void PlayQueueListView_Loaded(object sender, RoutedEventArgs e)
     {
+        await Data.MusicPlayer.WhenLoadedAsync();
         var currentSong = Data.PlayState.CurrentBriefSong;
         if (currentSong is null)
         {
             return;
         }
-        var listViewSource = PlayQueueListView.ItemsSource;
+
+        var listView = (sender as ListView)!;
+        var listViewSource = listView.ItemsSource;
         if (listViewSource is IEnumerable<IndexedPlayQueueSong> songs)
         {
             var targetSong = songs
@@ -111,7 +114,7 @@ public sealed partial class PlayQueuePage : Page
                 .FirstOrDefault(song => SongComparer.IsSameSong(song.Song, currentSong));
             if (targetSong is not null)
             {
-                PlayQueueListView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
+                listView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
             }
         }
     }
