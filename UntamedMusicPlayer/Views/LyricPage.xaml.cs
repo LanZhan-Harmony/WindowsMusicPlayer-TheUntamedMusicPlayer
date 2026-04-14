@@ -1,4 +1,3 @@
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Numerics;
 using Microsoft.UI.Dispatching;
@@ -52,11 +51,6 @@ public sealed partial class LyricPage : Page, IDisposable
             Timeout.Infinite
         );
 
-        if (Data.LyricManager.CurrentLyricSlices is INotifyCollectionChanged collectionChanged)
-        {
-            collectionChanged.CollectionChanged += CurrentLyricSlices_CollectionChanged;
-        }
-
         Data.PlayState.PropertyChanged += OnStateChanged;
         Data.RootPlayBarViewModel?.PropertyChanged += OnRootPlayBarChanged;
     }
@@ -79,17 +73,6 @@ public sealed partial class LyricPage : Page, IDisposable
     {
         _isLyricViewLoaded = true;
         RestartEnsureScrollToCurrentLyric();
-    }
-
-    private void CurrentLyricSlices_CollectionChanged(
-        object? sender,
-        NotifyCollectionChangedEventArgs e
-    )
-    {
-        if (!_isManualScrolling)
-        {
-            RestartEnsureScrollToCurrentLyric();
-        }
     }
 
     private void RestartEnsureScrollToCurrentLyric()
@@ -617,10 +600,7 @@ public sealed partial class LyricPage : Page, IDisposable
         _contentGridMarginAnimationTimer?.Stop();
         _contentGridMarginAnimationTimer?.Tick -= ContentGridMarginAnimationTick;
         _contentGridMarginAnimationTimer = null;
-        if (Data.LyricManager.CurrentLyricSlices is INotifyCollectionChanged collectionChanged)
-        {
-            collectionChanged.CollectionChanged -= CurrentLyricSlices_CollectionChanged;
-        }
+
         Data.PlayState.PropertyChanged -= OnStateChanged;
         Data.RootPlayBarViewModel?.PropertyChanged -= OnRootPlayBarChanged;
         Data.LyricPage = null;
