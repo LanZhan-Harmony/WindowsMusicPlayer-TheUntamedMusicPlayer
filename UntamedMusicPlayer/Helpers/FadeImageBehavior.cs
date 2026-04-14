@@ -69,12 +69,7 @@ public sealed class FadeImageBehavior : Behavior<Image>
 
     private void TransitionToNewSource(ImageSource? newSource)
     {
-        if (AssociatedObject is null)
-        {
-            return;
-        }
-
-        if (ReferenceEquals(AssociatedObject.Source, newSource))
+        if (AssociatedObject is null || AssociatedObject.Source == newSource)
         {
             return;
         }
