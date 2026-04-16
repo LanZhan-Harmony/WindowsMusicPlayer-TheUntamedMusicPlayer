@@ -974,4 +974,7 @@
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
     <value>Les utilisateurs hors de la Chine continentale peuvent ne pas avoir accès à cette bibliothèque musicale.</value>
   </data>
+  <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
+    <value>Cette bibliothèque musicale n’est pas encore ouverte, restez à l’écoute</value>
+  </data>
 </root>

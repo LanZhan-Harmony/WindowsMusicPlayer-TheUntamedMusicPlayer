@@ -111,7 +111,7 @@ public sealed class DetailedCloudOnlineArtistInfo
         IDetailedOnlineArtistInfo
 {
     private readonly HashSet<long> ArtistAlbumIDs = [];
-    public const byte Limit = 10;
+    public const byte Limit = 20;
     public ushort Page { get; set; } = 0;
     public int CurrentAlbumNum { get; set; } = 0;
     public bool HasAllLoaded { get; set; } = false;
