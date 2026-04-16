@@ -36,6 +36,8 @@ public sealed partial class HomeViewModel : ObservableObject
     partial void OnMusicLibraryIndexChanged(byte value)
     {
         Data.OnlineMusicLibrary.MusicLibraryIndex = value;
+        LibraryNotOpenVisibility =
+            MusicLibraryIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
         SaveMusicLibraryIndex();
         // 音乐库索引改变时强制重新搜索
         if (!string.IsNullOrWhiteSpace(Data.OnlineMusicLibrary.SearchKeyWords))
@@ -43,6 +45,9 @@ public sealed partial class HomeViewModel : ObservableObject
             _ = Data.OnlineMusicLibrary.ForceSearch();
         }
     }
+
+    [ObservableProperty]
+    public partial Visibility LibraryNotOpenVisibility { get; set; } = Visibility.Collapsed;
 
     public HomeViewModel()
     {
@@ -53,6 +58,8 @@ public sealed partial class HomeViewModel : ObservableObject
     {
         PageIndex = await LoadPageIndex();
         MusicLibraryIndex = await LoadMusicLibraryIndex();
+        LibraryNotOpenVisibility =
+            MusicLibraryIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public async void SuggestBox_TextChanged(

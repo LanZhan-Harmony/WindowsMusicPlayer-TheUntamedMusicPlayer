@@ -974,4 +974,7 @@
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
     <value>قد لا يتمكن المستخدمون خارج الصين القارية من الوصول إلى هذه المكتبة الموسيقية.</value>
   </data>
+  <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
+    <value>هذه المكتبة الموسيقية لم تفتح بعد، يرجى متابعة الموضوع</value>
+  </data>
 </root>

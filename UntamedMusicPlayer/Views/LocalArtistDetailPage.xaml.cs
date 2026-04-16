@@ -1,4 +1,5 @@
 using System.Numerics;
+using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -42,7 +43,9 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private CompositionPropertySet? _props;
     private Compositor? _compositor;
+    private ScrollViewer? _scrollViewer;
     private SpriteVisual? _backgroundVisual;
+    private CompositionSurfaceBrush? _backgroundImageBrush;
     private LoadedImageSurface? _imageSurface;
 
     private int SelectionBarSelectedIndex
@@ -103,6 +106,8 @@ public sealed partial class LocalArtistDetailPage : Page
 
     private void Cleanup()
     {
+        _scrollViewer = null;
+
         if (_backgroundVisual is not null)
         {
             ElementCompositionPreview.SetElementChildVisual(BackgroundHost, null);
@@ -111,19 +116,36 @@ public sealed partial class LocalArtistDetailPage : Page
         }
         _imageSurface?.Dispose();
         _imageSurface = null;
+        _backgroundImageBrush = null;
     }
 
     private void LocalArtistDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
-        var listScrollViewer = SharedScrollViewer;
+        UpdateActiveScrollViewerBinding();
+    }
+
+    private ListViewBase GetActiveAlbumView()
+    {
+        return AlbumListView.Visibility == Visibility.Visible ? AlbumListView : AlbumGridView;
+    }
+
+    private void UpdateActiveScrollViewerBinding()
+    {
+        var activeAlbumView = GetActiveAlbumView();
+        activeAlbumView.UpdateLayout();
+        var activeScrollViewer = activeAlbumView.FindDescendant<ScrollViewer>();
+        if (activeScrollViewer is null || _scrollViewer == activeScrollViewer)
+        {
+            return;
+        }
+
+        _scrollViewer = activeScrollViewer;
 
         var listScrollerPropertySet =
-            ElementCompositionPreview.GetScrollViewerManipulationPropertySet(listScrollViewer); // 获取 ScrollViewer 中包含滚动值的属性集
-        _compositor = listScrollerPropertySet.Compositor; // 获取与 ScrollViewer 关联的 Compositor, Compositor 用于创建动画
-
-        // 创建一个属性集，其中包含下面的 ExpressionAnimations 中引用的值
-        _props = _compositor.CreatePropertySet();
-        _props.InsertScalar("progress", 0); // 插入一个标量值, 用于跟踪滚动进度
+            ElementCompositionPreview.GetScrollViewerManipulationPropertySet(activeScrollViewer);
+        _compositor ??= listScrollerPropertySet.Compositor;
+        _props ??= _compositor.CreatePropertySet();
+        _props.InsertScalar("progress", 0);
         _props.InsertScalar("clampSize", ClampSize);
         _props.InsertScalar("backgroundScaleFactor", BackgroundScaleFactor);
         _props.InsertScalar("coverScaleFactor", CoverScaleFactor);
@@ -132,20 +154,28 @@ public sealed partial class LocalArtistDetailPage : Page
         _props.InsertScalar("headerPadding", 12);
 
         var listScrollingProperties =
-            listScrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>(); // 获取属性集的引用节点，以便在表达式动画中使用
+            listScrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>();
 
         CreateHeaderAnimation(_props, listScrollingProperties.Translation.Y);
 
-        if (ViewModel.AlbumList.Count != 0)
+        if (_backgroundVisual is null)
         {
-            var coverBytes = ViewModel.Artist.GetCoverBytes();
-            if (coverBytes.Length != 0)
+            if (ViewModel.AlbumList.Count == 0)
             {
-                CreateImageBackgroundGradientVisual(
-                    listScrollingProperties.Translation.Y,
-                    coverBytes
-                );
+                return;
             }
+
+            var coverBytes = ViewModel.Artist.GetCoverBytes();
+            if (coverBytes.Length == 0)
+            {
+                return;
+            }
+
+            CreateImageBackgroundGradientVisual(listScrollingProperties.Translation.Y, coverBytes);
+        }
+        else
+        {
+            RebindImageBackgroundGradientVisual(listScrollingProperties.Translation.Y);
         }
     }
 
@@ -259,6 +289,7 @@ public sealed partial class LocalArtistDetailPage : Page
             new Size(1000, 1000)
         );
         var imageBrush = _compositor.CreateSurfaceBrush(_imageSurface);
+        _backgroundImageBrush = imageBrush;
         imageBrush.HorizontalAlignmentRatio = 0.5f;
         imageBrush.VerticalAlignmentRatio = 0.25f;
         imageBrush.Stretch = CompositionStretch.UniformToFill;
@@ -282,6 +313,12 @@ public sealed partial class LocalArtistDetailPage : Page
         imageBrush.StartAnimation("Offset.Y", -scrollVerticalOffset * 0.8f);
 
         ElementCompositionPreview.SetElementChildVisual(BackgroundHost, visual);
+    }
+
+    private void RebindImageBackgroundGradientVisual(ScalarNode scrollVerticalOffset)
+    {
+        _backgroundVisual?.StartAnimation("Offset.Y", scrollVerticalOffset);
+        _backgroundImageBrush?.StartAnimation("Offset.Y", -scrollVerticalOffset * 0.8f);
     }
 
     private void CoverArt_OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -498,6 +535,7 @@ public sealed partial class LocalArtistDetailPage : Page
             AlbumGridView.Visibility = Visibility.Visible;
         }
         SelectionBarSelectedIndex = currentSelectedIndex;
+        UpdateActiveScrollViewerBinding();
     }
 
     private void SongListView_ItemClick(object sender, ItemClickEventArgs e)

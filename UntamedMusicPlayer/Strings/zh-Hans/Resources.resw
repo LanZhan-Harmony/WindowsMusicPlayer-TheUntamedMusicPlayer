@@ -1032,4 +1032,7 @@
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
     <value>中国大陆以外的用户可能无法访问此乐库。</value>
   </data>
+  <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
+    <value>此乐库暂未开放，敬请期待</value>
+  </data>
 </root>
