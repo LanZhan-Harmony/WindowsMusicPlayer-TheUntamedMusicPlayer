@@ -6,7 +6,6 @@
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:UntamedMusicPlayer.Models"
-      Background="Transparent"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -50,6 +49,8 @@
                         <Setter Target="KeyWordsTextBlock.Margin" Value="12,-5,12,0"/>
                         <Setter Target="NetworkErrorFontIcon.FontSize" Value="75"/>
                         <Setter Target="NetworkErrorStackPanel.Spacing" Value="18"/>
+                        <Setter Target="LibraryNotOpenFontIcon.FontSize" Value="75"/>
+                        <Setter Target="LibraryNotOpenStackPanel.Spacing" Value="18"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Medium">
@@ -63,6 +64,8 @@
                         <Setter Target="KeyWordsTextBlock.Margin" Value="52,-5,52,0"/>
                         <Setter Target="NetworkErrorFontIcon.FontSize" Value="130"/>
                         <Setter Target="NetworkErrorStackPanel.Spacing" Value="38"/>
+                        <Setter Target="LibraryNotOpenFontIcon.FontSize" Value="130"/>
+                        <Setter Target="LibraryNotOpenStackPanel.Spacing" Value="38"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Large">
@@ -76,6 +79,8 @@
                         <Setter Target="KeyWordsTextBlock.Margin" Value="52,-5,52,0"/>
                         <Setter Target="NetworkErrorFontIcon.FontSize" Value="130"/>
                         <Setter Target="NetworkErrorStackPanel.Spacing" Value="38"/>
+                        <Setter Target="LibraryNotOpenFontIcon.FontSize" Value="130"/>
+                        <Setter Target="LibraryNotOpenStackPanel.Spacing" Value="38"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -192,6 +197,17 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
+        </StackPanel>
+        <StackPanel x:Name="LibraryNotOpenStackPanel"
+                    Grid.Row="2" Grid.RowSpan="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Canvas.ZIndex="1" Orientation="Horizontal"
+                    Visibility="{x:Bind ViewModel.LibraryNotOpenVisibility, Mode=OneWay}">
+            <FontIcon x:Name="LibraryNotOpenFontIcon" Glyph="&#xF439;"/>
+            <TextBlock x:Uid="Home_LibraryNotOpen"
+                       VerticalAlignment="Center"
+                       FontSize="29" FontWeight="Bold"/>
         </StackPanel>
         <Frame x:Name="SelectFrame" Grid.Row="3"/>
     </Grid>

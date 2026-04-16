@@ -1,4 +1,5 @@
 using System.Numerics;
+using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Animations.Expressions;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -46,6 +47,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     private CompositionPropertySet? _props;
     private Compositor? _compositor;
     private SpriteVisual? _backgroundVisual;
+    private CompositionSurfaceBrush? _backgroundImageBrush;
     private LoadedImageSurface? _imageSurface;
 
     private bool _isSearching;
@@ -104,6 +106,9 @@ public sealed partial class OnlineArtistDetailPage : Page
 
     private void Cleanup()
     {
+        _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
+        _scrollViewer = null;
+
         if (_backgroundVisual is not null)
         {
             ElementCompositionPreview.SetElementChildVisual(BackgroundHost, null);
@@ -112,15 +117,36 @@ public sealed partial class OnlineArtistDetailPage : Page
         }
         _imageSurface?.Dispose();
         _imageSurface = null;
+        _backgroundImageBrush = null;
     }
 
     private void OnlineArtistDetailPage_Loaded(object sender, RoutedEventArgs e)
     {
-        _scrollViewer = SharedScrollViewer;
+        UpdateActiveScrollViewerBinding();
+    }
+
+    private ListViewBase GetActiveAlbumView()
+    {
+        return AlbumListView.Visibility == Visibility.Visible ? AlbumListView : AlbumGridView;
+    }
+
+    private void UpdateActiveScrollViewerBinding()
+    {
+        var activeAlbumView = GetActiveAlbumView();
+        activeAlbumView.UpdateLayout();
+        var activeScrollViewer = activeAlbumView.FindDescendant<ScrollViewer>();
+        if (activeScrollViewer is null || _scrollViewer == activeScrollViewer)
+        {
+            return;
+        }
+
+        _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
+        _scrollViewer = activeScrollViewer;
+
         var listScrollerPropertySet =
-            ElementCompositionPreview.GetScrollViewerManipulationPropertySet(_scrollViewer);
-        _compositor = listScrollerPropertySet.Compositor;
-        _props = _compositor.CreatePropertySet();
+            ElementCompositionPreview.GetScrollViewerManipulationPropertySet(activeScrollViewer);
+        _compositor ??= listScrollerPropertySet.Compositor;
+        _props ??= _compositor.CreatePropertySet();
         _props.InsertScalar("progress", 0);
         _props.InsertScalar("clampSize", ClampSize);
         _props.InsertScalar("backgroundScaleFactor", BackgroundScaleFactor);
@@ -132,10 +158,17 @@ public sealed partial class OnlineArtistDetailPage : Page
             listScrollerPropertySet.GetSpecializedReference<ManipulationPropertySetReferenceNode>();
         CreateHeaderAnimation(_props, listScrollingProperties.Translation.Y);
 
-        CreateImageBackgroundGradientVisual(
-            listScrollingProperties.Translation.Y,
-            ViewModel.BriefArtist.CoverPath
-        );
+        if (_backgroundVisual is null)
+        {
+            CreateImageBackgroundGradientVisual(
+                listScrollingProperties.Translation.Y,
+                ViewModel.BriefArtist.CoverPath
+            );
+        }
+        else
+        {
+            RebindImageBackgroundGradientVisual(listScrollingProperties.Translation.Y);
+        }
 
         _scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
     }
@@ -214,6 +247,7 @@ public sealed partial class OnlineArtistDetailPage : Page
             new Size(1000, 1000)
         );
         var imageBrush = _compositor.CreateSurfaceBrush(_imageSurface);
+        _backgroundImageBrush = imageBrush;
         imageBrush.HorizontalAlignmentRatio = 0.5f;
         imageBrush.VerticalAlignmentRatio = 0.25f;
         imageBrush.Stretch = CompositionStretch.UniformToFill;
@@ -232,6 +266,12 @@ public sealed partial class OnlineArtistDetailPage : Page
         visual.StartAnimation("Offset.Y", scrollVerticalOffset);
         imageBrush.StartAnimation("Offset.Y", -scrollVerticalOffset * 0.8f);
         ElementCompositionPreview.SetElementChildVisual(BackgroundHost, visual);
+    }
+
+    private void RebindImageBackgroundGradientVisual(ScalarNode scrollVerticalOffset)
+    {
+        _backgroundVisual?.StartAnimation("Offset.Y", scrollVerticalOffset);
+        _backgroundImageBrush?.StartAnimation("Offset.Y", -scrollVerticalOffset * 0.8f);
     }
 
     private void CoverArt_OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -468,6 +508,7 @@ public sealed partial class OnlineArtistDetailPage : Page
             AlbumGridView.Visibility = Visibility.Visible;
         }
         SelectionBarSelectedIndex = currentSelectedIndex;
+        UpdateActiveScrollViewerBinding();
     }
 
     private void SongListView_ItemClick(object sender, ItemClickEventArgs e)

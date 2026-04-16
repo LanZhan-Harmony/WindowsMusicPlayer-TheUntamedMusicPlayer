@@ -974,4 +974,7 @@
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
     <value>Pengguna di luar Tiongkok daratan mungkin tidak dapat mengakses perpustakaan musik ini.</value>
   </data>
+  <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
+    <value>Perpustakaan musik ini belum dibuka, harap pantau terus</value>
+  </data>
 </root>
