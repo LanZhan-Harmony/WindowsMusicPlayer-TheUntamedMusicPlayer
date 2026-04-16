@@ -54,7 +54,7 @@
 
     <Style x:Key="PlayButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource AccentTextFillColorTertiaryBrush}"/>
         <Setter Property="CornerRadius" Value="5"/>
         <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}"/>
         <Setter Property="Padding" Value="0"/>
@@ -67,32 +67,34 @@
                                 <VisualState x:Name="Normal"/>
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
-                                        <Setter Target="Ellipse.Fill" Value="{ThemeResource AppBarButtonBackgroundPointerOver}"/>
-                                        <Setter Target="Ellipse.Stroke" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}"/>
+                                        <Setter Target="Ellipse.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}"/>
+                                        <Setter Target="Ellipse.BorderBrush" Value="{ThemeResource AccentTextFillColorTertiaryBrush}"/>
                                         <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
-                                        <Setter Target="Ellipse.Fill" Value="{ThemeResource AppBarButtonBackgroundPressed}"/>
-                                        <Setter Target="Ellipse.Stroke" Value="{ThemeResource AppBarButtonBorderBrushPressed}"/>
+                                        <Setter Target="Ellipse.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}"/>
+                                        <Setter Target="Ellipse.BorderBrush" Value="{ThemeResource AccentTextFillColorTertiaryBrush}"/>
                                         <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
-                                        <Setter Target="Ellipse.Fill" Value="{ThemeResource AppBarButtonBackgroundDisabled}"/>
-                                        <Setter Target="Ellipse.Stroke" Value="{ThemeResource AppBarButtonBorderBrushDisabled}"/>
+                                        <Setter Target="Ellipse.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}"/>
+                                        <Setter Target="Ellipse.BorderBrush" Value="{ThemeResource AccentTextFillColorTertiaryBrush}"/>
                                         <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Ellipse x:Name="Ellipse"
-                                 Width="{TemplateBinding Width}"
-                                 Height="{TemplateBinding Height}"
-                                 Fill="{TemplateBinding Background}"
-                                 Stroke="{TemplateBinding BorderBrush}"/>
+                        <Border x:Name="Ellipse"
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="100"/>
                         <ContentPresenter x:Name="ContentPresenter"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"/>
