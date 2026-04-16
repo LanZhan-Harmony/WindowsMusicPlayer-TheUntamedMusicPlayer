@@ -61,7 +61,7 @@
                     <StackPanel VerticalAlignment="Center"
                                 Orientation="Vertical" Spacing="8">
                         <TextBlock x:Uid="NoMusic_MusicNotFound"
-                                   FontSize="29" FontWeight="Bold"/>
+                                   FontSize="29" FontWeight="SemiBold"/>
                         <TextBlock x:Uid="NoMusic_NoMusicContent" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <Button Click="{x:Bind ViewModel.PickMusicFolderButton_Click}" Style="{StaticResource AccentButtonStyle}">
                             <StackPanel Orientation="Horizontal" Spacing="8">

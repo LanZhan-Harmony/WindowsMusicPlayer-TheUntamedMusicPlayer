@@ -115,7 +115,7 @@
         <Button x:Uid="PlayBar_NowPlaying"
                 Grid.Row="1" Grid.Column="0"
                 Height="80" MinWidth="162"
-                Margin="4,0,0,4" HorizontalAlignment="Left"
+                Margin="3,0,0,2" HorizontalAlignment="Left"
                 AccessKey="Z"
                 AutomationProperties.HelpText="{x:Bind model:Data.PlayState.CurrentSong.ArtistAndAlbumStr, Mode=OneWay}"
                 AutomationProperties.Name="{x:Bind model:Data.PlayState.CurrentSong.Title, Mode=OneWay}"
@@ -166,13 +166,15 @@
                                                        Glyph=&#xE946;}"/>
                 </MenuFlyout>
             </Button.ContextFlyout>
-            <StackPanel HorizontalAlignment="Left"
-                        Orientation="Horizontal"
-                        Visibility="{x:Bind ViewModel.ButtonVisibility, Mode=OneWay}">
-                <!--<StackPanel.ChildrenTransitions>
+            <Grid Visibility="{x:Bind ViewModel.ButtonVisibility, Mode=OneWay}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.ChildrenTransitions>
                     <EntranceThemeTransition FromHorizontalOffset="50" IsStaggeringEnabled="True"/>
                     <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                </StackPanel.ChildrenTransitions>-->
+                </Grid.ChildrenTransitions>
                 <Border x:Name="CoverBorder"
                         Width="70" Height="70"
                         Margin="4,0,0,0" Padding="0"
@@ -200,27 +202,42 @@
                         </Grid>
                     </Canvas>
                 </Border>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Width="6" Visibility="{x:Bind GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}"/>
-                    <StackPanel Margin="0,0,4,0" HorizontalAlignment="Left"
-                                VerticalAlignment="Center">
-                        <TextBlock x:Name="SongTitleTextBlock"
-                                   Margin="10,0,0,4"
-                                   FontSize="20" FontWeight="Medium"
-                                   Text="{x:Bind model:Data.PlayState.CurrentSong.Title, Mode=OneWay}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"/>
-                        <TextBlock x:Name="ArtistAndAlbumTextBlock"
-                                   Margin="10,0,0,0"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Bind model:Data.PlayState.CurrentSong.ArtistAndAlbumStr, Mode=OneWay}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Visibility="{x:Bind GetArtistAndAlbumStrVisibility(model:Data.PlayState.CurrentSong), Mode=OneWay}"/>
-                    </StackPanel>
-                    <TextBlock Width="8" Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}"/>
-                </StackPanel>
-            </StackPanel>
+                <Grid x:Name="TextGrid"
+                      Grid.Column="1"
+                      VerticalAlignment="Center"
+                      RowSpacing="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.RowSpan="2" Grid.Column="0"
+                               Width="4"
+                               Visibility="{x:Bind GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}"/>
+                    <TextBlock x:Name="SongTitleTextBlock"
+                               Grid.Row="0" Grid.Column="1"
+                               Margin="11,0,4,0"
+                               FontSize="20" FontWeight="SemiBold"
+                               Text="{x:Bind model:Data.PlayState.CurrentSong.Title, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"/>
+                    <TextBlock x:Name="ArtistAndAlbumTextBlock"
+                               Grid.Row="1" Grid.Column="1"
+                               Margin="12,0,4,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="{x:Bind model:Data.PlayState.CurrentSong.ArtistAndAlbumStr, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               Visibility="{x:Bind GetArtistAndAlbumStrVisibility(model:Data.PlayState.CurrentSong), Mode=OneWay}"/>
+                    <TextBlock Grid.RowSpan="2" Grid.Column="2"
+                               Width="8"
+                               Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}"/>
+                </Grid>
+            </Grid>
         </Button>
 
         <!--  播放控制  -->
@@ -272,7 +289,7 @@
 
             <!--  播放/暂停  -->
             <Button Width="50" Height="50"
-                    AccessKey="P"
+                    AccessKey="P" BorderThickness="4"
                     Click="{x:Bind model:Data.MusicPlayer.PlayPauseUpdate}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource PlayButtonStyle}"
@@ -282,7 +299,7 @@
                     <KeyboardAccelerator Key="P" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                          FontSize="23"
+                          FontSize="22"
                           Glyph="{x:Bind GetPlayPauseIcon(model:Data.PlayState.PlayState), Mode=OneWay}"/>
             </Button>
 
@@ -349,7 +366,7 @@
                 </Button>
                 <!--  播放/暂停  -->
                 <Button Width="37" Height="37"
-                        AccessKey="P"
+                        AccessKey="P" BorderThickness="2"
                         Click="{x:Bind model:Data.MusicPlayer.PlayPauseUpdate}"
                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                         Style="{StaticResource PlayButtonStyle}"
