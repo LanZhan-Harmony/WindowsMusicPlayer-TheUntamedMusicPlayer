@@ -187,7 +187,7 @@
                       Glyph="&#xEB56;"/>
             <StackPanel VerticalAlignment="Center" Spacing="8">
                 <TextBlock x:Uid="Home_ServerError"
-                           FontSize="29" FontWeight="Bold"/>
+                           FontSize="29" FontWeight="SemiBold"/>
                 <TextBlock x:Uid="Home_UnableToAccess" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 <Button Click="{x:Bind model:Data.OnlineMusicLibrary.RetryButton_Click}" Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
@@ -204,10 +204,12 @@
                     VerticalAlignment="Center"
                     Canvas.ZIndex="1" Orientation="Horizontal"
                     Visibility="{x:Bind ViewModel.LibraryNotOpenVisibility, Mode=OneWay}">
-            <FontIcon x:Name="LibraryNotOpenFontIcon" Glyph="&#xF439;"/>
+            <FontIcon x:Name="LibraryNotOpenFontIcon"
+                      FontFamily="{StaticResource UntamedFontFamily}"
+                      Glyph="&#xF439;"/>
             <TextBlock x:Uid="Home_LibraryNotOpen"
                        VerticalAlignment="Center"
-                       FontSize="29" FontWeight="Bold"/>
+                       FontSize="29" FontWeight="SemiBold"/>
         </StackPanel>
         <Frame x:Name="SelectFrame" Grid.Row="3"/>
     </Grid>
