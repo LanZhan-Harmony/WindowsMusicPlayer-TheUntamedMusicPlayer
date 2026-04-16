@@ -15,7 +15,6 @@
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<LangVersion>preview</LangVersion>
 		<Features>runtime-async=on</Features>
-		<EnablePreviewFeatures>True</EnablePreviewFeatures>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Assets\**\*" />

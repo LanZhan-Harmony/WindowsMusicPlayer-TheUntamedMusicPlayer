@@ -974,4 +974,7 @@
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
     <value>中国本土以外のユーザーはこの音楽ライブラリにアクセスできない場合があります。</value>
   </data>
+  <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
+    <value>この音楽ライブラリーはまだ開いていません。どうぞご期待ください</value>
+  </data>
 </root>

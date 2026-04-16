@@ -435,7 +435,8 @@
                         <Setter Target="MoreButton.Visibility" Value="Visible"/>
                         <Setter Target="AddToFlyout.Visibility" Value="Visible"/>
                         <Setter Target="SelectorBarPanel.Margin" Value="0,27,0,0"/>
-                        <Setter Target="SharedScrollViewer.(ui:ScrollViewerExtensions.VerticalScrollBarMargin)" Value="0,-178,0,0"/>
+                        <Setter Target="AlbumListView.(ui:ScrollViewerExtensions.VerticalScrollBarMargin)" Value="0,-178,0,0"/>
+                        <Setter Target="AlbumGridView.(ui:ScrollViewerExtensions.VerticalScrollBarMargin)" Value="0,-178,0,0"/>
                         <Setter Target="AlbumListView.Padding" Value="12,0,12,0"/>
                         <Setter Target="AlbumView.Margin" Value="0,35,0,0"/>
                         <Setter Target="AlbumListHeaderPadding.Height" Value="55"/>
@@ -460,7 +461,8 @@
                         <Setter Target="MoreButton.Visibility" Value="Collapsed"/>
                         <Setter Target="AddToFlyout.Visibility" Value="Collapsed"/>
                         <Setter Target="SelectorBarPanel.Margin" Value="0,27,0,0"/>
-                        <Setter Target="SharedScrollViewer.(ui:ScrollViewerExtensions.VerticalScrollBarMargin)" Value="0,-195,0,0"/>
+                        <Setter Target="AlbumListView.(ui:ScrollViewerExtensions.VerticalScrollBarMargin)" Value="0,-195,0,0"/>
+                        <Setter Target="AlbumGridView.(ui:ScrollViewerExtensions.VerticalScrollBarMargin)" Value="0,-195,0,0"/>
                         <Setter Target="AlbumListView.Padding" Value="52,0,52,0"/>
                         <Setter Target="AlbumView.Margin" Value="0,25,0,0"/>
                         <Setter Target="AlbumListHeaderPadding.Height" Value="55"/>
@@ -484,7 +486,8 @@
                         <Setter Target="AddToButton.Visibility" Value="Visible"/>
                         <Setter Target="MoreButton.Visibility" Value="Collapsed"/>
                         <Setter Target="SelectorBarPanel.Margin" Value="0,3,0,0"/>
-                        <Setter Target="SharedScrollViewer.(ui:ScrollViewerExtensions.VerticalScrollBarMargin)" Value="0,-200,0,0"/>
+                        <Setter Target="AlbumListView.(ui:ScrollViewerExtensions.VerticalScrollBarMargin)" Value="0,-200,0,0"/>
+                        <Setter Target="AlbumGridView.(ui:ScrollViewerExtensions.VerticalScrollBarMargin)" Value="0,-200,0,0"/>
                         <Setter Target="AlbumListView.Padding" Value="52,0,52,0"/>
                         <Setter Target="AlbumView.Margin" Value="0,7,0,0"/>
                         <Setter Target="AlbumListHeaderPadding.Height" Value="93"/>
@@ -665,32 +668,28 @@
         </Grid>
 
         <Grid x:Name="AlbumView" Grid.Row="1">
-            <ScrollViewer x:Name="SharedScrollViewer">
-                <Grid>
-                    <ListView x:Name="AlbumListView"
-                              ui:ListViewExtensions.ItemContainerStretchDirection="Horizontal"
-                              IsItemClickEnabled="False"
-                              ItemTemplate="{StaticResource AlbumListViewTemplate}"
-                              ItemsSource="{x:Bind ViewModel.AlbumList}"
-                              SelectionMode="None"
-                              XYFocusUp="{x:Bind PlayAllButton}">
-                        <ListView.Header>
-                            <Border x:Name="AlbumListHeaderPadding"/>
-                        </ListView.Header>
-                    </ListView>
-                    <GridView x:Name="AlbumGridView"
-                              helper:ListViewExtensions.ItemCornerRadius="8"
-                              IsItemClickEnabled="True"
-                              ItemClick="AlbumGridView_ItemClick"
-                              ItemTemplate="{StaticResource AlbumGridViewTemplate}"
-                              ItemsSource="{x:Bind ViewModel.AlbumList}"
-                              SelectionMode="None">
-                        <GridView.Header>
-                            <Border x:Name="AlbumGridHeaderPadding"/>
-                        </GridView.Header>
-                    </GridView>
-                </Grid>
-            </ScrollViewer>
+            <ListView x:Name="AlbumListView"
+                      ui:ListViewExtensions.ItemContainerStretchDirection="Horizontal"
+                      IsItemClickEnabled="False"
+                      ItemTemplate="{StaticResource AlbumListViewTemplate}"
+                      ItemsSource="{x:Bind ViewModel.AlbumList}"
+                      SelectionMode="None" Visibility="Collapsed"
+                      XYFocusUp="{x:Bind PlayAllButton}">
+                <ListView.Header>
+                    <Border x:Name="AlbumListHeaderPadding"/>
+                </ListView.Header>
+            </ListView>
+            <GridView x:Name="AlbumGridView"
+                      helper:ListViewExtensions.ItemCornerRadius="8"
+                      IsItemClickEnabled="True"
+                      ItemClick="AlbumGridView_ItemClick"
+                      ItemTemplate="{StaticResource AlbumGridViewTemplate}"
+                      ItemsSource="{x:Bind ViewModel.AlbumList}"
+                      SelectionMode="None" Visibility="Collapsed">
+                <GridView.Header>
+                    <Border x:Name="AlbumGridHeaderPadding"/>
+                </GridView.Header>
+            </GridView>
         </Grid>
     </Grid>
 </Page>

@@ -974,4 +974,7 @@
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
     <value>중국 본토 외부의 사용자는 이 음악 라이브러리에 접근할 수 없을 수 있습니다.</value>
   </data>
+  <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
+    <value>이 음악 도서관은 아직 개방되지 않았으니 계속 지켜봐 주세요</value>
+  </data>
 </root>

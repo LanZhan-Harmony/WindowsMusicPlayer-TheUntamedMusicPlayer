@@ -52,7 +52,6 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         }
         else
         {
-            await Task.Delay(150); // 给 UI 线程一个喘息的机会，先完成页面导航
             IsSearchProgressRingActive = false;
         }
     }

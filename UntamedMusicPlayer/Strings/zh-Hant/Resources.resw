@@ -974,4 +974,7 @@
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
     <value>中國大陸以外的用戶可能無法存取此音樂庫。</value>
   </data>
+  <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
+    <value>這個音樂庫尚未開放，請持續關注</value>
+  </data>
 </root>
