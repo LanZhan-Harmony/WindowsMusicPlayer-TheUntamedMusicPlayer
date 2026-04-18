@@ -19,82 +19,101 @@ public static class Composition
 
     private static readonly Dictionary<Compositor, Dictionary<string, object>> _objCache = [];
 
-    public static T GetCached<T>(this Compositor c, string key, Func<T> create)
-        where T : notnull
+    extension(Compositor c)
     {
-        if (!_objCache.TryGetValue(c, out var dic))
+        public T GetCached<T>(string key, Func<T> create)
+            where T : notnull
         {
-            _objCache[c] = dic = [];
+            if (!_objCache.TryGetValue(c, out var dic))
+            {
+                _objCache[c] = dic = [];
+            }
+
+            if (!dic.TryGetValue(key, out var value) || value is null)
+            {
+                dic[key] = value = create();
+            }
+
+            return (T)value;
+        }
+    }
+
+    extension(CompositionObject c)
+    {
+        /// <summary>
+        /// Gets a cached version of a CompositionObject per compositor
+        /// (Each CoreWindow has it's own compositor). Allows sharing of animations
+        /// without recreating everytime.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="c"></param>
+        /// <param name="key"></param>
+        /// <param name="create"></param>
+        /// <returns></returns>
+        public T GetCached<T>(string key, Func<T> create)
+            where T : CompositionObject
+        {
+            return GetCached(c.Compositor, key, create);
+        }
+    }
+
+    extension(Compositor c)
+    {
+        public CubicBezierEasingFunction GetCachedEntranceEase()
+        {
+            return c.GetCached("EntranceEase", c.CreateEntranceEasingFunction);
         }
 
-        if (!dic.TryGetValue(key, out var value) || value is null)
+        public CubicBezierEasingFunction GetCachedFluentEntranceEase()
         {
-            dic[key] = value = create();
+            return c.GetCached("FluentEntranceEase", c.CreateFluentEntranceEasingFunction);
         }
-
-        return (T)value;
-    }
-
-    /// <summary>
-    /// Gets a cached version of a CompositionObject per compositor
-    /// (Each CoreWindow has it's own compositor). Allows sharing of animations
-    /// without recreating everytime.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="c"></param>
-    /// <param name="key"></param>
-    /// <param name="create"></param>
-    /// <returns></returns>
-    public static T GetCached<T>(this CompositionObject c, string key, Func<T> create)
-        where T : CompositionObject
-    {
-        return GetCached(c.Compositor, key, create);
-    }
-
-    public static CubicBezierEasingFunction GetCachedEntranceEase(this Compositor c)
-    {
-        return c.GetCached("EntranceEase", c.CreateEntranceEasingFunction);
-    }
-
-    public static CubicBezierEasingFunction GetCachedFluentEntranceEase(this Compositor c)
-    {
-        return c.GetCached("FluentEntranceEase", c.CreateFluentEntranceEasingFunction);
     }
 
     #endregion
 
     #region Element / Base Extensions
 
-    /// <summary>
-    /// Returns the Composition Hand-off Visual for this framework element
-    /// </summary>
-    /// <param name="element"></param>
-    /// <returns>Composition Hand-off Visual</returns>
-    public static Visual? GetElementVisual(this UIElement? element) =>
-        element is null ? null : ElementCompositionPreview.GetElementVisual(element);
-
-    public static CompositionPropertySet GetScrollManipulationPropertySet(
-        this ScrollViewer scrollViewer
-    )
+    extension(UIElement? element)
     {
-        return ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
+        /// <summary>
+        /// Returns the Composition Hand-off Visual for this framework element
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns>Composition Hand-off Visual</returns>
+        public Visual? GetElementVisual() =>
+            element is null ? null : ElementCompositionPreview.GetElementVisual(element);
     }
 
-    public static void SetShowAnimation(this UIElement element, ICompositionAnimationBase animation)
+    extension(ScrollViewer scrollViewer)
     {
-        ElementCompositionPreview.SetImplicitShowAnimation(element, animation);
+        public CompositionPropertySet GetScrollManipulationPropertySet()
+        {
+            return ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
+        }
     }
 
-    public static void SetHideAnimation(this UIElement element, ICompositionAnimationBase animation)
+    extension(UIElement element)
     {
-        ElementCompositionPreview.SetImplicitHideAnimation(element, animation);
+        public void SetShowAnimation(ICompositionAnimationBase animation)
+        {
+            ElementCompositionPreview.SetImplicitShowAnimation(element, animation);
+        }
+
+        public void SetHideAnimation(ICompositionAnimationBase animation)
+        {
+            ElementCompositionPreview.SetImplicitHideAnimation(element, animation);
+        }
     }
 
-    public static T SetChildVisual<T>(this T element, Visual visual)
+    extension<T>(T element)
         where T : UIElement
     {
-        ElementCompositionPreview.SetElementChildVisual(element, visual);
-        return element;
+        public T SetChildVisual(Visual visual)
+        {
+            ElementCompositionPreview.SetElementChildVisual(element, visual);
+            return element;
+        }
     }
 
     public static bool SupportsAlphaMask(UIElement element)
@@ -135,647 +154,621 @@ public static class Composition
 
     #region Translation
 
-    public static UIElement EnableCompositionTranslation(this UIElement element)
+    extension(UIElement element)
     {
-        return EnableCompositionTranslation(element, null);
-    }
-
-    public static UIElement EnableCompositionTranslation(
-        this UIElement element,
-        float x,
-        float y,
-        float z
-    )
-    {
-        return EnableCompositionTranslation(element, new Vector3(x, y, z));
-    }
-
-    public static UIElement EnableCompositionTranslation(
-        this UIElement element,
-        Vector3? defaultTranslation
-    )
-    {
-        var visual = GetElementVisual(element)!;
-        if (
-            visual.Properties.TryGetVector3(CompositionFactory.TRANSLATION, out _)
-            == CompositionGetValueStatus.NotFound
-        )
+        public UIElement EnableCompositionTranslation()
         {
-            ElementCompositionPreview.SetIsTranslationEnabled(element, true);
-            if (defaultTranslation.HasValue)
-            {
-                visual.Properties.InsertVector3(
-                    CompositionFactory.TRANSLATION,
-                    defaultTranslation.Value
-                );
-            }
-            else
-            {
-                visual.Properties.InsertVector3(CompositionFactory.TRANSLATION, new Vector3());
-            }
+            return EnableCompositionTranslation(element, null);
         }
 
-        return element;
+        public UIElement EnableCompositionTranslation(float x, float y, float z)
+        {
+            return EnableCompositionTranslation(element, new Vector3(x, y, z));
+        }
+
+        public UIElement EnableCompositionTranslation(Vector3? defaultTranslation)
+        {
+            var visual = GetElementVisual(element)!;
+            if (
+                visual.Properties.TryGetVector3(CompositionFactory.TRANSLATION, out _)
+                == CompositionGetValueStatus.NotFound
+            )
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(element, true);
+                if (defaultTranslation.HasValue)
+                {
+                    visual.Properties.InsertVector3(
+                        CompositionFactory.TRANSLATION,
+                        defaultTranslation.Value
+                    );
+                }
+                else
+                {
+                    visual.Properties.InsertVector3(CompositionFactory.TRANSLATION, new Vector3());
+                }
+            }
+
+            return element;
+        }
+
+        public bool IsTranslationEnabled()
+        {
+            return GetElementVisual(element)!
+                    .Properties.TryGetVector3(CompositionFactory.TRANSLATION, out _)
+                != CompositionGetValueStatus.NotFound;
+        }
     }
 
-    public static bool IsTranslationEnabled(this UIElement element)
+    extension(Visual visual)
     {
-        return GetElementVisual(element)!
-                .Properties.TryGetVector3(CompositionFactory.TRANSLATION, out _)
-            != CompositionGetValueStatus.NotFound;
-    }
+        public Vector3 GetTranslation()
+        {
+            visual.Properties.TryGetVector3(CompositionFactory.TRANSLATION, out var translation);
+            return translation;
+        }
 
-    public static Vector3 GetTranslation(this Visual visual)
-    {
-        visual.Properties.TryGetVector3(CompositionFactory.TRANSLATION, out var translation);
-        return translation;
-    }
+        public Visual SetTranslation(float x, float y, float z)
+        {
+            return SetTranslation(visual, new Vector3(x, y, z));
+        }
 
-    public static Visual SetTranslation(this Visual visual, float x, float y, float z)
-    {
-        return SetTranslation(visual, new Vector3(x, y, z));
-    }
+        public Visual SetTranslation(Vector3 translation)
+        {
+            visual.Properties.InsertVector3(CompositionFactory.TRANSLATION, translation);
+            return visual;
+        }
 
-    public static Visual SetTranslation(this Visual visual, Vector3 translation)
-    {
-        visual.Properties.InsertVector3(CompositionFactory.TRANSLATION, translation);
-        return visual;
-    }
+        /// <summary>
+        /// Sets the axis to rotate the visual around.
+        /// </summary>
+        /// <param name="visual"></param>
+        /// <param name="axis"></param>
+        /// <returns></returns>
+        public Visual SetRotationAxis(Vector3 axis)
+        {
+            visual.RotationAxis = axis;
+            return visual;
+        }
 
-    /// <summary>
-    /// Sets the axis to rotate the visual around.
-    /// </summary>
-    /// <param name="visual"></param>
-    /// <param name="axis"></param>
-    /// <returns></returns>
-    public static Visual SetRotationAxis(this Visual visual, Vector3 axis)
-    {
-        visual.RotationAxis = axis;
-        return visual;
-    }
+        /// <summary>
+        /// Sets the axis to rotate the visual around.
+        /// </summary>
+        /// <param name="visual"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <returns></returns>
+        public Visual SetRotationAxis(float x, float y, float z)
+        {
+            visual.RotationAxis = new Vector3(x, y, z);
+            return visual;
+        }
 
-    /// <summary>
-    /// Sets the axis to rotate the visual around.
-    /// </summary>
-    /// <param name="visual"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="z"></param>
-    /// <returns></returns>
-    public static Visual SetRotationAxis(this Visual visual, float x, float y, float z)
-    {
-        visual.RotationAxis = new Vector3(x, y, z);
-        return visual;
-    }
+        public Visual SetCenterPoint(float x, float y, float z)
+        {
+            return SetCenterPoint(visual, new Vector3(x, y, z));
+        }
 
-    public static Visual SetCenterPoint(this Visual visual, float x, float y, float z)
-    {
-        return SetCenterPoint(visual, new Vector3(x, y, z));
-    }
+        public Visual SetCenterPoint(Vector3 vector)
+        {
+            visual.CenterPoint = vector;
+            return visual;
+        }
 
-    public static Visual SetCenterPoint(this Visual visual, Vector3 vector)
-    {
-        visual.CenterPoint = vector;
-        return visual;
-    }
-
-    /// <summary>
-    /// Sets the centre point of a visual to its current cartesian centre (relative 0.5f, 0.5f).
-    /// </summary>
-    /// <param name="visual"></param>
-    /// <returns></returns>
-    public static Visual SetCenterPoint(this Visual visual)
-    {
-        return SetCenterPoint(visual, new Vector3(visual.Size / 2f, 0f));
+        /// <summary>
+        /// Sets the centre point of a visual to its current cartesian centre (relative 0.5f, 0.5f).
+        /// </summary>
+        /// <param name="visual"></param>
+        /// <returns></returns>
+        public Visual SetCenterPoint()
+        {
+            return SetCenterPoint(visual, new Vector3(visual.Size / 2f, 0f));
+        }
     }
 
     #endregion
 
-
     #region SetTarget
 
-    public static T SetTarget<T>(this T animation, string target)
+    extension<T>(T animation)
         where T : CompositionAnimation
     {
-        animation.Target = target;
-        return animation;
-    }
-
-    private static T SetSafeTarget<T>(this T animation, string? target)
-        where T : CompositionAnimation
-    {
-        if (!string.IsNullOrEmpty(target))
+        public T SetTarget(string target)
         {
             animation.Target = target;
+            return animation;
         }
 
-        return animation;
+        private T SetSafeTarget(string? target)
+        {
+            if (!string.IsNullOrEmpty(target))
+            {
+                animation.Target = target;
+            }
+            return animation;
+        }
     }
 
     #endregion
 
     #region SetDelayTime
 
-    /// <summary>
-    /// Sets the delay time in seconds
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="animation"></param>
-    /// <param name="delayTime">Delay Time in seconds</param>
-    /// <returns></returns>
-    public static T SetDelayTime<T>(this T animation, double delayTime)
+    extension<T>(T animation)
         where T : KeyFrameAnimation
     {
-        animation.DelayTime = TimeSpan.FromSeconds(delayTime);
-        return animation;
-    }
-
-    public static T SetDelayTime<T>(this T animation, TimeSpan delayTime)
-        where T : KeyFrameAnimation
-    {
-        animation.DelayTime = delayTime;
-        return animation;
-    }
-
-    #endregion
-
-
-    #region SetDelay
-
-    /// <summary>
-    /// Sets the delay time in seconds
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="animation"></param>
-    /// <param name="delayTime">Delay Time in seconds</param>
-    /// <returns></returns>
-    public static T SetDelay<T>(this T animation, double delayTime, AnimationDelayBehavior behavior)
-        where T : KeyFrameAnimation
-    {
-        animation.DelayTime = TimeSpan.FromSeconds(delayTime);
-        animation.DelayBehavior = behavior;
-        return animation;
-    }
-
-    public static T SetDelay<T>(
-        this T animation,
-        TimeSpan delayTime,
-        AnimationDelayBehavior behavior
-    )
-        where T : KeyFrameAnimation
-    {
-        animation.DelayBehavior = behavior;
-        animation.DelayTime = delayTime;
-        return animation;
-    }
-
-    #endregion
-
-
-    #region SetDelayBehaviour
-
-    public static T SetDelayBehavior<T>(this T animation, AnimationDelayBehavior behavior)
-        where T : KeyFrameAnimation
-    {
-        animation.DelayBehavior = behavior;
-        return animation;
-    }
-
-    public static T SetInitialValueBeforeDelay<T>(this T animation)
-        where T : KeyFrameAnimation
-    {
-        animation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-        return animation;
-    }
-
-    #endregion
-
-
-    #region SetDuration
-
-    /// <summary>
-    /// Sets the duration in seconds. If less than 0 the duration is not set.
-    /// </summary>
-    /// <param name="animation"></param>
-    /// <param name="duration">Duration in seconds</param>
-    /// <returns></returns>
-    public static T SetDuration<T>(this T animation, double duration)
-        where T : KeyFrameAnimation
-    {
-        if (duration >= 0)
+        /// <summary>
+        /// Sets the delay time in seconds
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="animation"></param>
+        /// <param name="delayTime">Delay Time in seconds</param>
+        /// <returns></returns>
+        public T SetDelayTime(double delayTime)
         {
-            return SetDuration(animation, TimeSpan.FromSeconds(duration));
+            animation.DelayTime = TimeSpan.FromSeconds(delayTime);
+            return animation;
         }
-        else
+
+        public T SetDelayTime(TimeSpan delayTime)
         {
+            animation.DelayTime = delayTime;
+            return animation;
+        }
+
+    #endregion
+
+        #region SetDelay
+
+        /// <summary>
+        /// Sets the delay time in seconds
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="animation"></param>
+        /// <param name="delayTime">Delay Time in seconds</param>
+        /// <returns></returns>
+        public T SetDelay(double delayTime, AnimationDelayBehavior behavior)
+        {
+            animation.DelayTime = TimeSpan.FromSeconds(delayTime);
+            animation.DelayBehavior = behavior;
+            return animation;
+        }
+
+        public T SetDelay(TimeSpan delayTime, AnimationDelayBehavior behavior)
+        {
+            animation.DelayBehavior = behavior;
+            animation.DelayTime = delayTime;
+            return animation;
+        }
+
+        #endregion
+
+        #region SetDelayBehaviour
+
+        public T SetDelayBehavior(AnimationDelayBehavior behavior)
+        {
+            animation.DelayBehavior = behavior;
+            return animation;
+        }
+
+        public T SetInitialValueBeforeDelay()
+        {
+            animation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            return animation;
+        }
+
+        #endregion
+
+        #region SetDuration
+
+        /// <summary>
+        /// Sets the duration in seconds. If less than 0 the duration is not set.
+        /// </summary>
+        /// <param name="animation"></param>
+        /// <param name="duration">Duration in seconds</param>
+        /// <returns></returns>
+        public T SetDuration(double duration)
+        {
+            if (duration >= 0)
+            {
+                return SetDuration(animation, TimeSpan.FromSeconds(duration));
+            }
+            else
+            {
+                return animation;
+            }
+        }
+
+        public T SetDuration(TimeSpan duration)
+        {
+            animation.Duration = duration;
+            return animation;
+        }
+
+        #endregion
+
+        #region StopBehaviour
+
+        public T SetStopBehavior(AnimationStopBehavior stopBehavior)
+        {
+            animation.StopBehavior = stopBehavior;
+            return animation;
+        }
+
+        #endregion
+
+        #region Direction
+
+        public T SetDirection(AnimationDirection direction)
+        {
+            animation.Direction = direction;
+            return animation;
+        }
+
+        #endregion
+
+        #region IterationBehavior
+
+        public T SetIterationBehavior(AnimationIterationBehavior iterationBehavior)
+        {
+            animation.IterationBehavior = iterationBehavior;
             return animation;
         }
     }
 
-    public static T SetDuration<T>(this T animation, TimeSpan duration)
-        where T : KeyFrameAnimation
-    {
-        animation.Duration = duration;
-        return animation;
-    }
-
-    #endregion
-
-
-    #region StopBehaviour
-
-    public static T SetStopBehavior<T>(this T animation, AnimationStopBehavior stopBehavior)
-        where T : KeyFrameAnimation
-    {
-        animation.StopBehavior = stopBehavior;
-        return animation;
-    }
-
-    #endregion
-
-
-    #region Direction
-
-    public static T SetDirection<T>(this T animation, AnimationDirection direction)
-        where T : KeyFrameAnimation
-    {
-        animation.Direction = direction;
-        return animation;
-    }
-
-    #endregion
-
+        #endregion
 
     #region Comment
 
-    public static T SetComment<T>(this T obj, string comment)
+    extension<T>(T obj)
         where T : CompositionObject
     {
-        obj.Comment = comment;
-        return obj;
+        public T SetComment(string comment)
+        {
+            obj.Comment = comment;
+            return obj;
+        }
     }
 
     #endregion
-
-
-    #region IterationBehavior
-
-    public static T SetIterationBehavior<T>(
-        this T animation,
-        AnimationIterationBehavior iterationBehavior
-    )
-        where T : KeyFrameAnimation
-    {
-        animation.IterationBehavior = iterationBehavior;
-        return animation;
-    }
-
-    #endregion
-
 
     #region AddKeyFrame Builders
 
-    public static T SetFinalValue<T>(this T animation, Vector3 finalValue)
+    extension<T>(T animation)
         where T : Vector3NaturalMotionAnimation
     {
-        animation.FinalValue = finalValue;
-        return animation;
+        public T SetFinalValue(Vector3 finalValue)
+        {
+            animation.FinalValue = finalValue;
+            return animation;
+        }
+
+        public T SetFinalValue(float x, float y, float z)
+        {
+            animation.FinalValue = new Vector3(x, y, z);
+            return animation;
+        }
     }
 
-    public static T SetFinalValue<T>(this T animation, float x, float y, float z)
-        where T : Vector3NaturalMotionAnimation
-    {
-        animation.FinalValue = new Vector3(x, y, z);
-        return animation;
-    }
-
-    public static T AddKeyFrame<T>(
-        this T animation,
-        float normalizedProgressKey,
-        string expression,
-        KeySpline spline
-    )
+    extension<T>(T animation)
         where T : KeyFrameAnimation
     {
-        animation.InsertExpressionKeyFrame(
-            normalizedProgressKey,
-            expression,
-            animation.Compositor.CreateCubicBezierEasingFunction(spline)
-        );
-        return animation;
+        public T AddKeyFrame(float normalizedProgressKey, string expression, KeySpline spline)
+        {
+            animation.InsertExpressionKeyFrame(
+                normalizedProgressKey,
+                expression,
+                animation.Compositor.CreateCubicBezierEasingFunction(spline)
+            );
+            return animation;
+        }
+
+        public T AddKeyFrame(
+            float normalizedProgressKey,
+            string expression,
+            CubicBezierPoints spline
+        )
+        {
+            animation.InsertExpressionKeyFrame(
+                normalizedProgressKey,
+                expression,
+                animation.Compositor.CreateCubicBezierEasingFunction(spline)
+            );
+            return animation;
+        }
+
+        public T AddKeyFrame(
+            float normalizedProgressKey,
+            string expression,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertExpressionKeyFrame(normalizedProgressKey, expression, ease);
+            return animation;
+        }
     }
 
-    public static T AddKeyFrame<T>(
-        this T animation,
-        float normalizedProgressKey,
-        string expression,
-        CubicBezierPoints spline
-    )
-        where T : KeyFrameAnimation
+    extension(ScalarKeyFrameAnimation animation)
     {
-        animation.InsertExpressionKeyFrame(
-            normalizedProgressKey,
-            expression,
-            animation.Compositor.CreateCubicBezierEasingFunction(spline)
-        );
-        return animation;
+        public ScalarKeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            float value,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, value, ease);
+            return animation;
+        }
+
+        public ScalarKeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            float value,
+            KeySpline ease
+        )
+        {
+            animation.InsertKeyFrame(
+                normalizedProgressKey,
+                value,
+                animation.Compositor.CreateCubicBezierEasingFunction(ease)
+            );
+            return animation;
+        }
     }
 
-    public static T AddKeyFrame<T>(
-        this T animation,
-        float normalizedProgressKey,
-        string expression,
-        CompositionEasingFunction? ease = null
-    )
-        where T : KeyFrameAnimation
+    extension(ColorKeyFrameAnimation animation)
     {
-        animation.InsertExpressionKeyFrame(normalizedProgressKey, expression, ease);
-        return animation;
+        public ColorKeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            Color value,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, value, ease);
+            return animation;
+        }
     }
 
-    public static ScalarKeyFrameAnimation AddKeyFrame(
-        this ScalarKeyFrameAnimation animation,
-        float normalizedProgressKey,
-        float value,
-        CompositionEasingFunction? ease = null
-    )
+    extension(Vector2KeyFrameAnimation animation)
     {
-        animation.InsertKeyFrame(normalizedProgressKey, value, ease);
-        return animation;
-    }
+        public Vector2KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            Vector2 value,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, value, ease);
+            return animation;
+        }
 
-    public static ScalarKeyFrameAnimation AddKeyFrame(
-        this ScalarKeyFrameAnimation animation,
-        float normalizedProgressKey,
-        float value,
-        KeySpline ease
-    )
-    {
-        animation.InsertKeyFrame(
-            normalizedProgressKey,
-            value,
-            animation.Compositor.CreateCubicBezierEasingFunction(ease)
-        );
-        return animation;
-    }
-
-    public static ColorKeyFrameAnimation AddKeyFrame(
-        this ColorKeyFrameAnimation animation,
-        float normalizedProgressKey,
-        Color value,
-        CompositionEasingFunction? ease = null
-    )
-    {
-        animation.InsertKeyFrame(normalizedProgressKey, value, ease);
-        return animation;
-    }
-
-    public static Vector2KeyFrameAnimation AddKeyFrame(
-        this Vector2KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        Vector2 value,
-        CompositionEasingFunction? ease = null
-    )
-    {
-        animation.InsertKeyFrame(normalizedProgressKey, value, ease);
-        return animation;
-    }
-
-    public static Vector2KeyFrameAnimation AddKeyFrame(
-        this Vector2KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        Vector2 value,
-        KeySpline ease
-    )
-    {
-        animation.InsertKeyFrame(
-            normalizedProgressKey,
-            value,
-            animation.Compositor.CreateCubicBezierEasingFunction(ease)
-        );
-        return animation;
+        public Vector2KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            Vector2 value,
+            KeySpline ease
+        )
+        {
+            animation.InsertKeyFrame(
+                normalizedProgressKey,
+                value,
+                animation.Compositor.CreateCubicBezierEasingFunction(ease)
+            );
+            return animation;
+        }
     }
 
     #region Vector3
 
-    public static Vector3KeyFrameAnimation AddKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        Vector3 value,
-        CompositionEasingFunction? ease = null
-    )
+    extension(Vector3KeyFrameAnimation animation)
     {
-        animation.InsertKeyFrame(normalizedProgressKey, value, ease);
-        return animation;
-    }
+        public Vector3KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            Vector3 value,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, value, ease);
+            return animation;
+        }
 
-    public static Vector3KeyFrameAnimation AddKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        Vector3 value,
-        KeySpline ease
-    )
-    {
-        animation.InsertKeyFrame(
-            normalizedProgressKey,
-            value,
-            animation.Compositor.CreateCubicBezierEasingFunction(ease)
-        );
-        return animation;
-    }
+        public Vector3KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            Vector3 value,
+            KeySpline ease
+        )
+        {
+            animation.InsertKeyFrame(
+                normalizedProgressKey,
+                value,
+                animation.Compositor.CreateCubicBezierEasingFunction(ease)
+            );
+            return animation;
+        }
 
-    public static Vector3KeyFrameAnimation AddKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        Vector3 value,
-        CubicBezierPoints ease
-    )
-    {
-        animation.InsertKeyFrame(
-            normalizedProgressKey,
-            value,
-            animation.Compositor.CreateCubicBezierEasingFunction(ease)
-        );
-        return animation;
-    }
+        public Vector3KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            Vector3 value,
+            CubicBezierPoints ease
+        )
+        {
+            animation.InsertKeyFrame(
+                normalizedProgressKey,
+                value,
+                animation.Compositor.CreateCubicBezierEasingFunction(ease)
+            );
+            return animation;
+        }
 
-    /// <summary>
-    /// Adds a Vector3KeyFrame where the X & Y components are set to the input value and the Z component defaults to 0f.
-    /// </summary>
-    /// <param name="animation"></param>
-    /// <param name="normalizedProgressKey"></param>
-    /// <param name="value"></param>
-    /// <param name="ease"></param>
-    /// <returns></returns>
-    public static Vector3KeyFrameAnimation AddKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        float value,
-        CompositionEasingFunction? ease = null
-    )
-    {
-        animation.InsertKeyFrame(normalizedProgressKey, new Vector3(value, value, 0f), ease);
-        return animation;
-    }
+        /// <summary>
+        /// Adds a Vector3KeyFrame where the X & Y components are set to the input value and the Z component defaults to 0f.
+        /// </summary>
+        /// <param name="animation"></param>
+        /// <param name="normalizedProgressKey"></param>
+        /// <param name="value"></param>
+        /// <param name="ease"></param>
+        /// <returns></returns>
+        public Vector3KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            float value,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, new Vector3(value, value, 0f), ease);
+            return animation;
+        }
 
-    public static Vector3KeyFrameAnimation AddKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        float value,
-        KeySpline ease
-    )
-    {
-        animation.InsertKeyFrame(
-            normalizedProgressKey,
-            new Vector3(value, value, 0f),
-            animation.Compositor.CreateCubicBezierEasingFunction(ease)
-        );
-        return animation;
-    }
+        public Vector3KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            float value,
+            KeySpline ease
+        )
+        {
+            animation.InsertKeyFrame(
+                normalizedProgressKey,
+                new Vector3(value, value, 0f),
+                animation.Compositor.CreateCubicBezierEasingFunction(ease)
+            );
+            return animation;
+        }
 
-    /// <summary>
-    /// Adds a Vector3KeyFrame where the X & Y components are set to the input value and the Z component defaults to 1f.
-    /// </summary>
-    /// <param name="animation"></param>
-    /// <param name="normalizedProgressKey"></param>
-    /// <param name="value"></param>
-    /// <param name="ease"></param>
-    /// <returns></returns>
-    public static Vector3KeyFrameAnimation AddScaleKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        float value,
-        CompositionEasingFunction? ease = null
-    )
-    {
-        animation.InsertKeyFrame(normalizedProgressKey, new Vector3(value, value, 1f), ease);
-        return animation;
-    }
+        /// <summary>
+        /// Adds a Vector3KeyFrame where the X & Y components are set to the input value and the Z component defaults to 1f.
+        /// </summary>
+        /// <param name="animation"></param>
+        /// <param name="normalizedProgressKey"></param>
+        /// <param name="value"></param>
+        /// <param name="ease"></param>
+        /// <returns></returns>
+        public Vector3KeyFrameAnimation AddScaleKeyFrame(
+            float normalizedProgressKey,
+            float value,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, new Vector3(value, value, 1f), ease);
+            return animation;
+        }
 
-    /// <summary>
-    /// Adds a Vector3KeyFrame where the X & Y components are set to the input value and the Z component defaults to 1f.
-    /// </summary>
-    /// <param name="animation"></param>
-    /// <param name="normalizedProgressKey"></param>
-    /// <param name="value"></param>
-    /// <param name="ease"></param>
-    /// <returns></returns>
-    public static Vector3KeyFrameAnimation AddScaleKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        float value,
-        KeySpline ease
-    )
-    {
-        animation.InsertKeyFrame(
-            normalizedProgressKey,
-            new Vector3(value, value, 1f),
-            animation.Compositor.CreateCubicBezierEasingFunction(ease)
-        );
-        return animation;
-    }
+        /// <summary>
+        /// Adds a Vector3KeyFrame where the X & Y components are set to the input value and the Z component defaults to 1f.
+        /// </summary>
+        /// <param name="animation"></param>
+        /// <param name="normalizedProgressKey"></param>
+        /// <param name="value"></param>
+        /// <param name="ease"></param>
+        /// <returns></returns>
+        public Vector3KeyFrameAnimation AddScaleKeyFrame(
+            float normalizedProgressKey,
+            float value,
+            KeySpline ease
+        )
+        {
+            animation.InsertKeyFrame(
+                normalizedProgressKey,
+                new Vector3(value, value, 1f),
+                animation.Compositor.CreateCubicBezierEasingFunction(ease)
+            );
+            return animation;
+        }
 
-    /// <summary>
-    /// Adds a Vector3KeyFrame using the X & Y components. The Z component defaults to 0f.
-    /// </summary>
-    /// <param name="animation"></param>
-    /// <param name="normalizedProgressKey"></param>
-    /// <param name="x">X Component of the Vector3</param>
-    /// <param name="y">Y Component of the Vector3</param>
-    /// <param name="ease">Optional ease</param>
-    /// <returns></returns>
-    public static Vector3KeyFrameAnimation AddKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        float x,
-        float y,
-        CompositionEasingFunction? ease = null
-    )
-    {
-        animation.InsertKeyFrame(normalizedProgressKey, new Vector3(x, y, 0f), ease);
-        return animation;
-    }
+        /// <summary>
+        /// Adds a Vector3KeyFrame using the X & Y components. The Z component defaults to 0f.
+        /// </summary>
+        /// <param name="animation"></param>
+        /// <param name="normalizedProgressKey"></param>
+        /// <param name="x">X Component of the Vector3</param>
+        /// <param name="y">Y Component of the Vector3</param>
+        /// <param name="ease">Optional ease</param>
+        /// <returns></returns>
+        public Vector3KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            float x,
+            float y,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, new Vector3(x, y, 0f), ease);
+            return animation;
+        }
 
-    public static Vector3KeyFrameAnimation AddKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        float x,
-        float y,
-        KeySpline ease
-    )
-    {
-        animation.InsertKeyFrame(
-            normalizedProgressKey,
-            new Vector3(x, y, 0f),
-            animation.Compositor.CreateCubicBezierEasingFunction(ease)
-        );
-        return animation;
-    }
+        public Vector3KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            float x,
+            float y,
+            KeySpline ease
+        )
+        {
+            animation.InsertKeyFrame(
+                normalizedProgressKey,
+                new Vector3(x, y, 0f),
+                animation.Compositor.CreateCubicBezierEasingFunction(ease)
+            );
+            return animation;
+        }
 
-    /// <summary>
-    /// Adds a Vector3KeyFrame with X Y & Z components.
-    /// </summary>
-    /// <param name="animation"></param>
-    /// <param name="normalizedProgressKey"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="z"></param>
-    /// <param name="ease"></param>
-    /// <returns></returns>
-    public static Vector3KeyFrameAnimation AddKeyFrame(
-        this Vector3KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        float x,
-        float y,
-        float z,
-        CompositionEasingFunction? ease = null
-    )
-    {
-        animation.InsertKeyFrame(normalizedProgressKey, new Vector3(x, y, z), ease);
-        return animation;
+        /// <summary>
+        /// Adds a Vector3KeyFrame with X Y & Z components.
+        /// </summary>
+        /// <param name="animation"></param>
+        /// <param name="normalizedProgressKey"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="ease"></param>
+        /// <returns></returns>
+        public Vector3KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            float x,
+            float y,
+            float z,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, new Vector3(x, y, z), ease);
+            return animation;
+        }
     }
 
     #endregion
 
-    public static Vector4KeyFrameAnimation AddKeyFrame(
-        this Vector4KeyFrameAnimation animation,
-        float normalizedProgressKey,
-        Vector4 value,
-        CompositionEasingFunction? ease = null
-    )
+    extension(Vector4KeyFrameAnimation animation)
     {
-        animation.InsertKeyFrame(normalizedProgressKey, value, ease);
-        return animation;
+        public Vector4KeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            Vector4 value,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, value, ease);
+            return animation;
+        }
     }
 
-    public static QuaternionKeyFrameAnimation AddKeyFrame(
-        this QuaternionKeyFrameAnimation animation,
-        float normalizedProgressKey,
-        Quaternion value,
-        CompositionEasingFunction? ease = null
-    )
+    extension(QuaternionKeyFrameAnimation animation)
     {
-        animation.InsertKeyFrame(normalizedProgressKey, value, ease);
-        return animation;
-    }
+        public QuaternionKeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            Quaternion value,
+            CompositionEasingFunction? ease = null
+        )
+        {
+            animation.InsertKeyFrame(normalizedProgressKey, value, ease);
+            return animation;
+        }
 
-    public static QuaternionKeyFrameAnimation AddKeyFrame(
-        this QuaternionKeyFrameAnimation animation,
-        float normalizedProgressKey,
-        Quaternion value,
-        KeySpline ease
-    )
-    {
-        animation.InsertKeyFrame(
-            normalizedProgressKey,
-            value,
-            animation.Compositor.CreateCubicBezierEasingFunction(ease)
-        );
-        return animation;
+        public QuaternionKeyFrameAnimation AddKeyFrame(
+            float normalizedProgressKey,
+            Quaternion value,
+            KeySpline ease
+        )
+        {
+            animation.InsertKeyFrame(
+                normalizedProgressKey,
+                value,
+                animation.Compositor.CreateCubicBezierEasingFunction(ease)
+            );
+            return animation;
+        }
     }
 
     #endregion
-
 
     #region Compositor Create Builders
 
@@ -790,445 +783,380 @@ public static class Composition
         return animation;
     }
 
-    public static SpringVector3NaturalMotionAnimation CreateSpringVector3Animation(
-        this CompositionObject visual,
-        string? targetProperty = null
-    )
+    extension(CompositionObject visual)
     {
-        return TryAddGroup(
-            visual,
-            visual.Compositor.CreateSpringVector3Animation().SetSafeTarget(targetProperty)
-        );
-    }
-
-    public static ColorKeyFrameAnimation CreateColorKeyFrameAnimation(
-        this CompositionObject visual,
-        string? targetProperty = null
-    )
-    {
-        return TryAddGroup(
-            visual,
-            visual.Compositor.CreateColorKeyFrameAnimation().SetSafeTarget(targetProperty)
-        );
-    }
-
-    public static ScalarKeyFrameAnimation CreateScalarKeyFrameAnimation(
-        this CompositionObject visual,
-        string? targetProperty = null
-    )
-    {
-        return TryAddGroup(
-            visual,
-            visual.Compositor.CreateScalarKeyFrameAnimation().SetSafeTarget(targetProperty)
-        );
-    }
-
-    public static Vector2KeyFrameAnimation CreateVector2KeyFrameAnimation(
-        this CompositionObject visual,
-        string? targetProperty = null
-    )
-    {
-        return TryAddGroup(
-            visual,
-            visual.Compositor.CreateVector2KeyFrameAnimation().SetSafeTarget(targetProperty)
-        );
-    }
-
-    public static Vector3KeyFrameAnimation CreateVector3KeyFrameAnimation(
-        this CompositionObject visual,
-        string? targetProperty = null
-    )
-    {
-        return TryAddGroup(
-            visual,
-            visual.Compositor.CreateVector3KeyFrameAnimation().SetSafeTarget(targetProperty)
-        );
-    }
-
-    public static Vector4KeyFrameAnimation CreateVector4KeyFrameAnimation(
-        this CompositionObject visual,
-        string? targetProperty = null
-    )
-    {
-        return TryAddGroup(
-            visual,
-            visual.Compositor.CreateVector4KeyFrameAnimation().SetSafeTarget(targetProperty)
-        );
-    }
-
-    public static QuaternionKeyFrameAnimation CreateQuaternionKeyFrameAnimation(
-        this CompositionObject visual,
-        string? targetProperty = null
-    )
-    {
-        return TryAddGroup(
-            visual,
-            visual.Compositor.CreateQuaternionKeyFrameAnimation().SetSafeTarget(targetProperty)
-        );
-    }
-
-    public static ExpressionAnimation CreateExpressionAnimation(this CompositionObject visual)
-    {
-        return TryAddGroup(visual, visual.Compositor.CreateExpressionAnimation());
-    }
-
-    public static ExpressionAnimation CreateExpressionAnimation(
-        this CompositionObject visual,
-        string targetProperty
-    )
-    {
-        return TryAddGroup(
-            visual,
-            visual.Compositor.CreateExpressionAnimation().SetTarget(targetProperty)
-        );
-    }
-
-    public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(
-        this Compositor compositor,
-        float x1,
-        float y1,
-        float x2,
-        float y2
-    )
-    {
-        return compositor.CreateCubicBezierEasingFunction(new Vector2(x1, y1), new Vector2(x2, y2));
-    }
-
-    public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(
-        this Compositor compositor,
-        KeySpline spline
-    )
-    {
-        return compositor.CreateCubicBezierEasingFunction(
-            spline.ControlPoint1.ToVector2(),
-            spline.ControlPoint2.ToVector2()
-        );
-    }
-
-    public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(
-        this Compositor compositor,
-        CubicBezierPoints points
-    )
-    {
-        return compositor.CreateCubicBezierEasingFunction(points.Start, points.End);
-    }
-
-    #endregion
-
-
-    #region SetExpression
-
-    public static ExpressionAnimation SetExpression(
-        this ExpressionAnimation animation,
-        string expression
-    )
-    {
-        animation.Expression = expression;
-        return animation;
-    }
-
-    #endregion
-
-
-    #region SetParameter Builders
-
-    public static T SetParameter<T>(this T animation, string key, UIElement parameter)
-        where T : CompositionAnimation
-    {
-        if (parameter is not null)
+        public SpringVector3NaturalMotionAnimation CreateSpringVector3Animation(
+            string? targetProperty = null
+        )
         {
-            animation.SetReferenceParameter(key, GetElementVisual(parameter));
-        }
-
-        return animation;
-    }
-
-    public static T SetParameter<T>(this T animation, string key, CompositionObject parameter)
-        where T : CompositionAnimation
-    {
-        animation.SetReferenceParameter(key, parameter);
-        return animation;
-    }
-
-    public static T SetParameter<T>(this T animation, string key, float parameter)
-        where T : CompositionAnimation
-    {
-        animation.SetScalarParameter(key, parameter);
-        return animation;
-    }
-
-    public static T SetParameter<T>(this T animation, string key, double parameter)
-        where T : CompositionAnimation
-    {
-        animation.SetScalarParameter(key, (float)parameter);
-        return animation;
-    }
-
-    public static T SetParameter<T>(this T animation, string key, Vector2 parameter)
-        where T : CompositionAnimation
-    {
-        animation.SetVector2Parameter(key, parameter);
-        return animation;
-    }
-
-    public static T SetParameter<T>(this T animation, string key, Vector3 parameter)
-        where T : CompositionAnimation
-    {
-        animation.SetVector3Parameter(key, parameter);
-        return animation;
-    }
-
-    public static T SetParameter<T>(this T animation, string key, Vector4 parameter)
-        where T : CompositionAnimation
-    {
-        animation.SetVector4Parameter(key, parameter);
-        return animation;
-    }
-
-    #endregion
-
-
-    #region PropertySet Builders
-
-    public static CompositionPropertySet Insert(
-        this CompositionPropertySet set,
-        string name,
-        float value
-    )
-    {
-        set.InsertScalar(name, value);
-        return set;
-    }
-
-    public static CompositionPropertySet Insert(
-        this CompositionPropertySet set,
-        string name,
-        bool value
-    )
-    {
-        set.InsertBoolean(name, value);
-        return set;
-    }
-
-    public static CompositionPropertySet Insert(
-        this CompositionPropertySet set,
-        string name,
-        Vector2 value
-    )
-    {
-        set.InsertVector2(name, value);
-        return set;
-    }
-
-    public static CompositionPropertySet Insert(
-        this CompositionPropertySet set,
-        string name,
-        Vector3 value
-    )
-    {
-        set.InsertVector3(name, value);
-        return set;
-    }
-
-    public static CompositionPropertySet Insert(
-        this CompositionPropertySet set,
-        string name,
-        Vector4 value
-    )
-    {
-        set.InsertVector4(name, value);
-        return set;
-    }
-
-    public static CompositionPropertySet Insert(
-        this CompositionPropertySet set,
-        string name,
-        Color value
-    )
-    {
-        set.InsertColor(name, value);
-        return set;
-    }
-
-    public static CompositionPropertySet Insert(
-        this CompositionPropertySet set,
-        string name,
-        Matrix3x2 value
-    )
-    {
-        set.InsertMatrix3x2(name, value);
-        return set;
-    }
-
-    public static CompositionPropertySet Insert(
-        this CompositionPropertySet set,
-        string name,
-        Matrix4x4 value
-    )
-    {
-        set.InsertMatrix4x4(name, value);
-        return set;
-    }
-
-    public static CompositionPropertySet Insert(
-        this CompositionPropertySet set,
-        string name,
-        Quaternion value
-    )
-    {
-        set.InsertQuaternion(name, value);
-        return set;
-    }
-
-    #endregion
-
-
-    #region Animation Start / Stop
-
-    public static void StartAnimation(
-        this CompositionObject compositionObject,
-        CompositionAnimation animation
-    )
-    {
-        if (string.IsNullOrWhiteSpace(animation.Target))
-        {
-            throw new ArgumentNullException("Animation has no target");
-        }
-
-        compositionObject.StartAnimation(animation.Target, animation);
-    }
-
-    public static void StartAnimation(
-        this CompositionObject compositionObject,
-        CompositionAnimationGroup animation
-    )
-    {
-        compositionObject.StartAnimationGroup(animation);
-    }
-
-    public static void StopAnimation(
-        this CompositionObject compositionObject,
-        CompositionAnimation animation
-    )
-    {
-        if (string.IsNullOrWhiteSpace(animation.Target))
-        {
-            throw new ArgumentNullException("Animation has no target");
-        }
-
-        compositionObject.StopAnimation(animation.Target);
-    }
-
-    #endregion
-
-
-    #region Brushes
-
-    public static CompositionGradientBrush AsCompositionBrush(
-        this LinearGradientBrush brush,
-        Compositor compositor
-    )
-    {
-        var compBrush = compositor.CreateLinearGradientBrush();
-
-        foreach (var stop in brush.GradientStops)
-        {
-            compBrush.ColorStops.Add(
-                compositor.CreateColorGradientStop((float)stop.Offset, stop.Color)
+            return TryAddGroup(
+                visual,
+                visual.Compositor.CreateSpringVector3Animation().SetSafeTarget(targetProperty)
             );
         }
 
-        // todo : try and copy transforms?
+        public ColorKeyFrameAnimation CreateColorKeyFrameAnimation(string? targetProperty = null)
+        {
+            return TryAddGroup(
+                visual,
+                visual.Compositor.CreateColorKeyFrameAnimation().SetSafeTarget(targetProperty)
+            );
+        }
 
-        return compBrush;
+        public ScalarKeyFrameAnimation CreateScalarKeyFrameAnimation(string? targetProperty = null)
+        {
+            return TryAddGroup(
+                visual,
+                visual.Compositor.CreateScalarKeyFrameAnimation().SetSafeTarget(targetProperty)
+            );
+        }
+
+        public Vector2KeyFrameAnimation CreateVector2KeyFrameAnimation(
+            string? targetProperty = null
+        )
+        {
+            return TryAddGroup(
+                visual,
+                visual.Compositor.CreateVector2KeyFrameAnimation().SetSafeTarget(targetProperty)
+            );
+        }
+
+        public Vector3KeyFrameAnimation CreateVector3KeyFrameAnimation(
+            string? targetProperty = null
+        )
+        {
+            return TryAddGroup(
+                visual,
+                visual.Compositor.CreateVector3KeyFrameAnimation().SetSafeTarget(targetProperty)
+            );
+        }
+
+        public Vector4KeyFrameAnimation CreateVector4KeyFrameAnimation(
+            string? targetProperty = null
+        )
+        {
+            return TryAddGroup(
+                visual,
+                visual.Compositor.CreateVector4KeyFrameAnimation().SetSafeTarget(targetProperty)
+            );
+        }
+
+        public QuaternionKeyFrameAnimation CreateQuaternionKeyFrameAnimation(
+            string? targetProperty = null
+        )
+        {
+            return TryAddGroup(
+                visual,
+                visual.Compositor.CreateQuaternionKeyFrameAnimation().SetSafeTarget(targetProperty)
+            );
+        }
+
+        public ExpressionAnimation CreateExpressionAnimation()
+        {
+            return TryAddGroup(visual, visual.Compositor.CreateExpressionAnimation());
+        }
+
+        public ExpressionAnimation CreateExpressionAnimation(string targetProperty)
+        {
+            return TryAddGroup(
+                visual,
+                visual.Compositor.CreateExpressionAnimation().SetTarget(targetProperty)
+            );
+        }
+    }
+
+    extension(Compositor compositor)
+    {
+        public CubicBezierEasingFunction CreateCubicBezierEasingFunction(
+            float x1,
+            float y1,
+            float x2,
+            float y2
+        )
+        {
+            return compositor.CreateCubicBezierEasingFunction(
+                new Vector2(x1, y1),
+                new Vector2(x2, y2)
+            );
+        }
+
+        public CubicBezierEasingFunction CreateCubicBezierEasingFunction(KeySpline spline)
+        {
+            return compositor.CreateCubicBezierEasingFunction(
+                spline.ControlPoint1.ToVector2(),
+                spline.ControlPoint2.ToVector2()
+            );
+        }
+
+        public CubicBezierEasingFunction CreateCubicBezierEasingFunction(CubicBezierPoints points)
+        {
+            return compositor.CreateCubicBezierEasingFunction(points.Start, points.End);
+        }
     }
 
     #endregion
 
+    #region SetExpression
+
+    extension(ExpressionAnimation animation)
+    {
+        public ExpressionAnimation SetExpression(string expression)
+        {
+            animation.Expression = expression;
+            return animation;
+        }
+    }
+
+    #endregion
+
+    #region SetParameter Builders
+
+    extension<T>(T animation)
+        where T : CompositionAnimation
+    {
+        public T SetParameter(string key, UIElement parameter)
+        {
+            if (parameter is not null)
+            {
+                animation.SetReferenceParameter(key, GetElementVisual(parameter));
+            }
+
+            return animation;
+        }
+
+        public T SetParameter(string key, CompositionObject parameter)
+        {
+            animation.SetReferenceParameter(key, parameter);
+            return animation;
+        }
+
+        public T SetParameter(string key, float parameter)
+        {
+            animation.SetScalarParameter(key, parameter);
+            return animation;
+        }
+
+        public T SetParameter(string key, double parameter)
+        {
+            animation.SetScalarParameter(key, (float)parameter);
+            return animation;
+        }
+
+        public T SetParameter(string key, Vector2 parameter)
+        {
+            animation.SetVector2Parameter(key, parameter);
+            return animation;
+        }
+
+        public T SetParameter(string key, Vector3 parameter)
+        {
+            animation.SetVector3Parameter(key, parameter);
+            return animation;
+        }
+
+        public T SetParameter(string key, Vector4 parameter)
+        {
+            animation.SetVector4Parameter(key, parameter);
+            return animation;
+        }
+    }
+
+    #endregion
+
+    #region PropertySet Builders
+
+    extension(CompositionPropertySet set)
+    {
+        public CompositionPropertySet Insert(string name, float value)
+        {
+            set.InsertScalar(name, value);
+            return set;
+        }
+
+        public CompositionPropertySet Insert(string name, bool value)
+        {
+            set.InsertBoolean(name, value);
+            return set;
+        }
+
+        public CompositionPropertySet Insert(string name, Vector2 value)
+        {
+            set.InsertVector2(name, value);
+            return set;
+        }
+
+        public CompositionPropertySet Insert(string name, Vector3 value)
+        {
+            set.InsertVector3(name, value);
+            return set;
+        }
+
+        public CompositionPropertySet Insert(string name, Vector4 value)
+        {
+            set.InsertVector4(name, value);
+            return set;
+        }
+
+        public CompositionPropertySet Insert(string name, Color value)
+        {
+            set.InsertColor(name, value);
+            return set;
+        }
+
+        public CompositionPropertySet Insert(string name, Matrix3x2 value)
+        {
+            set.InsertMatrix3x2(name, value);
+            return set;
+        }
+
+        public CompositionPropertySet Insert(string name, Matrix4x4 value)
+        {
+            set.InsertMatrix4x4(name, value);
+            return set;
+        }
+
+        public CompositionPropertySet Insert(string name, Quaternion value)
+        {
+            set.InsertQuaternion(name, value);
+            return set;
+        }
+    }
+
+    #endregion
+
+    #region Animation Start / Stop
+
+    extension(CompositionObject compositionObject)
+    {
+        public void StartAnimation(CompositionAnimation animation)
+        {
+            if (string.IsNullOrWhiteSpace(animation.Target))
+            {
+                throw new ArgumentNullException("Animation has no target");
+            }
+
+            compositionObject.StartAnimation(animation.Target, animation);
+        }
+
+        public void StartAnimation(CompositionAnimationGroup animation)
+        {
+            compositionObject.StartAnimationGroup(animation);
+        }
+
+        public void StopAnimation(CompositionAnimation animation)
+        {
+            if (string.IsNullOrWhiteSpace(animation.Target))
+            {
+                throw new ArgumentNullException("Animation has no target");
+            }
+
+            compositionObject.StopAnimation(animation.Target);
+        }
+    }
+
+    #endregion
+
+    #region Brushes
+
+    extension(LinearGradientBrush brush)
+    {
+        public CompositionGradientBrush AsCompositionBrush(Compositor compositor)
+        {
+            var compBrush = compositor.CreateLinearGradientBrush();
+
+            foreach (var stop in brush.GradientStops)
+            {
+                compBrush.ColorStops.Add(
+                    compositor.CreateColorGradientStop((float)stop.Offset, stop.Color)
+                );
+            }
+
+            // todo : try and copy transforms?
+
+            return compBrush;
+        }
+    }
+
+    #endregion
 
     #region Extras
 
-    public static CubicBezierEasingFunction CreateEase(
-        this Compositor c,
-        float x1,
-        float y1,
-        float x2,
-        float y2
-    )
+    extension(Compositor c)
     {
-        return c.CreateCubicBezierEasingFunction(new(x1, y1), new(x2, y2));
-    }
-
-    public static CubicBezierEasingFunction CreateEntranceEasingFunction(this Compositor c)
-    {
-        return c.CreateCubicBezierEasingFunction(new(.1f, .9f), new(.2f, 1));
-    }
-
-    public static CubicBezierEasingFunction CreateFluentEntranceEasingFunction(this Compositor c)
-    {
-        return c.CreateCubicBezierEasingFunction(new(0f, 0f), new(0f, 1));
-    }
-
-    public static CompositionAnimationGroup CreateAnimationGroup(
-        this Compositor c,
-        params CompositionAnimation[] animations
-    )
-    {
-        var group = c.CreateAnimationGroup();
-        foreach (var a in animations)
+        public CubicBezierEasingFunction CreateEase(float x1, float y1, float x2, float y2)
         {
-            group.Add(a);
+            return c.CreateCubicBezierEasingFunction(new(x1, y1), new(x2, y2));
         }
 
-        return group;
-    }
-
-    public static bool HasImplicitAnimation<T>(this T c, string path)
-        where T : CompositionObject
-    {
-        return c.ImplicitAnimations is not null
-            && c.ImplicitAnimations.TryGetValue(path, out var v)
-            && v is not null;
-    }
-
-    public static T SetImplicitAnimation<T>(
-        this T composition,
-        string path,
-        ICompositionAnimationBase? animation = null
-    )
-        where T : CompositionObject
-    {
-        if (composition.ImplicitAnimations is null)
+        public CubicBezierEasingFunction CreateEntranceEasingFunction()
         {
-            if (animation is null)
+            return c.CreateCubicBezierEasingFunction(new(.1f, .9f), new(.2f, 1));
+        }
+
+        public CubicBezierEasingFunction CreateFluentEntranceEasingFunction()
+        {
+            return c.CreateCubicBezierEasingFunction(new(0f, 0f), new(0f, 1));
+        }
+
+        public CompositionAnimationGroup CreateAnimationGroup(
+            params CompositionAnimation[] animations
+        )
+        {
+            var group = c.CreateAnimationGroup();
+            foreach (var a in animations)
             {
-                return composition;
+                group.Add(a);
             }
 
-            composition.ImplicitAnimations =
-                composition.Compositor.CreateImplicitAnimationCollection();
+            return group;
         }
-
-        if (animation is null)
-        {
-            composition.ImplicitAnimations.Remove(path);
-        }
-        else
-        {
-            composition.ImplicitAnimations[path] = animation;
-        }
-
-        return composition;
     }
 
-    public static FrameworkElement SetImplicitAnimation(
-        this FrameworkElement element,
-        string path,
-        ICompositionAnimationBase? animation = null
-    )
+    extension<T>(T c)
+        where T : CompositionObject
     {
-        SetImplicitAnimation(GetElementVisual(element)!, path, animation);
-        return element;
+        public bool HasImplicitAnimation(string path)
+        {
+            return c.ImplicitAnimations is not null
+                && c.ImplicitAnimations.TryGetValue(path, out var v)
+                && v is not null;
+        }
+
+        public T SetImplicitAnimation(string path, ICompositionAnimationBase? animation = null)
+        {
+            if (c.ImplicitAnimations is null)
+            {
+                if (animation is null)
+                {
+                    return c;
+                }
+
+                c.ImplicitAnimations = c.Compositor.CreateImplicitAnimationCollection();
+            }
+
+            if (animation is null)
+            {
+                c.ImplicitAnimations.Remove(path);
+            }
+            else
+            {
+                c.ImplicitAnimations[path] = animation;
+            }
+
+            return c;
+        }
+    }
+
+    extension(FrameworkElement element)
+    {
+        public FrameworkElement SetImplicitAnimation(
+            string path,
+            ICompositionAnimationBase? animation = null
+        )
+        {
+            SetImplicitAnimation(GetElementVisual(element)!, path, animation);
+            return element;
+        }
     }
 
     #endregion

@@ -5,12 +5,14 @@
                              Opacity="0.8"
                              Color="#FDFEFE"/>
             <SolidColorBrush x:Key="RequiredBrush" Color="#c50500"/>
+            <SolidColorBrush x:Key="PlayButtonDisabledBrush" Color="#eaeaea"/>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="AlternateBackgroundBrush"
                              Opacity="0.8"
                              Color="#323232"/>
             <SolidColorBrush x:Key="RequiredBrush" Color="#fff000"/>
+            <SolidColorBrush x:Key="PlayButtonDisabledBrush" Color="#7b7b7b"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

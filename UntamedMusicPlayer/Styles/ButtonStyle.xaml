@@ -82,7 +82,7 @@
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
                                         <Setter Target="Ellipse.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}"/>
-                                        <Setter Target="Ellipse.BorderBrush" Value="{ThemeResource AccentTextFillColorTertiaryBrush}"/>
+                                        <Setter Target="Ellipse.BorderBrush" Value="{ThemeResource PlayButtonDisabledBrush}"/>
                                         <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}"/>
                                     </VisualState.Setters>
                                 </VisualState>

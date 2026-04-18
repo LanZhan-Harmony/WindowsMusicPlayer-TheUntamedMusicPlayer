@@ -76,7 +76,6 @@ public static class CompositionNaturalMotion
 
         #endregion
 
-
         #region SetPeriod
 
         public SpringVector3NaturalMotionAnimation SetPeriod(double duration)
@@ -111,7 +110,6 @@ public static class CompositionNaturalMotion
         }
 
         #endregion
-
 
         #region SetFinalValue
 
