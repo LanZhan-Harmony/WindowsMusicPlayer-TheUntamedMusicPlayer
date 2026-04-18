@@ -175,7 +175,7 @@ public sealed class CloudSongSearchHelper
 
     public static async Task<List<BriefCloudOnlineSongInfo>> SearchSongsByIDsAsync(long[] IDs)
     {
-        if (IDs == null || IDs.Length == 0)
+        if (IDs is null || IDs.Length == 0)
         {
             return [];
         }
@@ -213,7 +213,7 @@ public sealed class CloudSongSearchHelper
                 continue;
             }
 
-            if (!detailsMap.TryGetValue(songId, out var trackElement) || trackElement == null)
+            if (!detailsMap.TryGetValue(songId, out var trackElement) || trackElement is null)
             {
                 continue;
             }

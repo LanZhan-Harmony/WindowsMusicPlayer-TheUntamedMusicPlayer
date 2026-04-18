@@ -1,7 +1,7 @@
 <Page x:Class="UntamedMusicPlayer.Views.HomePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+      xmlns:controls="using:UntamedMusicPlayer.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,6 +9,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
+        <Style BasedOn="{StaticResource RadioButtonsBaseButtonStyle}" TargetType="RadioButton"/>
         <DataTemplate x:Key="SuggestResultTemplate" x:DataType="model:SuggestResult">
             <Grid AutomationProperties.Name="{x:Bind Label}" ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
@@ -33,7 +34,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
@@ -138,68 +138,22 @@
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Disabled"
                       VerticalScrollMode="Disabled">
-            <controls:Segmented SelectedIndex="{x:Bind ViewModel.MusicLibraryIndex, Mode=OneWay}"
-                                SelectionChanged="{x:Bind ViewModel.Segmented_SelectionChanged}"
-                                SelectionMode="Single">
-                <controls:SegmentedItem>
-                    <TextBlock x:Uid="Home_MusicLibrary1"
-                               Width="90"
-                               HorizontalTextAlignment="Center"/>
-                </controls:SegmentedItem>
-                <controls:SegmentedItem>
-                    <TextBlock x:Uid="Home_MusicLibrary2"/>
-                </controls:SegmentedItem>
-                <controls:SegmentedItem>
-                    <TextBlock x:Uid="Home_MusicLibrary3"/>
-                </controls:SegmentedItem>
-                <controls:SegmentedItem>
-                    <TextBlock x:Uid="Home_MusicLibrary4"/>
-                </controls:SegmentedItem>
-                <controls:SegmentedItem>
-                    <TextBlock x:Uid="Home_MusicLibrary5"/>
-                </controls:SegmentedItem>
-                <controls:SegmentedItem>
-                    <TextBlock x:Uid="Home_MusicLibrary6"/>
-                </controls:SegmentedItem>
-            </controls:Segmented>
+            <controls:UXRadioButtons MaxColumns="6"
+                                     SelectedIndex="{x:Bind ViewModel.MusicLibraryIndex, Mode=OneWay}"
+                                     SelectionChanged="{x:Bind ViewModel.MusicLibraryIndex_SelectionChanged}">
+                <controls:UXRadioButtons.Items>
+                    <RadioButton x:Uid="Home_MusicLibrary1"/>
+                    <RadioButton x:Uid="Home_MusicLibrary2"/>
+                    <RadioButton x:Uid="Home_MusicLibrary3"/>
+                    <RadioButton x:Uid="Home_MusicLibrary4"/>
+                    <RadioButton x:Uid="Home_MusicLibrary5"/>
+                    <RadioButton x:Uid="Home_MusicLibrary6"/>
+                </controls:UXRadioButtons.Items>
+            </controls:UXRadioButtons>
         </ScrollViewer>
-        <TextBlock x:Name="KeyWordsTextBlock"
-                   Grid.Row="2"
-                   TextTrimming="WordEllipsis"
-                   Visibility="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsTextBlockVisibility, Mode=OneWay}">
-            <Run FontSize="30" FontWeight="Bold"
-                 Text="{x:Bind model:Data.OnlineMusicLibrary.SearchKeyWords, Mode=OneWay}"/>
-            <Run x:Uid="Home_SearchResult" FontSize="20"/>
-        </TextBlock>
-        <ProgressRing Grid.Row="2" Grid.RowSpan="2"
-                      Width="50" Height="50"
-                      Margin="0,24,0,0"
-                      Canvas.ZIndex="1"
-                      IsActive="{x:Bind model:Data.OnlineMusicLibrary.IsSearchProgressRingActive, Mode=OneWay}"/>
-        <StackPanel x:Name="NetworkErrorStackPanel"
-                    Grid.Row="2" Grid.RowSpan="2"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Canvas.ZIndex="1" Orientation="Horizontal"
-                    Visibility="{x:Bind model:Data.OnlineMusicLibrary.NetworkErrorVisibility, Mode=OneWay}">
-            <FontIcon x:Name="NetworkErrorFontIcon"
-                      FontFamily="{StaticResource UntamedFontFamily}"
-                      Glyph="&#xEB56;"/>
-            <StackPanel VerticalAlignment="Center" Spacing="8">
-                <TextBlock x:Uid="Home_ServerError"
-                           FontSize="29" FontWeight="SemiBold"/>
-                <TextBlock x:Uid="Home_UnableToAccess" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                <Button Click="{x:Bind model:Data.OnlineMusicLibrary.RetryButton_Click}" Style="{StaticResource AccentButtonStyle}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                                  FontSize="12" Glyph="&#xE72C;"/>
-                        <TextBlock x:Uid="Home_Retry"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </StackPanel>
+
         <StackPanel x:Name="LibraryNotOpenStackPanel"
-                    Grid.Row="2" Grid.RowSpan="2"
+                    Grid.Row="2"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Canvas.ZIndex="1" Orientation="Horizontal"
@@ -211,6 +165,48 @@
                        VerticalAlignment="Center"
                        FontSize="29" FontWeight="SemiBold"/>
         </StackPanel>
-        <Frame x:Name="SelectFrame" Grid.Row="3"/>
+
+        <Grid Grid.Row="2" Visibility="{x:Bind ViewModel.MainGridVisibility, Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="KeyWordsTextBlock"
+                       Grid.Row="0"
+                       TextTrimming="WordEllipsis"
+                       Visibility="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsTextBlockVisibility, Mode=OneWay}">
+                <Run FontSize="30" FontWeight="Bold"
+                     Text="{x:Bind model:Data.OnlineMusicLibrary.SearchKeyWords, Mode=OneWay}"/>
+                <Run x:Uid="Home_SearchResult" FontSize="20"/>
+            </TextBlock>
+            <ProgressRing Grid.Row="0" Grid.RowSpan="2"
+                          Width="50" Height="50"
+                          Margin="0,24,0,0"
+                          Canvas.ZIndex="1"
+                          IsActive="{x:Bind model:Data.OnlineMusicLibrary.IsSearchProgressRingActive, Mode=OneWay}"/>
+            <StackPanel x:Name="NetworkErrorStackPanel"
+                        Grid.Row="0" Grid.RowSpan="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Canvas.ZIndex="1" Orientation="Horizontal"
+                        Visibility="{x:Bind model:Data.OnlineMusicLibrary.NetworkErrorVisibility, Mode=OneWay}">
+                <FontIcon x:Name="NetworkErrorFontIcon"
+                          FontFamily="{StaticResource UntamedFontFamily}"
+                          Glyph="&#xEB56;"/>
+                <StackPanel VerticalAlignment="Center" Spacing="8">
+                    <TextBlock x:Uid="Home_ServerError"
+                               FontSize="29" FontWeight="SemiBold"/>
+                    <TextBlock x:Uid="Home_UnableToAccess" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <Button Click="{x:Bind model:Data.OnlineMusicLibrary.RetryButton_Click}" Style="{StaticResource AccentButtonStyle}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                      FontSize="12" Glyph="&#xE72C;"/>
+                            <TextBlock x:Uid="Home_Retry"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+            <Frame x:Name="SelectFrame" Grid.Row="1"/>
+        </Grid>
     </Grid>
 </Page>

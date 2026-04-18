@@ -5,13 +5,14 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
-                <ResourceDictionary Source="/Styles/FontSizes.xaml"/>
-                <ResourceDictionary Source="/Styles/Thickness.xaml"/>
-                <ResourceDictionary Source="/Styles/TextBlock.xaml"/>
+                <ResourceDictionary Source="/Styles/AnimationStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/ButtonStyle.xaml"/>
-                <ResourceDictionary Source="/Styles/ToggleSwitchStyle.xaml"/>
-                <ResourceDictionary Source="/Styles/DialogStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/ColorStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/DialogStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/FontSizes.xaml"/>
+                <ResourceDictionary Source="/Styles/TextBlock.xaml"/>
+                <ResourceDictionary Source="/Styles/Thickness.xaml"/>
+                <ResourceDictionary Source="/Styles/ToggleSwitchStyle.xaml"/>
                 <ResourceDictionary>
                     <FontFamily x:Key="UntamedFontFamily">ms-appx:///Assets/Fonts/UntamedFluentIcons.ttf#Untamed Fluent Icons</FontFamily>
                 </ResourceDictionary>

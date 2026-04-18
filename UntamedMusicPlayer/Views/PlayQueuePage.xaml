@@ -20,7 +20,6 @@
                 <Grid.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem x:Uid="Songs_Play"
-                                        Width="216"
                                         Click="PlayButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE768;}"/>
@@ -34,7 +33,6 @@
                                                               Glyph=&#xE710;}"
                                            Loaded="AddToSubItem_Loaded">
                             <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                            Width="216"
                                             Click="AddToPlayQueueButton_Click"
                                             Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                Glyph=&#xE93F;}"/>
@@ -328,7 +326,6 @@
                 <Button.Flyout>
                     <MenuFlyout Opened="AddToFlyout_Opened" Placement="Bottom">
                         <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                        Width="216"
                                         Click="AddToPlayQueueFlyoutButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE93F;}"/>

@@ -82,6 +82,11 @@ public sealed partial class RootPlayBarView : UserControl
     public Visibility GetNotDetailedVisibility(bool isdetail) =>
         isdetail ? Visibility.Collapsed : Visibility.Visible;
 
+    public Thickness GetSongTitleMargin(string artistAndAlbumStr) =>
+        string.IsNullOrWhiteSpace(artistAndAlbumStr)
+            ? new Thickness(11, 0, 4, -8)
+            : new Thickness(11, 0, 4, 4);
+
     public string GetShuffleModeToolTip(ShuffleState shufflemode) =>
         shufflemode == ShuffleState.Shuffled
             ? "PlayBar_ShuffleOn".GetLocalized()
