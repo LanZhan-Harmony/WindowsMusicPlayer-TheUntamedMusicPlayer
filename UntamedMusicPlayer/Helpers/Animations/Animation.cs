@@ -22,69 +22,70 @@ public static class Animation
 {
     #region Composite Transform
 
-    public static CompositeTransform GetNewCompositeTransform(
-        this FrameworkElement element,
-        bool centreOriginOnCreation = true,
-        bool overwriteOtherTransforms = true
-    )
+    extension(FrameworkElement element)
     {
-        element.RenderTransform = null;
-        return element.GetCompositeTransform(centreOriginOnCreation, overwriteOtherTransforms);
-    }
-
-    public static CompositeTransform GetCompositeTransform(
-        this FrameworkElement element,
-        bool centreOriginOnCreation = true,
-        bool overwriteOtherTransforms = true
-    )
-    {
-        var ct = element.RenderTransform as CompositeTransform;
-        if (ct is not null)
+        public CompositeTransform GetNewCompositeTransform(
+            bool centreOriginOnCreation = true,
+            bool overwriteOtherTransforms = true
+        )
         {
-            return ct;
+            element.RenderTransform = null;
+            return element.GetCompositeTransform(centreOriginOnCreation, overwriteOtherTransforms);
         }
 
-        // 3. If there's nothing there, create a new CompositeTransform
-        if (element.RenderTransform is null)
+        public CompositeTransform GetCompositeTransform(
+            bool centreOriginOnCreation = true,
+            bool overwriteOtherTransforms = true
+        )
         {
-            element.RenderTransform = new CompositeTransform();
-            ct = (CompositeTransform)element.RenderTransform;
-            if (centreOriginOnCreation)
+            var ct = element.RenderTransform as CompositeTransform;
+            if (ct is not null)
             {
-                ct.CenterX = ct.CenterY = 0.5;
-                element.RenderTransformOrigin = new Point(0.5, 0.5);
-            }
-        }
-        else
-        {
-            ct = new CompositeTransform();
-            if (centreOriginOnCreation)
-            {
-                ct.CenterX = ct.CenterY = 0.5;
-                element.RenderTransformOrigin = new Point(0.5, 0.5);
+                return ct;
             }
 
-            // 5. See if the existing item is a singular transform, and convert it to a CompositeTransform
-            if (element.RenderTransform is Transform transform)
+            // 3. If there's nothing there, create a new CompositeTransform
+            if (element.RenderTransform is null)
             {
-                ApplyTransform(ref ct, transform);
-                element.RenderTransform = ct;
+                element.RenderTransform = new CompositeTransform();
+                ct = (CompositeTransform)element.RenderTransform;
+                if (centreOriginOnCreation)
+                {
+                    ct.CenterX = ct.CenterY = 0.5;
+                    element.RenderTransformOrigin = new Point(0.5, 0.5);
+                }
             }
             else
             {
-                // 6. If we're a group of transforms, convert each child individually
-                if (element.RenderTransform is TransformGroup group)
+                ct = new CompositeTransform();
+                if (centreOriginOnCreation)
                 {
-                    foreach (var tran in group.Children)
-                    {
-                        ApplyTransform(ref ct, tran);
-                    }
+                    ct.CenterX = ct.CenterY = 0.5;
+                    element.RenderTransformOrigin = new Point(0.5, 0.5);
+                }
 
+                // 5. See if the existing item is a singular transform, and convert it to a CompositeTransform
+                if (element.RenderTransform is Transform transform)
+                {
+                    ApplyTransform(ref ct, transform);
                     element.RenderTransform = ct;
                 }
+                else
+                {
+                    // 6. If we're a group of transforms, convert each child individually
+                    if (element.RenderTransform is TransformGroup group)
+                    {
+                        foreach (var tran in group.Children)
+                        {
+                            ApplyTransform(ref ct, tran);
+                        }
+
+                        element.RenderTransform = ct;
+                    }
+                }
             }
+            return ct;
         }
-        return ct;
     }
 
     /// <summary>
@@ -125,414 +126,385 @@ public static class Animation
 
     #region Plane Projection
 
-    /// <summary>
-    /// Gets the plane projection from a FrameworkElement's projection property. If
-    /// the property is null or not a plane projection, a new plane projection is created
-    /// and set as the plane projection and then returned
-    /// </summary>
-    /// <param name="element"></param>
-    /// <returns></returns>
-    public static PlaneProjection GetPlaneProjection(this FrameworkElement element)
+    extension(FrameworkElement element)
     {
-        if (element.Projection is not PlaneProjection projection)
+        /// <summary>
+        /// Gets the plane projection from a FrameworkElement's projection property. If
+        /// the property is null or not a plane projection, a new plane projection is created
+        /// and set as the plane projection and then returned
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public PlaneProjection GetPlaneProjection()
         {
-            element.Projection = new PlaneProjection();
-            projection = (PlaneProjection)element.Projection;
+            if (element.Projection is not PlaneProjection projection)
+            {
+                element.Projection = new PlaneProjection();
+                projection = (PlaneProjection)element.Projection;
+            }
+            return projection;
         }
-        return projection;
     }
 
     #endregion
 
     #region Storyboard
 
-    /// <summary>
-    /// Returns an await-able task that runs the storyboard through to completion
-    /// </summary>
-    /// <param name="storyboard"></param>
-    /// <returns></returns>
-    public static Task BeginAsync(this Storyboard storyboard)
+    extension(Storyboard? storyboard)
     {
-        var tcs = new TaskCompletionSource<bool>();
-        if (storyboard is null)
+        /// <summary>
+        /// Returns an await-able task that runs the storyboard through to completion
+        /// </summary>
+        /// <param name="storyboard"></param>
+        /// <returns></returns>
+        public Task BeginAsync()
         {
-            tcs.SetException(new ArgumentNullException(nameof(storyboard)));
-        }
-        else
-        {
-            void onComplete(object? s, object e)
+            var tcs = new TaskCompletionSource<bool>();
+            if (storyboard is null)
             {
-                storyboard.Completed -= onComplete;
-                tcs.SetResult(true);
+                tcs.SetException(new ArgumentNullException(nameof(storyboard)));
             }
+            else
+            {
+                void onComplete(object? s, object e)
+                {
+                    storyboard.Completed -= onComplete;
+                    tcs.SetResult(true);
+                }
 
-            storyboard.Completed += onComplete;
-            storyboard.Begin();
-        }
-        return tcs.Task;
-    }
-
-    public static void AddTimeline(
-        this Storyboard storyboard,
-        Timeline timeline,
-        DependencyObject target,
-        string targetProperty
-    )
-    {
-        if (target is FrameworkElement frameworkElement)
-        {
-            if (targetProperty.StartsWith(TargetProperty.CompositeTransform.Identifier))
-            {
-                GetCompositeTransform(frameworkElement);
+                storyboard.Completed += onComplete;
+                storyboard.Begin();
             }
-            else if (targetProperty.StartsWith(TargetProperty.PlaneProjection.Identifier))
-            {
-                GetPlaneProjection(frameworkElement);
-            }
-            else if (targetProperty.StartsWith(TargetProperty.CompositeTransform3D.Identifier))
-            {
-                GetCompositeTransform3D(frameworkElement);
-            }
+            return tcs.Task;
         }
 
-        Storyboard.SetTarget(timeline, target);
-        Storyboard.SetTargetProperty(timeline, targetProperty);
+        public void AddTimeline(Timeline timeline, DependencyObject target, string targetProperty)
+        {
+            if (target is FrameworkElement frameworkElement)
+            {
+                if (targetProperty.StartsWith(TargetProperty.CompositeTransform.Identifier))
+                {
+                    GetCompositeTransform(frameworkElement);
+                }
+                else if (targetProperty.StartsWith(TargetProperty.PlaneProjection.Identifier))
+                {
+                    GetPlaneProjection(frameworkElement);
+                }
+                else if (targetProperty.StartsWith(TargetProperty.CompositeTransform3D.Identifier))
+                {
+                    GetCompositeTransform3D(frameworkElement);
+                }
+            }
 
-        storyboard.Children.Add(timeline);
+            Storyboard.SetTarget(timeline, target);
+            Storyboard.SetTargetProperty(timeline, targetProperty);
+
+            storyboard?.Children.Add(timeline);
+        }
     }
 
     #endregion
 
     #region Timelines
 
-    public static DoubleAnimationUsingKeyFrames AddDiscreteKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        double seconds,
-        double value
-    )
+    extension(DoubleAnimationUsingKeyFrames doubleAnimation)
     {
-        doubleAnimation.AddDiscreteKeyFrame(TimeSpan.FromSeconds(seconds), value);
-        return doubleAnimation;
-    }
-
-    public static DoubleAnimationUsingKeyFrames AddDiscreteKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        TimeSpan time,
-        double value
-    )
-    {
-        doubleAnimation.KeyFrames.Add(
-            new DiscreteDoubleKeyFrame { KeyTime = KeyTime.FromTimeSpan(time), Value = value }
-        );
-
-        return doubleAnimation;
-    }
-
-    /// <summary>
-    /// Adds a <see cref="LinearDoubleKeyFrame"/>
-    /// </summary>
-    /// <param name="doubleAnimation"></param>
-    /// <param name="seconds">Duration in seconds</param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static DoubleAnimationUsingKeyFrames AddKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        double seconds,
-        double value
-    )
-    {
-        doubleAnimation.AddLinearDoubleKeyFrame(TimeSpan.FromSeconds(seconds), value);
-        return doubleAnimation;
-    }
-
-    /// <summary>
-    /// Adds a <see cref="LinearDoubleKeyFrame"/>
-    /// </summary>
-    public static DoubleAnimationUsingKeyFrames AddKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        TimeSpan keyTime,
-        double value
-    )
-    {
-        doubleAnimation.AddLinearDoubleKeyFrame(keyTime, value);
-        return doubleAnimation;
-    }
-
-    /// <summary>
-    /// Adds a <see cref="SplineDoubleKeyFrame"/>
-    /// </summary>
-    /// <param name="doubleAnimation"></param>
-    /// <param name="seconds">Duration in seconds</param>
-    /// <param name="value"></param>
-    /// <param name="spline"></param>
-    /// <returns></returns>
-    public static DoubleAnimationUsingKeyFrames AddKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        double seconds,
-        double value,
-        KeySpline spline
-    )
-    {
-        doubleAnimation.AddSplineDoubleKeyFrame(TimeSpan.FromSeconds(seconds), value, spline);
-        return doubleAnimation;
-    }
-
-    /// <summary>
-    /// Adds a <see cref="SplineDoubleKeyFrame"/>
-    /// </summary>
-    public static DoubleAnimationUsingKeyFrames AddKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        TimeSpan keyTime,
-        double value,
-        KeySpline spline
-    )
-    {
-        doubleAnimation.AddSplineDoubleKeyFrame(keyTime, value, spline);
-        return doubleAnimation;
-    }
-
-    /// <summary>
-    /// Adds an <see cref="EasingDoubleKeyFrame"/>
-    /// </summary>
-    /// <param name="doubleAnimation"></param>
-    /// <param name="seconds">Duration in seconds</param>
-    /// <param name="value"></param>
-    /// <param name="ease"></param>
-    /// <returns></returns>
-    public static DoubleAnimationUsingKeyFrames AddKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        double seconds,
-        double value,
-        EasingFunctionBase? ease = null
-    )
-    {
-        doubleAnimation.AddEasingDoubleKeyFrame(TimeSpan.FromSeconds(seconds), value, ease);
-        return doubleAnimation;
-    }
-
-    /// <summary>
-    /// Adds an <see cref="EasingDoubleKeyFrame"/>
-    /// </summary>
-    public static DoubleAnimationUsingKeyFrames AddKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        TimeSpan keyTime,
-        double value,
-        EasingFunctionBase? ease = null
-    )
-    {
-        doubleAnimation.AddEasingDoubleKeyFrame(keyTime, value, ease);
-        return doubleAnimation;
-    }
-
-    private static DoubleAnimationUsingKeyFrames AddLinearDoubleKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        TimeSpan time,
-        double value
-    )
-    {
-        doubleAnimation.KeyFrames.Add(
-            new LinearDoubleKeyFrame { KeyTime = KeyTime.FromTimeSpan(time), Value = value }
-        );
-
-        return doubleAnimation;
-    }
-
-    private static DoubleAnimationUsingKeyFrames AddEasingDoubleKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        TimeSpan time,
-        double value,
-        EasingFunctionBase? ease = null
-    )
-    {
-        doubleAnimation.KeyFrames.Add(
-            new EasingDoubleKeyFrame
-            {
-                KeyTime = KeyTime.FromTimeSpan(time),
-                Value = value,
-                EasingFunction = ease,
-            }
-        );
-
-        return doubleAnimation;
-    }
-
-    private static DoubleAnimationUsingKeyFrames AddSplineDoubleKeyFrame(
-        this DoubleAnimationUsingKeyFrames doubleAnimation,
-        TimeSpan time,
-        double value,
-        KeySpline? spline = null
-    )
-    {
-        doubleAnimation.KeyFrames.Add(
-            new SplineDoubleKeyFrame
-            {
-                KeyTime = KeyTime.FromTimeSpan(time),
-                Value = value,
-                KeySpline = spline?.Clone(),
-            }
-        );
-        return doubleAnimation;
-    }
-
-    public static ObjectAnimationUsingKeyFrames AddKeyFrame(
-        this ObjectAnimationUsingKeyFrames objectAnimation,
-        double seconds,
-        object value
-    )
-    {
-        objectAnimation.AddKeyFrame(TimeSpan.FromSeconds(seconds), value);
-        return objectAnimation;
-    }
-
-    public static ObjectAnimationUsingKeyFrames AddKeyFrame(
-        this ObjectAnimationUsingKeyFrames objectAnimation,
-        TimeSpan time,
-        object value
-    )
-    {
-        objectAnimation.KeyFrames.Add(
-            new DiscreteObjectKeyFrame { KeyTime = KeyTime.FromTimeSpan(time), Value = value }
-        );
-        return objectAnimation;
-    }
-
-    public static T If<T>(this T t, bool condition, Action<T> action)
-        where T : Timeline
-    {
-        if (condition)
+        public DoubleAnimationUsingKeyFrames AddDiscreteKeyFrame(double seconds, double value)
         {
-            action(t);
+            doubleAnimation.AddDiscreteKeyFrame(TimeSpan.FromSeconds(seconds), value);
+            return doubleAnimation;
         }
 
-        return t;
+        public DoubleAnimationUsingKeyFrames AddDiscreteKeyFrame(TimeSpan time, double value)
+        {
+            doubleAnimation.KeyFrames.Add(
+                new DiscreteDoubleKeyFrame { KeyTime = KeyTime.FromTimeSpan(time), Value = value }
+            );
+            return doubleAnimation;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="LinearDoubleKeyFrame"/>
+        /// </summary>
+        /// <param name="doubleAnimation"></param>
+        /// <param name="seconds">Duration in seconds</param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public DoubleAnimationUsingKeyFrames AddKeyFrame(double seconds, double value)
+        {
+            doubleAnimation.AddLinearDoubleKeyFrame(TimeSpan.FromSeconds(seconds), value);
+            return doubleAnimation;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="LinearDoubleKeyFrame"/>
+        /// </summary>
+        public DoubleAnimationUsingKeyFrames AddKeyFrame(TimeSpan keyTime, double value)
+        {
+            doubleAnimation.AddLinearDoubleKeyFrame(keyTime, value);
+            return doubleAnimation;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="SplineDoubleKeyFrame"/>
+        /// </summary>
+        /// <param name="doubleAnimation"></param>
+        /// <param name="seconds">Duration in seconds</param>
+        /// <param name="value"></param>
+        /// <param name="spline"></param>
+        /// <returns></returns>
+        public DoubleAnimationUsingKeyFrames AddKeyFrame(
+            double seconds,
+            double value,
+            KeySpline spline
+        )
+        {
+            doubleAnimation.AddSplineDoubleKeyFrame(TimeSpan.FromSeconds(seconds), value, spline);
+            return doubleAnimation;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="SplineDoubleKeyFrame"/>
+        /// </summary>
+        public DoubleAnimationUsingKeyFrames AddKeyFrame(
+            TimeSpan keyTime,
+            double value,
+            KeySpline spline
+        )
+        {
+            doubleAnimation.AddSplineDoubleKeyFrame(keyTime, value, spline);
+            return doubleAnimation;
+        }
+
+        /// <summary>
+        /// Adds an <see cref="EasingDoubleKeyFrame"/>
+        /// </summary>
+        /// <param name="doubleAnimation"></param>
+        /// <param name="seconds">Duration in seconds</param>
+        /// <param name="value"></param>
+        /// <param name="ease"></param>
+        /// <returns></returns>
+        public DoubleAnimationUsingKeyFrames AddKeyFrame(
+            double seconds,
+            double value,
+            EasingFunctionBase? ease = null
+        )
+        {
+            doubleAnimation.AddEasingDoubleKeyFrame(TimeSpan.FromSeconds(seconds), value, ease);
+            return doubleAnimation;
+        }
+
+        /// <summary>
+        /// Adds an <see cref="EasingDoubleKeyFrame"/>
+        /// </summary>
+        public DoubleAnimationUsingKeyFrames AddKeyFrame(
+            TimeSpan keyTime,
+            double value,
+            EasingFunctionBase? ease = null
+        )
+        {
+            doubleAnimation.AddEasingDoubleKeyFrame(keyTime, value, ease);
+            return doubleAnimation;
+        }
+
+        private DoubleAnimationUsingKeyFrames AddLinearDoubleKeyFrame(TimeSpan time, double value)
+        {
+            doubleAnimation.KeyFrames.Add(
+                new LinearDoubleKeyFrame { KeyTime = KeyTime.FromTimeSpan(time), Value = value }
+            );
+
+            return doubleAnimation;
+        }
+
+        private DoubleAnimationUsingKeyFrames AddEasingDoubleKeyFrame(
+            TimeSpan time,
+            double value,
+            EasingFunctionBase? ease = null
+        )
+        {
+            doubleAnimation.KeyFrames.Add(
+                new EasingDoubleKeyFrame
+                {
+                    KeyTime = KeyTime.FromTimeSpan(time),
+                    Value = value,
+                    EasingFunction = ease,
+                }
+            );
+
+            return doubleAnimation;
+        }
+
+        private DoubleAnimationUsingKeyFrames AddSplineDoubleKeyFrame(
+            TimeSpan time,
+            double value,
+            KeySpline? spline = null
+        )
+        {
+            doubleAnimation.KeyFrames.Add(
+                new SplineDoubleKeyFrame
+                {
+                    KeyTime = KeyTime.FromTimeSpan(time),
+                    Value = value,
+                    KeySpline = spline?.Clone(),
+                }
+            );
+            return doubleAnimation;
+        }
     }
 
-    public static ColorAnimationUsingKeyFrames AddKeyFrame(
-        this ColorAnimationUsingKeyFrames colorAnimation,
-        double seconds,
-        Color color
-    )
+    extension(ObjectAnimationUsingKeyFrames objectAnimation)
     {
-        colorAnimation.AddKeyFrame(TimeSpan.FromSeconds(seconds), color);
-        return colorAnimation;
+        public ObjectAnimationUsingKeyFrames AddKeyFrame(double seconds, object value)
+        {
+            objectAnimation.AddKeyFrame(TimeSpan.FromSeconds(seconds), value);
+            return objectAnimation;
+        }
+
+        public ObjectAnimationUsingKeyFrames AddKeyFrame(TimeSpan time, object value)
+        {
+            objectAnimation.KeyFrames.Add(
+                new DiscreteObjectKeyFrame { KeyTime = KeyTime.FromTimeSpan(time), Value = value }
+            );
+            return objectAnimation;
+        }
     }
 
-    public static ColorAnimationUsingKeyFrames AddKeyFrame(
-        this ColorAnimationUsingKeyFrames objectAnimation,
-        TimeSpan time,
-        Color color
-    )
+    extension<T>(T t)
+        where T : Timeline
     {
-        objectAnimation.KeyFrames.Add(
-            new EasingColorKeyFrame { KeyTime = KeyTime.FromTimeSpan(time), Value = color }
-        );
-        return objectAnimation;
+        public T If(bool condition, Action<T> action)
+        {
+            if (condition)
+            {
+                action(t);
+            }
+
+            return t;
+        }
+    }
+
+    extension(ColorAnimationUsingKeyFrames colorAnimation)
+    {
+        public ColorAnimationUsingKeyFrames AddKeyFrame(double seconds, Color color)
+        {
+            colorAnimation.AddKeyFrame(TimeSpan.FromSeconds(seconds), color);
+            return colorAnimation;
+        }
+
+        public ColorAnimationUsingKeyFrames AddKeyFrame(TimeSpan time, Color color)
+        {
+            colorAnimation.KeyFrames.Add(
+                new EasingColorKeyFrame { KeyTime = KeyTime.FromTimeSpan(time), Value = color }
+            );
+            return colorAnimation;
+        }
     }
 
     #endregion
 
     #region Fluency
 
-    public static DoubleAnimation SetEase(this DoubleAnimation animation, EasingFunctionBase ease)
+    extension(DoubleAnimation animation)
     {
-        animation.EasingFunction = ease;
-        return animation;
+        public DoubleAnimation SetEase(EasingFunctionBase ease)
+        {
+            animation.EasingFunction = ease;
+            return animation;
+        }
+
+        public DoubleAnimation To(double? value)
+        {
+            animation.To = value;
+            return animation;
+        }
+
+        public DoubleAnimation By(double? value)
+        {
+            animation.By = value;
+            return animation;
+        }
+
+        public DoubleAnimation From(double? value)
+        {
+            animation.From = value;
+            return animation;
+        }
+
+        public DoubleAnimation Easing(EasingFunctionBase ease)
+        {
+            animation.EasingFunction = ease;
+            return animation;
+        }
     }
 
-    public static DoubleAnimation To(this DoubleAnimation animation, double? value)
-    {
-        animation.To = value;
-        return animation;
-    }
-
-    public static DoubleAnimation By(this DoubleAnimation animation, double? value)
-    {
-        animation.By = value;
-        return animation;
-    }
-
-    public static DoubleAnimation From(this DoubleAnimation animation, double? value)
-    {
-        animation.From = value;
-        return animation;
-    }
-
-    public static DoubleAnimation Easing(this DoubleAnimation animation, EasingFunctionBase ease)
-    {
-        animation.EasingFunction = ease;
-        return animation;
-    }
-
-    public static T SetSpeedRatio<T>(this T storyboard, double speedRatio)
+    extension<T>(T storyboard)
         where T : Timeline
     {
-        storyboard.SpeedRatio = speedRatio;
-        return storyboard;
+        public T SetSpeedRatio(double speedRatio)
+        {
+            storyboard.SpeedRatio = speedRatio;
+            return storyboard;
+        }
+
+        /// <summary>
+        /// Sets the BeginTime property on a Storyboard
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="storyboard"></param>
+        /// <param name="beginTime">Begin time in Seconds</param>
+        /// <returns></returns>
+        public T SetBeginTime(double beginTime)
+        {
+            return SetBeginTime(storyboard, TimeSpan.FromSeconds(beginTime));
+        }
+
+        public T SetBeginTime(TimeSpan beginTime)
+        {
+            storyboard.BeginTime = beginTime;
+            return storyboard;
+        }
+
+        /// <summary>
+        /// Sets the Duration of a Timeline
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="storyboard"></param>
+        /// <param name="duration">Duration in seconds</param>
+        /// <returns></returns>
+        public T SetDuration(double duration)
+        {
+            return SetDuration(storyboard, TimeSpan.FromSeconds(duration));
+        }
+
+        public T SetDuration(TimeSpan duration)
+        {
+            storyboard.Duration = duration;
+            return storyboard;
+        }
+
+        public T SetRepeatBehavior(RepeatBehavior behavior)
+        {
+            storyboard.RepeatBehavior = behavior;
+            return storyboard;
+        }
     }
 
-    /// <summary>
-    /// Sets the BeginTime property on a Storyboard
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="storyboard"></param>
-    /// <param name="beginTime">Begin time in Seconds</param>
-    /// <returns></returns>
-    public static T SetBeginTime<T>(this T storyboard, double beginTime)
-        where T : Timeline
+    extension(DoubleAnimation storyboard)
     {
-        return SetBeginTime(storyboard, TimeSpan.FromSeconds(beginTime));
+        public DoubleAnimation EnableDependentAnimation(bool value)
+        {
+            storyboard.EnableDependentAnimation = value;
+            return storyboard;
+        }
     }
 
-    public static T SetBeginTime<T>(this T storyboard, TimeSpan beginTime)
-        where T : Timeline
+    extension(DoubleAnimationUsingKeyFrames storyboard)
     {
-        storyboard.BeginTime = beginTime;
-        return storyboard;
-    }
-
-    /// <summary>
-    /// Sets the Duration of a Timeline
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="storyboard"></param>
-    /// <param name="duration">Duration in seconds</param>
-    /// <returns></returns>
-    public static T SetDuration<T>(this T storyboard, double duration)
-        where T : Timeline
-    {
-        return SetDuration(storyboard, TimeSpan.FromSeconds(duration));
-    }
-
-    public static T SetDuration<T>(this T storyboard, TimeSpan duration)
-        where T : Timeline
-    {
-        storyboard.Duration = duration;
-        return storyboard;
-    }
-
-    public static T SetRepeatBehavior<T>(this T storyboard, RepeatBehavior behavior)
-        where T : Timeline
-    {
-        storyboard.RepeatBehavior = behavior;
-        return storyboard;
-    }
-
-    public static DoubleAnimation EnableDependentAnimation(
-        this DoubleAnimation storyboard,
-        bool value
-    )
-    {
-        storyboard.EnableDependentAnimation = value;
-        return storyboard;
-    }
-
-    public static DoubleAnimationUsingKeyFrames EnableDependentAnimations(
-        this DoubleAnimationUsingKeyFrames storyboard,
-        bool value
-    )
-    {
-        storyboard.EnableDependentAnimation = value;
-        return storyboard;
+        public DoubleAnimationUsingKeyFrames EnableDependentAnimations(bool value)
+        {
+            storyboard.EnableDependentAnimation = value;
+            return storyboard;
+        }
     }
 
     public static T CreateTimeline<T>(
@@ -547,47 +519,52 @@ public static class Animation
         return timeline;
     }
 
-    public static T CreateTimeline<T>(
-        this Storyboard parent,
-        DependencyObject target,
-        string targetProperty
-    )
-        where T : Timeline, new()
+    extension(Storyboard parent)
     {
-        var timeline = new T();
-        parent.AddTimeline(timeline, target, targetProperty);
-        return timeline;
+        public T CreateTimeline<T>(DependencyObject target, string targetProperty)
+            where T : Timeline, new()
+        {
+            var timeline = new T();
+            parent.AddTimeline(timeline, target, targetProperty);
+            return timeline;
+        }
     }
 
-    public static Storyboard Build(this Storyboard storyboard, Action<Storyboard> action)
+    extension(Storyboard storyboard)
     {
-        action(storyboard);
-        return storyboard;
+        public Storyboard Build(Action<Storyboard> action)
+        {
+            action(storyboard);
+            return storyboard;
+        }
     }
 
     #endregion
 
     #region Transform3D
 
-    public static CompositeTransform3D GetCompositeTransform3D(this FrameworkElement target)
+    extension(FrameworkElement target)
     {
-        if (target.Transform3D is not CompositeTransform3D transform)
+        public CompositeTransform3D GetCompositeTransform3D()
         {
-            transform = new CompositeTransform3D();
-            target.Transform3D = transform;
+            if (target.Transform3D is not CompositeTransform3D transform)
+            {
+                transform = new CompositeTransform3D();
+                target.Transform3D = transform;
+            }
+
+            return transform;
         }
 
-        return transform;
-    }
-
-    public static PerspectiveTransform3D GetPerspectiveTransform3D(this FrameworkElement target)
-    {
-        if (target.Transform3D is not PerspectiveTransform3D transform)
+        public PerspectiveTransform3D GetPerspectiveTransform3D()
         {
-            target.Transform3D = transform = new PerspectiveTransform3D();
-        }
+            if (target.Transform3D is not PerspectiveTransform3D transform)
+            {
+                target.Transform3D = transform = new PerspectiveTransform3D();
+            }
 
-        return transform;
+            return transform;
+        }
     }
 
     #endregion
@@ -602,34 +579,31 @@ public static class Animation
         return keyspline;
     }
 
-    public static KeySpline Reverse(this KeySpline keySpline)
+    extension(KeySpline keySpline)
     {
-        return new KeySpline
+        public KeySpline Reverse()
         {
-            ControlPoint1 = new Point(keySpline.ControlPoint1.Y, keySpline.ControlPoint1.X),
-            ControlPoint2 = new Point(keySpline.ControlPoint2.Y, keySpline.ControlPoint2.X),
-        };
-    }
+            return new KeySpline
+            {
+                ControlPoint1 = new Point(keySpline.ControlPoint1.Y, keySpline.ControlPoint1.X),
+                ControlPoint2 = new Point(keySpline.ControlPoint2.Y, keySpline.ControlPoint2.X),
+            };
+        }
 
-    public static KeySpline Clone(this KeySpline keySpline)
-    {
-        return new KeySpline
+        public KeySpline Clone()
         {
-            ControlPoint1 = keySpline.ControlPoint1,
-            ControlPoint2 = keySpline.ControlPoint2,
-        };
-    }
+            return new KeySpline
+            {
+                ControlPoint1 = keySpline.ControlPoint1,
+                ControlPoint2 = keySpline.ControlPoint2,
+            };
+        }
 
-    public static void SetPoints(
-        this KeySpline keySpline,
-        double x1,
-        double y1,
-        double x2,
-        double y2
-    )
-    {
-        keySpline.ControlPoint1 = new Point(x1, y1);
-        keySpline.ControlPoint2 = new Point(x2, y2);
+        public void SetPoints(double x1, double y1, double x2, double y2)
+        {
+            keySpline.ControlPoint1 = new Point(x1, y1);
+            keySpline.ControlPoint2 = new Point(x2, y2);
+        }
     }
 
     #endregion
