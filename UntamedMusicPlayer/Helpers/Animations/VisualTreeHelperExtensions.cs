@@ -62,78 +62,60 @@ public static class VisualTreeHelperExtensions
         }
     }
 
-    /// <summary>
-    /// Gets the first descendant that is of the given type.
-    /// </summary>
-    /// <remarks>
-    /// Returns null if not found.
-    /// </remarks>
-    /// <typeparam name="T">Type of descendant to look for.</typeparam>
-    /// <param name="start">The start object.</param>
-    /// <returns></returns>
-    public static T? GetFirstDescendantOfType<T>(this FrameworkElement start, string name)
+    extension<T>(FrameworkElement start)
         where T : FrameworkElement
     {
-        return start.FindDescendants().OfType<T>().FirstOrDefault(e => e.Name == name);
+        /// <summary>
+        /// Gets the first descendant that is of the given type.
+        /// </summary>
+        /// <remarks>
+        /// Returns null if not found.
+        /// </remarks>
+        /// <typeparam name="T">Type of descendant to look for.</typeparam>
+        /// <param name="start">The start object.</param>
+        /// <returns></returns>
+        public T? GetFirstDescendantOfType(string name)
+        {
+            return start.FindDescendants().OfType<T>().FirstOrDefault(e => e.Name == name);
+        }
     }
 
-    /// <summary>
-    /// Gets the first descendant that is of the given type.
-    /// </summary>
-    /// <remarks>
-    /// Returns null if not found.
-    /// </remarks>
-    /// <typeparam name="T">Type of descendant to look for.</typeparam>
-    /// <param name="start">The start object.</param>
-    /// <returns></returns>
-    public static T? GetFirstDescendantOfType<T>(
-        this DependencyObject start,
-        Func<T, bool>? predicate = null
-    )
+    extension<T>(DependencyObject start)
         where T : DependencyObject
     {
-        if (predicate is null)
+        /// <summary>
+        /// Gets the first descendant that is of the given type.
+        /// </summary>
+        /// <remarks>
+        /// Returns null if not found.
+        /// </remarks>
+        /// <typeparam name="T">Type of descendant to look for.</typeparam>
+        /// <param name="start">The start object.</param>
+        /// <returns></returns>
+        public T? GetFirstDescendantOfType(Func<T, bool>? predicate = null)
         {
-            return start.FindDescendant<T>();
-        }
-        else
-        {
-            return start.FindDescendants().OfType<T>().FirstOrDefault(predicate);
+            if (predicate is null)
+            {
+                return start.FindDescendant<T>();
+            }
+            else
+            {
+                return start.FindDescendants().OfType<T>().FirstOrDefault(predicate);
+            }
         }
     }
 
-    public static IEnumerable<T> GetFirstLevelDescendantsOfType<T>(
-        this FrameworkElement start,
-        Predicate<T>? predicate = null
-    )
+    extension<T>(FrameworkElement start)
+        where T : FrameworkElement
     {
-        var queue = new Queue<FrameworkElement>();
-        var count = VisualTreeHelper.GetChildrenCount(start);
-
-        for (var i = 0; i < count; i++)
+        public IEnumerable<T> GetFirstLevelDescendantsOfType(Predicate<T>? predicate = null)
         {
-            if (VisualTreeHelper.GetChild(start, i) is FrameworkElement child)
-            {
-                if (child is T c && (predicate == null || predicate(c)))
-                {
-                    yield return c;
-                    continue;
-                }
-                else
-                {
-                    queue.Enqueue(child);
-                }
-            }
-        }
+            var queue = new Queue<FrameworkElement>();
+            var count = VisualTreeHelper.GetChildrenCount(start);
 
-        while (queue.Count > 0)
-        {
-            var parent = queue.Dequeue();
-            var count2 = VisualTreeHelper.GetChildrenCount(parent);
-
-            for (var i = 0; i < count2; i++)
+            for (var i = 0; i < count; i++)
             {
-                if (VisualTreeHelper.GetChild(parent, i) is FrameworkElement child)
+                if (VisualTreeHelper.GetChild(start, i) is FrameworkElement child)
                 {
                     if (child is T c && (predicate == null || predicate(c)))
                     {
@@ -146,26 +128,51 @@ public static class VisualTreeHelperExtensions
                     }
                 }
             }
+
+            while (queue.Count > 0)
+            {
+                var parent = queue.Dequeue();
+                var count2 = VisualTreeHelper.GetChildrenCount(parent);
+
+                for (var i = 0; i < count2; i++)
+                {
+                    if (VisualTreeHelper.GetChild(parent, i) is FrameworkElement child)
+                    {
+                        if (child is T c && (predicate == null || predicate(c)))
+                        {
+                            yield return c;
+                            continue;
+                        }
+                        else
+                        {
+                            queue.Enqueue(child);
+                        }
+                    }
+                }
+            }
         }
     }
 
-    public static bool ContainsFocus(this UIElement element)
+    extension(UIElement? element)
     {
-        if (element == null)
+        public bool ContainsFocus()
         {
-            return false;
-        }
+            if (element == null)
+            {
+                return false;
+            }
 
-        if (!(FocusManager.GetFocusedElement() is UIElement focused))
-        {
-            return false;
-        }
+            if (FocusManager.GetFocusedElement() is not UIElement focused)
+            {
+                return false;
+            }
 
-        if (focused == element)
-        {
-            return true;
-        }
+            if (focused == element)
+            {
+                return true;
+            }
 
-        return focused.FindAscendants().Any(a => a == element);
+            return focused.FindAscendants().Any(a => a == element);
+        }
     }
 }

@@ -1,9 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Helpers.Animations;
 using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
+using Windows.ApplicationModel.Contacts;
 using Windows.Storage;
 using Windows.System;
 
@@ -108,5 +111,70 @@ public sealed partial class SettingsPage : Page
             await ViewModel.ResetSoftwareButton_Click();
         }
         (sender as Button)!.IsEnabled = true;
+    }
+
+    private async void SettingsPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        const int delayMs = 10;
+        const int fromOffsetY = 80;
+        const int durationMs = 300;
+        const int staggerMs = 50;
+
+        var targets = GetEntranceTargets(ContentPanel);
+        ContentScroller.ChangeView(null, 0, null, true);
+        CompositionFactory.PlayEntrance(
+            targets,
+            delayMs,
+            fromOffsetY,
+            durationMs: durationMs,
+            staggerMs: staggerMs
+        );
+
+        ContentPanel.Opacity = 1;
+
+        var totalAnimationMs = delayMs + durationMs;
+        if (targets.Count > 1)
+        {
+            totalAnimationMs += (targets.Count - 1) * staggerMs;
+        }
+        await Task.Delay(totalAnimationMs);
+        SetRepositionTransitions();
+    }
+
+    private static List<UIElement> GetEntranceTargets(Panel panel)
+    {
+        var targets = new List<UIElement>();
+        foreach (var child in panel.Children)
+        {
+            if (child is StackPanel childPanel && childPanel.Children.Count > 0)
+            {
+                foreach (var nested in childPanel.Children)
+                {
+                    targets.Add(nested);
+                }
+            }
+            else
+            {
+                targets.Add(child);
+            }
+        }
+        return targets;
+    }
+
+    private void SetRepositionTransitions()
+    {
+        ApplyRepositionTransition(ContentPanel);
+        foreach (var child in ContentPanel.Children)
+        {
+            if (child is StackPanel childPanel)
+            {
+                ApplyRepositionTransition(childPanel);
+            }
+        }
+    }
+
+    private static void ApplyRepositionTransition(StackPanel panel)
+    {
+        panel.ChildrenTransitions = [new RepositionThemeTransition { IsStaggeringEnabled = false }];
     }
 }
