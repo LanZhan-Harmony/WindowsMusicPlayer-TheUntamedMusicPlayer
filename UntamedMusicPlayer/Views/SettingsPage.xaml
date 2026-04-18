@@ -9,6 +9,7 @@
       xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
       xmlns:ui="using:CommunityToolkit.WinUI"
       xmlns:xaml="using:Microsoft.UI.Xaml"
+      Loaded="SettingsPage_Loaded"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -42,7 +43,7 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="TitleGrid.Margin" Value="16,36,16,0"/>
-                        <Setter Target="ContentArea.Margin" Value="16,32,16,0"/>
+                        <Setter Target="ContentPanel.Margin" Value="16,32,16,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
@@ -51,7 +52,7 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="TitleGrid.Margin" Value="56,36,56,0"/>
-                        <Setter Target="ContentArea.Margin" Value="56,32,56,0"/>
+                        <Setter Target="ContentPanel.Margin" Value="56,32,56,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -59,21 +60,15 @@
         <Grid x:Name="TitleGrid" Grid.Row="0">
             <TextBlock x:Uid="Shell_Settings1" Style="{StaticResource TitleLargeTextBlockStyle}"/>
         </Grid>
-        <ScrollViewer Grid.Row="1" Padding="0,0,0,16">
-            <StackPanel x:Name="ContentArea"
-                        Orientation="Vertical" Spacing="18">
-
-                <!--  动画  -->
-                <StackPanel.ChildrenTransitions>
-                    <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                </StackPanel.ChildrenTransitions>
+        <ScrollViewer x:Name="ContentScroller"
+                      Grid.Row="1"
+                      Padding="0,0,0,16">
+            <StackPanel x:Name="ContentPanel"
+                        Opacity="0" Orientation="Vertical"
+                        Spacing="18">
 
                 <!--  库  -->
                 <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
-
                     <TextBlock x:Uid="Settings_Library"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
@@ -159,9 +154,6 @@
 
                 <!--  播放  -->
                 <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_Play"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
@@ -180,9 +172,6 @@
 
                 <!--  歌词  -->
                 <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_Lyric"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
@@ -218,9 +207,6 @@
 
                 <!--  个性化  -->
                 <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_Personalization"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
@@ -298,9 +284,6 @@
 
                 <!--  开发者选项  -->
                 <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_DeveloperOptions"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
@@ -314,9 +297,6 @@
 
                 <!--  关于  -->
                 <StackPanel Spacing="2">
-                    <StackPanel.ChildrenTransitions>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                    </StackPanel.ChildrenTransitions>
                     <TextBlock x:Uid="Settings_About"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
