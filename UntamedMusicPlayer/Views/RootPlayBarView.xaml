@@ -128,7 +128,6 @@
             <Button.ContextFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem x:Uid="Songs_Play"
-                                    Width="216"
                                     Click="{x:Bind ViewModel.PlayButton_Click}"
                                     Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                        Glyph=&#xE768;}"/>
@@ -142,7 +141,6 @@
                                                           Glyph=&#xE710;}"
                                        Loaded="AddToSubItem_Loaded">
                         <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                        Width="216"
                                         Click="{x:Bind ViewModel.AddToPlayQueueButton_Click}"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE93F;}"/>
@@ -204,8 +202,7 @@
                 </Border>
                 <Grid x:Name="TextGrid"
                       Grid.Column="1"
-                      VerticalAlignment="Center"
-                      RowSpacing="4">
+                      VerticalAlignment="Center">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -220,7 +217,7 @@
                                Visibility="{x:Bind GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}"/>
                     <TextBlock x:Name="SongTitleTextBlock"
                                Grid.Row="0" Grid.Column="1"
-                               Margin="11,0,4,0"
+                               Margin="{x:Bind GetSongTitleMargin(model:Data.PlayState.CurrentSong.ArtistAndAlbumStr), Mode=OneWay}"
                                FontSize="20" FontWeight="SemiBold"
                                Text="{x:Bind model:Data.PlayState.CurrentSong.Title, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"

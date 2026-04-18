@@ -825,22 +825,22 @@
   <data name="AlbumInfo_UnknownYear" xml:space="preserve">
     <value>未知年份</value>
   </data>
-  <data name="Home_MusicLibrary1.Text" xml:space="preserve">
+  <data name="Home_MusicLibrary1.Content" xml:space="preserve">
     <value>乐库1</value>
   </data>
-  <data name="Home_MusicLibrary6.Text" xml:space="preserve">
+  <data name="Home_MusicLibrary6.Content" xml:space="preserve">
     <value>乐库6</value>
   </data>
-  <data name="Home_MusicLibrary5.Text" xml:space="preserve">
+  <data name="Home_MusicLibrary5.Content" xml:space="preserve">
     <value>乐库5</value>
   </data>
-  <data name="Home_MusicLibrary4.Text" xml:space="preserve">
+  <data name="Home_MusicLibrary4.Content" xml:space="preserve">
     <value>乐库4</value>
   </data>
-  <data name="Home_MusicLibrary3.Text" xml:space="preserve">
+  <data name="Home_MusicLibrary3.Content" xml:space="preserve">
     <value>乐库3</value>
   </data>
-  <data name="Home_MusicLibrary2.Text" xml:space="preserve">
+  <data name="Home_MusicLibrary2.Content" xml:space="preserve">
     <value>乐库2</value>
   </data>
   <data name="Home_Retry.Text" xml:space="preserve">
