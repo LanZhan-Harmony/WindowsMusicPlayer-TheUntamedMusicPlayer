@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 
@@ -38,6 +38,7 @@ public sealed partial class HomeViewModel : ObservableObject
         Data.OnlineMusicLibrary.MusicLibraryIndex = value;
         LibraryNotOpenVisibility =
             MusicLibraryIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
+        MainGridVisibility = MusicLibraryIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
         SaveMusicLibraryIndex();
         // 音乐库索引改变时强制重新搜索
         if (!string.IsNullOrWhiteSpace(Data.OnlineMusicLibrary.SearchKeyWords))
@@ -46,8 +47,17 @@ public sealed partial class HomeViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// 乐库未开放提示可见性
+    /// </summary>
     [ObservableProperty]
     public partial Visibility LibraryNotOpenVisibility { get; set; } = Visibility.Collapsed;
+
+    /// <summary>
+    /// 主界面可见性
+    /// </summary>
+    [ObservableProperty]
+    public partial Visibility MainGridVisibility { get; set; } = Visibility.Collapsed;
 
     public HomeViewModel()
     {
@@ -60,6 +70,7 @@ public sealed partial class HomeViewModel : ObservableObject
         MusicLibraryIndex = await LoadMusicLibraryIndex();
         LibraryNotOpenVisibility =
             MusicLibraryIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
+        MainGridVisibility = MusicLibraryIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public async void SuggestBox_TextChanged(
@@ -126,11 +137,11 @@ public sealed partial class HomeViewModel : ObservableObject
         Navigate(currentSelectedIndex);
     }
 
-    public void Segmented_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    public void MusicLibraryIndex_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is Segmented segmented)
+        if (sender is UXRadioButtons buttons)
         {
-            var currentSelectedIndex = segmented.SelectedIndex;
+            var currentSelectedIndex = buttons.SelectedIndex;
             if (currentSelectedIndex < 0)
             {
                 return;

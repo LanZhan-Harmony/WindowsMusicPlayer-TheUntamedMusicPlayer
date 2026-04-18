@@ -85,10 +85,7 @@ public sealed class AlternatingListViewBehavior : Behavior<ListViewBase>
 
         AssociatedObject.ActualThemeChanged -= OnActualThemeChanged;
         AssociatedObject.ContainerContentChanging -= OnContainerContentChanging;
-        if (AssociatedObject.Items is not null)
-        {
-            AssociatedObject.Items.VectorChanged -= ItemsOnVectorChanged;
-        }
+        AssociatedObject.Items?.VectorChanged -= ItemsOnVectorChanged;
     }
 
     private void OnActualThemeChanged(FrameworkElement sender, object args)
