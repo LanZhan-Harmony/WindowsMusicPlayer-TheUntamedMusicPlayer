@@ -55,7 +55,7 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
     public partial Visibility NetworkErrorVisibility { get; set; } = Visibility.Collapsed;
 
     /// <summary>
-    /// 结果列表透明度(可见性)
+    /// 结果列表可见性
     /// </summary>
     [ObservableProperty]
     public partial Visibility ListViewVisibility { get; set; } = Visibility.Collapsed;

@@ -148,7 +148,6 @@
                 <Grid.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem x:Uid="Songs_Play"
-                                        Width="216"
                                         Click="SongListViewPlayButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE768;}"/>
@@ -166,7 +165,6 @@
                                                               Glyph=&#xE710;}"
                                            Loaded="SongListViewAddToSubItem_Loaded">
                             <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                            Width="216"
                                             Click="SongListViewAddToPlayQueueButton_Click"
                                             Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                Glyph=&#xE93F;}"/>
@@ -263,7 +261,6 @@
                 <Grid.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem x:Uid="Songs_Play"
-                                        Width="216"
                                         Click="AlbumGridViewPlayButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE768;}"/>
@@ -277,7 +274,6 @@
                                                               Glyph=&#xE710;}"
                                            Loaded="AlbumGridViewAddToSubItem_Loaded">
                             <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                            Width="216"
                                             Click="AlbumGridViewAddToPlayQueueButton_Click"
                                             Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                Glyph=&#xE93F;}"/>
@@ -329,7 +325,6 @@
                         <Button.Flyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem x:Uid="Songs_Play"
-                                                Width="216"
                                                 Click="AlbumGridViewPlayButton_Click"
                                                 Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                    Glyph=&#xE768;}"/>
@@ -343,7 +338,6 @@
                                                                       Glyph=&#xE710;}"
                                                    Loaded="AlbumGridViewAddToSubItem_Loaded">
                                     <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                                    Width="216"
                                                     Click="AlbumGridViewAddToPlayQueueButton_Click"
                                                     Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                        Glyph=&#xE93F;}"/>
@@ -605,7 +599,6 @@
                                 <Button.Flyout>
                                     <MenuFlyout Opened="AddToFlyout_Opened" Placement="Bottom">
                                         <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                                        Width="216"
                                                         Click="AddToPlayQueueFlyoutButton_Click"
                                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                            Glyph=&#xE93F;}"/>
@@ -634,7 +627,6 @@
                                                            IsEnabled="{x:Bind ViewModel.IsPlayAllButtonEnabled, Mode=OneWay}"
                                                            Loaded="AddToMoreFlyout_Loaded">
                                             <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                                            Width="216"
                                                             Click="AddToPlayQueueFlyoutButton_Click"
                                                             Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                                                Glyph=&#xE93F;}"/>
