@@ -1035,4 +1035,10 @@
   <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
     <value>This music library is not yet open, please stay tuned</value>
   </data>
+  <data name="Lyric_SpeedUpLyric.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Speed up lyrics by 0.3s</value>
+  </data>
+  <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Slow down lyrics by 0.3s</value>
+  </data>
 </root>

@@ -3,10 +3,12 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
@@ -30,6 +32,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private Timer? _playBarHideTimer;
     private bool _playBarTimerEnabled = false;
     private bool _isPlayBarHidden = false;
+    private readonly Visual _rootPlayBarVisual;
     private Microsoft.UI.Dispatching.DispatcherQueueTimer? _shellFrameMarginAnimationTimer;
     private DateTimeOffset _shellFrameMarginAnimationStart;
     private double _shellFrameMarginFrom;
@@ -74,6 +77,11 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 
         ErrorInfoBar.Translation += new Vector3(0, 0, 40);
 
+        _rootPlayBarVisual = ElementCompositionPreview.GetElementVisual(RootPlayBar);
+        ElementCompositionPreview.SetIsTranslationEnabled(RootPlayBar, true);
+        RootPlayBar.Translation = Vector3.Zero;
+        RootPlayBar.Opacity = 1;
+
         // 注册AppWindow.Closing事件来处理窗口关闭
         AppWindow.Closing += AppWindow_Closing;
 
@@ -113,7 +121,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                 if (_isPlayBarHidden)
                 {
                     AnimateShellFrameBottomMargin(117, 300);
-                    ShowPlayBarStoryboard.Begin();
+                    AnimatePlayBarVisibility(true, 300);
                     _isPlayBarHidden = false;
                     StopPlayBarTimer();
                 }
@@ -132,7 +140,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             if (_isPlayBarHidden)
             {
                 AnimateShellFrameBottomMargin(117, 300);
-                ShowPlayBarStoryboard.Begin();
+                AnimatePlayBarVisibility(true, 300);
                 _isPlayBarHidden = false;
             }
             StopPlayBarTimer();
@@ -157,7 +165,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                 )
                 {
                     AnimateShellFrameBottomMargin(0, 600);
-                    HidePlayBarStoryboard.Begin();
+                    AnimatePlayBarVisibility(false, 600);
                     _isPlayBarHidden = true;
                 }
             }
@@ -236,6 +244,54 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             sender.Tick -= ShellFrameMarginAnimationTick;
             ShellFrame.Margin = new Thickness(0, 0, 0, _shellFrameMarginTo);
         }
+    }
+
+    private void AnimatePlayBarVisibility(bool isVisible, double durationMs)
+    {
+        var targetY = isVisible ? 0f : 117f;
+        var targetOpacity = isVisible ? 1f : 0f;
+
+        if (
+            Math.Abs(RootPlayBar.Translation.Y - targetY) < 0.1f
+            && Math.Abs((float)RootPlayBar.Opacity - targetOpacity) < 0.01f
+        )
+        {
+            RootPlayBar.Translation = new Vector3(0f, targetY, 0f);
+            RootPlayBar.Opacity = targetOpacity;
+            return;
+        }
+
+        _rootPlayBarVisual.StopAnimation("Translation.Y");
+        _rootPlayBarVisual.StopAnimation("Opacity");
+
+        var compositor = _rootPlayBarVisual.Compositor;
+        var easing = isVisible
+            ? compositor.CreateCubicBezierEasingFunction(new Vector2(0f, 0f), new Vector2(0.2f, 1f))
+            : compositor.CreateCubicBezierEasingFunction(
+                new Vector2(0.4f, 0f),
+                new Vector2(1f, 1f)
+            );
+
+        var slideAnimation = compositor.CreateScalarKeyFrameAnimation();
+        slideAnimation.InsertKeyFrame(1f, targetY, easing);
+        slideAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
+        slideAnimation.Target = "Translation.Y";
+
+        var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+        opacityAnimation.InsertKeyFrame(1f, targetOpacity, easing);
+        opacityAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
+        opacityAnimation.Target = "Opacity";
+
+        var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        batch.Completed += (_, _) =>
+        {
+            RootPlayBar.Translation = new Vector3(0f, targetY, 0f);
+            RootPlayBar.Opacity = targetOpacity;
+        };
+
+        RootPlayBar.StartAnimation(slideAnimation);
+        RootPlayBar.StartAnimation(opacityAnimation);
+        batch.End();
     }
 
     /// <summary>
