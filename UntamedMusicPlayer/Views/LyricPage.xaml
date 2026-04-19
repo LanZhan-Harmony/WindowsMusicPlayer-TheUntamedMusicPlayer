@@ -52,33 +52,6 @@
                 </Grid>
             </UserControl>
         </DataTemplate>
-        <Storyboard x:Name="ShowTitleBarStoryboard">
-            <DoubleAnimation Storyboard.TargetName="AppTitleBar"
-                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
-                             From="-33" To="0"
-                             Duration="0:0:0.3">
-                <DoubleAnimation.EasingFunction>
-                    <CubicEase EasingMode="EaseOut"/>
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-            <DoubleAnimation Storyboard.TargetName="AppTitleBar"
-                             Storyboard.TargetProperty="Opacity" From="0"
-                             To="1" Duration="0:0:0.3"/>
-        </Storyboard>
-        <Storyboard x:Name="HideTitleBarStoryboard">
-            <DoubleAnimation Storyboard.TargetName="AppTitleBar"
-                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
-                             From="0" To="-33"
-                             Duration="0:0:0.6">
-                <DoubleAnimation.EasingFunction>
-                    <CubicEase EasingMode="EaseIn"/>
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-            <DoubleAnimation Storyboard.TargetName="AppTitleBar"
-                             Storyboard.TargetProperty="Opacity" From="1"
-                             To="0" Duration="0:0:0.6"/>
-        </Storyboard>
-
     </Page.Resources>
 
     <Grid x:Name="RootGrid" Background="Transparent">
@@ -149,9 +122,6 @@
               Height="33"
               VerticalAlignment="Center"
               Canvas.ZIndex="1" IsHitTestVisible="True">
-            <Grid.RenderTransform>
-                <CompositeTransform/>
-            </Grid.RenderTransform>
             <StackPanel Orientation="Horizontal">
                 <Button Width="48" Height="39"
                         AccessKey="A" Click="CoverBtnClickToDetail"
@@ -198,7 +168,7 @@
                               ItemTemplate="{StaticResource LyricViewTemplate}"
                               ItemsSource="{x:Bind model:Data.LyricManager.CurrentLyricSlices, Mode=OneWay}"
                               Loaded="LyricView_Loaded"
-                              PointerWheelChanged="LyricViewer_PointerWheelChanged"
+                              PointerWheelChanged="LyricView_PointerWheelChanged"
                               SelectionMode="None"/>
                     <StackPanel Height="600"/>
                 </StackPanel>
@@ -211,22 +181,29 @@
                     Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="25"
-                    Visibility="Collapsed">
+                    PointerEntered="LyricAdjustBorder_PointerEntered"
+                    PointerExited="LyricAdjustBorder_PointerExited">
                 <StackPanel Spacing="8">
-                    <Button Width="32" Height="32"
+                    <Button x:Uid="Lyric_SlowDownLyric"
+                            Width="32" Height="32"
                             HorizontalAlignment="Center"
                             Click="{x:Bind ViewModel.AddLyricAdjustButton_Click}"
-                            Style="{StaticResource CircularButtonStyle}">
-                        <FontIcon FontSize="16" Glyph="&#xE710;"/>
+                            Style="{StaticResource CircularButtonStyle}"
+                            ToolTipService.Placement="Left">
+                        <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                  FontSize="16" Glyph="&#xE710;"/>
                     </Button>
                     <Button MinWidth="40" Style="{StaticResource TransparentButtonStyle}">
                         <TextBlock HorizontalAlignment="Center" Text="{x:Bind model:Data.LyricManager.LyricAdjustDisplayStr, Mode=OneWay}"/>
                     </Button>
-                    <Button Width="32" Height="32"
+                    <Button x:Uid="Lyric_SpeedUpLyric"
+                            Width="32" Height="32"
                             HorizontalAlignment="Center"
                             Click="{x:Bind ViewModel.SubtractLyricAdjustButton_Click}"
-                            Style="{StaticResource CircularButtonStyle}">
-                        <FontIcon FontSize="16" Glyph="&#xE738;"/>
+                            Style="{StaticResource CircularButtonStyle}"
+                            ToolTipService.Placement="Left">
+                        <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
+                                  FontSize="16" Glyph="&#xE949;"/>
                     </Button>
                 </StackPanel>
             </Border>

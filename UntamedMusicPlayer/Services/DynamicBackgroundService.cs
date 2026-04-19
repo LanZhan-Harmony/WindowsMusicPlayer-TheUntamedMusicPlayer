@@ -74,8 +74,14 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
     /// </summary>
     public async Task UpdateBackgroundAsync()
     {
-        if (!IsEnabled || Data.PlayState.CurrentSong is null)
+        if (!IsEnabled)
         {
+            return;
+        }
+
+        if (Data.PlayState.CurrentSong is null)
+        {
+            ClearBackground();
             return;
         }
 
