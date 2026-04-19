@@ -104,6 +104,10 @@
                         <Setter Target="LyricViewer.(Grid.Column)" Value="0"/>
                         <Setter Target="LyricViewer.(Grid.ColumnSpan)" Value="2"/>
                         <Setter Target="LyricViewer.Margin" Value="30,0,30,0"/>
+                        <Setter Target="LyricAdjustBorder.(Grid.Row)" Value="1"/>
+                        <Setter Target="LyricAdjustBorder.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="LyricAdjustBorder.(Grid.Column)" Value="0"/>
+                        <Setter Target="LyricAdjustBorder.(Grid.ColumnSpan)" Value="2"/>
                         <!--<Setter Target="AdvancedLyricViewer.(Grid.Row)" Value="1"/>
                         <Setter Target="AdvancedLyricViewer.(Grid.RowSpan)" Value="1"/>
                         <Setter Target="AdvancedLyricViewer.(Grid.Column)" Value="0"/>
@@ -127,6 +131,10 @@
                         <Setter Target="LyricViewer.(Grid.Column)" Value="1"/>
                         <Setter Target="LyricViewer.(Grid.ColumnSpan)" Value="1"/>
                         <Setter Target="LyricViewer.Margin" Value="20,20,50,20"/>
+                        <Setter Target="LyricAdjustBorder.(Grid.Row)" Value="0"/>
+                        <Setter Target="LyricAdjustBorder.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="LyricAdjustBorder.(Grid.Column)" Value="1"/>
+                        <Setter Target="LyricAdjustBorder.(Grid.ColumnSpan)" Value="1"/>
                         <!--<Setter Target="AdvancedLyricViewer.(Grid.Row)" Value="0"/>
                         <Setter Target="AdvancedLyricViewer.(Grid.RowSpan)" Value="2"/>
                         <Setter Target="AdvancedLyricViewer.(Grid.Column)" Value="1"/>
@@ -189,10 +197,39 @@
                               ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
                               ItemTemplate="{StaticResource LyricViewTemplate}"
                               ItemsSource="{x:Bind model:Data.LyricManager.CurrentLyricSlices, Mode=OneWay}"
-                              Loaded="LyricView_Loaded" SelectionMode="None"/>
+                              Loaded="LyricView_Loaded"
+                              PointerWheelChanged="LyricViewer_PointerWheelChanged"
+                              SelectionMode="None"/>
                     <StackPanel Height="600"/>
                 </StackPanel>
             </ScrollViewer>
+
+            <Border x:Name="LyricAdjustBorder"
+                    Margin="0,0,30,0" Padding="2,6,2,6"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="25"
+                    Visibility="Collapsed">
+                <StackPanel Spacing="8">
+                    <Button Width="32" Height="32"
+                            HorizontalAlignment="Center"
+                            Click="{x:Bind ViewModel.AddLyricAdjustButton_Click}"
+                            Style="{StaticResource CircularButtonStyle}">
+                        <FontIcon FontSize="16" Glyph="&#xE710;"/>
+                    </Button>
+                    <Button MinWidth="40" Style="{StaticResource TransparentButtonStyle}">
+                        <TextBlock HorizontalAlignment="Center" Text="{x:Bind model:Data.LyricManager.LyricAdjustDisplayStr, Mode=OneWay}"/>
+                    </Button>
+                    <Button Width="32" Height="32"
+                            HorizontalAlignment="Center"
+                            Click="{x:Bind ViewModel.SubtractLyricAdjustButton_Click}"
+                            Style="{StaticResource CircularButtonStyle}">
+                        <FontIcon FontSize="16" Glyph="&#xE738;"/>
+                    </Button>
+                </StackPanel>
+            </Border>
 
             <Grid x:Name="ReferenceGrid"
                   Grid.Row="0" Grid.Column="0"
