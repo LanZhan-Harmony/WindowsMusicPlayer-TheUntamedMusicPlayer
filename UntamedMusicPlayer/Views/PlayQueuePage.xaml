@@ -12,7 +12,8 @@
 
     <Page.Resources>
         <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="playback:IndexedPlayQueueSong">
-            <Grid Height="52"
+            <Grid x:Name="TemplateContent"
+                  Height="52"
                   AutomationProperties.Name="{x:Bind Song.Title}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -216,11 +217,10 @@
                        Style="{StaticResource TitleLargeTextBlockStyle}"/>
             <SplitButton x:Name="AddFilesSplitButton" x:Uid="PlayQueue_AddFilesButton"
                          Grid.Column="2"
-                         Height="30"
                          Click="AddFilesSplitButton_Click">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                              FontSize="12" Glyph="&#xE838;"/>
+                              FontSize="16" Glyph="&#xE838;"/>
                     <TextBlock x:Name="AddTextBlock" x:Uid="PlayQueue_AddFiles"/>
                 </StackPanel>
                 <SplitButton.Flyout>

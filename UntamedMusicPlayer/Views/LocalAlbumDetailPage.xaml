@@ -17,7 +17,8 @@
         <converter:AlbumCoverConverter x:Key="AlbumCoverConverter"/>
         <converter:InverseAlbumCoverToVisibilityConverter x:Key="InverseAlbumCoverToVisibilityConverter"/>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefLocalSongInfo">
-            <Grid Height="52"
+            <Grid x:Name="TemplateContent"
+                  Height="52"
                   AutomationProperties.Name="{x:Bind Title}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"

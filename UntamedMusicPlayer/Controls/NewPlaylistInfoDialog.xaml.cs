@@ -14,7 +14,6 @@ public sealed partial class NewPlaylistInfoDialog : ContentDialog, IRecipient<Th
 
     public NewPlaylistInfoDialog()
     {
-        this.EnableLightDismiss();
         StrongReferenceMessenger.Default.Register(this);
         RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();

@@ -13,7 +13,8 @@
 
     <Page.Resources>
         <DataTemplate x:Key="PlaylistGridViewTemplate" x:DataType="contract:IBriefOnlinePlaylistInfo">
-            <Grid Width="170" Height="228"
+            <Grid x:Name="TemplateContent"
+                  Width="170" Height="228"
                   AutomationProperties.Name="{x:Bind Name}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"

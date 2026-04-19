@@ -13,12 +13,11 @@
         <converter:PlaylistCoverConverter x:Key="PlaylistCoverConverter"/>
         <converter:InversePlaylistCoverToVisibilityConverter x:Key="InversePlaylistCoverToVisibilityConverter"/>
         <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
-            <ListViewItem Margin="0,2,0,2">
-                <TextBlock Text="{x:Bind}"/>
-            </ListViewItem>
+            <TextBlock x:Name="TemplateContent" Text="{x:Bind}"/>
         </DataTemplate>
         <DataTemplate x:Key="PlaylistGridViewTemplate" x:DataType="model:PlaylistInfo">
-            <Grid Width="170" Height="228"
+            <Grid x:Name="TemplateContent"
+                  Width="170" Height="228"
                   AutomationProperties.Name="{x:Bind Name}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -309,6 +308,7 @@
                         <Flyout Placement="Bottom">
                             <ListView x:Name="SortByListView"
                                       Margin="-12,-13,-12,-15"
+                                      ItemContainerStyle="{StaticResource SortFilterListViewItemStyle}"
                                       ItemTemplate="{StaticResource SortByListViewItemTemplate}"
                                       ItemsSource="{x:Bind ViewModel.SortBy}"
                                       Loaded="{x:Bind ViewModel.SortByListView_Loaded}"
