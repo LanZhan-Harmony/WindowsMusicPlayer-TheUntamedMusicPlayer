@@ -73,7 +73,6 @@ public sealed partial class EditSongInfoDialog
 
     public EditSongInfoDialog(BriefLocalSongInfo info)
     {
-        this.EnableLightDismiss();
         StrongReferenceMessenger.Default.Register(this);
         var detailedInfo = new DetailedLocalSongInfo(info);
         _song = detailedInfo;

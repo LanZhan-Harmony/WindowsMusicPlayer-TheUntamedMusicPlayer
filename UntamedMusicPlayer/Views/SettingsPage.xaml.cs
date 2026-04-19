@@ -6,7 +6,6 @@ using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Helpers.Animations;
 using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
-using Windows.ApplicationModel.Contacts;
 using Windows.Storage;
 using Windows.System;
 

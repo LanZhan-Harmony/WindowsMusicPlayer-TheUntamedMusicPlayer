@@ -20,7 +20,7 @@
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
 
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="local:DisplaySongInfo">
-            <Grid Background="Transparent">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="17"/>
@@ -93,25 +93,21 @@
                             <StackPanel Margin="2,0,0,2" VerticalAlignment="Bottom"
                                         Canvas.ZIndex="2" Orientation="Horizontal"
                                         Spacing="2">
-                                <Button Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                                        Click="ChangeCoverButton_Click"
-                                        Style="{StaticResource MenuButtonStyle}">
+                                <Button Click="ChangeCoverButton_Click" Style="{StaticResource EditButtonStyle}">
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE70F;"/>
                                 </Button>
-                                <Button Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                                        Click="DeleteCoverButton_Click"
+                                <Button Click="DeleteCoverButton_Click"
                                         IsEnabled="{x:Bind IsDeleteCoverButtonEnabled, Mode=OneWay}"
-                                        Style="{StaticResource MenuButtonStyle}">
+                                        Style="{StaticResource EditButtonStyle}">
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE74D;"/>
                                 </Button>
                             </StackPanel>
                             <Button x:Name="SaveCoverButton"
                                     Margin="0,0,2,2" HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
-                                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                                     Canvas.ZIndex="2" Click="SaveCoverButton_Click"
                                     IsEnabled="{x:Bind IsSaveCoverButtonEnabled, Mode=OneWay}"
-                                    Style="{StaticResource MenuButtonStyle}">
+                                    Style="{StaticResource EditButtonStyle}">
                                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE74E;"/>
                             </Button>
                             <ProgressRing Width="48" Height="48"

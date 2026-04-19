@@ -92,10 +92,9 @@
                             <Button x:Name="SaveCoverButton"
                                     Margin="2,0,0,2" HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"
-                                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                                     Canvas.ZIndex="2" Click="SaveCoverButton_Click"
                                     IsEnabled="{x:Bind _isSaveCoverButtonEnabled}"
-                                    Style="{StaticResource MenuButtonStyle}">
+                                    Style="{StaticResource EditButtonStyle}">
                                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="&#xE74E;"/>
                             </Button>
                             <Image Canvas.ZIndex="1" Source="{x:Bind Cover, Mode=OneWay}"/>

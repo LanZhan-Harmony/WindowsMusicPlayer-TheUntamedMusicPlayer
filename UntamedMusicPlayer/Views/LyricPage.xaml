@@ -19,7 +19,7 @@
 
         <DataTemplate x:Key="LyricViewTemplate" x:DataType="lyricRenderer:LyricSlice">
             <UserControl>
-                <Grid>
+                <Grid x:Name="TemplateContent">
                     <VisualStateManager.VisualStateGroups>
                         <VisualStateGroup>
                             <VisualState x:Name="Narrow">
