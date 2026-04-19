@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -65,6 +66,7 @@ public static class ListViewExtensions
         {
             return;
         }
+
         var cornerRadius = GetItemCornerRadius(sender);
         var margin = GetItemMargin(sender);
         if (args.ItemContainer.FindDescendant<ListViewItemPresenter>() is { } presenter)

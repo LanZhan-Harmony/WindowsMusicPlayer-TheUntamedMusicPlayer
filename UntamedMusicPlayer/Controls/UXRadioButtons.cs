@@ -1,12 +1,14 @@
 using System.Numerics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using UntamedMusicPlayer.Helpers.Animations;
 using Windows.Foundation;
 
 namespace UntamedMusicPlayer.Controls;
 
+[Bindable]
 public partial class UXRadioButtons : RadioButtons
 {
     public event TypedEventHandler<

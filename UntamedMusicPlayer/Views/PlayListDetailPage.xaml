@@ -17,7 +17,8 @@
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
                                                         EmptyValue="Visible" NotEmptyValue="Collapsed"/>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:IndexedPlaylistSong">
-            <Grid Height="52"
+            <Grid x:Name="TemplateContent"
+                  Height="52"
                   AutomationProperties.Name="{x:Bind Song.Title}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"

@@ -495,73 +495,44 @@
                                 <MenuFlyoutItem.Template>
                                     <ControlTemplate>
                                         <ListView x:Name="SpeedListView"
+                                                  ItemContainerStyle="{StaticResource SpeedListViewItemStyle}"
                                                   KeyTipPlacementMode="Left"
                                                   Loaded="SpeedListView_Loaded"
                                                   SelectionChanged="SpeedListView_SelectionChanged">
-                                            <ListViewItem Margin="0,2,0,1" AccessKey="G">
+                                            <ListViewItem Margin="0,2,0,1"
+                                                          AccessKey="G" Content="0.25 ×"
+                                                          Tag="Ctrl+Shift+G">
                                                 <ListViewItem.KeyboardAccelerators>
                                                     <KeyboardAccelerator Key="G" Modifiers="Control,Shift"/>
                                                 </ListViewItem.KeyboardAccelerators>
-                                                <Grid Width="125">
-                                                    <TextBlock HorizontalAlignment="Left" Text="0.25 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right"
-                                                               VerticalAlignment="Center"
-                                                               FontSize="12"
-                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                               Text="Ctrl+Shift+G"/>
-                                                </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,1,0,1" AccessKey="H">
+                                            <ListViewItem Margin="0,1,0,1"
+                                                          AccessKey="H" Content="0.5 ×"
+                                                          Tag="Ctrl+Shift+H">
                                                 <ListViewItem.KeyboardAccelerators>
                                                     <KeyboardAccelerator Key="H" Modifiers="Control,Shift"/>
                                                 </ListViewItem.KeyboardAccelerators>
-                                                <Grid Width="125">
-                                                    <TextBlock HorizontalAlignment="Left" Text="0.5 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right"
-                                                               VerticalAlignment="Center"
-                                                               FontSize="12"
-                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                               Text="Ctrl+Shift+H"/>
-                                                </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,1,0,1" AccessKey="J">
+                                            <ListViewItem Margin="0,1,0,1"
+                                                          AccessKey="J" Content="1 ×"
+                                                          Tag="Ctrl+Shift+J">
                                                 <ListViewItem.KeyboardAccelerators>
                                                     <KeyboardAccelerator Key="J" Modifiers="Control,Shift"/>
                                                 </ListViewItem.KeyboardAccelerators>
-                                                <Grid Width="125">
-                                                    <TextBlock HorizontalAlignment="Left" Text="1 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right"
-                                                               VerticalAlignment="Center"
-                                                               FontSize="12"
-                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                               Text="Ctrl+Shift+J"/>
-                                                </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,1,0,1" AccessKey="K">
+                                            <ListViewItem Margin="0,1,0,1"
+                                                          AccessKey="K" Content="1.5 ×"
+                                                          Tag="Ctrl+Shift+K">
                                                 <ListViewItem.KeyboardAccelerators>
                                                     <KeyboardAccelerator Key="K" Modifiers="Control,Shift"/>
                                                 </ListViewItem.KeyboardAccelerators>
-                                                <Grid Width="125">
-                                                    <TextBlock HorizontalAlignment="Left" Text="1.5 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right"
-                                                               VerticalAlignment="Center"
-                                                               FontSize="12"
-                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                               Text="Ctrl+Shift+K"/>
-                                                </Grid>
                                             </ListViewItem>
-                                            <ListViewItem Margin="0,1,0,2" AccessKey="L">
+                                            <ListViewItem Margin="0,1,0,2"
+                                                          AccessKey="L" Content="2 ×"
+                                                          Tag="Ctrl+Shift+L">
                                                 <ListViewItem.KeyboardAccelerators>
                                                     <KeyboardAccelerator Key="L" Modifiers="Control,Shift"/>
                                                 </ListViewItem.KeyboardAccelerators>
-                                                <Grid Width="125">
-                                                    <TextBlock HorizontalAlignment="Left" Text="2 ×"/>
-                                                    <TextBlock HorizontalAlignment="Right"
-                                                               VerticalAlignment="Center"
-                                                               FontSize="12"
-                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                               Text="Ctrl+Shift+L"/>
-                                                </Grid>
                                             </ListViewItem>
                                         </ListView>
                                     </ControlTemplate>
