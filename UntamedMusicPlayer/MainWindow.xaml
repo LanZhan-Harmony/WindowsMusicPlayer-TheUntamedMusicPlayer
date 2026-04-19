@@ -14,32 +14,6 @@
 
     <Grid x:Name="RootGrid" Background="Transparent">
         <Grid.Resources>
-            <Storyboard x:Name="ShowPlayBarStoryboard">
-                <DoubleAnimation Storyboard.TargetName="RootPlayBar"
-                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
-                                 From="117" To="0"
-                                 Duration="0:0:0.3">
-                    <DoubleAnimation.EasingFunction>
-                        <CubicEase EasingMode="EaseOut"/>
-                    </DoubleAnimation.EasingFunction>
-                </DoubleAnimation>
-                <DoubleAnimation Storyboard.TargetName="RootPlayBar"
-                                 Storyboard.TargetProperty="Opacity" From="0"
-                                 To="1" Duration="0:0:0.3"/>
-            </Storyboard>
-            <Storyboard x:Name="HidePlayBarStoryboard">
-                <DoubleAnimation Storyboard.TargetName="RootPlayBar"
-                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
-                                 From="0" To="117"
-                                 Duration="0:0:0.6">
-                    <DoubleAnimation.EasingFunction>
-                        <CubicEase EasingMode="EaseIn"/>
-                    </DoubleAnimation.EasingFunction>
-                </DoubleAnimation>
-                <DoubleAnimation Storyboard.TargetName="RootPlayBar"
-                                 Storyboard.TargetProperty="Opacity" From="1"
-                                 To="0" Duration="0:0:0.6"/>
-            </Storyboard>
             <Storyboard x:Name="ShowInfoBarStoryboard">
                 <DoubleAnimation Storyboard.TargetName="ErrorInfoBar"
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)"
@@ -78,8 +52,8 @@
                  VerticalAlignment="Bottom"
                  Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                  Canvas.ZIndex="2" IsClosable="True"
-                 IsIconVisible="False" Opacity="1"
-                 Severity="Informational" Visibility="Collapsed">
+                 IsIconVisible="False" Severity="Informational"
+                 Visibility="Collapsed">
             <HyperlinkButton x:Name="SendFeedbackButton" x:Uid="Main_SendFeedback"
                              Margin="-12,-10,0,9"
                              NavigateUri="https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer/issues"/>
@@ -92,10 +66,6 @@
         </InfoBar>
         <view:RootPlayBarView x:Name="RootPlayBar"
                               Grid.Row="1"
-                              Canvas.ZIndex="1">
-            <view:RootPlayBarView.RenderTransform>
-                <CompositeTransform/>
-            </view:RootPlayBarView.RenderTransform>
-        </view:RootPlayBarView>
+                              Canvas.ZIndex="1"/>
     </Grid>
 </windowex:WindowEx>

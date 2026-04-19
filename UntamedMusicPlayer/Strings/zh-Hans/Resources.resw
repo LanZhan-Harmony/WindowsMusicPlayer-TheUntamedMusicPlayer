@@ -1035,4 +1035,10 @@
   <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
     <value>此乐库暂未开放，敬请期待</value>
   </data>
+  <data name="Lyric_SpeedUpLyric.ToolTipService.ToolTip" xml:space="preserve">
+    <value>歌词提前 0.3 秒</value>
+  </data>
+  <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
+    <value>歌词延后 0.3 秒</value>
+  </data>
 </root>
