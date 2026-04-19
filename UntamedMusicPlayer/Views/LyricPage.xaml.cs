@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Numerics;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -16,6 +17,14 @@ namespace UntamedMusicPlayer.Views;
 
 public sealed partial class LyricPage : Page, IDisposable
 {
+    private enum LyricAdjustBorderAnimationState
+    {
+        Hidden,
+        Showing,
+        Visible,
+        Hiding,
+    }
+
     public LyricViewModel ViewModel { get; }
 
     private bool isFirstLoad = true;
@@ -23,6 +32,8 @@ public sealed partial class LyricPage : Page, IDisposable
     private readonly Timer _autoScrollDelayTimer;
     private bool _isManualScrolling;
     private bool _isProgrammaticScroll;
+    private double? _programmaticTargetOffset;
+    private DispatcherQueueTimer? _programmaticScrollFallbackTimer;
 
     private Timer? _titleBarHideTimer;
     private bool _titleBarTimerEnabled = false;
@@ -39,13 +50,19 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private bool _isLyricViewLoaded;
 
+    private Visual? _lyricAdjustBorderVisual;
+    private LyricAdjustBorderAnimationState _lyricAdjustBorderAnimationState =
+        LyricAdjustBorderAnimationState.Hidden;
+    private bool _lyricAdjustShouldBeVisible;
+    private int _lyricAdjustAnimationVersion;
+
     public LyricPage()
     {
         ViewModel = App.GetService<LyricViewModel>();
         InitializeComponent();
 
         _autoScrollDelayTimer = new Timer(
-            _ => RestartEnsureScrollToCurrentLyric(),
+            _ => OnAutoScrollDelayTimerTick(),
             null,
             Timeout.Infinite,
             Timeout.Infinite
@@ -521,8 +538,16 @@ public sealed partial class LyricPage : Page, IDisposable
                 LyricViewer.VerticalOffset + topInViewport - LyricViewer.ActualHeight / 2 + 40;
             targetOffset = Math.Max(0, targetOffset);
 
-            _isProgrammaticScroll = true;
+            MarkProgrammaticScroll(targetOffset);
             LyricViewer.ChangeView(null, targetOffset, null, false);
+        }
+    }
+
+    private void LyricViewer_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+    {
+        if (_isProgrammaticScroll)
+        {
+            ClearProgrammaticScrollState();
         }
     }
 
@@ -530,19 +555,197 @@ public sealed partial class LyricPage : Page, IDisposable
     {
         if (_isProgrammaticScroll) // 如果是自动滚动
         {
-            if (!e.IsIntermediate) // 自动滚动完成后重置标志
+            if (
+                !e.IsIntermediate
+                || (
+                    _programmaticTargetOffset.HasValue
+                    && Math.Abs(LyricViewer.VerticalOffset - _programmaticTargetOffset.Value) < 1.0
+                )
+            )
             {
-                _isProgrammaticScroll = false;
+                ClearProgrammaticScrollState();
             }
             return;
         }
 
+        var wasManualScrolling = _isManualScrolling;
         _isManualScrolling = true;
+        if (!wasManualScrolling)
+        {
+            ShowLyricAdjustBorder();
+        }
         _autoScrollDelayTimer.Change(Timeout.Infinite, Timeout.Infinite);
         if (!e.IsIntermediate) // 用户停止滚动，启动3秒倒计时
         {
             _autoScrollDelayTimer.Change(3000, Timeout.Infinite);
         }
+    }
+
+    private void OnAutoScrollDelayTimerTick()
+    {
+        _isManualScrolling = false;
+        RestartEnsureScrollToCurrentLyric();
+        DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, HideLyricAdjustBorder);
+    }
+
+    private void EnsureLyricAdjustBorderVisualInitialized()
+    {
+        if (_lyricAdjustBorderVisual is not null)
+        {
+            return;
+        }
+
+        _lyricAdjustBorderVisual = ElementCompositionPreview.GetElementVisual(LyricAdjustBorder);
+        ElementCompositionPreview.SetIsTranslationEnabled(LyricAdjustBorder, true);
+        var hiddenOffsetX = (float)GetLyricAdjustBorderHiddenOffset();
+        LyricAdjustBorder.Translation = new Vector3(hiddenOffsetX, 0f, 0f);
+        _lyricAdjustBorderVisual.Opacity = 0f;
+    }
+
+    private double GetLyricAdjustBorderHiddenOffset()
+    {
+        var width = LyricAdjustBorder.ActualWidth;
+        if (width <= 0)
+        {
+            width = 48;
+        }
+        return width + LyricAdjustBorder.Margin.Right + 24;
+    }
+
+    private void ShowLyricAdjustBorder()
+    {
+        EnsureLyricAdjustBorderVisualInitialized();
+        if (_lyricAdjustBorderVisual is null)
+        {
+            return;
+        }
+
+        _lyricAdjustShouldBeVisible = true;
+        if (
+            _lyricAdjustBorderAnimationState
+            is LyricAdjustBorderAnimationState.Visible or LyricAdjustBorderAnimationState.Showing
+        )
+        {
+            return;
+        }
+
+        var previousState = _lyricAdjustBorderAnimationState;
+        var animationVersion = ++_lyricAdjustAnimationVersion;
+        _lyricAdjustBorderAnimationState = LyricAdjustBorderAnimationState.Showing;
+
+        LyricAdjustBorder.Visibility = Visibility.Visible;
+
+        var hiddenOffsetX = (float)GetLyricAdjustBorderHiddenOffset();
+        if (previousState == LyricAdjustBorderAnimationState.Hidden)
+        {
+            LyricAdjustBorder.Translation = new Vector3(hiddenOffsetX, 0f, 0f);
+            _lyricAdjustBorderVisual.Opacity = 0f;
+        }
+
+        _lyricAdjustBorderVisual.StopAnimation("Translation.X");
+        _lyricAdjustBorderVisual.StopAnimation("Opacity");
+
+        var compositor = _lyricAdjustBorderVisual.Compositor;
+
+        var slideIn = compositor.CreateScalarKeyFrameAnimation();
+        slideIn.InsertKeyFrame(
+            1f,
+            0f,
+            compositor.CreateCubicBezierEasingFunction(new Vector2(0f, 0f), new Vector2(0.2f, 1f))
+        );
+        slideIn.Duration = TimeSpan.FromMilliseconds(280);
+
+        var fadeIn = compositor.CreateScalarKeyFrameAnimation();
+        fadeIn.InsertKeyFrame(
+            1f,
+            1f,
+            compositor.CreateCubicBezierEasingFunction(new Vector2(0f, 0f), new Vector2(0.2f, 1f))
+        );
+        fadeIn.Duration = TimeSpan.FromMilliseconds(220);
+
+        var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        batch.Completed += (_, _) =>
+        {
+            if (animationVersion != _lyricAdjustAnimationVersion)
+            {
+                return;
+            }
+
+            if (_lyricAdjustShouldBeVisible)
+            {
+                _lyricAdjustBorderAnimationState = LyricAdjustBorderAnimationState.Visible;
+                LyricAdjustBorder.Translation = Vector3.Zero;
+                _lyricAdjustBorderVisual.Opacity = 1f;
+            }
+        };
+
+        _lyricAdjustBorderVisual.StartAnimation("Translation.X", slideIn);
+        _lyricAdjustBorderVisual.StartAnimation("Opacity", fadeIn);
+        batch.End();
+    }
+
+    private void HideLyricAdjustBorder()
+    {
+        EnsureLyricAdjustBorderVisualInitialized();
+        if (_lyricAdjustBorderVisual is null)
+        {
+            return;
+        }
+
+        _lyricAdjustShouldBeVisible = false;
+        if (
+            _lyricAdjustBorderAnimationState
+            is LyricAdjustBorderAnimationState.Hidden or LyricAdjustBorderAnimationState.Hiding
+        )
+        {
+            return;
+        }
+
+        _lyricAdjustBorderAnimationState = LyricAdjustBorderAnimationState.Hiding;
+        var animationVersion = ++_lyricAdjustAnimationVersion;
+
+        _lyricAdjustBorderVisual.StopAnimation("Translation.X");
+        _lyricAdjustBorderVisual.StopAnimation("Opacity");
+
+        var compositor = _lyricAdjustBorderVisual.Compositor;
+        var hiddenOffsetX = (float)GetLyricAdjustBorderHiddenOffset();
+
+        var slideOut = compositor.CreateScalarKeyFrameAnimation();
+        slideOut.InsertKeyFrame(
+            1f,
+            hiddenOffsetX,
+            compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0f), new Vector2(1f, 1f))
+        );
+        slideOut.Duration = TimeSpan.FromMilliseconds(240);
+
+        var fadeOut = compositor.CreateScalarKeyFrameAnimation();
+        fadeOut.InsertKeyFrame(
+            1f,
+            0f,
+            compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0f), new Vector2(1f, 1f))
+        );
+        fadeOut.Duration = TimeSpan.FromMilliseconds(180);
+
+        var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        batch.Completed += (_, _) =>
+        {
+            if (animationVersion != _lyricAdjustAnimationVersion)
+            {
+                return;
+            }
+
+            if (!_lyricAdjustShouldBeVisible)
+            {
+                LyricAdjustBorder.Visibility = Visibility.Collapsed;
+                LyricAdjustBorder.Translation = new Vector3(hiddenOffsetX, 0f, 0f);
+                _lyricAdjustBorderVisual.Opacity = 0f;
+                _lyricAdjustBorderAnimationState = LyricAdjustBorderAnimationState.Hidden;
+            }
+        };
+
+        _lyricAdjustBorderVisual.StartAnimation("Translation.X", slideOut);
+        _lyricAdjustBorderVisual.StartAnimation("Opacity", fadeOut);
+        batch.End();
     }
 
     private bool TryScrollToCurrentLyric()
@@ -581,10 +784,42 @@ public sealed partial class LyricPage : Page, IDisposable
 
         targetOffset = Math.Max(0, targetOffset);
 
-        _isProgrammaticScroll = true;
+        MarkProgrammaticScroll(targetOffset);
         LyricViewer.ChangeView(null, targetOffset, null, false);
 
         return true;
+    }
+
+    private void MarkProgrammaticScroll(double targetOffset)
+    {
+        _isProgrammaticScroll = true;
+        _programmaticTargetOffset = targetOffset;
+
+        _programmaticScrollFallbackTimer ??= DispatcherQueue.CreateTimer();
+        _programmaticScrollFallbackTimer.Stop();
+        _programmaticScrollFallbackTimer.Interval = TimeSpan.FromMilliseconds(900);
+        _programmaticScrollFallbackTimer.Tick -= ProgrammaticScrollFallbackTimerTick;
+        _programmaticScrollFallbackTimer.Tick += ProgrammaticScrollFallbackTimerTick;
+        _programmaticScrollFallbackTimer.Start();
+    }
+
+    private void ProgrammaticScrollFallbackTimerTick(DispatcherQueueTimer sender, object args)
+    {
+        sender.Stop();
+        sender.Tick -= ProgrammaticScrollFallbackTimerTick;
+        _isProgrammaticScroll = false;
+        _programmaticTargetOffset = null;
+    }
+
+    private void ClearProgrammaticScrollState()
+    {
+        _isProgrammaticScroll = false;
+        _programmaticTargetOffset = null;
+        if (_programmaticScrollFallbackTimer is not null)
+        {
+            _programmaticScrollFallbackTimer.Stop();
+            _programmaticScrollFallbackTimer.Tick -= ProgrammaticScrollFallbackTimerTick;
+        }
     }
 
     public void Dispose()
@@ -600,6 +835,12 @@ public sealed partial class LyricPage : Page, IDisposable
         _contentGridMarginAnimationTimer?.Stop();
         _contentGridMarginAnimationTimer?.Tick -= ContentGridMarginAnimationTick;
         _contentGridMarginAnimationTimer = null;
+        _programmaticScrollFallbackTimer?.Stop();
+        _programmaticScrollFallbackTimer?.Tick -= ProgrammaticScrollFallbackTimerTick;
+        _programmaticScrollFallbackTimer = null;
+        _lyricAdjustBorderVisual?.StopAnimation("Translation.X");
+        _lyricAdjustBorderVisual?.StopAnimation("Opacity");
+        _lyricAdjustBorderVisual = null;
 
         Data.PlayState.PropertyChanged -= OnStateChanged;
         Data.RootPlayBarViewModel?.PropertyChanged -= OnRootPlayBarChanged;

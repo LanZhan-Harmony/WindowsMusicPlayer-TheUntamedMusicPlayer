@@ -28,6 +28,17 @@ public sealed partial class LyricManager
     public partial string CurrentLyricContent { get; set; } = "";
 
     /// <summary>
+    /// 歌词偏移毫秒数，正数表示歌词显示延后，负数表示歌词显示提前
+    /// </summary>
+    public double LyricAdjustMilliseconds { get; set; } = 0;
+
+    /// <summary>
+    /// 歌词偏移显示字符串
+    /// </summary>
+    [ObservableProperty]
+    public partial string LyricAdjustDisplayStr { get; set; } = "0.0s";
+
+    /// <summary>
     /// 当前歌词切片集合
     /// </summary>
     [ObservableProperty]
@@ -128,6 +139,40 @@ public sealed partial class LyricManager
         });
     }
 
+    public async Task AddLyricAdjust()
+    {
+        LyricAdjustMilliseconds += 300;
+        LyricAdjustDisplayStr =
+            LyricAdjustMilliseconds == 0
+                ? "0.0s"
+                : $"{(LyricAdjustMilliseconds > 0 ? "+" : "-")}{Math.Abs(LyricAdjustMilliseconds) / 1000:F1}s";
+        await Task.Run(() =>
+        {
+            foreach (var slice in CurrentLyricSlices)
+            {
+                slice.StartTime += 300;
+                slice.EndTime += 300;
+            }
+        });
+    }
+
+    public async Task SubtractLyricAdjust()
+    {
+        LyricAdjustMilliseconds -= 300;
+        LyricAdjustDisplayStr =
+            LyricAdjustMilliseconds == 0
+                ? "0.0s"
+                : $"{(LyricAdjustMilliseconds > 0 ? "+" : "-")}{Math.Abs(LyricAdjustMilliseconds) / 1000:F1}s";
+        await Task.Run(() =>
+        {
+            foreach (var slice in CurrentLyricSlices)
+            {
+                slice.StartTime = Math.Max(0, slice.StartTime - 300);
+                slice.EndTime = Math.Max(0, slice.EndTime - 300);
+            }
+        });
+    }
+
     /// <summary>
     /// 重置歌词状态
     /// </summary>
@@ -137,6 +182,8 @@ public sealed partial class LyricManager
         {
             CurrentLyricIndex = 0;
             CurrentLyricContent = "";
+            LyricAdjustMilliseconds = 0;
+            LyricAdjustDisplayStr = "0.0s";
             CurrentLyricSlices.Clear();
         });
     }
