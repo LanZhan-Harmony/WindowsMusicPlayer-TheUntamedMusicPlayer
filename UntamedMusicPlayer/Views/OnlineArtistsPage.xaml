@@ -13,7 +13,8 @@
 
     <Page.Resources>
         <DataTemplate x:Key="ArtistGridViewTemplate" x:DataType="contract:IBriefOnlineArtistInfo">
-            <Grid Width="170" Height="226"
+            <Grid x:Name="TemplateContent"
+                  Width="170" Height="226"
                   AutomationProperties.Name="{x:Bind Name}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"

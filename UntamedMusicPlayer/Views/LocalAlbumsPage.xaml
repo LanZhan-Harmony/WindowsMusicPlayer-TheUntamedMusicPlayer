@@ -13,14 +13,10 @@
     <Page.Resources>
         <converter:AlbumCoverConverter x:Key="AlbumCoverConverter"/>
         <DataTemplate x:Key="SortByListViewItemTemplate" x:DataType="x:String">
-            <ListViewItem Margin="0,2,0,2">
-                <TextBlock Text="{x:Bind}"/>
-            </ListViewItem>
+            <TextBlock x:Name="TemplateContent" Text="{x:Bind}"/>
         </DataTemplate>
         <DataTemplate x:Key="GenreListViewItemTemplate" x:DataType="x:String">
-            <ListViewItem Margin="0,2,0,2">
-                <TextBlock Text="{x:Bind}"/>
-            </ListViewItem>
+            <TextBlock x:Name="TemplateContent" Text="{x:Bind}"/>
         </DataTemplate>
         <CollectionViewSource x:Name="GroupedAlbumList"
                               IsSourceGrouped="True"
@@ -43,7 +39,8 @@
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:LocalAlbumInfo">
-            <Grid Width="170" Height="228"
+            <Grid x:Name="TemplateContent"
+                  Width="170" Height="228"
                   AutomationProperties.Name="{x:Bind Name}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -263,6 +260,7 @@
                         <Flyout Placement="Bottom">
                             <ListView x:Name="SortByListView"
                                       Margin="-12,-13,-12,-15"
+                                      ItemContainerStyle="{StaticResource SortFilterListViewItemStyle}"
                                       ItemTemplate="{StaticResource SortByListViewItemTemplate}"
                                       ItemsSource="{x:Bind ViewModel.SortBy}"
                                       Loaded="{x:Bind ViewModel.SortByListView_Loaded}"
@@ -282,6 +280,7 @@
                         <Flyout Placement="Bottom">
                             <ListView x:Name="GenreListView"
                                       Margin="-12,-13,-12,-15"
+                                      ItemContainerStyle="{StaticResource SortFilterListViewItemStyle}"
                                       ItemTemplate="{StaticResource GenreListViewItemTemplate}"
                                       ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}"
                                       Loaded="{x:Bind ViewModel.GenreListView_Loaded}"

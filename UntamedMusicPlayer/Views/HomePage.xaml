@@ -11,7 +11,9 @@
     <Page.Resources>
         <Style BasedOn="{StaticResource RadioButtonsBaseButtonStyle}" TargetType="RadioButton"/>
         <DataTemplate x:Key="SuggestResultTemplate" x:DataType="model:SuggestResult">
-            <Grid AutomationProperties.Name="{x:Bind Label}" ColumnSpacing="8">
+            <Grid x:Name="TemplateContent"
+                  AutomationProperties.Name="{x:Bind Label}"
+                  ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="20"/>
                     <ColumnDefinition Width="*"/>
@@ -117,7 +119,7 @@
             </ScrollViewer>
             <AutoSuggestBox x:Name="AutoSuggestBox" x:Uid="Home_SearchOnlineSongs"
                             Grid.Column="2"
-                            Width="400" Height="32"
+                            Width="400"
                             Margin="0,7,0,0" VerticalAlignment="Center"
                             AccessKey="S"
                             ItemTemplate="{StaticResource SuggestResultTemplate}"
@@ -138,9 +140,7 @@
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Disabled"
                       VerticalScrollMode="Disabled">
-            <controls:UXRadioButtons MaxColumns="6"
-                                     SelectedIndex="{x:Bind ViewModel.MusicLibraryIndex, Mode=OneWay}"
-                                     SelectionChanged="{x:Bind ViewModel.MusicLibraryIndex_SelectionChanged}">
+            <controls:UXRadioButtons SelectedIndex="{x:Bind ViewModel.MusicLibraryIndex, Mode=OneWay}" SelectionChanged="{x:Bind ViewModel.MusicLibraryIndex_SelectionChanged}">
                 <controls:UXRadioButtons.Items>
                     <RadioButton x:Uid="Home_MusicLibrary1"/>
                     <RadioButton x:Uid="Home_MusicLibrary2"/>

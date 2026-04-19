@@ -138,7 +138,8 @@
             </UserControl>
         </DataTemplate>
         <DataTemplate x:Key="SongListViewTemplate" x:DataType="model:BriefLocalSongInfo">
-            <Grid Height="52"
+            <Grid x:Name="TemplateContent"
+                  Height="52"
                   AutomationProperties.Name="{x:Bind Title}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"
@@ -251,7 +252,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="model:LocalArtistAlbumInfo">
-            <Grid Width="170" Height="226"
+            <Grid x:Name="TemplateContent"
+                  Width="170" Height="226"
                   AutomationProperties.Name="{x:Bind Name}"
                   Background="Transparent"
                   PointerEntered="Grid_PointerEntered"

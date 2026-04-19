@@ -544,7 +544,7 @@
     <Style BasedOn="{StaticResource DefaultMenuFlyoutSubItemStyle}" TargetType="MenuFlyoutSubItem"/>
 
     <Style x:Key="DefaultRadioButtonsThemeStyle" TargetType="RadioButtons">
-        <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBase}"/>
+        <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}"/>
@@ -598,7 +598,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <primitives:ColumnMajorUniformToLargestGridLayout ColumnSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource TemplatedParent}}"
-                                                                      MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                      MaxColumns="6"
                                                                       RowSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource TemplatedParent}}"/>
                 </DataTemplate>
             </Setter.Value>
@@ -661,7 +661,7 @@
         <Setter Property="BarFill" Value="{ThemeResource AccentFillColorTertiaryBrush}"/>
         <Setter Property="BarPadding" Value="2"/>
         <Setter Property="BarSize" Value="12,3"/>
-        <Setter Property="Fill" Value="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"/>
+        <Setter Property="Fill" Value="Transparent"/>
         <Setter Property="OffsetTransition" Value="{StaticResource DefaultSelectorTransition}"/>
         <Setter Property="SizeTransition" Value="{StaticResource DefaultSelectorTransition}"/>
         <Setter Property="Stroke" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}"/>
@@ -672,4 +672,213 @@
     <DataTemplate x:Key="RadioSelectorTemplate">
         <controls:SelectorVisualElement Style="{StaticResource RadioSelectorElementStyle}"/>
     </DataTemplate>
+
+    <Style x:Key="DefaultThemeSliderStyle"
+           BasedOn="{StaticResource DefaultSliderStyle}"
+           TargetType="Slider">
+        <Setter Property="animations:FluentAnimation.PointerOver" Value="HorizontalThumb"/>
+    </Style>
+    <Style BasedOn="{StaticResource DefaultThemeSliderStyle}" TargetType="Slider"/>
+
+    <Style x:Key="DefaultThemeComboBoxItemStyle"
+           BasedOn="{StaticResource DefaultComboBoxItemStyle}"
+           TargetType="ComboBoxItem">
+        <Setter Property="animations:FluentAnimation.PointerDownScale" Value="0.95"/>
+        <Setter Property="animations:FluentAnimation.PointerOver" Value="ContentPresenter"/>
+        <Setter Property="animations:FluentAnimation.PointerOverAxis" Value="Horizontal"/>
+        <Setter Property="animations:FluentAnimation.PointerOverOffset" Value="3"/>
+        <Setter Property="animations:FluentAnimation.Pressed" Value="ContentPresenter"/>
+    </Style>
+    <Style BasedOn="{StaticResource DefaultThemeComboBoxItemStyle}" TargetType="ComboBoxItem"/>
+
+    <Style x:Key="DefaultThemeListViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="AllowDrop" Value="False"/>
+        <Setter Property="Background" Value="{ThemeResource ListViewItemBackground}"/>
+        <Setter Property="FocusVisualMargin" Value="1"/>
+        <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}"/>
+        <Setter Property="FocusVisualPrimaryThickness" Value="2"/>
+        <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}"/>
+        <Setter Property="FocusVisualSecondaryThickness" Value="1"/>
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+        <Setter Property="Foreground" Value="{ThemeResource ListViewItemForeground}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="IsHoldingEnabled" Value="True"/>
+        <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+        <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+        <Setter Property="Padding" Value="16,0,12,0"/>
+        <Setter Property="TabNavigation" Value="Local"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <ListViewItemPresenter x:Name="Root"
+                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           CheckBoxBorderBrush="{ThemeResource ListViewItemCheckBoxBorderBrush}"
+                                           CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                           CheckBoxCornerRadius="{ThemeResource ListViewItemCheckBoxCornerRadius}"
+                                           CheckBoxDisabledBorderBrush="{ThemeResource ListViewItemCheckBoxDisabledBorderBrush}"
+                                           CheckBoxDisabledBrush="{ThemeResource ListViewItemCheckBoxDisabledBrush}"
+                                           CheckBoxPointerOverBorderBrush="{ThemeResource ListViewItemCheckBoxPointerOverBorderBrush}"
+                                           CheckBoxPointerOverBrush="{ThemeResource ListViewItemCheckBoxPointerOverBrush}"
+                                           CheckBoxPressedBorderBrush="{ThemeResource ListViewItemCheckBoxPressedBorderBrush}"
+                                           CheckBoxPressedBrush="{ThemeResource ListViewItemCheckBoxPressedBrush}"
+                                           CheckBoxSelectedBrush="{ThemeResource ListViewItemCheckBoxSelectedBrush}"
+                                           CheckBoxSelectedDisabledBrush="{ThemeResource ListViewItemCheckBoxSelectedDisabledBrush}"
+                                           CheckBoxSelectedPointerOverBrush="{ThemeResource ListViewItemCheckBoxSelectedPointerOverBrush}"
+                                           CheckBoxSelectedPressedBrush="{ThemeResource ListViewItemCheckBoxSelectedPressedBrush}"
+                                           CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                                           CheckDisabledBrush="{ThemeResource ListViewItemCheckDisabledBrush}"
+                                           CheckMode="{ThemeResource ListViewItemCheckMode}"
+                                           CheckPressedBrush="{ThemeResource ListViewItemCheckPressedBrush}"
+                                           ContentMargin="{TemplateBinding Padding}"
+                                           ContentTransitions="{TemplateBinding ContentTransitions}"
+                                           Control.IsTemplateFocusTarget="True"
+                                           CornerRadius="{ThemeResource ListViewItemCornerRadius}"
+                                           DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                           DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                           DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                           DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                           FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                           FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                           FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                           FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                           FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                           FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                           FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                           PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                           PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                           PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                           PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                           ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                           SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                                           SelectedDisabledBackground="{ThemeResource ListViewItemBackgroundSelectedDisabled}"
+                                           SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                                           SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                                           SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                                           SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                           SelectionIndicatorBrush="{ThemeResource ListViewItemSelectionIndicatorBrush}"
+                                           SelectionIndicatorCornerRadius="{ThemeResource ListViewItemSelectionIndicatorCornerRadius}"
+                                           SelectionIndicatorDisabledBrush="{ThemeResource ListViewItemSelectionIndicatorDisabledBrush}"
+                                           SelectionIndicatorPointerOverBrush="{ThemeResource ListViewItemSelectionIndicatorPointerOverBrush}"
+                                           SelectionIndicatorPressedBrush="{ThemeResource ListViewItemSelectionIndicatorPressedBrush}"
+                                           SelectionIndicatorVisualEnabled="{ThemeResource ListViewItemSelectionIndicatorVisualEnabled}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates"
+                                              animations:FluentAnimation.PointerOver="TemplateContent"
+                                              animations:FluentAnimation.PointerOverAxis="Horizontal"
+                                              animations:FluentAnimation.Pressed="TemplateContent">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Selected"/>
+                                <VisualState x:Name="PointerOver"/>
+                                <VisualState x:Name="PointerOverSelected"/>
+                                <VisualState x:Name="PointerOverPressed"/>
+                                <VisualState x:Name="Pressed"/>
+                                <VisualState x:Name="PressedSelected"/>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ListViewItemPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="animations:FluentAnimation.PointerOverAxis" Value="Horizontal"/>
+        <Setter Property="animations:FluentAnimation.PointerOverOffset" Value="3"/>
+    </Style>
+    <Style BasedOn="{StaticResource DefaultThemeListViewItemStyle}" TargetType="ListViewItem"/>
+
+    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="GridViewItem">
+        <Setter Property="AllowDrop" Value="True"/>
+        <Setter Property="Background" Value="{ThemeResource GridViewItemBackground}"/>
+        <Setter Property="FocusVisualMargin" Value="-3"/>
+        <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource GridViewItemFocusVisualPrimaryBrush}"/>
+        <Setter Property="FocusVisualPrimaryThickness" Value="2"/>
+        <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource GridViewItemFocusVisualSecondaryBrush}"/>
+        <Setter Property="FocusVisualSecondaryThickness" Value="1"/>
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+        <Setter Property="Foreground" Value="{ThemeResource GridViewItemForeground}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="IsHoldingEnabled" Value="True"/>
+        <Setter Property="Margin" Value="0,0,4,4"/>
+        <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
+        <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
+        <Setter Property="TabNavigation" Value="Local"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GridViewItem">
+                    <ListViewItemPresenter x:Name="Root"
+                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           CheckBoxBorderBrush="{ThemeResource GridViewItemCheckBoxBorderBrush}"
+                                           CheckBoxBrush="{ThemeResource GridViewItemCheckBoxBrush}"
+                                           CheckBoxCornerRadius="{ThemeResource GridViewItemCheckBoxCornerRadius}"
+                                           CheckBoxDisabledBorderBrush="{ThemeResource GridViewItemCheckBoxDisabledBorderBrush}"
+                                           CheckBoxDisabledBrush="{ThemeResource GridViewItemCheckBoxDisabledBrush}"
+                                           CheckBoxPointerOverBorderBrush="{ThemeResource GridViewItemCheckBoxPointerOverBorderBrush}"
+                                           CheckBoxPointerOverBrush="{ThemeResource GridViewItemCheckBoxPointerOverBrush}"
+                                           CheckBoxPressedBorderBrush="{ThemeResource GridViewItemCheckBoxPressedBorderBrush}"
+                                           CheckBoxPressedBrush="{ThemeResource GridViewItemCheckBoxPressedBrush}"
+                                           CheckBoxSelectedBrush="{ThemeResource GridViewItemCheckBoxSelectedBrush}"
+                                           CheckBoxSelectedDisabledBrush="{ThemeResource GridViewItemCheckBoxSelectedDisabledBrush}"
+                                           CheckBoxSelectedPointerOverBrush="{ThemeResource GridViewItemCheckBoxSelectedPointerOverBrush}"
+                                           CheckBoxSelectedPressedBrush="{ThemeResource GridViewItemCheckBoxSelectedPressedBrush}"
+                                           CheckBrush="{ThemeResource GridViewItemCheckBrush}"
+                                           CheckDisabledBrush="{ThemeResource GridViewItemCheckDisabledBrush}"
+                                           CheckMode="{ThemeResource GridViewItemCheckMode}"
+                                           CheckPressedBrush="{ThemeResource GridViewItemCheckPressedBrush}"
+                                           ContentMargin="{TemplateBinding Padding}"
+                                           ContentTransitions="{TemplateBinding ContentTransitions}"
+                                           Control.IsTemplateFocusTarget="True"
+                                           CornerRadius="{ThemeResource GridViewItemCornerRadius}"
+                                           DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                           DragBackground="{ThemeResource GridViewItemDragBackground}"
+                                           DragForeground="{ThemeResource GridViewItemDragForeground}"
+                                           DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                           FocusBorderBrush="{ThemeResource GridViewItemFocusBorderBrush}"
+                                           FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                           FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                           FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                           FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                           FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                           PlaceholderBackground="{ThemeResource GridViewItemPlaceholderBackground}"
+                                           PointerOverBackground="{ThemeResource GridViewItemBackgroundPointerOver}"
+                                           PointerOverBorderBrush="{ThemeResource GridViewItemPointerOverBorderBrush}"
+                                           PointerOverForeground="{ThemeResource GridViewItemForegroundPointerOver}"
+                                           PressedBackground="{ThemeResource GridViewItemBackgroundPressed}"
+                                           ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}"
+                                           SelectedBackground="{ThemeResource GridViewItemBackgroundSelected}"
+                                           SelectedBorderBrush="{ThemeResource GridViewItemSelectedBorderBrush}"
+                                           SelectedBorderThickness="{ThemeResource GridViewItemSelectedBorderThickness}"
+                                           SelectedDisabledBackground="{ThemeResource GridViewItemBackgroundSelectedDisabled}"
+                                           SelectedDisabledBorderBrush="{ThemeResource GridViewItemSelectedDisabledBorderBrush}"
+                                           SelectedForeground="{ThemeResource GridViewItemForegroundSelected}"
+                                           SelectedInnerBorderBrush="{ThemeResource GridViewItemSelectedInnerBorderBrush}"
+                                           SelectedPointerOverBackground="{ThemeResource GridViewItemBackgroundSelectedPointerOver}"
+                                           SelectedPointerOverBorderBrush="{ThemeResource GridViewItemSelectedPointerOverBorderBrush}"
+                                           SelectedPressedBackground="{ThemeResource GridViewItemBackgroundSelectedPressed}"
+                                           SelectedPressedBorderBrush="{ThemeResource GridViewItemSelectedPressedBorderBrush}"
+                                           SelectionCheckMarkVisualEnabled="{ThemeResource GridViewItemSelectionCheckMarkVisualEnabled}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates"
+                                              animations:FluentAnimation.PointerOver="TemplateContent"
+                                              animations:FluentAnimation.Pressed="TemplateContent">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Selected"/>
+                                <VisualState x:Name="PointerOver"/>
+                                <VisualState x:Name="PointerOverSelected"/>
+                                <VisualState x:Name="PointerOverPressed"/>
+                                <VisualState x:Name="Pressed"/>
+                                <VisualState x:Name="PressedSelected"/>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ListViewItemPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="animations:FluentAnimation.PointerOverOffset" Value="3"/>
+    </Style>
+    <Style BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" TargetType="GridViewItem"/>
 </ResourceDictionary>

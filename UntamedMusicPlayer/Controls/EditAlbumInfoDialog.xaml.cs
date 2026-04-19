@@ -48,7 +48,6 @@ public sealed partial class EditAlbumInfoDialog
 
     public EditAlbumInfoDialog(LocalAlbumInfo info)
     {
-        this.EnableLightDismiss();
         StrongReferenceMessenger.Default.Register(this);
         _album = info;
         var songs = Data.MusicLibrary.GetSongsByAlbum(info);

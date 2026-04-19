@@ -38,7 +38,6 @@ public sealed partial class EqualizerDialog
 
     public EqualizerDialog()
     {
-        this.EnableLightDismiss();
         StrongReferenceMessenger.Default.Register(this);
         RequestedTheme = ThemeSelectorService.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light;
         InitializeComponent();
