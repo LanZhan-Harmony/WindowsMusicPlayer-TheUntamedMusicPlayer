@@ -138,6 +138,20 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
         );
     }
 
+    public async void AddLyricAdjustButton_Click(object sender, RoutedEventArgs _2)
+    {
+        (sender as Button)!.IsEnabled = false;
+        await Data.LyricManager.AddLyricAdjust();
+        (sender as Button)!.IsEnabled = true;
+    }
+
+    public async void SubtractLyricAdjustButton_Click(object sender, RoutedEventArgs _2)
+    {
+        (sender as Button)!.IsEnabled = false;
+        await Data.LyricManager.SubtractLyricAdjust();
+        (sender as Button)!.IsEnabled = true;
+    }
+
     public void Dispose()
     {
         Data.PlayState.PropertyChanged -= OnStateChanged;

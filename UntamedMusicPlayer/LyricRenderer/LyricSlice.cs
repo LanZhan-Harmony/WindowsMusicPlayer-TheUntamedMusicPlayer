@@ -7,7 +7,15 @@ namespace UntamedMusicPlayer.LyricRenderer;
 public sealed partial class LyricSlice(double startTime, string content) : ObservableObject
 {
     public string Content { get; set; } = content;
+
+    /// <summary>
+    /// 歌词切片开始时间，单位为毫秒
+    /// </summary>
     public double StartTime { get; set; } = startTime;
+
+    /// <summary>
+    /// 歌词切片结束时间，单位为毫秒
+    /// </summary>
     public double EndTime { get; set; }
 
     /// <summary>
