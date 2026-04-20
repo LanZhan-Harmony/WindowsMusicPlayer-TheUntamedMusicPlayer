@@ -4,7 +4,7 @@ using UntamedMusicPlayer.Models;
 
 namespace UntamedMusicPlayer.Converters;
 
-public partial class InverseAlbumCoverToVisibilityConverter : IValueConverter
+public sealed partial class InverseAlbumCoverToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
