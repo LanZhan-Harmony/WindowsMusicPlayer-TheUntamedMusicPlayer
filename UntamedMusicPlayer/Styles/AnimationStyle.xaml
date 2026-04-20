@@ -272,7 +272,7 @@
         <Setter Property="animations:FluentAnimation.PointerOverOffset" Value="3"/>
     </Style>
 
-    <Style x:Key="DefaultMenuFlyoutItemStyle" TargetType="MenuFlyoutItem">
+    <Style x:Key="DefaultThemeMenuFlyoutItemStyle" TargetType="MenuFlyoutItem">
         <Setter Property="Background" Value="{ThemeResource MenuFlyoutItemBackground}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutItemBackgroundBrush}"/>
         <Setter Property="BorderThickness" Value="{ThemeResource MenuFlyoutItemBorderThickness}"/>
@@ -295,8 +295,7 @@
                           CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates"
-                                              animations:FluentAnimation.PointerOver="ContentGrid"
-                                              animations:FluentAnimation.PointerOverAxis="Horizontal"
+                                              animations:FluentAnimation.PointerOver="TextBlock"
                                               animations:FluentAnimation.Pressed="ContentGrid">
                                 <VisualState x:Name="Normal"/>
                                 <VisualState x:Name="PointerOver">
@@ -403,11 +402,12 @@
         </Setter>
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="animations:FluentAnimation.PointerDownScale" Value="0.95"/>
         <Setter Property="animations:FluentAnimation.PointerOverAxis" Value="Horizontal"/>
         <Setter Property="animations:FluentAnimation.PointerOverOffset" Value="3"/>
     </Style>
 
-    <Style x:Key="DefaultMenuFlyoutSubItemStyle" TargetType="MenuFlyoutSubItem">
+    <Style x:Key="DefaultThemeMenuFlyoutSubItemStyle" TargetType="MenuFlyoutSubItem">
         <Setter Property="Background" Value="{ThemeResource MenuFlyoutSubItemBackground}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutSubItemBackgroundBrush}"/>
         <Setter Property="BorderThickness" Value="{ThemeResource MenuFlyoutSubItemBorderThickness}"/>
@@ -428,10 +428,7 @@
                           BorderThickness="{TemplateBinding BorderThickness}"
                           CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates"
-                                              animations:FluentAnimation.PointerOver="ContentGrid"
-                                              animations:FluentAnimation.PointerOverAxis="Horizontal"
-                                              animations:FluentAnimation.Pressed="ContentGrid">
+                            <VisualStateGroup x:Name="CommonStates" animations:FluentAnimation.Pressed="ContentGrid">
                                 <VisualState x:Name="Normal"/>
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
@@ -536,15 +533,16 @@
         </Setter>
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="animations:FluentAnimation.PointerOverAxis" Value="Horizontal"/>
-        <Setter Property="animations:FluentAnimation.PointerOverOffset" Value="3"/>
+        <Setter Property="animations:FluentAnimation.PointerDownScale" Value="0.95"/>
+        <Setter Property="animations:Properties.PointerAnimationOffset" Value="3"/>
+        <Setter Property="animations:Properties.PointerOverAnimation" Value="SubItemChevron,TextBlock|X"/>
     </Style>
 
-    <Style BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}" TargetType="MenuFlyoutItem"/>
-    <Style BasedOn="{StaticResource DefaultMenuFlyoutSubItemStyle}" TargetType="MenuFlyoutSubItem"/>
+    <Style BasedOn="{StaticResource DefaultThemeMenuFlyoutItemStyle}" TargetType="MenuFlyoutItem"/>
+    <Style BasedOn="{StaticResource DefaultThemeMenuFlyoutSubItemStyle}" TargetType="MenuFlyoutSubItem"/>
 
     <Style x:Key="DefaultRadioButtonsThemeStyle" TargetType="RadioButtons">
-        <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource ControlAltFillColorSecondaryBrush}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}"/>
@@ -661,7 +659,7 @@
         <Setter Property="BarFill" Value="{ThemeResource AccentFillColorTertiaryBrush}"/>
         <Setter Property="BarPadding" Value="2"/>
         <Setter Property="BarSize" Value="12,3"/>
-        <Setter Property="Fill" Value="Transparent"/>
+        <Setter Property="Fill" Value="{ThemeResource ControlFillColorDefaultBrush}"/>
         <Setter Property="OffsetTransition" Value="{StaticResource DefaultSelectorTransition}"/>
         <Setter Property="SizeTransition" Value="{StaticResource DefaultSelectorTransition}"/>
         <Setter Property="Stroke" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}"/>
