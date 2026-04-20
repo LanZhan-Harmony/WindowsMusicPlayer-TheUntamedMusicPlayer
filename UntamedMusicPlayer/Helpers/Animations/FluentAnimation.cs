@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMusicPlayer.Helpers.Animations;
 
-public class CommonStatesHelper : DependencyObject
+public sealed class CommonStatesHelper : DependencyObject
 {
     public event EventHandler<VisualStateChangedEventArgs>? StateChanging;
     public event EventHandler<VisualStateChangedEventArgs>? StateChanged;
@@ -55,7 +55,7 @@ public class CommonStatesHelper : DependencyObject
     }
 }
 
-public class FluentAnimationHelper
+public sealed class FluentAnimationHelper
 {
     private readonly VisualStateGroup _group;
     private FrameworkElement? _pointerTarget = null;
@@ -303,7 +303,7 @@ public class FluentAnimationHelper
     #endregion
 }
 
-public class FluentAnimation
+public sealed class FluentAnimation
 {
     #region Helper
 

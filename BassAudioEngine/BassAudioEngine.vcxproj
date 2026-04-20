@@ -137,8 +137,8 @@
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\$(Platform)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>del "$(OutDir)$(TargetName).lib"
-del "$(OutDir)$(TargetName).exp"</Command>
+      <Command>if exist "$(OutDir)$(TargetName).lib" del "$(OutDir)$(TargetName).lib"
+if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -154,6 +154,9 @@ del "$(OutDir)$(TargetName).exp"</Command>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,10 +164,12 @@ del "$(OutDir)$(TargetName).exp"</Command>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>bass.lib;bass_fx.lib;basswasapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\$(Platform)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>del "$(OutDir)$(TargetName).lib"
-del "$(OutDir)$(TargetName).exp"</Command>
+      <Command>if exist "$(OutDir)$(TargetName).lib" del "$(OutDir)$(TargetName).lib"
+if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -187,8 +192,8 @@ del "$(OutDir)$(TargetName).exp"</Command>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\$(Platform)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>del "$(OutDir)$(TargetName).lib"
-del "$(OutDir)$(TargetName).exp"</Command>
+      <Command>if exist "$(OutDir)$(TargetName).lib" del "$(OutDir)$(TargetName).lib"
+if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -211,8 +216,8 @@ del "$(OutDir)$(TargetName).exp"</Command>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\$(Platform)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>del "$(OutDir)$(TargetName).lib"
-del "$(OutDir)$(TargetName).exp"</Command>
+      <Command>if exist "$(OutDir)$(TargetName).lib" del "$(OutDir)$(TargetName).lib"
+if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -228,6 +233,9 @@ del "$(OutDir)$(TargetName).exp"</Command>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -235,10 +243,11 @@ del "$(OutDir)$(TargetName).exp"</Command>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>bass.lib;bass_fx.lib;basswasapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\$(Platform)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>del "$(OutDir)$(TargetName).lib"
-del "$(OutDir)$(TargetName).exp"</Command>
+      <Command>if exist "$(OutDir)$(TargetName).lib" del "$(OutDir)$(TargetName).lib"
+if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -254,6 +263,9 @@ del "$(OutDir)$(TargetName).exp"</Command>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -261,10 +273,11 @@ del "$(OutDir)$(TargetName).exp"</Command>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>bass.lib;bass_fx.lib;basswasapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\$(Platform)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>del "$(OutDir)$(TargetName).lib"
-del "$(OutDir)$(TargetName).exp"</Command>
+      <Command>if exist "$(OutDir)$(TargetName).lib" del "$(OutDir)$(TargetName).lib"
+if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@ using UntamedMusicPlayer.Models;
 
 namespace UntamedMusicPlayer.Converters;
 
-public partial class PlaylistCoverConverter : IValueConverter
+public sealed partial class PlaylistCoverConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
