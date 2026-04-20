@@ -1,16 +1,14 @@
 using System.Collections;
 using CommunityToolkit.WinUI;
-using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Windows.UI;
 
 namespace UntamedMusicPlayer.Helpers.Animations;
 
-public class Properties : DependencyObject
+public sealed class Properties : DependencyObject
 {
     public static string GetStyleKey(DependencyObject obj) =>
         (string)obj.GetValue(StyleKeyProperty);

@@ -155,7 +155,7 @@ public sealed partial class AudioEngine : IDisposable
                 _logger.PlaybackDeviceBusy();
                 return false;
             }
-            _logger.ZLogInformation($"Bass初始化失败: {NativeMethods.GetLastError()}");
+            _logger.ZLogInformation($"Bass初始化失败, 错误码: {NativeMethods.GetLastError()}");
             return false;
         }
 
@@ -196,7 +196,7 @@ public sealed partial class AudioEngine : IDisposable
             if (!success)
             {
                 _logger.ZLogInformation(
-                    $"创建Bass流失败: {NativeMethods.GetLastError()}, 文件: {_state.CurrentSong.Path}"
+                    $"创建Bass流失败, 错误码: {NativeMethods.GetLastError()}, 文件: {_state.CurrentSong.Path}"
                 );
                 return false;
             }
@@ -242,18 +242,23 @@ public sealed partial class AudioEngine : IDisposable
             if (_state.IsExclusiveMode)
             {
                 _logger.SongPlaybackError(_state.CurrentSong!.Title);
-                _logger.ZLogInformation($"独占播放失败: {NativeMethods.GetLastError()}");
+                _logger.ZLogInformation(
+                    $"独占播放失败, 错误码: {NativeMethods.GetLastError()}, 文件: {_state.CurrentSong.Path}"
+                );
                 return false;
             }
 
-            _logger.ZLogInformation($"共享播放失败: {NativeMethods.GetLastError()}");
+            _logger.ZLogInformation(
+                $"共享播放失败, 错误码: {NativeMethods.GetLastError()}, 文件: {_state.CurrentSong!.Path}"
+            );
             return false;
         });
 
     /// <summary>
     /// 暂停
     /// </summary>
-    public void Pause() => ExecuteOnPlaybackThread(() => NativeMethods.Pause(_state.IsExclusiveMode));
+    public void Pause() =>
+        ExecuteOnPlaybackThread(() => NativeMethods.Pause(_state.IsExclusiveMode));
 
     /// <summary>
     /// 停止
@@ -304,7 +309,7 @@ public sealed partial class AudioEngine : IDisposable
                     _dispatcher.TryEnqueue(() => _state.PlayState = MediaPlaybackState.Paused);
                 }
             }
-            await SetPositionInternal(position);
+            SetPositionInternal(position);
         });
     }
 
@@ -336,7 +341,7 @@ public sealed partial class AudioEngine : IDisposable
             if (currentPosition >= 0)
             {
                 var newPosition = Math.Max(0, currentPosition - 10);
-                _ = SetPositionInternal(newPosition);
+                SetPositionInternal(newPosition);
             }
         });
 
@@ -353,7 +358,7 @@ public sealed partial class AudioEngine : IDisposable
                     _state.TotalPlayingTime.TotalSeconds,
                     currentPosition + 30
                 );
-                _ = SetPositionInternal(newPosition);
+                SetPositionInternal(newPosition);
             }
         });
 
@@ -366,12 +371,12 @@ public sealed partial class AudioEngine : IDisposable
     /// 设置播放位置（秒）
     /// </summary>
     public void SetPosition(double targetSeconds) =>
-        ExecuteOnPlaybackThread(() => _ = SetPositionInternal(targetSeconds));
+        ExecuteOnPlaybackThread(() => SetPositionInternal(targetSeconds));
 
     /// <summary>
     /// 设置播放位置（秒）- 内部方法
     /// </summary>
-    private Task SetPositionInternal(double targetSeconds)
+    private void SetPositionInternal(double targetSeconds)
     {
         if (_hasLoadedSong)
         {
@@ -380,8 +385,6 @@ public sealed partial class AudioEngine : IDisposable
                 _state.CurrentPlayingTime = TimeSpan.FromSeconds(targetSeconds)
             );
         }
-
-        return Task.CompletedTask;
     }
 
     public void Dispose()
