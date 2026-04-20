@@ -160,7 +160,9 @@
                           VerticalScrollBarVisibility="Hidden"
                           ViewChanged="LyricViewer_ViewChanged">
                 <StackPanel>
-                    <StackPanel Height="600"/>
+                    <StackPanel Height="600"
+                                Background="Transparent"
+                                PointerWheelChanged="LyricView_PointerWheelChanged"/>
                     <ListView x:Name="LyricView"
                               helper:ListViewExtensions.ItemCornerRadius="15"
                               IsItemClickEnabled="True"
@@ -170,7 +172,9 @@
                               Loaded="LyricView_Loaded"
                               PointerWheelChanged="LyricView_PointerWheelChanged"
                               SelectionMode="None"/>
-                    <StackPanel Height="600"/>
+                    <StackPanel Height="600"
+                                Background="Transparent"
+                                PointerWheelChanged="LyricView_PointerWheelChanged"/>
                 </StackPanel>
             </ScrollViewer>
 

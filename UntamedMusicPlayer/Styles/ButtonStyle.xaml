@@ -20,32 +20,34 @@
                           BorderThickness="{TemplateBinding BorderThickness}"
                           CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
+                            <VisualStateGroup x:Name="CommonStates"
+                                              animations:FluentAnimation.PointerOver="Root"
+                                              animations:FluentAnimation.Pressed="Root">
                                 <VisualState x:Name="Normal"/>
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}"/>
                                         <Setter Target="Root.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}"/>
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}"/>
                                         <Setter Target="Root.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}"/>
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}"/>
                                         <Setter Target="Root.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushDisabled}"/>
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="Content"
+                        <ContentPresenter x:Name="ContentPresenter"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"/>
                     </Grid>
@@ -53,6 +55,7 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Width" Value="37"/>
+        <Setter Property="animations:FluentAnimation.PointerOverOffset" Value="-2"/>
     </Style>
 
     <Style x:Key="PlayButtonStyle" TargetType="Button">
@@ -63,9 +66,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid>
+                    <Grid x:Name="Root">
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
+                            <VisualStateGroup x:Name="CommonStates"
+                                              animations:FluentAnimation.PointerOver="Root"
+                                              animations:FluentAnimation.Pressed="Root">
                                 <VisualState x:Name="Normal"/>
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
@@ -104,6 +109,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="animations:FluentAnimation.PointerOverOffset" Value="-2"/>
     </Style>
 
     <Style x:Key="CoverButtonStyle" TargetType="Button">
