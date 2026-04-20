@@ -25,10 +25,6 @@ public sealed partial class AudioEngine : IDisposable
     private SyncProcedure? _syncFailCallback;
     private WasapiProcedure? _wasapiProc;
 
-    // GC 延迟模式控制
-    private GCLatencyMode _originalGCLatencyMode;
-    private bool _isGCLatencyModeChanged = false;
-
     // 专用播放线程相关
     private readonly Thread _playbackThread;
     private readonly BlockingCollection<Action> _taskQueue;
@@ -332,11 +328,9 @@ public sealed partial class AudioEngine : IDisposable
                 }
                 if (_isWasapiInitialized) // 从暂停恢复
                 {
-                    EnableSustainedLowLatencyGC();
                     if (!BassWasapi.Start())
                     {
                         _logger.ZLogInformation($"独占从暂停恢复播放失败: {Bass.LastError}");
-                        RestoreGCLatencyMode();
                         return false;
                     }
                     return true;
@@ -346,17 +340,14 @@ public sealed partial class AudioEngine : IDisposable
                     _logger.ZLogInformation($"无法获取流信息: {Bass.LastError}");
                     return false;
                 }
-                var (buffer, period) = AudioPerformanceGuardian.GetRecommendedSettings();
                 if (
                     !BassWasapi.Init(
                         -1,
                         channelInfo.Frequency,
                         channelInfo.Channels,
-                        _state.IsLowLatencyMode
-                            ? WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven
-                            : WasapiInitFlags.Exclusive,
-                        _state.IsLowLatencyMode ? 0.1f : buffer,
-                        _state.IsLowLatencyMode ? 0.025f : period,
+                        WasapiInitFlags.Exclusive | WasapiInitFlags.EventDriven,
+                        0.1f,
+                        0.025f,
                         _wasapiProc,
                         nint.Zero
                     )
@@ -372,11 +363,9 @@ public sealed partial class AudioEngine : IDisposable
                     return false;
                 }
                 _isWasapiInitialized = true;
-                EnableSustainedLowLatencyGC();
                 if (!BassWasapi.Start())
                 {
                     _logger.ZLogInformation($"独占播放失败: {Bass.LastError}");
-                    RestoreGCLatencyMode();
                     return false;
                 }
                 return true;
@@ -415,7 +404,6 @@ public sealed partial class AudioEngine : IDisposable
                     {
                         BassWasapi.Stop(false);
                     }
-                    RestoreGCLatencyMode();
                     return;
                 }
                 Bass.ChannelPause(_fxHandle);
@@ -429,7 +417,6 @@ public sealed partial class AudioEngine : IDisposable
         ExecuteOnPlaybackThread(() =>
         {
             FreeStreams();
-            RestoreGCLatencyMode();
         });
 
     /// <summary>
@@ -468,34 +455,6 @@ public sealed partial class AudioEngine : IDisposable
         {
             _state.IsExclusiveMode = isExclusive;
             if (_fxHandle == 0)
-            {
-                return;
-            }
-            var position = GetPositionSeconds();
-            Stop();
-            LoadSong();
-            if (isPlaying)
-            {
-                if (!Play())
-                {
-                    _dispatcher.TryEnqueue(() => _state.PlayState = MediaPlaybackState.Paused);
-                }
-            }
-            await SetPositionInternal(position);
-        });
-    }
-
-    /// <summary>
-    /// 设置低延迟模式
-    /// </summary>
-    /// <param name="isLowLatency"></param>
-    /// <param name="isPlaying"></param>
-    public async Task SetLowLatencyMode(bool isLowLatency, bool isPlaying)
-    {
-        await ExecuteOnPlaybackThread(async () =>
-        {
-            _state.IsLowLatencyMode = isLowLatency;
-            if (!_state.IsExclusiveMode || _fxHandle == 0)
             {
                 return;
             }
@@ -613,31 +572,6 @@ public sealed partial class AudioEngine : IDisposable
         }
     }
 
-    /// <summary>
-    /// 启用持续低延迟 GC 模式
-    /// </summary>
-    private void EnableSustainedLowLatencyGC()
-    {
-        if (!_isGCLatencyModeChanged)
-        {
-            _originalGCLatencyMode = GCSettings.LatencyMode;
-            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
-            _isGCLatencyModeChanged = true;
-        }
-    }
-
-    /// <summary>
-    /// 恢复原始 GC 延迟模式
-    /// </summary>
-    private void RestoreGCLatencyMode()
-    {
-        if (_isGCLatencyModeChanged)
-        {
-            GCSettings.LatencyMode = _originalGCLatencyMode;
-            _isGCLatencyModeChanged = false;
-        }
-    }
-
     public void Dispose()
     {
         if (_isDisposed)
@@ -655,7 +589,6 @@ public sealed partial class AudioEngine : IDisposable
             Bass.Free();
             _syncEndCallback -= OnPlaybackEnded;
             _syncFailCallback -= OnPlaybackFailed;
-            RestoreGCLatencyMode();
         });
 
         // 停止播放线程
