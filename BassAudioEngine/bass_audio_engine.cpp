@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 #include "bass_audio_engine_exports.h"
 
@@ -34,37 +34,24 @@ namespace
     {
         std::array<wchar_t, MAX_PATH> buffer{};
         auto length = GetModuleFileNameW(nullptr, buffer.data(), static_cast<DWORD>(buffer.size()));
-        if (length == 0)
+        if (length == 0) [[unlikely]]
         {
             return {};
         }
 
-        auto appPath = std::filesystem::path{ std::wstring_view{ buffer.data(), length } };
+        auto appPath = std::filesystem::path{std::wstring_view{buffer.data(), length}};
         return appPath.parent_path().wstring();
-    }
-
-    [[nodiscard]] std::string WideToUtf8(const wchar_t* text)
-    {
-        const auto utf8Length = WideCharToMultiByte(CP_UTF8, 0, text, -1, nullptr, 0, nullptr, nullptr);
-        if (utf8Length <= 0)
-        {
-            return {};
-        }
-
-        auto utf8Text = std::string(static_cast<size_t>(utf8Length), '\0');
-        WideCharToMultiByte(CP_UTF8, 0, text, -1, utf8Text.data(), utf8Length, nullptr, nullptr);
-        return utf8Text;
     }
 
     void LoadBassPlugins()
     {
-        if (g_engine.pluginsLoaded)
+        if (g_engine.pluginsLoaded) [[unlikely]]
         {
             return;
         }
 
         const auto appDirectory = GetAppDirectory();
-        if (appDirectory.empty())
+        if (appDirectory.empty()) [[unlikely]]
         {
             return;
         }
@@ -83,7 +70,7 @@ namespace
 
         for (const auto pluginName : pluginNames)
         {
-            const auto fullPath = std::filesystem::path{ appDirectory } / pluginName;
+            const auto fullPath = std::filesystem::path{appDirectory} / pluginName;
             BASS_PluginLoad(fullPath.c_str(), 0);
         }
 
@@ -92,12 +79,12 @@ namespace
 
     [[nodiscard]] bool EnsureBassInitialized()
     {
-        if (g_engine.bassInitialized)
+        if (g_engine.bassInitialized) [[unlikely]]
         {
             return true;
         }
 
-        if (!BASS_Init(-1, 44100, 0, nullptr, nullptr))
+        if (!BASS_Init(-1, 44100, 0, nullptr, nullptr)) [[unlikely]]
         {
             return false;
         }
@@ -120,40 +107,40 @@ namespace
             g_engine.wasapiInitialized = false;
         }
 
-        if (g_engine.fxHandle != 0)
+        if (g_engine.fxHandle != 0) [[likely]]
         {
             BASS_StreamFree(g_engine.fxHandle);
             g_engine.fxHandle = 0;
         }
 
-        if (g_engine.mainHandle != 0)
+        if (g_engine.mainHandle != 0) [[likely]]
         {
             BASS_StreamFree(g_engine.mainHandle);
             g_engine.mainHandle = 0;
         }
     }
 
-    void CALLBACK OnPlaybackEndedSync(HSYNC, DWORD, DWORD, void*)
+    void CALLBACK OnPlaybackEndedSync(HSYNC, DWORD, DWORD, void *)
     {
         const auto callback = g_engine.playbackEndedCallback;
-        if (callback != nullptr)
+        if (callback != nullptr) [[likely]]
         {
             callback();
         }
     }
 
-    void CALLBACK OnPlaybackFailedSync(HSYNC, DWORD, DWORD, void*)
+    void CALLBACK OnPlaybackFailedSync(HSYNC, DWORD, DWORD, void *)
     {
         const auto callback = g_engine.playbackFailedCallback;
-        if (callback != nullptr)
+        if (callback != nullptr) [[likely]]
         {
             callback();
         }
     }
 
-    DWORD CALLBACK WasapiProc(void* buffer, DWORD length, void*)
+    DWORD CALLBACK WasapiProc(void *buffer, DWORD length, void *)
     {
-        if (g_engine.fxHandle == 0)
+        if (g_engine.fxHandle == 0) [[unlikely]]
         {
             return 0;
         }
@@ -161,47 +148,39 @@ namespace
         return BASS_ChannelGetData(g_engine.fxHandle, buffer, length);
     }
 
-    [[nodiscard]] HSTREAM CreateMainStream(const wchar_t* path, BOOL isOnline)
+    [[nodiscard]] HSTREAM CreateMainStream(const wchar_t *path, BOOL isOnline)
     {
-        constexpr auto streamFlags = BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_ASYNCFILE | BASS_STREAM_DECODE;
-
         if (isOnline)
         {
-            const auto utf8Length = WideCharToMultiByte(CP_UTF8, 0, path, -1, nullptr, 0, nullptr, nullptr);
-            if (utf8Length <= 0)
-            {
-                return 0;
-            }
-
-            auto utf8Path = std::string(static_cast<size_t>(utf8Length), '\0');
-            WideCharToMultiByte(CP_UTF8, 0, path, -1, utf8Path.data(), utf8Length, nullptr, nullptr);
-            return BASS_StreamCreateURL(utf8Path.c_str(), 0, streamFlags, nullptr, nullptr);
+            constexpr auto streamFlags = BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE;
+            return BASS_StreamCreateURL(reinterpret_cast<const char *>(path), 0, streamFlags, nullptr, nullptr);
         }
 
+        constexpr auto streamFlags = BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_ASYNCFILE | BASS_STREAM_DECODE;
         return BASS_StreamCreateFile(FALSE, path, 0, 0, streamFlags);
     }
 }
 
 void WINAPI BaeSetCallbacks(BassAudioEngineCallback playbackEndedCallback, BassAudioEngineCallback playbackFailedCallback)
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
     g_engine.playbackEndedCallback = playbackEndedCallback;
     g_engine.playbackFailedCallback = playbackFailedCallback;
 }
 
 BOOL WINAPI BaeInitialize()
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
     return EnsureBassInitialized() ? TRUE : FALSE;
 }
 
 void WINAPI BaeShutdown()
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
 
     FreeStreamsUnsafe();
 
-    if (g_engine.bassInitialized)
+    if (g_engine.bassInitialized) [[likely]]
     {
         BASS_Free();
         g_engine.bassInitialized = false;
@@ -211,22 +190,22 @@ void WINAPI BaeShutdown()
     g_engine.playbackFailedCallback = nullptr;
 }
 
-BOOL WINAPI BaeLoadSong(const wchar_t* path, BOOL isOnline, BOOL isExclusiveMode, double volume, double speed, double* totalSeconds)
+BOOL WINAPI BaeLoadSong(const wchar_t *path, BOOL isOnline, BOOL isExclusiveMode, double volume, double speed, double *totalSeconds)
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
 
     FreeStreamsUnsafe();
 
-    if (!EnsureBassInitialized())
+    if (!EnsureBassInitialized()) [[unlikely]]
     {
         return FALSE;
     }
 
     g_engine.mainHandle = CreateMainStream(path, isOnline);
-    if (g_engine.mainHandle == 0 && BASS_ErrorGetCode() == BASS_ERROR_INIT)
+    if (g_engine.mainHandle == 0 && BASS_ErrorGetCode() == BASS_ERROR_INIT) [[unlikely]]
     {
         g_engine.bassInitialized = false;
-        if (!EnsureBassInitialized())
+        if (!EnsureBassInitialized()) [[unlikely]]
         {
             return FALSE;
         }
@@ -234,14 +213,14 @@ BOOL WINAPI BaeLoadSong(const wchar_t* path, BOOL isOnline, BOOL isExclusiveMode
         g_engine.mainHandle = CreateMainStream(path, isOnline);
     }
 
-    if (g_engine.mainHandle == 0)
+    if (g_engine.mainHandle == 0) [[unlikely]]
     {
         return FALSE;
     }
 
     const auto tempoFlags = isExclusiveMode ? BASS_STREAM_DECODE : BASS_FX_FREESOURCE;
     g_engine.fxHandle = BASS_FX_TempoCreate(g_engine.mainHandle, tempoFlags);
-    if (g_engine.fxHandle == 0)
+    if (g_engine.fxHandle == 0) [[unlikely]]
     {
         BASS_StreamFree(g_engine.mainHandle);
         g_engine.mainHandle = 0;
@@ -255,7 +234,7 @@ BOOL WINAPI BaeLoadSong(const wchar_t* path, BOOL isOnline, BOOL isExclusiveMode
     BASS_ChannelSetAttribute(g_engine.fxHandle, BASS_ATTRIB_TEMPO, tempoPercent);
     BASS_ChannelSetAttribute(g_engine.fxHandle, BASS_ATTRIB_VOL, static_cast<float>(volume));
 
-    if (totalSeconds != nullptr)
+    if (totalSeconds != nullptr) [[likely]]
     {
         const auto lengthBytes = BASS_ChannelGetLength(g_engine.fxHandle, BASS_POS_BYTE);
         *totalSeconds = BASS_ChannelBytes2Seconds(g_engine.fxHandle, lengthBytes);
@@ -266,22 +245,22 @@ BOOL WINAPI BaeLoadSong(const wchar_t* path, BOOL isOnline, BOOL isExclusiveMode
 
 void WINAPI BaeStop()
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
     FreeStreamsUnsafe();
 }
 
 BOOL WINAPI BaePlay(BOOL isExclusiveMode)
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
 
-    if (g_engine.fxHandle == 0)
+    if (g_engine.fxHandle == 0) [[unlikely]]
     {
         return FALSE;
     }
 
     if (isExclusiveMode)
     {
-        if (BASS_WASAPI_IsStarted())
+        if (BASS_WASAPI_IsStarted()) [[unlikely]]
         {
             return TRUE;
         }
@@ -292,13 +271,13 @@ BOOL WINAPI BaePlay(BOOL isExclusiveMode)
         }
 
         BASS_CHANNELINFO channelInfo{};
-        if (!BASS_ChannelGetInfo(g_engine.fxHandle, &channelInfo))
+        if (!BASS_ChannelGetInfo(g_engine.fxHandle, &channelInfo)) [[unlikely]]
         {
             return FALSE;
         }
 
         const auto initFlags = BASS_WASAPI_EXCLUSIVE | BASS_WASAPI_EVENT;
-        if (!BASS_WASAPI_Init(-1, channelInfo.freq, channelInfo.chans, initFlags, 0.1F, 0.025F, WasapiProc, nullptr))
+        if (!BASS_WASAPI_Init(-1, channelInfo.freq, channelInfo.chans, initFlags, 0.1F, 0.025F, WasapiProc, nullptr)) [[unlikely]]
         {
             return FALSE;
         }
@@ -307,12 +286,12 @@ BOOL WINAPI BaePlay(BOOL isExclusiveMode)
         return BASS_WASAPI_Start() ? TRUE : FALSE;
     }
 
-    if (BASS_ChannelIsActive(g_engine.fxHandle) == BASS_ACTIVE_PLAYING)
+    if (BASS_ChannelIsActive(g_engine.fxHandle) == BASS_ACTIVE_PLAYING) [[unlikely]]
     {
         return TRUE;
     }
 
-    if (BASS_ChannelPlay(g_engine.fxHandle, FALSE))
+    if (BASS_ChannelPlay(g_engine.fxHandle, FALSE)) [[likely]]
     {
         return TRUE;
     }
@@ -327,16 +306,16 @@ BOOL WINAPI BaePlay(BOOL isExclusiveMode)
 
 void WINAPI BaePause(BOOL isExclusiveMode)
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
 
-    if (g_engine.fxHandle == 0)
+    if (g_engine.fxHandle == 0) [[unlikely]]
     {
         return;
     }
 
     if (isExclusiveMode)
     {
-        if (BASS_WASAPI_IsStarted())
+        if (BASS_WASAPI_IsStarted()) [[likely]]
         {
             BASS_WASAPI_Stop(FALSE);
         }
@@ -349,9 +328,9 @@ void WINAPI BaePause(BOOL isExclusiveMode)
 
 void WINAPI BaeSetSpeed(double speed)
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
 
-    if (g_engine.fxHandle == 0)
+    if (g_engine.fxHandle == 0) [[unlikely]]
     {
         return;
     }
@@ -362,9 +341,9 @@ void WINAPI BaeSetSpeed(double speed)
 
 void WINAPI BaeSetVolume(double volume)
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
 
-    if (g_engine.fxHandle == 0)
+    if (g_engine.fxHandle == 0) [[unlikely]]
     {
         return;
     }
@@ -374,9 +353,9 @@ void WINAPI BaeSetVolume(double volume)
 
 double WINAPI BaeGetPositionSeconds()
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
 
-    if (g_engine.fxHandle == 0)
+    if (g_engine.fxHandle == 0) [[unlikely]]
     {
         return -1.0;
     }
@@ -387,9 +366,9 @@ double WINAPI BaeGetPositionSeconds()
 
 BOOL WINAPI BaeSetPositionSeconds(double targetSeconds)
 {
-    const auto lock = std::lock_guard{ g_engineMutex };
+    const auto lock = std::lock_guard{g_engineMutex};
 
-    if (g_engine.fxHandle == 0)
+    if (g_engine.fxHandle == 0) [[unlikely]]
     {
         return FALSE;
     }
@@ -397,11 +376,11 @@ BOOL WINAPI BaeSetPositionSeconds(double targetSeconds)
     const auto targetBytes = BASS_ChannelSeconds2Bytes(g_engine.fxHandle, targetSeconds);
     auto result = BASS_ChannelSetPosition(g_engine.fxHandle, targetBytes, BASS_POS_BYTE);
 
-    if (!result && BASS_ErrorGetCode() == BASS_ERROR_POSITION)
+    if (!result && BASS_ErrorGetCode() == BASS_ERROR_POSITION) [[unlikely]]
     {
         for (auto retryCount = 0; retryCount < 20 && !result; ++retryCount)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds{ 100 });
+            std::this_thread::sleep_for(std::chrono::milliseconds{100});
             result = BASS_ChannelSetPosition(g_engine.fxHandle, targetBytes, BASS_POS_BYTE);
         }
     }
@@ -418,9 +397,3 @@ BOOL WINAPI BaeIsLastErrorBusy()
 {
     return BASS_ErrorGetCode() == BASS_ERROR_BUSY ? TRUE : FALSE;
 }
-
-
-
-
-
-
