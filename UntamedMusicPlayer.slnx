@@ -5,6 +5,9 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Project Path="BassAudioEngine/BassAudioEngine.vcxproj" Id="ad06a049-a46d-4b45-ab74-471d5138a519">
+    <Platform Solution="*|arm64" Project="ARM64" />
+  </Project>
   <Project Path="UntamedMusicPlayer/UntamedMusicPlayer.csproj">
     <Platform Solution="*|Any CPU" Project="x64" />
     <Platform Solution="*|arm64" Project="arm64" />

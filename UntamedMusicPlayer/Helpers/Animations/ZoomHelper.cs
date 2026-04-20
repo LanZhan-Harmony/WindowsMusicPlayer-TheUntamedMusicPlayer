@@ -17,7 +17,7 @@ public enum ZoomTriggerMode
     Delta,
 }
 
-public class ZoomHelper : DependencyObject, IAttached
+public sealed class ZoomHelper : DependencyObject, IAttached
 {
     public const double DefaultSliderScaleFactor = 0.033d;
 

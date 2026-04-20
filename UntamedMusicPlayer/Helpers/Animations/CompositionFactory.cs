@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml.Media;
 
 namespace UntamedMusicPlayer.Helpers.Animations;
 
-public partial class CompositionFactory : DependencyObject
+public sealed class CompositionFactory : DependencyObject
 {
     public const double DefaultOffsetDuration = 0.325;
 
