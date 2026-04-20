@@ -85,7 +85,7 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         }
         _measureTextBlock.Text = currentLyricContent;
         _measureTextBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        var width = _measureTextBlock.DesiredSize.Width;
+        var width = _measureTextBlock.DesiredSize.Width + 5;
         return Math.Min(width, _maxTextBlockWidth);
     }
 
