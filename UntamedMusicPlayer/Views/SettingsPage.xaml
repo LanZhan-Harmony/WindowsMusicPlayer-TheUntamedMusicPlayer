@@ -157,14 +157,9 @@
                     <TextBlock x:Uid="Settings_Play"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <toolkit:SettingsExpander x:Uid="Settings_ExclusiveMode" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xF623;}">
+                    <toolkit:SettingsCard x:Uid="Settings_ExclusiveMode" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xF623;}">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsExclusiveMode, Mode=TwoWay}"/>
-                        <toolkit:SettingsExpander.Items>
-                            <toolkit:SettingsCard x:Uid="Settings_LowLatencyMode">
-                                <ToggleSwitch IsEnabled="{x:Bind ViewModel.IsExclusiveMode, Mode=OneWay}" IsOn="{x:Bind ViewModel.IsLowLatencyMode, Mode=TwoWay}"/>
-                            </toolkit:SettingsCard>
-                        </toolkit:SettingsExpander.Items>
-                    </toolkit:SettingsExpander>
+                    </toolkit:SettingsCard>
                     <toolkit:SettingsCard x:Uid="Settings_OnlyAddSpecificFolder" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE62F;}">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsOnlyAddSpecificFolder, Mode=TwoWay}"/>
                     </toolkit:SettingsCard>
