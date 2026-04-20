@@ -69,18 +69,6 @@ public sealed partial class SettingsViewModel
     }
 
     /// <summary>
-    /// 是否为独占模式下的低延迟模式
-    /// </summary>
-    [ObservableProperty]
-    public partial bool IsLowLatencyMode { get; set; } = Settings.IsLowLatencyMode;
-
-    partial void OnIsLowLatencyModeChanged(bool value)
-    {
-        Settings.IsLowLatencyMode = value;
-        Data.MusicPlayer.SetLowLatencyMode(value);
-    }
-
-    /// <summary>
     /// 是否为如果当前位于音乐库歌曲页面且使用文件夹排序方式，点击歌曲仅会将其所在文件夹内的歌曲加入播放队列
     /// </summary>
     [ObservableProperty]
