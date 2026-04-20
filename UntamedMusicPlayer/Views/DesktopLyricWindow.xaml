@@ -24,7 +24,7 @@
                        HorizontalTextAlignment="Center" MaxLines="2"
                        SizeChanged="LyricContentTextBlock_SizeChanged"
                        Text="{x:Bind model:Data.LyricManager.CurrentLyricContent, Mode=OneWay}"
-                       TextTrimming="WordEllipsis"/>
+                       TextAlignment="Center" TextTrimming="WordEllipsis"/>
         </Border>
     </Grid>
     <Window.SystemBackdrop>
