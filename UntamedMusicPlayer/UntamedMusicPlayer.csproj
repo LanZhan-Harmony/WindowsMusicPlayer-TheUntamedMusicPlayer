@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
+		<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
 		<RootNamespace>UntamedMusicPlayer</RootNamespace>
 		<ApplicationIcon>Assets/AppIcon/Icon.ico</ApplicationIcon>
@@ -14,7 +14,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<LangVersion>preview</LangVersion>
-		<Features>runtime-async=on</Features>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Assets\**\*" />
