@@ -383,24 +383,6 @@ public sealed partial class MusicPlayer : IDisposable
     }
 
     /// <summary>
-    /// 设置低延迟模式
-    /// </summary>
-    /// <param name="isLowLatency"></param>
-    public async void SetLowLatencyMode(bool isLowLatency)
-    {
-        if (State.IsLowLatencyMode == isLowLatency)
-        {
-            return;
-        }
-        _updatable = false;
-        await _audioEngine.SetLowLatencyMode(
-            isLowLatency,
-            State.PlayState == MediaPlaybackState.Playing
-        );
-        _updatable = true;
-    }
-
-    /// <summary>
     /// 快退10秒
     /// </summary>
     public void SkipBack10s()
