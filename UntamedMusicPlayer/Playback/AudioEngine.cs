@@ -31,7 +31,7 @@ public sealed partial class AudioEngine : IDisposable
         _state = state;
 
         // 初始化任务队列和取消令牌
-        _taskQueue = [with(new ConcurrentQueue<Action>())];
+        _taskQueue = new(new ConcurrentQueue<Action>());
         _cancellationTokenSource = new CancellationTokenSource();
 
         // 创建并启动专用播放线程
