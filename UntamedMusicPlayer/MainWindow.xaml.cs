@@ -251,16 +251,6 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         var targetY = isVisible ? 0f : 117f;
         var targetOpacity = isVisible ? 1f : 0f;
 
-        if (
-            Math.Abs(RootPlayBar.Translation.Y - targetY) < 0.1f
-            && Math.Abs((float)RootPlayBar.Opacity - targetOpacity) < 0.01f
-        )
-        {
-            RootPlayBar.Translation = new Vector3(0f, targetY, 0f);
-            RootPlayBar.Opacity = targetOpacity;
-            return;
-        }
-
         _rootPlayBarVisual.StopAnimation("Translation.Y");
         _rootPlayBarVisual.StopAnimation("Opacity");
 
@@ -275,23 +265,13 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         var slideAnimation = compositor.CreateScalarKeyFrameAnimation();
         slideAnimation.InsertKeyFrame(1f, targetY, easing);
         slideAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
-        slideAnimation.Target = "Translation.Y";
 
         var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
         opacityAnimation.InsertKeyFrame(1f, targetOpacity, easing);
         opacityAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
-        opacityAnimation.Target = "Opacity";
 
-        var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-        batch.Completed += (_, _) =>
-        {
-            RootPlayBar.Translation = new Vector3(0f, targetY, 0f);
-            RootPlayBar.Opacity = targetOpacity;
-        };
-
-        RootPlayBar.StartAnimation(slideAnimation);
-        RootPlayBar.StartAnimation(opacityAnimation);
-        batch.End();
+        _rootPlayBarVisual.StartAnimation("Translation.Y", slideAnimation);
+        _rootPlayBarVisual.StartAnimation("Opacity", opacityAnimation);
     }
 
     /// <summary>
