@@ -331,16 +331,6 @@ public sealed partial class LyricPage : Page, IDisposable
         var targetY = isVisible ? 0f : -33f;
         var targetOpacity = isVisible ? 1f : 0f;
 
-        if (
-            Math.Abs(AppTitleBar.Translation.Y - targetY) < 0.1f
-            && Math.Abs((float)AppTitleBar.Opacity - targetOpacity) < 0.01f
-        )
-        {
-            AppTitleBar.Translation = new Vector3(0f, targetY, 0f);
-            AppTitleBar.Opacity = targetOpacity;
-            return;
-        }
-
         _appTitleBarVisual.StopAnimation("Translation.Y");
         _appTitleBarVisual.StopAnimation("Opacity");
 
@@ -355,23 +345,13 @@ public sealed partial class LyricPage : Page, IDisposable
         var slideAnimation = compositor.CreateScalarKeyFrameAnimation();
         slideAnimation.InsertKeyFrame(1f, targetY, easing);
         slideAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
-        slideAnimation.Target = "Translation.Y";
 
         var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
         opacityAnimation.InsertKeyFrame(1f, targetOpacity, easing);
         opacityAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
-        opacityAnimation.Target = "Opacity";
 
-        var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-        batch.Completed += (_, _) =>
-        {
-            AppTitleBar.Translation = new Vector3(0f, targetY, 0f);
-            AppTitleBar.Opacity = targetOpacity;
-        };
-
-        AppTitleBar.StartAnimation(slideAnimation);
-        AppTitleBar.StartAnimation(opacityAnimation);
-        batch.End();
+        _appTitleBarVisual.StartAnimation("Translation.Y", slideAnimation);
+        _appTitleBarVisual.StartAnimation("Opacity", opacityAnimation);
     }
 
     private void StopTitleBarTimer()
