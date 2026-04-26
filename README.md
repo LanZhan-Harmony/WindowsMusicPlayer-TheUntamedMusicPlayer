@@ -29,9 +29,9 @@
 - 🎵 **全格式音频播放** - 支持 MP3、FLAC、OPUS、OGG 等 20+ 种音频格式，本地与在线音乐无缝切换
 - 🌐 **在线音乐搜索** - 集成在线音乐 API，支持在线搜索、播放歌曲、专辑、歌单及艺术家
 - 🗂️ **智能音乐管理** - 按艺术家、专辑、歌单多维度分类，支持 M3U8 播放列表导入导出
-- 📝 **沉浸歌词体验** - 内嵌与灵动词岛双模式歌词显示，支持字体自定义
+- 📝 **沉浸歌词体验** - 内嵌与灵动词岛双模式歌词显示，支持字体字号自定义
 - 🎛️ **专业音效控制** - 内置变速播放，支持 WASAPI 独占模式输出
-- 🎨 **精致视觉设计** - 多种 云母/亚克力 材质主题，封面取色动态背景，优雅现代的界面
+- 🎨 **精致视觉设计** - 多种云母、亚克力材质主题，封面取色动态背景，Q弹动效，优雅现代的界面
 - 🔄 **系统深度整合** - 系统媒体传输控制（SMTC）支持，文件关联启动，通知推送
 - 📋 **灵活队列管理** - 随机播放、单曲循环、列表循环，支持播放队列自由编辑
 
@@ -48,6 +48,14 @@
 - **x64** - 适用于 64 位系统（推荐，大多数用户）
 - **ARM64** - 适用于 ARM 64 位系统（如 Surface Pro X）
 - **x86** - 适用于 32 位系统（较少使用）
+
+## ❗ 注意事项
+
+批量选择歌曲功能暂未实现，目前点击歌曲前的复选框没有反应是正常现象。
+
+## 📢 社区
+
+交流群: [QQ群](https://qm.qq.com/q/fwxkEjwlDa) (548076820)
 
 ## 📱 应用界面
 
@@ -100,6 +108,16 @@
 | 简体中文                        | zh-Hans  |   ✅   |   ✅   | LanZhan-Harmony |
 | 繁体中文 (繁體中文)             | zh-Hant  |   ✅   |   -    | 机器翻译        |
 
+## ⭐ Star 历史趋势
+
+<a href="https://www.star-history.com/?repos=LanZhan-Harmony%2FWindowsMusicPlayer-TheUntamedMusicPlayer&type=date&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer&type=date&legend=top-left" />
+ </picture>
+</a>
+
 ## 🙏 致谢
 
 特别感谢以下开源项目和开发者的支持和灵感：
@@ -107,6 +125,7 @@
 - [离幻 UWP 音乐播放器](https://github.com/DenryDu/Disenchant-Music-Player)
 - [C# 版网易云音乐 API](https://github.com/wwh1004/NeteaseCloudMusicApi)
 - [ScreenBox](https://github.com/huynhsontung/Screenbox)
+- [Character-Map-UWP](https://github.com/character-map-uwp/Character-Map-UWP)
 
 ## 📚 项目依赖
 

@@ -17,6 +17,7 @@
 
 安装 Visual Studio 2026 时，请勾选以下工作负载：
 
+- **使用 C++ 的桌面开发**
 - **WinUI 应用程序开发**
 
 ![Visual Studio 组件安装图](/Docs/Images/VisualStudioComponent.png)
@@ -37,6 +38,14 @@ git clone https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicP
 
 等待 Visual Studio 自动还原 NuGet 依赖包。
 
-### 5. 编译并运行
+### 5. 编译 BassAudioEngine
+
+右击 `BassAudioEngine` 项目，选择“生成”以编译音频引擎。
+![编译 BassAudioEngine 图](/Docs/Images/BuildBassAudioEngine.png)
+
+### 6. 编译运行 Untamed Music Player
+
+右击 `Untamed Music Player` 项目，选择“设为启动项目”。
+![设为启动项目图](/Docs/Images/SetStartupProject.png)
 
 点击工具栏中的"**▶ Untamed Music Player (Package)**"按钮开始调试和运行应用程序。
