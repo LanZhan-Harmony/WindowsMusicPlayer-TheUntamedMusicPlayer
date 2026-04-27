@@ -1,11 +1,9 @@
 using System.Diagnostics;
-using System.Globalization;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -18,6 +16,7 @@ using UntamedMusicPlayer.Services;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Text;
 using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -82,9 +81,11 @@ public sealed partial class SettingsViewModel
     /// <summary>
     /// 字体列表
     /// </summary>
-    public List<FontInfo> FontFamilies { get; set; } = [];
+    public List<FontFamilyInfo> FontFamilies { get; set; } = FontHelper.GetSystemFontFamilies();
 
     public double[] FontSizes { get; set; } = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75];
+
+    public List<FontWeightInfo> FontWeights { get; set; } = FontHelper.GetFontWeights();
 
     /// <summary>
     /// 选中的字体
@@ -119,6 +120,26 @@ public sealed partial class SettingsViewModel
     partial void OnSelectedNotCurrentFontSizeChanged(double value)
     {
         Messenger.Send(new FontSizeChangeMessage());
+    }
+
+    /// <summary>
+    /// 选中的字重
+    /// </summary>
+    [ObservableProperty]
+    public partial FontWeight SelectedFontWeight { get; set; } = Settings.LyricPageFontWeight;
+
+    partial void OnSelectedFontWeightChanged(FontWeight value)
+    {
+        Settings.LyricPageFontWeight = value;
+    }
+
+    [ObservableProperty]
+    public partial int GlobalLyricOffset { get; set; } = Settings.GlobalLyricOffset;
+
+    partial void OnGlobalLyricOffsetChanged(int value)
+    {
+        Settings.GlobalLyricOffset = value;
+        Messenger.Send(new LyricOffsetChangeMessage(value));
     }
 
     /// <summary>
@@ -226,7 +247,6 @@ public sealed partial class SettingsViewModel
         EmptyFolderMessageVisibility =
             Data.MusicLibrary.Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
         LoadSongDownloadLocationAsync();
-        LoadFonts();
         IsExportPlaylistsButtonEnabled = Data.PlaylistLibrary.Playlists.Count > 0;
         Data.SettingsViewModel = this;
     }
@@ -499,7 +519,7 @@ public sealed partial class SettingsViewModel
 
     public void FontFamilyComboBox_SelectionChanged(object _, SelectionChangedEventArgs e)
     {
-        if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontInfo selectedFont)
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontFamilyInfo selectedFont)
         {
             SelectedFontFamily = new FontFamily(selectedFont.Name);
         }
@@ -510,6 +530,14 @@ public sealed partial class SettingsViewModel
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is double fontSize)
         {
             SelectedCurrentFontSize = fontSize;
+        }
+    }
+
+    public void FontWeightComboBox_SelectionChanged(object _, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontWeightInfo selectedWeight)
+        {
+            SelectedFontWeight = selectedWeight.FontWeight;
         }
     }
 
@@ -528,26 +556,6 @@ public sealed partial class SettingsViewModel
     public void MaterialComboBox_Loaded(object sender, RoutedEventArgs _)
     {
         (sender as ComboBox)!.SelectedIndex = SelectedMaterial;
-    }
-
-    public void LoadFonts()
-    {
-        var language = new string[] { CultureInfo.CurrentUICulture.Name.ToLowerInvariant() };
-        var names = CanvasTextFormat.GetSystemFontFamilies();
-        var displayNames = CanvasTextFormat.GetSystemFontFamilies(language);
-        var list = new List<FontInfo>();
-        for (var i = 0; i < names.Length; i++)
-        {
-            list.Add(
-                new FontInfo
-                {
-                    Name = names[i],
-                    DisplayName = displayNames[i],
-                    FontFamily = new FontFamily(names[i]),
-                }
-            );
-        }
-        FontFamilies = [.. list.AsValueEnumerable().OrderBy(f => f.Name)];
     }
 
     public void FontFamilyComboBox_Loaded(object sender, RoutedEventArgs _)
@@ -570,6 +578,17 @@ public sealed partial class SettingsViewModel
         else
         {
             (sender as ComboBox)!.Text = $"{SelectedCurrentFontSize}";
+        }
+    }
+
+    public void FontWeightComboBox_Loaded(object sender, RoutedEventArgs _)
+    {
+        var selectedItem = FontWeights.FirstOrDefault(weight =>
+            weight.FontWeight.Weight == SelectedFontWeight.Weight
+        );
+        if (selectedItem is not null)
+        {
+            (sender as ComboBox)!.SelectedItem = selectedItem;
         }
     }
 
