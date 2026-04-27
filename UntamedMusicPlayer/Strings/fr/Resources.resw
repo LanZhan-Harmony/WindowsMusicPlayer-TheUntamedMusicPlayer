@@ -116,9 +116,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>Emplacements de la bibliothèque musicale</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Aperçu des paroles</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>Aucun dossier n’est inclus dans cette bibliothèque.</value>
   </data>
@@ -497,11 +494,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>Choisissez un matériau</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
     <value>Famille de polices lyriques</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Taille de police des paroles</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>Choisissez une famille de polices</value>
@@ -982,5 +976,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>Ralentissez les paroles de 0,3 s</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>Taille de police</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>Aperçu</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>Famille de polices</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>Décalage lyrique global</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>Les valeurs négatives feront avancer les paroles, tandis que les valeurs positives les retarderont</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>Millisecondes</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>Léger, Extra Léger, Léger, Semi-Léger, Régulier, Moyen, Semi-Grasset, Gras, Extra Gros, Noir, Extra Noir</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>Choisissez un poids de police</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>Épaisseur de police</value>
   </data>
 </root>

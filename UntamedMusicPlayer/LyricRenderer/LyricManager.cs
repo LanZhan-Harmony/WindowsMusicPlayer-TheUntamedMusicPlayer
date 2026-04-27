@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Dispatching;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
+using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
 
 namespace UntamedMusicPlayer.LyricRenderer;
@@ -10,6 +11,7 @@ namespace UntamedMusicPlayer.LyricRenderer;
 public sealed partial class LyricManager
     : ObservableRecipient,
         IRecipient<FontSizeChangeMessage>,
+        IRecipient<LyricOffsetChangeMessage>,
         IDisposable
 {
     private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
@@ -28,9 +30,25 @@ public sealed partial class LyricManager
     public partial string CurrentLyricContent { get; set; } = "";
 
     /// <summary>
-    /// 歌词偏移毫秒数，正数表示歌词显示延后，负数表示歌词显示提前
+    /// 全局歌词偏移毫秒数，正数表示歌词显示延后，负数表示歌词显示提前
     /// </summary>
-    public double LyricAdjustMilliseconds { get; set; } = 0;
+    private double _globalLyricOffset = Settings.GlobalLyricOffset;
+
+    /// <summary>
+    /// 是否已手动调整（手动调整后将脱离全局偏移控制）
+    /// </summary>
+    private bool _isManuallyAdjusted = false;
+
+    /// <summary>
+    /// 手动调整的歌词偏移毫秒数
+    /// </summary>
+    private double _manualLyricOffset = 0;
+
+    /// <summary>
+    /// 总偏移毫秒数
+    /// </summary>
+    private double TotalLyricOffset =>
+        _isManuallyAdjusted ? _manualLyricOffset : _globalLyricOffset;
 
     /// <summary>
     /// 歌词偏移显示字符串
@@ -47,7 +65,8 @@ public sealed partial class LyricManager
     public LyricManager(SharedPlaybackState state)
         : base(StrongReferenceMessenger.Default)
     {
-        Messenger.Register(this);
+        Messenger.Register<FontSizeChangeMessage>(this);
+        Messenger.Register<LyricOffsetChangeMessage>(this);
         _state = state;
     }
 
@@ -56,6 +75,15 @@ public sealed partial class LyricManager
         foreach (var slice in CurrentLyricSlices)
         {
             slice.UpdateStyle();
+        }
+    }
+
+    public void Receive(LyricOffsetChangeMessage message)
+    {
+        _globalLyricOffset = message.OffsetMilliseconds;
+        if (!_isManuallyAdjusted)
+        {
+            UpdateLyricAdjustDisplay();
         }
     }
 
@@ -73,6 +101,9 @@ public sealed partial class LyricManager
         {
             CurrentLyricSlices = slices;
             CurrentLyricIndex = 0;
+            _isManuallyAdjusted = false;
+            _manualLyricOffset = 0;
+            UpdateLyricAdjustDisplay();
 
             if (CurrentLyricSlices.Count > 0)
             {
@@ -94,9 +125,10 @@ public sealed partial class LyricManager
     /// <returns></returns>
     public int GetCurrentLyricIndex(double currentTime)
     {
+        var offset = TotalLyricOffset;
         for (var i = 0; i < CurrentLyricSlices.Count; i++)
         {
-            if (CurrentLyricSlices[i].StartTime > currentTime)
+            if (CurrentLyricSlices[i].StartTime + offset > currentTime)
             {
                 return i > 0 ? i - 1 : 0;
             }
@@ -139,38 +171,35 @@ public sealed partial class LyricManager
         });
     }
 
-    public async Task AddLyricAdjust()
+    public Task AddLyricAdjust()
     {
-        LyricAdjustMilliseconds += 300;
-        LyricAdjustDisplayStr =
-            LyricAdjustMilliseconds == 0
-                ? "0.0s"
-                : $"{(LyricAdjustMilliseconds > 0 ? "+" : "-")}{Math.Abs(LyricAdjustMilliseconds) / 1000:F1}s";
-        await Task.Run(() =>
+        if (!_isManuallyAdjusted)
         {
-            foreach (var slice in CurrentLyricSlices)
-            {
-                slice.StartTime += 300;
-                slice.EndTime += 300;
-            }
-        });
+            _manualLyricOffset = _globalLyricOffset;
+            _isManuallyAdjusted = true;
+        }
+        _manualLyricOffset += 300;
+        UpdateLyricAdjustDisplay();
+        return Task.CompletedTask;
     }
 
-    public async Task SubtractLyricAdjust()
+    public Task SubtractLyricAdjust()
     {
-        LyricAdjustMilliseconds -= 300;
-        LyricAdjustDisplayStr =
-            LyricAdjustMilliseconds == 0
-                ? "0.0s"
-                : $"{(LyricAdjustMilliseconds > 0 ? "+" : "-")}{Math.Abs(LyricAdjustMilliseconds) / 1000:F1}s";
-        await Task.Run(() =>
+        if (!_isManuallyAdjusted)
         {
-            foreach (var slice in CurrentLyricSlices)
-            {
-                slice.StartTime = Math.Max(0, slice.StartTime - 300);
-                slice.EndTime = Math.Max(0, slice.EndTime - 300);
-            }
-        });
+            _manualLyricOffset = _globalLyricOffset;
+            _isManuallyAdjusted = true;
+        }
+        _manualLyricOffset -= 300;
+        UpdateLyricAdjustDisplay();
+        return Task.CompletedTask;
+    }
+
+    private void UpdateLyricAdjustDisplay()
+    {
+        var total = TotalLyricOffset;
+        LyricAdjustDisplayStr =
+            total == 0 ? "0.0s" : $"{(total > 0 ? "+" : "-")}{Math.Abs(total) / 1000:F1}s";
     }
 
     /// <summary>
@@ -182,8 +211,9 @@ public sealed partial class LyricManager
         {
             CurrentLyricIndex = 0;
             CurrentLyricContent = "";
-            LyricAdjustMilliseconds = 0;
-            LyricAdjustDisplayStr = "0.0s";
+            _isManuallyAdjusted = false;
+            _manualLyricOffset = 0;
+            UpdateLyricAdjustDisplay();
             CurrentLyricSlices.Clear();
         });
     }
@@ -191,6 +221,7 @@ public sealed partial class LyricManager
     public void Dispose()
     {
         Messenger.Unregister<FontSizeChangeMessage>(this);
+        Messenger.Unregister<LyricOffsetChangeMessage>(this);
         GC.SuppressFinalize(this);
     }
 }

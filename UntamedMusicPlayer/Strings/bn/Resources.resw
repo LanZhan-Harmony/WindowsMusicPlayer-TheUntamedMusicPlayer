@@ -116,9 +116,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>সঙ্গীত গ্রন্থাগারের অবস্থান</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>লিরিক প্রিভিউ</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>এই লাইব্রেরিতে কোন ফোল্ডার অন্তর্ভুক্ত নেই।</value>
   </data>
@@ -497,11 +494,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>একটি উপাদান চয়ন করুন</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
     <value>লিরিক ফন্ট-ফ্যামিলি</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>লিরিক ফন্ট-আকার</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>একটি ফন্ট-পরিবার চয়ন করুন</value>
@@ -982,5 +976,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>গানের কথা 0.3 সেকেন্ড ধীর করুন</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>ফন্টের আকার</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>পূর্বরূপ</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>ফন্ট পরিবার</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>গ্লোবাল লিরিক অফসেট</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>নেতিবাচক মানগুলি গানের কথাকে এগিয়ে নিয়ে যাবে, যখন ইতিবাচক মানগুলি তাদের বিলম্বিত করবে</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>মিলিসেকেন্ড</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>পাতলা, অতিরিক্ত আলো, হালকা, আধা হালকা, নিয়মিত, মাঝারি, আধা বোল্ড, গাঢ়, অতিরিক্ত গাঢ়, কালো, অতিরিক্ত কালো</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>একটি ফন্ট-ওজন চয়ন করুন</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>ফন্টের ওজন</value>
   </data>
 </root>

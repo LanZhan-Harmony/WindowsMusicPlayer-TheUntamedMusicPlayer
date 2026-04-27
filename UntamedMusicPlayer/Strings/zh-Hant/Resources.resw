@@ -174,9 +174,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>音樂庫位置</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>歌詞預覽</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>此庫中不包含任何資料夾</value>
   </data>
@@ -555,11 +552,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>選擇一個材質</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
     <value>歌詞字體</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>歌詞字型大小</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>選擇一種字體</value>
@@ -1040,5 +1034,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>歌詞延遲 0.3 秒</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>字號</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>預覽</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>字體系列</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>全局歌詞時間偏移</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>負值會推進歌詞，正面值則會延遲歌詞</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>毫秒</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>極細, 特細, 細, 次細, 標準, 中等, 半粗, 粗體, 特粗, 濃體, 特黑</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>選擇一個字重</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>字重</value>
   </data>
 </root>

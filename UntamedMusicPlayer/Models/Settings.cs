@@ -1,7 +1,10 @@
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Helpers;
 using Windows.UI;
+using Windows.UI.Text;
 
 namespace UntamedMusicPlayer.Models;
 
@@ -92,6 +95,38 @@ public static class Settings
         }
     }
     public static double LyricPageNotCurrentFontSize { get; set; }
+
+    /// <summary>
+    /// 歌词字重
+    /// </summary>
+    public static FontWeight LyricPageFontWeight
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                _localSettingsService.SaveSettingAsync(nameof(LyricPageFontWeight), value.Weight);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 全局歌词时间偏移
+    /// </summary>
+    public static int GlobalLyricOffset
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                _localSettingsService.SaveSettingAsync(nameof(GlobalLyricOffset), value);
+            }
+        }
+    }
 
     /// <summary>
     /// 应用主题
@@ -268,6 +303,14 @@ public static class Settings
             FontFamily = new(
                 await _localSettingsService.ReadSettingAsync<string>(nameof(FontFamily))
                     ?? "Microsoft YaHei"
+            );
+            var fontWeight = await _localSettingsService.ReadSettingAsync<ushort>(
+                nameof(LyricPageFontWeight)
+            );
+            LyricPageFontWeight =
+                fontWeight == 0 ? FontWeights.Normal : FontHelper.ConvertToFontWeight(fontWeight);
+            GlobalLyricOffset = await _localSettingsService.ReadSettingAsync<int>(
+                nameof(GlobalLyricOffset)
             );
             var themeName = await _localSettingsService.ReadSettingAsync<string>(nameof(Theme));
             Theme = Enum.TryParse<ElementTheme>(themeName, out var cacheTheme)
