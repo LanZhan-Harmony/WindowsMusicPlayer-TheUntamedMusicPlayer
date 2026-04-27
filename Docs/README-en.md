@@ -35,7 +35,7 @@ A modern music player for online and local music streaming
 - 📝 **Immersive Lyrics Experience** - Dual-mode lyrics display with embedded and floating options, supporting custom
   fonts
 - 🎛️ **Professional Audio Control** - Built-in variable speed playback with WASAPI exclusive mode output support
-- 🎨 **Exquisite Visual Design** - Multiple Mica/Acrylic material themes, cover-based dynamic backgrounds, elegant and
+- 🎨 **Exquisite Visual Design** - Multiple Mica/Acrylic material themes, cover-based dynamic backgrounds, bouncy animation, elegant and
   modern interface
 - 🔄 **Deep System Integration** - System Media Transport Control (SMTC) support, file association launch, and
   notification push
@@ -54,6 +54,10 @@ A modern music player for online and local music streaming
 - **x64** - For 64-bit systems (Recommended for most users)
 - **ARM64** - For ARM 64-bit systems (e.g., Surface Pro X)
 - **x86** - For 32-bit systems (Less common)
+
+## ❗ Important Notes
+
+The batch selection function for songs has not been implemented yet. Currently, it is normal that clicking the checkbox in front of a song does not respond.
 
 ## 📱 Application Interface
 
@@ -107,6 +111,16 @@ Current translation status:
 | Simplified Chinese (简体中文)  |    zh-Hans    |     ✅     |    ✅     | LanZhan-Harmony     |
 | Traditional Chinese (繁體中文) |    zh-Hant    |     ✅     |     -     | Machine Translation |
 
+## ⭐ Star History
+
+<a href="https://www.star-history.com/?repos=LanZhan-Harmony%2FWindowsMusicPlayer-TheUntamedMusicPlayer&type=date&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer&type=date&legend=top-left" />
+ </picture>
+</a>
+
 ## 🙏 Acknowledgments
 
 Special thanks to the following open-source projects and developers for their support and inspiration:
@@ -114,6 +128,7 @@ Special thanks to the following open-source projects and developers for their su
 - [Disenchant UWP Music Player](https://github.com/DenryDu/Disenchant-Music-Player)
 - [C# Netease Cloud Music API](https://github.com/wwh1004/NeteaseCloudMusicApi)
 - [ScreenBox](https://github.com/huynhsontung/Screenbox)
+- [Character-Map-UWP](https://github.com/character-map-uwp/Character-Map-UWP)
 
 ## 📚 Project Dependencies
 
