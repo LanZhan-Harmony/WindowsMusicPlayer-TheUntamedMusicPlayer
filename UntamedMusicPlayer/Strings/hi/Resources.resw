@@ -116,9 +116,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>संगीत पुस्तकालय स्थान</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>गीत पूर्वावलोकन</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>इस लायब्रेरी में कोई फ़ोल्डर शामिल नहीं हैं.</value>
   </data>
@@ -497,11 +494,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>एक सामग्री चुनें</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
     <value>गीत फ़ॉन्ट-परिवार</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>गीत फ़ॉन्ट-आकार</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>कोई फ़ॉन्ट-परिवार चुनें</value>
@@ -982,5 +976,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>गीत को 0.3s से धीमा करें</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>फ़ॉन्ट आकार</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>पूर्वसमीक्षा</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>फ़ॉन्ट परिवार</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>वैश्विक गीत ऑफसेट</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>नकारात्मक मूल्य गीत को आगे बढ़ाएंगे, जबकि सकारात्मक मूल्य उनमें देरी करेंगे</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>मिलीसेकंड</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>पतला, अतिरिक्त प्रकाश, प्रकाश, अर्ध प्रकाश, नियमित, मध्यम, अर्ध बोल्ड, बोल्ड, अतिरिक्त बोल्ड, काला, अतिरिक्त काला</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>फ़ॉन्ट-वेट चुनें</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>फ़ॉन्ट वजन</value>
   </data>
 </root>

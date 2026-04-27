@@ -116,9 +116,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>음악 도서관 위치</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>가사 미리보기</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>이 라이브러리에는 폴더가 포함되어 있지 않습니다.</value>
   </data>
@@ -497,11 +494,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>재료를 선택하세요</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
     <value>서정형 폰트 계열</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>가사 글꼴 크기</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>폰트 계열 선택</value>
@@ -982,5 +976,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>가사 속도를 0.3초 늦춰</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>글꼴 크기</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>미리보기</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>폰트 계열</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>글로벌 가사 상쇄</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>음수치는 가사를 진행시키고, 음수치는 가사를 지연시킵니다</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>밀리초</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>씬, 엑스트라 라이트, 라이트, 세미 라이트, 레귤러, 미디엄, 세미 볼드, 볼드, 엑스트라 볼드, 블랙, 엑스트라 블랙</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>글꼴 굵기 선택</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>폰트 굵기</value>
   </data>
 </root>

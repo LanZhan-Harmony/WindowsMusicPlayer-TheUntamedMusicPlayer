@@ -45,6 +45,7 @@
                                Margin="{x:Bind Margin, Mode=OneWay}"
                                FontFamily="{x:Bind model:Settings.FontFamily}"
                                FontSize="{x:Bind FontSize, Mode=OneWay}"
+                               FontWeight="{x:Bind model:Settings.LyricPageFontWeight}"
                                Opacity="{x:Bind Opacity, Mode=OneWay}"
                                SizeChanged="TextBlock_SizeChanged"
                                Text="{x:Bind Content}"

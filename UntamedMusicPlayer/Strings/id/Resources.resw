@@ -116,9 +116,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>Lokasi perpustakaan musik</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Pratinjau lirik</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>Tidak ada folder yang disertakan dalam perpustakaan ini.</value>
   </data>
@@ -497,11 +494,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>Pilih bahan</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
     <value>Keluarga font lirik</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Ukuran font lirik</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>Pilih keluarga font</value>
@@ -982,5 +976,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>Perlambat lirik sebesar 0,3 detik</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>Ukuran font</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>Pratinjau</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>Keluarga font</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>Offset Lirik Global</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>Nilai negatif akan memajukan lirik, sedangkan nilai positif akan menundanya</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>milidetik</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>Tipis, Ekstra Ringan, Ringan, Semi Ringan, Biasa, Sedang, Semi Tebal, Tebal, Ekstra Tebal, Hitam, Ekstra Hitam</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>Pilih bobot font</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>Berat font</value>
   </data>
 </root>
