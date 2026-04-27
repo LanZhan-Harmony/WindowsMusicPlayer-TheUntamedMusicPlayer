@@ -37,6 +37,14 @@ Open the `UntamedMusicPlayer.slnx` file in Visual Studio.
 
 Wait for Visual Studio to automatically restore the NuGet dependencies.
 
-### 5. Build and Run
+### 5. Compile BassAudioEngine
+
+Right-click on the `BassAudioEngine` project and select "Build" to compile the audio engine.
+![Build BassAudioEngine](Images/BuildBassAudioEngine.png)
+
+### 6. Build and Run Untamed Music Player
+
+Right-click on the `Untamed Music Player` project and select "Set as StartUp Project".
+![Set as StartUp Project](Images/SetStartupProject.png)
 
 Click the "**▶ Untamed Music Player (Package)**" button in the toolbar to start debugging and running the application.
