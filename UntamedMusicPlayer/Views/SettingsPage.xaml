@@ -26,8 +26,11 @@
                 </Button>
             </toolkit:SettingsCard>
         </DataTemplate>
-        <DataTemplate x:Key="FontComboBoxTemplate" x:DataType="model:FontInfo">
+        <DataTemplate x:Key="FontFamilyComboBoxTemplate" x:DataType="model:FontFamilyInfo">
             <TextBlock FontFamily="{x:Bind FontFamily}" Text="{x:Bind DisplayName}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="FontWeightComboBoxTemplate" x:DataType="model:FontWeightInfo">
+            <TextBlock FontWeight="{x:Bind FontWeight}" Text="{x:Bind DisplayName}"/>
         </DataTemplate>
     </Page.Resources>
     <Grid>
@@ -170,34 +173,56 @@
                     <TextBlock x:Uid="Settings_Lyric"
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <toolkit:SettingsCard x:Uid="Settings_LyricFontFamily" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE8D2;}">
-                        <ComboBox x:Uid="Settings_ChooseAFontFamily"
-                                  ItemTemplate="{StaticResource FontComboBoxTemplate}"
-                                  ItemsSource="{x:Bind ViewModel.FontFamilies}"
-                                  Loaded="{x:Bind ViewModel.FontFamilyComboBox_Loaded}"
-                                  SelectionChanged="{x:Bind ViewModel.FontFamilyComboBox_SelectionChanged}"/>
-                    </toolkit:SettingsCard>
-                    <toolkit:SettingsExpander x:Uid="Settings_LyricFontSize" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE8E9;}">
-                        <ComboBox x:Uid="Settings_ChooseAFontSize"
-                                  IsEditable="True"
-                                  ItemsSource="{x:Bind ViewModel.FontSizes}"
-                                  Loaded="{x:Bind ViewModel.FontSizeComboBox_Loaded}"
-                                  SelectionChanged="{x:Bind ViewModel.FontSizeComboBox_SelectionChanged}"
-                                  TextSubmitted="{x:Bind ViewModel.ComboBox_TextSubmitted}"/>
+                    <toolkit:SettingsExpander x:Uid="Settings_LyricFont" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE8D2;}">
                         <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard x:Uid="Settings_LyricFontFamily">
+                                <ComboBox x:Uid="Settings_ChooseAFontFamily"
+                                          ItemTemplate="{StaticResource FontFamilyComboBoxTemplate}"
+                                          ItemsSource="{x:Bind ViewModel.FontFamilies}"
+                                          Loaded="{x:Bind ViewModel.FontFamilyComboBox_Loaded}"
+                                          SelectionChanged="{x:Bind ViewModel.FontFamilyComboBox_SelectionChanged}"/>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard x:Uid="Settings_LyricFontSize">
+                                <ComboBox x:Uid="Settings_ChooseAFontSize"
+                                          IsEditable="True"
+                                          ItemsSource="{x:Bind ViewModel.FontSizes}"
+                                          Loaded="{x:Bind ViewModel.FontSizeComboBox_Loaded}"
+                                          SelectionChanged="{x:Bind ViewModel.FontSizeComboBox_SelectionChanged}"
+                                          TextSubmitted="{x:Bind ViewModel.ComboBox_TextSubmitted}"/>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard x:Uid="Settings_LyricFontWeight">
+                                <ComboBox x:Uid="Settings_ChooseAFontWeight"
+                                          ItemTemplate="{StaticResource FontWeightComboBoxTemplate}"
+                                          ItemsSource="{x:Bind ViewModel.FontWeights}"
+                                          Loaded="{x:Bind ViewModel.FontWeightComboBox_Loaded}"
+                                          SelectionChanged="{x:Bind ViewModel.FontWeightComboBox_SelectionChanged}"/>
+                            </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_LyricPreview">
                                 <StackPanel>
                                     <TextBlock x:Uid="Settings_ThisIsAHighlightedLyric"
                                                FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
-                                               FontSize="{x:Bind ViewModel.SelectedCurrentFontSize, Mode=OneWay}"/>
+                                               FontSize="{x:Bind ViewModel.SelectedCurrentFontSize, Mode=OneWay}"
+                                               FontWeight="{x:Bind ViewModel.SelectedFontWeight, Mode=OneWay}"/>
                                     <TextBlock x:Uid="Settings_ThisIsAnOrdinaryLyric"
                                                FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
                                                FontSize="{x:Bind ViewModel.SelectedNotCurrentFontSize, Mode=OneWay}"
+                                               FontWeight="{x:Bind ViewModel.SelectedFontWeight, Mode=OneWay}"
                                                Opacity="0.5"/>
                                 </StackPanel>
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
+
+                    <toolkit:SettingsCard x:Uid="Settings_LyricOffset" HeaderIcon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily}, Glyph=&#xE7BC;}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <NumberBox LargeChange="1000" Maximum="100000"
+                                       Minimum="-100000" SmallChange="300"
+                                       SpinButtonPlacementMode="Inline"
+                                       ValidationMode="InvalidInputOverwritten"
+                                       Value="{x:Bind ViewModel.GlobalLyricOffset, Mode=TwoWay}"/>
+                            <TextBlock x:Uid="Settings_Millisecond" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </toolkit:SettingsCard>
                 </StackPanel>
 
                 <!--  个性化  -->

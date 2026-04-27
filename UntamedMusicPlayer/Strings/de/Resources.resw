@@ -116,9 +116,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>Standorte für Musikbibliotheken</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Lyric-Vorschau</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>In dieser Bibliothek sind keine Ordner enthalten.</value>
   </data>
@@ -497,11 +494,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>Wählen Sie ein Material aus</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
     <value>Lyrische Schriftfamilie</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Lyric-Schriftgröße</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>Wählen Sie eine Schriftartfamilie</value>
@@ -982,5 +976,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>Verlangsamen Sie die Texte um 0,3 Sekunden</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>Schriftgröße</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>Vorschau</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>Schriftartfamilie</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>Globaler lyrischer Offset</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>Negative Werte bringen den Text voran, während positive Werte sie verzögern</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>Millisekunden</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>Dünn, Extra Leicht, Leicht, Halbleicht, Normal, Mittel, Halb Kräftig, Kräftig, Extra Kräftig, Schwarz, Extra Schwarz</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>Wählen Sie eine Schriftstärke</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>Schriftstärke</value>
   </data>
 </root>

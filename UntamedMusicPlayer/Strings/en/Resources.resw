@@ -174,9 +174,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>Music library locations</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Lyric preview</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>No folders are included in this library.</value>
   </data>
@@ -555,11 +552,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>Choose a material</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
-    <value>Lyric font-family</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Lyric font-size</value>
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
+    <value>Lyric font</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>Choose a font-family</value>
@@ -1040,5 +1034,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>Slow down lyrics by 0.3s</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>Family</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>Global Lyric Offset</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>Negative values will advance the lyrics, while positive values will delay them</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>ms</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>Thin, Extra Light, Light, Semi Light, Regular, Medium, Semi Bold, Bold, Extra Bold, Black, Extra Black</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>Choose a font-weight</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>Weight</value>
   </data>
 </root>

@@ -116,9 +116,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>Localizações da biblioteca musical</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Prévia da letra</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>Nenhuma pasta está incluída nesta biblioteca.</value>
   </data>
@@ -497,11 +494,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>Escolha um material</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
     <value>Família de fontes líricas</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Tamanho da fonte da letra</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>Escolha uma família de fontes</value>
@@ -982,5 +976,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>Letra de desaceleração em 0,3s</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>Tamanho da fonte</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>Prévia</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>Família de fontes</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>Offset Lírico Global</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>Valores negativos vão avançar a letra, enquanto valores positivos vão atrasá-las</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>milissegundos</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>Fino, Extra Claro, Leve, Semi Claro, Normal, Médio, Semi Ogrito, Ogrito, Extra Ogrito, Preto, Preto Extra</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>Escolha um peso de fonte</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>Peso da fonte</value>
   </data>
 </root>

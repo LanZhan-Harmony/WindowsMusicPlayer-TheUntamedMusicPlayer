@@ -116,9 +116,6 @@
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
     <value>Расположение музыкальных библиотек</value>
   </data>
-  <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Превью текста песен</value>
-  </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
     <value>В этой библиотеке нет папок.</value>
   </data>
@@ -497,11 +494,8 @@
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>Выберите материал</value>
   </data>
-  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+  <data name="Settings_LyricFont.Header" xml:space="preserve">
     <value>Лирическое семейство шрифтов</value>
-  </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Размер шрифта текста</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
     <value>Выберите семейство шрифтов</value>
@@ -982,5 +976,32 @@
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>Замедлите текст на 0,3 секунды</value>
+  </data>
+  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
+    <value>Размер шрифта</value>
+  </data>
+  <data name="Settings_LyricPreview.Header" xml:space="preserve">
+    <value>Превью</value>
+  </data>
+  <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
+    <value>Семейство шрифтов</value>
+  </data>
+  <data name="Settings_LyricOffset.Header" xml:space="preserve">
+    <value>Глобальный лирический офсет</value>
+  </data>
+  <data name="Settings_LyricOffset.Description" xml:space="preserve">
+    <value>Отрицательные значения продвигают текст, а положительные — задерживают их</value>
+  </data>
+  <data name="Settings_Millisecond.Text" xml:space="preserve">
+    <value>миллисекунды</value>
+  </data>
+  <data name="Settings_FontWeights" xml:space="preserve">
+    <value>Тонкая, Extra Light, Light, Semi Light, Regular, Medium, Semi Bold, Bold, Extra Bold, Black, Extra Black</value>
+  </data>
+  <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
+    <value>Выберите вес шрифта</value>
+  </data>
+  <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
+    <value>Вес шрифта</value>
   </data>
 </root>
