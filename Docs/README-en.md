@@ -52,8 +52,11 @@ A modern music player for online and local music streaming
 ### Choose the Right Version
 
 - **x64** - For 64-bit systems (Recommended for most users)
-- **ARM64** - For ARM 64-bit systems (e.g., Surface Pro X)
+- **ARM64** - For ARM 64-bit systems (e.g., MateBook E Go)
 - **x86** - For 32-bit systems (Less common)
+
+### System Requirements
+Windows 10 2004 or later
 
 ## ❗ Important Notes
 
