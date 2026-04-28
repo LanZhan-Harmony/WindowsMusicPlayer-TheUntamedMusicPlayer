@@ -47,8 +47,7 @@ public sealed partial class LyricManager
     /// <summary>
     /// 总偏移毫秒数
     /// </summary>
-    private double TotalLyricOffset =>
-        _isManuallyAdjusted ? _manualLyricOffset : _globalLyricOffset;
+    public double TotalLyricOffset => _isManuallyAdjusted ? _manualLyricOffset : _globalLyricOffset;
 
     /// <summary>
     /// 歌词偏移显示字符串
@@ -125,10 +124,9 @@ public sealed partial class LyricManager
     /// <returns></returns>
     public int GetCurrentLyricIndex(double currentTime)
     {
-        var offset = TotalLyricOffset;
         for (var i = 0; i < CurrentLyricSlices.Count; i++)
         {
-            if (CurrentLyricSlices[i].StartTime + offset > currentTime)
+            if (CurrentLyricSlices[i].StartTime + TotalLyricOffset > currentTime)
             {
                 return i > 0 ? i - 1 : 0;
             }
@@ -171,7 +169,7 @@ public sealed partial class LyricManager
         });
     }
 
-    public Task AddLyricAdjust()
+    public void AddLyricAdjust()
     {
         if (!_isManuallyAdjusted)
         {
@@ -180,10 +178,9 @@ public sealed partial class LyricManager
         }
         _manualLyricOffset += 300;
         UpdateLyricAdjustDisplay();
-        return Task.CompletedTask;
     }
 
-    public Task SubtractLyricAdjust()
+    public void SubtractLyricAdjust()
     {
         if (!_isManuallyAdjusted)
         {
@@ -192,7 +189,6 @@ public sealed partial class LyricManager
         }
         _manualLyricOffset -= 300;
         UpdateLyricAdjustDisplay();
-        return Task.CompletedTask;
     }
 
     private void UpdateLyricAdjustDisplay()
