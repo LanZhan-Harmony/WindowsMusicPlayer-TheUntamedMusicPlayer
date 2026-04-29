@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -54,6 +55,10 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
             targetSong = songs
                 .AsValueEnumerable()
                 .FirstOrDefault(song => song.Path == message.Song.Path);
+            if (targetSong is not null)
+            {
+                SongListView.ScrollIntoView(targetSong, message.Alignment);
+            }
         }
         else if (listViewSource is ICollectionView groupedSongs)
         {
@@ -61,10 +66,10 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
                 .AsValueEnumerable()
                 .OfType<BriefLocalSongInfo>()
                 .FirstOrDefault(song => song.Path == message.Song.Path);
-        }
-        if (targetSong is not null)
-        {
-            SongListView.ScrollIntoView(targetSong, message.Alignment);
+            if (targetSong is not null)
+            {
+                SongListView.MakeVisible(new SemanticZoomLocation { Item = targetSong });
+            }
         }
     }
 
