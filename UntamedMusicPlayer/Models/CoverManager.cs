@@ -511,6 +511,7 @@ public static class CoverManager
                 _playlistCovers.TryRemove(key, out _);
             }
         }
+        GC.Collect();
     }
 }
 
