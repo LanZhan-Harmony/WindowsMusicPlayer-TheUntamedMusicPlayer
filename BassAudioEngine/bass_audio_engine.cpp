@@ -276,10 +276,28 @@ BOOL WINAPI BaePlay(BOOL isExclusiveMode)
             return FALSE;
         }
 
-        const auto initFlags = BASS_WASAPI_EXCLUSIVE | BASS_WASAPI_EVENT;
+        // Use AUTOFORMAT flag to let BASS handle sample rate conversion automatically
+        // Try to initialize with the original frequency first
+        const auto initFlags = BASS_WASAPI_EXCLUSIVE | BASS_WASAPI_EVENT | BASS_WASAPI_AUTOFORMAT;
         if (!BASS_WASAPI_Init(-1, channelInfo.freq, channelInfo.chans, initFlags, 0.1F, 0.025F, WasapiProc, nullptr)) [[unlikely]]
         {
-            return FALSE;
+            // If autoformat doesn't work, fallback to common sample rates that devices usually support
+            const std::array<DWORD, 6> fallbackFreqs{48000, 44100, 96000, 192000, 32000, 88200};
+            bool initialized = false;
+
+            for (auto freq : fallbackFreqs)
+            {
+                if (BASS_WASAPI_Init(-1, freq, channelInfo.chans, initFlags, 0.1F, 0.025F, WasapiProc, nullptr))
+                {
+                    initialized = true;
+                    break;
+                }
+            }
+
+            if (!initialized) [[unlikely]]
+            {
+                return FALSE;
+            }
         }
 
         g_engine.wasapiInitialized = true;
