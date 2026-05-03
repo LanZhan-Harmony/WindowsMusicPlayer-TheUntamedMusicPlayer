@@ -195,6 +195,11 @@ public sealed partial class AudioEngine : IDisposable
 
             if (!success)
             {
+                if (NativeMethods.IsLastErrorBusy())
+                {
+                    _logger.PlaybackDeviceBusy();
+                    return false;
+                }
                 _logger.ZLogInformation(
                     $"创建Bass流失败, 错误码: {NativeMethods.GetLastError()}, 文件: {_state.CurrentSong.Path}"
                 );
@@ -223,7 +228,7 @@ public sealed partial class AudioEngine : IDisposable
     public bool Play() =>
         ExecuteOnPlaybackThread(() =>
         {
-            if (!_hasLoadedSong)
+            if (!_hasLoadedSong && !LoadSong())
             {
                 return false;
             }
