@@ -13,6 +13,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class OnlinePlayListsPage : Page
 {
     public OnlinePlayListsViewModel ViewModel { get; set; }
+    private bool _isInitialized = false;
     private ScrollViewer? _scrollViewer;
     private bool _isSearching;
 
@@ -90,7 +91,7 @@ public sealed partial class OnlinePlayListsPage : Page
         _scrollViewer = PlaylistGridView.FindDescendant<ScrollViewer>()!;
         _scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
 
-        if (Data.SelectedOnlinePlaylist is not null)
+        if (!_isInitialized && Data.SelectedOnlinePlaylist is not null)
         {
             gridView.ScrollIntoView(Data.SelectedOnlinePlaylist, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
@@ -108,6 +109,7 @@ public sealed partial class OnlinePlayListsPage : Page
             }
             gridView.Focus(FocusState.Programmatic);
         }
+        _isInitialized = true;
     }
 
     private async void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)

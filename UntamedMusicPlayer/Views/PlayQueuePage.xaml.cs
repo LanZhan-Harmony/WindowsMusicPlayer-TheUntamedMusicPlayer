@@ -14,10 +14,12 @@ namespace UntamedMusicPlayer.Views;
 
 public sealed partial class PlayQueuePage : Page
 {
-    public PlayQueueViewModel ViewModel { get; } = App.GetService<PlayQueueViewModel>();
+    public PlayQueueViewModel ViewModel { get; }
+    private bool _isInitialized = false;
 
     public PlayQueuePage()
     {
+        ViewModel = App.GetService<PlayQueueViewModel>();
         InitializeComponent();
     }
 
@@ -107,7 +109,7 @@ public sealed partial class PlayQueuePage : Page
 
         var listView = (sender as ListView)!;
         var listViewSource = listView.ItemsSource;
-        if (listViewSource is IEnumerable<IndexedPlayQueueSong> songs)
+        if (!_isInitialized && listViewSource is IEnumerable<IndexedPlayQueueSong> songs)
         {
             var targetSong = songs
                 .AsValueEnumerable()
@@ -117,6 +119,7 @@ public sealed partial class PlayQueuePage : Page
                 listView.ScrollIntoView(targetSong, ScrollIntoViewAlignment.Leading);
             }
         }
+        _isInitialized = true;
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)

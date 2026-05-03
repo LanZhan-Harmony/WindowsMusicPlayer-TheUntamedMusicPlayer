@@ -13,6 +13,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class PlayListsPage : Page
 {
     public PlayListsViewModel ViewModel { get; }
+    private bool _isInitialized = false;
 
     public PlayListsPage()
     {
@@ -52,7 +53,7 @@ public sealed partial class PlayListsPage : Page
 
     private async void PlaylistGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedPlaylist is not null && sender is GridView gridView)
+        if (!_isInitialized && Data.SelectedPlaylist is not null && sender is GridView gridView)
         {
             gridView.ScrollIntoView(Data.SelectedPlaylist, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
@@ -70,6 +71,7 @@ public sealed partial class PlayListsPage : Page
             }
             gridView.Focus(FocusState.Programmatic);
         }
+        _isInitialized = true;
     }
 
     private void PlaylistGridView_ItemClick(object sender, ItemClickEventArgs e)
