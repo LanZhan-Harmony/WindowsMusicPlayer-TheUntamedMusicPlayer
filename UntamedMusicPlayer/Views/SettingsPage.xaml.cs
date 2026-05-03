@@ -14,6 +14,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class SettingsPage : Page
 {
     public SettingsViewModel ViewModel { get; set; }
+    private bool _isInitialized = false;
 
     public SettingsPage()
     {
@@ -114,6 +115,10 @@ public sealed partial class SettingsPage : Page
 
     private async void SettingsPage_Loaded(object sender, RoutedEventArgs e)
     {
+        if (_isInitialized)
+        {
+            return;
+        }
         const int delayMs = 10;
         const int fromOffsetY = 80;
         const int durationMs = 300;
@@ -138,6 +143,7 @@ public sealed partial class SettingsPage : Page
         }
         await Task.Delay(totalAnimationMs);
         SetRepositionTransitions();
+        _isInitialized = true;
     }
 
     private static List<UIElement> GetEntranceTargets(Panel panel)
