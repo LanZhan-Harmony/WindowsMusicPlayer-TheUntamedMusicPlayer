@@ -11,6 +11,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class LocalAlbumsPage : Page
 {
     public LocalAlbumsViewModel ViewModel { get; }
+    private bool _isInitialized = false;
 
     public LocalAlbumsPage()
     {
@@ -72,7 +73,7 @@ public sealed partial class LocalAlbumsPage : Page
 
     private async void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Data.SelectedLocalAlbum is not null && sender is GridView gridView)
+        if (!_isInitialized && Data.SelectedLocalAlbum is not null && sender is GridView gridView)
         {
             gridView.ScrollIntoView(Data.SelectedLocalAlbum, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
@@ -90,6 +91,7 @@ public sealed partial class LocalAlbumsPage : Page
             }
             gridView.Focus(FocusState.Programmatic);
         }
+        _isInitialized = true;
     }
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
