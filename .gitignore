@@ -27,9 +27,9 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 
-# Allow Libraries directories for BassAudioEngine
-!BassAudioEngine/Libraries/
-!BassAudioEngine/Libraries/**/
+# Allow Libraries directories except BassAudioEngine.dll
+!**/Libraries/**/*
+BassAudioEngine.dll
 
 bld/
 [Bb]in/
