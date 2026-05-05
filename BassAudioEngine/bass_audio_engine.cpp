@@ -2,18 +2,6 @@
 
 #include "bass_audio_engine_exports.h"
 
-#include "bass.h"
-#include "bass_fx.h"
-#include "basswasapi.h"
-
-#include <array>
-#include <chrono>
-#include <filesystem>
-#include <mutex>
-#include <string>
-#include <string_view>
-#include <thread>
-
 namespace
 {
     struct EngineState final
