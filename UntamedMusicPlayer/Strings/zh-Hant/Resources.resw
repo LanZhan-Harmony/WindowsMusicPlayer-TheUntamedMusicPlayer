@@ -222,9 +222,6 @@
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
     <value>可降低音訊延遲。 建議在中高性能設備上啟用。 若遇到聲音卡頓或播放異常，請關閉。</value>
   </data>
-  <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
-    <value>開啟后，應用內音量調節不可用，請在操作系統調節音量。</value>
-  </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
     <value>如果當前位於音樂庫歌曲頁面且使用資料夾排序方式，點擊歌曲僅會將其所在資料夾內的歌曲加入播放佇列。</value>
   </data>

@@ -222,9 +222,6 @@
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
     <value>音声遅延を減らします。中〜高価格帯のデバイスにおすすめです。カクつきや再生の問題がある場合は、これを無効にしてください。</value>
   </data>
-  <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
-    <value>一度有効になると、アプリ内の音量コントロールは使えなくなります。OSを通じて音量を調整してください。</value>
-  </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
     <value>もし音楽ライブラリの曲のページでフォルダのソートが有効なら、曲をクリックすると同じフォルダの曲だけが再生キューに追加されます。</value>
   </data>
