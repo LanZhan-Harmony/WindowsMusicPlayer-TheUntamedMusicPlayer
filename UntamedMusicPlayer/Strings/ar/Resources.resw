@@ -222,9 +222,6 @@
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
     <value>يقلل من تأخير الصوت. موصى به للأجهزة متوسطة إلى العالية. قم بتعطيل هذا إذا واجهت تقطعا أو مشاكل في التشغيل.</value>
   </data>
-  <data name="Settings_ExclusiveMode.Description" xml:space="preserve">
-    <value>بمجرد تفعيلها، لن يكون التحكم في مستوى الصوت داخل التطبيق متاحا. يرجى ضبط مستوى الصوت عبر نظام التشغيل.</value>
-  </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
     <value>إذا كنت في صفحة الأغاني في مكتبة الموسيقى مع تفعيل فرز المجلدات، فإن النقر على أغنية سيضيف فقط الأغاني من نفس المجلد إلى قائمة التشغيل.</value>
   </data>

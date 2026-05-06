@@ -128,12 +128,13 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>bass.lib;bass_fx.lib;basswasapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>bass.lib;bass_fx.lib;basswasapi.lib;bassmix.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\$(Platform)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -157,6 +158,7 @@ if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -183,12 +185,13 @@ if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>bass.lib;bass_fx.lib;basswasapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>bass.lib;bass_fx.lib;basswasapi.lib;bassmix.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\$(Platform)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -207,12 +210,13 @@ if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>bass.lib;bass_fx.lib;basswasapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>bass.lib;bass_fx.lib;basswasapi.lib;bassmix.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\$(Platform)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -236,6 +240,7 @@ if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -266,6 +271,7 @@ if exist "$(OutDir)$(TargetName).exp" del "$(OutDir)$(TargetName).exp"</Command>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
