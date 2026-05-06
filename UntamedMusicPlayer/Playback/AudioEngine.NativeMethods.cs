@@ -4,7 +4,7 @@ namespace UntamedMusicPlayer.Playback;
 
 public sealed partial class AudioEngine
 {
-    private const string NativeLibraryName = "BassAudioEngine";
+    private const string NativeLibraryName = "BassAudioEngine.dll";
 
     [UnmanagedFunctionPointer(CallingConvention.Winapi)]
     private delegate void NativePlaybackCallback();

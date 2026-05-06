@@ -14,5 +14,6 @@
 #include "bass.h"
 #include "bass_fx.h"
 #include "basswasapi.h"
+#include "bassmix.h"
 
 #endif // PCH_H

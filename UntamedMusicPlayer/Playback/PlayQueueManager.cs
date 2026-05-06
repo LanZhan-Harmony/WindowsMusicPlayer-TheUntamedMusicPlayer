@@ -53,6 +53,11 @@ public sealed partial class PlayQueueManager : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>
+    /// 设置正常播放队列
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="list"></param>
     public void SetNormalPlayQueue(string name, IReadOnlyList<IBriefSongInfoBase> list)
     {
         if (
@@ -78,6 +83,11 @@ public sealed partial class PlayQueueManager : ObservableObject, IDisposable
         _ = FileManager.SavePlayQueueDataAsync(NormalPlayQueue, ShuffledPlayQueue);
     }
 
+    /// <summary>
+    /// 设置随机播放队列
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="list"></param>
     public void SetShuffledPlayQueue(string name, IReadOnlyList<IBriefSongInfoBase> list)
     {
         if (
@@ -102,6 +112,12 @@ public sealed partial class PlayQueueManager : ObservableObject, IDisposable
         _ = FileManager.SavePlayQueueDataAsync(NormalPlayQueue, ShuffledPlayQueue);
     }
 
+    /// <summary>
+    /// 检测是否是同一队列
+    /// </summary>
+    /// <param name="currentQueue"></param>
+    /// <param name="targetQueue"></param>
+    /// <returns></returns>
     private static bool IsSameSongList(
         ObservableCollection<IndexedPlayQueueSong> currentQueue,
         IReadOnlyList<IBriefSongInfoBase> targetQueue
@@ -112,17 +128,18 @@ public sealed partial class PlayQueueManager : ObservableObject, IDisposable
             return false;
         }
 
-        for (var i = 0; i < targetQueue.Count; i++)
-        {
-            var currentSong = currentQueue[i].Song;
-            var targetSong = targetQueue[i];
-            if (currentSong != targetSong)
-            {
-                return false;
-            }
-        }
+        // 如果多于10个，只检查前5、后5和中间位；否则检查全部索引
+        var indices =
+            currentQueue.Count > 10
+                ?
+                [
+                    .. Enumerable.Range(0, 5),
+                    currentQueue.Count / 2,
+                    .. Enumerable.Range(currentQueue.Count - 5, 5),
+                ]
+                : Enumerable.Range(0, currentQueue.Count);
 
-        return true;
+        return indices.AsValueEnumerable().All(i => currentQueue[i].Song == targetQueue[i]);
     }
 
     /// <summary>
