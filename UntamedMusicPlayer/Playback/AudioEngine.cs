@@ -43,8 +43,12 @@ public sealed partial class AudioEngine : IDisposable
         };
         _playbackThread.Start();
 
-        ExecuteOnPlaybackThread(InitializeBass);
+        InitializeAsync();
+    }
 
+    private async void InitializeAsync()
+    {
+        await ExecuteOnPlaybackThreadAsync(InitializeBass);
         _state.PropertyChanged += OnStateChanged;
     }
 
@@ -71,36 +75,47 @@ public sealed partial class AudioEngine : IDisposable
     }
 
     /// <summary>
-    /// 在播放线程上执行操作
+    /// 在播放线程上异步执行操作
     /// </summary>
-    private void ExecuteOnPlaybackThread(Action action)
+    private Task ExecuteOnPlaybackThreadAsync(Action action)
     {
         if (_isDisposed)
         {
-            return;
+            return Task.CompletedTask;
         }
         if (Thread.CurrentThread == _playbackThread)
         {
             action();
+            return Task.CompletedTask;
         }
-        else
+        var tcs = new TaskCompletionSource();
+        _taskQueue.Add(() =>
         {
-            _taskQueue.Add(action);
-        }
+            try
+            {
+                action();
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        return tcs.Task;
     }
 
     /// <summary>
-    /// 在播放线程上执行操作并等待结果
+    /// 在播放线程上异步执行操作并等待结果
     /// </summary>
-    private T ExecuteOnPlaybackThread<T>(Func<T> func)
+    private Task<T> ExecuteOnPlaybackThreadAsync<T>(Func<T> func)
     {
         if (_isDisposed)
         {
-            return default!;
+            return Task.FromResult(default(T)!);
         }
         if (Thread.CurrentThread == _playbackThread)
         {
-            return func();
+            return Task.FromResult(func());
         }
         var tcs = new TaskCompletionSource<T>();
         _taskQueue.Add(() =>
@@ -115,26 +130,84 @@ public sealed partial class AudioEngine : IDisposable
                 tcs.SetException(ex);
             }
         });
-        return tcs.Task.Result;
+        return tcs.Task;
     }
 
-    private void OnStateChanged(object? _, PropertyChangedEventArgs e)
+    /// <summary>
+    /// 在播放线程上异步执行异步操作
+    /// </summary>
+    private Task ExecuteOnPlaybackThreadAsync(Func<Task> func)
+    {
+        if (_isDisposed)
+        {
+            return Task.CompletedTask;
+        }
+        if (Thread.CurrentThread == _playbackThread)
+        {
+            return func();
+        }
+        var tcs = new TaskCompletionSource();
+        _taskQueue.Add(async () =>
+        {
+            try
+            {
+                await func();
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        return tcs.Task;
+    }
+
+    /// <summary>
+    /// 在播放线程上异步执行异步操作并等待结果
+    /// </summary>
+    private Task<T> ExecuteOnPlaybackThreadAsync<T>(Func<Task<T>> func)
+    {
+        if (_isDisposed)
+        {
+            return Task.FromResult(default(T)!);
+        }
+        if (Thread.CurrentThread == _playbackThread)
+        {
+            return func();
+        }
+        var tcs = new TaskCompletionSource<T>();
+        _taskQueue.Add(async () =>
+        {
+            try
+            {
+                var result = await func();
+                tcs.SetResult(result);
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        return tcs.Task;
+    }
+
+    private async void OnStateChanged(object? _, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {
             case nameof(SharedPlaybackState.Volume):
                 if (!_state.IsMute)
                 {
-                    ExecuteOnPlaybackThread(() => SetVolume(_state.Volume / 100.0));
+                    await ExecuteOnPlaybackThreadAsync(() => SetVolume(_state.Volume / 100.0));
                 }
                 break;
             case nameof(SharedPlaybackState.IsMute):
-                ExecuteOnPlaybackThread(() =>
+                await ExecuteOnPlaybackThreadAsync(() =>
                     SetVolume(_state.IsMute ? 0.0 : _state.Volume / 100.0)
                 );
                 break;
             case nameof(SharedPlaybackState.Speed):
-                ExecuteOnPlaybackThread(() => SetSpeed(_state.Speed));
+                await ExecuteOnPlaybackThreadAsync(() => SetSpeed(_state.Speed));
                 break;
         }
     }
@@ -175,8 +248,8 @@ public sealed partial class AudioEngine : IDisposable
     /// <summary>
     /// 载入要播放的歌曲
     /// </summary>
-    public bool LoadSong() =>
-        ExecuteOnPlaybackThread(() =>
+    public Task<bool> LoadSongAsync() =>
+        ExecuteOnPlaybackThreadAsync(() =>
         {
             _hasLoadedSong = false;
             if (_state.CurrentSong is null)
@@ -225,10 +298,10 @@ public sealed partial class AudioEngine : IDisposable
     /// <summary>
     /// 播放
     /// </summary>
-    public bool Play() =>
-        ExecuteOnPlaybackThread(() =>
+    public Task<bool> PlayAsync() =>
+        ExecuteOnPlaybackThreadAsync(async () =>
         {
-            if (!_hasLoadedSong && !LoadSong())
+            if (!_hasLoadedSong && !await LoadSongAsync())
             {
                 return false;
             }
@@ -262,13 +335,13 @@ public sealed partial class AudioEngine : IDisposable
     /// <summary>
     /// 暂停
     /// </summary>
-    public void Pause() =>
-        ExecuteOnPlaybackThread(() => NativeMethods.Pause(_state.IsExclusiveMode));
+    public Task PauseAsync() =>
+        ExecuteOnPlaybackThreadAsync(() => NativeMethods.Pause(_state.IsExclusiveMode));
 
     /// <summary>
     /// 停止
     /// </summary>
-    public void Stop() => ExecuteOnPlaybackThread(FreeStreams);
+    public Task StopAsync() => ExecuteOnPlaybackThreadAsync(FreeStreams);
 
     /// <summary>
     /// 设置播放速度
@@ -295,9 +368,9 @@ public sealed partial class AudioEngine : IDisposable
     /// <summary>
     /// 设置独占模式
     /// </summary>
-    public async Task SetExclusiveMode(bool isExclusive, bool isPlaying)
+    public async Task SetExclusiveModeAsync(bool isExclusive, bool isPlaying)
     {
-        await ExecuteOnPlaybackThread(async () =>
+        await ExecuteOnPlaybackThreadAsync(async () =>
         {
             _state.IsExclusiveMode = isExclusive;
             if (!_hasLoadedSong)
@@ -305,11 +378,11 @@ public sealed partial class AudioEngine : IDisposable
                 return;
             }
             var position = GetPositionSeconds();
-            Stop();
-            LoadSong();
+            await StopAsync();
+            await LoadSongAsync();
             if (isPlaying)
             {
-                if (!Play())
+                if (!await PlayAsync())
                 {
                     _dispatcher.TryEnqueue(() => _state.PlayState = MediaPlaybackState.Paused);
                 }
@@ -321,9 +394,9 @@ public sealed partial class AudioEngine : IDisposable
     /// <summary>
     /// 随着计时器更新播放进度
     /// </summary>
-    public async Task UpdatePosition()
+    public async Task UpdatePositionAsync()
     {
-        var position = ExecuteOnPlaybackThread(GetPositionSeconds);
+        var position = await ExecuteOnPlaybackThreadAsync(GetPositionSeconds);
         if (position >= 0)
         {
             var tcs = new TaskCompletionSource<bool>();
@@ -339,8 +412,8 @@ public sealed partial class AudioEngine : IDisposable
     /// <summary>
     /// 快退10秒
     /// </summary>
-    public void SkipBack10s() =>
-        ExecuteOnPlaybackThread(() =>
+    public Task SkipBack10sAsync() =>
+        ExecuteOnPlaybackThreadAsync(() =>
         {
             var currentPosition = GetPositionSeconds();
             if (currentPosition >= 0)
@@ -353,8 +426,8 @@ public sealed partial class AudioEngine : IDisposable
     /// <summary>
     /// 快进30秒
     /// </summary>
-    public void SkipForward30s() =>
-        ExecuteOnPlaybackThread(() =>
+    public Task SkipForward30sAsync() =>
+        ExecuteOnPlaybackThreadAsync(() =>
         {
             var currentPosition = GetPositionSeconds();
             if (currentPosition >= 0)
@@ -375,8 +448,8 @@ public sealed partial class AudioEngine : IDisposable
     /// <summary>
     /// 设置播放位置（秒）
     /// </summary>
-    public void SetPosition(double targetSeconds) =>
-        ExecuteOnPlaybackThread(() => SetPositionInternal(targetSeconds));
+    public Task SetPositionAsync(double targetSeconds) =>
+        ExecuteOnPlaybackThreadAsync(() => SetPositionInternal(targetSeconds));
 
     /// <summary>
     /// 设置播放位置（秒）- 内部方法
@@ -392,7 +465,7 @@ public sealed partial class AudioEngine : IDisposable
         }
     }
 
-    public void Dispose()
+    public async void Dispose()
     {
         if (_isDisposed)
         {
@@ -401,7 +474,7 @@ public sealed partial class AudioEngine : IDisposable
 
         _state.PropertyChanged -= OnStateChanged;
 
-        ExecuteOnPlaybackThread(() =>
+        await ExecuteOnPlaybackThreadAsync(() =>
         {
             FreeStreams();
             NativeMethods.SetCallbacks(null, null);

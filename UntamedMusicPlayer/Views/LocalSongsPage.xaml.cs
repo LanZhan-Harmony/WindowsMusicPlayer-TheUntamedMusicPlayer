@@ -68,7 +68,10 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
                 .FirstOrDefault(song => song.Path == message.Song.Path);
             if (targetSong is not null)
             {
-                SongListView.MakeVisible(new SemanticZoomLocation { Item = targetSong });
+                SongListView.Opacity = 0;
+                await Task.Delay(100); // 确保 UI 有时间更新分组展开状态
+                SongListView.ScrollIntoView(targetSong, message.Alignment);
+                SongListView.Opacity = 1;
             }
         }
     }

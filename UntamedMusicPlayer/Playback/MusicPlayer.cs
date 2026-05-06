@@ -79,15 +79,15 @@ public sealed partial class MusicPlayer : IDisposable
     /// <summary>
     /// 播放结束回调
     /// </summary>
-    private void OnPlaybackEnded()
+    private async void OnPlaybackEnded()
     {
         if (_updatable)
         {
             if (State.RepeatMode == RepeatState.RepeatOne)
             {
                 State.CurrentPlayingTime = TimeSpan.Zero;
-                _audioEngine.SetPosition(0);
-                Play();
+                await _audioEngine.SetPositionAsync(0);
+                await Play();
                 _lyricManager.UpdateCurrentLyric();
                 return;
             }
@@ -106,12 +106,12 @@ public sealed partial class MusicPlayer : IDisposable
     /// <summary>
     /// 播放不可用歌曲处理
     /// </summary>
-    private void HandleSongNotAvailable()
+    private async void HandleSongNotAvailable()
     {
         _logger.SongPlaybackError(State.CurrentSong!.Title);
         if (RepeatState.RepeatOne == State.RepeatMode || State.CurrentSong.IsOnline)
         {
-            Stop();
+            await Stop();
             return;
         }
         State.CurrentBriefSong?.IsPlayAvailable = false;
@@ -119,7 +119,7 @@ public sealed partial class MusicPlayer : IDisposable
         if (_failedCount >= 3)
         {
             _failedCount = 0;
-            Stop();
+            await Stop();
             return;
         }
         PlayNextSong();
@@ -152,14 +152,14 @@ public sealed partial class MusicPlayer : IDisposable
     /// SMTC播放位置更改请求回调
     /// </summary>
     /// <param name="time"></param>
-    private void OnSMTCPlaybackPositionChangeRequested(TimeSpan time)
+    private async void OnSMTCPlaybackPositionChangeRequested(TimeSpan time)
     {
         if (time > State.TotalPlayingTime)
         {
             time = State.TotalPlayingTime;
         }
         State.CurrentPlayingTime = time;
-        _audioEngine.SetPosition(time.TotalSeconds);
+        await _audioEngine.SetPositionAsync(time.TotalSeconds);
         _lyricManager.UpdateCurrentLyric();
     }
 
@@ -194,7 +194,7 @@ public sealed partial class MusicPlayer : IDisposable
     /// <param name="shouldStop"></param>
     private async void PlaySongByIndex(int index, bool shouldStop = false)
     {
-        Stop();
+        await Stop();
         State.PlayState = MediaPlaybackState.Buffering;
         var songToPlay = _queueManager.CurrentQueue[index];
         State.CurrentBriefSong = songToPlay.Song;
@@ -213,7 +213,7 @@ public sealed partial class MusicPlayer : IDisposable
         _smtcManager.SetButtonsEnabled(true, true, true, true);
         if (!shouldStop && couldPlay)
         {
-            Play();
+            await Play();
         }
         else
         {
@@ -228,7 +228,7 @@ public sealed partial class MusicPlayer : IDisposable
     private async Task<bool> SetSource()
     {
         BarViewAvailabilityChanged?.Invoke(true);
-        if (!_audioEngine.LoadSong())
+        if (!await _audioEngine.LoadSongAsync())
         {
             return false;
         }
@@ -258,9 +258,9 @@ public sealed partial class MusicPlayer : IDisposable
     /// <summary>
     /// 清空播放队列(回调)
     /// </summary>
-    public void ClearPlayQueue()
+    public async void ClearPlayQueue()
     {
-        Stop();
+        await Stop();
         State.CurrentPlayingTime = TimeSpan.Zero;
         State.TotalPlayingTime = TimeSpan.Zero;
         _queueManager.Reset();
@@ -281,15 +281,15 @@ public sealed partial class MusicPlayer : IDisposable
     /// <summary>
     /// 切换播放/暂停状态
     /// </summary>
-    public void PlayPauseUpdate()
+    public async void PlayPauseUpdate()
     {
         if (State.PlayState == MediaPlaybackState.Paused)
         {
-            Play();
+            await Play();
         }
         else
         {
-            Pause();
+            await Pause();
         }
     }
 
@@ -301,9 +301,9 @@ public sealed partial class MusicPlayer : IDisposable
     /// <summary>
     /// 播放
     /// </summary>
-    public void Play()
+    public async Task Play()
     {
-        if (_audioEngine.Play())
+        if (await _audioEngine.PlayAsync())
         {
             RequestExtendedExecution();
             _positionUpdateTimer = new Timer(
@@ -324,9 +324,9 @@ public sealed partial class MusicPlayer : IDisposable
     /// <summary>
     /// 暂停
     /// </summary>
-    public void Pause()
+    public async Task Pause()
     {
-        _audioEngine.Pause();
+        await _audioEngine.PauseAsync();
         ClearExtendedExecution();
         State.PlayState = MediaPlaybackState.Paused;
 
@@ -338,9 +338,9 @@ public sealed partial class MusicPlayer : IDisposable
     /// <summary>
     /// 停止
     /// </summary>
-    public void Stop()
+    public async Task Stop()
     {
-        _audioEngine.Stop();
+        await _audioEngine.StopAsync();
         ClearExtendedExecution();
         State.PlayState = MediaPlaybackState.Paused;
 
@@ -359,7 +359,7 @@ public sealed partial class MusicPlayer : IDisposable
         {
             return;
         }
-        await _audioEngine.UpdatePosition();
+        await _audioEngine.UpdatePositionAsync();
         _lyricManager.UpdateCurrentLyric();
         _smtcManager.UpdateTimelinePosition();
     }
@@ -375,7 +375,7 @@ public sealed partial class MusicPlayer : IDisposable
             return;
         }
         _updatable = false;
-        await _audioEngine.SetExclusiveMode(
+        await _audioEngine.SetExclusiveModeAsync(
             isExclusive,
             State.PlayState == MediaPlaybackState.Playing
         );
@@ -385,10 +385,10 @@ public sealed partial class MusicPlayer : IDisposable
     /// <summary>
     /// 快退10秒
     /// </summary>
-    public void SkipBack10s()
+    public async void SkipBack10s()
     {
         _updatable = false;
-        _audioEngine.SkipBack10s();
+        await _audioEngine.SkipBack10sAsync();
         _lyricManager.UpdateCurrentLyric();
         _updatable = true;
     }
@@ -396,10 +396,10 @@ public sealed partial class MusicPlayer : IDisposable
     /// <summary>
     /// 快进30秒
     /// </summary>
-    public void SkipForward30s()
+    public async void SkipForward30s()
     {
         _updatable = false;
-        _audioEngine.SkipForward30s();
+        await _audioEngine.SkipForward30sAsync();
         _lyricManager.UpdateCurrentLyric();
         _updatable = true;
     }
@@ -424,12 +424,12 @@ public sealed partial class MusicPlayer : IDisposable
     /// 鼠标或键盘拖动进度条完成后调用, 设置播放位置
     /// </summary>
     /// <param name="time"></param>
-    public void SetPositionByPercentage(double sliderValue)
+    public async void SetPositionByPercentage(double sliderValue)
     {
         State.CurrentPlayingTime = TimeSpan.FromMilliseconds(
             sliderValue * State.TotalPlayingTime.TotalMilliseconds / 100
         );
-        _audioEngine.SetPosition(State.CurrentPlayingTime.TotalSeconds);
+        await _audioEngine.SetPositionAsync(State.CurrentPlayingTime.TotalSeconds);
         _lyricManager.UpdateCurrentLyric();
         _updatable = true;
     }
@@ -438,11 +438,11 @@ public sealed partial class MusicPlayer : IDisposable
     /// 点击歌词时调用, 设置播放位置
     /// </summary>
     /// <param name="time"></param>
-    public void LyricPositionUpdate(double time)
+    public async void LyricPositionUpdate(double time)
     {
         _updatable = false;
         State.CurrentPlayingTime = TimeSpan.FromMilliseconds(time);
-        _audioEngine.SetPosition(time / 1000);
+        await _audioEngine.SetPositionAsync(time / 1000);
         _lyricManager.UpdateCurrentLyric();
         _updatable = true;
     }
@@ -475,9 +475,9 @@ public sealed partial class MusicPlayer : IDisposable
         await _queueManager.SaveStateAsync();
     }
 
-    public void Dispose()
+    public async void Dispose()
     {
-        Stop();
+        await Stop();
         _audioEngine.PlaybackEnded -= OnPlaybackEnded;
         _audioEngine.PlaybackFailed -= OnPlaybackFailed;
         _audioEngine.Dispose();

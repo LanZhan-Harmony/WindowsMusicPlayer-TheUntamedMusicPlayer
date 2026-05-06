@@ -33,6 +33,9 @@
     <ClInclude Include="bass_audio_engine_exports.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="bassmix.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
