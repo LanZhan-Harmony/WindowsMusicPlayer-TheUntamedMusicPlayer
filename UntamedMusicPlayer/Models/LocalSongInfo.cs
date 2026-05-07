@@ -146,7 +146,8 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
             HasCover = musicFile.Tag.Pictures.Length != 0;
         }
-        catch (Exception ex) when (ex is CorruptFileException or UnsupportedFormatException)
+        catch (Exception ex)
+            when (ex is CorruptFileException or UnsupportedFormatException or ArgumentException)
         {
             // 设置默认值
             Title = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -244,20 +245,17 @@ public sealed class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInf
             Album = musicFile.Tag.Album ?? "";
             Artists = [.. musicFile.Tag.AlbumArtists, .. musicFile.Tag.Performers];
             ArtistsStr = IBriefSongInfoBase.GetArtistsStr(Artists);
-            AlbumArtistsStr = IDetailedSongInfoBase.GetAlbumArtistsStr(
-                [
-                    .. musicFile
-                        .Tag.AlbumArtists.AsValueEnumerable()
-                        .SelectMany(artist =>
-                            artist.Split(
-                                Delimiters,
-                                StringSplitOptions.RemoveEmptyEntries
-                                    | StringSplitOptions.TrimEntries
-                            )
+            AlbumArtistsStr = IDetailedSongInfoBase.GetAlbumArtistsStr([
+                .. musicFile
+                    .Tag.AlbumArtists.AsValueEnumerable()
+                    .SelectMany(artist =>
+                        artist.Split(
+                            Delimiters,
+                            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
                         )
-                        .Distinct(),
-                ]
-            );
+                    )
+                    .Distinct(),
+            ]);
             ArtistAndAlbumStr = IDetailedSongInfoBase.GetArtistAndAlbumStr(Album, ArtistsStr);
             Year = info.Year;
             YearStr = info.YearStr;
@@ -278,7 +276,8 @@ public sealed class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInf
                 Cover.SetSource(stream.AsRandomAccessStream());
             }
         }
-        catch (Exception ex) when (ex is CorruptFileException or UnsupportedFormatException) { }
+        catch (Exception ex)
+            when (ex is CorruptFileException or UnsupportedFormatException or ArgumentException) { }
         catch (Exception ex) when (ex is FileNotFoundException)
         {
             IsPlayAvailable = false;
