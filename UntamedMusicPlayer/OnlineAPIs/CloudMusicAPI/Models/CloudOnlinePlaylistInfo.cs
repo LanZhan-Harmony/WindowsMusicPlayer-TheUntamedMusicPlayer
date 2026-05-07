@@ -91,7 +91,7 @@ public sealed class DetailedCloudOnlinePlaylistInfo
         };
         try
         {
-            var api = NeteaseCloudMusicApi.Instance;
+            var api = App.GetService<CloudMusicApiService>();
             var (_, result) = await api.RequestAsync(
                 CloudMusicApiProviders.PlaylistDetail,
                 new Dictionary<string, string> { { "id", $"{briefInfo.ID}" } }

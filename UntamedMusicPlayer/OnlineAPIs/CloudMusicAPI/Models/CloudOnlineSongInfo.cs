@@ -127,15 +127,13 @@ public partial class BriefCloudOnlineSongInfo : IBriefOnlineSongInfo
             Album = (string)jInfo["al"]!["name"]!;
             AlbumID = (long)jInfo["al"]!["id"]!;
             ArtistID = (long)jInfo["ar"]![0]!["id"]!;
-            ArtistsStr = IBriefSongInfoBase.GetArtistsStr(
-                [
-                    .. jInfo["ar"]!
-                        .AsArray()
-                        .Select(t => (string)t!["name"]!)
-                        .Distinct()
-                        .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
-                ]
-            );
+            ArtistsStr = IBriefSongInfoBase.GetArtistsStr([
+                .. jInfo["ar"]!
+                    .AsArray()
+                    .Select(t => (string)t!["name"]!)
+                    .Distinct()
+                    .DefaultIfEmpty(IBriefSongInfoBase._unknownArtist),
+            ]);
             Duration = TimeSpan.FromMilliseconds((long)jInfo["dt"]!);
             DurationStr = IBriefSongInfoBase.GetDurationStr(Duration);
             YearStr = IBriefSongInfoBase.GetYearStr(
@@ -176,7 +174,7 @@ public sealed class DetailedCloudOnlineSongInfo : BriefCloudOnlineSongInfo, IDet
             ArtistID = info.ArtistID,
             DurationStr = info.DurationStr,
         };
-        var api = NeteaseCloudMusicApi.Instance;
+        var api = App.GetService<CloudMusicApiService>();
         var songUrlTask = api.RequestAsync(
             CloudMusicApiProviders.SongUrl,
             new Dictionary<string, string> { { "id", $"{info.ID}" } }

@@ -7,6 +7,7 @@ using UntamedMusicPlayer.Activation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
 using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using WinUIEx;
@@ -73,6 +74,9 @@ public sealed partial class App : Application
                     services.AddSingleton<IColorExtractionService, ColorExtractionService>();
                     services.AddSingleton<IDynamicBackgroundService, DynamicBackgroundService>();
                     services.AddSingleton<IActivationService, ActivationService>();
+
+                    // Online Services
+                    services.AddSingleton<CloudMusicApiService>();
 
                     // Views and ViewModels
                     services.AddTransient<MainViewModel>();

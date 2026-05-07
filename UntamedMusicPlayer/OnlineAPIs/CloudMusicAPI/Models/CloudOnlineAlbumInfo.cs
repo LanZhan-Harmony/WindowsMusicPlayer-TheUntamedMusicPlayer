@@ -63,7 +63,7 @@ public class BriefCloudOnlineAlbumInfo : IBriefOnlineAlbumInfo
         BriefCloudOnlineSongInfo briefInfo
     )
     {
-        var api = NeteaseCloudMusicApi.Instance;
+        var api = App.GetService<CloudMusicApiService>();
         var (_, result) = await api.RequestAsync(
             CloudMusicApiProviders.SongDetail,
             new Dictionary<string, string> { { "ids", $"{briefInfo.ID}" } }
@@ -137,7 +137,7 @@ public sealed class DetailedCloudOnlineAlbumInfo
         };
         try
         {
-            var api = NeteaseCloudMusicApi.Instance;
+            var api = App.GetService<CloudMusicApiService>();
             var (_, result) = await api.RequestAsync(
                 CloudMusicApiProviders.Album,
                 new Dictionary<string, string> { { "id", $"{briefInfo.ID}" } }
@@ -178,7 +178,7 @@ public sealed class DetailedCloudOnlineAlbumInfo
     private static async Task ProcessSongsAsync(
         JsonElement songsElement,
         DetailedCloudOnlineAlbumInfo info,
-        NeteaseCloudMusicApi api
+        CloudMusicApiService api
     )
     {
         var actualCount = songsElement.GetArrayLength();
@@ -240,7 +240,7 @@ public sealed class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
 
     public static async Task<CloudOnlineArtistAlbumInfo> CreateAsync(
         JsonElement jInfo,
-        NeteaseCloudMusicApi api,
+        CloudMusicApiService api,
         bool isDetailed = true
     )
     {
@@ -293,7 +293,7 @@ public sealed class CloudOnlineArtistAlbumInfo : IOnlineArtistAlbumInfo
         JsonElement songsElement,
         CloudOnlineArtistAlbumInfo info,
         ushort year,
-        NeteaseCloudMusicApi api
+        CloudMusicApiService api
     )
     {
         var actualCount = songsElement.GetArrayLength();

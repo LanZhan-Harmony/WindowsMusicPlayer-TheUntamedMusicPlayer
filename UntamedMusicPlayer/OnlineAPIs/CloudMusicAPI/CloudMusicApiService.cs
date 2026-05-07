@@ -11,48 +11,13 @@ namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
 /// <summary>
 /// 网易云音乐API
 /// </summary>
-public sealed partial class NeteaseCloudMusicApi : IDisposable
+public sealed partial class CloudMusicApiService : IDisposable
 {
     private readonly HttpClient _client;
     private readonly HttpClientHandler _clientHandler;
-    private bool _isDisposed;
-
-    // 单例相关字段
-    private static readonly Lazy<NeteaseCloudMusicApi> _instance = new(() =>
-        new NeteaseCloudMusicApi()
-    );
-
-    /// <summary>
-    /// 获取单例实例
-    /// </summary>
-    public static NeteaseCloudMusicApi Instance => _instance.Value;
-
     private static readonly Dictionary<string, string> _emptyQueries = [];
 
-    /// <summary />
-    public HttpClient Client => _client;
-
-    /// <summary />
-    public HttpClientHandler ClientHandler => _clientHandler;
-
-    /// <summary>
-    /// 代理服务器
-    /// </summary>
-    public IWebProxy Proxy
-    {
-        get => _clientHandler.Proxy;
-        set => _clientHandler.Proxy = value;
-    }
-
-    /// <summary>
-    /// 空请求参数，用于填充 queries 参数
-    /// </summary>
-    public static Dictionary<string, string> EmptyQueries => _emptyQueries;
-
-    /// <summary>
-    /// 构造器
-    /// </summary>
-    private NeteaseCloudMusicApi()
+    public CloudMusicApiService()
     {
         _clientHandler = new HttpClientHandler
         {
@@ -69,7 +34,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
     /// <param name="queries">参数</param>
     /// <returns></returns>
     public Task<(bool, JsonObject)> RequestAsync(
-        NeteaseCloudMusicApiProvider provider,
+        CloudMusicApiProvider provider,
         Dictionary<string, string> queries
     )
     {
@@ -244,7 +209,7 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
                 new QueryCollection { { "User-Agent", Request.ChooseUserAgent("pc") } }
             );
             var s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
-            var matchs = MyRegex().Matches(s);
+            var matchs = RelatedPlaylistRegex().Matches(s);
             var playlists = new JsonArray();
             matchs
                 .Cast<Match>()
@@ -277,22 +242,15 @@ public sealed partial class NeteaseCloudMusicApi : IDisposable
         }
     }
 
-    /// <summary />
     public void Dispose()
     {
-        if (_isDisposed)
-        {
-            return;
-        }
-
         _clientHandler.Dispose();
         _client.Dispose();
-        _isDisposed = true;
     }
 
     [GeneratedRegex(
         @"<div class=""cver u-cover u-cover-3"">[\s\S]*?<img src=""([^""]+)"">[\s\S]*?<a class=""sname f-fs1 s-fc0"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>[\s\S]*?<a class=""nm nm f-thide s-fc3"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>",
         RegexOptions.Compiled
     )]
-    private static partial Regex MyRegex();
+    private static partial Regex RelatedPlaylistRegex();
 }
