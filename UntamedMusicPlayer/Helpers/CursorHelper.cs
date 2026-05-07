@@ -2,21 +2,46 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
+using UntamedMusicPlayer.Services;
 using WinRT;
+using ZLogger;
 
 namespace UntamedMusicPlayer.Helpers;
 
 public static partial class CursorHelper
 {
+    private static readonly ILogger _logger = LoggingService.CreateLogger(nameof(CursorHelper));
+
     extension(UIElement element)
     {
-        [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "set_ProtectedCursor")]
-        public extern void SetProtectedCursor(InputCursor? value);
+        public void SetCursorVisibility(bool visible)
+        {
+            if (visible)
+            {
+                SetProtectedCursor(element, null);
+            }
+            else
+            {
+                try
+                {
+                    var cursor = LoadCursor("Assets/Cursors/TransparentCursor.cur");
+                    SetProtectedCursor(element, cursor);
+                }
+                catch (Exception ex)
+                {
+                    _logger.ZLogInformation(ex, $"加载隐藏光标文件失败");
+                }
+            }
+        }
     }
 
-    public static InputCursor? LoadCursor(string filePath)
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "set_ProtectedCursor")]
+    private static extern void SetProtectedCursor(UIElement element, InputCursor? value);
+
+    private static InputCursor? LoadCursor(string filePath)
     {
         ArgumentNullException.ThrowIfNull(filePath);
         var hcursor = LoadCursorFromFileW(filePath);

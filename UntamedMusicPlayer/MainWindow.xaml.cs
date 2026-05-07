@@ -1,13 +1,10 @@
 using System.ComponentModel;
 using System.Numerics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Dispatching;
-using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -20,6 +17,7 @@ using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using UntamedMusicPlayer.Views;
+using Windows.Foundation;
 using Windows.System;
 using WinRT.Interop;
 using WinUIEx;
@@ -44,6 +42,8 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private double _shellFrameMarginFrom;
     private double _shellFrameMarginTo;
     private double _shellFrameMarginAnimationDuration;
+    private Point? _lastPointerPosition;
+    private const double MOUSE_MOVE_THRESHOLD = 5.0;
 
     // 热键 ID
     private const int HOTKEY_ID_VOLUME_UP = 1;
@@ -108,26 +108,6 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         Data.RootPlayBarViewModel?.PropertyChanged += OnRootPlayBarChanged;
     }
 
-    private void SetCursorVisibility(bool isVisible)
-    {
-        if (isVisible)
-        {
-            RootGrid.SetProtectedCursor(null);
-        }
-        else
-        {
-            try
-            {
-                var cursor = CursorHelper.LoadCursor("Assets/Cursors/TransparentCursor.cur");
-                RootGrid.SetProtectedCursor(cursor);
-            }
-            catch (Exception ex)
-            {
-                _logger.ZLogInformation(ex, $"加载隐藏光标文件失败");
-            }
-        }
-    }
-
     private void OnRootPlayBarChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (
@@ -154,7 +134,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 
                 if (_isCursorHidden)
                 {
-                    SetCursorVisibility(true);
+                    RootGrid.SetCursorVisibility(true);
                     _isCursorHidden = false;
                 }
                 StopCursorTimer();
@@ -164,16 +144,31 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
 
     private void RootGrid_PointerMoved(object sender, PointerRoutedEventArgs e)
     {
-        // 任何移动都立即显示鼠标
+        var pointerPoint = e.GetCurrentPoint(RootGrid);
+        var position = pointerPoint.Position;
+
+        if (_lastPointerPosition.HasValue)
+        {
+            var deltaX = position.X - _lastPointerPosition.Value.X;
+            var deltaY = position.Y - _lastPointerPosition.Value.Y;
+            var distance = Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY));
+
+            if (distance < MOUSE_MOVE_THRESHOLD)
+            {
+                return;
+            }
+        }
+
+        _lastPointerPosition = position;
+
+        // 移动后显示鼠标
         if (_isCursorHidden)
         {
-            SetCursorVisibility(true);
+            RootGrid.SetCursorVisibility(true);
             _isCursorHidden = false;
         }
         StopCursorTimer();
 
-        var pointerPoint = e.GetCurrentPoint(RootGrid);
-        var position = pointerPoint.Position;
         var height = RootGrid.ActualHeight;
 
         if (position.Y > height - 117) // 如果鼠标在底部 117 像素范围内
@@ -254,7 +249,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         {
             DispatcherQueue.TryEnqueue(() =>
             {
-                SetCursorVisibility(false);
+                RootGrid.SetCursorVisibility(false);
                 _isCursorHidden = true;
             });
         }
@@ -270,7 +265,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                 Timeout.Infinite,
                 Timeout.Infinite
             );
-            _cursorHideTimer.Change(TimeSpan.FromSeconds(3), Timeout.InfiniteTimeSpan);
+            _cursorHideTimer.Change(TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
             _cursorTimerEnabled = true;
         }
     }
@@ -607,7 +602,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             _cursorHideTimer?.Dispose();
             if (_isCursorHidden)
             {
-                SetCursorVisibility(true);
+                RootGrid.SetCursorVisibility(true);
             }
             _shellFrameMarginAnimationTimer?.Stop();
             _shellFrameMarginAnimationTimer?.Tick -= ShellFrameMarginAnimationTick;
