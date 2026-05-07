@@ -43,7 +43,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private double _shellFrameMarginTo;
     private double _shellFrameMarginAnimationDuration;
     private Point? _lastPointerPosition;
-    private const double MOUSE_MOVE_THRESHOLD = 5.0;
+    private const double MOUSE_MOVE_THRESHOLD = 15.0;
 
     // 热键 ID
     private const int HOTKEY_ID_VOLUME_UP = 1;
