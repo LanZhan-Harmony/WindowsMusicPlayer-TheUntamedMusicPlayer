@@ -1,10 +1,13 @@
 using System.ComponentModel;
 using System.Numerics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -32,6 +35,9 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private Timer? _playBarHideTimer;
     private bool _playBarTimerEnabled = false;
     private bool _isPlayBarHidden = false;
+    private Timer? _cursorHideTimer;
+    private bool _cursorTimerEnabled = false;
+    private bool _isCursorHidden = false;
     private readonly Visual _rootPlayBarVisual;
     private Microsoft.UI.Dispatching.DispatcherQueueTimer? _shellFrameMarginAnimationTimer;
     private DateTimeOffset _shellFrameMarginAnimationStart;
@@ -102,6 +108,26 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         Data.RootPlayBarViewModel?.PropertyChanged += OnRootPlayBarChanged;
     }
 
+    private void SetCursorVisibility(bool isVisible)
+    {
+        if (isVisible)
+        {
+            RootGrid.SetProtectedCursor(null);
+        }
+        else
+        {
+            try
+            {
+                var cursor = CursorHelper.LoadCursor("Assets/Cursors/TransparentCursor.cur");
+                RootGrid.SetProtectedCursor(cursor);
+            }
+            catch (Exception ex)
+            {
+                _logger.ZLogInformation(ex, $"加载隐藏光标文件失败");
+            }
+        }
+    }
+
     private void OnRootPlayBarChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (
@@ -125,12 +151,27 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                     _isPlayBarHidden = false;
                     StopPlayBarTimer();
                 }
+
+                if (_isCursorHidden)
+                {
+                    SetCursorVisibility(true);
+                    _isCursorHidden = false;
+                }
+                StopCursorTimer();
             }
         }
     }
 
     private void RootGrid_PointerMoved(object sender, PointerRoutedEventArgs e)
     {
+        // 任何移动都立即显示鼠标
+        if (_isCursorHidden)
+        {
+            SetCursorVisibility(true);
+            _isCursorHidden = false;
+        }
+        StopCursorTimer();
+
         var pointerPoint = e.GetCurrentPoint(RootGrid);
         var position = pointerPoint.Position;
         var height = RootGrid.ActualHeight;
@@ -148,6 +189,12 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         else if (!_isPlayBarHidden) // 鼠标离开了底部，开始定时器
         {
             StartPlayBarTimer();
+        }
+
+        // 鼠标自动隐藏逻辑：position.Y >= 33 && position.Y <= height - 117
+        if (position.Y >= 33 && position.Y <= height - 117)
+        {
+            StartCursorTimer();
         }
     }
 
@@ -193,6 +240,47 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         {
             _playBarHideTimer?.Change(Timeout.Infinite, Timeout.Infinite);
             _playBarTimerEnabled = false;
+        }
+    }
+
+    private void CursorHideTimerTick(object? state)
+    {
+        StopCursorTimer();
+        if (
+            Data.RootPlayBarViewModel!.IsDetail
+            && Data.RootPlayBarViewModel.IsFullScreen
+            && !_isCursorHidden
+        )
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                SetCursorVisibility(false);
+                _isCursorHidden = true;
+            });
+        }
+    }
+
+    private void StartCursorTimer()
+    {
+        if (!_cursorTimerEnabled)
+        {
+            _cursorHideTimer ??= new Timer(
+                CursorHideTimerTick,
+                null,
+                Timeout.Infinite,
+                Timeout.Infinite
+            );
+            _cursorHideTimer.Change(TimeSpan.FromSeconds(3), Timeout.InfiniteTimeSpan);
+            _cursorTimerEnabled = true;
+        }
+    }
+
+    private void StopCursorTimer()
+    {
+        if (_cursorTimerEnabled)
+        {
+            _cursorHideTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+            _cursorTimerEnabled = false;
         }
     }
 
@@ -516,6 +604,11 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             App.GetService<IMaterialSelectorService>().Dispose();
             App.GetService<IDynamicBackgroundService>().Dispose();
             _playBarHideTimer?.Dispose();
+            _cursorHideTimer?.Dispose();
+            if (_isCursorHidden)
+            {
+                SetCursorVisibility(true);
+            }
             _shellFrameMarginAnimationTimer?.Stop();
             _shellFrameMarginAnimationTimer?.Tick -= ShellFrameMarginAnimationTick;
             _shellFrameMarginAnimationTimer = null;

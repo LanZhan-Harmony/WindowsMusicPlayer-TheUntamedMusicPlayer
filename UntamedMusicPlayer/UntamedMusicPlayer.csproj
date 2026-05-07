@@ -17,6 +17,9 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Assets\**\*" />
+		<Content Update="Assets\Cursors\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Content Update="Assets\Fonts\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
