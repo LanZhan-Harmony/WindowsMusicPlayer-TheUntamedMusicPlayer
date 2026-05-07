@@ -4,14 +4,14 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Utils;
-using static UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.NeteaseCloudMusicApiProvider;
+using static UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.CloudMusicApiProvider;
 
 namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
 
 /// <summary>
 /// 网易云音乐API相关信息提供者
 /// </summary>
-public sealed class NeteaseCloudMusicApiProvider
+public sealed class CloudMusicApiProvider
 {
     private static readonly IEnumerable<KeyValuePair<string, string>> _emptyData = [];
 
@@ -46,7 +46,7 @@ public sealed class NeteaseCloudMusicApiProvider
         set => _dataProvider = value;
     }
 
-    internal NeteaseCloudMusicApiProvider(string name)
+    internal CloudMusicApiProvider(string name)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -56,7 +56,7 @@ public sealed class NeteaseCloudMusicApiProvider
         _route = name;
     }
 
-    internal NeteaseCloudMusicApiProvider(
+    internal CloudMusicApiProvider(
         string name,
         HttpMethod method,
         Func<Dictionary<string, string>, string> url,
@@ -160,7 +160,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 初始化昵称
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ActivateInitProfile = new(
+    public static readonly CloudMusicApiProvider ActivateInitProfile = new(
         "/activate/init/profile",
         HttpMethod.Post,
         q => "http://music.163.com/eapi/activate/initProfile",
@@ -171,7 +171,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取专辑内容
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Album = new(
+    public static readonly CloudMusicApiProvider Album = new(
         "/album",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/album/{q["id"]}",
@@ -182,7 +182,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 专辑动态信息
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider AlbumDetailDynamic = new(
+    public static readonly CloudMusicApiProvider AlbumDetailDynamic = new(
         "/album/detail/dynamic",
         HttpMethod.Post,
         q => "https://music.163.com/api/album/detail/dynamic",
@@ -193,7 +193,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 最新专辑
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider AlbumNewest = new(
+    public static readonly CloudMusicApiProvider AlbumNewest = new(
         "/album/newest",
         HttpMethod.Post,
         q => "https://music.163.com/api/discovery/newAlbum",
@@ -204,7 +204,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 收藏/取消收藏专辑
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider AlbumSub = new(
+    public static readonly CloudMusicApiProvider AlbumSub = new(
         "/album/sub",
         HttpMethod.Post,
         q => $"https://music.163.com/api/album/{(q["t"] == "1" ? "sub" : "unsub")}",
@@ -215,7 +215,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 已收藏专辑列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider AlbumSublist = new(
+    public static readonly CloudMusicApiProvider AlbumSublist = new(
         "/album/sublist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/album/sublist",
@@ -230,7 +230,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌手单曲
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Artists = new(
+    public static readonly CloudMusicApiProvider Artists = new(
         "/artists",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/artist/{q["id"]}",
@@ -241,7 +241,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌手专辑列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ArtistAlbum = new(
+    public static readonly CloudMusicApiProvider ArtistAlbum = new(
         "/artist/album",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/artist/albums/{q["id"]}",
@@ -256,7 +256,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取歌手描述
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ArtistDesc = new(
+    public static readonly CloudMusicApiProvider ArtistDesc = new(
         "/artist/desc",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/artist/introduction",
@@ -267,7 +267,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌手分类列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ArtistList = new(
+    public static readonly CloudMusicApiProvider ArtistList = new(
         "/artist/list",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/artist/list",
@@ -287,7 +287,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取歌手 mv
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ArtistMv = new(
+    public static readonly CloudMusicApiProvider ArtistMv = new(
         "/artist/mv",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/artist/mvs",
@@ -303,7 +303,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 收藏/取消收藏歌手
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ArtistSub = new(
+    public static readonly CloudMusicApiProvider ArtistSub = new(
         "/artist/sub",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/artist/{(q["t"] == "1" ? "sub" : "unsub")}",
@@ -317,7 +317,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 收藏的歌手列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ArtistSublist = new(
+    public static readonly CloudMusicApiProvider ArtistSublist = new(
         "/artist/sublist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/artist/sublist",
@@ -332,7 +332,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌手热门50首歌曲
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ArtistTopSong = new(
+    public static readonly CloudMusicApiProvider ArtistTopSong = new(
         "/artist/top/song",
         HttpMethod.Post,
         q => "https://music.163.com/api/artist/top/song",
@@ -343,7 +343,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// banner
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Banner = new(
+    public static readonly CloudMusicApiProvider Banner = new(
         "/banner",
         HttpMethod.Post,
         q => "https://music.163.com/api/v2/banner/get",
@@ -360,7 +360,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// batch批量请求接口
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Batch = new(
+    public static readonly CloudMusicApiProvider Batch = new(
         "/batch",
         HttpMethod.Post,
         q => "http://music.163.com/eapi/batch",
@@ -388,7 +388,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 发送验证码
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CaptchaSent = new(
+    public static readonly CloudMusicApiProvider CaptchaSent = new(
         "/captcha/sent",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/sms/captcha/sent",
@@ -399,7 +399,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 验证验证码
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CaptchaVerify = new(
+    public static readonly CloudMusicApiProvider CaptchaVerify = new(
         "/captcha/verify",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/sms/captcha/verify",
@@ -414,7 +414,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 检测手机号码是否已注册
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CellphoneExistenceCheck = new(
+    public static readonly CloudMusicApiProvider CellphoneExistenceCheck = new(
         "/cellphone/existence/check",
         HttpMethod.Post,
         q => "http://music.163.com/eapi/cellphone/existence/check",
@@ -428,7 +428,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 音乐是否可用
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CheckMusic = new(
+    public static readonly CloudMusicApiProvider CheckMusic = new(
         "/check/music",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/song/enhance/player/url",
@@ -442,7 +442,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 发送/删除评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Comment = new(
+    public static readonly CloudMusicApiProvider Comment = new(
         "/comment",
         HttpMethod.Post,
         q =>
@@ -481,7 +481,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 专辑评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentAlbum = new(
+    public static readonly CloudMusicApiProvider CommentAlbum = new(
         "/comment/album",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/resource/comments/R_AL_3_{q["id"]}",
@@ -497,7 +497,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台节目评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentDj = new(
+    public static readonly CloudMusicApiProvider CommentDj = new(
         "/comment/dj",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/resource/comments/A_DJ_1_{q["id"]}",
@@ -513,7 +513,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取动态评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentEvent = new(
+    public static readonly CloudMusicApiProvider CommentEvent = new(
         "/comment/event",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/resource/comments/{q["threadId"]}",
@@ -528,7 +528,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 热门评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentHot = new(
+    public static readonly CloudMusicApiProvider CommentHot = new(
         "/comment/hot",
         HttpMethod.Post,
         q =>
@@ -545,7 +545,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 云村热评
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentHotwallList = new(
+    public static readonly CloudMusicApiProvider CommentHotwallList = new(
         "/comment/hotwall/list",
         HttpMethod.Post,
         q => "https://music.163.com/api/comment/hotwall/list/get",
@@ -556,7 +556,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 给评论点赞
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentLike = new(
+    public static readonly CloudMusicApiProvider CommentLike = new(
         "/comment/like",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/comment/{(q["t"] == "1" ? "like" : "unlike")}",
@@ -574,7 +574,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌曲评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentMusic = new(
+    public static readonly CloudMusicApiProvider CommentMusic = new(
         "/comment/music",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/resource/comments/R_SO_4_{q["id"]}",
@@ -590,7 +590,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// mv 评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentMv = new(
+    public static readonly CloudMusicApiProvider CommentMv = new(
         "/comment/mv",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/resource/comments/R_MV_5_{q["id"]}",
@@ -606,7 +606,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌单评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentPlaylist = new(
+    public static readonly CloudMusicApiProvider CommentPlaylist = new(
         "/comment/playlist",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/resource/comments/A_PL_0_{q["id"]}",
@@ -622,7 +622,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 视频评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider CommentVideo = new(
+    public static readonly CloudMusicApiProvider CommentVideo = new(
         "/comment/video",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/resource/comments/R_VI_62_{q["id"]}",
@@ -638,7 +638,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 签到
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DailySignin = new(
+    public static readonly CloudMusicApiProvider DailySignin = new(
         "/daily_signin",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/point/dailyTask",
@@ -649,7 +649,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 我的数字专辑
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DigitalAlbumPurchased = new(
+    public static readonly CloudMusicApiProvider DigitalAlbumPurchased = new(
         "/digitalAlbum/purchased",
         HttpMethod.Post,
         q => "https://music.163.com/api/digitalAlbum/purchased",
@@ -664,7 +664,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台banner
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjBanner = new(
+    public static readonly CloudMusicApiProvider DjBanner = new(
         "/dj/banner",
         HttpMethod.Post,
         q => "http://music.163.com/weapi/djradio/banner/get",
@@ -675,7 +675,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 非热门类型
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjCategoryExcludehot = new(
+    public static readonly CloudMusicApiProvider DjCategoryExcludehot = new(
         "/dj/category/excludehot",
         HttpMethod.Post,
         q => "http://music.163.com/weapi/djradio/category/excludehot",
@@ -686,7 +686,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 推荐类型
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjCategoryRecommend = new(
+    public static readonly CloudMusicApiProvider DjCategoryRecommend = new(
         "/dj/category/recommend",
         HttpMethod.Post,
         q => "http://music.163.com/weapi/djradio/home/category/recommend",
@@ -697,7 +697,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 分类
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjCatelist = new(
+    public static readonly CloudMusicApiProvider DjCatelist = new(
         "/dj/catelist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/djradio/category/get",
@@ -708,7 +708,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 详情
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjDetail = new(
+    public static readonly CloudMusicApiProvider DjDetail = new(
         "/dj/detail",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/djradio/get",
@@ -719,7 +719,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 热门电台
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjHot = new(
+    public static readonly CloudMusicApiProvider DjHot = new(
         "/dj/hot",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/djradio/hot/v1",
@@ -730,7 +730,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 付费精选
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjPaygift = new(
+    public static readonly CloudMusicApiProvider DjPaygift = new(
         "/dj/paygift",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/djradio/home/paygift/list?_nmclfl=1",
@@ -741,7 +741,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 节目
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjProgram = new(
+    public static readonly CloudMusicApiProvider DjProgram = new(
         "/dj/program",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/dj/program/byradio",
@@ -757,7 +757,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 节目详情
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjProgramDetail = new(
+    public static readonly CloudMusicApiProvider DjProgramDetail = new(
         "/dj/program/detail",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/dj/program/detail",
@@ -768,7 +768,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 节目榜
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjProgramToplist = new(
+    public static readonly CloudMusicApiProvider DjProgramToplist = new(
         "/dj/program/toplist",
         HttpMethod.Post,
         q => "https://music.163.com/api/program/toplist/v1",
@@ -779,7 +779,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 24小时节目榜
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjProgramToplistHours = new(
+    public static readonly CloudMusicApiProvider DjProgramToplistHours = new(
         "/dj/program/toplist/hours",
         HttpMethod.Post,
         q => "https://music.163.com/api/program/toplist/hours",
@@ -790,7 +790,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 类别热门电台
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjRadioHot = new(
+    public static readonly CloudMusicApiProvider DjRadioHot = new(
         "/dj/radio/hot",
         HttpMethod.Post,
         q => "https://music.163.com/api/djradio/hot",
@@ -805,7 +805,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 推荐
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjRecommend = new(
+    public static readonly CloudMusicApiProvider DjRecommend = new(
         "/dj/recommend",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/djradio/recommend/v1",
@@ -816,7 +816,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 分类推荐
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjRecommendType = new(
+    public static readonly CloudMusicApiProvider DjRecommendType = new(
         "/dj/recommend/type",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/djradio/recommend",
@@ -827,7 +827,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 订阅
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjSub = new(
+    public static readonly CloudMusicApiProvider DjSub = new(
         "/dj/sub",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/djradio/{(q["t"] == "1" ? "sub" : "unsub")}",
@@ -838,7 +838,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台的订阅列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjSublist = new(
+    public static readonly CloudMusicApiProvider DjSublist = new(
         "/dj/sublist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/djradio/get/subed",
@@ -853,7 +853,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 今日优选
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjTodayPerfered = new(
+    public static readonly CloudMusicApiProvider DjTodayPerfered = new(
         "/dj/today/perfered",
         HttpMethod.Post,
         q => "http://music.163.com/weapi/djradio/home/today/perfered",
@@ -864,7 +864,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 新晋电台榜/热门电台榜
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjToplist = new(
+    public static readonly CloudMusicApiProvider DjToplist = new(
         "/dj/toplist",
         HttpMethod.Post,
         q => "https://music.163.com/api/djradio/toplist",
@@ -879,7 +879,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 24小时主播榜
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjToplistHours = new(
+    public static readonly CloudMusicApiProvider DjToplistHours = new(
         "/dj/toplist/hours",
         HttpMethod.Post,
         q => "https://music.163.com/api/dj/toplist/hours",
@@ -890,7 +890,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 主播新人榜
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjToplistNewcomer = new(
+    public static readonly CloudMusicApiProvider DjToplistNewcomer = new(
         "/dj/toplist/newcomer",
         HttpMethod.Post,
         q => "https://music.163.com/api/dj/toplist/newcomer",
@@ -901,7 +901,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 付费精品
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjToplistPay = new(
+    public static readonly CloudMusicApiProvider DjToplistPay = new(
         "/dj/toplist/pay",
         HttpMethod.Post,
         q => "https://music.163.com/api/djradio/toplist/pay",
@@ -912,7 +912,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 电台 - 最热主播榜
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider DjToplistPopular = new(
+    public static readonly CloudMusicApiProvider DjToplistPopular = new(
         "/dj/toplist/popular",
         HttpMethod.Post,
         q => "https://music.163.com/api/dj/toplist/popular",
@@ -923,7 +923,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取动态消息
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Event = new(
+    public static readonly CloudMusicApiProvider Event = new(
         "/event",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v1/event/get",
@@ -937,7 +937,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 删除用户动态
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider EventDel = new(
+    public static readonly CloudMusicApiProvider EventDel = new(
         "/event/del",
         HttpMethod.Post,
         q => "https://music.163.com/eapi/event/delete",
@@ -948,7 +948,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 转发用户动态
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider EventForward = new(
+    public static readonly CloudMusicApiProvider EventForward = new(
         "/event/forward",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/event/forward",
@@ -963,7 +963,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 垃圾桶
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider FmTrash = new(
+    public static readonly CloudMusicApiProvider FmTrash = new(
         "/fm_trash",
         HttpMethod.Post,
         q =>
@@ -975,7 +975,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 关注/取消关注用户
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Follow = new(
+    public static readonly CloudMusicApiProvider Follow = new(
         "/follow",
         HttpMethod.Post,
         q =>
@@ -987,7 +987,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取热门话题
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider HotTopic = new(
+    public static readonly CloudMusicApiProvider HotTopic = new(
         "/hot/topic",
         HttpMethod.Post,
         q => "http://music.163.com/weapi/act/hot",
@@ -998,7 +998,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 喜欢音乐
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Like = new(
+    public static readonly CloudMusicApiProvider Like = new(
         "/like",
         HttpMethod.Post,
         q =>
@@ -1010,7 +1010,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 喜欢音乐列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Likelist = new(
+    public static readonly CloudMusicApiProvider Likelist = new(
         "/likelist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/song/like/get",
@@ -1021,7 +1021,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 邮箱登录
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Login = new(
+    public static readonly CloudMusicApiProvider Login = new(
         "/login",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/login",
@@ -1039,7 +1039,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 手机登录
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider LoginCellphone = new(
+    public static readonly CloudMusicApiProvider LoginCellphone = new(
         "/login/cellphone",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/login/cellphone",
@@ -1058,7 +1058,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 登录刷新
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider LoginRefresh = new(
+    public static readonly CloudMusicApiProvider LoginRefresh = new(
         "/login/refresh",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/login/token/refresh",
@@ -1069,12 +1069,12 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 登录状态
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider LoginStatus = new("/login/status");
+    public static readonly CloudMusicApiProvider LoginStatus = new("/login/status");
 
     /// <summary>
     /// 退出登录
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Logout = new(
+    public static readonly CloudMusicApiProvider Logout = new(
         "/logout",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/logout",
@@ -1085,7 +1085,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌词
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Lyric = new(
+    public static readonly CloudMusicApiProvider Lyric = new(
         "/lyric",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/song/lyric?lv=-1&kv=-1&tv=-1",
@@ -1096,7 +1096,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 通知 - 评论
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MsgComments = new(
+    public static readonly CloudMusicApiProvider MsgComments = new(
         "/msg/comments",
         HttpMethod.Post,
         q => $"https://music.163.com/api/v1/user/comments/{q["uid"]}",
@@ -1112,7 +1112,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 通知 - @我
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MsgForwards = new(
+    public static readonly CloudMusicApiProvider MsgForwards = new(
         "/msg/forwards",
         HttpMethod.Post,
         q => "https://music.163.com/api/forwards/get",
@@ -1127,7 +1127,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 通知 - 通知
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MsgNotices = new(
+    public static readonly CloudMusicApiProvider MsgNotices = new(
         "/msg/notices",
         HttpMethod.Post,
         q => "https://music.163.com/api/msg/notices",
@@ -1142,7 +1142,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 通知 - 私信
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MsgPrivate = new(
+    public static readonly CloudMusicApiProvider MsgPrivate = new(
         "/msg/private",
         HttpMethod.Post,
         q => "https://music.163.com/api/msg/private/users",
@@ -1157,7 +1157,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 私信内容
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MsgPrivateHistory = new(
+    public static readonly CloudMusicApiProvider MsgPrivateHistory = new(
         "/msg/private/history",
         HttpMethod.Post,
         q => "https://music.163.com/api/msg/private/history",
@@ -1173,7 +1173,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 全部 mv
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MvAll = new(
+    public static readonly CloudMusicApiProvider MvAll = new(
         "/mv/all",
         HttpMethod.Post,
         q => "https://interface.music.163.com/api/mv/all",
@@ -1200,7 +1200,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取 mv 数据
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MvDetail = new(
+    public static readonly CloudMusicApiProvider MvDetail = new(
         "/mv/detail",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/mv/detail",
@@ -1211,7 +1211,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 网易出品mv
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MvExclusiveRcmd = new(
+    public static readonly CloudMusicApiProvider MvExclusiveRcmd = new(
         "/mv/exclusive/rcmd",
         HttpMethod.Post,
         q => "https://interface.music.163.com/api/mv/exclusive/rcmd",
@@ -1222,7 +1222,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 最新 mv
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MvFirst = new(
+    public static readonly CloudMusicApiProvider MvFirst = new(
         "/mv/first",
         HttpMethod.Post,
         q => "https://interface.music.163.com/weapi/mv/first",
@@ -1237,7 +1237,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 收藏/取消收藏 MV
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MvSub = new(
+    public static readonly CloudMusicApiProvider MvSub = new(
         "/mv/sub",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/mv/{(q["t"] == "1" ? "sub" : "unsub")}",
@@ -1251,7 +1251,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 收藏的 MV 列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MvSublist = new(
+    public static readonly CloudMusicApiProvider MvSublist = new(
         "/mv/sublist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/cloudvideo/allvideo/sublist",
@@ -1266,7 +1266,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// mv 地址
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider MvUrl = new(
+    public static readonly CloudMusicApiProvider MvUrl = new(
         "/mv/url",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/song/enhance/play/mv/url",
@@ -1277,7 +1277,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 推荐歌单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Personalized = new(
+    public static readonly CloudMusicApiProvider Personalized = new(
         "/personalized",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/personalized/playlist",
@@ -1292,7 +1292,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 推荐电台
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PersonalizedDjprogram = new(
+    public static readonly CloudMusicApiProvider PersonalizedDjprogram = new(
         "/personalized/djprogram",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/personalized/djprogram",
@@ -1303,7 +1303,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 推荐 mv
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PersonalizedMv = new(
+    public static readonly CloudMusicApiProvider PersonalizedMv = new(
         "/personalized/mv",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/personalized/mv",
@@ -1314,7 +1314,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 推荐新音乐
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PersonalizedNewsong = new(
+    public static readonly CloudMusicApiProvider PersonalizedNewsong = new(
         "/personalized/newsong",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/personalized/newsong",
@@ -1325,7 +1325,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 独家放送
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PersonalizedPrivatecontent = new(
+    public static readonly CloudMusicApiProvider PersonalizedPrivatecontent = new(
         "/personalized/privatecontent",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/personalized/privatecontent",
@@ -1336,7 +1336,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 私人 FM
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PersonalFm = new(
+    public static readonly CloudMusicApiProvider PersonalFm = new(
         "/personal_fm",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v1/radio/get",
@@ -1347,7 +1347,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌单分类
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistCatlist = new(
+    public static readonly CloudMusicApiProvider PlaylistCatlist = new(
         "/playlist/catlist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/playlist/catalogue",
@@ -1358,7 +1358,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 新建歌单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistCreate = new(
+    public static readonly CloudMusicApiProvider PlaylistCreate = new(
         "/playlist/create",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/playlist/create",
@@ -1369,7 +1369,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 删除歌单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistDelete = new(
+    public static readonly CloudMusicApiProvider PlaylistDelete = new(
         "/playlist/delete",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/playlist/delete",
@@ -1380,7 +1380,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 更新歌单描述
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistDescUpdate = new(
+    public static readonly CloudMusicApiProvider PlaylistDescUpdate = new(
         "/playlist/desc/update",
         HttpMethod.Post,
         q => "http://interface3.music.163.com/eapi/playlist/desc/update",
@@ -1391,7 +1391,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取歌单详情
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistDetail = new(
+    public static readonly CloudMusicApiProvider PlaylistDetail = new(
         "/playlist/detail",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v3/playlist/detail",
@@ -1406,7 +1406,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 热门歌单分类
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistHot = new(
+    public static readonly CloudMusicApiProvider PlaylistHot = new(
         "/playlist/hot",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/playlist/hottags",
@@ -1417,7 +1417,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 更新歌单名
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistNameUpdate = new(
+    public static readonly CloudMusicApiProvider PlaylistNameUpdate = new(
         "/playlist/name/update",
         HttpMethod.Post,
         q => "http://interface3.music.163.com/eapi/playlist/update/name",
@@ -1428,7 +1428,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 收藏/取消收藏歌单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistSubscribe = new(
+    public static readonly CloudMusicApiProvider PlaylistSubscribe = new(
         "/playlist/subscribe",
         HttpMethod.Post,
         q =>
@@ -1440,7 +1440,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌单收藏者
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistSubscribers = new(
+    public static readonly CloudMusicApiProvider PlaylistSubscribers = new(
         "/playlist/subscribers",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/playlist/subscribers",
@@ -1455,7 +1455,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 更新歌单标签
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistTagsUpdate = new(
+    public static readonly CloudMusicApiProvider PlaylistTagsUpdate = new(
         "/playlist/tags/update",
         HttpMethod.Post,
         q => "http://interface3.music.163.com/eapi/playlist/tags/update",
@@ -1466,7 +1466,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 对歌单添加或删除歌曲
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistTracks = new(
+    public static readonly CloudMusicApiProvider PlaylistTracks = new(
         "/playlist/tracks",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/playlist/manipulate/tracks",
@@ -1477,7 +1477,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 更新歌单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaylistUpdate = new(
+    public static readonly CloudMusicApiProvider PlaylistUpdate = new(
         "/playlist/update",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/batch",
@@ -1505,7 +1505,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 心动模式/智能播放
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider PlaymodeIntelligenceList = new(
+    public static readonly CloudMusicApiProvider PlaymodeIntelligenceList = new(
         "/playmode/intelligence/list",
         HttpMethod.Post,
         q => "http://music.163.com/weapi/playmode/intelligence/list",
@@ -1525,7 +1525,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 推荐节目
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ProgramRecommend = new(
+    public static readonly CloudMusicApiProvider ProgramRecommend = new(
         "/program/recommend",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/program/recommend/v1",
@@ -1540,7 +1540,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 更换绑定手机
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Rebind = new(
+    public static readonly CloudMusicApiProvider Rebind = new(
         "/rebind",
         HttpMethod.Post,
         q => "https://music.163.com/api/user/replaceCellphone",
@@ -1556,7 +1556,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 每日推荐歌单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider RecommendResource = new(
+    public static readonly CloudMusicApiProvider RecommendResource = new(
         "/recommend/resource",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v1/discovery/recommend/resource",
@@ -1567,7 +1567,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 每日推荐歌曲
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider RecommendSongs = new(
+    public static readonly CloudMusicApiProvider RecommendSongs = new(
         "/recommend/songs",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v1/discovery/recommend/songs",
@@ -1578,7 +1578,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 注册(修改密码)
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider RegisterCellphone = new(
+    public static readonly CloudMusicApiProvider RegisterCellphone = new(
         "/register/cellphone",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/register/cellphone",
@@ -1597,7 +1597,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 相关视频
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider RelatedAllvideo = new(
+    public static readonly CloudMusicApiProvider RelatedAllvideo = new(
         "/related/allvideo",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/cloudvideo/v1/allvideo/rcmd",
@@ -1615,12 +1615,12 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 相关歌单推荐
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider RelatedPlaylist = new("/related/playlist");
+    public static readonly CloudMusicApiProvider RelatedPlaylist = new("/related/playlist");
 
     /// <summary>
     /// 资源点赞( MV,电台,视频)
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ResourceLike = new(
+    public static readonly CloudMusicApiProvider ResourceLike = new(
         "/resource/like",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/resource/{(q["t"] == "1" ? "like" : "unlike")}",
@@ -1637,7 +1637,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 听歌打卡
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Scrobble = new(
+    public static readonly CloudMusicApiProvider Scrobble = new(
         "/scrobble",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/feedback/weblog",
@@ -1674,7 +1674,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 搜索
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Search = new(
+    public static readonly CloudMusicApiProvider Search = new(
         "/search",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/search/get",
@@ -1690,7 +1690,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 默认搜索关键词
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SearchDefault = new(
+    public static readonly CloudMusicApiProvider SearchDefault = new(
         "/search/default",
         HttpMethod.Post,
         q => "http://interface3.music.163.com/eapi/search/defaultkeyword/get",
@@ -1701,7 +1701,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 热搜列表(简略)
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SearchHot = new(
+    public static readonly CloudMusicApiProvider SearchHot = new(
         "/search/hot",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/search/hot",
@@ -1712,7 +1712,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 热搜列表(详细)
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SearchHotDetail = new(
+    public static readonly CloudMusicApiProvider SearchHotDetail = new(
         "/search/hot/detail",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/hotsearchlist/get",
@@ -1723,7 +1723,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 搜索多重匹配
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SearchMultimatch = new(
+    public static readonly CloudMusicApiProvider SearchMultimatch = new(
         "/search/multimatch",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/search/suggest/multimatch",
@@ -1734,7 +1734,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 搜索建议
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SearchSuggest = new(
+    public static readonly CloudMusicApiProvider SearchSuggest = new(
         "/search/suggest",
         HttpMethod.Post,
         q =>
@@ -1746,7 +1746,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 发送私信(带歌单)
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SendPlaylist = new(
+    public static readonly CloudMusicApiProvider SendPlaylist = new(
         "/send/playlist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/msg/private/send",
@@ -1762,7 +1762,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 发送私信
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SendText = new(
+    public static readonly CloudMusicApiProvider SendText = new(
         "/send/text",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/msg/private/send",
@@ -1778,7 +1778,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 设置
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Setting = new(
+    public static readonly CloudMusicApiProvider Setting = new(
         "/setting",
         HttpMethod.Post,
         q => "https://music.163.com/api/user/setting",
@@ -1789,7 +1789,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 分享歌曲、歌单、mv、电台、电台节目到动态
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ShareResource = new(
+    public static readonly CloudMusicApiProvider ShareResource = new(
         "/share/resource",
         HttpMethod.Post,
         q => "http://music.163.com/weapi/share/friends/resource",
@@ -1804,7 +1804,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取相似歌手
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SimiArtist = new(
+    public static readonly CloudMusicApiProvider SimiArtist = new(
         "/simi/artist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/discovery/simiArtist",
@@ -1815,7 +1815,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 相似 mv
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SimiMv = new(
+    public static readonly CloudMusicApiProvider SimiMv = new(
         "/simi/mv",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/discovery/simiMV",
@@ -1826,7 +1826,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取相似歌单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SimiPlaylist = new(
+    public static readonly CloudMusicApiProvider SimiPlaylist = new(
         "/simi/playlist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/discovery/simiPlaylist",
@@ -1841,7 +1841,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取相似音乐
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SimiSong = new(
+    public static readonly CloudMusicApiProvider SimiSong = new(
         "/simi/song",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v1/discovery/simiSong",
@@ -1856,7 +1856,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取最近 5 个听了这首歌的用户
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SimiUser = new(
+    public static readonly CloudMusicApiProvider SimiUser = new(
         "/simi/user",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/discovery/simiUser",
@@ -1871,7 +1871,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取歌曲详情
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SongDetail = new(
+    public static readonly CloudMusicApiProvider SongDetail = new(
         "/song/detail",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v3/song/detail",
@@ -1892,7 +1892,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取音乐 url
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider SongUrl = new(
+    public static readonly CloudMusicApiProvider SongUrl = new(
         "/song/url",
         HttpMethod.Post,
         q => "https://music.163.com/api/song/enhance/player/url",
@@ -1912,7 +1912,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 所有榜单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Toplist = new(
+    public static readonly CloudMusicApiProvider Toplist = new(
         "/toplist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/toplist",
@@ -1923,7 +1923,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌手榜
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ToplistArtist = new(
+    public static readonly CloudMusicApiProvider ToplistArtist = new(
         "/toplist/artist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/toplist/artist",
@@ -1939,7 +1939,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 所有榜单内容摘要
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider ToplistDetail = new(
+    public static readonly CloudMusicApiProvider ToplistDetail = new(
         "/toplist/detail",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/toplist/detail",
@@ -1950,7 +1950,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 新碟上架
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider TopAlbum = new(
+    public static readonly CloudMusicApiProvider TopAlbum = new(
         "/top/album",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/album/new",
@@ -1966,7 +1966,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 热门歌手
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider TopArtists = new(
+    public static readonly CloudMusicApiProvider TopArtists = new(
         "/top/artists",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/artist/top",
@@ -1981,7 +1981,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 排行榜
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Top_List = new(
+    public static readonly CloudMusicApiProvider Top_List = new(
         "/top/list",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v3/playlist/detail",
@@ -1995,7 +1995,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// mv 排行
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider TopMv = new(
+    public static readonly CloudMusicApiProvider TopMv = new(
         "/top/mv",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/mv/toplist",
@@ -2011,7 +2011,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 歌单 ( 网友精选碟 )
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider TopPlaylist = new(
+    public static readonly CloudMusicApiProvider TopPlaylist = new(
         "/top/playlist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/playlist/list",
@@ -2028,7 +2028,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取精品歌单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider TopPlaylistHighquality = new(
+    public static readonly CloudMusicApiProvider TopPlaylistHighquality = new(
         "/top/playlist/highquality",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/playlist/highquality/list",
@@ -2044,7 +2044,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 新歌速递
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider TopSong = new(
+    public static readonly CloudMusicApiProvider TopSong = new(
         "/top/song",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v1/discovery/new/songs",
@@ -2055,7 +2055,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 用户电台
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserAudio = new(
+    public static readonly CloudMusicApiProvider UserAudio = new(
         "/user/audio",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/djradio/get/byuser",
@@ -2066,7 +2066,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 云盘
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserCloud = new(
+    public static readonly CloudMusicApiProvider UserCloud = new(
         "/user/cloud",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v1/cloud/get",
@@ -2077,7 +2077,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 云盘歌曲删除
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserCloudDel = new(
+    public static readonly CloudMusicApiProvider UserCloudDel = new(
         "/user/cloud/del",
         HttpMethod.Post,
         q => "http://music.163.com/weapi/cloud/del",
@@ -2088,7 +2088,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 云盘数据详情
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserCloudDetail = new(
+    public static readonly CloudMusicApiProvider UserCloudDetail = new(
         "/user/cloud/detail",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v1/cloud/get/byids",
@@ -2099,7 +2099,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取用户详情
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserDetail = new(
+    public static readonly CloudMusicApiProvider UserDetail = new(
         "/user/detail",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/v1/user/detail/{q["uid"]}",
@@ -2110,7 +2110,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取用户电台
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserDj = new(
+    public static readonly CloudMusicApiProvider UserDj = new(
         "/user/dj",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/dj/program/{q["uid"]}",
@@ -2121,7 +2121,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取用户动态
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserEvent = new(
+    public static readonly CloudMusicApiProvider UserEvent = new(
         "/user/event",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/event/get/{q["uid"]}",
@@ -2137,7 +2137,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取用户粉丝列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserFolloweds = new(
+    public static readonly CloudMusicApiProvider UserFolloweds = new(
         "/user/followeds",
         HttpMethod.Post,
         q => $"https://music.163.com/eapi/user/getfolloweds/{q["uid"]}",
@@ -2152,7 +2152,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取用户关注列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserFollows = new(
+    public static readonly CloudMusicApiProvider UserFollows = new(
         "/user/follows",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/user/getfollows/{q["uid"]}",
@@ -2167,7 +2167,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取用户歌单
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserPlaylist = new(
+    public static readonly CloudMusicApiProvider UserPlaylist = new(
         "/user/playlist",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/user/playlist",
@@ -2182,7 +2182,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取用户播放记录
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserRecord = new(
+    public static readonly CloudMusicApiProvider UserRecord = new(
         "/user/record",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/v1/play/record",
@@ -2193,7 +2193,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取用户信息 , 歌单，收藏，mv, dj 数量
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserSubcount = new(
+    public static readonly CloudMusicApiProvider UserSubcount = new(
         "/user/subcount",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/subcount",
@@ -2204,7 +2204,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 更新用户信息
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider UserUpdate = new(
+    public static readonly CloudMusicApiProvider UserUpdate = new(
         "/user/update",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/user/profile/update",
@@ -2223,7 +2223,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 视频详情
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider VideoDetail = new(
+    public static readonly CloudMusicApiProvider VideoDetail = new(
         "/video/detail",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/cloudvideo/v1/video/detail",
@@ -2234,7 +2234,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取视频标签下的视频
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider VideoGroup = new(
+    public static readonly CloudMusicApiProvider VideoGroup = new(
         "/video/group",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/videotimeline/videogroup/get",
@@ -2250,7 +2250,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取视频标签列表
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider VideoGroupList = new(
+    public static readonly CloudMusicApiProvider VideoGroupList = new(
         "/video/group/list",
         HttpMethod.Post,
         q => "https://music.163.com/api/cloudvideo/group/list",
@@ -2261,7 +2261,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 收藏视频
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider VideoSub = new(
+    public static readonly CloudMusicApiProvider VideoSub = new(
         "/video/sub",
         HttpMethod.Post,
         q => $"https://music.163.com/weapi/cloudvideo/video/{(q["t"] == "1" ? "sub" : "unsub")}",
@@ -2272,7 +2272,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 获取视频播放地址
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider VideoUrl = new(
+    public static readonly CloudMusicApiProvider VideoUrl = new(
         "/video/url",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/cloudvideo/playurl",
@@ -2286,7 +2286,7 @@ public static partial class CloudMusicApiProviders
     /// <summary>
     /// 操作记录 （无文档）
     /// </summary>
-    public static readonly NeteaseCloudMusicApiProvider Weblog = new(
+    public static readonly CloudMusicApiProvider Weblog = new(
         "/weblog",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/feedback/weblog",

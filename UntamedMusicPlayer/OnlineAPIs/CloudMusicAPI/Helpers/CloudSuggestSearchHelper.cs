@@ -10,7 +10,7 @@ public sealed class CloudSuggestSearchHelper
 {
     private static readonly ILogger _logger =
         LoggingService.CreateLogger<CloudSuggestSearchHelper>();
-    private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
+    private static readonly CloudMusicApiService _api = App.GetService<CloudMusicApiService>();
 
     public static async Task<List<SuggestResult>> GetSuggestAsync(string keyWords)
     {

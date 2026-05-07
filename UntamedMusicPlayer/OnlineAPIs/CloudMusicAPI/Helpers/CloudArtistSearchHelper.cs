@@ -11,7 +11,7 @@ public sealed class CloudArtistSearchHelper
     private static readonly ILogger _logger =
         LoggingService.CreateLogger<CloudArtistSearchHelper>();
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
-    private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
+    private static readonly CloudMusicApiService _api = App.GetService<CloudMusicApiService>();
 
     public static async Task SearchArtistsAsync(string keyWords, CloudOnlineArtistInfoList list)
     {

@@ -9,7 +9,7 @@ public sealed class CloudSongSearchHelper
 {
     private static readonly ILogger _logger = LoggingService.CreateLogger<CloudSongSearchHelper>();
     private static readonly SemaphoreSlim _searchSemaphore = new(1, 1);
-    private static readonly NeteaseCloudMusicApi _api = NeteaseCloudMusicApi.Instance;
+    private static readonly CloudMusicApiService _api = App.GetService<CloudMusicApiService>();
 
     public static async Task SearchSongsAsync(string keyWords, CloudOnlineSongInfoList list)
     {
@@ -153,8 +153,7 @@ public sealed class CloudSongSearchHelper
                 .ToDictionary(
                     item => item!["id"]!.GetValue<long>(),
                     item => item!["url"] is not null
-                )
-            ?? [];
+                ) ?? [];
 
         for (var i = 0; i < actualCount; i++)
         {
@@ -196,14 +195,12 @@ public sealed class CloudSongSearchHelper
                 .ToDictionary(
                     item => item!["id"]!.GetValue<long>(),
                     item => item!["url"] is not null
-                )
-            ?? [];
+                ) ?? [];
 
         var detailsMap =
             detailsResult["songs"]
                 ?.AsArray()
-                .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item)
-            ?? [];
+                .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item) ?? [];
 
         var result = new List<BriefCloudOnlineSongInfo>();
         foreach (var songId in IDs)

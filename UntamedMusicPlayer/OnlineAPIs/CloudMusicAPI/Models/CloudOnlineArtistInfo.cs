@@ -52,7 +52,7 @@ public class BriefCloudOnlineArtistInfo : IBriefOnlineArtistInfo
 
     public static async Task<BriefCloudOnlineArtistInfo> CreateFromIDAsync(long artistID)
     {
-        var api = NeteaseCloudMusicApi.Instance;
+        var api = App.GetService<CloudMusicApiService>();
         var (_, result) = await api.RequestAsync(
             CloudMusicApiProviders.ArtistAlbum,
             new Dictionary<string, string>
