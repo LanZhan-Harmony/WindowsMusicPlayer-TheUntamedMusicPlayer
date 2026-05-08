@@ -185,7 +185,7 @@
                             <toolkit:SettingsCard x:Uid="Settings_LyricPageCurrentFontSize">
                                 <ComboBox x:Uid="Settings_ChooseAFontSize"
                                           IsEditable="True"
-                                          ItemsSource="{x:Bind ViewModel.FontSizes}"
+                                          ItemsSource="{x:Bind ViewModel.LyricPageCurrentFontSizes}"
                                           Loaded="{x:Bind ViewModel.LyricPageCurrentFontSizeComboBox_Loaded}"
                                           SelectionChanged="{x:Bind ViewModel.LyricPageCurrentFontSizeComboBox_SelectionChanged}"
                                           TextSubmitted="{x:Bind ViewModel.LyricPageCurrentFontSizeComboBox_TextSubmitted}"/>
@@ -193,7 +193,7 @@
                             <toolkit:SettingsCard x:Uid="Settings_LyricPageNotCurrentFontSize">
                                 <ComboBox x:Uid="Settings_ChooseAFontSize"
                                           IsEditable="True"
-                                          ItemsSource="{x:Bind ViewModel.FontSizes}"
+                                          ItemsSource="{x:Bind ViewModel.LyricPageNotCurrentFontSizes}"
                                           Loaded="{x:Bind ViewModel.LyricPageNotCurrentFontSizeComboBox_Loaded}"
                                           SelectionChanged="{x:Bind ViewModel.LyricPageNotCurrentFontSizeComboBox_SelectionChanged}"
                                           TextSubmitted="{x:Bind ViewModel.LyricPageNotCurrentFontSizeComboBox_TextSubmitted}"/>
