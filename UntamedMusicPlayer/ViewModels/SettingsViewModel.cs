@@ -83,7 +83,10 @@ public sealed partial class SettingsViewModel
     /// </summary>
     public List<FontFamilyInfo> FontFamilies { get; set; } = FontHelper.GetSystemFontFamilies();
 
-    public double[] FontSizes { get; set; } = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75];
+    public double[] LyricPageCurrentFontSizes { get; set; } =
+    [30, 35, 40, 45, 50, 55, 60, 65, 70, 75];
+    public double[] LyricPageNotCurrentFontSizes { get; set; } =
+    [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65];
 
     public List<FontWeightInfo> FontWeights { get; set; } = FontHelper.GetFontWeights();
 
@@ -572,7 +575,7 @@ public sealed partial class SettingsViewModel
     {
         if (double.TryParse(args.Text, out var fontSize))
         {
-            LyricPageNotCurrentFontSize = Math.Clamp(fontSize, 20, 100);
+            LyricPageNotCurrentFontSize = Math.Clamp(fontSize, 5, 100);
         }
         else
         {
@@ -597,7 +600,9 @@ public sealed partial class SettingsViewModel
 
     public void LyricPageCurrentFontSizeComboBox_Loaded(object sender, RoutedEventArgs _)
     {
-        var selectedItem = FontSizes.FirstOrDefault(f => f == LyricPageCurrentFontSize);
+        var selectedItem = LyricPageCurrentFontSizes.FirstOrDefault(f =>
+            f == LyricPageCurrentFontSize
+        );
         if (selectedItem != 0.0)
         {
             (sender as ComboBox)!.SelectedItem = selectedItem;
@@ -610,7 +615,9 @@ public sealed partial class SettingsViewModel
 
     public void LyricPageNotCurrentFontSizeComboBox_Loaded(object sender, RoutedEventArgs _)
     {
-        var selectedItem = FontSizes.FirstOrDefault(f => f == LyricPageNotCurrentFontSize);
+        var selectedItem = LyricPageNotCurrentFontSizes.FirstOrDefault(f =>
+            f == LyricPageNotCurrentFontSize
+        );
         if (selectedItem != 0.0)
         {
             (sender as ComboBox)!.SelectedItem = selectedItem;

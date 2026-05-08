@@ -342,18 +342,13 @@ namespace
 
 		// Initialize WASAPI in exclusive mode — NO BASS_WASAPI_AUTOFORMAT.
 		// We've already negotiated a supported format, and BASSmix handles all the resampling, so WASAPI doesn't need to convert anything.
-		constexpr DWORD wasapiFlags = BASS_WASAPI_EXCLUSIVE | BASS_WASAPI_EVENT;
-		if (!BASS_WASAPI_Init(-1, deviceFmt.freq, deviceFmt.chans, wasapiFlags, 0.05F, 0, WasapiProc, nullptr)) [[unlikely]]
+		constexpr DWORD wasapiFlags = BASS_WASAPI_EXCLUSIVE;
+		if (!BASS_WASAPI_Init(-1, deviceFmt.freq, deviceFmt.chans, wasapiFlags, 0.1F, 0, WasapiProc, nullptr)) [[unlikely]]
 		{
-			// Fall back without EVENT flag
-			constexpr DWORD wasapiFlagsFallback = BASS_WASAPI_EXCLUSIVE;
-			if (!BASS_WASAPI_Init(-1, deviceFmt.freq, deviceFmt.chans, wasapiFlagsFallback, 0.1F, 0.025F, WasapiProc, nullptr))
-			{
-				BASS_Mixer_ChannelRemove(g_engine.fxHandle);
-				BASS_StreamFree(g_engine.mixerHandle);
-				g_engine.mixerHandle = 0;
-				return false;
-			}
+			BASS_Mixer_ChannelRemove(g_engine.fxHandle);
+			BASS_StreamFree(g_engine.mixerHandle);
+			g_engine.mixerHandle = 0;
+			return false;
 		}
 
 		g_engine.wasapiInitialized = true;
