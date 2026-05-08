@@ -324,7 +324,9 @@ public static class Settings
                 nameof(LyricPageNotCurrentFontSize)
             );
             LyricPageNotCurrentFontSize =
-                lyricPageNotCurrentFontSize == 0 ? 20 : lyricPageNotCurrentFontSize;
+                lyricPageNotCurrentFontSize == 0
+                    ? LyricPageCurrentFontSize * 0.4
+                    : lyricPageNotCurrentFontSize;
             var fontWeight = await _localSettingsService.ReadSettingAsync<ushort>(
                 nameof(LyricPageFontWeight)
             );
