@@ -1048,7 +1048,7 @@
     <value>毫秒</value>
   </data>
   <data name="Settings_FontWeights" xml:space="preserve">
-    <value>極細, 特細, 細, 次細, 標準, 中等, 半粗, 粗體, 特粗, 濃體, 特黑</value>
+    <value>極細, 特細, 細, 稍細, 標準, 中等, 稍粗, 粗, 特粗, 黑, 特黑</value>
   </data>
   <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
     <value>選擇一個字重</value>
