@@ -89,12 +89,23 @@ public static class Settings
             if (field != value)
             {
                 field = value;
-                LyricPageNotCurrentFontSize = value * 0.4;
                 _localSettingsService.SaveSettingAsync(nameof(LyricPageCurrentFontSize), value);
             }
         }
     }
-    public static double LyricPageNotCurrentFontSize { get; set; }
+
+    public static double LyricPageNotCurrentFontSize
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                _localSettingsService.SaveSettingAsync(nameof(LyricPageNotCurrentFontSize), value);
+            }
+        }
+    }
 
     /// <summary>
     /// 歌词字重
@@ -304,6 +315,16 @@ public static class Settings
                 await _localSettingsService.ReadSettingAsync<string>(nameof(FontFamily))
                     ?? "Microsoft YaHei"
             );
+            var lyricPageCurrentFontSize = await _localSettingsService.ReadSettingAsync<double>(
+                nameof(LyricPageCurrentFontSize)
+            );
+            LyricPageCurrentFontSize =
+                lyricPageCurrentFontSize == 0 ? 50 : lyricPageCurrentFontSize;
+            var lyricPageNotCurrentFontSize = await _localSettingsService.ReadSettingAsync<double>(
+                nameof(LyricPageNotCurrentFontSize)
+            );
+            LyricPageNotCurrentFontSize =
+                lyricPageNotCurrentFontSize == 0 ? 20 : lyricPageNotCurrentFontSize;
             var fontWeight = await _localSettingsService.ReadSettingAsync<ushort>(
                 nameof(LyricPageFontWeight)
             );
@@ -331,11 +352,6 @@ public static class Settings
 
             if (NotFirstUsed)
             {
-                var lyricPageCurrentFontSize = await _localSettingsService.ReadSettingAsync<double>(
-                    nameof(LyricPageCurrentFontSize)
-                );
-                LyricPageCurrentFontSize =
-                    lyricPageCurrentFontSize == 0 ? 50 : lyricPageCurrentFontSize;
                 PreviousIsDarkTheme = await _localSettingsService.ReadSettingAsync<bool>(
                     nameof(PreviousIsDarkTheme)
                 );
@@ -347,7 +363,6 @@ public static class Settings
             }
             else
             {
-                LyricPageCurrentFontSize = 50;
                 IsFallBack = true;
                 LuminosityOpacity = 85;
                 var darkColor = Color.FromArgb(255, 44, 44, 44);

@@ -28,7 +28,6 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private readonly Timer _autoHideDelayTimer;
     private readonly Visual _appTitleBarVisual;
-    private bool _isAnimatingLyricAdjustBorder = false;
     private bool _isLyricAdjustBorderShown = false;
 
     private Timer? _titleBarHideTimer;
@@ -59,7 +58,11 @@ public sealed partial class LyricPage : Page, IDisposable
             Timeout.Infinite
         );
         _autoHideDelayTimer = new Timer(
-            _ => DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, HideLyricAdjustBorder),
+            _ =>
+                DispatcherQueue.TryEnqueue(
+                    DispatcherQueuePriority.Low,
+                    () => AnimateLyricAdjustBorderVisibility(false, 240)
+                ),
             null,
             Timeout.Infinite,
             Timeout.Infinite
@@ -70,7 +73,6 @@ public sealed partial class LyricPage : Page, IDisposable
         var hiddenOffsetX = (float)(
             LyricAdjustBorder.ActualWidth + LyricAdjustBorder.Margin.Right + 24
         );
-        ;
         LyricAdjustBorder.Translation = new Vector3(hiddenOffsetX, 0f, 0f);
         _lyricAdjustBorderVisual.Opacity = 0f;
 
@@ -326,6 +328,16 @@ public sealed partial class LyricPage : Page, IDisposable
         }
     }
 
+    private void StopTitleBarTimer()
+    {
+        if (_titleBarTimerEnabled)
+        {
+            _titleBarHideTimer?.Dispose();
+            _titleBarHideTimer = null;
+            _titleBarTimerEnabled = false;
+        }
+    }
+
     private void AnimateTitleBarVisibility(bool isVisible, double durationMs)
     {
         var targetY = isVisible ? 0f : -33f;
@@ -352,15 +364,6 @@ public sealed partial class LyricPage : Page, IDisposable
 
         _appTitleBarVisual.StartAnimation("Translation.Y", slideAnimation);
         _appTitleBarVisual.StartAnimation("Opacity", opacityAnimation);
-    }
-
-    private void StopTitleBarTimer()
-    {
-        if (_titleBarTimerEnabled)
-        {
-            _titleBarHideTimer?.Change(Timeout.Infinite, Timeout.Infinite);
-            _titleBarTimerEnabled = false;
-        }
     }
 
     private void AnimateContentGridTopMargin(double targetTop, double durationMs)
@@ -409,6 +412,45 @@ public sealed partial class LyricPage : Page, IDisposable
             sender.Tick -= ContentGridMarginAnimationTick;
             ContentGrid.Margin = new Thickness(0, _contentGridMarginTo, 0, 0);
         }
+    }
+
+    private void AnimateLyricAdjustBorderVisibility(bool isVisible, double durationMs)
+    {
+        if (_isLyricAdjustBorderShown == isVisible)
+        {
+            return;
+        }
+        _isLyricAdjustBorderShown = isVisible;
+
+        var hiddenOffsetX = (float)(
+            LyricAdjustBorder.ActualWidth + LyricAdjustBorder.Margin.Right + 24
+        );
+        var targetX = isVisible ? 0f : hiddenOffsetX;
+        var targetOpacity = isVisible ? 1f : 0f;
+
+        _lyricAdjustBorderVisual.StopAnimation("Translation.X");
+        _lyricAdjustBorderVisual.StopAnimation("Opacity");
+
+        var compositor = _lyricAdjustBorderVisual.Compositor;
+        var easing = isVisible
+            ? compositor.CreateCubicBezierEasingFunction(new Vector2(0f, 0f), new Vector2(0.2f, 1f))
+            : compositor.CreateCubicBezierEasingFunction(
+                new Vector2(0.4f, 0f),
+                new Vector2(1f, 1f)
+            );
+
+        var slideAnimation = compositor.CreateScalarKeyFrameAnimation();
+        slideAnimation.InsertKeyFrame(1f, targetX, easing);
+        slideAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
+        slideAnimation.Target = "Translation.X";
+
+        var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+        opacityAnimation.InsertKeyFrame(1f, targetOpacity, easing);
+        opacityAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
+        opacityAnimation.Target = "Opacity";
+
+        LyricAdjustBorder.StartAnimation(slideAnimation);
+        LyricAdjustBorder.StartAnimation(opacityAnimation);
     }
 
     private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
@@ -617,7 +659,7 @@ public sealed partial class LyricPage : Page, IDisposable
         }
 
         _isManualScrolling = true;
-        ShowLyricAdjustBorder();
+        AnimateLyricAdjustBorderVisibility(true, 280);
         _autoScrollDelayTimer.Change(Timeout.Infinite, Timeout.Infinite);
         _autoHideDelayTimer.Change(Timeout.Infinite, Timeout.Infinite);
         if (!e.IsIntermediate) // 用户停止滚动，启动3秒倒计时
@@ -667,110 +709,6 @@ public sealed partial class LyricPage : Page, IDisposable
         LyricViewer.ChangeView(null, targetOffset, null, false);
 
         return true;
-    }
-
-    private void ShowLyricAdjustBorder()
-    {
-        if (_isAnimatingLyricAdjustBorder || _isLyricAdjustBorderShown)
-        {
-            return;
-        }
-        _isAnimatingLyricAdjustBorder = true;
-        var hiddenOffsetX = (float)(
-            LyricAdjustBorder.ActualWidth + LyricAdjustBorder.Margin.Right + 24
-        );
-
-        // 停止之前的动画
-        _lyricAdjustBorderVisual.StopAnimation("Translation.X");
-        _lyricAdjustBorderVisual.StopAnimation("Opacity");
-
-        // 设置初始状态
-        LyricAdjustBorder.Translation = new Vector3(hiddenOffsetX, 0f, 0f);
-        LyricAdjustBorder.Opacity = 0f;
-
-        var compositor = _lyricAdjustBorderVisual.Compositor;
-        var slideIn = compositor.CreateScalarKeyFrameAnimation();
-        slideIn.InsertKeyFrame(0f, hiddenOffsetX);
-        slideIn.InsertKeyFrame(
-            1f,
-            0f,
-            compositor.CreateCubicBezierEasingFunction(new Vector2(0f, 0f), new Vector2(0.2f, 1f))
-        );
-        slideIn.Duration = TimeSpan.FromMilliseconds(280);
-        slideIn.Target = "Translation.X";
-
-        var fadeIn = compositor.CreateScalarKeyFrameAnimation();
-        fadeIn.InsertKeyFrame(0f, 0f);
-        fadeIn.InsertKeyFrame(
-            1f,
-            1f,
-            compositor.CreateCubicBezierEasingFunction(new Vector2(0f, 0f), new Vector2(0.2f, 1f))
-        );
-        fadeIn.Duration = TimeSpan.FromMilliseconds(220);
-        fadeIn.Target = "Opacity";
-
-        var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-        batch.Completed += (_, _) =>
-        {
-            LyricAdjustBorder.Translation = Vector3.Zero;
-            LyricAdjustBorder.Opacity = 1f;
-            _isAnimatingLyricAdjustBorder = false;
-            _isLyricAdjustBorderShown = true;
-        };
-
-        LyricAdjustBorder.StartAnimation(slideIn);
-        LyricAdjustBorder.StartAnimation(fadeIn);
-        batch.End();
-    }
-
-    private void HideLyricAdjustBorder()
-    {
-        if (_isAnimatingLyricAdjustBorder || !_isLyricAdjustBorderShown)
-        {
-            return;
-        }
-        _isAnimatingLyricAdjustBorder = true;
-
-        var hiddenOffsetX = (float)(
-            LyricAdjustBorder.ActualWidth + LyricAdjustBorder.Margin.Right + 24
-        );
-
-        _lyricAdjustBorderVisual.StopAnimation("Translation.X");
-        _lyricAdjustBorderVisual.StopAnimation("Opacity");
-
-        var compositor = _lyricAdjustBorderVisual.Compositor;
-        var slideOut = compositor.CreateScalarKeyFrameAnimation();
-        slideOut.InsertKeyFrame(0f, 0f);
-        slideOut.InsertKeyFrame(
-            1f,
-            hiddenOffsetX,
-            compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0f), new Vector2(1f, 1f))
-        );
-        slideOut.Duration = TimeSpan.FromMilliseconds(240);
-        slideOut.Target = "Translation.X";
-
-        var fadeOut = compositor.CreateScalarKeyFrameAnimation();
-        fadeOut.InsertKeyFrame(0f, 1f);
-        fadeOut.InsertKeyFrame(
-            1f,
-            0f,
-            compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0f), new Vector2(1f, 1f))
-        );
-        fadeOut.Duration = TimeSpan.FromMilliseconds(180);
-        fadeOut.Target = "Opacity";
-
-        var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-        batch.Completed += (_, _) =>
-        {
-            LyricAdjustBorder.Translation = new Vector3(hiddenOffsetX, 0f, 0f);
-            LyricAdjustBorder.Opacity = 0f;
-            _isAnimatingLyricAdjustBorder = false;
-            _isLyricAdjustBorderShown = false;
-        };
-
-        LyricAdjustBorder.StartAnimation(slideOut);
-        LyricAdjustBorder.StartAnimation(fadeOut);
-        batch.End();
     }
 
     public void Dispose()

@@ -1032,9 +1032,6 @@
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>Slow down lyrics by 0.3s</value>
   </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>Size</value>
-  </data>
   <data name="Settings_LyricPreview.Header" xml:space="preserve">
     <value>Preview</value>
   </data>
@@ -1058,5 +1055,11 @@
   </data>
   <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
     <value>Weight</value>
+  </data>
+  <data name="Settings_LyricPageCurrentFontSize.Header" xml:space="preserve">
+    <value>Highlighted lyric font size</value>
+  </data>
+  <data name="Settings_LyricPageNotCurrentFontSize.Header" xml:space="preserve">
+    <value>Normal lyric font size</value>
   </data>
 </root>

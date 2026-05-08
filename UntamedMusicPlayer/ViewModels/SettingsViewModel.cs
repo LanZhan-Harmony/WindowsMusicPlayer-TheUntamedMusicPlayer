@@ -102,23 +102,25 @@ public sealed partial class SettingsViewModel
     /// 选中的高亮字号
     /// </summary>
     [ObservableProperty]
-    public partial double SelectedCurrentFontSize { get; set; } = Settings.LyricPageCurrentFontSize;
+    public partial double LyricPageCurrentFontSize { get; set; } =
+        Settings.LyricPageCurrentFontSize;
 
-    partial void OnSelectedCurrentFontSizeChanged(double value)
+    partial void OnLyricPageCurrentFontSizeChanged(double value)
     {
         Settings.LyricPageCurrentFontSize = value;
-        SelectedNotCurrentFontSize = value * 0.4;
+        Messenger.Send(new FontSizeChangeMessage());
     }
 
     /// <summary>
     /// 选中的非高亮字号
     /// </summary>
     [ObservableProperty]
-    public partial double SelectedNotCurrentFontSize { get; set; } =
+    public partial double LyricPageNotCurrentFontSize { get; set; } =
         Settings.LyricPageNotCurrentFontSize;
 
-    partial void OnSelectedNotCurrentFontSizeChanged(double value)
+    partial void OnLyricPageNotCurrentFontSizeChanged(double value)
     {
+        Settings.LyricPageNotCurrentFontSize = value;
         Messenger.Send(new FontSizeChangeMessage());
     }
 
@@ -126,9 +128,9 @@ public sealed partial class SettingsViewModel
     /// 选中的字重
     /// </summary>
     [ObservableProperty]
-    public partial FontWeight SelectedFontWeight { get; set; } = Settings.LyricPageFontWeight;
+    public partial FontWeight LyricPageFontWeight { get; set; } = Settings.LyricPageFontWeight;
 
-    partial void OnSelectedFontWeightChanged(FontWeight value)
+    partial void OnLyricPageFontWeightChanged(FontWeight value)
     {
         Settings.LyricPageFontWeight = value;
     }
@@ -146,7 +148,7 @@ public sealed partial class SettingsViewModel
     /// 深浅色主题
     /// </summary>
     [ObservableProperty]
-    public partial ElementTheme ElementTheme { get; set; }
+    public partial ElementTheme ElementTheme { get; set; } = Settings.Theme;
 
     [RelayCommand]
     public void SwitchTheme(ElementTheme theme)
@@ -168,13 +170,13 @@ public sealed partial class SettingsViewModel
     /// 选中的材质
     /// </summary>
     [ObservableProperty]
-    public partial byte SelectedMaterial { get; set; }
+    public partial byte SelectedMaterial { get; set; } = (byte)Settings.Material;
 
     /// <summary>
     /// 是否启用窗口失去焦点回退
     /// </summary>
     [ObservableProperty]
-    public partial bool IsFallBack { get; set; }
+    public partial bool IsFallBack { get; set; } = Settings.IsFallBack;
 
     partial void OnIsFallBackChanged(bool value)
     {
@@ -185,7 +187,7 @@ public sealed partial class SettingsViewModel
     /// 不透明度
     /// </summary>
     [ObservableProperty]
-    public partial byte LuminosityOpacity { get; set; }
+    public partial byte LuminosityOpacity { get; set; } = Settings.LuminosityOpacity;
 
     partial void OnLuminosityOpacityChanged(byte value)
     {
@@ -196,7 +198,7 @@ public sealed partial class SettingsViewModel
     /// 背景颜色
     /// </summary>
     [ObservableProperty]
-    public partial Color TintColor { get; set; }
+    public partial Color TintColor { get; set; } = Settings.TintColor;
 
     partial void OnTintColorChanged(Color value)
     {
@@ -230,19 +232,12 @@ public sealed partial class SettingsViewModel
     /// <summary>
     /// 版本信息
     /// </summary>
-    [ObservableProperty]
-    public partial string VersionDescription { get; set; }
+    public string VersionDescription { get; set; } = GetVersionDescription();
 
     public SettingsViewModel()
         : base(StrongReferenceMessenger.Default)
     {
         Messenger.Register(this);
-        ElementTheme = Settings.Theme;
-        IsFallBack = Settings.IsFallBack;
-        SelectedMaterial = (byte)Settings.Material;
-        LuminosityOpacity = Settings.LuminosityOpacity;
-        TintColor = Settings.TintColor;
-        VersionDescription = GetVersionDescription();
 
         EmptyFolderMessageVisibility =
             Data.MusicLibrary.Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
@@ -525,11 +520,25 @@ public sealed partial class SettingsViewModel
         }
     }
 
-    public void FontSizeComboBox_SelectionChanged(object _, SelectionChangedEventArgs e)
+    public void LyricPageCurrentFontSizeComboBox_SelectionChanged(
+        object _,
+        SelectionChangedEventArgs e
+    )
     {
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is double fontSize)
         {
-            SelectedCurrentFontSize = fontSize;
+            LyricPageCurrentFontSize = fontSize;
+        }
+    }
+
+    public void LyricPageNotCurrentFontSizeComboBox_SelectionChanged(
+        object _,
+        SelectionChangedEventArgs e
+    )
+    {
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is double fontSize)
+        {
+            LyricPageNotCurrentFontSize = fontSize;
         }
     }
 
@@ -537,19 +546,37 @@ public sealed partial class SettingsViewModel
     {
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontWeightInfo selectedWeight)
         {
-            SelectedFontWeight = selectedWeight.FontWeight;
+            LyricPageFontWeight = selectedWeight.FontWeight;
         }
     }
 
-    public void ComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
+    public void LyricPageCurrentFontSizeComboBox_TextSubmitted(
+        ComboBox sender,
+        ComboBoxTextSubmittedEventArgs args
+    )
     {
         if (double.TryParse(args.Text, out var fontSize))
         {
-            SelectedCurrentFontSize = Math.Clamp(fontSize, 20, 100);
+            LyricPageCurrentFontSize = Math.Clamp(fontSize, 20, 100);
         }
         else
         {
-            sender.Text = $"{SelectedCurrentFontSize}";
+            sender.Text = $"{LyricPageCurrentFontSize}";
+        }
+    }
+
+    public void LyricPageNotCurrentFontSizeComboBox_TextSubmitted(
+        ComboBox sender,
+        ComboBoxTextSubmittedEventArgs args
+    )
+    {
+        if (double.TryParse(args.Text, out var fontSize))
+        {
+            LyricPageNotCurrentFontSize = Math.Clamp(fontSize, 20, 100);
+        }
+        else
+        {
+            sender.Text = $"{LyricPageNotCurrentFontSize}";
         }
     }
 
@@ -568,23 +595,36 @@ public sealed partial class SettingsViewModel
         }
     }
 
-    public void FontSizeComboBox_Loaded(object sender, RoutedEventArgs _)
+    public void LyricPageCurrentFontSizeComboBox_Loaded(object sender, RoutedEventArgs _)
     {
-        var selectedItem = FontSizes.FirstOrDefault(f => f == SelectedCurrentFontSize);
+        var selectedItem = FontSizes.FirstOrDefault(f => f == LyricPageCurrentFontSize);
         if (selectedItem != 0.0)
         {
             (sender as ComboBox)!.SelectedItem = selectedItem;
         }
         else
         {
-            (sender as ComboBox)!.Text = $"{SelectedCurrentFontSize}";
+            (sender as ComboBox)!.Text = $"{LyricPageCurrentFontSize}";
+        }
+    }
+
+    public void LyricPageNotCurrentFontSizeComboBox_Loaded(object sender, RoutedEventArgs _)
+    {
+        var selectedItem = FontSizes.FirstOrDefault(f => f == LyricPageNotCurrentFontSize);
+        if (selectedItem != 0.0)
+        {
+            (sender as ComboBox)!.SelectedItem = selectedItem;
+        }
+        else
+        {
+            (sender as ComboBox)!.Text = $"{LyricPageNotCurrentFontSize}";
         }
     }
 
     public void FontWeightComboBox_Loaded(object sender, RoutedEventArgs _)
     {
         var selectedItem = FontWeights.FirstOrDefault(weight =>
-            weight.FontWeight.Weight == SelectedFontWeight.Weight
+            weight.FontWeight.Weight == LyricPageFontWeight.Weight
         );
         if (selectedItem is not null)
         {

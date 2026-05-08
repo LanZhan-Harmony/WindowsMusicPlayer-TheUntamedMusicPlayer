@@ -331,7 +331,7 @@ public sealed partial class MusicPlayer : IDisposable
         State.PlayState = MediaPlaybackState.Paused;
 
         _smtcManager.UpdatePlaybackStatus(MediaPlaybackStatus.Paused);
-        _positionUpdateTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+        _positionUpdateTimer?.Dispose();
         _positionUpdateTimer = null;
     }
 
