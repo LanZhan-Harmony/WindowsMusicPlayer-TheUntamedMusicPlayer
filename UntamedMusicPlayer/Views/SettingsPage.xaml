@@ -182,13 +182,21 @@
                                           Loaded="{x:Bind ViewModel.FontFamilyComboBox_Loaded}"
                                           SelectionChanged="{x:Bind ViewModel.FontFamilyComboBox_SelectionChanged}"/>
                             </toolkit:SettingsCard>
-                            <toolkit:SettingsCard x:Uid="Settings_LyricFontSize">
+                            <toolkit:SettingsCard x:Uid="Settings_LyricPageCurrentFontSize">
                                 <ComboBox x:Uid="Settings_ChooseAFontSize"
                                           IsEditable="True"
                                           ItemsSource="{x:Bind ViewModel.FontSizes}"
-                                          Loaded="{x:Bind ViewModel.FontSizeComboBox_Loaded}"
-                                          SelectionChanged="{x:Bind ViewModel.FontSizeComboBox_SelectionChanged}"
-                                          TextSubmitted="{x:Bind ViewModel.ComboBox_TextSubmitted}"/>
+                                          Loaded="{x:Bind ViewModel.LyricPageCurrentFontSizeComboBox_Loaded}"
+                                          SelectionChanged="{x:Bind ViewModel.LyricPageCurrentFontSizeComboBox_SelectionChanged}"
+                                          TextSubmitted="{x:Bind ViewModel.LyricPageCurrentFontSizeComboBox_TextSubmitted}"/>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard x:Uid="Settings_LyricPageNotCurrentFontSize">
+                                <ComboBox x:Uid="Settings_ChooseAFontSize"
+                                          IsEditable="True"
+                                          ItemsSource="{x:Bind ViewModel.FontSizes}"
+                                          Loaded="{x:Bind ViewModel.LyricPageNotCurrentFontSizeComboBox_Loaded}"
+                                          SelectionChanged="{x:Bind ViewModel.LyricPageNotCurrentFontSizeComboBox_SelectionChanged}"
+                                          TextSubmitted="{x:Bind ViewModel.LyricPageNotCurrentFontSizeComboBox_TextSubmitted}"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_LyricFontWeight">
                                 <ComboBox x:Uid="Settings_ChooseAFontWeight"
@@ -201,12 +209,12 @@
                                 <StackPanel>
                                     <TextBlock x:Uid="Settings_ThisIsAHighlightedLyric"
                                                FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
-                                               FontSize="{x:Bind ViewModel.SelectedCurrentFontSize, Mode=OneWay}"
-                                               FontWeight="{x:Bind ViewModel.SelectedFontWeight, Mode=OneWay}"/>
+                                               FontSize="{x:Bind ViewModel.LyricPageCurrentFontSize, Mode=OneWay}"
+                                               FontWeight="{x:Bind ViewModel.LyricPageFontWeight, Mode=OneWay}"/>
                                     <TextBlock x:Uid="Settings_ThisIsAnOrdinaryLyric"
                                                FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
-                                               FontSize="{x:Bind ViewModel.SelectedNotCurrentFontSize, Mode=OneWay}"
-                                               FontWeight="{x:Bind ViewModel.SelectedFontWeight, Mode=OneWay}"
+                                               FontSize="{x:Bind ViewModel.LyricPageNotCurrentFontSize, Mode=OneWay}"
+                                               FontWeight="{x:Bind ViewModel.LyricPageFontWeight, Mode=OneWay}"
                                                Opacity="0.5"/>
                                 </StackPanel>
                             </toolkit:SettingsCard>
@@ -323,7 +331,7 @@
                     <toolkit:SettingsExpander x:Name="About" x:Uid="Settings_AboutDescription"
                                               Header="{x:Bind model:Data.AppDisplayName}"
                                               HeaderIcon="{ui:BitmapIcon Source=ms-appx:///Assets/AppIcon/Icon.ico}">
-                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}"/>
+                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription}"/>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard x:Uid="Settings_Thanks"/>
                             <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">

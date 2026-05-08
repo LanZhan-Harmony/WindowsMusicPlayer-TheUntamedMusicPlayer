@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using ZLinq;
 
@@ -6,13 +7,26 @@ namespace UntamedMusicPlayer.LyricRenderer;
 public static partial class LyricParser
 {
     [GeneratedRegex(@".*\](.*)", RegexOptions.Compiled)]
-    private static partial Regex RegexWord();
+    private static partial Regex WordRegex();
 
-    [GeneratedRegex(@"\[([0-9.:]*)\]", RegexOptions.Compiled)]
-    private static partial Regex RegexTime();
+    [GeneratedRegex(@"\[\s*([0-9.:]+)\s*\]", RegexOptions.Compiled)]
+    private static partial Regex TimeRegex();
 
     [GeneratedRegex(@"\[offset:\s*([+-]?\d+)\]", RegexOptions.Compiled)]
-    private static partial Regex RegexOffset();
+    private static partial Regex OffsetRegex();
+
+    [GeneratedRegex(@"<\s*([0-9.:]+)\s*>", RegexOptions.Compiled)]
+    private static partial Regex EnhancedTimeRegex();
+
+    [GeneratedRegex(@"(?:\[\s*[0-9.:]+\s*\]|<\s*[0-9.:]+\s*>)", RegexOptions.Compiled)]
+    private static partial Regex AllTimesRegex();
+
+    private sealed class LyricSliceGroup
+    {
+        public List<string> Contents { get; } = [];
+
+        public double? EndTime { get; set; }
+    }
 
     /// <summary>
     /// 解析歌词文本并返回歌词片段列表
@@ -27,138 +41,274 @@ public static partial class LyricParser
             return [];
         }
 
-        var lyricSlices = new List<LyricSlice>();
-        await Task.Run(() =>
+        return await Task.Run(() =>
         {
             var lines = lyric.Split(
                 ['\r', '\n'],
                 StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
             );
-            var offset = 0.0; // 时间偏移量（毫秒）
-            double? lastTime = null; // 上一条歌词的时间
-            var emptyStartTime = 0.0; // 空白歌词块的开始时间
-            var inEmptyBlock = false; // 当前是否在空白歌词块中
-            var timeGroupedLyrics = new Dictionary<double, List<string>>(); // 用于存储时间相同的歌词内容(例如翻译), Dictionary<时间, 歌词内容列表>
+            var offset = 0.0;
+            var enhanced = lines.Any(line => line.Contains('<'));
+            var timeGroupedLyrics = new Dictionary<double, LyricSliceGroup>();
 
-            foreach (var line in lines) // 解析所有歌词行并按时间分组
+            if (enhanced)
             {
-                if (line.StartsWith("[offset:")) // 处理偏移量标签 [offset:±毫秒数]
+                ParseEnhancedLrcLines(lines, ref offset, timeGroupedLyrics);
+            }
+            else
+            {
+                ParseNormalLrcLines(lines, ref offset, timeGroupedLyrics);
+            }
+
+            return BuildLyricSlices(timeGroupedLyrics, duration);
+        });
+    }
+
+    private static void ParseNormalLrcLines(
+        IEnumerable<string> lines,
+        ref double offset,
+        Dictionary<double, LyricSliceGroup> timeGroupedLyrics
+    )
+    {
+        double? lastTime = null;
+        var emptyStartTime = 0.0;
+        var inEmptyBlock = false;
+
+        foreach (var line in lines)
+        {
+            if (TryHandleSpecialLine(line, ref offset))
+            {
+                continue;
+            }
+
+            try
+            {
+                var wordMatch = WordRegex().Match(line);
+                var word = wordMatch.Groups[1].Value;
+                var isEmptyWord = string.IsNullOrWhiteSpace(word);
+
+                var timeMatches = TimeRegex().Matches(line);
+                if (timeMatches.Count == 0)
                 {
-                    var offsetMatch = RegexOffset().Match(line);
-                    if (offsetMatch.Success)
-                    {
-                        offset = double.Parse(offsetMatch.Groups[1].Value);
-                    }
                     continue;
                 }
 
-                if (
-                    line.StartsWith("[ti:") // 标题
-                    || line.StartsWith("[ar:") // 艺术家
-                    || line.StartsWith("[al:") // 专辑
-                    || line.StartsWith("[by:") // 制作者
-                ) // 跳过元信息标签
+                foreach (Match timeMatch in timeMatches)
                 {
-                    continue;
-                }
-
-                try
-                {
-                    // 提取歌词内容
-                    var wordMatch = RegexWord().Match(line);
-                    var word = wordMatch.Groups[1].Value;
-                    var isEmptyWord = string.IsNullOrWhiteSpace(word);
-
-                    // 提取时间标签
-                    var timeMatches = RegexTime().Matches(line);
-                    if (timeMatches.Count == 0)
+                    if (!TryParseTime(timeMatch.Groups[1].Value, offset, out var time))
                     {
                         continue;
                     }
 
-                    foreach (Match timeMatch in timeMatches) // 处理该行的所有时间标签
+                    if (isEmptyWord)
                     {
-                        var time =
-                            TimeSpan.Parse("00:" + timeMatch.Groups[1].Value).TotalMilliseconds
-                            + offset; // 解析时间并加上偏移量
-
-                        if (isEmptyWord) // 是空白歌词
+                        if (!inEmptyBlock)
                         {
-                            if (!inEmptyBlock) // 是空白块中第一个空白行
-                            {
-                                emptyStartTime = time != lastTime ? time : (lastTime ?? 0) + 1; // 如果时间与上一条歌词相同, 则将空白块开始时间设为上一条歌词时间+1毫秒
-                                inEmptyBlock = true;
-                            }
-                        }
-                        else // 不是空白歌词
-                        {
-                            if (inEmptyBlock) // 之前在空白块中, 现在遇到非空白歌词, 结束空白块
-                            {
-                                if (time - emptyStartTime > 5000) // 如果空白块持续时间超过5秒，添加省略号
-                                {
-                                    if (
-                                        !timeGroupedLyrics.TryGetValue(
-                                            emptyStartTime,
-                                            out var emptyBlockList
-                                        )
-                                    )
-                                    {
-                                        timeGroupedLyrics[emptyStartTime] = emptyBlockList = [];
-                                    }
-                                    emptyBlockList.Add("•••");
-                                }
-                                inEmptyBlock = false;
-                            }
-
-                            if (!timeGroupedLyrics.TryGetValue(time, out var lyricList)) // 将歌词按时间分组
-                            {
-                                timeGroupedLyrics[time] = lyricList = [];
-                            }
-                            lyricList.Add(word);
-                            lastTime = time;
+                            emptyStartTime = time != lastTime ? time : (lastTime ?? 0) + 1;
+                            inEmptyBlock = true;
                         }
                     }
+                    else
+                    {
+                        if (inEmptyBlock)
+                        {
+                            if (time - emptyStartTime > 5000)
+                            {
+                                AddSliceContent(timeGroupedLyrics, emptyStartTime, "•••");
+                            }
+
+                            inEmptyBlock = false;
+                        }
+
+                        AddSliceContent(timeGroupedLyrics, time, word);
+                        lastTime = time;
+                    }
                 }
-                catch
+            }
+            catch
+            {
+                continue;
+            }
+        }
+
+        if (inEmptyBlock && lastTime.HasValue && lastTime.Value - emptyStartTime > 5000)
+        {
+            AddSliceContent(timeGroupedLyrics, emptyStartTime, "•••");
+        }
+    }
+
+    private static void ParseEnhancedLrcLines(
+        IEnumerable<string> lines,
+        ref double offset,
+        Dictionary<double, LyricSliceGroup> timeGroupedLyrics
+    )
+    {
+        double? lastTime = null;
+        var emptyStartTime = 0.0;
+        var inEmptyBlock = false;
+
+        foreach (var line in lines)
+        {
+            if (TryHandleSpecialLine(line, ref offset))
+            {
+                continue;
+            }
+
+            try
+            {
+                var timeMatches = TimeRegex().Matches(line);
+                var enhancedTimeMatches = EnhancedTimeRegex().Matches(line);
+                if (timeMatches.Count == 0 && enhancedTimeMatches.Count == 0)
                 {
                     continue;
                 }
-            }
 
-            if (inEmptyBlock && lastTime.HasValue && lastTime.Value - emptyStartTime > 5000) // 处理最后一个空白块
-            {
-                if (!timeGroupedLyrics.TryGetValue(emptyStartTime, out var emptyBlockList))
+                var allTimes = new List<double>();
+                foreach (Match timeMatch in timeMatches)
                 {
-                    timeGroupedLyrics[emptyStartTime] = emptyBlockList = [];
+                    if (TryParseTime(timeMatch.Groups[1].Value, offset, out var time))
+                    {
+                        allTimes.Add(time);
+                    }
                 }
-                emptyBlockList.Add("•••");
-            }
 
-            foreach (var kvp in timeGroupedLyrics) // 将分组的歌词转换为LyricSlice对象
+                foreach (Match timeMatch in enhancedTimeMatches)
+                {
+                    if (TryParseTime(timeMatch.Groups[1].Value, offset, out var time))
+                    {
+                        allTimes.Add(time);
+                    }
+                }
+
+                if (allTimes.Count == 0)
+                {
+                    continue;
+                }
+
+                var startTime = allTimes[0];
+                double? explicitEndTime = allTimes.Count > 1 ? allTimes[^1] : null;
+                var content = AllTimesRegex().Replace(line, string.Empty).Trim();
+                var isEmptyWord = string.IsNullOrWhiteSpace(content);
+
+                if (isEmptyWord)
+                {
+                    if (!inEmptyBlock)
+                    {
+                        emptyStartTime = startTime != lastTime ? startTime : (lastTime ?? 0) + 1;
+                        inEmptyBlock = true;
+                    }
+                }
+                else
+                {
+                    if (inEmptyBlock)
+                    {
+                        if (startTime - emptyStartTime > 5000)
+                        {
+                            AddSliceContent(timeGroupedLyrics, emptyStartTime, "•••");
+                        }
+
+                        inEmptyBlock = false;
+                    }
+
+                    AddSliceContent(timeGroupedLyrics, startTime, content, explicitEndTime);
+                    lastTime = explicitEndTime ?? startTime;
+                }
+            }
+            catch
             {
-                var time = kvp.Key;
-                var contents = kvp.Value;
-                var mergedContent = string.Join("\n", contents); // 将同一时间的多行歌词用换行符连接
-                lyricSlices.Add(new LyricSlice(time, mergedContent));
+                continue;
             }
-        });
+        }
 
-        // 按时间排序
-        var sortedSlices = lyricSlices.AsValueEnumerable().OrderBy(t => t.StartTime).ToList();
-
-        // 设置每个歌词片段的EndTime
-        for (var i = 0; i < sortedSlices.Count; i++)
+        if (inEmptyBlock && lastTime.HasValue && lastTime.Value - emptyStartTime > 5000)
         {
-            if (i < sortedSlices.Count - 1)
+            AddSliceContent(timeGroupedLyrics, emptyStartTime, "•••");
+        }
+    }
+
+    private static bool TryHandleSpecialLine(string line, ref double offset)
+    {
+        if (line.StartsWith("[offset:", StringComparison.OrdinalIgnoreCase))
+        {
+            var offsetMatch = OffsetRegex().Match(line);
+            if (offsetMatch.Success)
             {
-                // 当前歌词的EndTime为下一个歌词的StartTime
-                sortedSlices[i].EndTime = sortedSlices[i + 1].StartTime;
+                offset = double.Parse(offsetMatch.Groups[1].Value, CultureInfo.InvariantCulture);
             }
-            else
+
+            return true;
+        }
+
+        if (
+            line.StartsWith("[ti:", StringComparison.OrdinalIgnoreCase)
+            || line.StartsWith("[ar:", StringComparison.OrdinalIgnoreCase)
+            || line.StartsWith("[al:", StringComparison.OrdinalIgnoreCase)
+            || line.StartsWith("[by:", StringComparison.OrdinalIgnoreCase)
+        )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryParseTime(string value, double offset, out double milliseconds)
+    {
+        if (TimeSpan.TryParse($"00:{value}", CultureInfo.InvariantCulture, out var timeSpan))
+        {
+            milliseconds = timeSpan.TotalMilliseconds + offset;
+            return true;
+        }
+
+        milliseconds = 0;
+        return false;
+    }
+
+    private static void AddSliceContent(
+        Dictionary<double, LyricSliceGroup> groupedLyrics,
+        double startTime,
+        string content,
+        double? endTime = null
+    )
+    {
+        if (!groupedLyrics.TryGetValue(startTime, out var group))
+        {
+            groupedLyrics[startTime] = group = new LyricSliceGroup();
+        }
+
+        group.Contents.Add(content);
+
+        if (endTime.HasValue)
+        {
+            group.EndTime = group.EndTime.HasValue
+                ? Math.Max(group.EndTime.Value, endTime.Value)
+                : endTime.Value;
+        }
+    }
+
+    private static List<LyricSlice> BuildLyricSlices(
+        Dictionary<double, LyricSliceGroup> groupedLyrics,
+        TimeSpan duration
+    )
+    {
+        var sortedGroups = groupedLyrics.AsValueEnumerable().OrderBy(t => t.Key).ToList();
+        var sortedSlices = new List<LyricSlice>(sortedGroups.Count);
+
+        for (var i = 0; i < sortedGroups.Count; i++)
+        {
+            var startTime = sortedGroups[i].Key;
+            var group = sortedGroups[i].Value;
+            var slice = new LyricSlice(startTime, string.Join("\n", group.Contents))
             {
-                // 最后一个歌词的EndTime为歌曲总时长
-                sortedSlices[i].EndTime = duration.TotalMilliseconds;
-            }
+                EndTime =
+                    group.EndTime
+                    ?? (
+                        i < sortedGroups.Count - 1
+                            ? sortedGroups[i + 1].Key
+                            : duration.TotalMilliseconds
+                    ),
+            };
+            sortedSlices.Add(slice);
         }
 
         return sortedSlices;

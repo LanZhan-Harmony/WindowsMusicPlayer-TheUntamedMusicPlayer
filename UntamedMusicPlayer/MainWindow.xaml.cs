@@ -233,7 +233,8 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         if (_playBarTimerEnabled)
         {
-            _playBarHideTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+            _playBarHideTimer?.Dispose();
+            _playBarHideTimer = null;
             _playBarTimerEnabled = false;
         }
     }
@@ -274,7 +275,8 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         if (_cursorTimerEnabled)
         {
-            _cursorHideTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+            _cursorHideTimer?.Dispose();
+            _cursorHideTimer = null;
             _cursorTimerEnabled = false;
         }
     }

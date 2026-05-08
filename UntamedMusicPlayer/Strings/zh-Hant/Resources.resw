@@ -1032,9 +1032,6 @@
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>歌詞延遲 0.3 秒</value>
   </data>
-  <data name="Settings_LyricFontSize.Header" xml:space="preserve">
-    <value>字號</value>
-  </data>
   <data name="Settings_LyricPreview.Header" xml:space="preserve">
     <value>預覽</value>
   </data>
@@ -1058,5 +1055,11 @@
   </data>
   <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
     <value>字重</value>
+  </data>
+  <data name="Settings_LyricPageCurrentFontSize.Header" xml:space="preserve">
+    <value>高亮歌詞字號</value>
+  </data>
+  <data name="Settings_LyricPageNotCurrentFontSize.Header" xml:space="preserve">
+    <value>普通歌詞字號</value>
   </data>
 </root>
