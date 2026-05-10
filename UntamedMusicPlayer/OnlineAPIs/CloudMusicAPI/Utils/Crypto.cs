@@ -1,8 +1,9 @@
-#pragma warning disable
+#pragma warning disable IL2026, IL3050
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using ZLinq;
 
 namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Utils;
 
@@ -21,7 +22,7 @@ internal static class Crypto
     {
         var text = JsonSerializer.Serialize(obj);
         var secretKey = RandomNumberGenerator.GetBytes(16);
-        secretKey = [.. secretKey.Select(n => (byte)base62[n % 62])];
+        secretKey = [.. secretKey.AsValueEnumerable().Select(n => (byte)base62[n % 62])];
         return new()
         {
             {

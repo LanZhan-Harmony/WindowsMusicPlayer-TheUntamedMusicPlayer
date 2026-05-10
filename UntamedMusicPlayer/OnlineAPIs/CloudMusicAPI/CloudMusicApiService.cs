@@ -1,4 +1,4 @@
-#pragma warning disable
+#pragma warning disable IL2026, IL3050
 using System.Net;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -15,7 +15,12 @@ public sealed partial class CloudMusicApiService : IDisposable
 {
     private readonly HttpClient _client;
     private readonly HttpClientHandler _clientHandler;
-    private static readonly Dictionary<string, string> _emptyQueries = [];
+
+    [GeneratedRegex(
+        @"<div class=""cver u-cover u-cover-3"">[\s\S]*?<img src=""([^""]+)"">[\s\S]*?<a class=""sname f-fs1 s-fc0"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>[\s\S]*?<a class=""nm nm f-thide s-fc3"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>",
+        RegexOptions.Compiled
+    )]
+    private static partial Regex RelatedPlaylistRegex();
 
     public CloudMusicApiService()
     {
@@ -79,7 +84,15 @@ public sealed partial class CloudMusicApiService : IDisposable
         ArgumentNullException.ThrowIfNull(options);
 
         var (isOk, json) = await Request.CreateRequest(_client, method, url, data, options);
-        json = (JsonObject)json["body"];
+        if (json["body"] is not JsonObject body)
+        {
+            return (
+                false,
+                new JsonObject { { "code", 500 }, { "msg", "响应格式错误：body 不是对象" } }
+            );
+        }
+
+        json = body;
         if (!isOk && (int?)json["code"] == 301)
         {
             json["msg"] = "需要登录";
@@ -88,9 +101,7 @@ public sealed partial class CloudMusicApiService : IDisposable
         return (isOk, json);
     }
 
-    private async Task<(bool, JsonObject?)> HandleCheckMusicAsync(
-        Dictionary<string, string> queries
-    )
+    private async Task<(bool, JsonObject)> HandleCheckMusicAsync(Dictionary<string, string> queries)
     {
         var provider = CloudMusicApiProviders.CheckMusic;
 
@@ -102,7 +113,7 @@ public sealed partial class CloudMusicApiService : IDisposable
         );
         if (!isOk)
         {
-            return (false, null);
+            return (false, json);
         }
 
         var playable =
@@ -118,7 +129,7 @@ public sealed partial class CloudMusicApiService : IDisposable
         return (true, result);
     }
 
-    private async Task<(bool, JsonObject?)> HandleLoginAsync(Dictionary<string, string> queries)
+    private async Task<(bool, JsonObject)> HandleLoginAsync(Dictionary<string, string> queries)
     {
         var provider = CloudMusicApiProviders.Login;
 
@@ -130,7 +141,7 @@ public sealed partial class CloudMusicApiService : IDisposable
         );
         if (!isOk)
         {
-            return (false, null);
+            return (false, json);
         }
 
         if ((int?)json["code"] == 502)
@@ -155,7 +166,7 @@ public sealed partial class CloudMusicApiService : IDisposable
             const string GBINDS = "GBinds=";
 
             response = await _client.GetAsync("https://music.163.com");
-            var s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+            var s = await response.Content.ReadAsStringAsync();
             var index = s.IndexOf(GUSER, StringComparison.Ordinal);
             if (index == -1)
             {
@@ -211,24 +222,25 @@ public sealed partial class CloudMusicApiService : IDisposable
             var s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
             var matchs = RelatedPlaylistRegex().Matches(s);
             var playlists = new JsonArray();
-            matchs
-                .Cast<Match>()
-                .Select(match => new JsonObject
-                {
+            foreach (Match match in matchs)
+            {
+                playlists.Add(
+                    new JsonObject
                     {
-                        "creator",
-                        new JsonObject
                         {
-                            { "userId", match.Groups[4].Value["/user/home?id=".Length..] },
-                            { "nickname", match.Groups[5].Value },
-                        }
-                    },
-                    { "coverImgUrl", match.Groups[1].Value[..^"?param=50y50".Length] },
-                    { "name", match.Groups[3].Value },
-                    { "id", match.Groups[2].Value["/playlist?id=".Length..] },
-                })
-                .ToList()
-                .ForEach(obj => playlists.Add(obj));
+                            "creator",
+                            new JsonObject
+                            {
+                                { "userId", match.Groups[4].Value["/user/home?id=".Length..] },
+                                { "nickname", match.Groups[5].Value },
+                            }
+                        },
+                        { "coverImgUrl", match.Groups[1].Value[..^"?param=50y50".Length] },
+                        { "name", match.Groups[3].Value },
+                        { "id", match.Groups[2].Value["/playlist?id=".Length..] },
+                    }
+                );
+            }
 
             return (true, new JsonObject { { "code", 200 }, { "playlists", playlists } });
         }
@@ -247,10 +259,4 @@ public sealed partial class CloudMusicApiService : IDisposable
         _clientHandler.Dispose();
         _client.Dispose();
     }
-
-    [GeneratedRegex(
-        @"<div class=""cver u-cover u-cover-3"">[\s\S]*?<img src=""([^""]+)"">[\s\S]*?<a class=""sname f-fs1 s-fc0"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>[\s\S]*?<a class=""nm nm f-thide s-fc3"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>",
-        RegexOptions.Compiled
-    )]
-    private static partial Regex RelatedPlaylistRegex();
 }

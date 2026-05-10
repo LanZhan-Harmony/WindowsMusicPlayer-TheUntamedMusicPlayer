@@ -1,4 +1,4 @@
-#pragma warning disable
+#pragma warning disable IL2026, IL3050
 using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -16,44 +16,22 @@ public sealed class CloudMusicApiProvider
     private static readonly IEnumerable<KeyValuePair<string, string>> _emptyData = [];
 
     private readonly string _route;
-    private readonly ParameterInfo[] _parameterInfos;
-    private readonly HttpMethod _method;
-    private readonly Options _options;
-    private readonly Func<Dictionary<string, string>, string> _url;
-    private Func<
-        Dictionary<string, string>,
-        IEnumerable<KeyValuePair<string, string>>
-    > _dataProvider;
-
-    /// <summary />
-    public string Route => _route;
-
-    internal HttpMethod Method => _method;
-
-    internal Func<Dictionary<string, string>, string> Url => _url;
-
-    internal Func<Dictionary<string, string>, IEnumerable<KeyValuePair<string, string>>> Data =>
-        _dataProvider ?? GetData;
-
-    internal Options Options => _options;
-
-    internal Func<
-        Dictionary<string, string>,
-        IEnumerable<KeyValuePair<string, string>>
-    > DataProvider
+    private readonly ParameterInfo[] _parameterInfos = [];
+    internal HttpMethod Method { get; init; } = HttpMethod.Get;
+    internal Options Options { get; init; } = new();
+    internal Func<Dictionary<string, string>, string> Url { get; init; } = static _ => "";
+    internal Func<Dictionary<string, string>, IEnumerable<KeyValuePair<string, string>>> Data
     {
-        get => _dataProvider;
-        set => _dataProvider = value;
+        get;
+        set => field = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     internal CloudMusicApiProvider(string name)
     {
-        if (string.IsNullOrEmpty(name))
-        {
-            throw new ArgumentNullException(nameof(name));
-        }
+        ArgumentException.ThrowIfNullOrEmpty(name);
 
         _route = name;
+        Data = GetData;
     }
 
     internal CloudMusicApiProvider(
@@ -64,31 +42,28 @@ public sealed class CloudMusicApiProvider
         Options options
     )
     {
-        if (string.IsNullOrEmpty(name))
-        {
-            throw new ArgumentNullException(nameof(name));
-        }
-
+        ArgumentException.ThrowIfNullOrEmpty(name);
         ArgumentNullException.ThrowIfNull(method);
         ArgumentNullException.ThrowIfNull(url);
         ArgumentNullException.ThrowIfNull(parameterInfos);
         ArgumentNullException.ThrowIfNull(options);
 
         _route = name;
-        _method = method;
-        _url = url;
         _parameterInfos = parameterInfos;
-        _options = options;
+        Method = method;
+        Url = url;
+        Options = options;
+        Data = GetData;
     }
 
     private IEnumerable<KeyValuePair<string, string>> GetData(Dictionary<string, string> queries)
     {
-        var data = new QueryCollection();
-
         if (_parameterInfos.Length == 0)
         {
             return _emptyData;
         }
+
+        var data = new QueryCollection(_parameterInfos.Length);
 
         foreach (var parameterInfo in _parameterInfos)
         {
@@ -105,14 +80,20 @@ public sealed class CloudMusicApiProvider
                         parameterInfo.Key,
                         queries.TryGetValue(parameterInfo.GetForwardedKey(), out var value)
                             ? parameterInfo.GetRealValue(value)
-                            : parameterInfo.DefaultValue
+                            : parameterInfo.DefaultValue ?? ""
                     );
                     break;
                 case ParameterType.Constant:
-                    data.Add(parameterInfo.Key, parameterInfo.DefaultValue);
+                    data.Add(parameterInfo.Key, parameterInfo.DefaultValue ?? "");
                     break;
                 case ParameterType.SpecialHandle:
-                    data.Add(parameterInfo.Key, parameterInfo.SpecialHandler(queries));
+                    data.Add(
+                        parameterInfo.Key,
+                        parameterInfo.SpecialHandler?.Invoke(queries)
+                            ?? throw new InvalidOperationException(
+                                $"Special handler is not configured for parameter '{parameterInfo.Key}'."
+                            )
+                    );
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(parameterInfo));
@@ -133,22 +114,21 @@ public sealed class CloudMusicApiProvider
         SpecialHandle,
     }
 
-    internal sealed class ParameterInfo(string key, ParameterType type, string defaultValue)
+    internal sealed class ParameterInfo(string key, ParameterType type, string? defaultValue)
     {
-        public string Key = key;
-        public ParameterType Type = type;
-        public string DefaultValue = defaultValue;
-        public string KeyForwarding;
-        public Func<string, string> Transformer;
-        public Func<Dictionary<string, string>, string> SpecialHandler;
+        public string Key { get; } = key;
+        public ParameterType Type { get; } = type;
+        public string? DefaultValue { get; } = defaultValue;
+        public string? KeyForwarding { get; init; }
+        public Func<string, string>? Transformer { get; init; }
+        public Func<Dictionary<string, string>, string>? SpecialHandler { get; init; }
 
         public ParameterInfo(string key)
             : this(key, ParameterType.Required, null) { }
 
         public string GetForwardedKey() => KeyForwarding ?? Key;
 
-        public string GetRealValue(string value) =>
-            Transformer is null ? value : Transformer(value);
+        public string GetRealValue(string value) => Transformer?.Invoke(value) ?? value;
     }
 }
 
@@ -157,6 +137,9 @@ public sealed class CloudMusicApiProvider
 /// </summary>
 public static partial class CloudMusicApiProviders
 {
+    [GeneratedRegex(@"^\d+$", RegexOptions.Compiled)]
+    private static partial Regex DigitsOnlyRegex();
+
     /// <summary>
     /// 初始化昵称
     /// </summary>
@@ -273,10 +256,7 @@ public static partial class CloudMusicApiProviders
         q => "https://music.163.com/weapi/artist/list",
         [
             new("categoryCode", ParameterType.Optional, "1001") { KeyForwarding = "cat" },
-            new("initial", ParameterType.Optional, string.Empty)
-            {
-                Transformer = t => $"{((int)t[0])}",
-            },
+            new("initial", ParameterType.Optional, "") { Transformer = t => $"{((int)t[0])}" },
             new("offset", ParameterType.Optional, "0"),
             new("limit", ParameterType.Optional, "30"),
             new("total", ParameterType.Constant, "true"),
@@ -368,7 +348,7 @@ public static partial class CloudMusicApiProviders
         BuildOptions("eapi", null, null, "/api/batch")
     )
     {
-        DataProvider = queries =>
+        Data = queries =>
         {
             QueryCollection data;
 
@@ -420,7 +400,7 @@ public static partial class CloudMusicApiProviders
         q => "http://music.163.com/eapi/cellphone/existence/check",
         [
             new("cellphone") { KeyForwarding = "phone" },
-            new("countrycode", ParameterType.Optional, string.Empty),
+            new("countrycode", ParameterType.Optional, ""),
         ],
         BuildOptions("eapi", null, null, "/api/cellphone/existence/check")
     );
@@ -451,7 +431,7 @@ public static partial class CloudMusicApiProviders
         BuildOptions("weapi", [new("os", "pc")])
     )
     {
-        DataProvider = queries =>
+        Data = queries =>
         {
             QueryCollection data;
 
@@ -1045,7 +1025,7 @@ public static partial class CloudMusicApiProviders
         q => "https://music.163.com/weapi/login/cellphone",
         [
             new("phone"),
-            new("countrycode", ParameterType.Optional, string.Empty),
+            new("countrycode", ParameterType.Optional, ""),
             new("password")
             {
                 Transformer = t => t.ToByteArrayUtf8().ComputeMd5().ToHexStringLower(),
@@ -1227,7 +1207,7 @@ public static partial class CloudMusicApiProviders
         HttpMethod.Post,
         q => "https://interface.music.163.com/weapi/mv/first",
         [
-            new("area", ParameterType.Optional, string.Empty),
+            new("area", ParameterType.Optional, ""),
             new("limit", ParameterType.Optional, "30"),
             new("total", ParameterType.Constant, "true"),
         ],
@@ -1362,7 +1342,7 @@ public static partial class CloudMusicApiProviders
         "/playlist/create",
         HttpMethod.Post,
         q => "https://music.163.com/weapi/playlist/create",
-        [new("name"), new("privacy", ParameterType.Optional, string.Empty)],
+        [new("name"), new("privacy", ParameterType.Optional, "")],
         BuildOptions("weapi", [new("os", "pc")])
     );
 
@@ -1485,7 +1465,7 @@ public static partial class CloudMusicApiProviders
         BuildOptions("weapi", [new("os", "pc")])
     )
     {
-        DataProvider = queries => new QueryCollection
+        Data = queries => new QueryCollection
         {
             {
                 "/api/playlist/update/name",
@@ -1530,7 +1510,7 @@ public static partial class CloudMusicApiProviders
         HttpMethod.Post,
         q => "https://music.163.com/weapi/program/recommend/v1",
         [
-            new("cateId", ParameterType.Optional, string.Empty) { KeyForwarding = "type" },
+            new("cateId", ParameterType.Optional, "") { KeyForwarding = "type" },
             new("limit", ParameterType.Optional, "10"),
             new("offset", ParameterType.Optional, "0"),
         ],
@@ -1606,7 +1586,7 @@ public static partial class CloudMusicApiProviders
             new("type")
             {
                 KeyForwarding = "id",
-                Transformer = t => MyRegex().IsMatch(t) ? "0" : "1",
+                Transformer = t => DigitsOnlyRegex().IsMatch(t) ? "0" : "1",
             },
         ],
         BuildOptions("weapi")
@@ -1738,7 +1718,7 @@ public static partial class CloudMusicApiProviders
         "/search/suggest",
         HttpMethod.Post,
         q =>
-            $"https://music.163.com/weapi/search/suggest/{(q.GetValueOrDefault("type", null) == "mobile" ? "keyword" : "web")}",
+            $"https://music.163.com/weapi/search/suggest/{(q.TryGetValue("type", out var suggestType) && suggestType == "mobile" ? "keyword" : "web")}",
         [new("s") { KeyForwarding = "keywords" }],
         BuildOptions("weapi")
     );
@@ -1753,7 +1733,7 @@ public static partial class CloudMusicApiProviders
         [
             new("userIds") { KeyForwarding = "user_ids", Transformer = JsonArrayTransformer },
             new("msg"),
-            new("id", ParameterType.Optional, string.Empty) { KeyForwarding = "playlist" },
+            new("id", ParameterType.Optional, "") { KeyForwarding = "playlist" },
             new("type", ParameterType.Constant, "playlist"),
         ],
         BuildOptions("weapi", [new("os", "pc")])
@@ -1769,7 +1749,7 @@ public static partial class CloudMusicApiProviders
         [
             new("userIds") { KeyForwarding = "user_ids", Transformer = JsonArrayTransformer },
             new("msg"),
-            new("id", ParameterType.Optional, string.Empty) { KeyForwarding = "playlist" },
+            new("id", ParameterType.Optional, "") { KeyForwarding = "playlist" },
             new("type", ParameterType.Constant, "text"),
         ],
         BuildOptions("weapi", [new("os", "pc")])
@@ -1795,8 +1775,8 @@ public static partial class CloudMusicApiProviders
         q => "http://music.163.com/weapi/share/friends/resource",
         [
             new("type", ParameterType.Optional, "song"),
-            new("msg", ParameterType.Optional, string.Empty),
-            new("id", ParameterType.Optional, string.Empty),
+            new("msg", ParameterType.Optional, ""),
+            new("id", ParameterType.Optional, ""),
         ],
         BuildOptions("weapi")
     );
@@ -2000,7 +1980,7 @@ public static partial class CloudMusicApiProviders
         HttpMethod.Post,
         q => "https://music.163.com/weapi/mv/toplist",
         [
-            new("area", ParameterType.Optional, string.Empty),
+            new("area", ParameterType.Optional, ""),
             new("limit", ParameterType.Optional, "30"),
             new("offset", ParameterType.Optional, "0"),
             new("total", ParameterType.Constant, "true"),
@@ -2296,19 +2276,21 @@ public static partial class CloudMusicApiProviders
 
     private static Options BuildOptions(string crypto) => BuildOptions(crypto, null);
 
-    private static Options BuildOptions(string crypto, IEnumerable<Cookie> cookies) =>
+    private static Options BuildOptions(string crypto, IEnumerable<Cookie>? cookies) =>
         BuildOptions(crypto, cookies, null);
 
-    private static Options BuildOptions(string crypto, IEnumerable<Cookie> cookies, string ua) =>
+    private static Options BuildOptions(string crypto, IEnumerable<Cookie>? cookies, string? ua) =>
         BuildOptions(crypto, cookies, ua, null);
 
     private static Options BuildOptions(
         string crypto,
-        IEnumerable<Cookie> cookies,
-        string ua,
-        string url
+        IEnumerable<Cookie>? cookies,
+        string? ua,
+        string? url
     )
     {
+        ArgumentNullException.ThrowIfNull(crypto);
+
         CookieCollection cookieCollection;
         Options options;
 
@@ -2331,11 +2313,10 @@ public static partial class CloudMusicApiProviders
         return options;
     }
 
-    private static string JsonArrayTransformer(string value) =>
-        "[" + value.Replace(" ", string.Empty) + "]";
+    private static string JsonArrayTransformer(string value) => "[" + value.Replace(" ", "") + "]";
 
     private static string JsonArrayTransformer2(string value) =>
-        "[\"" + value.Replace(" ", string.Empty) + "\"]";
+        "[\"" + value.Replace(" ", "") + "\"]";
 
     private static string BannerTypeTransformer(string type)
     {
@@ -2430,7 +2411,4 @@ public static partial class CloudMusicApiProviders
             _ => throw new ArgumentOutOfRangeException(nameof(idx)),
         };
     }
-
-    [GeneratedRegex(@"^\d+$", RegexOptions.Compiled)]
-    private static partial Regex MyRegex();
 }
