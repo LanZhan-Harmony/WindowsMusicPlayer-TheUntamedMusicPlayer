@@ -1,4 +1,4 @@
-#pragma warning disable
+#pragma warning disable IL2026, IL3050
 using System.IO.Compression;
 using System.Net;
 using System.Text;
@@ -29,15 +29,21 @@ internal static partial class Request
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0",
     ];
 
-    public static string ChooseUserAgent(string UA)
+    [GeneratedRegex(@"\w*api", RegexOptions.Compiled)]
+    private static partial Regex ApiTypeRegex();
+
+    [GeneratedRegex(@"\s*Domain=[^(;|$)]+;*", RegexOptions.Compiled)]
+    private static partial Regex CookieDomainRegex();
+
+    public static string ChooseUserAgent(string? ua)
     {
-        return UA switch
+        return ua switch
         {
             "mobile" => userAgentList[Random.Shared.Next(8)],
             "pc" => userAgentList[Random.Shared.Next(6) + 8],
-            _ => string.IsNullOrEmpty(UA)
+            _ => string.IsNullOrEmpty(ua)
                 ? userAgentList[Random.Shared.Next(userAgentList.Length)]
-                : UA,
+                : ua,
         };
     }
 
@@ -55,27 +61,25 @@ internal static partial class Request
         ArgumentNullException.ThrowIfNull(data_);
         ArgumentNullException.ThrowIfNull(options);
 
-        var headers = new Dictionary<string, string>
+        var headers = new Dictionary<string, string>(3)
         {
             ["User-Agent"] = ChooseUserAgent(options.UA),
-            ["Cookie"] = string.Join(
-                "; ",
-                options
-                    .Cookie.Cast<Cookie>()
-                    .Select(t => Uri.EscapeDataString(t.Name) + "=" + Uri.EscapeDataString(t.Value))
-            ),
+            ["Cookie"] = BuildCookieHeader(options.Cookie),
         };
+
         if (method == HttpMethod.Post)
         {
             headers["Content-Type"] = "application/x-www-form-urlencoded";
         }
 
-        if (url.Contains("music.163.com"))
+        if (url.Contains("music.163.com", StringComparison.Ordinal))
         {
             headers["Referer"] = "https://music.163.com";
         }
 
-        var data = new Dictionary<string, string>();
+        var data = data_ is ICollection<KeyValuePair<string, string>> dataCollection
+            ? new Dictionary<string, string>(dataCollection.Count)
+            : [];
         foreach (var item in data_)
         {
             data.Add(item.Key, item.Value);
@@ -84,19 +88,16 @@ internal static partial class Request
         switch (options.Crypto)
         {
             case "weapi":
-            {
-                data["csrf_token"] = options.Cookie["__csrf"]?.Value ?? string.Empty;
+                data["csrf_token"] = options.Cookie["__csrf"]?.Value ?? "";
                 data = Crypto.WEApi(data);
-                url = MyRegex1().Replace(url, "weapi");
+                url = ApiTypeRegex().Replace(url, "weapi");
                 break;
-            }
             case "linuxapi":
-            {
                 data = Crypto.LinuxApi(
                     new Dictionary<string, object>
                     {
                         { "method", method.Method },
-                        { "url", MyRegex1().Replace(url, "api") },
+                        { "url", ApiTypeRegex().Replace(url, "api") },
                         { "params", data },
                     }
                 );
@@ -104,27 +105,22 @@ internal static partial class Request
                     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36";
                 url = "https://music.163.com/api/linux/forward";
                 break;
-            }
             case "eapi":
             {
-                CookieCollection cookie;
-                string csrfToken;
-                Dictionary<string, string> header;
-
-                cookie = [];
+                var cookie = new CookieCollection();
                 foreach (Cookie item in options.Cookie)
                 {
                     cookie.Add(new Cookie(item.Name, item.Value));
                 }
 
-                csrfToken = cookie["__csrf"]?.Value ?? string.Empty;
-                header = new Dictionary<string, string>()
+                var csrfToken = cookie["__csrf"]?.Value ?? "";
+                var header = new Dictionary<string, string>(12)
                 {
-                    { "osver", cookie["osver"]?.Value ?? string.Empty }, // 系统版本
-                    { "deviceId", cookie["deviceId"]?.Value ?? string.Empty }, // encrypt.base64.encode(imei + '\t02:00:00:00:00:00\t5106025eb79a5247\t70ffbaac7')
+                    { "osver", cookie["osver"]?.Value ?? "" }, // 系统版本
+                    { "deviceId", cookie["deviceId"]?.Value ?? "" }, // encrypt.base64.encode(imei + '\t02:00:00:00:00:00\t5106025eb79a5247\t70ffbaac7')
                     { "appver", cookie["appver"]?.Value ?? "6.1.1" }, // app版本
                     { "versioncode", cookie["versioncode"]?.Value ?? "140" }, // 版本号
-                    { "mobilename", cookie["mobilename"]?.Value ?? string.Empty }, // 设备model
+                    { "mobilename", cookie["mobilename"]?.Value ?? "" }, // 设备model
                     {
                         "buildver",
                         cookie["buildver"]?.Value ?? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}"
@@ -132,34 +128,30 @@ internal static partial class Request
                     { "resolution", cookie["resolution"]?.Value ?? "1920x1080" }, // 设备分辨率
                     { "__csrf", csrfToken },
                     { "os", cookie["os"]?.Value ?? "android" },
-                    { "channel", cookie["channel"]?.Value ?? string.Empty },
+                    { "channel", cookie["channel"]?.Value ?? "" },
                     {
                         "requestId",
                         $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}_{Random.Shared.Next(1000):D4}"
                     },
                 };
-                if (cookie["MUSIC_U"] is not null)
+                if (cookie["MUSIC_U"] is Cookie musicUCookie)
                 {
-                    header["MUSIC_U"] = cookie["MUSIC_U"].Value;
+                    header["MUSIC_U"] = musicUCookie.Value;
                 }
 
-                if (cookie["MUSIC_A"] is not null)
+                if (cookie["MUSIC_A"] is Cookie musicACookie)
                 {
-                    header["MUSIC_A"] = cookie["MUSIC_A"].Value;
+                    header["MUSIC_A"] = musicACookie.Value;
                 }
 
-                headers["Cookie"] = string.Join(
-                    "; ",
-                    header.Select(t =>
-                        Uri.EscapeDataString(t.Key) + "=" + Uri.EscapeDataString(t.Value)
-                    )
-                );
+                headers["Cookie"] = BuildCookieHeader(header);
                 data["header"] = JsonSerializer.Serialize(header);
-                data = Crypto.EApi(options.Url, data);
-                url = MyRegex1().Replace(url, "eapi");
+                data = Crypto.EApi(options.Url ?? "", data);
+                url = ApiTypeRegex().Replace(url, "eapi");
                 break;
             }
         }
+
         var answer = new JsonObject
         {
             { "status", 500 },
@@ -170,8 +162,7 @@ internal static partial class Request
         HttpResponseMessage? response = null;
         try
         {
-            JsonValue temp2;
-            int temp3;
+            var statusCode = 500;
 
             response = await client.SendAsync(
                 method,
@@ -186,18 +177,22 @@ internal static partial class Request
                 throw new HttpRequestException();
             }
 
-            if (!response.Headers.TryGetValues("set-cookie", out var temp1))
+            if (!response.Headers.TryGetValues("set-cookie", out var responseCookies))
             {
-                temp1 = [];
+                responseCookies = [];
             }
 
             var cookieArray = new JsonArray();
-            temp1
-                .Select(x => MyRegex2().Replace(x, string.Empty))
-                .Where(x => !string.IsNullOrEmpty(x))
-                .ToList()
-                .ForEach(x => cookieArray.Add(x));
+            foreach (var rawCookie in responseCookies)
+            {
+                var cookieValue = CookieDomainRegex().Replace(rawCookie, "");
+                if (!string.IsNullOrEmpty(cookieValue))
+                {
+                    cookieArray.Add(JsonValue.Create(cookieValue));
+                }
+            }
             answer["cookie"] = cookieArray;
+
             if (options.Crypto == "eapi")
             {
                 byte[] buffer;
@@ -215,34 +210,43 @@ internal static partial class Request
                 {
                     buffer = await response.Content.ReadAsByteArrayAsync();
                 }
+
                 try
                 {
                     answer["body"] = JsonObject.Parse(
                         Encoding.UTF8.GetString(Crypto.Decrypt(buffer))
                     );
-                    temp2 = (JsonValue)answer["body"]["code"];
-                    answer["status"] = temp2 is null ? (int)response.StatusCode : (int)temp2;
                 }
                 catch
                 {
                     answer["body"] = JsonObject.Parse(Encoding.UTF8.GetString(buffer));
-                    answer["status"] = (int)response.StatusCode;
                 }
+
+                statusCode =
+                    answer["body"] is JsonObject eapiBody
+                    && eapiBody["code"] is JsonValue eapiCode
+                    && eapiCode.TryGetValue<int>(out var eapiCodeInt)
+                        ? eapiCodeInt
+                        : (int)response.StatusCode;
             }
             else
             {
                 answer["body"] = JsonObject.Parse(await response.Content.ReadAsStringAsync());
-                temp2 = (JsonValue)answer["body"]["code"];
-                answer["status"] = temp2 is null ? (int)response.StatusCode : (int)temp2;
-                if (temp2 is not null && (int)temp2 == 502)
+                statusCode =
+                    answer["body"] is JsonObject body
+                    && body["code"] is JsonValue code
+                    && code.TryGetValue<int>(out var codeInt)
+                        ? codeInt
+                        : (int)response.StatusCode;
+                if (statusCode == 502)
                 {
-                    answer["status"] = 200;
+                    statusCode = 200;
                 }
             }
-            temp3 = (int)answer["status"];
-            temp3 = 100 < temp3 && temp3 < 600 ? temp3 : 400;
-            answer["status"] = temp3;
-            return (temp3 == 200, answer);
+
+            statusCode = 100 < statusCode && statusCode < 600 ? statusCode : 400;
+            answer["status"] = statusCode;
+            return (statusCode == 200, answer);
         }
         catch (Exception ex)
         {
@@ -256,9 +260,39 @@ internal static partial class Request
         }
     }
 
-    [GeneratedRegex(@"\w*api", RegexOptions.Compiled)]
-    private static partial Regex MyRegex1();
+    private static string BuildCookieHeader(CookieCollection cookies)
+    {
+        var sb = new StringBuilder();
+        foreach (Cookie cookie in cookies)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append("; ");
+            }
 
-    [GeneratedRegex(@"\s*Domain=[^(;|$)]+;*", RegexOptions.Compiled)]
-    private static partial Regex MyRegex2();
+            sb.Append(Uri.EscapeDataString(cookie.Name));
+            sb.Append('=');
+            sb.Append(Uri.EscapeDataString(cookie.Value));
+        }
+
+        return sb.ToString();
+    }
+
+    private static string BuildCookieHeader(Dictionary<string, string> cookies)
+    {
+        var sb = new StringBuilder();
+        foreach (var (key, value) in cookies)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append("; ");
+            }
+
+            sb.Append(Uri.EscapeDataString(key));
+            sb.Append('=');
+            sb.Append(Uri.EscapeDataString(value));
+        }
+
+        return sb.ToString();
+    }
 }

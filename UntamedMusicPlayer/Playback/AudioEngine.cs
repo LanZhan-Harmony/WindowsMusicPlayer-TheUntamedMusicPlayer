@@ -400,11 +400,14 @@ public sealed partial class AudioEngine : IDisposable
         if (position >= 0)
         {
             var tcs = new TaskCompletionSource<bool>();
-            _dispatcher.TryEnqueue(() =>
-            {
-                _state.CurrentPlayingTime = TimeSpan.FromSeconds(position);
-                tcs.SetResult(true);
-            });
+            _dispatcher.TryEnqueue(
+                DispatcherQueuePriority.High,
+                () =>
+                {
+                    _state.CurrentPlayingTime = TimeSpan.FromSeconds(position);
+                    tcs.SetResult(true);
+                }
+            );
             await tcs.Task;
         }
     }

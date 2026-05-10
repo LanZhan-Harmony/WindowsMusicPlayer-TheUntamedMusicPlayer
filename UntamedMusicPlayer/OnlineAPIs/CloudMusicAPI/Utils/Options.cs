@@ -4,8 +4,8 @@ namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Utils;
 
 internal sealed class Options
 {
-    public string Crypto { get; set; } = null!;
-    public CookieCollection Cookie { get; set; } = null!;
-    public string UA { get; set; } = null!;
-    public string Url { get; set; } = null!;
+    public string Crypto { get; set; } = "";
+    public CookieCollection Cookie { get; set; } = [];
+    public string? UA { get; set; }
+    public string? Url { get; set; }
 }

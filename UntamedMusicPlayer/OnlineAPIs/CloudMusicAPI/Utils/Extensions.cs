@@ -1,4 +1,3 @@
-#pragma warning disable
 using System.Security.Cryptography;
 using System.Text;
 
@@ -22,12 +21,8 @@ internal static class Extensions
         public byte[] ComputeMd5() => MD5.HashData(value);
     }
 
-    extension(Random random)
-    {
-        public byte[] RandomBytes(int length) => RandomNumberGenerator.GetBytes(length);
-    }
-
     extension<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
+        where TKey : notnull
     {
         public TValue GetValueOrDefault(TKey key, TValue defaultValue) =>
             dictionary.TryGetValue(key, out var value) ? value : defaultValue;

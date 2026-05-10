@@ -1,4 +1,4 @@
-#pragma warning disable
+#pragma warning disable IL2026
 using System.Text;
 
 namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Extensions;
