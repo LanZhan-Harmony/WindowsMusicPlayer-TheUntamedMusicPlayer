@@ -374,7 +374,9 @@ public sealed partial class PlayQueueManager : ObservableObject, IDisposable
     {
         try
         {
-            (NormalPlayQueue, ShuffledPlayQueue) = await FileManager.LoadPlayQueueDataAsync();
+            (NormalPlayQueue, ShuffledPlayQueue) = await Task.Run(() =>
+                FileManager.LoadPlayQueueDataAsync()
+            );
             _state.PlayQueueCount = NormalPlayQueue.Count;
             if (_state.PlayQueueCount == 0)
             {

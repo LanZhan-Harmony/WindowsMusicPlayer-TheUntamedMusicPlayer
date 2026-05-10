@@ -22,7 +22,7 @@ public sealed partial class PlaylistLibrary : ObservableRecipient
 
     public async Task LoadLibraryAsync()
     {
-        Playlists = await FileManager.LoadPlaylistDataAsync();
+        Playlists = await Task.Run(() => FileManager.LoadPlaylistDataAsync());
         HasLoaded = true;
         CoverManager.ForceAllPlaylistCoversRefresh();
         Messenger.Send(new HavePlaylistMessage(Playlists.Count > 0));

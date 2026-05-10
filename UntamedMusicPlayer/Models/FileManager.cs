@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using MemoryPack;
 using Microsoft.Extensions.Logging;
@@ -8,7 +7,6 @@ using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Services;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using ZLogger;
 
 namespace UntamedMusicPlayer.Models;
@@ -52,20 +50,38 @@ public static class FileManager
                 {
                     folderFingerprints[folder] = GetFolderFingerprintFast(folder);
                 }
-                await SaveObjectToFileAsync(
+                // NativeAOT 修复: 使用 AotSafeSerializer（struct BufferWriter）序列化，
+                // 避免 MemoryPack 内部 GVM 共享泛型分派表冲突导致的崩溃
+                await SaveBytesToFileAsync(
                     libraryFolder,
                     "FolderFingerprints",
-                    folderFingerprints
+                    MemoryPackAotSerializer.Serialize(folderFingerprints)
                 );
 
-                var songsTask = SaveObjectToFileAsync(libraryFolder, "Songs", songs); // 保存歌曲列表
-                var albumsTask = SaveObjectToFileAsync(libraryFolder, "Albums", albums); // 保存专辑数据
-                var artistsTask = SaveObjectToFileAsync(libraryFolder, "Artists", artists); // 保存艺术家数据
-                var genresTask = SaveObjectToFileAsync(libraryFolder, "Genres", genres); // 保存流派列表
-                var musicFoldersTask = SaveObjectToFileAsync(
+                var songsTask = SaveBytesToFileAsync(
+                    libraryFolder,
+                    "Songs",
+                    MemoryPackAotSerializer.Serialize(songs)
+                ); // 保存歌曲列表
+                var albumsTask = SaveBytesToFileAsync(
+                    libraryFolder,
+                    "Albums",
+                    MemoryPackAotSerializer.Serialize(albums)
+                ); // 保存专辑数据
+                var artistsTask = SaveBytesToFileAsync(
+                    libraryFolder,
+                    "Artists",
+                    MemoryPackAotSerializer.Serialize(artists)
+                ); // 保存艺术家数据
+                var genresTask = SaveBytesToFileAsync(
+                    libraryFolder,
+                    "Genres",
+                    MemoryPackAotSerializer.Serialize(genres)
+                ); // 保存流派列表
+                var musicFoldersTask = SaveBytesToFileAsync(
                     libraryFolder,
                     "MusicFolders",
-                    musicFolders
+                    MemoryPackAotSerializer.Serialize(musicFolders)
                 ); // 保存音乐文件夹列表
 
                 await Task.WhenAll(
@@ -97,17 +113,24 @@ public static class FileManager
         {
             try
             {
+                var normalData = MemoryPackAotSerializer.Serialize(normalPlayQueue);
+                var shuffledData = MemoryPackAotSerializer.Serialize(shuffledPlayQueue);
                 var playQueueFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
                     "PlayQueueData",
                     CreationCollisionOption.OpenIfExists
                 );
 
-                await SaveObjectToFileAsync(playQueueFolder, "NormalPlayQueue", normalPlayQueue); // 保存播放队列
-                await SaveObjectToFileAsync(
+                var normalQueueTask = SaveBytesToFileAsync(
+                    playQueueFolder,
+                    "NormalPlayQueue",
+                    normalData
+                ); // 保存播放队列
+                var shuffledQueueTask = SaveBytesToFileAsync(
                     playQueueFolder,
                     "ShuffledPlayQueue",
-                    shuffledPlayQueue
+                    shuffledData
                 ); // 保存随机播放队列
+                await Task.WhenAll(normalQueueTask, shuffledQueueTask);
             }
             catch (Exception ex)
             {
@@ -126,12 +149,13 @@ public static class FileManager
         {
             try
             {
+                var playlistData = MemoryPackAotSerializer.Serialize(playlists);
                 var playlistFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
                     "PlaylistData",
                     CreationCollisionOption.OpenIfExists
                 );
 
-                await SaveObjectToFileAsync(playlistFolder, "Playlists", playlists); // 保存播放列表
+                await SaveBytesToFileAsync(playlistFolder, "Playlists", playlistData); // 保存播放列表
             }
             catch (Exception ex)
             {
@@ -195,10 +219,14 @@ public static class FileManager
             }
 
             // 读取保存的文件夹指纹
-            var savedFingerprints = await LoadObjectFromFileAsync<Dictionary<string, string>>(
+            // NativeAOT 修复: 先加载原始字节，再在具体调用点反序列化
+            var fingerprintBytes = await LoadBytesFromFileAsync(
                 libraryFolder,
                 "FolderFingerprints"
             );
+            var savedFingerprints = fingerprintBytes is null
+                ? null
+                : MemoryPackSerializer.Deserialize<Dictionary<string, string>>(fingerprintBytes);
             if (savedFingerprints is null)
             {
                 return (true, data);
@@ -226,30 +254,45 @@ public static class FileManager
             }
 
             // 并行加载所有数据文件
-            var songsTask = LoadObjectFromFileAsync<ConcurrentBag<BriefLocalSongInfo>>(
-                libraryFolder,
-                "Songs"
-            );
-            var albumsTask = LoadObjectFromFileAsync<ConcurrentDictionary<string, LocalAlbumInfo>>(
-                libraryFolder,
-                "Albums"
-            );
-            var artistsTask = LoadObjectFromFileAsync<
-                ConcurrentDictionary<string, LocalArtistInfo>
-            >(libraryFolder, "Artists");
-            var genresTask = LoadObjectFromFileAsync<List<string>>(libraryFolder, "Genres");
-            var musicFoldersTask = LoadObjectFromFileAsync<ConcurrentDictionary<string, byte>>(
-                libraryFolder,
-                "MusicFolders"
-            );
+            var songsTask = LoadBytesFromFileAsync(libraryFolder, "Songs");
+            var albumsTask = LoadBytesFromFileAsync(libraryFolder, "Albums");
+            var artistsTask = LoadBytesFromFileAsync(libraryFolder, "Artists");
+            var genresTask = LoadBytesFromFileAsync(libraryFolder, "Genres");
+            var musicFoldersTask = LoadBytesFromFileAsync(libraryFolder, "MusicFolders");
 
             await Task.WhenAll(songsTask, albumsTask, artistsTask, genresTask, musicFoldersTask);
 
-            var songsList = songsTask.Result;
-            var albumsDict = albumsTask.Result;
-            var artistsDict = artistsTask.Result;
-            var genresList = genresTask.Result;
-            var musicFoldersDict = musicFoldersTask.Result;
+            var songsBytes = songsTask.Result;
+            var albumsBytes = albumsTask.Result;
+            var artistsBytes = artistsTask.Result;
+            var genresBytes = genresTask.Result;
+            var musicFoldersBytes = musicFoldersTask.Result;
+
+            if (
+                songsBytes is null
+                || albumsBytes is null
+                || artistsBytes is null
+                || genresBytes is null
+                || musicFoldersBytes is null
+            )
+            {
+                return (true, data);
+            }
+
+            // NativeAOT 修复: 在具体调用点反序列化
+            var songsList = MemoryPackSerializer.Deserialize<ConcurrentBag<BriefLocalSongInfo>>(
+                songsBytes
+            );
+            var albumsDict = MemoryPackSerializer.Deserialize<
+                ConcurrentDictionary<string, LocalAlbumInfo>
+            >(albumsBytes);
+            var artistsDict = MemoryPackSerializer.Deserialize<
+                ConcurrentDictionary<string, LocalArtistInfo>
+            >(artistsBytes);
+            var genresList = MemoryPackSerializer.Deserialize<List<string>>(genresBytes);
+            var musicFoldersDict = MemoryPackSerializer.Deserialize<
+                ConcurrentDictionary<string, byte>
+            >(musicFoldersBytes);
 
             if (
                 songsList is null
@@ -301,17 +344,23 @@ public static class FileManager
                 return ([], []);
             }
 
-            var normalPlayQueuetask = LoadObjectFromFileAsync<
-                ObservableCollection<IndexedPlayQueueSong>
-            >(playQueueFolder, "NormalPlayQueue");
-            var shuffledPlayQueuetask = LoadObjectFromFileAsync<
-                ObservableCollection<IndexedPlayQueueSong>
-            >(playQueueFolder, "ShuffledPlayQueue");
+            var normalBytesTask = LoadBytesFromFileAsync(playQueueFolder, "NormalPlayQueue");
+            var shuffledBytesTask = LoadBytesFromFileAsync(playQueueFolder, "ShuffledPlayQueue");
+            await Task.WhenAll(normalBytesTask, shuffledBytesTask);
 
-            await Task.WhenAll(normalPlayQueuetask, shuffledPlayQueuetask);
+            var normalBytes = normalBytesTask.Result;
+            var shuffledBytes = shuffledBytesTask.Result;
 
-            var normalPlayQueueList = normalPlayQueuetask.Result ?? [];
-            var shuffledPlayQueueList = shuffledPlayQueuetask.Result ?? [];
+            var normalPlayQueueList = normalBytes is null
+                ? []
+                : MemoryPackSerializer.Deserialize<ObservableCollection<IndexedPlayQueueSong>>(
+                    normalBytes
+                ) ?? [];
+            var shuffledPlayQueueList = shuffledBytes is null
+                ? []
+                : MemoryPackSerializer.Deserialize<ObservableCollection<IndexedPlayQueueSong>>(
+                    shuffledBytes
+                ) ?? [];
 
             return (normalPlayQueueList, shuffledPlayQueueList);
         }
@@ -341,10 +390,13 @@ public static class FileManager
             {
                 return await LoadPlaylistDataFromM3u8Async();
             }
-            var playlists = await LoadObjectFromFileAsync<List<PlaylistInfo>>(
-                playlistFolder,
-                "Playlists"
-            );
+
+            var playlistBytes = await LoadBytesFromFileAsync(playlistFolder, "Playlists");
+            if (playlistBytes is null)
+            {
+                return await LoadPlaylistDataFromM3u8Async();
+            }
+            var playlists = MemoryPackSerializer.Deserialize<List<PlaylistInfo>>(playlistBytes);
             if (playlists is null)
             {
                 return await LoadPlaylistDataFromM3u8Async();
@@ -407,18 +459,22 @@ public static class FileManager
     }
 
     /// <summary>
-    /// 使用二进制序列化保存对象到文件
+    /// 保存已序列化的字节数据到文件
     /// </summary>
-    public static async Task SaveObjectToFileAsync<T>(StorageFolder folder, string fileName, T obj)
+    /// <remarks>
+    /// NativeAOT 兼容: 调用方应在具体调用点使用确切类型调用 MemoryPackSerializer.Serialize，
+    /// 而不是在泛型方法内部调用，以避免 GVM 分派链缺失导致的崩溃。
+    /// </remarks>
+    public static async Task SaveBytesToFileAsync(
+        StorageFolder folder,
+        string fileName,
+        byte[] data
+    )
     {
         try
         {
-            var data = MemoryPackSerializer.Serialize(obj);
-            var file = await folder.CreateFileAsync(
-                fileName + ".bin",
-                CreationCollisionOption.ReplaceExisting
-            );
-            await FileIO.WriteBytesAsync(file, data);
+            var filePath = Path.Combine(folder.Path, fileName + ".bin");
+            await File.WriteAllBytesAsync(filePath, data);
         }
         catch (Exception ex)
         {
@@ -427,34 +483,27 @@ public static class FileManager
     }
 
     /// <summary>
-    /// 从文件加载对象
+    /// 从文件加载原始字节数据
     /// </summary>
-    public static async Task<T?> LoadObjectFromFileAsync<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T
-    >(StorageFolder folder, string fileName)
+    /// <remarks>
+    /// NativeAOT 兼容: 调用方应在具体调用点使用确切类型调用 MemoryPackSerializer.Deserialize，
+    /// 而不是在泛型方法内部调用，以避免 GVM 分派链缺失导致的崩溃。
+    /// </remarks>
+    public static async Task<byte[]?> LoadBytesFromFileAsync(StorageFolder folder, string fileName)
     {
         try
         {
-            StorageFile file;
-            try
+            var filePath = Path.Combine(folder.Path, fileName + ".bin");
+            if (!File.Exists(filePath))
             {
-                file = await folder.GetFileAsync(fileName + ".bin");
+                return null;
             }
-            catch
-            {
-                return default;
-            }
-
-            var buffer = await FileIO.ReadBufferAsync(file);
-            var data = new byte[buffer.Length];
-            using var dataReader = DataReader.FromBuffer(buffer);
-            dataReader.ReadBytes(data);
-            return MemoryPackSerializer.Deserialize<T>(data);
+            return await File.ReadAllBytesAsync(filePath);
         }
         catch (Exception ex)
         {
             _logger.ZLogInformation(ex, $"加载对象错误");
-            return default;
+            return null;
         }
     }
 
