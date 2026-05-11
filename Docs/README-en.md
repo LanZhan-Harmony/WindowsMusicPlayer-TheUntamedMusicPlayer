@@ -56,11 +56,21 @@ A modern music player for online and local music streaming
 - **x86** - For 32-bit systems (Less common)
 
 ### System Requirements
+
 Windows 10 2004 or later
 
-## ❗ Important Notes
+## ❓ Troubleshooting
 
-The batch selection function for songs has not been implemented yet. Currently, it is normal that clicking the checkbox in front of a song does not respond.
+- **App fails to open after installation**: Try restarting your computer. If the issue persists, uninstall and reinstall the app. If it still doesn't work, please submit an [Issue](https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer/issues).
+- **File System Error (12007) on launch**: Ensure you are connected to the internet, then uninstall and reinstall the app.
+- **App crashes on startup or frequently**: Please submit an [Issue](https://github.com/LanZhan-Harmony/WindowsMusicPlayer-TheUntamedMusicPlayer/issues).
+- **Acrylic effects not showing**:
+  1. Go to Windows **Settings > Personalization > Colors** and turn on **Transparency effects**. Disable "Battery saver" mode and restart the player.
+  2. In the player's settings, set "Window Material" to **Desktop Acrylic, Acrylic Base or Acrylic Thin**, and lower the opacity.
+- **System settings or new fonts not taking effect**: Please restart the player.
+- **Lyric font changed but Dynamic Lyrics island remains the same**: Toggle the Desktop Lyric (close and reopen).
+- **Mouse cursor auto-hide fails in full-screen lyrics mode**: Disable the Desktop Lyric.
+- **Clicking the checkbox before a song does not respond**: The batch selection feature is not yet implemented. This is currently expected behavior.
 
 ## 📱 Application Interface
 
