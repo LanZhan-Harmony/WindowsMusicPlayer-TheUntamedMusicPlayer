@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using MemoryPack;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -147,7 +148,12 @@ public partial class BriefLocalSongInfo : IBriefSongInfoBase
             HasCover = musicFile.Tag.Pictures.Length != 0;
         }
         catch (Exception ex)
-            when (ex is CorruptFileException or UnsupportedFormatException or ArgumentException)
+            when (ex
+                    is CorruptFileException
+                        or UnsupportedFormatException
+                        or ArgumentException
+                        or SerializationException
+            )
         {
             // 设置默认值
             Title = System.IO.Path.GetFileNameWithoutExtension(path);
