@@ -283,7 +283,12 @@ public sealed class DetailedLocalSongInfo : BriefLocalSongInfo, IDetailedSongInf
             }
         }
         catch (Exception ex)
-            when (ex is CorruptFileException or UnsupportedFormatException or ArgumentException) { }
+            when (ex
+                    is CorruptFileException
+                        or UnsupportedFormatException
+                        or ArgumentException
+                        or SerializationException
+            ) { }
         catch (Exception ex) when (ex is FileNotFoundException)
         {
             IsPlayAvailable = false;
