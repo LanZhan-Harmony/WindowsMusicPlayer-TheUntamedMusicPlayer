@@ -15,6 +15,7 @@
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
+	
 	<ItemGroup>
 		<None Remove="Assets\**\*" />
 		<Content Update="Assets\Cursors\*">
@@ -27,9 +28,11 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+	
 	<ItemGroup>
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
@@ -37,7 +40,7 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="8.2.251219" />
 		<PackageReference Include="hyjiacan.pinyin4net" Version="4.1.1" />
 		<PackageReference Include="MemoryPack" Version="1.21.4" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.8" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.4.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.0.1" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
@@ -48,17 +51,21 @@
 		<PackageReference Include="ZLinq" Version="1.5.6" />
 		<PackageReference Include="ZLogger" Version="2.5.10" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<TrimmerRootAssembly Include="TagLibSharp" />
 	</ItemGroup>
+	
 	<!-- 在此处定义“Msix” ProjectCapability 允许即使尚未还原 Windows App SDK Nuget 包，也可以为此项目激活单项目 MSIX 打包工具扩展。 -->
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
+	
 	<!-- 在此处定义“HasPackageAndPublishMenuAddedByProject”属性允许即使尚未还原 Windows App SDK Nuget 包，也可以为此项目启用解决方案资源管理器“打包和发布”上下文菜单项。 -->
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>True</HasPackageAndPublishMenu>
 	</PropertyGroup>
+	
 	<!-- 发布属性 -->
 	<PropertyGroup>
 		<DefaultLanguage>en</DefaultLanguage>

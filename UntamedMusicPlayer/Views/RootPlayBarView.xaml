@@ -612,6 +612,7 @@
                         <!--  全屏  -->
                         <MenuFlyoutItem x:Name="FullScreenMenu" x:Uid="PlayBar_Menu_FullScreeen"
                                         AccessKey="U"
+                                        Click="{x:Bind ViewModel.FullScreenButton_Click}"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE740;}"
                                         KeyTipPlacementMode="Left">
