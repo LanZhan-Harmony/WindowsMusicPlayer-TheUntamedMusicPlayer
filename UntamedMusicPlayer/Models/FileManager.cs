@@ -50,41 +50,25 @@ public static class FileManager
                 {
                     folderFingerprints[folder] = GetFolderFingerprintFast(folder);
                 }
-                // NativeAOT 修复: 使用 AotSafeSerializer（struct BufferWriter）序列化，
-                // 避免 MemoryPack 内部 GVM 共享泛型分派表冲突导致的崩溃
-                await SaveBytesToFileAsync(
+
+                var fingerprintTask = SaveObjectToFileAsync(
                     libraryFolder,
                     "FolderFingerprints",
-                    MemoryPackAotSerializer.Serialize(folderFingerprints)
+                    folderFingerprints
                 );
 
-                var songsTask = SaveBytesToFileAsync(
-                    libraryFolder,
-                    "Songs",
-                    MemoryPackAotSerializer.Serialize(songs)
-                ); // 保存歌曲列表
-                var albumsTask = SaveBytesToFileAsync(
-                    libraryFolder,
-                    "Albums",
-                    MemoryPackAotSerializer.Serialize(albums)
-                ); // 保存专辑数据
-                var artistsTask = SaveBytesToFileAsync(
-                    libraryFolder,
-                    "Artists",
-                    MemoryPackAotSerializer.Serialize(artists)
-                ); // 保存艺术家数据
-                var genresTask = SaveBytesToFileAsync(
-                    libraryFolder,
-                    "Genres",
-                    MemoryPackAotSerializer.Serialize(genres)
-                ); // 保存流派列表
-                var musicFoldersTask = SaveBytesToFileAsync(
+                var songsTask = SaveObjectToFileAsync(libraryFolder, "Songs", songs); // 保存歌曲列表
+                var albumsTask = SaveObjectToFileAsync(libraryFolder, "Albums", albums); // 保存专辑数据
+                var artistsTask = SaveObjectToFileAsync(libraryFolder, "Artists", artists); // 保存艺术家数据
+                var genresTask = SaveObjectToFileAsync(libraryFolder, "Genres", genres); // 保存流派列表
+                var musicFoldersTask = SaveObjectToFileAsync(
                     libraryFolder,
                     "MusicFolders",
-                    MemoryPackAotSerializer.Serialize(musicFolders)
+                    musicFolders
                 ); // 保存音乐文件夹列表
 
                 await Task.WhenAll(
+                    fingerprintTask,
                     songsTask,
                     albumsTask,
                     artistsTask,
@@ -113,22 +97,20 @@ public static class FileManager
         {
             try
             {
-                var normalData = MemoryPackAotSerializer.Serialize(normalPlayQueue);
-                var shuffledData = MemoryPackAotSerializer.Serialize(shuffledPlayQueue);
                 var playQueueFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
                     "PlayQueueData",
                     CreationCollisionOption.OpenIfExists
                 );
 
-                var normalQueueTask = SaveBytesToFileAsync(
+                var normalQueueTask = SaveObjectToFileAsync(
                     playQueueFolder,
                     "NormalPlayQueue",
-                    normalData
+                    normalPlayQueue
                 ); // 保存播放队列
-                var shuffledQueueTask = SaveBytesToFileAsync(
+                var shuffledQueueTask = SaveObjectToFileAsync(
                     playQueueFolder,
                     "ShuffledPlayQueue",
-                    shuffledData
+                    shuffledPlayQueue
                 ); // 保存随机播放队列
                 await Task.WhenAll(normalQueueTask, shuffledQueueTask);
             }
@@ -149,13 +131,12 @@ public static class FileManager
         {
             try
             {
-                var playlistData = MemoryPackAotSerializer.Serialize(playlists);
                 var playlistFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
                     "PlaylistData",
                     CreationCollisionOption.OpenIfExists
                 );
 
-                await SaveBytesToFileAsync(playlistFolder, "Playlists", playlistData); // 保存播放列表
+                await SaveObjectToFileAsync(playlistFolder, "Playlists", playlists); // 保存播放列表
             }
             catch (Exception ex)
             {
@@ -465,16 +446,25 @@ public static class FileManager
     /// NativeAOT 兼容: 调用方应在具体调用点使用确切类型调用 MemoryPackSerializer.Serialize，
     /// 而不是在泛型方法内部调用，以避免 GVM 分派链缺失导致的崩溃。
     /// </remarks>
-    public static async Task SaveBytesToFileAsync(
+    public static async Task SaveObjectToFileAsync<T>(
         StorageFolder folder,
         string fileName,
-        byte[] data
+        T? value,
+        int initialCapacity = 8192
     )
     {
         try
         {
             var filePath = Path.Combine(folder.Path, fileName + ".bin");
-            await File.WriteAllBytesAsync(filePath, data);
+            await using var stream = new FileStream(
+                filePath,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None,
+                bufferSize: 4096,
+                useAsync: true
+            );
+            await MemoryPackAotSerializer.SerializeToStreamAsync(stream, value, initialCapacity);
         }
         catch (Exception ex)
         {
