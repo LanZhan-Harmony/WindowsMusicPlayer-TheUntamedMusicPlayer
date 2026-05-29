@@ -104,6 +104,14 @@ public struct AotSafeBufferWriter(int initialCapacity) : IBufferWriter<byte>
     }
 
     public readonly byte[] ToArray() => _buffer.AsSpan(0, _written).ToArray();
+
+    public readonly ValueTask WriteToAsync(
+        Stream stream,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return stream.WriteAsync(_buffer.AsMemory(0, _written), cancellationToken);
+    }
 }
 
 /// <summary>
@@ -123,6 +131,9 @@ public struct AotSafeBufferWriter(int initialCapacity) : IBufferWriter<byte>
 /// 值类型泛型参数在 NativeAOT 中永远不会使用 shared generics，
 /// 因此每个 formatter 的 Serialize<AotSafeBufferWriter> 都有自己独立的 GVM 表项，从根本上避免了分派表冲突。
 /// </para>
+/// <para>
+/// 当前默认初始容量设为 8KB，用于覆盖常见的 1KB~5KB 序列化结果，并尽量减少扩容和数组拷贝次数。
+/// </para>
 /// </remarks>
 public static class MemoryPackAotSerializer
 {
@@ -132,8 +143,20 @@ public static class MemoryPackAotSerializer
     /// </summary>
     public static byte[] Serialize<T>(in T? value)
     {
-        var bufferWriter = new AotSafeBufferWriter(1024);
+        var bufferWriter = new AotSafeBufferWriter(8192);
         MemoryPackSerializer.Serialize(bufferWriter, value);
         return bufferWriter.ToArray();
+    }
+
+    public static ValueTask SerializeToStreamAsync<T>(
+        Stream stream,
+        T? value,
+        int initialCapacity = 8192,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var bufferWriter = new AotSafeBufferWriter(initialCapacity);
+        MemoryPackSerializer.Serialize(bufferWriter, value);
+        return bufferWriter.WriteToAsync(stream, cancellationToken);
     }
 }
