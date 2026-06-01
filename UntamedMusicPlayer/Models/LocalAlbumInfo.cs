@@ -123,5 +123,6 @@ public class LocalArtistAlbumInfo(LocalAlbumInfo localAlbumInfo) : IArtistAlbumI
     public string YearStr { get; set; } = IArtistAlbumInfoBase.GetYearStr(localAlbumInfo.Year);
     public BitmapImage? Cover { get; set; } = CoverManager.GetAlbumCoverBitmap(localAlbumInfo);
     public List<IBriefSongInfoBase> SongList { get; set; } =
-    [.. Data.MusicLibrary.GetSongsByAlbum(localAlbumInfo)];
+    [.. App.GetService<MusicLibrary>().GetSongsByAlbum(localAlbumInfo)];
 }
+

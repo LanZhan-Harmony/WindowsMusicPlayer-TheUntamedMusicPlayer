@@ -54,6 +54,11 @@ public sealed partial class PlayListDetailPage : Page
     {
         base.OnNavigatedTo(e);
 
+        if (e.Parameter is PlaylistInfo playlist)
+        {
+            ViewModel.Initialize(playlist);
+        }
+
         if (Data.ShellViewModel!.NavigatePage == nameof(PlayListsPage))
         {
             var animation = ConnectedAnimationService
@@ -69,7 +74,7 @@ public sealed partial class PlayListDetailPage : Page
         if (
             e.NavigationMode == NavigationMode.Back
             && Data.ShellViewModel!.NavigatePage == nameof(PlayListsPage)
-            && Data.SelectedPlaylist is not null
+            && ViewModel.Playlist is not null
         )
         {
             ConnectedAnimationService
@@ -299,7 +304,7 @@ public sealed partial class PlayListDetailPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -317,7 +322,9 @@ public sealed partial class PlayListDetailPage : Page
         if (sender is MenuFlyoutItem { DataContext: Tuple<IBriefSongInfoBase, PlaylistInfo> tuple })
         {
             var (songInfo, playlist) = tuple;
-            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
+            ViewModel.AddToPlaylistCommand.ExecuteAsync(
+                new Tuple<IBriefSongInfoBase, PlaylistInfo>(songInfo, playlist)
+            );
         }
     }
 
@@ -329,7 +336,7 @@ public sealed partial class PlayListDetailPage : Page
             {
                 flyout.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -346,13 +353,13 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
         {
-            ViewModel.AddToPlaylistFlyoutButton_Click(playlist);
+            ViewModel.AddAllToPlaylistCommand.ExecuteAsync(playlist);
         }
     }
 
     private void AddToPlayQueueFlyoutButton_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.AddToPlayQueueFlyoutButton_Click();
+        ViewModel.AddAllToPlayQueueCommand.Execute(null);
     }
 
     private async void AddToNewPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
@@ -362,7 +369,7 @@ public sealed partial class PlayListDetailPage : Page
 
         if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
         {
-            ViewModel.AddToPlaylistFlyoutButton_Click(dialog.CreatedPlaylist);
+            await ViewModel.AddAllToPlaylistCommand.ExecuteAsync(dialog.CreatedPlaylist);
         }
     }
 
@@ -397,9 +404,8 @@ public sealed partial class PlayListDetailPage : Page
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            Data.SelectedPlaylist = null;
             Data.ShellPage!.GoBack();
-            Data.PlaylistLibrary.DeletePlaylist(ViewModel.Playlist);
+            App.GetService<PlaylistLibrary>().DeletePlaylist(ViewModel.Playlist);
         }
     }
 
@@ -407,7 +413,7 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
-            ViewModel.PlayButton_Click(info.Song);
+            ViewModel.PlayCommand.Execute(info.Song);
         }
     }
 
@@ -415,7 +421,7 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
-            ViewModel.PlayNextButton_Click(info.Song);
+            ViewModel.PlayNextCommand.Execute(info.Song);
         }
     }
 
@@ -423,7 +429,7 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
-            ViewModel.AddToPlayQueueButton_Click(info.Song);
+            ViewModel.AddToPlayQueueCommand.Execute(info.Song);
         }
     }
 
@@ -436,7 +442,9 @@ public sealed partial class PlayListDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButton_Click(info.Song, dialog.CreatedPlaylist);
+                await ViewModel.AddToPlaylistCommand.ExecuteAsync(
+                    new Tuple<IBriefSongInfoBase, PlaylistInfo>(info.Song, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -445,7 +453,7 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
-            ViewModel.RemoveButton_Click(info);
+            ViewModel.RemoveCommand.ExecuteAsync(info);
         }
     }
 
@@ -453,7 +461,7 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
-            ViewModel.MoveUpButton_Click(info);
+            ViewModel.MoveUpCommand.Execute(info);
         }
     }
 
@@ -461,7 +469,7 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
-            ViewModel.MoveDownButton_Click(info);
+            ViewModel.MoveDownCommand.Execute(info);
         }
     }
 
@@ -469,7 +477,7 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
-            ViewModel.ShowAlbumButton_Click(info.Song);
+            ViewModel.ShowAlbumCommand.ExecuteAsync(info.Song);
         }
     }
 
@@ -477,7 +485,7 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
-            ViewModel.ShowArtistButton_Click(info.Song);
+            ViewModel.ShowArtistCommand.ExecuteAsync(info.Song);
         }
     }
 
@@ -493,3 +501,9 @@ public sealed partial class PlayListDetailPage : Page
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
+
+
+
+
+
+

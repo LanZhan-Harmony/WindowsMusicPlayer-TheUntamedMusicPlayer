@@ -11,7 +11,8 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="PlayQueueListViewTemplate" x:DataType="playback:IndexedPlayQueueSong">
+        <DataTemplate x:Key="PlayQueueListViewTemplate"
+                x:DataType="playback:IndexedPlayQueueSong">
             <Grid x:Name="TemplateContent"
                   Height="52"
                   AutomationProperties.Name="{x:Bind Song.Title}"
@@ -86,22 +87,27 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox x:Name="ItemCheckBox"
                           Grid.Column="0"
-                          Canvas.ZIndex="1" IsThreeState="False"
+                          Canvas.ZIndex="1"
+                        IsThreeState="False"
                           Visibility="Collapsed"/>
                 <FontIcon x:Name="PlayingFontIcon"
                           Grid.Column="0"
-                          Margin="2,0,0,0" HorizontalAlignment="Left"
+                          Margin="2,0,0,0"
+                        HorizontalAlignment="Left"
                           Canvas.ZIndex="0"
                           FontFamily="{StaticResource UntamedFontFamily}"
                           FontSize="16"
                           Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                           Glyph="&#xE93D;"
                           Visibility="Collapsed"/>
-                <Button x:Name="PlayButton" x:Uid="Songs_PlayButton"
+                <Button x:Name="PlayButton"
+                        x:Uid="Songs_PlayButton"
                         Grid.Column="1"
                         Padding="5"
-                        Background="Transparent" BorderBrush="Transparent"
-                        Canvas.ZIndex="1" Click="PlayButton_Click"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Canvas.ZIndex="1"
+                        Click="PlayButton_Click"
                         Style="{StaticResource SmallPlayButtonStyle}"
                         Visibility="Collapsed">
                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
@@ -113,7 +119,8 @@
                           Grid.Column="1"
                           Canvas.ZIndex="0"
                           FontFamily="{StaticResource UntamedFontFamily}"
-                          FontSize="16" Glyph="&#xE940;"/>
+                          FontSize="16"
+                        Glyph="&#xE940;"/>
                 <TextBlock x:Name="TitleText"
                            Grid.Column="2"
                            VerticalAlignment="Center"
@@ -122,7 +129,8 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.ToolTip="{x:Bind Song.Title}"/>
                 <Button Grid.Column="3"
-                        Background="Transparent" BorderBrush="Transparent"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
                         Click="ShowArtistButton_Click">
                     <TextBlock x:Name="ArtistText"
                                FontSize="12"
@@ -131,7 +139,8 @@
                                ToolTipService.ToolTip="{x:Bind Song.ArtistsStr}"/>
                 </Button>
                 <Button Grid.Column="4"
-                        Background="Transparent" BorderBrush="Transparent"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
                         Click="ShowAlbumButton_Click">
                     <TextBlock x:Name="AlbumText"
                                FontSize="12"
@@ -157,7 +166,8 @@
                            ToolTipService.ToolTip="{x:Bind Song.GenreStr}"/>
                 <TextBlock x:Name="DurationText"
                            Grid.Column="7"
-                           Margin="0,0,10,0" HorizontalAlignment="Right"
+                           Margin="0,0,10,0"
+                        HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            FontSize="12"
                            Text="{x:Bind Song.DurationStr}"
@@ -179,14 +189,22 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="TitleGrid.Margin" Value="16,36,16,0"/>
-                        <Setter Target="AddTextBlock.Visibility" Value="Collapsed"/>
-                        <Setter Target="MenuPanel.Margin" Value="16,22,16,0"/>
-                        <Setter Target="ClearButton.Width" Value="68"/>
-                        <Setter Target="AddToButton.Width" Value="68"/>
-                        <Setter Target="ClearTextBlock.Visibility" Value="Collapsed"/>
-                        <Setter Target="AddToTextBlock.Visibility" Value="Collapsed"/>
-                        <Setter Target="PlayQueueListView.Padding" Value="12,0,12,0"/>
+                        <Setter Target="TitleGrid.Margin"
+                                Value="16,36,16,0"/>
+                        <Setter Target="AddTextBlock.Visibility"
+                                Value="Collapsed"/>
+                        <Setter Target="MenuPanel.Margin"
+                                Value="16,22,16,0"/>
+                        <Setter Target="ClearButton.Width"
+                                Value="68"/>
+                        <Setter Target="AddToButton.Width"
+                                Value="68"/>
+                        <Setter Target="ClearTextBlock.Visibility"
+                                Value="Collapsed"/>
+                        <Setter Target="AddToTextBlock.Visibility"
+                                Value="Collapsed"/>
+                        <Setter Target="PlayQueueListView.Padding"
+                                Value="12,0,12,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Normal">
@@ -194,12 +212,18 @@
                         <AdaptiveTrigger MinWindowWidth="641"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="TitleGrid.Margin" Value="56,36,56,0"/>
-                        <Setter Target="AddTextBlock.Visibility" Value="Visible"/>
-                        <Setter Target="MenuPanel.Margin" Value="56,22,56,0"/>
-                        <Setter Target="ClearTextBlock.Visibility" Value="Visible"/>
-                        <Setter Target="AddToTextBlock.Visibility" Value="Visible"/>
-                        <Setter Target="PlayQueueListView.Padding" Value="52,0,52,0"/>
+                        <Setter Target="TitleGrid.Margin"
+                                Value="56,36,56,0"/>
+                        <Setter Target="AddTextBlock.Visibility"
+                                Value="Visible"/>
+                        <Setter Target="MenuPanel.Margin"
+                                Value="56,22,56,0"/>
+                        <Setter Target="ClearTextBlock.Visibility"
+                                Value="Visible"/>
+                        <Setter Target="AddToTextBlock.Visibility"
+                                Value="Visible"/>
+                        <Setter Target="PlayQueueListView.Padding"
+                                Value="52,0,52,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -215,13 +239,17 @@
             <TextBlock x:Uid="Shell_PlayQueue1"
                        Grid.Column="0"
                        Style="{StaticResource TitleLargeTextBlockStyle}"/>
-            <SplitButton x:Name="AddFilesSplitButton" x:Uid="PlayQueue_AddFilesButton"
+            <SplitButton x:Name="AddFilesSplitButton"
+                    x:Uid="PlayQueue_AddFilesButton"
                          Grid.Column="2"
                          Click="AddFilesSplitButton_Click">
-                <StackPanel Orientation="Horizontal" Spacing="8">
+                <StackPanel Orientation="Horizontal"
+                        Spacing="8">
                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                              FontSize="16" Glyph="&#xE838;"/>
-                    <TextBlock x:Name="AddTextBlock" x:Uid="PlayQueue_AddFiles"/>
+                              FontSize="16"
+                            Glyph="&#xE838;"/>
+                    <TextBlock x:Name="AddTextBlock"
+                            x:Uid="PlayQueue_AddFiles"/>
                 </StackPanel>
                 <SplitButton.Flyout>
                     <MenuFlyout>
@@ -232,9 +260,11 @@
                                             Click="AddFilesButton_Click"
                                             Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
-                                                    Orientation="Horizontal" Spacing="12">
+                                                    Orientation="Horizontal"
+                                                Spacing="12">
                                             <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                                                      FontSize="16" Glyph="&#xE838;"/>
+                                                      FontSize="16"
+                                                    Glyph="&#xE838;"/>
                                             <StackPanel>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_AddFilesToPlayQueue"/>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_BrowseForFiles"
@@ -254,9 +284,11 @@
                                             Click="AddFolderButton_Click"
                                             Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
-                                                    Orientation="Horizontal" Spacing="12">
+                                                    Orientation="Horizontal"
+                                                Spacing="12">
                                             <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                                                      FontSize="16" Glyph="&#xF2CE;"/>
+                                                      FontSize="16"
+                                                    Glyph="&#xF2CE;"/>
                                             <StackPanel>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_AddFolderToPlayQueue"/>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_ChooseAFolder"
@@ -276,9 +308,11 @@
                                             Click="AddUrlButton_Click"
                                             Style="{StaticResource FlyoutButtonStyle}">
                                         <StackPanel Margin="10,4,10,5"
-                                                    Orientation="Horizontal" Spacing="12">
+                                                    Orientation="Horizontal"
+                                                Spacing="12">
                                             <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                                                      FontSize="16" Glyph="&#xE774;"/>
+                                                      FontSize="16"
+                                                    Glyph="&#xE774;"/>
                                             <StackPanel>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_AddMediaFromURL"/>
                                                 <TextBlock x:Uid="PlayQueue_AddFiles_EnterAURL"
@@ -297,19 +331,25 @@
         <StackPanel x:Name="MenuPanel"
                     Grid.Row="1"
                     KeyTipPlacementMode="Bottom"
-                    Orientation="Horizontal" Spacing="16">
-            <Button x:Name="ClearButton" x:Uid="PlayQueue_ClearButton"
+                    Orientation="Horizontal"
+                Spacing="16">
+            <Button x:Name="ClearButton"
+                    x:Uid="PlayQueue_ClearButton"
                     Padding="11,9,11,9"
                     AccessKey="CX"
-                    Click="{x:Bind ViewModel.ClearButton_Click}"
+                    Command="{x:Bind ViewModel.ClearCommand}"
                     IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=OneWay}">
                 <Button.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="X" Modifiers="Control,Shift"/>
+                    <KeyboardAccelerator Key="X"
+                            Modifiers="Control,Shift"/>
                 </Button.KeyboardAccelerators>
-                <StackPanel Orientation="Horizontal" Spacing="8">
+                <StackPanel Orientation="Horizontal"
+                        Spacing="8">
                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                              FontSize="16" Glyph="&#xE74D;"/>
-                    <TextBlock x:Name="ClearTextBlock" x:Uid="PlayQueue_Clear"
+                              FontSize="16"
+                            Glyph="&#xE74D;"/>
+                    <TextBlock x:Name="ClearTextBlock"
+                            x:Uid="PlayQueue_Clear"
                                FontSize="12"/>
                 </StackPanel>
             </Button>
@@ -317,14 +357,18 @@
                     Padding="11,9,11,9"
                     AccessKey="CW"
                     IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=OneWay}">
-                <StackPanel Orientation="Horizontal" Spacing="8">
+                <StackPanel Orientation="Horizontal"
+                        Spacing="8">
                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
-                              FontSize="16" Glyph="&#xE710;"/>
-                    <TextBlock x:Name="AddToTextBlock" x:Uid="Songs_AddTo"
+                              FontSize="16"
+                            Glyph="&#xE710;"/>
+                    <TextBlock x:Name="AddToTextBlock"
+                            x:Uid="Songs_AddTo"
                                FontSize="12"/>
                 </StackPanel>
                 <Button.Flyout>
-                    <MenuFlyout Opened="AddToFlyout_Opened" Placement="Bottom">
+                    <MenuFlyout Opened="AddToFlyout_Opened"
+                            Placement="Bottom">
                         <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
                                         Click="AddToPlayQueueFlyoutButton_Click"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
@@ -346,7 +390,8 @@
                   helper:CurrentSongHighlightExtensions.PlayingBrush="{ThemeResource AccentTextFillColorTertiaryBrush}"
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
-                  AllowDrop="True" CanDragItems="True"
+                  AllowDrop="True"
+                CanDragItems="True"
                   CanReorderItems="True"
                   DragItemsCompleted="{x:Bind ViewModel.PlayQueueListView_DragItemsCompleted}"
                   DragItemsStarting="{x:Bind ViewModel.PlayQueueListView_DragItemsStarting}"
@@ -366,3 +411,4 @@
         </ListView>
     </Grid>
 </Page>
+

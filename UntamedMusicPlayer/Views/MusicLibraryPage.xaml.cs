@@ -16,18 +16,18 @@ public sealed partial class MusicLibraryPage : Page
         set
         {
             field = value;
-            ViewModel.SaveSelectionBarSelectedIndex(value);
+            _ = ViewModel.SaveSelectionBarSelectedIndexAsync(value);
         }
     } = 0;
 
     public MusicLibraryPage()
     {
         ViewModel = App.GetService<MusicLibraryViewModel>();
-        InitializeAsync();
+        _ = InitializeAsync();
         InitializeComponent();
     }
 
-    private async void InitializeAsync()
+    private async Task InitializeAsync()
     {
         SelectionBarSelectedIndex = await ViewModel.LoadSelectionBarSelectedIndex();
     }
@@ -68,3 +68,8 @@ public sealed partial class MusicLibraryPage : Page
         }
     }
 }
+
+
+
+
+

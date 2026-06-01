@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using MemoryPack;
 using Microsoft.Extensions.Logging;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Services;
@@ -250,7 +251,7 @@ public sealed partial class PlaylistInfo
             CoverPaths.Count > 0
             && Path.Combine(ApplicationData.Current.LocalFolder.Path, "PlaylistCover")
                 == Path.GetDirectoryName(CoverPaths[0])
-            && Data.SupportedCoverTypes.Contains(Path.GetExtension(CoverPaths[0]).ToLower())
+            && AppConstants.SupportedCoverTypes.Contains(Path.GetExtension(CoverPaths[0]).ToLower())
         )
         {
             try
@@ -274,7 +275,7 @@ public sealed partial class PlaylistInfo
             && CoverPaths.Count > 0
             && Path.Combine(ApplicationData.Current.LocalFolder.Path, "PlaylistCover")
                 == Path.GetDirectoryName(CoverPaths[0])
-            && Data.SupportedCoverTypes.Contains(Path.GetExtension(CoverPaths[0]).ToLower())
+            && AppConstants.SupportedCoverTypes.Contains(Path.GetExtension(CoverPaths[0]).ToLower())
         )
         {
             try

@@ -108,7 +108,7 @@ public sealed partial class SettingsPage : Page
 
         if (result == ContentDialogResult.Primary)
         {
-            await ViewModel.ResetSoftwareButton_Click();
+            ViewModel.ResetSoftwareButtonCommand.Execute(null);
         }
         (sender as Button)!.IsEnabled = true;
     }
@@ -183,3 +183,8 @@ public sealed partial class SettingsPage : Page
         panel.ChildrenTransitions = [new RepositionThemeTransition { IsStaggeringEnabled = false }];
     }
 }
+
+
+
+
+

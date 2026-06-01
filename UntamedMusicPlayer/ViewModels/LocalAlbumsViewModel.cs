@@ -11,6 +11,7 @@ using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 using ZLinq;
 
+using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class LocalAlbumsViewModel
@@ -20,10 +21,12 @@ public sealed partial class LocalAlbumsViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly INavigationService _navigationService =
+        App.GetService<INavigationService>();
 
     private bool _groupMode = true;
 
-    private List<LocalAlbumInfo> _albumList = [.. Data.MusicLibrary.Albums.Values];
+    private List<LocalAlbumInfo> _albumList = [.. App.GetService<MusicLibrary>().Albums.Values];
 
     public List<string> SortBy { get; set; } = [.. "Albums_SortBy".GetLocalized().Split(", ")];
 
@@ -31,7 +34,7 @@ public sealed partial class LocalAlbumsViewModel
 
     public List<LocalAlbumInfo> NotGroupedAlbumList { get; set; } = [];
 
-    public List<string> Genres { get; set; } = Data.MusicLibrary.Genres;
+    public List<string> Genres { get; set; } = App.GetService<MusicLibrary>().Genres;
 
     [ObservableProperty]
     public partial bool IsProgressRingActive { get; set; } = true;
@@ -43,7 +46,7 @@ public sealed partial class LocalAlbumsViewModel
     {
         SortByStr = SortBy[value];
         SetGroupMode();
-        SaveSortModeAsync();
+        _ = SaveSortModeAsync();
     }
 
     [ObservableProperty]
@@ -58,7 +61,7 @@ public sealed partial class LocalAlbumsViewModel
         {
             GenreStr = Genres[value];
         }
-        SaveGenreModeAsync();
+        _ = SaveGenreModeAsync();
     }
 
     [ObservableProperty]
@@ -68,23 +71,23 @@ public sealed partial class LocalAlbumsViewModel
         : base(StrongReferenceMessenger.Default)
     {
         Messenger.Register(this);
-        LoadModeAndAlbumList();
+        _ = LoadModeAndAlbumList();
         Data.LocalAlbumsViewModel = this;
     }
 
     public void Receive(HaveMusicMessage message)
     {
-        LoadModeAndAlbumList();
+        _ = LoadModeAndAlbumList();
     }
 
-    public async void LoadModeAndAlbumList()
+    public async Task LoadModeAndAlbumList()
     {
-        _albumList = [.. Data.MusicLibrary.Albums.Values];
+        _albumList = [.. App.GetService<MusicLibrary>().Albums.Values];
         if (_albumList.Count == 0)
         {
             return;
         }
-        Genres = Data.MusicLibrary.Genres;
+        Genres = App.GetService<MusicLibrary>().Genres;
         await LoadSortModeAsync();
         await LoadGenreModeAsync();
         await FilterAlbums();
@@ -309,18 +312,12 @@ public sealed partial class LocalAlbumsViewModel
         });
     }
 
-    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
+    public async void SortByListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs _unused
+    )
     {
-        var currentsortmode = SortMode;
-        SortMode = (byte)(sender as ListView)!.SelectedIndex;
-        if (SortMode != currentsortmode)
-        {
-            IsProgressRingActive = true;
-            await SortAlbums();
-            OnPropertyChanged(nameof(GroupedAlbumList));
-            OnPropertyChanged(nameof(NotGroupedAlbumList));
-            IsProgressRingActive = false;
-        }
+        _ = ChangeSortModeAsync((sender as ListView)!.SelectedIndex);
     }
 
     public void SortByListView_Loaded(object sender, RoutedEventArgs _)
@@ -328,18 +325,54 @@ public sealed partial class LocalAlbumsViewModel
         (sender as ListView)!.SelectedIndex = SortMode;
     }
 
-    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
+    public async void GenreListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs _unused
+    )
     {
-        var currentGenreMode = GenreMode;
-        GenreMode = (byte)(sender as ListView)!.SelectedIndex;
-        if (GenreMode != currentGenreMode)
+        _ = ChangeGenreModeAsync((sender as ListView)!.SelectedIndex);
+    }
+
+    public async Task ChangeSortModeAsync(int selectedIndex)
+    {
+        if (selectedIndex < 0)
         {
-            IsProgressRingActive = true;
-            await FilterAlbums();
-            OnPropertyChanged(nameof(GroupedAlbumList));
-            OnPropertyChanged(nameof(NotGroupedAlbumList));
-            IsProgressRingActive = false;
+            return;
         }
+
+        var currentSortMode = SortMode;
+        SortMode = (byte)selectedIndex;
+        if (SortMode == currentSortMode)
+        {
+            return;
+        }
+
+        IsProgressRingActive = true;
+        await SortAlbums();
+        OnPropertyChanged(nameof(GroupedAlbumList));
+        OnPropertyChanged(nameof(NotGroupedAlbumList));
+        IsProgressRingActive = false;
+    }
+
+    public async Task ChangeGenreModeAsync(int selectedIndex)
+    {
+        if (selectedIndex < 0)
+        {
+            return;
+        }
+
+        var currentGenreMode = GenreMode;
+        GenreMode = selectedIndex;
+        if (GenreMode == currentGenreMode)
+        {
+            return;
+        }
+
+        IsProgressRingActive = true;
+        await FilterAlbums();
+        OnPropertyChanged(nameof(GroupedAlbumList));
+        OnPropertyChanged(nameof(NotGroupedAlbumList));
+        IsProgressRingActive = false;
     }
 
     public void GenreListView_Loaded(object sender, RoutedEventArgs _)
@@ -347,20 +380,26 @@ public sealed partial class LocalAlbumsViewModel
         (sender as ListView)!.SelectedIndex = GenreMode;
     }
 
-    public void PlayButton_Click(LocalAlbumInfo info)
+    [RelayCommand]
+
+    public void PlayButton(LocalAlbumInfo info)
+
     {
-        var songList = Data.MusicLibrary.GetSongsByAlbum(info);
+        var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
         Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
-        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
-    public void PlayNextButton_Click(LocalAlbumInfo info)
+    [RelayCommand]
+
+    public void PlayNextButton(LocalAlbumInfo info)
+
     {
-        var songList = Data.MusicLibrary.GetSongsByAlbum(info);
+        var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -368,13 +407,16 @@ public sealed partial class LocalAlbumsViewModel
         }
     }
 
-    public void AddToPlayQueueButton_Click(LocalAlbumInfo info)
+    [RelayCommand]
+
+    public void AddToPlayQueueButton(LocalAlbumInfo info)
+
     {
-        var songList = Data.MusicLibrary.GetSongsByAlbum(info);
+        var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -382,21 +424,28 @@ public sealed partial class LocalAlbumsViewModel
         }
     }
 
-    public async void AddToPlaylistButton_Click(LocalAlbumInfo info, PlaylistInfo playlist)
+    [RelayCommand]
+
+    public async Task AddToPlaylistButton(Tuple<LocalAlbumInfo, PlaylistInfo> tuple)
+
     {
-        var songList = Data.MusicLibrary.GetSongsByAlbum(info);
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
+
+        var (info, playlist) = tuple;
+        var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
 
-    public void ShowArtistButton_Click(LocalAlbumInfo info)
+    [RelayCommand]
+
+    public void ShowArtistButton(LocalAlbumInfo info)
+
     {
-        var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(info.Artists[0]);
+        var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(info.Artists[0]);
         if (localArtistInfo is not null)
         {
-            Data.SelectedLocalArtist = localArtistInfo;
-            Data.ShellPage!.Navigate(
+            _navigationService.NavigateShell(
                 nameof(LocalArtistDetailPage),
-                "",
+                new LocalArtistNavigationArgs(localArtistInfo, nameof(LocalAlbumsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -417,12 +466,12 @@ public sealed partial class LocalAlbumsViewModel
         }
     }
 
-    public async void SaveSortModeAsync()
+    public async Task SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("AlbumSortMode", SortMode);
     }
 
-    public async void SaveGenreModeAsync()
+    public async Task SaveGenreModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("AlbumGenreMode", GenreMode);
     }
@@ -450,5 +499,11 @@ public sealed partial class LocalAlbumsViewModel
         };
     }
 
+
+
+
+
+
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
+

@@ -197,14 +197,16 @@
                   IsItemClickEnabled="True"
                   ItemClick="AlbumGridView_ItemClick"
                   ItemTemplate="{StaticResource AlbumGridViewTemplate}"
-                  ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineAlbumInfoList, Mode=OneWay}"
+                  ItemsSource="{x:Bind OnlineMusicLibrary.OnlineAlbumInfoList, Mode=OneWay}"
                   Loaded="AlbumGridView_Loaded" SelectionMode="None"
-                  Visibility="{x:Bind model:Data.OnlineMusicLibrary.ListViewVisibility, Mode=OneWay}">
+                  Visibility="{x:Bind OnlineMusicLibrary.ListViewVisibility, Mode=OneWay}">
             <GridView.Footer>
                 <ProgressRing Width="25" Height="25"
                               Margin="0,5,0,5"
-                              Visibility="{x:Bind model:Data.OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
+                              Visibility="{x:Bind OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
             </GridView.Footer>
         </GridView>
     </Grid>
 </Page>
+
+

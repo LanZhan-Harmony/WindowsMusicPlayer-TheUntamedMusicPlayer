@@ -13,6 +13,8 @@ public sealed partial class HomeViewModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly INavigationService _navigationService =
+        App.GetService<INavigationService>();
 
     private SelectorBar? _selectorBar;
 
@@ -25,8 +27,8 @@ public sealed partial class HomeViewModel : ObservableObject
         set
         {
             field = value;
-            Data.OnlineMusicLibrary.PageIndex = value;
-            SavePageIndex();
+            App.GetService<OnlineMusicLibrary>().PageIndex = value;
+            _ = SavePageIndexAsync();
         }
     }
 
@@ -35,15 +37,15 @@ public sealed partial class HomeViewModel : ObservableObject
 
     partial void OnMusicLibraryIndexChanged(byte value)
     {
-        Data.OnlineMusicLibrary.MusicLibraryIndex = value;
+        App.GetService<OnlineMusicLibrary>().MusicLibraryIndex = value;
         LibraryNotOpenVisibility =
             MusicLibraryIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
         MainGridVisibility = MusicLibraryIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
-        SaveMusicLibraryIndex();
+        _ = SaveMusicLibraryIndexAsync();
         // 音乐库索引改变时强制重新搜索
-        if (!string.IsNullOrWhiteSpace(Data.OnlineMusicLibrary.SearchKeyWords))
+        if (!string.IsNullOrWhiteSpace(App.GetService<OnlineMusicLibrary>().SearchKeyWords))
         {
-            _ = Data.OnlineMusicLibrary.ForceSearch();
+            _ = App.GetService<OnlineMusicLibrary>().ForceSearch();
         }
     }
 
@@ -61,10 +63,10 @@ public sealed partial class HomeViewModel : ObservableObject
 
     public HomeViewModel()
     {
-        Initialize();
+        _ = InitializeAsync();
     }
 
-    private async void Initialize()
+    private async Task InitializeAsync()
     {
         PageIndex = await LoadPageIndex();
         MusicLibraryIndex = await LoadMusicLibraryIndex();
@@ -80,8 +82,8 @@ public sealed partial class HomeViewModel : ObservableObject
     {
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
-            Data.OnlineMusicLibrary.SuggestKeyWords = sender.Text;
-            await Data.OnlineMusicLibrary.UpdateSuggestResult();
+            App.GetService<OnlineMusicLibrary>().SuggestKeyWords = sender.Text;
+            await App.GetService<OnlineMusicLibrary>().UpdateSuggestResult();
         }
     }
 
@@ -93,7 +95,7 @@ public sealed partial class HomeViewModel : ObservableObject
         if (args.ChosenSuggestion is SuggestResult result)
         {
             var keyWords = result.Label;
-            Data.OnlineMusicLibrary.ClearSuggestResult();
+            App.GetService<OnlineMusicLibrary>().ClearSuggestResult();
             var currentSelectedIndex = result.Icon switch
             {
                 "\uE8D6" => 0,
@@ -102,17 +104,17 @@ public sealed partial class HomeViewModel : ObservableObject
                 "\uE728" => 3,
                 _ => 0,
             };
-            Data.OnlineMusicLibrary.SearchKeyWords = keyWords;
+            App.GetService<OnlineMusicLibrary>().SearchKeyWords = keyWords;
             Navigate(currentSelectedIndex);
             // 搜索关键词改变时强制重新搜索
-            await Data.OnlineMusicLibrary.ForceSearch();
+            await App.GetService<OnlineMusicLibrary>().ForceSearch();
         }
         else
         {
-            Data.OnlineMusicLibrary.SearchKeyWords = args.QueryText;
-            Data.OnlineMusicLibrary.ClearSuggestResult();
+            App.GetService<OnlineMusicLibrary>().SearchKeyWords = args.QueryText;
+            App.GetService<OnlineMusicLibrary>().ClearSuggestResult();
             // 搜索关键词改变时强制重新搜索
-            await Data.OnlineMusicLibrary.ForceSearch();
+            await App.GetService<OnlineMusicLibrary>().ForceSearch();
         }
     }
 
@@ -146,8 +148,19 @@ public sealed partial class HomeViewModel : ObservableObject
             {
                 return;
             }
-            MusicLibraryIndex = (byte)currentSelectedIndex;
+            _ = ChangeMusicLibraryIndexAsync(currentSelectedIndex);
         }
+    }
+
+    public Task ChangeMusicLibraryIndexAsync(int selectedIndex)
+    {
+        if (selectedIndex < 0)
+        {
+            return Task.CompletedTask;
+        }
+
+        MusicLibraryIndex = (byte)selectedIndex;
+        return Task.CompletedTask;
     }
 
     public void Navigate(int currentSelectedIndex)
@@ -167,13 +180,12 @@ public sealed partial class HomeViewModel : ObservableObject
         PageIndex = (byte)currentSelectedIndex;
         _selectorBar?.SelectedItem = _selectorBar.Items[currentSelectedIndex];
 
-        _ = Data.OnlineMusicLibrary.Search();
-        Data.HomePage?.GetFrame()
-            .Navigate(
-                page,
-                null,
-                new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect }
-            );
+        _ = App.GetService<OnlineMusicLibrary>().Search();
+        _navigationService.NavigateHome(
+            page,
+            null,
+            new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect }
+        );
     }
 
     public async Task<byte> LoadPageIndex()
@@ -186,13 +198,14 @@ public sealed partial class HomeViewModel : ObservableObject
         return await _localSettingsService.ReadSettingAsync<byte>("HomeMusicLibraryIndex");
     }
 
-    public async void SavePageIndex()
+    public async Task SavePageIndexAsync()
     {
         await _localSettingsService.SaveSettingAsync("HomePageIndex", PageIndex);
     }
 
-    public async void SaveMusicLibraryIndex()
+    public async Task SaveMusicLibraryIndexAsync()
     {
         await _localSettingsService.SaveSettingAsync("HomeMusicLibraryIndex", MusicLibraryIndex);
     }
 }
+

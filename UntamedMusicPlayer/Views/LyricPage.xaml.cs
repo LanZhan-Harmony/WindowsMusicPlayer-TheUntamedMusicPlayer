@@ -466,7 +466,7 @@ public sealed partial class LyricPage : Page, IDisposable
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -483,7 +483,7 @@ public sealed partial class LyricPage : Page, IDisposable
     {
         if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
         {
-            ViewModel.AddToPlaylistButton_Click(playlist);
+            ViewModel.AddToPlaylistButtonCommand.Execute(playlist);
         }
     }
 
@@ -494,7 +494,7 @@ public sealed partial class LyricPage : Page, IDisposable
 
         if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
         {
-            ViewModel.AddToPlaylistButton_Click(dialog.CreatedPlaylist);
+            ViewModel.AddToPlaylistButtonCommand.Execute(dialog.CreatedPlaylist);
         }
     }
 
@@ -731,3 +731,9 @@ public sealed partial class LyricPage : Page, IDisposable
         Data.LyricPage = null;
     }
 }
+
+
+
+
+
+

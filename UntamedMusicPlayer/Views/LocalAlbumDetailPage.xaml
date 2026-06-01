@@ -280,7 +280,7 @@
                             <Button x:Name="PlayAllButton"
                                     Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     AutomationProperties.LabeledBy="{x:Bind PlayAllTextBlock}"
-                                    Click="{x:Bind ViewModel.PlayAllButton_Click}"
+                                    Command="{x:Bind ViewModel.PlayAllButtonCommand}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -292,7 +292,7 @@
                             </Button>
                             <Button Padding="11,9,11,9" HorizontalAlignment="Stretch"
                                     AutomationProperties.LabeledBy="{x:Bind ShuffleAndPlayTextBlock}"
-                                    Click="{x:Bind ViewModel.ShuffledPlayAllButton_Click}"
+                                    Command="{x:Bind ViewModel.ShuffledPlayAllButtonCommand}"
                                     XYFocusDown="{x:Bind SongListView}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
@@ -397,3 +397,4 @@
         </ListView>
     </Grid>
 </Page>
+

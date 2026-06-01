@@ -1,15 +1,23 @@
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 
+using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
-public sealed class OnlineAlbumsViewModel
+public sealed partial class OnlineAlbumsViewModel
 {
+    private readonly INavigationService _navigationService =
+        App.GetService<INavigationService>();
+
     public OnlineAlbumsViewModel() { }
 
-    public async void PlayButton_Click(IBriefOnlineAlbumInfo info)
+    [RelayCommand]
+
+    public async Task PlayButton(IBriefOnlineAlbumInfo info)
+
     {
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
@@ -18,10 +26,13 @@ public sealed class OnlineAlbumsViewModel
             return;
         }
         Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
-        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
-    public async void PlayNextButton_Click(IBriefOnlineAlbumInfo info)
+    [RelayCommand]
+
+    public async Task PlayNextButton(IBriefOnlineAlbumInfo info)
+
     {
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
@@ -32,7 +43,7 @@ public sealed class OnlineAlbumsViewModel
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -40,7 +51,10 @@ public sealed class OnlineAlbumsViewModel
         }
     }
 
-    public async void AddToPlayQueueButton_Click(IBriefOnlineAlbumInfo info)
+    [RelayCommand]
+
+    public async Task AddToPlayQueueButton(IBriefOnlineAlbumInfo info)
+
     {
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
@@ -58,24 +72,37 @@ public sealed class OnlineAlbumsViewModel
         }
     }
 
-    public async void AddToPlaylistButton_Click(IBriefOnlineAlbumInfo info, PlaylistInfo playlist)
+    [RelayCommand]
+
+    public async Task AddToPlaylistButton(Tuple<IBriefOnlineAlbumInfo, PlaylistInfo> tuple)
+
     {
+
+        var (info, playlist) = tuple;
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
 
-    public async void ShowArtistButton_Click(IBriefOnlineAlbumInfo info)
+    [RelayCommand]
+
+    public async Task ShowArtistButton(IBriefOnlineAlbumInfo info)
+
     {
         var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromAlbumInfoAsync(info);
         if (onlineArtistInfo is not null)
         {
-            Data.SelectedOnlineArtist = onlineArtistInfo;
-            Data.ShellPage!.Navigate(
+            _navigationService.NavigateShell(
                 nameof(OnlineArtistDetailPage),
-                "",
+                new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(OnlineAlbumsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
     }
+
+
+
+
+
 }
+

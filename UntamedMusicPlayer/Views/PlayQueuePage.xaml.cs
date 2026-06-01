@@ -31,7 +31,7 @@ public sealed partial class PlayQueuePage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -49,7 +49,9 @@ public sealed partial class PlayQueuePage : Page
         if (sender is MenuFlyoutItem { DataContext: Tuple<IBriefSongInfoBase, PlaylistInfo> tuple })
         {
             var (songInfo, playlist) = tuple;
-            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
+            ViewModel.AddToPlaylistCommand.ExecuteAsync(
+                new Tuple<IBriefSongInfoBase, PlaylistInfo>(songInfo, playlist)
+            );
         }
     }
 
@@ -61,7 +63,7 @@ public sealed partial class PlayQueuePage : Page
             {
                 flyout.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -78,13 +80,13 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
         {
-            ViewModel.AddToPlaylistFlyoutButton_Click(playlist);
+            ViewModel.AddQueueToPlaylistCommand.ExecuteAsync(playlist);
         }
     }
 
     private void AddToPlayQueueFlyoutButton_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.AddToPlayQueueFlyoutButton_Click();
+        ViewModel.AddQueueToPlayQueueCommand.Execute(null);
     }
 
     private async void AddToNewPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
@@ -94,13 +96,13 @@ public sealed partial class PlayQueuePage : Page
 
         if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
         {
-            ViewModel.AddToPlaylistFlyoutButton_Click(dialog.CreatedPlaylist);
+            await ViewModel.AddQueueToPlaylistCommand.ExecuteAsync(dialog.CreatedPlaylist);
         }
     }
 
     private async void PlayQueueListView_Loaded(object sender, RoutedEventArgs e)
     {
-        await Data.MusicPlayer.WhenLoadedAsync();
+        await App.GetService<MusicPlayer>().WhenLoadedAsync();
         var currentSong = Data.PlayState.CurrentBriefSong;
         if (currentSong is null)
         {
@@ -153,7 +155,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlayQueueSong info })
         {
-            ViewModel.PlayButton_Click(info);
+            ViewModel.PlayCommand.Execute(info);
         }
     }
 
@@ -161,7 +163,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlayQueueSong info })
         {
-            ViewModel.PlayNextButton_Click(info.Song);
+            ViewModel.PlayNextCommand.Execute(info.Song);
         }
     }
 
@@ -169,7 +171,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlayQueueSong info })
         {
-            ViewModel.AddToPlayQueueButton_Click(info.Song);
+            ViewModel.AddToPlayQueueCommand.Execute(info.Song);
         }
     }
 
@@ -182,7 +184,9 @@ public sealed partial class PlayQueuePage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButton_Click(info.Song, dialog.CreatedPlaylist);
+                await ViewModel.AddToPlaylistCommand.ExecuteAsync(
+                    new Tuple<IBriefSongInfoBase, PlaylistInfo>(info.Song, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -191,7 +195,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlayQueueSong info })
         {
-            ViewModel.RemoveButton_Click(info);
+            ViewModel.RemoveCommand.Execute(info);
         }
     }
 
@@ -199,7 +203,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlayQueueSong info })
         {
-            ViewModel.MoveUpButton_Click(info);
+            ViewModel.MoveUpCommand.Execute(info);
         }
     }
 
@@ -207,7 +211,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlayQueueSong info })
         {
-            ViewModel.MoveDownButton_Click(info);
+            ViewModel.MoveDownCommand.Execute(info);
         }
     }
 
@@ -225,7 +229,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlayQueueSong info })
         {
-            ViewModel.ShowAlbumButton_Click(info.Song);
+            ViewModel.ShowAlbumCommand.ExecuteAsync(info.Song);
         }
     }
 
@@ -233,7 +237,7 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlayQueueSong info })
         {
-            ViewModel.ShowArtistButton_Click(info.Song);
+            ViewModel.ShowArtistCommand.ExecuteAsync(info.Song);
         }
     }
 
@@ -242,21 +246,21 @@ public sealed partial class PlayQueuePage : Page
     private async void AddFilesSplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
     {
         sender.IsEnabled = false;
-        await ViewModel.AddFilesButton_Click();
+        await ViewModel.AddFilesCommand.ExecuteAsync(null);
         sender.IsEnabled = true;
     }
 
     private async void AddFilesButton_Click(object sender, RoutedEventArgs e)
     {
         AddFilesSplitButton.IsEnabled = false;
-        await ViewModel.AddFilesButton_Click();
+        await ViewModel.AddFilesCommand.ExecuteAsync(null);
         AddFilesSplitButton.IsEnabled = true;
     }
 
     private async void AddFolderButton_Click(object sender, RoutedEventArgs e)
     {
         AddFilesSplitButton.IsEnabled = false;
-        await ViewModel.AddFolderButton_Click();
+        await ViewModel.AddFolderCommand.ExecuteAsync(null);
         AddFilesSplitButton.IsEnabled = true;
     }
 
@@ -296,8 +300,14 @@ public sealed partial class PlayQueuePage : Page
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            ViewModel.AddUrlButton_Click(contentTextBox.Text);
+            ViewModel.AddUrlCommand.Execute(contentTextBox.Text);
         }
         AddFilesSplitButton.IsEnabled = true;
     }
 }
+
+
+
+
+
+

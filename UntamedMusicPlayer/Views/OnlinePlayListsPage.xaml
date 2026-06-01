@@ -188,15 +188,17 @@
                   IsItemClickEnabled="True"
                   ItemClick="PlaylistGridView_ItemClick"
                   ItemTemplate="{StaticResource PlaylistGridViewTemplate}"
-                  ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlinePlaylistInfoList, Mode=OneWay}"
+                  ItemsSource="{x:Bind OnlineMusicLibrary.OnlinePlaylistInfoList, Mode=OneWay}"
                   Loaded="PlaylistGridView_Loaded"
                   SelectionMode="None"
-                  Visibility="{x:Bind model:Data.OnlineMusicLibrary.ListViewVisibility, Mode=OneWay}">
+                  Visibility="{x:Bind OnlineMusicLibrary.ListViewVisibility, Mode=OneWay}">
             <GridView.Footer>
                 <ProgressRing Width="25" Height="25"
                               Margin="0,5,0,5"
-                              Visibility="{x:Bind model:Data.OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
+                              Visibility="{x:Bind OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
             </GridView.Footer>
         </GridView>
     </Grid>
 </Page>
+
+

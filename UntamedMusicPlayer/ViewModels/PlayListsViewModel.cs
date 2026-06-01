@@ -9,6 +9,7 @@ using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using ZLinq;
 
+using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class PlayListsViewModel
@@ -19,12 +20,14 @@ public sealed partial class PlayListsViewModel
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
 
-    private List<PlaylistInfo> _tempPlaylists = Data.PlaylistLibrary.Playlists;
+    private List<PlaylistInfo> _tempPlaylists = App.GetService<PlaylistLibrary>().Playlists;
 
     public ObservableCollection<PlaylistInfo> Playlists { get; set; } = [];
 
+    public PlaylistInfo? LastNavigatedPlaylist { get; set; }
+
     [ObservableProperty]
-    public partial bool IsMainProgressRingActive { get; set; } = !Data.PlaylistLibrary.HasLoaded;
+    public partial bool IsMainProgressRingActive { get; set; } = !App.GetService<PlaylistLibrary>().HasLoaded;
 
     [ObservableProperty]
     public partial Visibility NoPlaylistControlVisibility { get; set; } = Visibility.Collapsed;
@@ -40,7 +43,7 @@ public sealed partial class PlayListsViewModel
     partial void OnSortModeChanged(byte value)
     {
         SortByStr = SortBy[value];
-        SaveSortModeAsync();
+        _ = SaveSortModeAsync();
     }
 
     [ObservableProperty]
@@ -53,7 +56,7 @@ public sealed partial class PlayListsViewModel
         : base(StrongReferenceMessenger.Default)
     {
         Messenger.Register(this);
-        LoadModeAndPlayList();
+        _ = LoadModeAndPlayList();
     }
 
     public void Receive(HavePlaylistMessage message)
@@ -65,16 +68,16 @@ public sealed partial class PlayListsViewModel
         HavePlaylistControlVisibility = message.HasPlaylist
             ? Visibility.Visible
             : Visibility.Collapsed;
-        LoadModeAndPlayList();
+        _ = LoadModeAndPlayList();
     }
 
-    public async void LoadModeAndPlayList()
+    public async Task LoadModeAndPlayList()
     {
         if (IsMainProgressRingActive)
         {
             return;
         }
-        _tempPlaylists = Data.PlaylistLibrary.Playlists;
+        _tempPlaylists = App.GetService<PlaylistLibrary>().Playlists;
         if (_tempPlaylists.Count == 0)
         {
             NoPlaylistControlVisibility = Visibility.Visible;
@@ -150,20 +153,38 @@ public sealed partial class PlayListsViewModel
         (sender as ListView)!.SelectedIndex = SortMode;
     }
 
-    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
+    public async void SortByListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs _unused
+    )
     {
-        var currentsortmode = SortMode;
-        SortMode = (byte)(sender as ListView)!.SelectedIndex;
-        if (SortMode != currentsortmode)
-        {
-            IsProgressRingActive = true;
-            await SortPlaylists();
-            OnPropertyChanged(nameof(Playlists));
-            IsProgressRingActive = false;
-        }
+        _ = ChangeSortModeAsync((sender as ListView)!.SelectedIndex);
     }
 
-    public void PlayButton_Click(PlaylistInfo info)
+    public async Task ChangeSortModeAsync(int selectedIndex)
+    {
+        if (selectedIndex < 0)
+        {
+            return;
+        }
+
+        var currentSortMode = SortMode;
+        SortMode = (byte)selectedIndex;
+        if (SortMode == currentSortMode)
+        {
+            return;
+        }
+
+        IsProgressRingActive = true;
+        await SortPlaylists();
+        OnPropertyChanged(nameof(Playlists));
+        IsProgressRingActive = false;
+    }
+
+    [RelayCommand]
+
+    public void PlayButton(PlaylistInfo info)
+
     {
         var songList = info.GetAllSongs();
         if (songList.Length == 0)
@@ -171,10 +192,13 @@ public sealed partial class PlayListsViewModel
             return;
         }
         Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
-        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
-    public void PlayNextButton_Click(PlaylistInfo info)
+    [RelayCommand]
+
+    public void PlayNextButton(PlaylistInfo info)
+
     {
         var songList = info.GetAllSongs();
         if (songList.Length == 0)
@@ -184,7 +208,7 @@ public sealed partial class PlayListsViewModel
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -192,7 +216,10 @@ public sealed partial class PlayListsViewModel
         }
     }
 
-    public void AddToPlayQueueButton_Click(PlaylistInfo info)
+    [RelayCommand]
+
+    public void AddToPlayQueueButton(PlaylistInfo info)
+
     {
         var songList = info.GetAllSongs();
         if (songList.Length == 0)
@@ -202,7 +229,7 @@ public sealed partial class PlayListsViewModel
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -210,10 +237,15 @@ public sealed partial class PlayListsViewModel
         }
     }
 
-    public async void AddToPlaylistButton_Click(PlaylistInfo info, PlaylistInfo playlist)
+    [RelayCommand]
+
+    public async Task AddToPlaylistButton(Tuple<PlaylistInfo, PlaylistInfo> tuple)
+
     {
+
+        var (info, playlist) = tuple;
         var songList = info.GetAllSongs();
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
 
     public async Task LoadSortModeAsync()
@@ -222,10 +254,15 @@ public sealed partial class PlayListsViewModel
         SortByStr = SortBy[SortMode];
     }
 
-    public async void SaveSortModeAsync()
+    public async Task SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("PlaylistSortMode", SortMode);
     }
 
+
+
+
+
     public void Dispose() => Messenger.Unregister<HavePlaylistMessage>(this);
 }
+

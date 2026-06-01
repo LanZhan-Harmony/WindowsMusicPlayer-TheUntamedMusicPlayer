@@ -1,43 +1,54 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 
+using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
-public sealed class OnlineSongsViewModel
+public sealed partial class OnlineSongsViewModel
 {
+    private readonly INavigationService _navigationService =
+        App.GetService<INavigationService>();
+
     public OnlineSongsViewModel() { }
 
     public void OnlineSongsSongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
-            $"OnlineSongs:{Data.OnlineMusicLibrary.SearchKeyWords}",
-            Data.OnlineMusicLibrary.OnlineSongInfoList
+            $"OnlineSongs:{App.GetService<OnlineMusicLibrary>().SearchKeyWords}",
+            App.GetService<OnlineMusicLibrary>().OnlineSongInfoList
         );
         if (e.ClickedItem is IBriefOnlineSongInfo info)
         {
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
     }
 
-    public void OnlineSongsPlayButton_Click(IBriefOnlineSongInfo info)
+    [RelayCommand]
+
+    public void OnlineSongsPlayButton(IBriefOnlineSongInfo info)
+
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
-            $"OnlineSongs:{Data.OnlineMusicLibrary.SearchKeyWords}",
-            Data.OnlineMusicLibrary.OnlineSongInfoList
+            $"OnlineSongs:{App.GetService<OnlineMusicLibrary>().SearchKeyWords}",
+            App.GetService<OnlineMusicLibrary>().OnlineSongInfoList
         );
-        Data.MusicPlayer.PlaySongByInfo(info);
+        App.GetService<MusicPlayer>().PlaySongByInfo(info);
     }
 
-    public void OnlineSongsPlayNextButton_Click(IBriefOnlineSongInfo info)
+    [RelayCommand]
+
+    public void OnlineSongsPlayNextButton(IBriefOnlineSongInfo info)
+
     {
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
             Data.PlayQueueManager.SetNormalPlayQueue("OnlineSongs:Part", list);
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
@@ -45,13 +56,16 @@ public sealed class OnlineSongsViewModel
         }
     }
 
-    public void AddToPlayQueueButton_Click(IBriefOnlineSongInfo info)
+    [RelayCommand]
+
+    public void AddToPlayQueueButton(IBriefOnlineSongInfo info)
+
     {
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
             Data.PlayQueueManager.SetNormalPlayQueue("OnlineSongs:Part", list);
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
@@ -59,36 +73,53 @@ public sealed class OnlineSongsViewModel
         }
     }
 
-    public async void AddToPlaylistButton_Click(IBriefOnlineSongInfo info, PlaylistInfo playlist)
+    [RelayCommand]
+
+    public async Task AddToPlaylistButton(Tuple<IBriefOnlineSongInfo, PlaylistInfo> tuple)
+
     {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
+
+        var (info, playlist) = tuple;
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, info);
     }
 
-    public async void ShowAlbumButton_Click(IBriefOnlineSongInfo info)
+    [RelayCommand]
+
+    public async Task ShowAlbumButton(IBriefOnlineSongInfo info)
+
     {
         var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(info);
         if (onlineAlbumInfo is not null)
         {
-            Data.SelectedOnlineAlbum = onlineAlbumInfo;
-            Data.ShellPage!.Navigate(
+            _navigationService.NavigateShell(
                 nameof(OnlineAlbumDetailPage),
-                "",
+                new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(OnlineSongsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
     }
 
-    public async void ShowArtistButton_Click(IBriefOnlineSongInfo info)
+    [RelayCommand]
+
+    public async Task ShowArtistButton(IBriefOnlineSongInfo info)
+
     {
         var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(info);
         if (onlineArtistInfo is not null)
         {
-            Data.SelectedOnlineArtist = onlineArtistInfo;
-            Data.ShellPage!.Navigate(
+            _navigationService.NavigateShell(
                 nameof(OnlineArtistDetailPage),
-                "",
+                new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(OnlineSongsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
     }
+
+    // Legacy click-handler adapters kept for batch-refactor compatibility.
+
+
+
+
+
 }
+

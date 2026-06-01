@@ -78,7 +78,7 @@ public static class DownloadHelper
                     await ShowCompletionNotificationAsync(detailedInfo.Title, finalPath);
 
                     // 重新加载音乐库
-                    _ = Data.MusicLibrary.LoadLibraryAgainAsync();
+                    _ = App.GetService<MusicLibrary>().LoadLibraryAgainAsync();
                 }
                 catch (OperationCanceledException)
                 {
@@ -528,3 +528,4 @@ public static class DownloadHelper
         return location;
     }
 }
+

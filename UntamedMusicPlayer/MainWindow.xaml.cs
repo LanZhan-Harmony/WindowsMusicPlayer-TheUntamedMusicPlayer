@@ -543,7 +543,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         {
             args.Cancel = true;
             sender.Hide(); // 立即隐藏窗口，提升视觉响应
-            await Data.MusicPlayer.Pause(); // 立即停止音乐播放
+            await App.GetService<MusicPlayer>().Pause(); // 立即停止音乐播放
             Data.DesktopLyricWindow?.Dispose(); // 立即关闭桌面歌词
             if (Data.ImageViewerWindows is not null) // 立即关闭图片查看器
             {
@@ -556,8 +556,8 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             Settings.NotFirstUsed = true;
             // 并行执行保存以缩短退出后的存活时间
             await Task.WhenAll(
-                Data.MusicPlayer.SaveStateAsync(),
-                Data.PlaylistLibrary.SaveLibraryAsync()
+                App.GetService<MusicPlayer>().SaveStateAsync(),
+                App.GetService<PlaylistLibrary>().SaveLibraryAsync()
             );
         }
         catch (Exception ex)
@@ -586,7 +586,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         try
         {
-            Data.MusicPlayer.Dispose();
+            App.GetService<MusicPlayer>().Dispose();
             UnregisterGlobalHotKeys();
 
             RootGrid.RemoveHandler(UIElement.KeyDownEvent, new KeyEventHandler(OnGlobalKeyDown));
@@ -617,3 +617,4 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         }
     }
 }
+

@@ -58,7 +58,7 @@ public sealed partial class OnlineArtistDetailPage : Page
         set
         {
             field = value;
-            ViewModel.SaveSelectionBarSelectedIndex(value);
+            _ = ViewModel.SaveSelectionBarSelectedIndexAsync(value);
         }
     } = 0;
 
@@ -73,12 +73,14 @@ public sealed partial class OnlineArtistDetailPage : Page
         SelectionBarSelectedIndex = await ViewModel.LoadSelectionBarSelectedIndex();
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
 
-        // 检查并加载艺术家数据
-        ViewModel.CheckAndLoadArtistAsync();
+        if (e.Parameter is IBriefOnlineArtistInfo artist)
+        {
+            await ViewModel.Initialize(artist);
+        }
 
         if (Data.ShellViewModel!.NavigatePage == nameof(OnlineArtistsPage))
         {
@@ -353,7 +355,7 @@ public sealed partial class OnlineArtistDetailPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -376,7 +378,7 @@ public sealed partial class OnlineArtistDetailPage : Page
         )
         {
             var (songInfo, playlist) = tuple;
-            ViewModel.SongListViewAddToPlaylistButton_Click(songInfo, playlist);
+            ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(Tuple.Create(songInfo, playlist));
         }
     }
 
@@ -388,7 +390,7 @@ public sealed partial class OnlineArtistDetailPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -411,7 +413,7 @@ public sealed partial class OnlineArtistDetailPage : Page
         )
         {
             var (albumInfo, playlist) = tuple;
-            ViewModel.AlbumGridViewAddToPlaylistButton_Click(albumInfo, playlist);
+            ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(Tuple.Create(albumInfo, playlist));
         }
     }
 
@@ -423,7 +425,7 @@ public sealed partial class OnlineArtistDetailPage : Page
             {
                 flyout.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -440,13 +442,13 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
         {
-            ViewModel.AddToPlaylistFlyoutButton_Click(playlist);
+            ViewModel.AddToPlaylistFlyoutButtonCommand.Execute(playlist);
         }
     }
 
     private void AddToPlayQueueFlyoutButton_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.AddToPlayQueueFlyoutButton_Click();
+        ViewModel.AddToPlayQueueFlyoutButtonCommand.Execute(null);
     }
 
     private async void AddToNewPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
@@ -456,7 +458,7 @@ public sealed partial class OnlineArtistDetailPage : Page
 
         if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
         {
-            ViewModel.AddToPlaylistFlyoutButton_Click(dialog.CreatedPlaylist);
+            ViewModel.AddToPlaylistFlyoutButtonCommand.Execute(dialog.CreatedPlaylist);
         }
     }
 
@@ -468,7 +470,7 @@ public sealed partial class OnlineArtistDetailPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -523,7 +525,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            ViewModel.SongListViewPlayButton_Click(info);
+            ViewModel.SongListViewPlayButtonCommand.Execute(info);
         }
     }
 
@@ -531,7 +533,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            ViewModel.SongListViewPlayNextButton_Click(info);
+            ViewModel.SongListViewPlayNextButtonCommand.Execute(info);
         }
     }
 
@@ -547,7 +549,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            ViewModel.SongListViewAddToPlayQueueButton_Click(info);
+            ViewModel.SongListViewAddToPlayQueueButtonCommand.Execute(info);
         }
     }
 
@@ -560,7 +562,7 @@ public sealed partial class OnlineArtistDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.SongListViewAddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+                ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
             }
         }
     }
@@ -582,7 +584,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            ViewModel.SongListViewShowAlbumButton_Click(info);
+            ViewModel.SongListViewShowAlbumButtonCommand.Execute(info);
         }
     }
 
@@ -603,10 +605,12 @@ public sealed partial class OnlineArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.SelectedOnlineAlbum = onlineAlbumInfo;
                 Data.ShellPage!.Navigate(
                     nameof(OnlineAlbumDetailPage),
-                    nameof(OnlineArtistDetailPage),
+                    new OnlineAlbumNavigationArgs(
+                        onlineAlbumInfo,
+                        nameof(OnlineArtistDetailPage)
+                    ),
                     new SuppressNavigationTransitionInfo()
                 );
             }
@@ -617,7 +621,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IOnlineArtistAlbumInfo info })
         {
-            ViewModel.AlbumGridViewPlayButton_Click(info);
+            ViewModel.AlbumGridViewPlayButtonCommand.Execute(info);
         }
     }
 
@@ -625,7 +629,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IOnlineArtistAlbumInfo info })
         {
-            ViewModel.AlbumGridViewPlayNextButton_Click(info);
+            ViewModel.AlbumGridViewPlayNextButtonCommand.Execute(info);
         }
     }
 
@@ -633,7 +637,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IOnlineArtistAlbumInfo info })
         {
-            ViewModel.AlbumGridViewAddToPlayQueueButton_Click(info);
+            ViewModel.AlbumGridViewAddToPlayQueueButtonCommand.Execute(info);
         }
     }
 
@@ -646,7 +650,7 @@ public sealed partial class OnlineArtistDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AlbumGridViewAddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+                ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
             }
         }
     }
@@ -664,10 +668,12 @@ public sealed partial class OnlineArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.SelectedOnlineAlbum = onlineAlbumInfo;
                 Data.ShellPage!.Navigate(
                     nameof(OnlineAlbumDetailPage),
-                    nameof(OnlineArtistDetailPage),
+                    new OnlineAlbumNavigationArgs(
+                        onlineAlbumInfo,
+                        nameof(OnlineArtistDetailPage)
+                    ),
                     new SuppressNavigationTransitionInfo()
                 );
             }
@@ -681,3 +687,9 @@ public sealed partial class OnlineArtistDetailPage : Page
         _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
     }
 }
+
+
+
+
+
+

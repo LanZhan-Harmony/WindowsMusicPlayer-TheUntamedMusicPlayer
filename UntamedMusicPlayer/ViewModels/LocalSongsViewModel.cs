@@ -14,6 +14,7 @@ using UntamedMusicPlayer.Views;
 using ZLinq;
 using ZLogger;
 
+using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class LocalSongsViewModel
@@ -23,6 +24,8 @@ public sealed partial class LocalSongsViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly INavigationService _navigationService =
+        App.GetService<INavigationService>();
     private readonly ILogger _logger = LoggingService.CreateLogger<LocalSongsViewModel>();
 
     /// <summary>
@@ -71,7 +74,7 @@ public sealed partial class LocalSongsViewModel
     {
         SortByStr = SortBy[value];
         SetGroupMode();
-        SaveSortModeAsync();
+        _ = SaveSortModeAsync();
     }
 
     /// <summary>
@@ -92,7 +95,7 @@ public sealed partial class LocalSongsViewModel
         {
             GenreStr = Genres[value];
         }
-        SaveGenreModeAsync();
+        _ = SaveGenreModeAsync();
     }
 
     /// <summary>
@@ -105,23 +108,23 @@ public sealed partial class LocalSongsViewModel
         : base(StrongReferenceMessenger.Default)
     {
         Messenger.Register(this);
-        LoadModeAndSongList();
+        _ = LoadModeAndSongList();
         Data.LocalSongsViewModel = this;
     }
 
     public void Receive(HaveMusicMessage message)
     {
-        LoadModeAndSongList();
+        _ = LoadModeAndSongList();
     }
 
-    public async void LoadModeAndSongList()
+    public async Task LoadModeAndSongList()
     {
-        _songList = [.. Data.MusicLibrary.Songs];
+        _songList = [.. App.GetService<MusicLibrary>().Songs];
         if (_songList.Count == 0)
         {
             return;
         }
-        Genres = Data.MusicLibrary.Genres;
+        Genres = App.GetService<MusicLibrary>().Genres;
         await LoadSortModeAsync();
         await LoadGenreModeAsync();
         try
@@ -489,19 +492,12 @@ public sealed partial class LocalSongsViewModel
         });
     }
 
-    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
+    public async void SortByListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs _unused
+    )
     {
-        var currentsortmode = SortMode;
-        SortMode = (byte)(sender as ListView)!.SelectedIndex;
-        if (SortMode != currentsortmode)
-        {
-            IsProgressRingActive = true;
-            await SortSongs();
-            OnPropertyChanged(nameof(GroupedSongList));
-            OnPropertyChanged(nameof(NotGroupedSongList));
-            Messenger.Send(new ScrollToSongMessage());
-            IsProgressRingActive = false;
-        }
+        _ = ChangeSortModeAsync((sender as ListView)!.SelectedIndex);
     }
 
     public void SortByListView_Loaded(object sender, RoutedEventArgs _)
@@ -509,19 +505,56 @@ public sealed partial class LocalSongsViewModel
         (sender as ListView)!.SelectedIndex = SortMode;
     }
 
-    public async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
+    public async void GenreListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs _unused
+    )
     {
-        var currentGenreMode = GenreMode;
-        GenreMode = (byte)(sender as ListView)!.SelectedIndex;
-        if (GenreMode != currentGenreMode)
+        _ = ChangeGenreModeAsync((sender as ListView)!.SelectedIndex);
+    }
+
+    public async Task ChangeSortModeAsync(int selectedIndex)
+    {
+        if (selectedIndex < 0)
         {
-            IsProgressRingActive = true;
-            await FilterSongs();
-            OnPropertyChanged(nameof(GroupedSongList));
-            OnPropertyChanged(nameof(NotGroupedSongList));
-            Messenger.Send(new ScrollToSongMessage());
-            IsProgressRingActive = false;
+            return;
         }
+
+        var currentSortMode = SortMode;
+        SortMode = (byte)selectedIndex;
+        if (SortMode == currentSortMode)
+        {
+            return;
+        }
+
+        IsProgressRingActive = true;
+        await SortSongs();
+        OnPropertyChanged(nameof(GroupedSongList));
+        OnPropertyChanged(nameof(NotGroupedSongList));
+        Messenger.Send(new ScrollToSongMessage());
+        IsProgressRingActive = false;
+    }
+
+    public async Task ChangeGenreModeAsync(int selectedIndex)
+    {
+        if (selectedIndex < 0)
+        {
+            return;
+        }
+
+        var currentGenreMode = GenreMode;
+        GenreMode = selectedIndex;
+        if (GenreMode == currentGenreMode)
+        {
+            return;
+        }
+
+        IsProgressRingActive = true;
+        await FilterSongs();
+        OnPropertyChanged(nameof(GroupedSongList));
+        OnPropertyChanged(nameof(NotGroupedSongList));
+        Messenger.Send(new ScrollToSongMessage());
+        IsProgressRingActive = false;
     }
 
     public void GenreListView_Loaded(object sender, RoutedEventArgs _)
@@ -529,14 +562,18 @@ public sealed partial class LocalSongsViewModel
         (sender as ListView)!.SelectedIndex = GenreMode;
     }
 
-    public void ShuffledPlayAllButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public void ShuffledPlayAllButton()
+
     {
         Data.PlayQueueManager.SetShuffledPlayQueue(
             "ShuffledLocalSongs:All",
             ConvertGroupedToFlatList()
         );
-        Data.MusicPlayer.PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
+        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
     }
+
 
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
@@ -546,26 +583,32 @@ public sealed partial class LocalSongsViewModel
                 $"LocalSongs:All:{SortByStr}",
                 ConvertGroupedToFlatList(info)
             );
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
     }
 
-    public void PlayButton_Click(BriefLocalSongInfo info)
+    [RelayCommand]
+
+    public void PlayButton(BriefLocalSongInfo info)
+
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
             $"LocalSongs:All:{SortByStr}",
             ConvertGroupedToFlatList(info)
         );
-        Data.MusicPlayer.PlaySongByInfo(info);
+        App.GetService<MusicPlayer>().PlaySongByInfo(info);
     }
 
-    public void PlayNextButton_Click(BriefLocalSongInfo info)
+    [RelayCommand]
+
+    public void PlayNextButton(BriefLocalSongInfo info)
+
     {
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
             Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", list);
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
@@ -576,13 +619,14 @@ public sealed partial class LocalSongsViewModel
     /// <summary>
     /// 添加歌曲到播放队列
     /// </summary>
-    public void AddToPlayQueueButton_Click(BriefLocalSongInfo info)
+    [RelayCommand]
+    public void AddToPlayQueueButton(BriefLocalSongInfo info)
     {
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
             Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", list);
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
@@ -590,34 +634,43 @@ public sealed partial class LocalSongsViewModel
         }
     }
 
-    public async void AddToPlaylistButton_Click(BriefLocalSongInfo info, PlaylistInfo playlist)
+    [RelayCommand]
+
+    public async Task AddToPlaylistButton(Tuple<BriefLocalSongInfo, PlaylistInfo> tuple)
+
     {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
+
+        var (info, playlist) = tuple;
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, info);
     }
 
-    public void ShowAlbumButton_Click(BriefLocalSongInfo info)
+    [RelayCommand]
+
+    public void ShowAlbumButton(BriefLocalSongInfo info)
+
     {
-        var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info.Album);
+        var localAlbumInfo = App.GetService<MusicLibrary>().GetAlbumInfoBySong(info.Album);
         if (localAlbumInfo is not null)
         {
-            Data.SelectedLocalAlbum = localAlbumInfo;
-            Data.ShellPage!.Navigate(
+            _navigationService.NavigateShell(
                 nameof(LocalAlbumDetailPage),
-                "",
+                new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalSongsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
     }
 
-    public void ShowArtistButton_Click(BriefLocalSongInfo info)
+    [RelayCommand]
+
+    public void ShowArtistButton(BriefLocalSongInfo info)
+
     {
-        var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(info.Artists[0]);
+        var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(info.Artists[0]);
         if (localArtistInfo is not null)
         {
-            Data.SelectedLocalArtist = localArtistInfo;
-            Data.ShellPage!.Navigate(
+            _navigationService.NavigateShell(
                 nameof(LocalArtistDetailPage),
-                "",
+                new LocalArtistNavigationArgs(localArtistInfo, nameof(LocalSongsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -638,12 +691,12 @@ public sealed partial class LocalSongsViewModel
         }
     }
 
-    public async void SaveSortModeAsync()
+    public async Task SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("SortMode", SortMode);
     }
 
-    public async void SaveGenreModeAsync()
+    public async Task SaveGenreModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("GenreMode", GenreMode);
     }
@@ -671,5 +724,12 @@ public sealed partial class LocalSongsViewModel
         };
     }
 
+
+
+
+
+
+
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
+

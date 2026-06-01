@@ -190,28 +190,28 @@ public sealed partial class RootPlayBarView : UserControl
     public void PointerPressedLyricUpdate(object sender, PointerRoutedEventArgs _)
     {
         _hasPointerPressed = true;
-        Data.MusicPlayer.LyricUpdateByPercentage(((Slider)sender).Value, true);
+        App.GetService<MusicPlayer>().LyricUpdateByPercentage(((Slider)sender).Value, true);
     }
 
     public void PointerMovedLyricUpdate(object sender, PointerRoutedEventArgs _)
     {
         if (_hasPointerPressed)
         {
-            Data.MusicPlayer.LyricUpdateByPercentage(((Slider)sender).Value, false);
+            App.GetService<MusicPlayer>().LyricUpdateByPercentage(((Slider)sender).Value, false);
         }
     }
 
     public void PointerReleasedPositionUpdate(object sender, PointerRoutedEventArgs _)
     {
         _hasPointerPressed = false;
-        Data.MusicPlayer.SetPositionByPercentage(((Slider)sender).Value);
+        App.GetService<MusicPlayer>().SetPositionByPercentage(((Slider)sender).Value);
     }
 
     public void KeyDownLyricUpdate(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Left || e.Key == VirtualKey.Right)
         {
-            Data.MusicPlayer.LyricUpdateByPercentage(((Slider)sender).Value, true);
+            App.GetService<MusicPlayer>().LyricUpdateByPercentage(((Slider)sender).Value, true);
         }
     }
 
@@ -219,7 +219,7 @@ public sealed partial class RootPlayBarView : UserControl
     {
         if (e.Key == VirtualKey.Left || e.Key == VirtualKey.Right)
         {
-            Data.MusicPlayer.SetPositionByPercentage(((Slider)sender).Value);
+            App.GetService<MusicPlayer>().SetPositionByPercentage(((Slider)sender).Value);
         }
     }
 
@@ -240,7 +240,7 @@ public sealed partial class RootPlayBarView : UserControl
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -257,7 +257,7 @@ public sealed partial class RootPlayBarView : UserControl
     {
         if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
         {
-            ViewModel.AddToPlaylistButton_Click(playlist);
+            ViewModel.AddToPlaylistButtonCommand.Execute(playlist);
         }
     }
 
@@ -268,7 +268,7 @@ public sealed partial class RootPlayBarView : UserControl
 
         if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
         {
-            ViewModel.AddToPlaylistButton_Click(dialog.CreatedPlaylist);
+            ViewModel.AddToPlaylistButtonCommand.Execute(dialog.CreatedPlaylist);
         }
     }
 
@@ -279,3 +279,9 @@ public sealed partial class RootPlayBarView : UserControl
         await dialog.ShowAsync();
     }
 }
+
+
+
+
+
+

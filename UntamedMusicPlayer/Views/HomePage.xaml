@@ -123,8 +123,8 @@
                             Margin="0,7,0,0" VerticalAlignment="Center"
                             AccessKey="S"
                             ItemTemplate="{StaticResource SuggestResultTemplate}"
-                            ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.SuggestResultList, Mode=OneWay}"
-                            Loaded="{x:Bind model:Data.OnlineMusicLibrary.AutoSuggestBox_Loaded}"
+                            ItemsSource="{x:Bind OnlineMusicLibrary.SuggestResultList, Mode=OneWay}"
+                            Loaded="{x:Bind OnlineMusicLibrary.AutoSuggestBox_Loaded}"
                             QueryIcon="Find"
                             QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted}"
                             TextChanged="{x:Bind ViewModel.SuggestBox_TextChanged}"
@@ -174,22 +174,22 @@
             <TextBlock x:Name="KeyWordsTextBlock"
                        Grid.Row="0"
                        TextTrimming="WordEllipsis"
-                       Visibility="{x:Bind model:Data.OnlineMusicLibrary.KeyWordsTextBlockVisibility, Mode=OneWay}">
+                       Visibility="{x:Bind OnlineMusicLibrary.KeyWordsTextBlockVisibility, Mode=OneWay}">
                 <Run FontSize="30" FontWeight="Bold"
-                     Text="{x:Bind model:Data.OnlineMusicLibrary.SearchKeyWords, Mode=OneWay}"/>
+                     Text="{x:Bind OnlineMusicLibrary.SearchKeyWords, Mode=OneWay}"/>
                 <Run x:Uid="Home_SearchResult" FontSize="20"/>
             </TextBlock>
             <ProgressRing Grid.Row="0" Grid.RowSpan="2"
                           Width="50" Height="50"
                           Margin="0,24,0,0"
                           Canvas.ZIndex="1"
-                          IsActive="{x:Bind model:Data.OnlineMusicLibrary.IsSearchProgressRingActive, Mode=OneWay}"/>
+                          IsActive="{x:Bind OnlineMusicLibrary.IsSearchProgressRingActive, Mode=OneWay}"/>
             <StackPanel x:Name="NetworkErrorStackPanel"
                         Grid.Row="0" Grid.RowSpan="2"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Canvas.ZIndex="1" Orientation="Horizontal"
-                        Visibility="{x:Bind model:Data.OnlineMusicLibrary.NetworkErrorVisibility, Mode=OneWay}">
+                        Visibility="{x:Bind OnlineMusicLibrary.NetworkErrorVisibility, Mode=OneWay}">
                 <FontIcon x:Name="NetworkErrorFontIcon"
                           FontFamily="{StaticResource UntamedFontFamily}"
                           Glyph="&#xEB56;"/>
@@ -197,7 +197,7 @@
                     <TextBlock x:Uid="Home_ServerError"
                                FontSize="29" FontWeight="SemiBold"/>
                     <TextBlock x:Uid="Home_UnableToAccess" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <Button Click="{x:Bind model:Data.OnlineMusicLibrary.RetryButton_Click}" Style="{StaticResource AccentButtonStyle}">
+                    <Button Click="{x:Bind OnlineMusicLibrary.RetryButton_Click}" Style="{StaticResource AccentButtonStyle}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                       FontSize="12" Glyph="&#xE72C;"/>
@@ -210,3 +210,5 @@
         </Grid>
     </Grid>
 </Page>
+
+

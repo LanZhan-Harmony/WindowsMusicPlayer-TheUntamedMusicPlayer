@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using UntamedMusicPlayer.Contracts.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -10,10 +11,14 @@ using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 
+using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class LyricViewModel : ObservableObject, IDisposable
 {
+    private readonly INavigationService _navigationService =
+        App.GetService<INavigationService>();
+
     [ObservableProperty]
     public partial bool IsShowCoverEnabled { get; set; }
 
@@ -36,47 +41,61 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
         if (e.ClickedItem is LyricSlice lyricSlice)
         {
             var time = lyricSlice.StartTime;
-            Data.MusicPlayer.LyricPositionUpdate(time);
+            App.GetService<MusicPlayer>().LyricPositionUpdate(time);
         }
     }
 
-    public void PlayButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public void PlayButton()
+
     {
         var currentSong = Data.PlayState.CurrentBriefSong;
-        Data.MusicPlayer.PlaySongByInfo(currentSong!);
+        App.GetService<MusicPlayer>().PlaySongByInfo(currentSong!);
     }
 
-    public void PlayNextButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public void PlayNextButton()
+
     {
         var currentSong = Data.PlayState.CurrentBriefSong;
         Data.PlayQueueManager.AddSongsToNextPlay([currentSong!]);
     }
 
-    public void AddToPlayQueueButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public void AddToPlayQueueButton()
+
     {
         var currentSong = Data.PlayState.CurrentBriefSong;
         Data.PlayQueueManager.AddSongsToEnd([currentSong!]);
     }
 
-    public async void AddToPlaylistButton_Click(PlaylistInfo playlist)
+    [RelayCommand]
+
+    public async Task AddToPlaylistButton(PlaylistInfo playlist)
+
     {
         var currentSong = Data.PlayState.CurrentBriefSong;
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, currentSong!);
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, currentSong!);
     }
 
-    public async void ShowAlbumButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public async Task ShowAlbumButton()
+
     {
         Data.RootPlayBarViewModel!.DetailModeUpdate();
         var info = Data.PlayState.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(localInfo.Album);
+            var localAlbumInfo = App.GetService<MusicLibrary>().GetAlbumInfoBySong(localInfo.Album);
             if (localAlbumInfo is not null)
             {
-                Data.SelectedLocalAlbum = localAlbumInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(LocalAlbumDetailPage),
-                    "",
+                    new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LyricPage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
@@ -86,29 +105,30 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
             var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(onlineInfo);
             if (onlineAlbumInfo is not null)
             {
-                Data.SelectedOnlineAlbum = onlineAlbumInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(OnlineAlbumDetailPage),
-                    "",
+                    new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(LyricPage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
         }
     }
 
-    public async void ShowArtistButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public async Task ShowArtistButton()
+
     {
         Data.RootPlayBarViewModel!.DetailModeUpdate();
         var info = Data.PlayState.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(localInfo.Artists[0]);
+            var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(localInfo.Artists[0]);
             if (localArtistInfo is not null)
             {
-                Data.SelectedLocalArtist = localArtistInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(LocalArtistDetailPage),
-                    "",
+                    new LocalArtistNavigationArgs(localArtistInfo, nameof(LyricPage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
@@ -118,17 +138,19 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
             var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(onlineInfo);
             if (onlineArtistInfo is not null)
             {
-                Data.SelectedOnlineArtist = onlineArtistInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(OnlineArtistDetailPage),
-                    "",
+                    new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(LyricPage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
         }
     }
 
-    public async void ShowCoverButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public async Task ShowCoverButton()
+
     {
         Data.ImageViewerWindows ??= [];
         var windowId = Guid.CreateVersion7();
@@ -138,18 +160,34 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
         );
     }
 
-    public async void AddLyricAdjustButton_Click(object sender, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public async Task AddLyricAdjustButton()
+
     {
         Data.LyricManager.AddLyricAdjust();
     }
 
-    public async void SubtractLyricAdjustButton_Click(object sender, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public async Task SubtractLyricAdjustButton()
+
     {
         Data.LyricManager.SubtractLyricAdjust();
     }
+
+
+
+
+
+
+
+
 
     public void Dispose()
     {
         Data.PlayState.PropertyChanged -= OnStateChanged;
     }
+
 }
+

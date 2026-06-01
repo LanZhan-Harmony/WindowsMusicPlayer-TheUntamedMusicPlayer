@@ -49,7 +49,7 @@ public sealed partial class SettingsViewModel
 
     partial void OnSongDownloadLocationChanged(string value)
     {
-        SaveSongDownloadLocationAsync(value);
+        _ = SaveSongDownloadLocationAsync(value);
     }
 
     [ObservableProperty]
@@ -64,7 +64,7 @@ public sealed partial class SettingsViewModel
     partial void OnIsExclusiveModeChanged(bool value)
     {
         Settings.IsExclusiveMode = value;
-        Data.MusicPlayer.SetExclusiveMode(value);
+        App.GetService<MusicPlayer>().SetExclusiveMode(value);
     }
 
     /// <summary>
@@ -243,9 +243,9 @@ public sealed partial class SettingsViewModel
         Messenger.Register(this);
 
         EmptyFolderMessageVisibility =
-            Data.MusicLibrary.Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
-        LoadSongDownloadLocationAsync();
-        IsExportPlaylistsButtonEnabled = Data.PlaylistLibrary.Playlists.Count > 0;
+            App.GetService<MusicLibrary>().Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+        _ = LoadSongDownloadLocationAsync();
+        IsExportPlaylistsButtonEnabled = App.GetService<PlaylistLibrary>().Playlists.Count > 0;
         Data.SettingsViewModel = this;
     }
 
@@ -254,9 +254,11 @@ public sealed partial class SettingsViewModel
         IsExportPlaylistsButtonEnabled = message.HasPlaylist;
     }
 
-    public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs _)
+    [RelayCommand]
+
+    public async Task PickMusicFolderButton()
+
     {
-        (sender as Button)!.IsEnabled = false;
         var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
         {
             SuggestedStartLocation = PickerLocationId.MusicLibrary,
@@ -265,43 +267,47 @@ public sealed partial class SettingsViewModel
         var folder = await openPicker.PickSingleFolderAsync();
         if (
             folder is not null
-            && !Data.MusicLibrary.Folders.AsValueEnumerable().Contains(folder.Path)
+            && !App.GetService<MusicLibrary>().Folders.AsValueEnumerable().Contains(folder.Path)
         )
         {
-            Data.MusicLibrary.Folders.Add(folder.Path);
+            App.GetService<MusicLibrary>().Folders.Add(folder.Path);
             EmptyFolderMessageVisibility =
-                Data.MusicLibrary.Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+                App.GetService<MusicLibrary>().Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
             await SaveFoldersAsync();
-            await Data.MusicLibrary.LoadLibraryAgainAsync(); // 重新加载音乐库
+            await App.GetService<MusicLibrary>().LoadLibraryAgainAsync(); // 重新加载音乐库
         }
-        (sender as Button)!.IsEnabled = true;
     }
 
     public async void RemoveMusicFolder(string folder)
     {
-        Data.MusicLibrary.Folders.Remove(folder);
+        App.GetService<MusicLibrary>().Folders.Remove(folder);
         EmptyFolderMessageVisibility =
-            Data.MusicLibrary.Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+            App.GetService<MusicLibrary>().Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
         await SaveFoldersAsync();
-        await Data.MusicLibrary.LoadLibraryAgainAsync();
+        await App.GetService<MusicLibrary>().LoadLibraryAgainAsync();
     }
 
-    public async void RefreshButton_Click(object sender, RoutedEventArgs _)
+    [RelayCommand]
+
+    public async Task RefreshButton()
+
     {
-        var senderButton = sender as Button;
-        senderButton!.IsEnabled = false;
-        await Data.MusicLibrary.LoadLibraryAgainAsync();
-        senderButton!.IsEnabled = true;
+        await App.GetService<MusicLibrary>().LoadLibraryAgainAsync();
     }
 
-    public void SongDownloadLocationButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public void SongDownloadLocationButton()
+
     {
         Process.Start("explorer.exe", SongDownloadLocation);
     }
 
-    public async void ChangeSongDownloadLocationButton_Click(object sender, RoutedEventArgs _)
+    [RelayCommand]
+
+    public async Task ChangeSongDownloadLocationButton()
+
     {
-        (sender as Button)!.IsEnabled = false;
         try
         {
             var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
@@ -315,15 +321,13 @@ public sealed partial class SettingsViewModel
             }
         }
         catch { }
-        finally
-        {
-            (sender as Button)!.IsEnabled = true;
-        }
     }
 
-    public async void ImportFromM3u8Button_Click(object sender, RoutedEventArgs _)
+    [RelayCommand]
+
+    public async Task ImportFromM3u8Button()
+
     {
-        (sender as Button)!.IsEnabled = false;
         try
         {
             var picker = new FileOpenPicker(App.MainWindow!.AppWindow.Id)
@@ -344,7 +348,7 @@ public sealed partial class SettingsViewModel
                 await info.AddSongs(songs);
                 infos.Add(info);
             }
-            Data.PlaylistLibrary.NewPlaylists(infos);
+            App.GetService<PlaylistLibrary>().NewPlaylists(infos);
             Messenger.Send(
                 new LogMessage(
                     LogLevel.None,
@@ -361,15 +365,13 @@ public sealed partial class SettingsViewModel
             );
         }
         catch { }
-        finally
-        {
-            (sender as Button)!.IsEnabled = true;
-        }
     }
 
-    public async void ImportFromBinButton_Click(object sender, RoutedEventArgs _)
+    [RelayCommand]
+
+    public async Task ImportFromBinButton()
+
     {
-        (sender as Button)!.IsEnabled = false;
         try
         {
             var picker = new FileOpenPicker(App.MainWindow!.AppWindow.Id)
@@ -381,7 +383,7 @@ public sealed partial class SettingsViewModel
             if (file is not null)
             {
                 var playlists = await FileManager.LoadPlaylistDataFromBinAsync(file.Path);
-                Data.PlaylistLibrary.NewPlaylists(playlists);
+                App.GetService<PlaylistLibrary>().NewPlaylists(playlists);
                 Messenger.Send(
                     new LogMessage(
                         LogLevel.None,
@@ -399,15 +401,13 @@ public sealed partial class SettingsViewModel
             }
         }
         catch { }
-        finally
-        {
-            (sender as Button)!.IsEnabled = true;
-        }
     }
 
-    public async void ExportToM3u8Button_Click(object sender, RoutedEventArgs _)
+    [RelayCommand]
+
+    public async Task ExportToM3u8Button()
+
     {
-        (sender as Button)!.IsEnabled = false;
         try
         {
             var folderPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
@@ -415,7 +415,7 @@ public sealed partial class SettingsViewModel
                 SuggestedStartLocation = PickerLocationId.MusicLibrary,
             };
             var folder = await folderPicker.PickSingleFolderAsync();
-            var count = Data.PlaylistLibrary.Playlists.Count;
+            var count = App.GetService<PlaylistLibrary>().Playlists.Count;
             if (folder is not null && count != 0)
             {
                 await M3u8Helper.ExportPlaylistsToM3u8Async(folder.Path);
@@ -436,18 +436,16 @@ public sealed partial class SettingsViewModel
             }
         }
         catch { }
-        finally
-        {
-            (sender as Button)!.IsEnabled = true;
-        }
     }
 
-    public async void ExportToBinButton_Click(object sender, RoutedEventArgs _)
+    [RelayCommand]
+
+    public async Task ExportToBinButton()
+
     {
-        (sender as Button)!.IsEnabled = false;
         try
         {
-            var prepareBinTask = FileManager.SavePlaylistDataAsync(Data.PlaylistLibrary.Playlists);
+            var prepareBinTask = FileManager.SavePlaylistDataAsync(App.GetService<PlaylistLibrary>().Playlists);
             var savePicker = new FileSavePicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.MusicLibrary,
@@ -455,7 +453,7 @@ public sealed partial class SettingsViewModel
                 FileTypeChoices = { { "Settings_PlaylistFile".GetLocalized(), [".bin"] } },
             };
             var file = await savePicker.PickSaveFileAsync();
-            var count = Data.PlaylistLibrary.Playlists.Count;
+            var count = App.GetService<PlaylistLibrary>().Playlists.Count;
             if (file is not null && count != 0)
             {
                 await prepareBinTask;
@@ -484,10 +482,6 @@ public sealed partial class SettingsViewModel
             }
         }
         catch { }
-        finally
-        {
-            (sender as Button)!.IsEnabled = true;
-        }
     }
 
     public async void MaterialComboBox_SelectionChanged(object _1, SelectionChangedEventArgs _2)
@@ -501,7 +495,10 @@ public sealed partial class SettingsViewModel
         TintColor = color;
     }
 
-    public async void ResetMaterialButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public async Task ResetMaterialButton()
+
     {
         IsFallBack = true;
         SelectedMaterial = (byte)MaterialType.DesktopAcrylic;
@@ -639,14 +636,20 @@ public sealed partial class SettingsViewModel
         }
     }
 
-    public void OpenLoggingFolderButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public void OpenLoggingFolderButton()
+
     {
         var logFolder = LoggingService.GetLogFolderPath();
         Directory.CreateDirectory(logFolder);
         Process.Start("explorer.exe", logFolder);
     }
 
-    public async Task ResetSoftwareButton_Click()
+    [RelayCommand]
+
+    public async Task ResetSoftwareButton()
+
     {
         try
         {
@@ -676,7 +679,7 @@ public sealed partial class SettingsViewModel
         return $"{"Settings_Version".GetLocalized()} {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
     }
 
-    private async void LoadSongDownloadLocationAsync()
+    private async Task LoadSongDownloadLocationAsync()
     {
         var location = await _localSettingsService.ReadSettingAsync<string>("SongDownloadLocation");
         if (string.IsNullOrWhiteSpace(location))
@@ -694,13 +697,24 @@ public sealed partial class SettingsViewModel
         SongDownloadLocation = location;
     }
 
+
+
+
+
+
+
+
+
+
+
+
     public static async Task SaveFoldersAsync()
     {
-        var folderPaths = Data.MusicLibrary.Folders?.AsValueEnumerable().ToList();
+        var folderPaths = App.GetService<MusicLibrary>().Folders?.AsValueEnumerable().ToList();
         await ApplicationData.Current.LocalFolder.SaveAsync("MusicFolders", folderPaths); //	调用 SettingsStorageExtensions 类中的扩展方法 SaveAsync，将 folderPaths 列表保存到名为 "MusicFolders" 的文件中。
     }
 
-    private async void SaveSongDownloadLocationAsync(string songDownloadLocation)
+    private async Task SaveSongDownloadLocationAsync(string songDownloadLocation)
     {
         await _localSettingsService.SaveSettingAsync("SongDownloadLocation", songDownloadLocation);
     }
@@ -710,3 +724,4 @@ public sealed partial class SettingsViewModel
         Messenger.Unregister<HavePlaylistMessage>(this);
     }
 }
+

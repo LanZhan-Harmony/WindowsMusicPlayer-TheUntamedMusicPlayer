@@ -1,13 +1,15 @@
+using CommunityToolkit.Mvvm.Input;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Models;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public sealed class OnlinePlayListsViewModel
+public sealed partial class OnlinePlayListsViewModel
 {
     public OnlinePlayListsViewModel() { }
 
-    public async void PlayButton_Click(IBriefOnlinePlaylistInfo info)
+    [RelayCommand]
+    private async Task Play(IBriefOnlinePlaylistInfo info)
     {
         var detailedInfo = await IDetailedOnlinePlaylistInfo.CreateDetailedOnlinePlaylistInfoAsync(
             info
@@ -18,10 +20,11 @@ public sealed class OnlinePlayListsViewModel
             return;
         }
         Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{info.Name}", songList);
-        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
-    public async void PlayNextButton_Click(IBriefOnlinePlaylistInfo info)
+    [RelayCommand]
+    private async Task PlayNext(IBriefOnlinePlaylistInfo info)
     {
         var detailedInfo = await IDetailedOnlinePlaylistInfo.CreateDetailedOnlinePlaylistInfoAsync(
             info
@@ -34,7 +37,7 @@ public sealed class OnlinePlayListsViewModel
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -42,7 +45,8 @@ public sealed class OnlinePlayListsViewModel
         }
     }
 
-    public async void AddToPlayQueueButton_Click(IBriefOnlinePlaylistInfo info)
+    [RelayCommand]
+    private async Task AddToPlayQueue(IBriefOnlinePlaylistInfo info)
     {
         var detailedInfo = await IDetailedOnlinePlaylistInfo.CreateDetailedOnlinePlaylistInfoAsync(
             info
@@ -55,7 +59,7 @@ public sealed class OnlinePlayListsViewModel
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -63,15 +67,15 @@ public sealed class OnlinePlayListsViewModel
         }
     }
 
-    public async void AddToPlaylistButton_Click(
-        IBriefOnlinePlaylistInfo info,
-        PlaylistInfo playlist
-    )
+    [RelayCommand]
+    private async Task AddToPlaylist(Tuple<IBriefOnlinePlaylistInfo, PlaylistInfo> tuple)
     {
+        var (info, playlist) = tuple;
         var detailedInfo = await IDetailedOnlinePlaylistInfo.CreateDetailedOnlinePlaylistInfoAsync(
             info
         );
         var songList = detailedInfo.SongList;
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
 }
+

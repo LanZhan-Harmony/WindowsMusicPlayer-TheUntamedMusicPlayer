@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
@@ -161,7 +162,7 @@ public sealed partial class EditPlaylistInfoDialog
             {
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
             };
-            Array.ForEach(Data.SupportedCoverTypes, openPicker.FileTypeFilter.Add);
+            Array.ForEach(AppConstants.SupportedCoverTypes, openPicker.FileTypeFilter.Add);
             var file = await openPicker.PickSingleFileAsync();
             if (file is null)
             {
@@ -381,7 +382,7 @@ public sealed partial class EditPlaylistInfoDialog
     {
         if (_originalName != _name)
         {
-            var uniqueName = Data.PlaylistLibrary.GetUniquePlaylistName(_name);
+            var uniqueName = App.GetService<PlaylistLibrary>().GetUniquePlaylistName(_name);
             _playlist.Name = uniqueName;
             StrongReferenceMessenger.Default.Send(
                 new PlaylistRenameMessage(_originalName, uniqueName)
@@ -397,7 +398,7 @@ public sealed partial class EditPlaylistInfoDialog
         await _playlist.AddRange([.. Songs.Select(s => s.Song)]);
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(true));
         StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(_playlist));
-        _ = FileManager.SavePlaylistDataAsync(Data.PlaylistLibrary.Playlists);
+        _ = FileManager.SavePlaylistDataAsync(App.GetService<PlaylistLibrary>().Playlists);
     }
 
     private new void CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -416,3 +417,4 @@ public sealed partial class EditPlaylistInfoDialog
         StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
+
