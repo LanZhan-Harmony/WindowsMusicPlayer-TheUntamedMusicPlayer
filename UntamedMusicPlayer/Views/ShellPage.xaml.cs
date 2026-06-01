@@ -31,7 +31,7 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
         {
             return;
         }
-        foreach (var playlist in Data.PlaylistLibrary.Playlists)
+        foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
         {
             var playlistItem = new NavigationViewItem
             {
@@ -110,7 +110,7 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
         if (sender is NavigationViewItem navItem)
         {
             navItem.MenuItems.Clear();
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistItem = new NavigationViewItem
                 {
@@ -152,8 +152,12 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
                 {
                     return;
                 }
-                Data.SelectedPlaylist = playlist;
                 ViewModel.PrevPlaylistInfo = playlist;
+                NavigationFrame.Navigate(
+                    typeof(PlayListDetailPage),
+                    new PlaylistNavigationArgs(playlist, nameof(ShellPage))
+                );
+                return;
             }
             else if (ViewModel.CurrentPage == tag)
             {
@@ -179,11 +183,21 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
 
     public void Navigate(
         string destPage,
-        string parameter,
+        object? parameter,
         NavigationTransitionInfo? infoOverride = null
     )
     {
-        ViewModel.NavigatePage = parameter;
+        ViewModel.NavigatePage = parameter switch
+        {
+            string s => s,
+            PlaylistNavigationArgs navArgs => navArgs.FromPage,
+            LocalAlbumNavigationArgs navArgs => navArgs.FromPage,
+            LocalArtistNavigationArgs navArgs => navArgs.FromPage,
+            OnlineAlbumNavigationArgs navArgs => navArgs.FromPage,
+            OnlineArtistNavigationArgs navArgs => navArgs.FromPage,
+            OnlinePlaylistNavigationArgs navArgs => navArgs.FromPage,
+            _ => "",
+        };
         var pageToNavigate = destPage switch
         {
             nameof(HomePage) => typeof(HomePage),
@@ -199,23 +213,30 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
             nameof(OnlinePlayListDetailPage) => typeof(OnlinePlayListDetailPage),
             _ => typeof(HomePage),
         };
-        NavigationFrame.Navigate(pageToNavigate, null, infoOverride);
+        var navParameter = parameter switch
+        {
+            PlaylistNavigationArgs navArgs2 => navArgs2.Playlist,
+            LocalAlbumNavigationArgs navArgs2 => navArgs2.Album,
+            LocalArtistNavigationArgs navArgs2 => navArgs2.Artist,
+            OnlineAlbumNavigationArgs navArgs2 => navArgs2.Album,
+            OnlineArtistNavigationArgs navArgs2 => navArgs2.Artist,
+            OnlinePlaylistNavigationArgs navArgs2 => navArgs2.Playlist,
+            _ => parameter,
+        };
+        NavigationFrame.Navigate(pageToNavigate, navParameter, infoOverride);
     }
 
     public void GoBack()
     {
         if (NavigationFrame.CanGoBack)
         {
-            var page = NavigationFrame.BackStack.AsValueEnumerable().LastOrDefault();
-            if (page?.SourcePageType == typeof(PlayListDetailPage) && Data.SelectedPlaylist is null)
-            {
-                NavigationFrame.BackStack.Remove(page);
-                GoBack();
-            }
-            else
-            {
-                NavigationFrame.GoBack();
-            }
+            NavigationFrame.GoBack();
         }
     }
 }
+
+
+
+
+
+

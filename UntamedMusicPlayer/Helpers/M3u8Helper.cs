@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Text;
 using System.Text.RegularExpressions;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Helpers;
 using ZLinq;
@@ -172,7 +173,7 @@ public static partial class M3u8Helper
     private static bool ProcessLocalPath(string localPath, out (int Type, object Data) result)
     {
         result = default;
-        if (!Data.SupportedAudioTypes.Contains(Path.GetExtension(localPath))) // 检查文件扩展名
+        if (!AppConstants.SupportedAudioTypes.Contains(Path.GetExtension(localPath))) // 检查文件扩展名
         {
             return false;
         }
@@ -292,7 +293,7 @@ public static partial class M3u8Helper
 
     public static async Task ExportPlaylistsToM3u8Async(string folder)
     {
-        var playlists = Data.PlaylistLibrary.Playlists;
+        var playlists = App.GetService<PlaylistLibrary>().Playlists;
         await Task.Run(async () =>
         {
             foreach (var playlist in playlists)
@@ -358,3 +359,4 @@ public static partial class M3u8Helper
         }
     }
 }
+

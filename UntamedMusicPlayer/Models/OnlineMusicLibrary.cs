@@ -4,13 +4,14 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Helpers;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Models;
 using UntamedMusicPlayer.Services;
 using ZLogger;
 
-namespace UntamedMusicPlayer.Models;
+namespace UntamedMusicPlayer.Services;
 
 public sealed partial class OnlineMusicLibrary : ObservableObject
 {

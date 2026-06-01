@@ -14,6 +14,7 @@ public sealed partial class OnlinePlayListsPage : Page
 {
     public OnlinePlayListsViewModel ViewModel { get; set; }
     private bool _isInitialized = false;
+    private IBriefOnlinePlaylistInfo? _lastNavigatedPlaylist;
     private ScrollViewer? _scrollViewer;
     private bool _isSearching;
 
@@ -31,7 +32,7 @@ public sealed partial class OnlinePlayListsPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -54,7 +55,9 @@ public sealed partial class OnlinePlayListsPage : Page
         )
         {
             var (playlistInfo, playlist) = tuple;
-            ViewModel.AddToPlaylistButton_Click(playlistInfo, playlist);
+            ViewModel.AddToPlaylistCommand.ExecuteAsync(
+                new Tuple<IBriefOnlinePlaylistInfo, PlaylistInfo>(playlistInfo, playlist)
+            );
         }
     }
 
@@ -91,9 +94,9 @@ public sealed partial class OnlinePlayListsPage : Page
         _scrollViewer = PlaylistGridView.FindDescendant<ScrollViewer>()!;
         _scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
 
-        if (!_isInitialized && Data.SelectedOnlinePlaylist is not null)
+        if (!_isInitialized && _lastNavigatedPlaylist is not null)
         {
-            gridView.ScrollIntoView(Data.SelectedOnlinePlaylist, ScrollIntoViewAlignment.Leading);
+            gridView.ScrollIntoView(_lastNavigatedPlaylist, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -103,7 +106,7 @@ public sealed partial class OnlinePlayListsPage : Page
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(
                     animation,
-                    Data.SelectedOnlinePlaylist,
+                    _lastNavigatedPlaylist,
                     "CoverBorder"
                 );
             }
@@ -116,13 +119,13 @@ public sealed partial class OnlinePlayListsPage : Page
     {
         if (
             !_isSearching
-            && !Data.OnlineMusicLibrary.OnlinePlaylistInfoList.HasAllLoaded
+            && !App.GetService<OnlineMusicLibrary>().OnlinePlaylistInfoList.HasAllLoaded
             && _scrollViewer!.VerticalOffset + _scrollViewer.ViewportHeight
                 >= _scrollViewer.ExtentHeight - 50
         )
         {
             _isSearching = true;
-            await Data.OnlineMusicLibrary.SearchMore();
+            await App.GetService<OnlineMusicLibrary>().SearchMore();
             _isSearching = false;
         }
     }
@@ -139,10 +142,10 @@ public sealed partial class OnlinePlayListsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedOnlinePlaylist = info;
+            _lastNavigatedPlaylist = info;
             Data.ShellPage!.Navigate(
                 nameof(OnlinePlayListDetailPage),
-                nameof(OnlinePlayListsPage),
+                new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -152,7 +155,7 @@ public sealed partial class OnlinePlayListsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlinePlaylistInfo info })
         {
-            ViewModel.PlayButton_Click(info);
+            ViewModel.PlayCommand.ExecuteAsync(info);
         }
     }
 
@@ -160,7 +163,7 @@ public sealed partial class OnlinePlayListsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlinePlaylistInfo info })
         {
-            ViewModel.PlayNextButton_Click(info);
+            ViewModel.PlayNextCommand.ExecuteAsync(info);
         }
     }
 
@@ -168,7 +171,7 @@ public sealed partial class OnlinePlayListsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlinePlaylistInfo info })
         {
-            ViewModel.AddToPlayQueueButton_Click(info);
+            ViewModel.AddToPlayQueueCommand.ExecuteAsync(info);
         }
     }
 
@@ -181,7 +184,9 @@ public sealed partial class OnlinePlayListsPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+                await ViewModel.AddToPlaylistCommand.ExecuteAsync(
+                    new Tuple<IBriefOnlinePlaylistInfo, PlaylistInfo>(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -196,10 +201,10 @@ public sealed partial class OnlinePlayListsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedOnlinePlaylist = info;
+            _lastNavigatedPlaylist = info;
             Data.ShellPage!.Navigate(
                 nameof(OnlinePlayListDetailPage),
-                nameof(OnlinePlayListsPage),
+                new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -212,3 +217,9 @@ public sealed partial class OnlinePlayListsPage : Page
         _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
     }
 }
+
+
+
+
+
+

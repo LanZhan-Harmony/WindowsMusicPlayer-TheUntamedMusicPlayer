@@ -8,6 +8,7 @@ using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using ZLinq;
 
+using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class MusicLibraryViewModel
@@ -34,7 +35,7 @@ public sealed partial class MusicLibraryViewModel
         : base(StrongReferenceMessenger.Default)
     {
         Messenger.Register(this);
-        InitializeLibraryAsync();
+        _ = InitializeLibraryAsync();
     }
 
     public void Receive(HaveMusicMessage message)
@@ -43,24 +44,26 @@ public sealed partial class MusicLibraryViewModel
         HaveMusicControlVisibility = message.HasMusic ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private async void InitializeLibraryAsync()
+    private async Task InitializeLibraryAsync()
     {
-        if (!Data.MusicLibrary.HasLoaded)
+        if (!App.GetService<MusicLibrary>().HasLoaded)
         {
-            await Data.MusicLibrary.LoadLibraryAsync();
+            await App.GetService<MusicLibrary>().LoadLibraryAsync();
         }
         IsProgressRingActive = false;
-        NoMusicControlVisibility = Data.MusicLibrary.Songs.IsEmpty
+        NoMusicControlVisibility = App.GetService<MusicLibrary>().Songs.IsEmpty
             ? Visibility.Visible
             : Visibility.Collapsed;
-        HaveMusicControlVisibility = Data.MusicLibrary.Songs.IsEmpty
+        HaveMusicControlVisibility = App.GetService<MusicLibrary>().Songs.IsEmpty
             ? Visibility.Collapsed
             : Visibility.Visible;
     }
 
-    public async void PickMusicFolderButton_Click(object sender, RoutedEventArgs _)
+    [RelayCommand]
+
+    public async Task PickMusicFolderButton()
+
     {
-        (sender as Button)!.IsEnabled = false;
         var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
         {
             SuggestedStartLocation = PickerLocationId.MusicLibrary,
@@ -68,18 +71,17 @@ public sealed partial class MusicLibraryViewModel
         var folder = await openPicker.PickSingleFolderAsync();
         if (
             folder is not null
-            && !Data.MusicLibrary.Folders.AsValueEnumerable().Contains(folder.Path)
+            && !App.GetService<MusicLibrary>().Folders.AsValueEnumerable().Contains(folder.Path)
         )
         {
             NoMusicControlVisibility = Visibility.Collapsed;
             HaveMusicControlVisibility = Visibility.Collapsed;
             IsProgressRingActive = true;
-            Data.MusicLibrary.Folders.Add(folder.Path);
+            App.GetService<MusicLibrary>().Folders.Add(folder.Path);
             await SettingsViewModel.SaveFoldersAsync();
-            await Data.MusicLibrary.LoadLibraryAgainAsync();
+            await App.GetService<MusicLibrary>().LoadLibraryAgainAsync();
             IsProgressRingActive = false;
         }
-        (sender as Button)!.IsEnabled = true;
     }
 
     public async Task<int> LoadSelectionBarSelectedIndex()
@@ -89,7 +91,7 @@ public sealed partial class MusicLibraryViewModel
         );
     }
 
-    public async void SaveSelectionBarSelectedIndex(int selectedIndex)
+    public async Task SaveSelectionBarSelectedIndexAsync(int selectedIndex)
     {
         await _localSettingsService.SaveSettingAsync(
             "HaveMusicSelectionBarSelectedIndex",
@@ -97,5 +99,7 @@ public sealed partial class MusicLibraryViewModel
         );
     }
 
+
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
+

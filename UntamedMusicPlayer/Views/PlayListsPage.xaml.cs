@@ -29,7 +29,7 @@ public sealed partial class PlayListsPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -47,15 +47,19 @@ public sealed partial class PlayListsPage : Page
         if (sender is MenuFlyoutItem { DataContext: Tuple<PlaylistInfo, PlaylistInfo> tuple })
         {
             var (artistInfo, playlist) = tuple;
-            ViewModel.AddToPlaylistButton_Click(artistInfo, playlist);
+            ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(artistInfo, playlist));
         }
     }
 
     private async void PlaylistGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (!_isInitialized && Data.SelectedPlaylist is not null && sender is GridView gridView)
+        if (
+            !_isInitialized
+            && ViewModel.LastNavigatedPlaylist is not null
+            && sender is GridView gridView
+        )
         {
-            gridView.ScrollIntoView(Data.SelectedPlaylist, ScrollIntoViewAlignment.Leading);
+            gridView.ScrollIntoView(ViewModel.LastNavigatedPlaylist, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -65,7 +69,7 @@ public sealed partial class PlayListsPage : Page
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(
                     animation,
-                    Data.SelectedPlaylist,
+                    ViewModel.LastNavigatedPlaylist,
                     "CoverBorder"
                 );
             }
@@ -86,10 +90,10 @@ public sealed partial class PlayListsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedPlaylist = info;
+            ViewModel.LastNavigatedPlaylist = info;
             Data.ShellPage!.Navigate(
                 nameof(PlayListDetailPage),
-                nameof(PlayListsPage),
+                new PlaylistNavigationArgs(info, nameof(PlayListsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -120,7 +124,7 @@ public sealed partial class PlayListsPage : Page
     private void PlayLists_CreatePlaylist1(object sender, RoutedEventArgs e)
     {
         var playlistName = PlaylistNameTextBox1.Text;
-        Data.PlaylistLibrary.NewPlaylist(playlistName);
+        App.GetService<PlaylistLibrary>().NewPlaylist(playlistName);
         CreatePlaylistButton.Flyout.Hide();
     }
 
@@ -145,7 +149,7 @@ public sealed partial class PlayListsPage : Page
     private void PlayLists_CreatePlaylist2(object sender, RoutedEventArgs e)
     {
         var playlistName = PlaylistNameTextBox2.Text;
-        Data.PlaylistLibrary.NewPlaylist(playlistName);
+        App.GetService<PlaylistLibrary>().NewPlaylist(playlistName);
         NewPlaylistButton.Flyout.Hide();
     }
 
@@ -163,7 +167,7 @@ public sealed partial class PlayListsPage : Page
     {
         if (sender is FrameworkElement { DataContext: PlaylistInfo info })
         {
-            ViewModel.PlayButton_Click(info);
+            ViewModel.PlayButtonCommand.Execute(info);
         }
     }
 
@@ -171,7 +175,7 @@ public sealed partial class PlayListsPage : Page
     {
         if (sender is FrameworkElement { DataContext: PlaylistInfo info })
         {
-            ViewModel.PlayNextButton_Click(info);
+            ViewModel.PlayNextButtonCommand.Execute(info);
         }
     }
 
@@ -179,7 +183,7 @@ public sealed partial class PlayListsPage : Page
     {
         if (sender is FrameworkElement { DataContext: PlaylistInfo info })
         {
-            ViewModel.AddToPlayQueueButton_Click(info);
+            ViewModel.AddToPlayQueueButtonCommand.Execute(info);
         }
     }
 
@@ -192,7 +196,7 @@ public sealed partial class PlayListsPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
             }
         }
     }
@@ -230,10 +234,16 @@ public sealed partial class PlayListsPage : Page
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                Data.PlaylistLibrary.DeletePlaylist(info);
+                App.GetService<PlaylistLibrary>().DeletePlaylist(info);
             }
         }
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
+
+
+
+
+
+

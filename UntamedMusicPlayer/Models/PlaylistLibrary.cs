@@ -4,9 +4,10 @@ using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
+using UntamedMusicPlayer.Models;
 using ZLinq;
 
-namespace UntamedMusicPlayer.Models;
+namespace UntamedMusicPlayer.Services;
 
 public sealed partial class PlaylistLibrary : ObservableRecipient
 {

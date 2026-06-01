@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
@@ -50,7 +51,7 @@ public sealed partial class EditAlbumInfoDialog
     {
         StrongReferenceMessenger.Default.Register(this);
         _album = info;
-        var songs = Data.MusicLibrary.GetSongsByAlbum(info);
+        var songs = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
         _tempSongs = [.. songs.AsValueEnumerable().Select(song => new TempSongInfo(song))];
         _name = info.Name;
         _albumArtist = info.ArtistsStr;
@@ -88,7 +89,7 @@ public sealed partial class EditAlbumInfoDialog
                 try
                 {
                     var itemType = Path.GetExtension(tempSong.OriginalSong.Path).ToLower();
-                    if (!Data.SupportedAudioTypesForTagEditing.Contains(itemType))
+                    if (!AppConstants.SupportedAudioTypesForTagEditing.Contains(itemType))
                     {
                         continue;
                     }
@@ -120,7 +121,7 @@ public sealed partial class EditAlbumInfoDialog
             }
             if (hasChanges)
             {
-                _ = Data.MusicLibrary.LoadLibraryAgainAsync();
+                _ = App.GetService<MusicLibrary>().LoadLibraryAgainAsync();
             }
         });
 
@@ -180,3 +181,4 @@ public class TempSongInfo(BriefLocalSongInfo originalSong)
             : originalSong.ArtistsStr;
     public BriefLocalSongInfo OriginalSong { get; } = originalSong;
 }
+

@@ -8,6 +8,7 @@ using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using ZLinq;
 
+using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class LocalArtistsViewModel
@@ -18,7 +19,7 @@ public sealed partial class LocalArtistsViewModel
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
 
-    private List<LocalArtistInfo> _artistList = [.. Data.MusicLibrary.Artists.Values];
+    private List<LocalArtistInfo> _artistList = [.. App.GetService<MusicLibrary>().Artists.Values];
 
     public List<string> SortBy { get; set; } = [.. "Artists_SortBy".GetLocalized().Split(", ")];
 
@@ -33,7 +34,7 @@ public sealed partial class LocalArtistsViewModel
     partial void OnSortModeChanged(byte value)
     {
         SortByStr = SortBy[value];
-        SaveSortModeAsync();
+        _ = SaveSortModeAsync();
     }
 
     [ObservableProperty]
@@ -43,17 +44,17 @@ public sealed partial class LocalArtistsViewModel
         : base(StrongReferenceMessenger.Default)
     {
         Messenger.Register(this);
-        LoadModeAndArtistList();
+        _ = LoadModeAndArtistList();
     }
 
     public void Receive(HaveMusicMessage message)
     {
-        LoadModeAndArtistList();
+        _ = LoadModeAndArtistList();
     }
 
-    public async void LoadModeAndArtistList()
+    public async Task LoadModeAndArtistList()
     {
-        _artistList = [.. Data.MusicLibrary.Artists.Values];
+        _artistList = [.. App.GetService<MusicLibrary>().Artists.Values];
         if (_artistList.Count == 0)
         {
             return;
@@ -64,17 +65,32 @@ public sealed partial class LocalArtistsViewModel
         IsProgressRingActive = false;
     }
 
-    public async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs _)
+    public async void SortByListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs _unused
+    )
     {
-        var currentsortmode = SortMode;
-        SortMode = (byte)(sender as ListView)!.SelectedIndex;
-        if (SortMode != currentsortmode)
+        _ = ChangeSortModeAsync((sender as ListView)!.SelectedIndex);
+    }
+
+    public async Task ChangeSortModeAsync(int selectedIndex)
+    {
+        if (selectedIndex < 0)
         {
-            IsProgressRingActive = true;
-            await SortArtists();
-            OnPropertyChanged(nameof(GroupedArtistList));
-            IsProgressRingActive = false;
+            return;
         }
+
+        var currentSortMode = SortMode;
+        SortMode = (byte)selectedIndex;
+        if (SortMode == currentSortMode)
+        {
+            return;
+        }
+
+        IsProgressRingActive = true;
+        await SortArtists();
+        OnPropertyChanged(nameof(GroupedArtistList));
+        IsProgressRingActive = false;
     }
 
     public void SortByListView_Loaded(object sender, RoutedEventArgs _)
@@ -130,20 +146,26 @@ public sealed partial class LocalArtistsViewModel
         });
     }
 
-    public void PlayButton_Click(LocalArtistInfo info)
+    [RelayCommand]
+
+    public void PlayButton(LocalArtistInfo info)
+
     {
-        var songList = Data.MusicLibrary.GetSongsByArtist(info);
+        var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
         Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
-        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
-    public void PlayNextButton_Click(LocalArtistInfo info)
+    [RelayCommand]
+
+    public void PlayNextButton(LocalArtistInfo info)
+
     {
-        var songList = Data.MusicLibrary.GetSongsByArtist(info);
+        var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -151,13 +173,16 @@ public sealed partial class LocalArtistsViewModel
         }
     }
 
-    public void AddToPlayQueueButton_Click(LocalArtistInfo info)
+    [RelayCommand]
+
+    public void AddToPlayQueueButton(LocalArtistInfo info)
+
     {
-        var songList = Data.MusicLibrary.GetSongsByArtist(info);
+        var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -165,10 +190,15 @@ public sealed partial class LocalArtistsViewModel
         }
     }
 
-    public async void AddToPlaylistButton_Click(LocalArtistInfo info, PlaylistInfo playlist)
+    [RelayCommand]
+
+    public async Task AddToPlaylistButton(Tuple<LocalArtistInfo, PlaylistInfo> tuple)
+
     {
-        var songList = Data.MusicLibrary.GetSongsByArtist(info);
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
+
+        var (info, playlist) = tuple;
+        var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
 
     public async Task LoadSortModeAsync()
@@ -177,7 +207,7 @@ public sealed partial class LocalArtistsViewModel
         SortByStr = SortBy[SortMode];
     }
 
-    public async void SaveSortModeAsync()
+    public async Task SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("ArtistSortMode", SortMode);
     }
@@ -187,5 +217,10 @@ public sealed partial class LocalArtistsViewModel
         return isActive ? Visibility.Collapsed : Visibility.Visible;
     }
 
+
+
+
+
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
+

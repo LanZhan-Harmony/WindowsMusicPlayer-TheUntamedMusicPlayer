@@ -340,3 +340,4 @@
                       IsActive="{x:Bind ViewModel.IsMainProgressRingActive, Mode=OneWay}"/>
     </Grid>
 </Page>
+

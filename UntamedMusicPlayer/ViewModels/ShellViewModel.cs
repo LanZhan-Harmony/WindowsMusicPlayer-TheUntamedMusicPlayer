@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
@@ -17,6 +18,7 @@ public sealed partial class ShellViewModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
 
     public bool IsFirstLoaded { get; set; } = true;
 
@@ -32,7 +34,7 @@ public sealed partial class ShellViewModel : ObservableObject
     public ShellViewModel()
     {
         Data.ShellViewModel = this;
-        LoadAsync();
+        _ = LoadAsync();
     }
 
     public void NavigationFrame_Navigating(object _, NavigatingCancelEventArgs e)
@@ -42,7 +44,12 @@ public sealed partial class ShellViewModel : ObservableObject
             PrevPlaylistInfo = null;
         }
         CurrentPage = e.SourcePageType.Name;
-        var navView = Data.ShellPage!.GetNavigationView();
+        var navView = _navigationService.GetShellNavigationView();
+        if (navView is null)
+        {
+            _ = SaveCurrentPageAsync();
+            return;
+        }
         if (
             CurrentPage
             is nameof(HomePage)
@@ -92,7 +99,7 @@ public sealed partial class ShellViewModel : ObservableObject
         {
             SelectedItem = navView.FooterMenuItems[0];
         }
-        SaveCurrentPageAsync();
+        _ = SaveCurrentPageAsync();
     }
 
     public void NavigationFrame_DragOver(object _, DragEventArgs e)
@@ -129,7 +136,7 @@ public sealed partial class ShellViewModel : ObservableObject
                     if (item is StorageFile file)
                     {
                         var extension = Path.GetExtension(file.Path).ToLowerInvariant();
-                        if (Data.SupportedAudioTypes.Contains(extension))
+                        if (AppConstants.SupportedAudioTypes.Contains(extension))
                         {
                             musicFiles.Add(file);
                         }
@@ -159,7 +166,7 @@ public sealed partial class ShellViewModel : ObservableObject
             foreach (var file in files)
             {
                 var extension = Path.GetExtension(file.Path).ToLowerInvariant();
-                if (Data.SupportedAudioTypes.Contains(extension))
+                if (AppConstants.SupportedAudioTypes.Contains(extension))
                 {
                     musicFiles.Add(file);
                 }
@@ -198,18 +205,19 @@ public sealed partial class ShellViewModel : ObservableObject
         if (newSongs.Count > 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
-            Data.MusicPlayer.PlaySongByInfo(newSongs[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(newSongs[0]);
         }
     }
 
-    private async void LoadAsync()
+    private async Task LoadAsync()
     {
         CurrentPage =
             await _localSettingsService.ReadSettingAsync<string>("CurrentPage") ?? nameof(HomePage);
     }
 
-    private async void SaveCurrentPageAsync()
+    private async Task SaveCurrentPageAsync()
     {
         await _localSettingsService.SaveSettingAsync("CurrentPage", CurrentPage);
     }
 }
+

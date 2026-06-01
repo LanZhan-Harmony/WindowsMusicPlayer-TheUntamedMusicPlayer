@@ -4,12 +4,13 @@ using System.Globalization;
 using MemoryPack;
 using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLogger;
 
-namespace UntamedMusicPlayer.Models;
+namespace UntamedMusicPlayer.Services;
 
 public static class FileManager
 {

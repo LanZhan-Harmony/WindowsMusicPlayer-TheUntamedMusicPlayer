@@ -1,5 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using UntamedMusicPlayer.Core.Constants;
+using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Models;
 using Windows.Storage;
 
@@ -10,6 +12,13 @@ namespace UntamedMusicPlayer.Activation;
 /// </summary>
 public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
+    private readonly IAppStateService _appStateService;
+
+    public FileActivationHandler(IAppStateService appStateService)
+    {
+        _appStateService = appStateService;
+    }
+
     protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
     {
         // 检查是否是通过文件激活
@@ -20,7 +29,7 @@ public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEve
     protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
         // 设置文件激活标志
-        Data.IsFileActivationLaunch = true;
+        _appStateService.IsFileActivationLaunch = true;
 
         // 获取文件激活参数
         var activatedArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
@@ -40,7 +49,7 @@ public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEve
             {
                 foreach (var file in fileArgs.Files.OfType<StorageFile>())
                 {
-                    if (Data.SupportedAudioTypes.Contains(file.FileType.ToLowerInvariant()))
+                    if (AppConstants.SupportedAudioTypes.Contains(file.FileType.ToLowerInvariant()))
                     {
                         var songInfo = new BriefLocalSongInfo(
                             file.Path,
@@ -67,7 +76,7 @@ public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEve
     private static async Task WaitForInitializationAsync()
     {
         // 等待数据对象初始化
-        await Data.MusicPlayer.WhenLoadedAsync();
+        await App.GetService<MusicPlayer>().WhenLoadedAsync();
 
         // 再等待一小段时间确保UI完全加载
         await Task.Delay(500);
@@ -79,7 +88,8 @@ public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEve
     private static void PlayMusicFiles(List<BriefLocalSongInfo> musicFiles)
     {
         Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", musicFiles);
-        Data.MusicPlayer.PlaySongByInfo(musicFiles[0]);
+        App.GetService<MusicPlayer>().PlaySongByInfo(musicFiles[0]);
         Data.RootPlayBarViewModel?.DetailModeUpdate();
     }
 }
+

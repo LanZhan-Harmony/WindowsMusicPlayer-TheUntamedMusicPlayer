@@ -12,6 +12,7 @@ public sealed partial class LocalArtistsPage : Page
 {
     public LocalArtistsViewModel ViewModel { get; }
     private bool _isInitialized = false;
+    private LocalArtistInfo? _lastNavigatedArtist;
 
     public LocalArtistsPage()
     {
@@ -27,7 +28,7 @@ public sealed partial class LocalArtistsPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -45,7 +46,7 @@ public sealed partial class LocalArtistsPage : Page
         if (sender is MenuFlyoutItem { DataContext: Tuple<LocalArtistInfo, PlaylistInfo> tuple })
         {
             var (artistInfo, playlist) = tuple;
-            ViewModel.AddToPlaylistButton_Click(artistInfo, playlist);
+            ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(artistInfo, playlist));
         }
     }
 
@@ -73,9 +74,9 @@ public sealed partial class LocalArtistsPage : Page
 
     private async void ArtistGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (!_isInitialized && Data.SelectedLocalArtist is not null && sender is GridView gridView)
+        if (!_isInitialized && _lastNavigatedArtist is not null && sender is GridView gridView)
         {
-            gridView.ScrollIntoView(Data.SelectedLocalArtist, ScrollIntoViewAlignment.Leading);
+            gridView.ScrollIntoView(_lastNavigatedArtist, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -85,7 +86,7 @@ public sealed partial class LocalArtistsPage : Page
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(
                     animation,
-                    Data.SelectedLocalArtist,
+                    _lastNavigatedArtist,
                     "CoverBorder"
                 );
             }
@@ -106,10 +107,10 @@ public sealed partial class LocalArtistsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedLocalArtist = localArtistInfo;
+            _lastNavigatedArtist = localArtistInfo;
             Data.ShellPage!.Navigate(
                 nameof(LocalArtistDetailPage),
-                nameof(LocalArtistsPage),
+                new LocalArtistNavigationArgs(localArtistInfo, nameof(LocalArtistsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -119,7 +120,7 @@ public sealed partial class LocalArtistsPage : Page
     {
         if (sender is FrameworkElement { DataContext: LocalArtistInfo info })
         {
-            ViewModel.PlayButton_Click(info);
+            ViewModel.PlayButtonCommand.Execute(info);
         }
     }
 
@@ -127,7 +128,7 @@ public sealed partial class LocalArtistsPage : Page
     {
         if (sender is FrameworkElement { DataContext: LocalArtistInfo info })
         {
-            ViewModel.PlayNextButton_Click(info);
+            ViewModel.PlayNextButtonCommand.Execute(info);
         }
     }
 
@@ -135,7 +136,7 @@ public sealed partial class LocalArtistsPage : Page
     {
         if (sender is FrameworkElement { DataContext: LocalArtistInfo info })
         {
-            ViewModel.AddToPlayQueueButton_Click(info);
+            ViewModel.AddToPlayQueueButtonCommand.Execute(info);
         }
     }
 
@@ -148,7 +149,7 @@ public sealed partial class LocalArtistsPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
             }
         }
     }
@@ -163,10 +164,10 @@ public sealed partial class LocalArtistsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedLocalArtist = info;
+            _lastNavigatedArtist = info;
             Data.ShellPage!.Navigate(
                 nameof(LocalArtistDetailPage),
-                nameof(LocalArtistsPage),
+                new LocalArtistNavigationArgs(info, nameof(LocalArtistsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -174,3 +175,9 @@ public sealed partial class LocalArtistsPage : Page
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
+
+
+
+
+
+

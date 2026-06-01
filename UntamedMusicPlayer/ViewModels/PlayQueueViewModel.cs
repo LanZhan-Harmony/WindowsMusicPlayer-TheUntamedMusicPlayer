@@ -1,11 +1,14 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
@@ -18,6 +21,8 @@ namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
 {
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
+
     private IndexedPlayQueueSong? _currentSong;
 
     [ObservableProperty]
@@ -42,13 +47,15 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         }
     }
 
-    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
+    [RelayCommand]
+    private async Task AddQueueToPlaylist(PlaylistInfo playlist)
     {
         var songList = PlayQueue.AsValueEnumerable().Select(song => song.Song).ToArray();
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
 
-    public void AddToPlayQueueFlyoutButton_Click()
+    [RelayCommand]
+    private void AddQueueToPlayQueue()
     {
         var songList = PlayQueue.AsValueEnumerable().Select(song => song.Song).ToArray();
         Data.PlayQueueManager.AddSongsToEnd(songList);
@@ -58,56 +65,64 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
     {
         if (e.ClickedItem is IndexedPlayQueueSong info)
         {
-            Data.MusicPlayer.PlaySongByIndexedInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByIndexedInfo(info);
         }
     }
 
-    public void PlayButton_Click(IndexedPlayQueueSong info)
+    [RelayCommand]
+    private void Play(IndexedPlayQueueSong info)
     {
-        Data.MusicPlayer.PlaySongByIndexedInfo(info);
+        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(info);
     }
 
-    public void PlayNextButton_Click(IBriefSongInfoBase info)
+    [RelayCommand]
+    private void PlayNext(IBriefSongInfoBase info)
     {
         Data.PlayQueueManager.AddSongsToNextPlay([info]);
     }
 
-    public void AddToPlayQueueButton_Click(IBriefSongInfoBase info)
+    [RelayCommand]
+    private void AddToPlayQueue(IBriefSongInfoBase info)
     {
         Data.PlayQueueManager.AddSongsToEnd([info]);
     }
 
-    public async void AddToPlaylistButton_Click(IBriefSongInfoBase info, PlaylistInfo playlist)
+    [RelayCommand]
+    private async Task AddToPlaylist(Tuple<IBriefSongInfoBase, PlaylistInfo> tuple)
     {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
+        var (info, playlist) = tuple;
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, info);
     }
 
-    public void RemoveButton_Click(IndexedPlayQueueSong info)
+    [RelayCommand]
+    private void Remove(IndexedPlayQueueSong info)
     {
         Data.PlayQueueManager.RemoveSong(info);
     }
 
-    public void MoveUpButton_Click(IndexedPlayQueueSong info)
+    [RelayCommand]
+    private void MoveUp(IndexedPlayQueueSong info)
     {
         Data.PlayQueueManager.MoveUpSong(info);
     }
 
-    public void MoveDownButton_Click(IndexedPlayQueueSong info)
+    [RelayCommand]
+    private void MoveDown(IndexedPlayQueueSong info)
     {
         Data.PlayQueueManager.MoveDownSong(info);
     }
 
-    public async void ShowAlbumButton_Click(IBriefSongInfoBase info)
+    [RelayCommand]
+    private async Task ShowAlbum(IBriefSongInfoBase info)
     {
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(localInfo.Album);
+            var localAlbumInfo = App.GetService<MusicLibrary>().GetAlbumInfoBySong(localInfo.Album);
             if (localAlbumInfo is not null)
             {
-                Data.SelectedLocalAlbum = localAlbumInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(LocalAlbumDetailPage),
-                    "",
+                    new LocalAlbumNavigationArgs(localAlbumInfo, nameof(PlayQueuePage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
@@ -117,27 +132,26 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
             var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(onlineInfo);
             if (onlineAlbumInfo is not null)
             {
-                Data.SelectedOnlineAlbum = onlineAlbumInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(OnlineAlbumDetailPage),
-                    "",
+                    new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(PlayQueuePage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
         }
     }
 
-    public async void ShowArtistButton_Click(IBriefSongInfoBase info)
+    [RelayCommand]
+    private async Task ShowArtist(IBriefSongInfoBase info)
     {
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(localInfo.Artists[0]);
+            var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(localInfo.Artists[0]);
             if (localArtistInfo is not null)
             {
-                Data.SelectedLocalArtist = localArtistInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(LocalArtistDetailPage),
-                    "",
+                    new LocalArtistNavigationArgs(localArtistInfo, nameof(PlayQueuePage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
@@ -147,28 +161,29 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
             var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(onlineInfo);
             if (onlineArtistInfo is not null)
             {
-                Data.SelectedOnlineArtist = onlineArtistInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(OnlineArtistDetailPage),
-                    "",
+                    new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(PlayQueuePage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
         }
     }
 
-    public void ClearButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+    private void Clear()
     {
-        Data.MusicPlayer.ClearPlayQueue();
+        App.GetService<MusicPlayer>().ClearPlayQueue();
     }
 
-    public async Task AddFilesButton_Click()
+    [RelayCommand]
+    public async Task AddFiles()
     {
         var picker = new FileOpenPicker(App.MainWindow!.AppWindow.Id)
         {
             SuggestedStartLocation = PickerLocationId.MusicLibrary,
         };
-        Array.ForEach(Data.SupportedAudioTypes, picker.FileTypeFilter.Add);
+        Array.ForEach(AppConstants.SupportedAudioTypes, picker.FileTypeFilter.Add);
         var files = await picker.PickMultipleFilesAsync();
         if (files.Count > 0)
         {
@@ -179,7 +194,8 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         }
     }
 
-    public async Task AddFolderButton_Click()
+    [RelayCommand]
+    public async Task AddFolder()
     {
         var picker = new FolderPicker(App.MainWindow!.AppWindow.Id)
         {
@@ -204,7 +220,8 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         }
     }
 
-    public void AddUrlButton_Click(string url)
+    [RelayCommand]
+    public void AddUrl(string url)
     {
         var songInfo = new BriefUnknownSongInfo(new Uri(url));
         if (!songInfo.IsPlayAvailable)
@@ -218,7 +235,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         else
         {
             Data.PlayQueueManager.SetNormalPlayQueue("UnknownOnlineSongs:Part", [songInfo]);
-            Data.MusicPlayer.PlaySongByInfo(songInfo);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songInfo);
         }
         IsButtonEnabled = PlayQueue.Count > 0;
     }
@@ -282,7 +299,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
                     if (item is StorageFile file)
                     {
                         var extension = Path.GetExtension(file.Path).ToLowerInvariant();
-                        if (Data.SupportedAudioTypes.Contains(extension))
+                        if (AppConstants.SupportedAudioTypes.Contains(extension))
                         {
                             musicFiles.Add(file);
                         }
@@ -336,7 +353,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
             foreach (var file in files)
             {
                 var extension = Path.GetExtension(file.Path).ToLowerInvariant();
-                if (Data.SupportedAudioTypes.Contains(extension))
+                if (AppConstants.SupportedAudioTypes.Contains(extension))
                 {
                     musicFiles.Add(file);
                 }
@@ -381,7 +398,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
             else
             {
                 Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
-                Data.MusicPlayer.PlaySongByInfo(newSongs[0]);
+                App.GetService<MusicPlayer>().PlaySongByInfo(newSongs[0]);
             }
         }
         IsButtonEnabled = PlayQueue.Count > 0;
@@ -392,3 +409,4 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         Data.PlayQueueManager.PropertyChanged -= OnPlayQueueChanged;
     }
 }
+

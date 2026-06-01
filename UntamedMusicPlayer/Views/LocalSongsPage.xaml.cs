@@ -83,7 +83,7 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -101,7 +101,7 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         if (sender is MenuFlyoutItem { DataContext: Tuple<BriefLocalSongInfo, PlaylistInfo> tuple })
         {
             var (songInfo, playlist) = tuple;
-            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
+            ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(songInfo, playlist));
         }
     }
 
@@ -127,7 +127,7 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            ViewModel.PlayButton_Click(info);
+            ViewModel.PlayButtonCommand.Execute(info);
         }
     }
 
@@ -135,7 +135,7 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            ViewModel.PlayNextButton_Click(info);
+            ViewModel.PlayNextButtonCommand.Execute(info);
         }
     }
 
@@ -143,7 +143,7 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            ViewModel.AddToPlayQueueButton_Click(info);
+            ViewModel.AddToPlayQueueButtonCommand.Execute(info);
         }
     }
 
@@ -156,7 +156,7 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
             }
         }
     }
@@ -184,7 +184,7 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            ViewModel.ShowAlbumButton_Click(info);
+            ViewModel.ShowAlbumButtonCommand.Execute(info);
         }
     }
 
@@ -192,9 +192,15 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
     {
         if (sender is FrameworkElement { DataContext: BriefLocalSongInfo info })
         {
-            ViewModel.ShowArtistButton_Click(info);
+            ViewModel.ShowArtistButtonCommand.Execute(info);
         }
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
+
+
+
+
+
+

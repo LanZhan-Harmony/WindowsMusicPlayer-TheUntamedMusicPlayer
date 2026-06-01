@@ -5,14 +5,16 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
+using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLinq;
 using ZLogger;
 
-namespace UntamedMusicPlayer.Models;
+namespace UntamedMusicPlayer.Services;
 
 public sealed partial class MusicLibrary : ObservableRecipient
 {
@@ -255,7 +257,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
             var supportedFiles = entries
                 .AsValueEnumerable()
                 .OfType<StorageFile>()
-                .Where(file => Data.SupportedAudioTypes.Contains(file.FileType.ToLower()));
+                .Where(file => AppConstants.SupportedAudioTypes.Contains(file.FileType.ToLower()));
 
             foreach (var file in supportedFiles)
             {
@@ -355,7 +357,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
         try
         {
             var fileExtension = Path.GetExtension(e.FullPath).ToLower();
-            if (Data.SupportedAudioTypes.Contains(fileExtension))
+            if (AppConstants.SupportedAudioTypes.Contains(fileExtension))
             {
                 await LoadLibraryAgainAsync();
             }
@@ -380,7 +382,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
         try
         {
             var fileExtension = Path.GetExtension(e.FullPath).ToLower();
-            if (Data.SupportedAudioTypes.Contains(fileExtension))
+            if (AppConstants.SupportedAudioTypes.Contains(fileExtension))
             {
                 await LoadLibraryAgainAsync();
             }

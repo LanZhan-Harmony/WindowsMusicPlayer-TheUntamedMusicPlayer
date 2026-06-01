@@ -171,3 +171,8 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         Data.DesktopLyricWindow = null;
     }
 }
+
+
+
+
+

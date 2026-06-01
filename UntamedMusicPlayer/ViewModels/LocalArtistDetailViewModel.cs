@@ -5,52 +5,72 @@ using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 
+using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
-public sealed class LocalArtistDetailViewModel
+public sealed partial class LocalArtistDetailViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly INavigationService _navigationService =
+        App.GetService<INavigationService>();
 
-    public LocalArtistInfo Artist { get; set; } = Data.SelectedLocalArtist!;
+    public LocalArtistInfo Artist { get; set; } = null!;
 
-    public List<LocalArtistAlbumInfo> AlbumList { get; set; }
+    public List<LocalArtistAlbumInfo> AlbumList { get; set; } = [];
 
-    public LocalArtistDetailViewModel()
+    public LocalArtistDetailViewModel() { }
+
+    public void Initialize(LocalArtistInfo artist)
     {
-        AlbumList = Data.MusicLibrary.GetAlbumsByArtist(Artist);
+        Artist = artist;
+        AlbumList = App.GetService<MusicLibrary>().GetAlbumsByArtist(Artist);
     }
 
-    public void PlayAllButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public void PlayAllButton()
+
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
-        Data.MusicPlayer.PlaySongByInfo(AlbumList[0].SongList[0]);
+        App.GetService<MusicPlayer>().PlaySongByInfo(AlbumList[0].SongList[0]);
     }
 
-    public void ShuffledPlayAllButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+
+    public void ShuffledPlayAllButton()
+
     {
         Data.PlayQueueManager.SetShuffledPlayQueue(
             $"ShuffledLocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
-        Data.MusicPlayer.PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
+        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
     }
 
-    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
+
+
+    [RelayCommand]
+
+    public async Task AddToPlaylistFlyoutButton(PlaylistInfo playlist)
+
     {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, ConvertAllSongsToFlatArray());
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, ConvertAllSongsToFlatArray());
     }
 
-    public void AddToPlayQueueFlyoutButton_Click()
+    [RelayCommand]
+
+    public void AddToPlayQueueFlyoutButton()
+
     {
         var allSongs = ConvertAllSongsToFlatArray();
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}", allSongs);
-            Data.MusicPlayer.PlaySongByInfo(allSongs[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(allSongs[0]);
         }
         else
         {
@@ -64,25 +84,31 @@ public sealed class LocalArtistDetailViewModel
             $"LocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
-        Data.MusicPlayer.PlaySongByInfo(info);
+        App.GetService<MusicPlayer>().PlaySongByInfo(info);
     }
 
-    public void SongListViewPlayButton_Click(BriefLocalSongInfo info)
+    [RelayCommand]
+
+    public void SongListViewPlayButton(BriefLocalSongInfo info)
+
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
-        Data.MusicPlayer.PlaySongByInfo(info);
+        App.GetService<MusicPlayer>().PlaySongByInfo(info);
     }
 
-    public void SongListViewPlayNextButton_Click(BriefLocalSongInfo info)
+    [RelayCommand]
+
+    public void SongListViewPlayNextButton(BriefLocalSongInfo info)
+
     {
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}:Part", list);
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
@@ -90,13 +116,16 @@ public sealed class LocalArtistDetailViewModel
         }
     }
 
-    public void SongListViewAddToPlayQueueButton_Click(BriefLocalSongInfo info)
+    [RelayCommand]
+
+    public void SongListViewAddToPlayQueueButton(BriefLocalSongInfo info)
+
     {
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}:Part", list);
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
@@ -104,42 +133,52 @@ public sealed class LocalArtistDetailViewModel
         }
     }
 
-    public async void SongListViewAddToPlaylistButton_Click(
-        BriefLocalSongInfo info,
-        PlaylistInfo playlist
-    )
+    [RelayCommand]
+
+    public async Task SongListViewAddToPlaylistButton(Tuple<BriefLocalSongInfo, PlaylistInfo> tuple)
+
     {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
+
+        var (info, playlist) = tuple;
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, info);
     }
 
-    public void SongListViewShowAlbumButton_Click(BriefLocalSongInfo info)
+    [RelayCommand]
+
+    public void SongListViewShowAlbumButton(BriefLocalSongInfo info)
+
     {
-        var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(info.Album);
+        var localAlbumInfo = App.GetService<MusicLibrary>().GetAlbumInfoBySong(info.Album);
         if (localAlbumInfo is not null)
         {
-            Data.SelectedLocalAlbum = localAlbumInfo;
-            Data.ShellPage!.Navigate(
+            _navigationService.NavigateShell(
                 nameof(LocalAlbumDetailPage),
-                "",
+                new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
     }
 
-    public void AlbumGridViewPlayButton_Click(LocalArtistAlbumInfo info)
+    [RelayCommand]
+
+    public void AlbumGridViewPlayButton(LocalArtistAlbumInfo info)
+
     {
         var songList = info.SongList;
         Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
-        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
-    public void AlbumGridViewPlayNextButton_Click(LocalArtistAlbumInfo info)
+    [RelayCommand]
+
+    public void AlbumGridViewPlayNextButton(LocalArtistAlbumInfo info)
+
     {
         var songList = info.SongList;
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -147,13 +186,16 @@ public sealed class LocalArtistDetailViewModel
         }
     }
 
-    public void AlbumGridViewAddToPlayQueueButton_Click(LocalArtistAlbumInfo info)
+    [RelayCommand]
+
+    public void AlbumGridViewAddToPlayQueueButton(LocalArtistAlbumInfo info)
+
     {
         var songList = info.SongList;
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -161,12 +203,14 @@ public sealed class LocalArtistDetailViewModel
         }
     }
 
-    public async void AlbumGridViewAddToPlaylistButton_Click(
-        LocalArtistAlbumInfo info,
-        PlaylistInfo playlist
-    )
+    [RelayCommand]
+
+    public async Task AlbumGridViewAddToPlaylistButton(Tuple<LocalArtistAlbumInfo, PlaylistInfo> tuple)
+
     {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, info.SongList);
+
+        var (info, playlist) = tuple;
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, info.SongList);
     }
 
     private IBriefSongInfoBase[] ConvertAllSongsToFlatArray()
@@ -188,4 +232,16 @@ public sealed class LocalArtistDetailViewModel
             selectedIndex
         );
     }
+
+
+
+
+
+
+
+
+
+
+
 }
+

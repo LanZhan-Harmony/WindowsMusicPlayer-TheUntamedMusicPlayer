@@ -162,9 +162,9 @@
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.OnlineSongsSongListView_ItemClick}"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
-                  ItemsSource="{x:Bind model:Data.OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
+                  ItemsSource="{x:Bind OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
                   Loaded="SongListView_Loaded" SelectionMode="None"
-                  Visibility="{x:Bind model:Data.OnlineMusicLibrary.ListViewVisibility, Mode=OneWay}">
+                  Visibility="{x:Bind OnlineMusicLibrary.ListViewVisibility, Mode=OneWay}">
             <interactivity:Interaction.Behaviors>
                 <helper:AlternatingListViewBehavior AlternateBackground="{ThemeResource AlternateBackgroundBrush}"
                                                     AlternateBorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -173,8 +173,10 @@
             <ListView.Footer>
                 <ProgressRing Width="25" Height="25"
                               Margin="0,5,0,5"
-                              Visibility="{x:Bind model:Data.OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
+                              Visibility="{x:Bind OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
             </ListView.Footer>
         </ListView>
     </Grid>
 </Page>
+
+

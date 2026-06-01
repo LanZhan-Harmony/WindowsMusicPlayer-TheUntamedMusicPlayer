@@ -26,7 +26,7 @@ public sealed partial class NewPlaylistInfoDialog : ContentDialog, IRecipient<Th
     private void CreateButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         var name = NameTextBox.Text;
-        CreatedPlaylist = Data.PlaylistLibrary.NewPlaylist(name);
+        CreatedPlaylist = App.GetService<PlaylistLibrary>().NewPlaylist(name);
     }
 
     private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -39,3 +39,4 @@ public sealed partial class NewPlaylistInfoDialog : ContentDialog, IRecipient<Th
         StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
+

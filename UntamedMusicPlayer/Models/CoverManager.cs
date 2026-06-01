@@ -2,12 +2,13 @@ using System.Collections.Concurrent;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
+using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using ZLogger;
 
-namespace UntamedMusicPlayer.Models;
+namespace UntamedMusicPlayer.Services;
 
 public static class CoverManager
 {

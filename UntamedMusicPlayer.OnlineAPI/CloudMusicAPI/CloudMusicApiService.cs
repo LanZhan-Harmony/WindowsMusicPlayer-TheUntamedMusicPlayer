@@ -1,0 +1,261 @@
+using System.Net;
+using System.Text;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI.Extensions;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI.Utils;
+
+namespace UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+
+/// <summary>
+/// 网易云音乐API
+/// </summary>
+public sealed partial class CloudMusicApiService : IDisposable
+{
+    private readonly HttpClient _client;
+    private readonly HttpClientHandler _clientHandler;
+
+    [GeneratedRegex(
+        @"<div class=""cver u-cover u-cover-3"">[\s\S]*?<img src=""([^""]+)"">[\s\S]*?<a class=""sname f-fs1 s-fc0"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>[\s\S]*?<a class=""nm nm f-thide s-fc3"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>",
+        RegexOptions.Compiled
+    )]
+    private static partial Regex RelatedPlaylistRegex();
+
+    public CloudMusicApiService()
+    {
+        _clientHandler = new HttpClientHandler
+        {
+            AutomaticDecompression = DecompressionMethods.None,
+            UseCookies = true,
+        };
+        _client = new HttpClient(_clientHandler);
+    }
+
+    /// <summary>
+    /// API请求
+    /// </summary>
+    /// <param name="provider">API提供者</param>
+    /// <param name="queries">参数</param>
+    /// <returns></returns>
+    public Task<(bool, JsonObject)> RequestAsync(
+        CloudMusicApiProvider provider,
+        Dictionary<string, string> queries
+    )
+    {
+        ArgumentNullException.ThrowIfNull(provider);
+        ArgumentNullException.ThrowIfNull(queries);
+
+        if (provider == CloudMusicApiProviders.CheckMusic)
+        {
+            return HandleCheckMusicAsync(queries);
+        }
+        if (provider == CloudMusicApiProviders.Login)
+        {
+            return HandleLoginAsync(queries);
+        }
+        if (provider == CloudMusicApiProviders.LoginStatus)
+        {
+            return HandleLoginStatusAsync();
+        }
+        if (provider == CloudMusicApiProviders.RelatedPlaylist)
+        {
+            return HandleRelatedPlaylistAsync(queries);
+        }
+
+        return RequestAsync(
+            provider.Method,
+            provider.Url(queries),
+            provider.Data(queries),
+            provider.Options
+        );
+    }
+
+    private async Task<(bool, JsonObject)> RequestAsync(
+        HttpMethod method,
+        string url,
+        IEnumerable<KeyValuePair<string, string>> data,
+        Options options
+    )
+    {
+        ArgumentNullException.ThrowIfNull(method);
+        ArgumentNullException.ThrowIfNull(url);
+        ArgumentNullException.ThrowIfNull(data);
+        ArgumentNullException.ThrowIfNull(options);
+
+        var (isOk, json) = await Request.CreateRequest(_client, method, url, data, options);
+        if (json["body"] is not JsonObject body)
+        {
+            return (
+                false,
+                new JsonObject { { "code", 500 }, { "msg", "响应格式错误：body 不是对象" } }
+            );
+        }
+
+        json = body;
+        if (!isOk && (int?)json["code"] == 301)
+        {
+            json["msg"] = "需要登录";
+        }
+
+        return (isOk, json);
+    }
+
+    private async Task<(bool, JsonObject)> HandleCheckMusicAsync(Dictionary<string, string> queries)
+    {
+        var provider = CloudMusicApiProviders.CheckMusic;
+
+        var (isOk, json) = await RequestAsync(
+            provider.Method,
+            provider.Url(queries),
+            provider.Data(queries),
+            provider.Options
+        );
+        if (!isOk)
+        {
+            return (false, json);
+        }
+
+        var playable =
+            (int?)json["code"] == 200
+            && json["data"] is JsonArray dataArray
+            && dataArray.Count > 0
+            && (int?)dataArray[0]?["code"] == 200;
+        var result = new JsonObject
+        {
+            { "success", playable },
+            { "message", playable ? "ok" : "亲爱的,暂无版权" },
+        };
+        return (true, result);
+    }
+
+    private async Task<(bool, JsonObject)> HandleLoginAsync(Dictionary<string, string> queries)
+    {
+        var provider = CloudMusicApiProviders.Login;
+
+        var (isOk, json) = await RequestAsync(
+            provider.Method,
+            provider.Url(queries),
+            provider.Data(queries),
+            provider.Options
+        );
+        if (!isOk)
+        {
+            return (false, json);
+        }
+
+        if ((int?)json["code"] == 502)
+        {
+            json = new JsonObject
+            {
+                { "msg", "账号或密码错误" },
+                { "code", 502 },
+                { "message", "账号或密码错误" },
+            };
+        }
+
+        return (isOk, json);
+    }
+
+    private async Task<(bool, JsonObject)> HandleLoginStatusAsync()
+    {
+        HttpResponseMessage? response = null;
+        try
+        {
+            const string GUSER = "GUser=";
+            const string GBINDS = "GBinds=";
+
+            response = await _client.GetAsync("https://music.163.com");
+            var s = await response.Content.ReadAsStringAsync();
+            var index = s.IndexOf(GUSER, StringComparison.Ordinal);
+            if (index == -1)
+            {
+                goto errorExit;
+            }
+
+            var json = new JsonObject { { "code", 200 } };
+            var profileJson = JsonNode.Parse(s[(index + GUSER.Length)..]);
+            if (profileJson is not null)
+            {
+                json.Add("profile", profileJson.AsObject());
+            }
+
+            index = s.IndexOf(GBINDS, StringComparison.Ordinal);
+            if (index == -1)
+            {
+                goto errorExit;
+            }
+
+            var bindingsJson = JsonNode.Parse(s[(index + GBINDS.Length)..]);
+            if (bindingsJson is not null)
+            {
+                json.Add("bindings", bindingsJson.AsArray());
+            }
+
+            return (true, json);
+        }
+        catch
+        {
+            goto errorExit;
+        }
+        finally
+        {
+            response?.Dispose();
+        }
+        errorExit:
+        return (false, new JsonObject { { "code", 301 } });
+    }
+
+    private async Task<(bool, JsonObject)> HandleRelatedPlaylistAsync(
+        Dictionary<string, string> queries
+    )
+    {
+        HttpResponseMessage? response = null;
+        try
+        {
+            response = await _client.SendAsync(
+                HttpMethod.Get,
+                "https://music.163.com/playlist",
+                new QueryCollection { { "id", queries["id"] } },
+                new QueryCollection { { "User-Agent", Request.ChooseUserAgent("pc") } }
+            );
+            var s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+            var matchs = RelatedPlaylistRegex().Matches(s);
+            var playlists = new JsonArray();
+            foreach (Match match in matchs)
+            {
+                playlists.Add(
+                    new JsonObject
+                    {
+                        {
+                            "creator",
+                            new JsonObject
+                            {
+                                { "userId", match.Groups[4].Value["/user/home?id=".Length..] },
+                                { "nickname", match.Groups[5].Value },
+                            }
+                        },
+                        { "coverImgUrl", match.Groups[1].Value[..^"?param=50y50".Length] },
+                        { "name", match.Groups[3].Value },
+                        { "id", match.Groups[2].Value["/playlist?id=".Length..] },
+                    }
+                );
+            }
+
+            return (true, new JsonObject { { "code", 200 }, { "playlists", playlists } });
+        }
+        catch (Exception ex)
+        {
+            return (false, new JsonObject { { "code", 500 }, { "msg", ex.ToFullString() } });
+        }
+        finally
+        {
+            response?.Dispose();
+        }
+    }
+
+    public void Dispose()
+    {
+        _clientHandler.Dispose();
+        _client.Dispose();
+    }
+}

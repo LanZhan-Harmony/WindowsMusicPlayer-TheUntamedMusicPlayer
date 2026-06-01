@@ -204,7 +204,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    Click="{x:Bind ViewModel.ShuffledPlayAllButton_Click}"
+                    Command="{x:Bind ViewModel.ShuffledPlayAllButtonCommand}"
                     Style="{StaticResource AccentButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
@@ -306,3 +306,4 @@
         </SemanticZoom>
     </Grid>
 </Page>
+

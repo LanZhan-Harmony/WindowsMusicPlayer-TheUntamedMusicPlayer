@@ -50,10 +50,13 @@ public sealed partial class OnlineAlbumDetailPage : Page
         InitializeComponent();
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        ViewModel.CheckAndLoadAlbumAsync();
+        if (e.Parameter is IBriefOnlineAlbumInfo album)
+        {
+            await ViewModel.Initialize(album);
+        }
 
         if (
             Data.ShellViewModel!.NavigatePage
@@ -310,7 +313,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -333,7 +336,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         )
         {
             var (songInfo, playlist) = tuple;
-            ViewModel.AddToPlaylistButton_Click(songInfo, playlist);
+            ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(songInfo, playlist));
         }
     }
 
@@ -345,7 +348,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
             {
                 flyout.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -362,13 +365,13 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         if (sender is MenuFlyoutItem { DataContext: PlaylistInfo playlist })
         {
-            ViewModel.AddToPlaylistFlyoutButton_Click(playlist);
+            ViewModel.AddToPlaylistFlyoutButtonCommand.Execute(playlist);
         }
     }
 
     private void AddToPlayQueueFlyoutButton_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.AddToPlayQueueFlyoutButton_Click();
+        ViewModel.AddToPlayQueueFlyoutButtonCommand.Execute(null);
     }
 
     private async void AddToNewPlaylistFlyoutButton_Click(object sender, RoutedEventArgs e)
@@ -378,7 +381,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
 
         if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
         {
-            ViewModel.AddToPlaylistFlyoutButton_Click(dialog.CreatedPlaylist);
+            ViewModel.AddToPlaylistFlyoutButtonCommand.Execute(dialog.CreatedPlaylist);
         }
     }
 
@@ -390,7 +393,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -407,7 +410,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            ViewModel.PlayButton_Click(info);
+            ViewModel.PlayButtonCommand.Execute(info);
         }
     }
 
@@ -415,7 +418,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            ViewModel.PlayNextButton_Click(info);
+            ViewModel.PlayNextButtonCommand.Execute(info);
         }
     }
 
@@ -427,15 +430,15 @@ public sealed partial class OnlineAlbumDetailPage : Page
         }
     }
 
-    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs _)
+    private void AddToPlayQueueButton_Click(object sender, RoutedEventArgs _unused)
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            ViewModel.AddToPlayQueueButton_Click(info);
+            ViewModel.AddToPlayQueueButtonCommand.Execute(info);
         }
     }
 
-    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs _)
+    private async void AddToNewPlaylistButton_Click(object sender, RoutedEventArgs _unused)
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
@@ -444,7 +447,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
             }
         }
     }
@@ -466,9 +469,15 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            ViewModel.ShowArtistButton_Click(info);
+            ViewModel.ShowArtistButtonCommand.Execute(info);
         }
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
+
+
+
+
+
+

@@ -1,11 +1,13 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
@@ -20,18 +22,21 @@ public sealed partial class PlayListDetailViewModel
         IRecipient<PlaylistChangeMessage>,
         IDisposable
 {
-    [ObservableProperty]
-    public partial PlaylistInfo Playlist { get; set; } = Data.SelectedPlaylist!;
+    private readonly INavigationService _navigationService =
+        App.GetService<INavigationService>();
 
     [ObservableProperty]
-    public partial string PlaylistName { get; set; } = Data.SelectedPlaylist!.Name;
+    public partial PlaylistInfo Playlist { get; set; } = null!;
 
     [ObservableProperty]
-    public partial string TotalSongNumStr { get; set; } = Data.SelectedPlaylist!.TotalSongNumStr;
+    public partial string PlaylistName { get; set; } = "";
 
     [ObservableProperty]
-    public partial WriteableBitmap? Cover { get; set; } =
-        CoverManager.GetPlaylistCoverBitmap(Data.SelectedPlaylist);
+    public partial string TotalSongNumStr { get; set; } = "";
+
+    [ObservableProperty]
+    public partial WriteableBitmap? Cover { get; set; }
+        = null;
 
     [ObservableProperty]
     public partial ObservableCollection<IndexedPlaylistSong> SongList { get; set; }
@@ -44,7 +49,17 @@ public sealed partial class PlayListDetailViewModel
     {
         Messenger.Register<PlaylistRenameMessage>(this);
         Messenger.Register<PlaylistChangeMessage>(this);
-        SongList = Playlist.SongList;
+        SongList = [];
+        IsPlayAllButtonEnabled = false;
+    }
+
+    public void Initialize(PlaylistInfo playlist)
+    {
+        Playlist = playlist;
+        PlaylistName = playlist.Name;
+        TotalSongNumStr = playlist.TotalSongNumStr;
+        Cover = CoverManager.GetPlaylistCoverBitmap(playlist);
+        SongList = playlist.SongList;
         IsPlayAllButtonEnabled = SongList.Count > 0;
     }
 
@@ -67,7 +82,8 @@ public sealed partial class PlayListDetailViewModel
         }
     }
 
-    public void PlayAllButton_Click(object _1, RoutedEventArgs _2)
+    [RelayCommand]
+    private void PlayAll()
     {
         if (SongList.Count == 0)
         {
@@ -75,16 +91,18 @@ public sealed partial class PlayListDetailViewModel
         }
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
         Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
-        Data.MusicPlayer.PlaySongByInfo(songList[0]);
+        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
-    public async void AddToPlaylistFlyoutButton_Click(PlaylistInfo playlist)
+    [RelayCommand]
+    private async Task AddAllToPlaylist(PlaylistInfo playlist)
     {
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, songList);
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
 
-    public void AddToPlayQueueFlyoutButton_Click()
+    [RelayCommand]
+    private void AddAllToPlayQueue()
     {
         if (SongList.Count == 0)
         {
@@ -94,7 +112,7 @@ public sealed partial class PlayListDetailViewModel
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
-            Data.MusicPlayer.PlaySongByInfo(songList[0]);
+            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
@@ -108,26 +126,28 @@ public sealed partial class PlayListDetailViewModel
         Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
         if (e.ClickedItem is IndexedPlaylistSong indexedInfo)
         {
-            Data.MusicPlayer.PlaySongByInfo(indexedInfo.Song);
+            App.GetService<MusicPlayer>().PlaySongByInfo(indexedInfo.Song);
         }
     }
 
-    public void PlayButton_Click(IBriefSongInfoBase info)
+    [RelayCommand]
+    private void Play(IBriefSongInfoBase info)
     {
         Data.PlayQueueManager.SetNormalPlayQueue(
             $"Songs:Playlist:{Playlist.Name}",
             SongList.AsValueEnumerable().Select(s => s.Song).ToArray()
         );
-        Data.MusicPlayer.PlaySongByInfo(info);
+        App.GetService<MusicPlayer>().PlaySongByInfo(info);
     }
 
-    public void PlayNextButton_Click(IBriefSongInfoBase info)
+    [RelayCommand]
+    private void PlayNext(IBriefSongInfoBase info)
     {
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefSongInfoBase> { info };
             Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
@@ -135,13 +155,14 @@ public sealed partial class PlayListDetailViewModel
         }
     }
 
-    public void AddToPlayQueueButton_Click(IBriefSongInfoBase info)
+    [RelayCommand]
+    private void AddToPlayQueue(IBriefSongInfoBase info)
     {
         if (Data.PlayQueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefSongInfoBase> { info };
             Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
-            Data.MusicPlayer.PlaySongByInfo(info);
+            App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
@@ -149,41 +170,46 @@ public sealed partial class PlayListDetailViewModel
         }
     }
 
-    public async void AddToPlaylistButton_Click(IBriefSongInfoBase info, PlaylistInfo playlist)
+    [RelayCommand]
+    private async Task AddToPlaylist(Tuple<IBriefSongInfoBase, PlaylistInfo> tuple)
     {
-        await Data.PlaylistLibrary.AddToPlaylist(playlist, info);
+        var (info, playlist) = tuple;
+        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, info);
     }
 
-    public async void RemoveButton_Click(IndexedPlaylistSong info)
+    [RelayCommand]
+    private async Task Remove(IndexedPlaylistSong info)
     {
-        await Data.PlaylistLibrary.DeleteFromPlaylist(Playlist, info);
+        await App.GetService<PlaylistLibrary>().DeleteFromPlaylist(Playlist, info);
         if (SongList.Count == 0)
         {
             IsPlayAllButtonEnabled = false;
         }
     }
 
-    public void MoveUpButton_Click(IndexedPlaylistSong info)
+    [RelayCommand]
+    private void MoveUp(IndexedPlaylistSong info)
     {
-        Data.PlaylistLibrary.MoveUpInPlaylist(Playlist, info);
+        App.GetService<PlaylistLibrary>().MoveUpInPlaylist(Playlist, info);
     }
 
-    public void MoveDownButton_Click(IndexedPlaylistSong info)
+    [RelayCommand]
+    private void MoveDown(IndexedPlaylistSong info)
     {
-        Data.PlaylistLibrary.MoveDownInPlaylist(Playlist, info);
+        App.GetService<PlaylistLibrary>().MoveDownInPlaylist(Playlist, info);
     }
 
-    public async void ShowAlbumButton_Click(IBriefSongInfoBase info)
+    [RelayCommand]
+    private async Task ShowAlbum(IBriefSongInfoBase info)
     {
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localAlbumInfo = Data.MusicLibrary.GetAlbumInfoBySong(localInfo.Album);
+            var localAlbumInfo = App.GetService<MusicLibrary>().GetAlbumInfoBySong(localInfo.Album);
             if (localAlbumInfo is not null)
             {
-                Data.SelectedLocalAlbum = localAlbumInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(LocalAlbumDetailPage),
-                    "",
+                    new LocalAlbumNavigationArgs(localAlbumInfo, nameof(PlayListDetailPage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
@@ -193,27 +219,26 @@ public sealed partial class PlayListDetailViewModel
             var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(onlineInfo);
             if (onlineAlbumInfo is not null)
             {
-                Data.SelectedOnlineAlbum = onlineAlbumInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(OnlineAlbumDetailPage),
-                    "",
+                    new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(PlayListDetailPage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
         }
     }
 
-    public async void ShowArtistButton_Click(IBriefSongInfoBase info)
+    [RelayCommand]
+    private async Task ShowArtist(IBriefSongInfoBase info)
     {
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localArtistInfo = Data.MusicLibrary.GetArtistInfoBySong(localInfo.Artists[0]);
+            var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(localInfo.Artists[0]);
             if (localArtistInfo is not null)
             {
-                Data.SelectedLocalArtist = localArtistInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(LocalArtistDetailPage),
-                    "",
+                    new LocalArtistNavigationArgs(localArtistInfo, nameof(PlayListDetailPage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
@@ -223,10 +248,9 @@ public sealed partial class PlayListDetailViewModel
             var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(onlineInfo);
             if (onlineArtistInfo is not null)
             {
-                Data.SelectedOnlineArtist = onlineArtistInfo;
-                Data.ShellPage!.Navigate(
+                _navigationService.NavigateShell(
                     nameof(OnlineArtistDetailPage),
-                    "",
+                    new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(PlayListDetailPage)),
                     new SuppressNavigationTransitionInfo()
                 );
             }
@@ -252,7 +276,7 @@ public sealed partial class PlayListDetailViewModel
             }
             Playlist.ReindexSongs();
             Messenger.Send(new HavePlaylistMessage(true));
-            _ = FileManager.SavePlaylistDataAsync(Data.PlaylistLibrary.Playlists);
+            _ = FileManager.SavePlaylistDataAsync(App.GetService<PlaylistLibrary>().Playlists);
         }
     }
 
@@ -262,3 +286,4 @@ public sealed partial class PlayListDetailViewModel
         Messenger.Unregister<PlaylistChangeMessage>(this);
     }
 }
+

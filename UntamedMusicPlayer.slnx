@@ -8,6 +8,8 @@
   <Project Path="BassAudioEngine/BassAudioEngine.vcxproj" Id="ad06a049-a46d-4b45-ab74-471d5138a519">
     <Platform Solution="*|arm64" Project="ARM64" />
   </Project>
+  <Project Path="UntamedMusicPlayer.Core/UntamedMusicPlayer.Core.csproj" Id="9ff72fe7-d6c8-4795-a6f7-7d1e19fb5d83" />
+  <Project Path="UntamedMusicPlayer.OnlineAPI/UntamedMusicPlayer.OnlineAPI.csproj" Id="015848bc-f1c6-4c14-91a7-c5c3db4767d4" />
   <Project Path="UntamedMusicPlayer/UntamedMusicPlayer.csproj">
     <Platform Solution="*|Any CPU" Project="x64" />
     <Platform Solution="*|arm64" Project="arm64" />

@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
@@ -107,7 +108,7 @@ public sealed partial class EditSongInfoDialog
     private async void SaveButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         Data.IsMusicProcessing = true;
-        if (!Data.SupportedAudioTypesForTagEditing.Contains(_song.ItemType))
+        if (!AppConstants.SupportedAudioTypesForTagEditing.Contains(_song.ItemType))
         {
             Data.IsMusicProcessing = false;
             return;
@@ -156,7 +157,7 @@ public sealed partial class EditSongInfoDialog
                 }
                 else
                 {
-                    _ = Data.MusicLibrary.LoadLibraryAgainAsync();
+                    _ = App.GetService<MusicLibrary>().LoadLibraryAgainAsync();
                 }
             }
             catch (Exception ex)
@@ -190,7 +191,7 @@ public sealed partial class EditSongInfoDialog
             {
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
             };
-            Array.ForEach(Data.SupportedCoverTypes, openPicker.FileTypeFilter.Add);
+            Array.ForEach(AppConstants.SupportedCoverTypes, openPicker.FileTypeFilter.Add);
             var file = await openPicker.PickSingleFileAsync();
             if (file is not null)
             {
@@ -267,3 +268,4 @@ public sealed partial class EditSongInfoDialog
         StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
+

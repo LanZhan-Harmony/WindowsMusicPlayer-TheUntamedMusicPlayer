@@ -12,6 +12,7 @@ public sealed partial class LocalAlbumsPage : Page
 {
     public LocalAlbumsViewModel ViewModel { get; }
     private bool _isInitialized = false;
+    private LocalAlbumInfo? _lastNavigatedAlbum;
 
     public LocalAlbumsPage()
     {
@@ -27,7 +28,7 @@ public sealed partial class LocalAlbumsPage : Page
             {
                 menuItem.Items.RemoveAt(3);
             }
-            foreach (var playlist in Data.PlaylistLibrary.Playlists)
+            foreach (var playlist in App.GetService<PlaylistLibrary>().Playlists)
             {
                 var playlistMenuItem = new MenuFlyoutItem
                 {
@@ -45,7 +46,7 @@ public sealed partial class LocalAlbumsPage : Page
         if (sender is MenuFlyoutItem { DataContext: Tuple<LocalAlbumInfo, PlaylistInfo> tuple })
         {
             var (albumInfo, playlist) = tuple;
-            ViewModel.AddToPlaylistButton_Click(albumInfo, playlist);
+            ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(albumInfo, playlist));
         }
     }
 
@@ -73,9 +74,9 @@ public sealed partial class LocalAlbumsPage : Page
 
     private async void AlbumGridView_Loaded(object sender, RoutedEventArgs e)
     {
-        if (!_isInitialized && Data.SelectedLocalAlbum is not null && sender is GridView gridView)
+        if (!_isInitialized && _lastNavigatedAlbum is not null && sender is GridView gridView)
         {
-            gridView.ScrollIntoView(Data.SelectedLocalAlbum, ScrollIntoViewAlignment.Leading);
+            gridView.ScrollIntoView(_lastNavigatedAlbum, ScrollIntoViewAlignment.Leading);
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -85,7 +86,7 @@ public sealed partial class LocalAlbumsPage : Page
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 await gridView.TryStartConnectedAnimationAsync(
                     animation,
-                    Data.SelectedLocalAlbum,
+                    _lastNavigatedAlbum,
                     "CoverBorder"
                 );
             }
@@ -106,10 +107,10 @@ public sealed partial class LocalAlbumsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedLocalAlbum = info;
+            _lastNavigatedAlbum = info;
             Data.ShellPage!.Navigate(
                 nameof(LocalAlbumDetailPage),
-                nameof(LocalAlbumsPage),
+                new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -119,7 +120,7 @@ public sealed partial class LocalAlbumsPage : Page
     {
         if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
-            ViewModel.PlayButton_Click(info);
+            ViewModel.PlayButtonCommand.Execute(info);
         }
     }
 
@@ -127,7 +128,7 @@ public sealed partial class LocalAlbumsPage : Page
     {
         if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
-            ViewModel.PlayNextButton_Click(info);
+            ViewModel.PlayNextButtonCommand.Execute(info);
         }
     }
 
@@ -135,7 +136,7 @@ public sealed partial class LocalAlbumsPage : Page
     {
         if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
-            ViewModel.AddToPlayQueueButton_Click(info);
+            ViewModel.AddToPlayQueueButtonCommand.Execute(info);
         }
     }
 
@@ -148,7 +149,7 @@ public sealed partial class LocalAlbumsPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButton_Click(info, dialog.CreatedPlaylist);
+                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
             }
         }
     }
@@ -172,10 +173,10 @@ public sealed partial class LocalAlbumsPage : Page
             ConnectedAnimationService
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
-            Data.SelectedLocalAlbum = info;
+            _lastNavigatedAlbum = info;
             Data.ShellPage!.Navigate(
                 nameof(LocalAlbumDetailPage),
-                nameof(LocalAlbumsPage),
+                new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
                 new SuppressNavigationTransitionInfo()
             );
         }
@@ -185,9 +186,15 @@ public sealed partial class LocalAlbumsPage : Page
     {
         if (sender is FrameworkElement { DataContext: LocalAlbumInfo info })
         {
-            ViewModel.ShowArtistButton_Click(info);
+            ViewModel.ShowArtistButtonCommand.Execute(info);
         }
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
+
+
+
+
+
+

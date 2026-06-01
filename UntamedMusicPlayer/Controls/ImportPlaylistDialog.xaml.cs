@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
@@ -127,7 +128,7 @@ public sealed partial class ImportPlaylistDialog
             {
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
             };
-            Array.ForEach(Data.SupportedCoverTypes, openPicker.FileTypeFilter.Add);
+            Array.ForEach(AppConstants.SupportedCoverTypes, openPicker.FileTypeFilter.Add);
             var file = await openPicker.PickSingleFileAsync();
             if (file is null)
             {
@@ -323,7 +324,9 @@ public sealed partial class ImportPlaylistDialog
                 {
                     var supportedFiles = entries
                         .OfType<StorageFile>()
-                        .Where(file => Data.SupportedAudioTypes.Contains(file.FileType.ToLower()));
+                        .Where(file =>
+                            AppConstants.SupportedAudioTypes.Contains(file.FileType.ToLower())
+                        );
                     foreach (var file in supportedFiles)
                     {
                         var briefLocalSongInfo = new BriefLocalSongInfo(file.Path, "");
@@ -374,7 +377,7 @@ public sealed partial class ImportPlaylistDialog
             : PlaylistNameTextBox.Text;
         var playlist = new PlaylistInfo(name, _coverPath);
         await playlist.AddSongs([.. Songs.Select(s => s.Song)]);
-        Data.PlaylistLibrary!.NewPlaylists([playlist]);
+        App.GetService<PlaylistLibrary>()!.NewPlaylists([playlist]);
         StrongReferenceMessenger.Default.Send(
             new LogMessage(
                 LogLevel.None,
@@ -412,3 +415,4 @@ public class DisplaySongInfo(IBriefSongInfoBase song)
         };
     public IBriefSongInfoBase Song { get; set; } = song;
 }
+

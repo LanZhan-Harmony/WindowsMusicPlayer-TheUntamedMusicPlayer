@@ -53,6 +53,11 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <ProjectReference Include="..\UntamedMusicPlayer.Core\UntamedMusicPlayer.Core.csproj" />
+	  <ProjectReference Include="..\UntamedMusicPlayer.OnlineAPI\UntamedMusicPlayer.OnlineAPI.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
 		<TrimmerRootAssembly Include="TagLibSharp" />
 	</ItemGroup>
 	

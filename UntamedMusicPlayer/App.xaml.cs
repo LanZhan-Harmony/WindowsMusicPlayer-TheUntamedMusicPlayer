@@ -4,6 +4,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using UntamedMusicPlayer.Activation;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
@@ -74,6 +76,12 @@ public sealed partial class App : Application
                     services.AddSingleton<IColorExtractionService, ColorExtractionService>();
                     services.AddSingleton<IDynamicBackgroundService, DynamicBackgroundService>();
                     services.AddSingleton<IActivationService, ActivationService>();
+                    services.AddSingleton<INavigationService, NavigationService>();
+                    services.AddSingleton<IAppStateService, AppStateService>();
+                    services.AddSingleton<MusicLibrary>();
+                    services.AddSingleton<OnlineMusicLibrary>();
+                    services.AddSingleton<PlaylistLibrary>();
+                    services.AddSingleton<MusicPlayer>();
 
                     // Online Services
                     services.AddSingleton<CloudMusicApiService>();

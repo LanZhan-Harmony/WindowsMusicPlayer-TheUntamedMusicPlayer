@@ -1,6 +1,7 @@
 using UntamedMusicPlayer.Activation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
 using ZLinq;
 
 namespace UntamedMusicPlayer.Services;
@@ -15,6 +16,10 @@ public sealed class ActivationService(IEnumerable<IActivationHandler> activation
         App.GetService<IMaterialSelectorService>();
     private readonly IDynamicBackgroundService _dynamicBackgroundService =
         App.GetService<IDynamicBackgroundService>();
+    private readonly MusicLibrary _musicLibrary = App.GetService<MusicLibrary>();
+    private readonly OnlineMusicLibrary _onlineMusicLibrary = App.GetService<OnlineMusicLibrary>();
+    private readonly PlaylistLibrary _playlistLibrary = App.GetService<PlaylistLibrary>();
+    private readonly MusicPlayer _musicPlayer = App.GetService<MusicPlayer>();
 
     public async Task ActivateAsync(object activationArgs)
     {
@@ -28,6 +33,10 @@ public sealed class ActivationService(IEnumerable<IActivationHandler> activation
 
     private async Task InitializeAsync()
     {
+        _ = _musicLibrary;
+        _ = _onlineMusicLibrary;
+        _ = _playlistLibrary;
+        _ = _musicPlayer;
         _themeSelectorService.Initialize();
         await _materialSelectorService.InitializeAsync();
     }

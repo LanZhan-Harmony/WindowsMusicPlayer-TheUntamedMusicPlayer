@@ -128,11 +128,11 @@
             <Button.ContextFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem x:Uid="Songs_Play"
-                                    Click="{x:Bind ViewModel.PlayButton_Click}"
+                                    Command="{x:Bind ViewModel.PlayButtonCommand}"
                                     Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                        Glyph=&#xE768;}"/>
                     <MenuFlyoutItem x:Uid="Songs_PlayNext"
-                                    Click="{x:Bind ViewModel.PlayNextButton_Click}"
+                                    Command="{x:Bind ViewModel.PlayNextButtonCommand}"
                                     Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                        Glyph=&#xF5EB;}"/>
                     <MenuFlyoutSeparator/>
@@ -141,7 +141,7 @@
                                                           Glyph=&#xE710;}"
                                        Loaded="AddToSubItem_Loaded">
                         <MenuFlyoutItem x:Uid="Songs_AddTo_PlayQueue"
-                                        Click="{x:Bind ViewModel.AddToPlayQueueButton_Click}"
+                                        Command="{x:Bind ViewModel.AddToPlayQueueButtonCommand}"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE93F;}"/>
                         <MenuFlyoutSeparator/>
@@ -151,11 +151,11 @@
                                                            Glyph=&#xE710;}"/>
                     </MenuFlyoutSubItem>
                     <MenuFlyoutItem x:Uid="Songs_ShowAlbum"
-                                    Click="{x:Bind ViewModel.ShowAlbumButton_Click}"
+                                    Command="{x:Bind ViewModel.ShowAlbumButtonCommand}"
                                     Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                        Glyph=&#xE93C;}"/>
                     <MenuFlyoutItem x:Uid="Songs_ShowArtist"
-                                    Click="{x:Bind ViewModel.ShowArtistButton_Click}"
+                                    Command="{x:Bind ViewModel.ShowArtistButtonCommand}"
                                     Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                        Glyph=&#xE77B;}"/>
                     <MenuFlyoutItem x:Uid="Songs_Properties"
@@ -260,7 +260,7 @@
             <!--  上一曲  -->
             <Button x:Uid="PlayBar_Prev"
                     AccessKey="B"
-                    Click="{x:Bind model:Data.MusicPlayer.PlayPreviousSong}"
+                    Click="{x:Bind MusicPlayer.PlayPreviousSong}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
@@ -273,7 +273,7 @@
             <!--  快退10s  -->
             <Button x:Name="SkipBackButton" x:Uid="PlayBar_SkipBack10s"
                     AccessKey="I"
-                    Click="{x:Bind model:Data.MusicPlayer.SkipBack10s}"
+                    Click="{x:Bind MusicPlayer.SkipBack10s}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource MenuButtonStyle}"
                     Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}">
@@ -287,7 +287,7 @@
             <!--  播放/暂停  -->
             <Button Width="50" Height="50"
                     AccessKey="P" BorderThickness="4"
-                    Click="{x:Bind model:Data.MusicPlayer.PlayPauseUpdate}"
+                    Click="{x:Bind MusicPlayer.PlayPauseUpdate}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource PlayButtonStyle}"
                     ToolTipService.ToolTip="{x:Bind GetPlayPauseTooltip(model:Data.PlayState.PlayState), Mode=OneWay}">
@@ -303,7 +303,7 @@
             <!--  快进30s  -->
             <Button x:Name="SkipForwardButton" x:Uid="PlayBar_SkipForw30s"
                     AccessKey="O"
-                    Click="{x:Bind model:Data.MusicPlayer.SkipForward30s}"
+                    Click="{x:Bind MusicPlayer.SkipForward30s}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource MenuButtonStyle}"
                     Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}">
@@ -317,7 +317,7 @@
             <!--  下一曲  -->
             <Button x:Uid="PlayBar_Next"
                     AccessKey="F"
-                    Click="{x:Bind model:Data.MusicPlayer.PlayNextSong}"
+                    Click="{x:Bind MusicPlayer.PlayNextSong}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
@@ -352,7 +352,7 @@
                 <!--  上一曲  -->
                 <Button x:Uid="PlayBar_Prev"
                         AccessKey="B"
-                        Click="{x:Bind model:Data.MusicPlayer.PlayPreviousSong}"
+                        Click="{x:Bind MusicPlayer.PlayPreviousSong}"
                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                         Style="{StaticResource MenuButtonStyle}">
                     <Button.KeyboardAccelerators>
@@ -364,7 +364,7 @@
                 <!--  播放/暂停  -->
                 <Button Width="37" Height="37"
                         AccessKey="P" BorderThickness="2"
-                        Click="{x:Bind model:Data.MusicPlayer.PlayPauseUpdate}"
+                        Click="{x:Bind MusicPlayer.PlayPauseUpdate}"
                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                         Style="{StaticResource PlayButtonStyle}"
                         ToolTipService.ToolTip="{x:Bind GetPlayPauseTooltip(model:Data.PlayState.PlayState), Mode=OneWay}">
@@ -379,7 +379,7 @@
                 <!--  下一曲  -->
                 <Button x:Uid="PlayBar_Next"
                         AccessKey="F"
-                        Click="{x:Bind model:Data.MusicPlayer.PlayNextSong}"
+                        Click="{x:Bind MusicPlayer.PlayNextSong}"
                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                         Style="{StaticResource MenuButtonStyle}">
                     <Button.KeyboardAccelerators>
@@ -403,7 +403,7 @@
                                     KeyTipPlacementMode="Top" Orientation="Horizontal"
                                     Spacing="12">
                             <Button AccessKey="M"
-                                    Click="{x:Bind model:Data.MusicPlayer.MuteUnmuteUpdate}"
+                                    Click="{x:Bind MusicPlayer.MuteUnmuteUpdate}"
                                     Style="{StaticResource MenuButtonStyle}">
                                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                           FontSize="16"
@@ -428,7 +428,7 @@
             <!--  全屏  -->
             <Button x:Name="FullScreenButton" x:Uid="PlayBar_FullScreen"
                     AccessKey="U"
-                    Click="{x:Bind ViewModel.FullScreenButton_Click}"
+                    Command="{x:Bind ViewModel.FullScreenButtonCommand}"
                     Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="F11"/>
@@ -441,7 +441,7 @@
             <!--  桌面歌词  -->
             <Button x:Uid="PlayBar_DesktopLyric"
                     AccessKey="M"
-                    Click="{x:Bind ViewModel.DesktopLyricButton_Click}"
+                    Command="{x:Bind ViewModel.DesktopLyricButtonCommand}"
                     Style="{StaticResource MenuButtonStyle}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="M" Modifiers="Control"/>
@@ -555,7 +555,7 @@
                         <!--  快退10s  -->
                         <MenuFlyoutItem x:Name="SkipBackMenu" x:Uid="PlayBar_More_SkipBack10s"
                                         AccessKey="I"
-                                        Click="{x:Bind model:Data.MusicPlayer.SkipBack10s}"
+                                        Click="{x:Bind MusicPlayer.SkipBack10s}"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xED3C;}"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
@@ -569,7 +569,7 @@
                         <!--  快进30s  -->
                         <MenuFlyoutItem x:Name="SkipForwardMenu" x:Uid="PlayBar_More_SkipForw30s"
                                         AccessKey="O"
-                                        Click="{x:Bind model:Data.MusicPlayer.SkipForward30s}"
+                                        Click="{x:Bind MusicPlayer.SkipForward30s}"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xED3D;}"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
@@ -612,7 +612,7 @@
                         <!--  全屏  -->
                         <MenuFlyoutItem x:Name="FullScreenMenu" x:Uid="PlayBar_Menu_FullScreeen"
                                         AccessKey="U"
-                                        Click="{x:Bind ViewModel.FullScreenButton_Click}"
+                                        Command="{x:Bind ViewModel.FullScreenButtonCommand}"
                                         Icon="{ui:FontIcon FontFamily={StaticResource UntamedFontFamily},
                                                            Glyph=&#xE740;}"
                                         KeyTipPlacementMode="Left">
@@ -626,3 +626,5 @@
         </StackPanel>
     </Grid>
 </UserControl>
+
+
