@@ -117,7 +117,7 @@ public static class VisualTreeHelperExtensions
             {
                 if (VisualTreeHelper.GetChild(start, i) is FrameworkElement child)
                 {
-                    if (child is T c && (predicate == null || predicate(c)))
+                    if (child is T c && (predicate is null || predicate(c)))
                     {
                         yield return c;
                         continue;
@@ -138,7 +138,7 @@ public static class VisualTreeHelperExtensions
                 {
                     if (VisualTreeHelper.GetChild(parent, i) is FrameworkElement child)
                     {
-                        if (child is T c && (predicate == null || predicate(c)))
+                        if (child is T c && (predicate is null || predicate(c)))
                         {
                             yield return c;
                             continue;
@@ -157,7 +157,7 @@ public static class VisualTreeHelperExtensions
     {
         public bool ContainsFocus()
         {
-            if (element == null)
+            if (element is null)
             {
                 return false;
             }
