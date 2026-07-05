@@ -1,7 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
@@ -47,19 +45,19 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
     /// 显示"...的搜索结果"的文本块可见性
     /// </summary>
     [ObservableProperty]
-    public partial Visibility KeyWordsTextBlockVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsKeyWordsTextBlockVisible { get; set; } = false;
 
     /// <summary>
     /// 网络错误可见性
     /// </summary>
     [ObservableProperty]
-    public partial Visibility NetworkErrorVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsNetworkErrorVisible { get; set; } = false;
 
     /// <summary>
     /// 结果列表可见性
     /// </summary>
     [ObservableProperty]
-    public partial Visibility ListViewVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsListViewVisible { get; set; } = false;
 
     /// <summary>
     /// 加载进度环可见性
@@ -92,17 +90,17 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(SearchKeyWords))
         {
-            KeyWordsTextBlockVisibility = Visibility.Collapsed;
-            NetworkErrorVisibility = Visibility.Collapsed;
-            ListViewVisibility = Visibility.Collapsed;
+            IsKeyWordsTextBlockVisible = false;
+            IsNetworkErrorVisible = false;
+            IsListViewVisible = false;
             return;
         }
 
         if (!await NetworkHelper.IsInternetAvailableAsync())
         {
-            KeyWordsTextBlockVisibility = Visibility.Collapsed;
-            NetworkErrorVisibility = Visibility.Visible;
-            ListViewVisibility = Visibility.Collapsed;
+            IsKeyWordsTextBlockVisible = false;
+            IsNetworkErrorVisible = true;
+            IsListViewVisible = false;
             return;
         }
 
@@ -110,15 +108,15 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
         if (ShouldSkipSearch())
         {
             // 直接显示现有结果
-            KeyWordsTextBlockVisibility = Visibility.Visible;
-            NetworkErrorVisibility = Visibility.Collapsed;
-            ListViewVisibility = Visibility.Visible;
+            IsKeyWordsTextBlockVisible = true;
+            IsNetworkErrorVisible = false;
+            IsListViewVisible = true;
             return;
         }
 
-        KeyWordsTextBlockVisibility = Visibility.Collapsed;
-        NetworkErrorVisibility = Visibility.Collapsed;
-        ListViewVisibility = Visibility.Collapsed;
+        IsKeyWordsTextBlockVisible = false;
+        IsNetworkErrorVisible = false;
+        IsListViewVisible = false;
         IsSearchProgressRingActive = true;
         try
         {
@@ -208,8 +206,8 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
             _lastSearchKeyWords = SearchKeyWords;
             _lastMusicLibraryIndex = MusicLibraryIndex;
 
-            KeyWordsTextBlockVisibility = Visibility.Visible;
-            ListViewVisibility = Visibility.Visible;
+            IsKeyWordsTextBlockVisible = true;
+            IsListViewVisible = true;
         }
         catch (Exception ex)
         {
@@ -392,16 +390,5 @@ public sealed partial class OnlineMusicLibrary : ObservableObject
         SuggestResultList = [];
     }
 
-    public void AutoSuggestBox_Loaded(object sender, RoutedEventArgs _)
-    {
-        if (sender is AutoSuggestBox autoSuggestBox)
-        {
-            autoSuggestBox.Text = SearchKeyWords;
-        }
-    }
-
-    public async void RetryButton_Click(object _1, RoutedEventArgs _2)
-    {
-        await ForceSearch();
-    }
+    public Task RetryAsync() => ForceSearch();
 }

@@ -232,8 +232,8 @@
                                   ItemContainerStyle="{StaticResource SortFilterListViewItemStyle}"
                                   ItemTemplate="{StaticResource SortByListViewItemTemplate}"
                                   ItemsSource="{x:Bind ViewModel.SortBy}"
-                                  Loaded="{x:Bind ViewModel.SortByListView_Loaded}"
-                                  SelectionChanged="{x:Bind ViewModel.SortByListView_SelectionChanged}"/>
+                                  Loaded="SortByListView_Loaded"
+                                  SelectionChanged="SortByListView_SelectionChanged"/>
                     </Flyout>
                 </Button.Flyout>
             </Button>

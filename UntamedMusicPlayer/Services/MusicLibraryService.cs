@@ -4,8 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
 using UntamedMusicPlayer.Core.Constants;
+using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
@@ -24,6 +24,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
     /// 调度器队列
     /// </summary>
     private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
+    private readonly IAppStateService _appStateService;
 
     /// <summary>
     /// 信号量, 只允许一个线程访问
@@ -83,39 +84,45 @@ public sealed partial class MusicLibrary : ObservableRecipient
     /// </summary>
     public List<string> Genres { get; set; } = [];
 
-    public MusicLibrary()
+    public MusicLibrary(IAppStateService appStateService)
         : base(StrongReferenceMessenger.Default)
     {
-        LoadFoldersAsync();
+        _appStateService = appStateService;
+        RunFireAndForget(LoadFoldersAsync());
     }
 
-    public async void LoadFoldersAsync()
+    public async Task LoadFoldersAsync()
     {
         await _librarySemaphore.WaitAsync(); // 防止本函数未执行完就执行 LoadLibraryAsync
-        var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>(
-            "MusicFolders"
-        );
-        if (folderPaths is not null)
+        try
         {
-            foreach (var path in folderPaths)
+            var folderPaths = await ApplicationData.Current.LocalFolder.ReadAsync<List<string>>(
+                "MusicFolders"
+            );
+            if (folderPaths is not null)
             {
-                try
+                foreach (var path in folderPaths)
                 {
-                    if (!Directory.Exists(path))
+                    try
                     {
-                        continue;
+                        if (!Directory.Exists(path))
+                        {
+                            continue;
+                        }
+                        Folders.Add(path);
                     }
-                    Folders.Add(path);
+                    catch (Exception ex)
+                    {
+                        _logger.ZLogInformation(ex, $"加载音乐文件夹失败：{path}");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    _logger.ZLogInformation(ex, $"加载音乐文件夹失败：{path}");
-                }
+                Messenger.Send(new MusicFoldersChangedMessage());
             }
-            Data.SettingsViewModel?.EmptyFolderMessageVisibility =
-                Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
         }
-        _librarySemaphore.Release();
+        finally
+        {
+            _librarySemaphore.Release();
+        }
     }
 
     public async Task LoadLibraryAsync()
@@ -347,41 +354,22 @@ public sealed partial class MusicLibrary : ObservableRecipient
         }
     }
 
-    private async void OnChanged(object sender, FileSystemEventArgs e)
-    {
-        if (_isHandlingChange || Data.IsMusicProcessing)
-        {
-            return;
-        }
-        _isHandlingChange = true;
-        try
-        {
-            var fileExtension = Path.GetExtension(e.FullPath).ToLower();
-            if (AppConstants.SupportedAudioTypes.Contains(fileExtension))
-            {
-                await LoadLibraryAgainAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"处理文件夹变更事件失败");
-        }
-        finally
-        {
-            _isHandlingChange = false;
-        }
-    }
+    private void OnChanged(object sender, FileSystemEventArgs e) =>
+        RunFireAndForget(HandleFolderChangedAsync(e.FullPath, "变更"));
 
-    private async void OnRenamed(object sender, RenamedEventArgs e)
+    private void OnRenamed(object sender, RenamedEventArgs e) =>
+        RunFireAndForget(HandleFolderChangedAsync(e.FullPath, "重命名"));
+
+    private async Task HandleFolderChangedAsync(string fullPath, string changeDescription)
     {
-        if (_isHandlingChange || Data.IsMusicProcessing)
+        if (_isHandlingChange || _appStateService.IsMusicProcessing)
         {
             return;
         }
         _isHandlingChange = true;
         try
         {
-            var fileExtension = Path.GetExtension(e.FullPath).ToLower();
+            var fileExtension = Path.GetExtension(fullPath).ToLower();
             if (AppConstants.SupportedAudioTypes.Contains(fileExtension))
             {
                 await LoadLibraryAgainAsync();
@@ -389,7 +377,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
         }
         catch (Exception ex)
         {
-            _logger.ZLogInformation(ex, $"处理文件夹重命名事件失败");
+            _logger.ZLogInformation(ex, $"处理文件夹{changeDescription}事件失败");
         }
         finally
         {
@@ -451,4 +439,21 @@ public sealed partial class MusicLibrary : ObservableRecipient
     /// <returns></returns>
     public LocalArtistInfo? GetArtistInfoBySong(string artist) =>
         Artists.TryGetValue(artist, out var localArtistInfo) ? localArtistInfo : null;
+
+    private void RunFireAndForget(Task task)
+    {
+        _ = RunFireAndForgetAsync(task);
+    }
+
+    private async Task RunFireAndForgetAsync(Task task)
+    {
+        try
+        {
+            await task;
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"音乐库异步操作失败");
+        }
+    }
 }

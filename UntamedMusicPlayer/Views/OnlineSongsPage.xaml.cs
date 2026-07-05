@@ -14,6 +14,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class OnlineSongsPage : Page
 {
     public OnlineSongsViewModel ViewModel { get; set; }
+    public OnlineMusicLibrary OnlineMusicLibrary { get; } = App.GetService<OnlineMusicLibrary>();
     private bool _isInitialized = false;
     private ScrollViewer? _scrollViewer;
     private bool _isSearching;
@@ -23,6 +24,9 @@ public sealed partial class OnlineSongsPage : Page
         ViewModel = App.GetService<OnlineSongsViewModel>();
         InitializeComponent();
     }
+
+    public Visibility ToVisibility(bool isVisible) =>
+        isVisible ? Visibility.Visible : Visibility.Collapsed;
 
     private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
     {
@@ -90,7 +94,7 @@ public sealed partial class OnlineSongsPage : Page
 
         if (
             !_isInitialized
-            && Data.PlayState.CurrentBriefSong is IBriefOnlineSongInfo currentSong
+            && App.GetService<MusicPlayer>().State.CurrentBriefSong is IBriefOnlineSongInfo currentSong
             && listView.ItemsSource is IEnumerable<IBriefOnlineSongInfo> songs
         )
         {

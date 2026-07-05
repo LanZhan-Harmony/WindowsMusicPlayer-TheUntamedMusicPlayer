@@ -82,7 +82,7 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
         {
             return;
         }
-        Data.PlayQueueManager.SetNormalPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Playlist:{Playlist.Name}",
             Playlist.SongList
         );
@@ -97,9 +97,9 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
         {
             return;
         }
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue(
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
                 $"OnlineSongs:Playlist:{Playlist.Name}",
                 Playlist.SongList
             );
@@ -107,7 +107,7 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd(Playlist.SongList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(Playlist.SongList);
         }
     }
 
@@ -129,7 +129,7 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
 
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
-        Data.PlayQueueManager.SetNormalPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Playlist:{Playlist.Name}",
             Playlist.SongList
         );
@@ -144,7 +144,7 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
     public void PlayButton(IBriefOnlineSongInfo info)
 
     {
-        Data.PlayQueueManager.SetNormalPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Playlist:{Playlist.Name}",
             Playlist.SongList
         );
@@ -156,10 +156,10 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
     public void PlayNextButton(IBriefOnlineSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue(
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
                 $"OnlineSongs:Playlist:{Playlist.Name}:Part",
                 list
             );
@@ -167,7 +167,7 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([info]);
         }
     }
 
@@ -176,10 +176,10 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
     public void AddToPlayQueueButton(IBriefOnlineSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue(
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
                 $"OnlineSongs:Playlist:{Playlist.Name}:Part",
                 list
             );
@@ -187,7 +187,7 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([info]);
         }
     }
 

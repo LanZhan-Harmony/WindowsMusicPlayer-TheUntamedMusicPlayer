@@ -77,6 +77,7 @@ public sealed partial class App : Application
                     services.AddSingleton<IDynamicBackgroundService, DynamicBackgroundService>();
                     services.AddSingleton<IActivationService, ActivationService>();
                     services.AddSingleton<INavigationService, NavigationService>();
+                    services.AddSingleton<IWindowService, WindowService>();
                     services.AddSingleton<IAppStateService, AppStateService>();
                     services.AddSingleton<MusicLibrary>();
                     services.AddSingleton<OnlineMusicLibrary>();
@@ -88,7 +89,7 @@ public sealed partial class App : Application
 
                     // Views and ViewModels
                     services.AddTransient<MainViewModel>();
-                    services.AddTransient<RootPlayBarViewModel>();
+                    services.AddSingleton<RootPlayBarViewModel>();
                     services.AddSingleton<ShellViewModel>();
                     services.AddTransient<SettingsViewModel>();
                     services.AddTransient<HomeViewModel>();

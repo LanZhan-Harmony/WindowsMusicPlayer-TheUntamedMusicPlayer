@@ -142,7 +142,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
             return;
         }
         var allSongs = ConvertAllSongsToFlatArray();
-        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
         App.GetService<MusicPlayer>().PlaySongByInfo(allSongs[0]);
     }
 
@@ -155,11 +155,11 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         {
             return;
         }
-        Data.PlayQueueManager.SetShuffledPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetShuffledPlayQueue(
             $"ShuffledOnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
-        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
+        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(App.GetService<MusicPlayer>().QueueManager.CurrentQueue[0]);
     }
 
 
@@ -182,20 +182,20 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
             return;
         }
         var allSongs = ConvertAllSongsToFlatArray();
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
             App.GetService<MusicPlayer>().PlaySongByInfo(allSongs[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd(allSongs);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(allSongs);
         }
     }
 
     public void SongListView_ItemClick(IBriefOnlineSongInfo info)
     {
-        Data.PlayQueueManager.SetNormalPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
@@ -207,7 +207,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     public void SongListViewPlayButton(IBriefOnlineSongInfo info)
 
     {
-        Data.PlayQueueManager.SetNormalPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
@@ -219,10 +219,10 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     public void SongListViewPlayNextButton(IBriefOnlineSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue(
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
                 $"OnlineSongs:Artist:{Artist.Name}:Part",
                 list
             );
@@ -230,7 +230,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([info]);
         }
     }
 
@@ -239,10 +239,10 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     public void SongListViewAddToPlayQueueButton(IBriefOnlineSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue(
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
                 $"OnlineSongs:Artist:{Artist.Name}:Part",
                 list
             );
@@ -250,7 +250,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([info]);
         }
     }
 
@@ -286,7 +286,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
 
     {
         var songList = info.SongList;
-        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
         App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
@@ -296,14 +296,14 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
 
     {
         var songList = info.SongList;
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
@@ -313,14 +313,14 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
 
     {
         var songList = info.SongList;
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
         }
     }
 

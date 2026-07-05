@@ -17,10 +17,11 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
 {
     private readonly INavigationService _navigationService =
         App.GetService<INavigationService>();
+    private readonly IWindowService _windowService =
+        App.GetService<IWindowService>();
+    private LyricPage? _lyricPage;
 
     public bool IsDesktopLyricWindowStarted { get; set; } = false;
-
-    public static RootPlayBarView? RootPlayBarView { get; set; }
 
     [ObservableProperty]
     public partial bool IsDetail { get; set; } = false;
@@ -36,12 +37,12 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
 
     public RootPlayBarViewModel()
     {
-        Data.RootPlayBarViewModel = this;
-        ButtonVisibility = Data.PlayState.CurrentSong is null
+        var musicPlayer = App.GetService<MusicPlayer>();
+        ButtonVisibility = musicPlayer.State.CurrentSong is null
             ? Visibility.Collapsed
             : Visibility.Visible;
-        Availability = Data.PlayState is not null;
-        App.GetService<MusicPlayer>().BarViewAvailabilityChanged += OnBarViewAvailabilityChanged;
+        Availability = musicPlayer.State is not null;
+        musicPlayer.BarViewAvailabilityChanged += OnBarViewAvailabilityChanged;
     }
 
     private void OnBarViewAvailabilityChanged(bool value)
@@ -82,18 +83,18 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     {
         if (!IsDetail)
         {
-            Data.LyricPage = new LyricPage();
             var frame = _navigationService.GetShellFrame();
             if (frame is null)
             {
                 return;
             }
+            _lyricPage = new LyricPage();
 
             RunCompositionFadeTransition(
                 frame,
                 () =>
                 {
-                    frame.Content = Data.LyricPage;
+                    frame.Content = _lyricPage;
                 }
             );
 
@@ -117,7 +118,8 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
                 }
             );
 
-            Data.LyricPage?.Dispose(); // 强制调用 Dispose 方法
+            _lyricPage?.Dispose(); // 强制调用 Dispose 方法
+            _lyricPage = null;
 
             IsDetail = false;
         }
@@ -148,12 +150,12 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     {
         if (!IsDesktopLyricWindowStarted)
         {
-            Data.DesktopLyricWindow = new DesktopLyricWindow();
+            _windowService.ShowDesktopLyricWindow(() => IsDesktopLyricWindowStarted = false);
             IsDesktopLyricWindowStarted = true;
         }
         else
         {
-            Data.DesktopLyricWindow?.Dispose();
+            _windowService.CloseDesktopLyricWindow();
             IsDesktopLyricWindowStarted = false;
         }
     }
@@ -163,7 +165,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     public void PlayButton()
 
     {
-        var currentSong = Data.PlayState.CurrentBriefSong;
+        var currentSong = App.GetService<MusicPlayer>().State.CurrentBriefSong;
         App.GetService<MusicPlayer>().PlaySongByInfo(currentSong!);
     }
 
@@ -172,8 +174,8 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     public void PlayNextButton()
 
     {
-        var currentSong = Data.PlayState.CurrentBriefSong;
-        Data.PlayQueueManager.AddSongsToNextPlay([currentSong!]);
+        var currentSong = App.GetService<MusicPlayer>().State.CurrentBriefSong;
+        App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([currentSong!]);
     }
 
     [RelayCommand]
@@ -181,8 +183,8 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     public void AddToPlayQueueButton()
 
     {
-        var currentSong = Data.PlayState.CurrentBriefSong;
-        Data.PlayQueueManager.AddSongsToEnd([currentSong!]);
+        var currentSong = App.GetService<MusicPlayer>().State.CurrentBriefSong;
+        App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([currentSong!]);
     }
 
     [RelayCommand]
@@ -190,7 +192,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     public async Task AddToPlaylistButton(PlaylistInfo playlist)
 
     {
-        var currentSong = Data.PlayState.CurrentBriefSong;
+        var currentSong = App.GetService<MusicPlayer>().State.CurrentBriefSong;
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, currentSong!);
     }
 
@@ -203,7 +205,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
         {
             DetailModeUpdate();
         }
-        var info = Data.PlayState.CurrentBriefSong;
+        var info = App.GetService<MusicPlayer>().State.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
             var localAlbumInfo = App.GetService<MusicLibrary>().GetAlbumInfoBySong(localInfo.Album);
@@ -239,7 +241,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
         {
             DetailModeUpdate();
         }
-        var info = Data.PlayState.CurrentBriefSong;
+        var info = App.GetService<MusicPlayer>().State.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
             var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(localInfo.Artists[0]);

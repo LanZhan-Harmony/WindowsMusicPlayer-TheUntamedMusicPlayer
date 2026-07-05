@@ -134,7 +134,7 @@
                 <TextBlock x:Name="AppTitleBarText"
                            Margin="12,0,0,0" VerticalAlignment="Center"
                            Style="{StaticResource CaptionTextBlockStyle}"
-                           Text="{x:Bind model:Data.AppDisplayName}"
+                           Text="{x:Bind AppDisplayName}"
                            TextWrapping="NoWrap"/>
             </StackPanel>
         </Grid>
@@ -169,7 +169,7 @@
                               IsItemClickEnabled="True"
                               ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
                               ItemTemplate="{StaticResource LyricViewTemplate}"
-                              ItemsSource="{x:Bind model:Data.LyricManager.CurrentLyricSlices, Mode=OneWay}"
+                              ItemsSource="{x:Bind LyricManager.CurrentLyricSlices, Mode=OneWay}"
                               Loaded="LyricView_Loaded"
                               PointerWheelChanged="LyricView_PointerWheelChanged"
                               SelectionMode="None"/>
@@ -199,7 +199,7 @@
                                   FontSize="16" Glyph="&#xE710;"/>
                     </Button>
                     <Button MinWidth="40" Style="{StaticResource TransparentButtonStyle}">
-                        <TextBlock HorizontalAlignment="Center" Text="{x:Bind model:Data.LyricManager.LyricAdjustDisplayStr, Mode=OneWay}"/>
+                        <TextBlock HorizontalAlignment="Center" Text="{x:Bind LyricManager.LyricAdjustDisplayStr, Mode=OneWay}"/>
                     </Button>
                     <Button x:Uid="Lyric_SpeedUpLyric"
                             Width="32" Height="32"
@@ -272,13 +272,13 @@
                            VerticalAlignment="Center"
                            Canvas.ZIndex="1" Opacity="1">
                         <interactivity:Interaction.Behaviors>
-                            <helper:FadeImageBehavior Source="{x:Bind model:Data.PlayState.CurrentSong.Cover, Mode=OneWay}" Duration="0:0:0.45"/>
+                            <helper:FadeImageBehavior Source="{x:Bind PlayState.CurrentSong.Cover, Mode=OneWay}" Duration="0:0:0.45"/>
                         </interactivity:Interaction.Behaviors>
                     </Image>
                     <Grid x:Name="ControllerCoverGrid"
                           Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                           Canvas.ZIndex="0"
-                          Visibility="{x:Bind model:Data.PlayState.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
+                          Visibility="{x:Bind PlayState.CurrentSong.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}">
                         <FontIcon x:Name="ControllerCoverFontIcon"
                                   Canvas.ZIndex="0"
                                   FontFamily="{StaticResource UntamedFontFamily}"

@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
@@ -30,10 +28,10 @@ public sealed partial class PlayListsViewModel
     public partial bool IsMainProgressRingActive { get; set; } = !App.GetService<PlaylistLibrary>().HasLoaded;
 
     [ObservableProperty]
-    public partial Visibility NoPlaylistControlVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsNoPlaylistControlVisible { get; set; } = false;
 
     [ObservableProperty]
-    public partial Visibility HavePlaylistControlVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsHavePlaylistControlVisible { get; set; } = false;
 
     public List<string> SortBy { get; set; } = [.. "Playlists_SortBy".GetLocalized().Split(", ")];
 
@@ -62,12 +60,8 @@ public sealed partial class PlayListsViewModel
     public void Receive(HavePlaylistMessage message)
     {
         IsMainProgressRingActive = false;
-        NoPlaylistControlVisibility = message.HasPlaylist
-            ? Visibility.Collapsed
-            : Visibility.Visible;
-        HavePlaylistControlVisibility = message.HasPlaylist
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+        IsNoPlaylistControlVisible = !message.HasPlaylist;
+        IsHavePlaylistControlVisible = message.HasPlaylist;
         _ = LoadModeAndPlayList();
     }
 
@@ -80,17 +74,15 @@ public sealed partial class PlayListsViewModel
         _tempPlaylists = App.GetService<PlaylistLibrary>().Playlists;
         if (_tempPlaylists.Count == 0)
         {
-            NoPlaylistControlVisibility = Visibility.Visible;
-            HavePlaylistControlVisibility = Visibility.Collapsed;
+            IsNoPlaylistControlVisible = true;
+            IsHavePlaylistControlVisible = false;
             return;
         }
         await LoadSortModeAsync();
         await SortPlaylists();
         OnPropertyChanged(nameof(Playlists));
-        NoPlaylistControlVisibility =
-            Playlists.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-        HavePlaylistControlVisibility =
-            Playlists.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+        IsNoPlaylistControlVisible = Playlists.Count == 0;
+        IsHavePlaylistControlVisible = Playlists.Count > 0;
     }
 
     public async Task SortPlaylists()
@@ -148,19 +140,6 @@ public sealed partial class PlayListsViewModel
         });
     }
 
-    public void SortByListView_Loaded(object sender, RoutedEventArgs _)
-    {
-        (sender as ListView)!.SelectedIndex = SortMode;
-    }
-
-    public async void SortByListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs _unused
-    )
-    {
-        _ = ChangeSortModeAsync((sender as ListView)!.SelectedIndex);
-    }
-
     public async Task ChangeSortModeAsync(int selectedIndex)
     {
         if (selectedIndex < 0)
@@ -191,7 +170,7 @@ public sealed partial class PlayListsViewModel
         {
             return;
         }
-        Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
         App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
@@ -205,14 +184,14 @@ public sealed partial class PlayListsViewModel
         {
             return;
         }
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
@@ -226,14 +205,14 @@ public sealed partial class PlayListsViewModel
         {
             return;
         }
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
         }
     }
 

@@ -3,6 +3,7 @@ using Microsoft.Windows.AppLifecycle;
 using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.ViewModels;
 using Windows.Storage;
 
 namespace UntamedMusicPlayer.Activation;
@@ -87,9 +88,9 @@ public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEve
     /// </summary>
     private static void PlayMusicFiles(List<BriefLocalSongInfo> musicFiles)
     {
-        Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", musicFiles);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue("LocalSongs:Part", musicFiles);
         App.GetService<MusicPlayer>().PlaySongByInfo(musicFiles[0]);
-        Data.RootPlayBarViewModel?.DetailModeUpdate();
+        App.GetService<RootPlayBarViewModel>().DetailModeUpdate();
     }
 }
 

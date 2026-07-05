@@ -1,7 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Messages;
@@ -26,10 +24,10 @@ public sealed partial class MusicLibraryViewModel
     public partial bool IsProgressRingActive { get; set; } = true;
 
     [ObservableProperty]
-    public partial Visibility NoMusicControlVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsNoMusicControlVisible { get; set; } = false;
 
     [ObservableProperty]
-    public partial Visibility HaveMusicControlVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsHaveMusicControlVisible { get; set; } = false;
 
     public MusicLibraryViewModel()
         : base(StrongReferenceMessenger.Default)
@@ -40,8 +38,8 @@ public sealed partial class MusicLibraryViewModel
 
     public void Receive(HaveMusicMessage message)
     {
-        NoMusicControlVisibility = message.HasMusic ? Visibility.Collapsed : Visibility.Visible;
-        HaveMusicControlVisibility = message.HasMusic ? Visibility.Visible : Visibility.Collapsed;
+        IsNoMusicControlVisible = !message.HasMusic;
+        IsHaveMusicControlVisible = message.HasMusic;
     }
 
     private async Task InitializeLibraryAsync()
@@ -51,12 +49,8 @@ public sealed partial class MusicLibraryViewModel
             await App.GetService<MusicLibrary>().LoadLibraryAsync();
         }
         IsProgressRingActive = false;
-        NoMusicControlVisibility = App.GetService<MusicLibrary>().Songs.IsEmpty
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-        HaveMusicControlVisibility = App.GetService<MusicLibrary>().Songs.IsEmpty
-            ? Visibility.Collapsed
-            : Visibility.Visible;
+        IsNoMusicControlVisible = App.GetService<MusicLibrary>().Songs.IsEmpty;
+        IsHaveMusicControlVisible = !App.GetService<MusicLibrary>().Songs.IsEmpty;
     }
 
     [RelayCommand]
@@ -74,8 +68,8 @@ public sealed partial class MusicLibraryViewModel
             && !App.GetService<MusicLibrary>().Folders.AsValueEnumerable().Contains(folder.Path)
         )
         {
-            NoMusicControlVisibility = Visibility.Collapsed;
-            HaveMusicControlVisibility = Visibility.Collapsed;
+            IsNoMusicControlVisible = false;
+            IsHaveMusicControlVisible = false;
             IsProgressRingActive = true;
             App.GetService<MusicLibrary>().Folders.Add(folder.Path);
             await SettingsViewModel.SaveFoldersAsync();

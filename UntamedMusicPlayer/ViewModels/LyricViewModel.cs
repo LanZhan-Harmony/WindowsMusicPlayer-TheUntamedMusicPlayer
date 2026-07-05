@@ -18,21 +18,34 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
 {
     private readonly INavigationService _navigationService =
         App.GetService<INavigationService>();
+    private readonly IWindowService _windowService =
+        App.GetService<IWindowService>();
+    private readonly RootPlayBarViewModel _rootPlayBarViewModel =
+        App.GetService<RootPlayBarViewModel>();
+    private readonly MusicPlayer _musicPlayer;
+    private readonly SharedPlaybackState _playState;
+    private readonly PlayQueueManager _playQueueManager;
+    private readonly LyricManager _lyricManager;
 
     [ObservableProperty]
     public partial bool IsShowCoverEnabled { get; set; }
 
     public LyricViewModel()
     {
-        IsShowCoverEnabled = Data.PlayState.CurrentSong?.Cover is not null;
-        Data.PlayState.PropertyChanged += OnStateChanged;
+        _musicPlayer = App.GetService<MusicPlayer>();
+        _playState = _musicPlayer.State;
+        _playQueueManager = _musicPlayer.QueueManager;
+        _lyricManager = _musicPlayer.LyricManager;
+
+        IsShowCoverEnabled = _playState.CurrentSong?.Cover is not null;
+        _playState.PropertyChanged += OnStateChanged;
     }
 
     private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(SharedPlaybackState.CurrentSong))
         {
-            IsShowCoverEnabled = Data.PlayState.CurrentSong?.Cover is not null;
+            IsShowCoverEnabled = _playState.CurrentSong?.Cover is not null;
         }
     }
 
@@ -41,7 +54,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
         if (e.ClickedItem is LyricSlice lyricSlice)
         {
             var time = lyricSlice.StartTime;
-            App.GetService<MusicPlayer>().LyricPositionUpdate(time);
+            _musicPlayer.LyricPositionUpdate(time);
         }
     }
 
@@ -50,8 +63,8 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     public void PlayButton()
 
     {
-        var currentSong = Data.PlayState.CurrentBriefSong;
-        App.GetService<MusicPlayer>().PlaySongByInfo(currentSong!);
+        var currentSong = _playState.CurrentBriefSong;
+        _musicPlayer.PlaySongByInfo(currentSong!);
     }
 
     [RelayCommand]
@@ -59,8 +72,8 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     public void PlayNextButton()
 
     {
-        var currentSong = Data.PlayState.CurrentBriefSong;
-        Data.PlayQueueManager.AddSongsToNextPlay([currentSong!]);
+        var currentSong = _playState.CurrentBriefSong;
+        _playQueueManager.AddSongsToNextPlay([currentSong!]);
     }
 
     [RelayCommand]
@@ -68,8 +81,8 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     public void AddToPlayQueueButton()
 
     {
-        var currentSong = Data.PlayState.CurrentBriefSong;
-        Data.PlayQueueManager.AddSongsToEnd([currentSong!]);
+        var currentSong = _playState.CurrentBriefSong;
+        _playQueueManager.AddSongsToEnd([currentSong!]);
     }
 
     [RelayCommand]
@@ -77,7 +90,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     public async Task AddToPlaylistButton(PlaylistInfo playlist)
 
     {
-        var currentSong = Data.PlayState.CurrentBriefSong;
+        var currentSong = _playState.CurrentBriefSong;
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, currentSong!);
     }
 
@@ -86,8 +99,8 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     public async Task ShowAlbumButton()
 
     {
-        Data.RootPlayBarViewModel!.DetailModeUpdate();
-        var info = Data.PlayState.CurrentBriefSong;
+        _rootPlayBarViewModel.DetailModeUpdate();
+        var info = _playState.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
             var localAlbumInfo = App.GetService<MusicLibrary>().GetAlbumInfoBySong(localInfo.Album);
@@ -119,8 +132,8 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     public async Task ShowArtistButton()
 
     {
-        Data.RootPlayBarViewModel!.DetailModeUpdate();
-        var info = Data.PlayState.CurrentBriefSong;
+        _rootPlayBarViewModel.DetailModeUpdate();
+        var info = _playState.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
             var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(localInfo.Artists[0]);
@@ -149,31 +162,34 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
 
-    public async Task ShowCoverButton()
+    public void ShowCoverButton()
 
     {
-        Data.ImageViewerWindows ??= [];
+        var currentSong = _playState.CurrentSong;
+        if (currentSong?.Cover is null)
+        {
+            return;
+        }
+
         var windowId = Guid.CreateVersion7();
-        Data.ImageViewerWindows.Add(
-            windowId,
-            new ImageViewerWindow(windowId, Data.PlayState.CurrentSong!)
-        );
+        var window = new ImageViewerWindow(windowId, currentSong);
+        _windowService.AddImageViewerWindow(windowId, window);
     }
 
     [RelayCommand]
 
-    public async Task AddLyricAdjustButton()
+    public void AddLyricAdjustButton()
 
     {
-        Data.LyricManager.AddLyricAdjust();
+        _lyricManager.AddLyricAdjust();
     }
 
     [RelayCommand]
 
-    public async Task SubtractLyricAdjustButton()
+    public void SubtractLyricAdjustButton()
 
     {
-        Data.LyricManager.SubtractLyricAdjust();
+        _lyricManager.SubtractLyricAdjust();
     }
 
 
@@ -186,7 +202,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
-        Data.PlayState.PropertyChanged -= OnStateChanged;
+        _playState.PropertyChanged -= OnStateChanged;
     }
 
 }

@@ -1,16 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Core.Constants;
-using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
-using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
 
@@ -18,7 +12,6 @@ public sealed partial class ShellViewModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
-    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
 
     public bool IsFirstLoaded { get; set; } = true;
 
@@ -28,132 +21,53 @@ public sealed partial class ShellViewModel : ObservableObject
 
     public PlaylistInfo? PrevPlaylistInfo { get; set; }
 
-    [ObservableProperty]
-    public partial object SelectedItem { get; set; } = null!;
-
     public ShellViewModel()
     {
-        Data.ShellViewModel = this;
         _ = LoadAsync();
     }
 
-    public void NavigationFrame_Navigating(object _, NavigatingCancelEventArgs e)
+    public async Task SetCurrentPageAsync(string pageName, bool isBackNavigation)
     {
-        if (e.NavigationMode == NavigationMode.Back)
+        if (isBackNavigation)
         {
             PrevPlaylistInfo = null;
         }
-        CurrentPage = e.SourcePageType.Name;
-        var navView = _navigationService.GetShellNavigationView();
-        if (navView is null)
-        {
-            _ = SaveCurrentPageAsync();
-            return;
-        }
-        if (
-            CurrentPage
-            is nameof(HomePage)
-                or nameof(OnlineAlbumDetailPage)
-                or nameof(OnlineArtistDetailPage)
-                or nameof(OnlinePlayListDetailPage)
-        )
-        {
-            SelectedItem = navView.MenuItems[0];
-        }
-        else if (
-            CurrentPage
-            is nameof(MusicLibraryPage)
-                or nameof(LocalAlbumDetailPage)
-                or nameof(LocalArtistDetailPage)
-        )
-        {
-            SelectedItem = navView.MenuItems[1];
-        }
-        else if (CurrentPage is nameof(PlayQueuePage))
-        {
-            SelectedItem = navView.MenuItems[3];
-        }
-        else if (CurrentPage is nameof(PlayListsPage))
-        {
-            SelectedItem = navView.MenuItems[4];
-        }
-        else if (CurrentPage is nameof(PlayListDetailPage))
-        {
-            var playlistsNavItem = navView.MenuItems[4] as NavigationViewItem;
-            var playlistSubItem = playlistsNavItem!
-                .MenuItems.AsValueEnumerable()
-                .Cast<NavigationViewItem>()
-                .FirstOrDefault(item =>
-                    item.DataContext is PlaylistInfo playlist && playlist == PrevPlaylistInfo
-                );
-            if (playlistSubItem is not null)
-            {
-                SelectedItem = playlistSubItem;
-            }
-            else
-            {
-                SelectedItem = playlistsNavItem;
-            }
-        }
-        else if (CurrentPage is nameof(SettingsPage))
-        {
-            SelectedItem = navView.FooterMenuItems[0];
-        }
-        _ = SaveCurrentPageAsync();
+        CurrentPage = pageName;
+        await SaveCurrentPageAsync();
     }
 
-    public void NavigationFrame_DragOver(object _, DragEventArgs e)
-    {
-        if (CurrentPage == nameof(PlayQueuePage))
-        {
-            return;
-        }
-        if (e.DataView.Contains(StandardDataFormats.StorageItems))
-        {
-            e.AcceptedOperation = DataPackageOperation.Copy;
-            e.DragUIOverride.Caption = "Shell_PlayFiles".GetLocalized();
-            e.DragUIOverride.IsCaptionVisible = true;
-            e.DragUIOverride.IsContentVisible = true;
-            e.DragUIOverride.IsGlyphVisible = false;
-        }
-    }
+    public bool CanAcceptExternalStorageItems() => CurrentPage != nameof(PlayQueuePage);
 
-    public async void NavigationFrame_Drop(object _, DragEventArgs e)
+    public async Task AddExternalStorageItemsToPlayQueueAsync(
+        IReadOnlyList<IStorageItem> storageItems
+    )
     {
-        if (CurrentPage == nameof(PlayQueuePage))
+        if (!CanAcceptExternalStorageItems())
         {
             return;
         }
-        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+
+        var musicFiles = new List<StorageFile>();
+        foreach (var item in storageItems)
         {
-            var def = e.GetDeferral();
-            var items = await e.DataView.GetStorageItemsAsync();
-            var musicFiles = new List<StorageFile>();
-            await Task.Run(async () =>
+            if (item is StorageFile file)
             {
-                foreach (var item in items)
+                var extension = Path.GetExtension(file.Path).ToLowerInvariant();
+                if (AppConstants.SupportedAudioTypes.Contains(extension))
                 {
-                    if (item is StorageFile file)
-                    {
-                        var extension = Path.GetExtension(file.Path).ToLowerInvariant();
-                        if (AppConstants.SupportedAudioTypes.Contains(extension))
-                        {
-                            musicFiles.Add(file);
-                        }
-                    }
-                    else if (item is StorageFolder folder)
-                    {
-                        var folderFiles = await GetMusicFilesFromFolderAsync(folder);
-                        musicFiles.AddRange(folderFiles);
-                    }
+                    musicFiles.Add(file);
                 }
-            });
-
-            if (musicFiles.Count > 0)
-            {
-                await AddExternalFilesToPlayQueue(musicFiles);
             }
-            def.Complete();
+            else if (item is StorageFolder folder)
+            {
+                var folderFiles = await GetMusicFilesFromFolderAsync(folder);
+                musicFiles.AddRange(folderFiles);
+            }
+        }
+
+        if (musicFiles.Count > 0)
+        {
+            await AddExternalFilesToPlayQueueAsync(musicFiles);
         }
     }
 
@@ -183,7 +97,7 @@ public sealed partial class ShellViewModel : ObservableObject
         return musicFiles;
     }
 
-    public static async Task AddExternalFilesToPlayQueue(List<StorageFile> files)
+    public static async Task AddExternalFilesToPlayQueueAsync(IReadOnlyList<StorageFile> files)
     {
         var newSongs = new List<IBriefSongInfoBase>();
         await Task.Run(() =>
@@ -204,8 +118,8 @@ public sealed partial class ShellViewModel : ObservableObject
         });
         if (newSongs.Count > 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
-            App.GetService<MusicPlayer>().PlaySongByInfo(newSongs[0]);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
+            await App.GetService<MusicPlayer>().PlaySongByInfoAsync(newSongs[0]);
         }
     }
 

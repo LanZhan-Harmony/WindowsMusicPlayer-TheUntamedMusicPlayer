@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
@@ -18,6 +19,44 @@ public sealed partial class LocalAlbumsPage : Page
     {
         ViewModel = App.GetService<LocalAlbumsViewModel>();
         InitializeComponent();
+    }
+
+    private void SortByListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            listView.SelectedIndex = ViewModel.SortMode;
+        }
+    }
+
+    private async void SortByListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs e
+    )
+    {
+        if (sender is ListView listView)
+        {
+            await ViewModel.ChangeSortModeAsync(listView.SelectedIndex);
+        }
+    }
+
+    private void GenreListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            listView.SelectedIndex = ViewModel.GenreMode;
+        }
+    }
+
+    private async void GenreListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs e
+    )
+    {
+        if (sender is ListView listView)
+        {
+            await ViewModel.ChangeGenreModeAsync(listView.SelectedIndex);
+        }
     }
 
     private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
@@ -108,7 +147,7 @@ public sealed partial class LocalAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedAlbum = info;
-            Data.ShellPage!.Navigate(
+            App.GetService<INavigationService>().NavigateShell(
                 nameof(LocalAlbumDetailPage),
                 new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
                 new SuppressNavigationTransitionInfo()
@@ -174,7 +213,7 @@ public sealed partial class LocalAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedAlbum = info;
-            Data.ShellPage!.Navigate(
+            App.GetService<INavigationService>().NavigateShell(
                 nameof(LocalAlbumDetailPage),
                 new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
                 new SuppressNavigationTransitionInfo()

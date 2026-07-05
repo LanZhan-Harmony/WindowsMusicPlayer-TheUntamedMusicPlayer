@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
@@ -22,6 +23,7 @@ public sealed partial class LocalArtistDetailPage : Page
 {
     public LocalArtistDetailViewModel ViewModel { get; } =
         App.GetService<LocalArtistDetailViewModel>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 80, 107);
@@ -54,7 +56,7 @@ public sealed partial class LocalArtistDetailPage : Page
         set
         {
             field = value;
-            ViewModel.SaveSelectionBarSelectedIndex(value);
+            _ = ViewModel.SaveSelectionBarSelectedIndexAsync(value);
         }
     } = 0;
 
@@ -80,7 +82,7 @@ public sealed partial class LocalArtistDetailPage : Page
         {
             ViewModel.Initialize(artist);
         }
-        if (Data.ShellViewModel!.NavigatePage == nameof(LocalArtistsPage))
+        if (_navigationService.NavigationSourcePage == nameof(LocalArtistsPage))
         {
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -98,7 +100,7 @@ public sealed partial class LocalArtistDetailPage : Page
         base.OnNavigatingFrom(e);
         if (
             e.NavigationMode == NavigationMode.Back
-            && Data.ShellViewModel!.NavigatePage == nameof(LocalArtistsPage)
+            && _navigationService.NavigationSourcePage == nameof(LocalArtistsPage)
         )
         {
             ConnectedAnimationService
@@ -635,7 +637,7 @@ public sealed partial class LocalArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.ShellPage!.Navigate(
+                App.GetService<INavigationService>().NavigateShell(
                     nameof(LocalAlbumDetailPage),
                     new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
                     new SuppressNavigationTransitionInfo()
@@ -705,7 +707,7 @@ public sealed partial class LocalArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.ShellPage!.Navigate(
+                App.GetService<INavigationService>().NavigateShell(
                     nameof(LocalAlbumDetailPage),
                     new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
                     new SuppressNavigationTransitionInfo()

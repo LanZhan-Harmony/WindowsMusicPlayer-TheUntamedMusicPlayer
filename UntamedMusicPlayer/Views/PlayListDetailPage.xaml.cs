@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
@@ -24,6 +25,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class PlayListDetailPage : Page
 {
     public PlayListDetailViewModel ViewModel { get; } = App.GetService<PlayListDetailViewModel>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 82, 115);
@@ -59,7 +61,7 @@ public sealed partial class PlayListDetailPage : Page
             ViewModel.Initialize(playlist);
         }
 
-        if (Data.ShellViewModel!.NavigatePage == nameof(PlayListsPage))
+        if (_navigationService.NavigationSourcePage == nameof(PlayListsPage))
         {
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -73,7 +75,7 @@ public sealed partial class PlayListDetailPage : Page
         base.OnNavigatingFrom(e);
         if (
             e.NavigationMode == NavigationMode.Back
-            && Data.ShellViewModel!.NavigatePage == nameof(PlayListsPage)
+            && _navigationService.NavigationSourcePage == nameof(PlayListsPage)
             && ViewModel.Playlist is not null
         )
         {
@@ -404,7 +406,7 @@ public sealed partial class PlayListDetailPage : Page
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            Data.ShellPage!.GoBack();
+            App.GetService<INavigationService>().GoBackShell();
             App.GetService<PlaylistLibrary>().DeletePlaylist(ViewModel.Playlist);
         }
     }

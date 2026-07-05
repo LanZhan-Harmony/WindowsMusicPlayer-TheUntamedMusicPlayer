@@ -1,11 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
-using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
@@ -15,8 +10,7 @@ public sealed partial class HomeViewModel : ObservableObject
         App.GetService<ILocalSettingsService>();
     private readonly INavigationService _navigationService =
         App.GetService<INavigationService>();
-
-    private SelectorBar? _selectorBar;
+    private readonly OnlineMusicLibrary _onlineMusicLibrary = App.GetService<OnlineMusicLibrary>();
 
     /// <summary>
     /// 页面索引, 0为歌曲, 1为专辑, 2为艺术家, 3为歌单
@@ -27,7 +21,7 @@ public sealed partial class HomeViewModel : ObservableObject
         set
         {
             field = value;
-            App.GetService<OnlineMusicLibrary>().PageIndex = value;
+            _onlineMusicLibrary.PageIndex = value;
             _ = SavePageIndexAsync();
         }
     }
@@ -37,15 +31,13 @@ public sealed partial class HomeViewModel : ObservableObject
 
     partial void OnMusicLibraryIndexChanged(byte value)
     {
-        App.GetService<OnlineMusicLibrary>().MusicLibraryIndex = value;
-        LibraryNotOpenVisibility =
-            MusicLibraryIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
-        MainGridVisibility = MusicLibraryIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+        _onlineMusicLibrary.MusicLibraryIndex = value;
+        UpdateLibraryVisibilityState();
         _ = SaveMusicLibraryIndexAsync();
         // 音乐库索引改变时强制重新搜索
-        if (!string.IsNullOrWhiteSpace(App.GetService<OnlineMusicLibrary>().SearchKeyWords))
+        if (!string.IsNullOrWhiteSpace(_onlineMusicLibrary.SearchKeyWords))
         {
-            _ = App.GetService<OnlineMusicLibrary>().ForceSearch();
+            _ = _onlineMusicLibrary.ForceSearch();
         }
     }
 
@@ -53,13 +45,13 @@ public sealed partial class HomeViewModel : ObservableObject
     /// 乐库未开放提示可见性
     /// </summary>
     [ObservableProperty]
-    public partial Visibility LibraryNotOpenVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsLibraryNotOpenVisible { get; set; }
 
     /// <summary>
     /// 主界面可见性
     /// </summary>
     [ObservableProperty]
-    public partial Visibility MainGridVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsMainGridVisible { get; set; }
 
     public HomeViewModel()
     {
@@ -70,32 +62,24 @@ public sealed partial class HomeViewModel : ObservableObject
     {
         PageIndex = await LoadPageIndex();
         MusicLibraryIndex = await LoadMusicLibraryIndex();
-        LibraryNotOpenVisibility =
-            MusicLibraryIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
-        MainGridVisibility = MusicLibraryIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+        UpdateLibraryVisibilityState();
     }
 
-    public async void SuggestBox_TextChanged(
-        AutoSuggestBox sender,
-        AutoSuggestBoxTextChangedEventArgs args
-    )
+    public async Task UpdateSuggestTextAsync(string text, bool isUserInput)
     {
-        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+        if (isUserInput)
         {
-            App.GetService<OnlineMusicLibrary>().SuggestKeyWords = sender.Text;
-            await App.GetService<OnlineMusicLibrary>().UpdateSuggestResult();
+            _onlineMusicLibrary.SuggestKeyWords = text;
+            await _onlineMusicLibrary.UpdateSuggestResult();
         }
     }
 
-    public async void SuggestBox_QuerySubmitted(
-        AutoSuggestBox _,
-        AutoSuggestBoxQuerySubmittedEventArgs args
-    )
+    public async Task SubmitSearchAsync(SuggestResult? chosenSuggestion, string queryText)
     {
-        if (args.ChosenSuggestion is SuggestResult result)
+        if (chosenSuggestion is SuggestResult result)
         {
             var keyWords = result.Label;
-            App.GetService<OnlineMusicLibrary>().ClearSuggestResult();
+            _onlineMusicLibrary.ClearSuggestResult();
             var currentSelectedIndex = result.Icon switch
             {
                 "\uE8D6" => 0,
@@ -104,51 +88,17 @@ public sealed partial class HomeViewModel : ObservableObject
                 "\uE728" => 3,
                 _ => 0,
             };
-            App.GetService<OnlineMusicLibrary>().SearchKeyWords = keyWords;
+            _onlineMusicLibrary.SearchKeyWords = keyWords;
             Navigate(currentSelectedIndex);
             // 搜索关键词改变时强制重新搜索
-            await App.GetService<OnlineMusicLibrary>().ForceSearch();
+            await _onlineMusicLibrary.ForceSearch();
         }
         else
         {
-            App.GetService<OnlineMusicLibrary>().SearchKeyWords = args.QueryText;
-            App.GetService<OnlineMusicLibrary>().ClearSuggestResult();
+            _onlineMusicLibrary.SearchKeyWords = queryText;
+            _onlineMusicLibrary.ClearSuggestResult();
             // 搜索关键词改变时强制重新搜索
-            await App.GetService<OnlineMusicLibrary>().ForceSearch();
-        }
-    }
-
-    public void SelectorBar_Loaded(object sender, RoutedEventArgs _)
-    {
-        if (sender is SelectorBar selectorBar)
-        {
-            _selectorBar = selectorBar;
-            var selectedItem = selectorBar.Items[PageIndex];
-            selectorBar.SelectedItem = selectedItem;
-        }
-    }
-
-    public void SelectorBar_SelectionChanged(
-        SelectorBar sender,
-        SelectorBarSelectionChangedEventArgs _
-    )
-    {
-        var selectedItem = sender.SelectedItem;
-        var currentSelectedIndex = sender.Items.IndexOf(selectedItem);
-
-        Navigate(currentSelectedIndex);
-    }
-
-    public void MusicLibraryIndex_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (sender is UXRadioButtons buttons)
-        {
-            var currentSelectedIndex = buttons.SelectedIndex;
-            if (currentSelectedIndex < 0)
-            {
-                return;
-            }
-            _ = ChangeMusicLibraryIndexAsync(currentSelectedIndex);
+            await _onlineMusicLibrary.ForceSearch();
         }
     }
 
@@ -165,27 +115,27 @@ public sealed partial class HomeViewModel : ObservableObject
 
     public void Navigate(int currentSelectedIndex)
     {
+        if (currentSelectedIndex < 0)
+        {
+            return;
+        }
+
         var page = currentSelectedIndex switch
         {
-            0 => typeof(OnlineSongsPage),
-            1 => typeof(OnlineAlbumsPage),
-            2 => typeof(OnlineArtistsPage),
-            3 => typeof(OnlinePlayListsPage),
-            _ => typeof(OnlineSongsPage),
+            0 => HomeNavigationPage.OnlineSongs,
+            1 => HomeNavigationPage.OnlineAlbums,
+            2 => HomeNavigationPage.OnlineArtists,
+            3 => HomeNavigationPage.OnlinePlayLists,
+            _ => HomeNavigationPage.OnlineSongs,
         };
-        var slideNavigationTransitionEffect =
+        var direction =
             currentSelectedIndex - PageIndex > 0
-                ? SlideNavigationTransitionEffect.FromRight
-                : SlideNavigationTransitionEffect.FromLeft;
+                ? HomeNavigationDirection.Forward
+                : HomeNavigationDirection.Backward;
         PageIndex = (byte)currentSelectedIndex;
-        _selectorBar?.SelectedItem = _selectorBar.Items[currentSelectedIndex];
 
-        _ = App.GetService<OnlineMusicLibrary>().Search();
-        _navigationService.NavigateHome(
-            page,
-            null,
-            new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect }
-        );
+        _ = _onlineMusicLibrary.Search();
+        _navigationService.NavigateHome(page, null, direction);
     }
 
     public async Task<byte> LoadPageIndex()
@@ -206,6 +156,12 @@ public sealed partial class HomeViewModel : ObservableObject
     public async Task SaveMusicLibraryIndexAsync()
     {
         await _localSettingsService.SaveSettingAsync("HomeMusicLibraryIndex", MusicLibraryIndex);
+    }
+
+    private void UpdateLibraryVisibilityState()
+    {
+        IsLibraryNotOpenVisible = MusicLibraryIndex != 0;
+        IsMainGridVisible = MusicLibraryIndex == 0;
     }
 }
 

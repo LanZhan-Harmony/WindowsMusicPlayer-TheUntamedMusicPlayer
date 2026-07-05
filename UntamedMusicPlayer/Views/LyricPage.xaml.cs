@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
@@ -19,6 +20,12 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class LyricPage : Page, IDisposable
 {
     public LyricViewModel ViewModel { get; }
+    public string AppDisplayName { get; } = "AppDisplayName".GetLocalized();
+    private readonly MusicPlayer _musicPlayer = App.GetService<MusicPlayer>();
+    private readonly RootPlayBarViewModel _rootPlayBarViewModel =
+        App.GetService<RootPlayBarViewModel>();
+    public SharedPlaybackState PlayState => _musicPlayer.State;
+    public LyricManager LyricManager => _musicPlayer.LyricManager;
 
     private bool isFirstLoad = true;
 
@@ -81,8 +88,8 @@ public sealed partial class LyricPage : Page, IDisposable
         AppTitleBar.Translation = Vector3.Zero;
         AppTitleBar.Opacity = 1;
 
-        Data.PlayState.PropertyChanged += OnStateChanged;
-        Data.RootPlayBarViewModel?.PropertyChanged += OnRootPlayBarChanged;
+        PlayState.PropertyChanged += OnStateChanged;
+        _rootPlayBarViewModel.PropertyChanged += OnRootPlayBarChanged;
     }
 
     private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
@@ -178,7 +185,7 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private async Task RecalculateCoverSizeWhenCoverReadyAsync(CancellationToken cancellationToken)
     {
-        var cover = Data.PlayState.CurrentSong?.Cover;
+        var cover = PlayState.CurrentSong?.Cover;
         if (cover is null)
         {
             return;
@@ -253,7 +260,7 @@ public sealed partial class LyricPage : Page, IDisposable
                     or nameof(RootPlayBarViewModel.IsFullScreen)
         )
         {
-            if (Data.RootPlayBarViewModel!.IsDetail && Data.RootPlayBarViewModel.IsFullScreen)
+            if (_rootPlayBarViewModel.IsDetail && _rootPlayBarViewModel.IsFullScreen)
             {
                 RootGrid.PointerMoved += RootGrid_PointerMoved;
             }
@@ -300,8 +307,8 @@ public sealed partial class LyricPage : Page, IDisposable
             () =>
             {
                 if (
-                    Data.RootPlayBarViewModel!.IsDetail
-                    && Data.RootPlayBarViewModel.IsFullScreen
+                    _rootPlayBarViewModel.IsDetail
+                    && _rootPlayBarViewModel.IsFullScreen
                     && !_isTitleBarHidden
                 )
                 {
@@ -455,7 +462,7 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private void CoverBtnClickToDetail(object sender, RoutedEventArgs e)
     {
-        Data.RootPlayBarViewModel!.DetailModeUpdate();
+        _rootPlayBarViewModel.DetailModeUpdate();
     }
 
     private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
@@ -500,7 +507,7 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        var currentSong = Data.PlayState.CurrentSong;
+        var currentSong = PlayState.CurrentSong;
         var dialog = new PropertiesDialog(currentSong!) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
     }
@@ -523,7 +530,7 @@ public sealed partial class LyricPage : Page, IDisposable
         var availableWidth = Math.Max(0, width - scalingMargin);
         var availableHeight = Math.Max(0, height - scalingMargin);
 
-        var currentCover = Data.PlayState.CurrentSong?.Cover;
+        var currentCover = PlayState.CurrentSong?.Cover;
         double coverWidth,
             coverHeight;
 
@@ -676,7 +683,7 @@ public sealed partial class LyricPage : Page, IDisposable
             return false;
         }
 
-        var currentSlice = Data.LyricManager.CurrentLyricSlices.FirstOrDefault(s => s.IsCurrent);
+        var currentSlice = LyricManager.CurrentLyricSlices.FirstOrDefault(s => s.IsCurrent);
         if (
             currentSlice is null
             || LyricView.ContainerFromItem(currentSlice) is not UIElement container
@@ -726,9 +733,8 @@ public sealed partial class LyricPage : Page, IDisposable
         _contentGridMarginAnimationTimer?.Tick -= ContentGridMarginAnimationTick;
         _contentGridMarginAnimationTimer = null;
 
-        Data.PlayState.PropertyChanged -= OnStateChanged;
-        Data.RootPlayBarViewModel?.PropertyChanged -= OnRootPlayBarChanged;
-        Data.LyricPage = null;
+        PlayState.PropertyChanged -= OnStateChanged;
+        _rootPlayBarViewModel.PropertyChanged -= OnRootPlayBarChanged;
     }
 }
 

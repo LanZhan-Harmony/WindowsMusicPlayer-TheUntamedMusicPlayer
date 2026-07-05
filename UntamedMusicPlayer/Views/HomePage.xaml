@@ -105,8 +105,8 @@
                           VerticalScrollMode="Disabled">
                 <SelectorBar x:Name="MainSelectorBar"
                              Grid.Column="1"
-                             Loaded="{x:Bind ViewModel.SelectorBar_Loaded}"
-                             SelectionChanged="{x:Bind ViewModel.SelectorBar_SelectionChanged}">
+                             Loaded="MainSelectorBar_Loaded"
+                             SelectionChanged="MainSelectorBar_SelectionChanged">
                     <SelectorBarItem x:Name="SelectorBarItemPage1" x:Uid="HaveMusic_Songs"
                                      FontSize="18"/>
                     <SelectorBarItem x:Name="SelectorBarItemPage2" x:Uid="HaveMusic_Albums"
@@ -124,10 +124,10 @@
                             AccessKey="S"
                             ItemTemplate="{StaticResource SuggestResultTemplate}"
                             ItemsSource="{x:Bind OnlineMusicLibrary.SuggestResultList, Mode=OneWay}"
-                            Loaded="{x:Bind OnlineMusicLibrary.AutoSuggestBox_Loaded}"
+                            Loaded="AutoSuggestBox_Loaded"
                             QueryIcon="Find"
-                            QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted}"
-                            TextChanged="{x:Bind ViewModel.SuggestBox_TextChanged}"
+                            QuerySubmitted="AutoSuggestBox_QuerySubmitted"
+                            TextChanged="AutoSuggestBox_TextChanged"
                             ToolTipService.ToolTip="Ctrl+W">
                 <AutoSuggestBox.KeyboardAccelerators>
                     <KeyboardAccelerator Key="W" Modifiers="Control"/>
@@ -140,7 +140,7 @@
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Disabled"
                       VerticalScrollMode="Disabled">
-            <controls:UXRadioButtons SelectedIndex="{x:Bind ViewModel.MusicLibraryIndex, Mode=OneWay}" SelectionChanged="{x:Bind ViewModel.MusicLibraryIndex_SelectionChanged}">
+            <controls:UXRadioButtons SelectedIndex="{x:Bind ViewModel.MusicLibraryIndex, Mode=OneWay}" SelectionChanged="MusicLibraryIndex_SelectionChanged">
                 <controls:UXRadioButtons.Items>
                     <RadioButton x:Uid="Home_MusicLibrary1"/>
                     <RadioButton x:Uid="Home_MusicLibrary2"/>
@@ -157,7 +157,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Canvas.ZIndex="1" Orientation="Horizontal"
-                    Visibility="{x:Bind ViewModel.LibraryNotOpenVisibility, Mode=OneWay}">
+                    Visibility="{x:Bind ToVisibility(ViewModel.IsLibraryNotOpenVisible), Mode=OneWay}">
             <FontIcon x:Name="LibraryNotOpenFontIcon"
                       FontFamily="{StaticResource UntamedFontFamily}"
                       Glyph="&#xF439;"/>
@@ -166,7 +166,7 @@
                        FontSize="29" FontWeight="SemiBold"/>
         </StackPanel>
 
-        <Grid Grid.Row="2" Visibility="{x:Bind ViewModel.MainGridVisibility, Mode=OneWay}">
+        <Grid Grid.Row="2" Visibility="{x:Bind ToVisibility(ViewModel.IsMainGridVisible), Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="*"/>
@@ -174,7 +174,7 @@
             <TextBlock x:Name="KeyWordsTextBlock"
                        Grid.Row="0"
                        TextTrimming="WordEllipsis"
-                       Visibility="{x:Bind OnlineMusicLibrary.KeyWordsTextBlockVisibility, Mode=OneWay}">
+                       Visibility="{x:Bind ToVisibility(OnlineMusicLibrary.IsKeyWordsTextBlockVisible), Mode=OneWay}">
                 <Run FontSize="30" FontWeight="Bold"
                      Text="{x:Bind OnlineMusicLibrary.SearchKeyWords, Mode=OneWay}"/>
                 <Run x:Uid="Home_SearchResult" FontSize="20"/>
@@ -189,7 +189,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Canvas.ZIndex="1" Orientation="Horizontal"
-                        Visibility="{x:Bind OnlineMusicLibrary.NetworkErrorVisibility, Mode=OneWay}">
+                        Visibility="{x:Bind ToVisibility(OnlineMusicLibrary.IsNetworkErrorVisible), Mode=OneWay}">
                 <FontIcon x:Name="NetworkErrorFontIcon"
                           FontFamily="{StaticResource UntamedFontFamily}"
                           Glyph="&#xEB56;"/>
@@ -197,7 +197,7 @@
                     <TextBlock x:Uid="Home_ServerError"
                                FontSize="29" FontWeight="SemiBold"/>
                     <TextBlock x:Uid="Home_UnableToAccess" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <Button Click="{x:Bind OnlineMusicLibrary.RetryButton_Click}" Style="{StaticResource AccentButtonStyle}">
+                    <Button Click="RetryButton_Click" Style="{StaticResource AccentButtonStyle}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                       FontSize="12" Glyph="&#xE72C;"/>

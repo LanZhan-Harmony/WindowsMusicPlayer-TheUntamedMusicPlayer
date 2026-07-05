@@ -82,7 +82,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         {
             return;
         }
-        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
         App.GetService<MusicPlayer>().PlaySongByInfo(Album.SongList[0]);
     }
 
@@ -95,11 +95,11 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         {
             return;
         }
-        Data.PlayQueueManager.SetShuffledPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetShuffledPlayQueue(
             $"ShuffledOnlineSongs:Album:{Album.Name}",
             Album.SongList
         );
-        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
+        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(App.GetService<MusicPlayer>().QueueManager.CurrentQueue[0]);
     }
 
 
@@ -121,9 +121,9 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         {
             return;
         }
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue(
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
                 $"OnlineSongs:Album:{Album.Name}",
                 Album.SongList
             );
@@ -131,13 +131,13 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd(Album.SongList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(Album.SongList);
         }
     }
 
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
-        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
         if (e.ClickedItem is IBriefOnlineSongInfo info)
         {
             App.GetService<MusicPlayer>().PlaySongByInfo(info);
@@ -149,7 +149,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
     public void PlayButton(IBriefOnlineSongInfo info)
 
     {
-        Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}", Album.SongList);
         App.GetService<MusicPlayer>().PlaySongByInfo(info);
     }
 
@@ -158,15 +158,15 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
     public void PlayNextButton(IBriefOnlineSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}:Part", list);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}:Part", list);
             App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([info]);
         }
     }
 
@@ -175,15 +175,15 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
     public void AddToPlayQueueButton(IBriefOnlineSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}:Part", list);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{Album.Name}:Part", list);
             App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([info]);
         }
     }
 

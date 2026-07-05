@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
@@ -13,6 +14,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class OnlineArtistsPage : Page
 {
     public OnlineArtistsViewModel ViewModel { get; set; }
+    public OnlineMusicLibrary OnlineMusicLibrary { get; } = App.GetService<OnlineMusicLibrary>();
     private bool _isInitialized = false;
     private IBriefOnlineArtistInfo? _lastNavigatedArtist;
     private ScrollViewer? _scrollViewer;
@@ -23,6 +25,9 @@ public sealed partial class OnlineArtistsPage : Page
         ViewModel = App.GetService<OnlineArtistsViewModel>();
         InitializeComponent();
     }
+
+    public Visibility ToVisibility(bool isVisible) =>
+        isVisible ? Visibility.Visible : Visibility.Collapsed;
 
     private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
     {
@@ -141,7 +146,7 @@ public sealed partial class OnlineArtistsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedArtist = info;
-            Data.ShellPage!.Navigate(
+            App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlineArtistDetailPage),
                 new OnlineArtistNavigationArgs(info, nameof(OnlineArtistsPage)),
                 new SuppressNavigationTransitionInfo()
@@ -198,7 +203,7 @@ public sealed partial class OnlineArtistsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedArtist = info;
-            Data.ShellPage!.Navigate(
+            App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlineArtistDetailPage),
                 new OnlineArtistNavigationArgs(info, nameof(OnlineArtistsPage)),
                 new SuppressNavigationTransitionInfo()
