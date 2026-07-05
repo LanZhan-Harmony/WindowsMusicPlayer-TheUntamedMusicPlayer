@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 
 namespace UntamedMusicPlayer.Views;
@@ -9,6 +10,7 @@ public sealed partial class MusicLibraryPage : Page
 {
     private readonly SettingsViewModel _settingsViewModel = App.GetService<SettingsViewModel>();
     public MusicLibraryViewModel ViewModel { get; }
+    public MusicLibrary MusicLibrary { get; } = App.GetService<MusicLibrary>();
 
     private int SelectionBarSelectedIndex
     {
@@ -26,6 +28,9 @@ public sealed partial class MusicLibraryPage : Page
         _ = InitializeAsync();
         InitializeComponent();
     }
+
+    public Visibility ToVisibility(bool isVisible) =>
+        isVisible ? Visibility.Visible : Visibility.Collapsed;
 
     private async Task InitializeAsync()
     {

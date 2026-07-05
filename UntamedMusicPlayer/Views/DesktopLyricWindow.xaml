@@ -15,15 +15,15 @@
                 VerticalAlignment="Center"
                 Background="Black" CornerRadius="30">
             <TextBlock x:Name="LyricContent"
-                       Width="{x:Bind GetTextBlockWidth(model:Data.LyricManager.CurrentLyricContent), Mode=OneWay}"
-                       Height="{x:Bind GetTextBlockHeight(model:Data.LyricManager.CurrentLyricContent), Mode=OneWay}"
+                       Width="{x:Bind GetTextBlockWidth(LyricManager.CurrentLyricContent), Mode=OneWay}"
+                       Height="{x:Bind GetTextBlockHeight(LyricManager.CurrentLyricContent), Mode=OneWay}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontFamily="{x:Bind model:Settings.FontFamily}"
                        FontSize="32" Foreground="#FDFDFD"
                        HorizontalTextAlignment="Center" MaxLines="2"
                        SizeChanged="LyricContentTextBlock_SizeChanged"
-                       Text="{x:Bind model:Data.LyricManager.CurrentLyricContent, Mode=OneWay}"
+                       Text="{x:Bind LyricManager.CurrentLyricContent, Mode=OneWay}"
                        TextAlignment="Center" TextTrimming="WordEllipsis"/>
         </Border>
     </Grid>
@@ -31,4 +31,3 @@
         <winuiex:TransparentTintBackdrop/>
     </Window.SystemBackdrop>
 </winuiex:WindowEx>
-

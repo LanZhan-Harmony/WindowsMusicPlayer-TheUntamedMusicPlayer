@@ -22,8 +22,8 @@ namespace UntamedMusicPlayer.LyricRenderer;
 public sealed partial class AdvancedLyricRenderer : UserControl
 {
     private readonly LyricRenderState _renderState = new();
-    private readonly SharedPlaybackState _playState = Data.PlayState;
-    private readonly LyricManager _lyricManager = Data.LyricManager;
+    private readonly SharedPlaybackState _playState = App.GetService<MusicPlayer>().State;
+    private readonly LyricManager _lyricManager = App.GetService<MusicPlayer>().LyricManager;
 
     // 渲染参数
     private const float LineSpacing = 40f;

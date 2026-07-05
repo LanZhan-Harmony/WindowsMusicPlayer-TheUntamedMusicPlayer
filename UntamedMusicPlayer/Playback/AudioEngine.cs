@@ -8,7 +8,7 @@ using ZLogger;
 
 namespace UntamedMusicPlayer.Playback;
 
-public sealed partial class AudioEngine : IDisposable
+public sealed partial class AudioEngine : IDisposable, IAsyncDisposable
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<AudioEngine>();
     private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
@@ -43,10 +43,10 @@ public sealed partial class AudioEngine : IDisposable
         };
         _playbackThread.Start();
 
-        InitializeAsync();
+        RunFireAndForget(InitializeAsync());
     }
 
-    private async void InitializeAsync()
+    private async Task InitializeAsync()
     {
         await ExecuteOnPlaybackThreadAsync(InitializeBass);
         _state.PropertyChanged += OnStateChanged;
@@ -191,7 +191,10 @@ public sealed partial class AudioEngine : IDisposable
         return tcs.Task;
     }
 
-    private async void OnStateChanged(object? _, PropertyChangedEventArgs e)
+    private void OnStateChanged(object? _, PropertyChangedEventArgs e) =>
+        RunFireAndForget(OnStateChangedAsync(e));
+
+    private async Task OnStateChangedAsync(PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {
@@ -468,7 +471,13 @@ public sealed partial class AudioEngine : IDisposable
         }
     }
 
-    public async void Dispose()
+    public void Dispose()
+    {
+        DisposeAsync().AsTask().GetAwaiter().GetResult();
+        GC.SuppressFinalize(this);
+    }
+
+    public async ValueTask DisposeAsync()
     {
         if (_isDisposed)
         {
@@ -502,5 +511,22 @@ public sealed partial class AudioEngine : IDisposable
         _cancellationTokenSource.Dispose();
 
         GC.SuppressFinalize(this);
+    }
+
+    private void RunFireAndForget(Task task)
+    {
+        _ = RunFireAndForgetAsync(task);
+    }
+
+    private async Task RunFireAndForgetAsync(Task task)
+    {
+        try
+        {
+            await task;
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogInformation(ex, $"音频引擎异步操作失败");
+        }
     }
 }

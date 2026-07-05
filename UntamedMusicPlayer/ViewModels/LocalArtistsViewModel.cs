@@ -65,14 +65,6 @@ public sealed partial class LocalArtistsViewModel
         IsProgressRingActive = false;
     }
 
-    public async void SortByListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs _unused
-    )
-    {
-        _ = ChangeSortModeAsync((sender as ListView)!.SelectedIndex);
-    }
-
     public async Task ChangeSortModeAsync(int selectedIndex)
     {
         if (selectedIndex < 0)
@@ -91,11 +83,6 @@ public sealed partial class LocalArtistsViewModel
         await SortArtists();
         OnPropertyChanged(nameof(GroupedArtistList));
         IsProgressRingActive = false;
-    }
-
-    public void SortByListView_Loaded(object sender, RoutedEventArgs _)
-    {
-        (sender as ListView)!.SelectedIndex = SortMode;
     }
 
     public async Task SortArtists()
@@ -152,7 +139,7 @@ public sealed partial class LocalArtistsViewModel
 
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
-        Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
         App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
@@ -162,14 +149,14 @@ public sealed partial class LocalArtistsViewModel
 
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
@@ -179,14 +166,14 @@ public sealed partial class LocalArtistsViewModel
 
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
         }
     }
 

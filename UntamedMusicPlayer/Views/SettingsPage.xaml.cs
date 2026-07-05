@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Helpers.Animations;
+using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Storage;
@@ -14,6 +15,8 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class SettingsPage : Page
 {
     public SettingsViewModel ViewModel { get; set; }
+    public MusicLibrary MusicLibrary { get; } = App.GetService<MusicLibrary>();
+    public string AppDisplayName { get; } = "AppDisplayName".GetLocalized();
     private bool _isInitialized = false;
 
     public SettingsPage()
@@ -21,6 +24,9 @@ public sealed partial class SettingsPage : Page
         ViewModel = App.GetService<SettingsViewModel>();
         InitializeComponent();
     }
+
+    public Visibility ToVisibility(bool isVisible) =>
+        isVisible ? Visibility.Visible : Visibility.Collapsed;
 
     private async void RemoveMusicFolderButton_Click(object sender, RoutedEventArgs e)
     {
@@ -48,7 +54,7 @@ public sealed partial class SettingsPage : Page
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                ViewModel.RemoveMusicFolder(folder);
+                await ViewModel.RemoveMusicFolderAsync(folder);
             }
         }
     }
@@ -181,6 +187,142 @@ public sealed partial class SettingsPage : Page
     private static void ApplyRepositionTransition(StackPanel panel)
     {
         panel.ChildrenTransitions = [new RepositionThemeTransition { IsStaggeringEnabled = false }];
+    }
+
+    private async void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        await ViewModel.UpdateSelectedMaterialAsync();
+    }
+
+    private void FontFamilyComboBox_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ComboBox comboBox)
+        {
+            return;
+        }
+
+        var selectedFontName = ViewModel.SelectedFontFamily.Source;
+        var index = ViewModel.FontFamilies.FindIndex(f => f.Name == selectedFontName);
+        if (index >= 0)
+        {
+            comboBox.SelectedIndex = index;
+        }
+    }
+
+    private void FontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontFamilyInfo selectedFont)
+        {
+            ViewModel.SelectFontFamily(selectedFont);
+        }
+    }
+
+    private void LyricPageCurrentFontSizeComboBox_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ComboBox comboBox)
+        {
+            return;
+        }
+
+        var selectedItem = ViewModel.LyricPageCurrentFontSizes.FirstOrDefault(f =>
+            f == ViewModel.LyricPageCurrentFontSize
+        );
+        if (selectedItem != 0.0)
+        {
+            comboBox.SelectedItem = selectedItem;
+        }
+        else
+        {
+            comboBox.Text = $"{ViewModel.LyricPageCurrentFontSize}";
+        }
+    }
+
+    private void LyricPageCurrentFontSizeComboBox_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs e
+    )
+    {
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is double fontSize)
+        {
+            ViewModel.SelectLyricPageCurrentFontSize(fontSize);
+        }
+    }
+
+    private void LyricPageCurrentFontSizeComboBox_TextSubmitted(
+        ComboBox sender,
+        ComboBoxTextSubmittedEventArgs args
+    )
+    {
+        if (!ViewModel.TrySubmitLyricPageCurrentFontSize(args.Text))
+        {
+            sender.Text = $"{ViewModel.LyricPageCurrentFontSize}";
+        }
+    }
+
+    private void LyricPageNotCurrentFontSizeComboBox_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ComboBox comboBox)
+        {
+            return;
+        }
+
+        var selectedItem = ViewModel.LyricPageNotCurrentFontSizes.FirstOrDefault(f =>
+            f == ViewModel.LyricPageNotCurrentFontSize
+        );
+        if (selectedItem != 0.0)
+        {
+            comboBox.SelectedItem = selectedItem;
+        }
+        else
+        {
+            comboBox.Text = $"{ViewModel.LyricPageNotCurrentFontSize}";
+        }
+    }
+
+    private void LyricPageNotCurrentFontSizeComboBox_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs e
+    )
+    {
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is double fontSize)
+        {
+            ViewModel.SelectLyricPageNotCurrentFontSize(fontSize);
+        }
+    }
+
+    private void LyricPageNotCurrentFontSizeComboBox_TextSubmitted(
+        ComboBox sender,
+        ComboBoxTextSubmittedEventArgs args
+    )
+    {
+        if (!ViewModel.TrySubmitLyricPageNotCurrentFontSize(args.Text))
+        {
+            sender.Text = $"{ViewModel.LyricPageNotCurrentFontSize}";
+        }
+    }
+
+    private void FontWeightComboBox_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ComboBox comboBox)
+        {
+            return;
+        }
+
+        var selectedItem = ViewModel.FontWeights.FirstOrDefault(weight =>
+            weight.FontWeight.Weight == ViewModel.LyricPageFontWeight.Weight
+        );
+        if (selectedItem is not null)
+        {
+            comboBox.SelectedItem = selectedItem;
+        }
+    }
+
+    private void FontWeightComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontWeightInfo selectedWeight)
+        {
+            ViewModel.SelectFontWeight(selectedWeight);
+        }
     }
 }
 

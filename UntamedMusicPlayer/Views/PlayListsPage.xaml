@@ -216,7 +216,7 @@
 
         <Grid x:Name="NoPlaylistControl"
               Grid.Row="1"
-              Visibility="{x:Bind ViewModel.NoPlaylistControlVisibility, Mode=OneWay}">
+              Visibility="{x:Bind ToVisibility(ViewModel.IsNoPlaylistControlVisible), Mode=OneWay}">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <StackPanel x:Name="StackPanel"
                             HorizontalAlignment="Center"
@@ -258,7 +258,7 @@
 
         <Grid x:Name="HavePlaylistControl"
               Grid.Row="1"
-              Visibility="{x:Bind ViewModel.HavePlaylistControlVisibility, Mode=OneWay}">
+              Visibility="{x:Bind ToVisibility(ViewModel.IsHavePlaylistControlVisible), Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -311,8 +311,8 @@
                                       ItemContainerStyle="{StaticResource SortFilterListViewItemStyle}"
                                       ItemTemplate="{StaticResource SortByListViewItemTemplate}"
                                       ItemsSource="{x:Bind ViewModel.SortBy}"
-                                      Loaded="{x:Bind ViewModel.SortByListView_Loaded}"
-                                      SelectionChanged="{x:Bind ViewModel.SortByListView_SelectionChanged}"/>
+                                      Loaded="SortByListView_Loaded"
+                                      SelectionChanged="SortByListView_SelectionChanged"/>
                         </Flyout>
                     </Button.Flyout>
                 </Button>

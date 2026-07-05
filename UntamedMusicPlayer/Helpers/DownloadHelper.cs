@@ -5,6 +5,7 @@ using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using Windows.Storage;
@@ -34,7 +35,8 @@ public static class DownloadHelper
         await CancelCurrentDownloadAsync();
         _currentDownloadCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-        Data.IsMusicProcessing = true;
+        var appStateService = App.GetService<IAppStateService>();
+        appStateService.IsMusicProcessing = true;
         _currentDownloadPath = null;
         _currentFinalPath = null;
 
@@ -92,7 +94,7 @@ public static class DownloadHelper
                 }
                 finally
                 {
-                    Data.IsMusicProcessing = false;
+                    appStateService.IsMusicProcessing = false;
                     _currentDownloadCts?.Dispose();
                     _currentDownloadCts = null;
                     _currentDownloadPath = null;

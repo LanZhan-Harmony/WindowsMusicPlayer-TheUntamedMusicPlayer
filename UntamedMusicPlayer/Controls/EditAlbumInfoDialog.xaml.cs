@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Core.Constants;
+using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
@@ -22,6 +23,7 @@ public sealed partial class EditAlbumInfoDialog
         IRecipient<ThemeChangeMessage>
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<EditAlbumInfoDialog>();
+    private readonly IAppStateService _appStateService = App.GetService<IAppStateService>();
     private readonly LocalAlbumInfo _album;
     private string _name;
     private string _albumArtist;
@@ -78,7 +80,7 @@ public sealed partial class EditAlbumInfoDialog
 
     private async void SaveButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        Data.IsMusicProcessing = true;
+        _appStateService.IsMusicProcessing = true;
 
         await Task.Run(async () =>
         {
@@ -125,7 +127,7 @@ public sealed partial class EditAlbumInfoDialog
             }
         });
 
-        Data.IsMusicProcessing = false;
+        _appStateService.IsMusicProcessing = false;
     }
 
     private async void SaveCoverButton_Click(object sender, RoutedEventArgs e)

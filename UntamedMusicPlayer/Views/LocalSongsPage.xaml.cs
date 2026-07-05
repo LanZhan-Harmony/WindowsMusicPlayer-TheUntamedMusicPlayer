@@ -23,6 +23,44 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         InitializeComponent();
     }
 
+    private void SortByListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            listView.SelectedIndex = ViewModel.SortMode;
+        }
+    }
+
+    private async void SortByListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs e
+    )
+    {
+        if (sender is ListView listView)
+        {
+            await ViewModel.ChangeSortModeAsync(listView.SelectedIndex);
+        }
+    }
+
+    private void GenreListView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            listView.SelectedIndex = ViewModel.GenreMode;
+        }
+    }
+
+    private async void GenreListView_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs e
+    )
+    {
+        if (sender is ListView listView)
+        {
+            await ViewModel.ChangeGenreModeAsync(listView.SelectedIndex);
+        }
+    }
+
     private void LocalSongsPage_Unloaded(object sender, RoutedEventArgs e)
     {
         StrongReferenceMessenger.Default.Unregister<ScrollToSongMessage>(this);

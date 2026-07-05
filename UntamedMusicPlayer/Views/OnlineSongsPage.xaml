@@ -164,7 +164,7 @@
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
                   Loaded="SongListView_Loaded" SelectionMode="None"
-                  Visibility="{x:Bind OnlineMusicLibrary.ListViewVisibility, Mode=OneWay}">
+                  Visibility="{x:Bind ToVisibility(OnlineMusicLibrary.IsListViewVisible), Mode=OneWay}">
             <interactivity:Interaction.Behaviors>
                 <helper:AlternatingListViewBehavior AlternateBackground="{ThemeResource AlternateBackgroundBrush}"
                                                     AlternateBorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"

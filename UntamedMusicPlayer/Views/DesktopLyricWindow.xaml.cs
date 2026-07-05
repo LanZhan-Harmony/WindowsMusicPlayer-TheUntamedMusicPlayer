@@ -5,7 +5,9 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
 using Windows.Foundation;
@@ -29,9 +31,14 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
     private readonly Compositor? _compositor;
     private readonly Visual? _borderVisual;
     private readonly DesktopLyricWindowHelper _windowHelper;
+    private readonly Action _closedCallback;
+    private bool _isDisposed;
 
-    public DesktopLyricWindow()
+    public LyricManager LyricManager { get; } = App.GetService<MusicPlayer>().LyricManager;
+
+    public DesktopLyricWindow(Action closedCallback)
     {
+        _closedCallback = closedCallback;
         Title = "DesktopLyricWindowTitle".GetLocalized();
         ExtendsContentIntoTitleBar = true;
         InitializeComponent();
@@ -161,14 +168,18 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
 
     private void Window_Closed(object sender, WindowEventArgs args)
     {
-        Data.RootPlayBarViewModel?.IsDesktopLyricWindowStarted = false;
+        _closedCallback();
         _windowHelper.Dispose();
     }
 
     public void Dispose()
     {
+        if (_isDisposed)
+        {
+            return;
+        }
+        _isDisposed = true;
         Close();
-        Data.DesktopLyricWindow = null;
     }
 }
 

@@ -32,7 +32,7 @@ public sealed partial class LocalArtistDetailViewModel
     public void PlayAllButton()
 
     {
-        Data.PlayQueueManager.SetNormalPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
@@ -44,11 +44,11 @@ public sealed partial class LocalArtistDetailViewModel
     public void ShuffledPlayAllButton()
 
     {
-        Data.PlayQueueManager.SetShuffledPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetShuffledPlayQueue(
             $"ShuffledLocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
-        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
+        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(App.GetService<MusicPlayer>().QueueManager.CurrentQueue[0]);
     }
 
 
@@ -67,20 +67,20 @@ public sealed partial class LocalArtistDetailViewModel
 
     {
         var allSongs = ConvertAllSongsToFlatArray();
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}", allSongs);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}", allSongs);
             App.GetService<MusicPlayer>().PlaySongByInfo(allSongs[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd(allSongs);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(allSongs);
         }
     }
 
     public void SongListView_ItemClick(BriefLocalSongInfo info)
     {
-        Data.PlayQueueManager.SetNormalPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
@@ -92,7 +92,7 @@ public sealed partial class LocalArtistDetailViewModel
     public void SongListViewPlayButton(BriefLocalSongInfo info)
 
     {
-        Data.PlayQueueManager.SetNormalPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
             $"LocalSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
@@ -104,15 +104,15 @@ public sealed partial class LocalArtistDetailViewModel
     public void SongListViewPlayNextButton(BriefLocalSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}:Part", list);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}:Part", list);
             App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([info]);
         }
     }
 
@@ -121,15 +121,15 @@ public sealed partial class LocalArtistDetailViewModel
     public void SongListViewAddToPlayQueueButton(BriefLocalSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}:Part", list);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{Artist.Name}:Part", list);
             App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([info]);
         }
     }
 
@@ -165,7 +165,7 @@ public sealed partial class LocalArtistDetailViewModel
 
     {
         var songList = info.SongList;
-        Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
         App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
@@ -175,14 +175,14 @@ public sealed partial class LocalArtistDetailViewModel
 
     {
         var songList = info.SongList;
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
@@ -192,14 +192,14 @@ public sealed partial class LocalArtistDetailViewModel
 
     {
         var songList = info.SongList;
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
         }
     }
 
@@ -225,7 +225,7 @@ public sealed partial class LocalArtistDetailViewModel
         );
     }
 
-    public async void SaveSelectionBarSelectedIndex(int selectedIndex)
+    public async Task SaveSelectionBarSelectedIndexAsync(int selectedIndex)
     {
         await _localSettingsService.SaveSettingAsync(
             "LocalArtistDetailSelectionBarSelectedIndex",

@@ -90,11 +90,11 @@
                             </StackPanel>
                         </Button>
                         <toolkit:SettingsExpander.ItemsFooter>
-                            <Grid Height="35" Visibility="{x:Bind ViewModel.EmptyFolderMessageVisibility, Mode=OneWay}">
+                            <Grid Height="35" Visibility="{x:Bind ToVisibility(ViewModel.IsEmptyFolderMessageVisible), Mode=OneWay}">
                                 <toolkit:SettingsCard x:Name="emptyFolderMessage"
                                                       Background="Transparent" BorderBrush="Transparent"
                                                       ContentAlignment="Left"
-                                                      Visibility="{x:Bind ViewModel.EmptyFolderMessageVisibility, Mode=OneWay}">
+                                                      Visibility="{x:Bind ToVisibility(ViewModel.IsEmptyFolderMessageVisible), Mode=OneWay}">
                                     <TextBlock x:Uid="Settings_NoFolder" Margin="42,0,0,8"/>
                                 </toolkit:SettingsCard>
                             </Grid>
@@ -179,31 +179,31 @@
                                 <ComboBox x:Uid="Settings_ChooseAFontFamily"
                                           ItemTemplate="{StaticResource FontFamilyComboBoxTemplate}"
                                           ItemsSource="{x:Bind ViewModel.FontFamilies}"
-                                          Loaded="{x:Bind ViewModel.FontFamilyComboBox_Loaded}"
-                                          SelectionChanged="{x:Bind ViewModel.FontFamilyComboBox_SelectionChanged}"/>
+                                          Loaded="FontFamilyComboBox_Loaded"
+                                          SelectionChanged="FontFamilyComboBox_SelectionChanged"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_LyricPageCurrentFontSize">
                                 <ComboBox x:Uid="Settings_ChooseAFontSize"
                                           IsEditable="True"
                                           ItemsSource="{x:Bind ViewModel.LyricPageCurrentFontSizes}"
-                                          Loaded="{x:Bind ViewModel.LyricPageCurrentFontSizeComboBox_Loaded}"
-                                          SelectionChanged="{x:Bind ViewModel.LyricPageCurrentFontSizeComboBox_SelectionChanged}"
-                                          TextSubmitted="{x:Bind ViewModel.LyricPageCurrentFontSizeComboBox_TextSubmitted}"/>
+                                          Loaded="LyricPageCurrentFontSizeComboBox_Loaded"
+                                          SelectionChanged="LyricPageCurrentFontSizeComboBox_SelectionChanged"
+                                          TextSubmitted="LyricPageCurrentFontSizeComboBox_TextSubmitted"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_LyricPageNotCurrentFontSize">
                                 <ComboBox x:Uid="Settings_ChooseAFontSize"
                                           IsEditable="True"
                                           ItemsSource="{x:Bind ViewModel.LyricPageNotCurrentFontSizes}"
-                                          Loaded="{x:Bind ViewModel.LyricPageNotCurrentFontSizeComboBox_Loaded}"
-                                          SelectionChanged="{x:Bind ViewModel.LyricPageNotCurrentFontSizeComboBox_SelectionChanged}"
-                                          TextSubmitted="{x:Bind ViewModel.LyricPageNotCurrentFontSizeComboBox_TextSubmitted}"/>
+                                          Loaded="LyricPageNotCurrentFontSizeComboBox_Loaded"
+                                          SelectionChanged="LyricPageNotCurrentFontSizeComboBox_SelectionChanged"
+                                          TextSubmitted="LyricPageNotCurrentFontSizeComboBox_TextSubmitted"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_LyricFontWeight">
                                 <ComboBox x:Uid="Settings_ChooseAFontWeight"
                                           ItemTemplate="{StaticResource FontWeightComboBoxTemplate}"
                                           ItemsSource="{x:Bind ViewModel.FontWeights}"
-                                          Loaded="{x:Bind ViewModel.FontWeightComboBox_Loaded}"
-                                          SelectionChanged="{x:Bind ViewModel.FontWeightComboBox_SelectionChanged}"/>
+                                          Loaded="FontWeightComboBox_Loaded"
+                                          SelectionChanged="FontWeightComboBox_SelectionChanged"/>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard x:Uid="Settings_LyricPreview">
                                 <StackPanel>
@@ -277,7 +277,7 @@
                             <ComboBox x:Name="MaterialComboBox" x:Uid="Settings_ChooseAMaterial"
                                       ItemsSource="{x:Bind ViewModel.Materials}"
                                       SelectedIndex="{x:Bind ViewModel.SelectedMaterial, Mode=TwoWay}"
-                                      SelectionChanged="{x:Bind ViewModel.MaterialComboBox_SelectionChanged}"/>
+                                      SelectionChanged="MaterialComboBox_SelectionChanged"/>
                         </StackPanel>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard x:Uid="Settings_FallBack">
@@ -329,7 +329,7 @@
                                Margin="0,12,0,5"
                                Style="{StaticResource BodyStrongTextBlockStyle}"/>
                     <toolkit:SettingsExpander x:Name="About" x:Uid="Settings_AboutDescription"
-                                              Header="{x:Bind model:Data.AppDisplayName}"
+                                              Header="{x:Bind AppDisplayName}"
                                               HeaderIcon="{ui:BitmapIcon Source=ms-appx:///Assets/AppIcon/Icon.ico}">
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionDescription}"/>
                         <toolkit:SettingsExpander.Items>

@@ -72,7 +72,6 @@ public sealed partial class LocalAlbumsViewModel
     {
         Messenger.Register(this);
         _ = LoadModeAndAlbumList();
-        Data.LocalAlbumsViewModel = this;
     }
 
     public void Receive(HaveMusicMessage message)
@@ -131,7 +130,7 @@ public sealed partial class LocalAlbumsViewModel
             .. _albumList
                 .AsValueEnumerable()
                 .GroupBy(m => TitleComparer.GetGroupKey(m.Name[0]))
-                .Select(g => new GroupInfoList(g) { Key = g.Key }),
+                .Select(g => CreateGroupInfoList(g, g.Key)),
         ];
         NotGroupedAlbumList = [.. _albumList];
 
@@ -201,7 +200,7 @@ public sealed partial class LocalAlbumsViewModel
                         ? "..."
                         : TitleComparer.GetGroupKey(m.Name[0])
                 )
-                .Select(g => new GroupInfoList(g) { Key = g.Key });
+                .Select(g => CreateGroupInfoList(g, g.Key));
 
             GroupedAlbumList = [.. sortedGroups];
         });
@@ -221,7 +220,7 @@ public sealed partial class LocalAlbumsViewModel
                         ? "..."
                         : TitleComparer.GetGroupKey(m.Name[0])
                 )
-                .Select(g => new GroupInfoList(g) { Key = g.Key });
+                .Select(g => CreateGroupInfoList(g, g.Key));
 
             GroupedAlbumList = [.. sortedGroups];
         });
@@ -237,7 +236,7 @@ public sealed partial class LocalAlbumsViewModel
                 .OfType<LocalAlbumInfo>()
                 .OrderBy(m => m.Year)
                 .GroupBy(m => m.Year == 0 ? "..." : $"{m.Year}")
-                .Select(g => new GroupInfoList(g) { Key = g.Key });
+                .Select(g => CreateGroupInfoList(g, g.Key));
             GroupedAlbumList = [.. sortedGroups];
         });
     }
@@ -252,7 +251,7 @@ public sealed partial class LocalAlbumsViewModel
                 .OfType<LocalAlbumInfo>()
                 .OrderByDescending(m => m.Year)
                 .GroupBy(m => m.Year == 0 ? "..." : $"{m.Year}")
-                .Select(g => new GroupInfoList(g) { Key = g.Key });
+                .Select(g => CreateGroupInfoList(g, g.Key));
 
             GroupedAlbumList = [.. sortedGroups];
         });
@@ -268,7 +267,7 @@ public sealed partial class LocalAlbumsViewModel
                 .OfType<LocalAlbumInfo>()
                 .OrderBy(m => m, new AlbumArtistComparer())
                 .GroupBy(m => m.ArtistsStr)
-                .Select(g => new GroupInfoList(g) { Key = g.Key });
+                .Select(g => CreateGroupInfoList(g, g.Key));
 
             GroupedAlbumList = [.. sortedGroups];
         });
@@ -284,7 +283,7 @@ public sealed partial class LocalAlbumsViewModel
                 .OfType<LocalAlbumInfo>()
                 .OrderByDescending(m => m, new AlbumArtistComparer())
                 .GroupBy(m => m.ArtistsStr)
-                .Select(g => new GroupInfoList(g) { Key = g.Key });
+                .Select(g => CreateGroupInfoList(g, g.Key));
 
             GroupedAlbumList = [.. sortedGroups];
         });
@@ -310,27 +309,6 @@ public sealed partial class LocalAlbumsViewModel
 
             NotGroupedAlbumList = [.. sortedGroups];
         });
-    }
-
-    public async void SortByListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs _unused
-    )
-    {
-        _ = ChangeSortModeAsync((sender as ListView)!.SelectedIndex);
-    }
-
-    public void SortByListView_Loaded(object sender, RoutedEventArgs _)
-    {
-        (sender as ListView)!.SelectedIndex = SortMode;
-    }
-
-    public async void GenreListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs _unused
-    )
-    {
-        _ = ChangeGenreModeAsync((sender as ListView)!.SelectedIndex);
     }
 
     public async Task ChangeSortModeAsync(int selectedIndex)
@@ -375,18 +353,13 @@ public sealed partial class LocalAlbumsViewModel
         IsProgressRingActive = false;
     }
 
-    public void GenreListView_Loaded(object sender, RoutedEventArgs _)
-    {
-        (sender as ListView)!.SelectedIndex = GenreMode;
-    }
-
     [RelayCommand]
 
     public void PlayButton(LocalAlbumInfo info)
 
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
-        Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
         App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
     }
 
@@ -396,14 +369,14 @@ public sealed partial class LocalAlbumsViewModel
 
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
@@ -413,14 +386,14 @@ public sealed partial class LocalAlbumsViewModel
 
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
             App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd(songList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
         }
     }
 
@@ -481,7 +454,17 @@ public sealed partial class LocalAlbumsViewModel
         return isActive ? Visibility.Collapsed : Visibility.Visible;
     }
 
-    public double GetZoomedOutViewGridWidth(byte sortmode)
+    private GroupInfoList CreateGroupInfoList(IEnumerable<object> items, string key)
+    {
+        return new GroupInfoList(items)
+        {
+            Key = key,
+            ZoomedOutViewGridWidth = GetZoomedOutViewGridWidth(SortMode),
+            ZoomedOutViewTextBlockMargin = GetZoomedOutViewTextBlockMargin(SortMode),
+        };
+    }
+
+    private static double GetZoomedOutViewGridWidth(byte sortmode)
     {
         return sortmode switch
         {
@@ -490,7 +473,7 @@ public sealed partial class LocalAlbumsViewModel
         };
     }
 
-    public Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
+    private static Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
     {
         return sortmode switch
         {

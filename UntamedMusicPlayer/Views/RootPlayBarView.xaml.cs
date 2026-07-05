@@ -17,13 +17,14 @@ public sealed partial class RootPlayBarView : UserControl
     private bool _hasPointerPressed = false;
 
     public RootPlayBarViewModel ViewModel { get; }
+    public MusicPlayer MusicPlayer { get; } = App.GetService<MusicPlayer>();
+    public SharedPlaybackState PlayState => MusicPlayer.State;
+    public PlayQueueManager PlayQueueManager => MusicPlayer.QueueManager;
 
     public RootPlayBarView()
     {
-        RootPlayBarViewModel.RootPlayBarView = this;
         InitializeComponent();
         ViewModel = App.GetService<RootPlayBarViewModel>();
-        Data.RootPlayBarView = this;
     }
 
     public string GetCurrent(TimeSpan current) =>
@@ -138,7 +139,7 @@ public sealed partial class RootPlayBarView : UserControl
     public string GetFullScreenIcon(bool isFullscreen) => isFullscreen ? "\uE73F" : "\uE740";
 
     private void SpeedListView_Loaded(object sender, RoutedEventArgs e) =>
-        (sender as ListView)!.SelectedIndex = Data.PlayState.Speed switch
+        (sender as ListView)!.SelectedIndex = PlayState.Speed switch
         {
             0.25 => 0,
             0.5 => 1,
@@ -149,7 +150,7 @@ public sealed partial class RootPlayBarView : UserControl
         };
 
     private void SpeedListView_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
-        Data.PlayState.Speed = (sender as ListView)!.SelectedIndex switch
+        PlayState.Speed = (sender as ListView)!.SelectedIndex switch
         {
             0 => 0.25,
             1 => 0.5,
@@ -161,7 +162,7 @@ public sealed partial class RootPlayBarView : UserControl
 
     private async void PlayBarProperty_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new PropertiesDialog(Data.PlayState.CurrentSong!) { XamlRoot = XamlRoot };
+        var dialog = new PropertiesDialog(PlayState.CurrentSong!) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
     }
 
@@ -190,28 +191,28 @@ public sealed partial class RootPlayBarView : UserControl
     public void PointerPressedLyricUpdate(object sender, PointerRoutedEventArgs _)
     {
         _hasPointerPressed = true;
-        App.GetService<MusicPlayer>().LyricUpdateByPercentage(((Slider)sender).Value, true);
+        MusicPlayer.LyricUpdateByPercentage(((Slider)sender).Value, true);
     }
 
     public void PointerMovedLyricUpdate(object sender, PointerRoutedEventArgs _)
     {
         if (_hasPointerPressed)
         {
-            App.GetService<MusicPlayer>().LyricUpdateByPercentage(((Slider)sender).Value, false);
+            MusicPlayer.LyricUpdateByPercentage(((Slider)sender).Value, false);
         }
     }
 
     public void PointerReleasedPositionUpdate(object sender, PointerRoutedEventArgs _)
     {
         _hasPointerPressed = false;
-        App.GetService<MusicPlayer>().SetPositionByPercentage(((Slider)sender).Value);
+        MusicPlayer.SetPositionByPercentage(((Slider)sender).Value);
     }
 
     public void KeyDownLyricUpdate(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Left || e.Key == VirtualKey.Right)
         {
-            App.GetService<MusicPlayer>().LyricUpdateByPercentage(((Slider)sender).Value, true);
+            MusicPlayer.LyricUpdateByPercentage(((Slider)sender).Value, true);
         }
     }
 
@@ -219,7 +220,7 @@ public sealed partial class RootPlayBarView : UserControl
     {
         if (e.Key == VirtualKey.Left || e.Key == VirtualKey.Right)
         {
-            App.GetService<MusicPlayer>().SetPositionByPercentage(((Slider)sender).Value);
+            MusicPlayer.SetPositionByPercentage(((Slider)sender).Value);
         }
     }
 
@@ -274,7 +275,7 @@ public sealed partial class RootPlayBarView : UserControl
 
     private async void PropertiesButton_Click(object sender, RoutedEventArgs e)
     {
-        var currentSong = Data.PlayState.CurrentSong;
+        var currentSong = PlayState.CurrentSong;
         var dialog = new PropertiesDialog(currentSong!) { XamlRoot = XamlRoot };
         await dialog.ShowAsync();
     }

@@ -34,7 +34,7 @@ public sealed partial class LocalAlbumDetailViewModel
     public void PlayAllButton()
 
     {
-        Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
         App.GetService<MusicPlayer>().PlaySongByInfo(SongList[0]);
     }
 
@@ -43,11 +43,11 @@ public sealed partial class LocalAlbumDetailViewModel
     public void ShuffledPlayAllButton()
 
     {
-        Data.PlayQueueManager.SetShuffledPlayQueue(
+        App.GetService<MusicPlayer>().QueueManager.SetShuffledPlayQueue(
             $"ShuffledLocalSongs:Album:{Album.Name}",
             SongList
         );
-        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(Data.PlayQueueManager.CurrentQueue[0]);
+        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(App.GetService<MusicPlayer>().QueueManager.CurrentQueue[0]);
     }
 
 
@@ -65,20 +65,20 @@ public sealed partial class LocalAlbumDetailViewModel
     public void AddToPlayQueueFlyoutButton()
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
             App.GetService<MusicPlayer>().PlaySongByInfo(SongList[0]);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd(SongList);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(SongList);
         }
     }
 
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
-        Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
         if (e.ClickedItem is BriefLocalSongInfo info)
         {
             App.GetService<MusicPlayer>().PlaySongByInfo(info);
@@ -90,7 +90,7 @@ public sealed partial class LocalAlbumDetailViewModel
     public void PlayButton(BriefLocalSongInfo info)
 
     {
-        Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
+        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
         App.GetService<MusicPlayer>().PlaySongByInfo(info);
     }
 
@@ -99,15 +99,15 @@ public sealed partial class LocalAlbumDetailViewModel
     public void PlayNextButton(BriefLocalSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}:Part", list);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}:Part", list);
             App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToNextPlay([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([info]);
         }
     }
 
@@ -116,15 +116,15 @@ public sealed partial class LocalAlbumDetailViewModel
     public void AddToPlayQueueButton(BriefLocalSongInfo info)
 
     {
-        if (Data.PlayQueueManager.CurrentQueue.Count == 0)
+        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            Data.PlayQueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}:Part", list);
+            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}:Part", list);
             App.GetService<MusicPlayer>().PlaySongByInfo(info);
         }
         else
         {
-            Data.PlayQueueManager.AddSongsToEnd([info]);
+            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([info]);
         }
     }
 

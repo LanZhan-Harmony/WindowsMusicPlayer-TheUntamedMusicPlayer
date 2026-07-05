@@ -2,8 +2,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Models;
@@ -13,7 +11,6 @@ using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using ZLinq;
 
@@ -22,27 +19,32 @@ namespace UntamedMusicPlayer.ViewModels;
 public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
 {
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
+    private readonly MusicPlayer _musicPlayer = App.GetService<MusicPlayer>();
+    private readonly PlayQueueManager _playQueueManager;
+    private readonly SharedPlaybackState _playState;
 
     private IndexedPlayQueueSong? _currentSong;
 
     [ObservableProperty]
-    public partial ObservableCollection<IndexedPlayQueueSong> PlayQueue { get; set; } =
-        Data.PlayQueueManager.CurrentQueue;
+    public partial ObservableCollection<IndexedPlayQueueSong> PlayQueue { get; set; } = null!;
 
     [ObservableProperty]
     public partial bool IsButtonEnabled { get; set; } = false;
 
     public PlayQueueViewModel()
     {
+        _playQueueManager = _musicPlayer.QueueManager;
+        _playState = _musicPlayer.State;
+        PlayQueue = _playQueueManager.CurrentQueue;
         IsButtonEnabled = PlayQueue.Count > 0;
-        Data.PlayQueueManager.PropertyChanged += OnPlayQueueChanged;
+        _playQueueManager.PropertyChanged += OnPlayQueueChanged;
     }
 
     private void OnPlayQueueChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(Data.PlayQueueManager.CurrentQueue))
+        if (e.PropertyName == nameof(PlayQueueManager.CurrentQueue))
         {
-            PlayQueue = Data.PlayQueueManager.CurrentQueue;
+            PlayQueue = _playQueueManager.CurrentQueue;
             IsButtonEnabled = PlayQueue.Count > 0;
         }
     }
@@ -58,33 +60,25 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
     private void AddQueueToPlayQueue()
     {
         var songList = PlayQueue.AsValueEnumerable().Select(song => song.Song).ToArray();
-        Data.PlayQueueManager.AddSongsToEnd(songList);
-    }
-
-    public void PlayQueueListView_ItemClick(object _, ItemClickEventArgs e)
-    {
-        if (e.ClickedItem is IndexedPlayQueueSong info)
-        {
-            App.GetService<MusicPlayer>().PlaySongByIndexedInfo(info);
-        }
+        _playQueueManager.AddSongsToEnd(songList);
     }
 
     [RelayCommand]
     private void Play(IndexedPlayQueueSong info)
     {
-        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(info);
+        _musicPlayer.PlaySongByIndexedInfo(info);
     }
 
     [RelayCommand]
     private void PlayNext(IBriefSongInfoBase info)
     {
-        Data.PlayQueueManager.AddSongsToNextPlay([info]);
+        _playQueueManager.AddSongsToNextPlay([info]);
     }
 
     [RelayCommand]
     private void AddToPlayQueue(IBriefSongInfoBase info)
     {
-        Data.PlayQueueManager.AddSongsToEnd([info]);
+        _playQueueManager.AddSongsToEnd([info]);
     }
 
     [RelayCommand]
@@ -97,19 +91,19 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Remove(IndexedPlayQueueSong info)
     {
-        Data.PlayQueueManager.RemoveSong(info);
+        _playQueueManager.RemoveSong(info);
     }
 
     [RelayCommand]
     private void MoveUp(IndexedPlayQueueSong info)
     {
-        Data.PlayQueueManager.MoveUpSong(info);
+        _playQueueManager.MoveUpSong(info);
     }
 
     [RelayCommand]
     private void MoveDown(IndexedPlayQueueSong info)
     {
-        Data.PlayQueueManager.MoveDownSong(info);
+        _playQueueManager.MoveDownSong(info);
     }
 
     [RelayCommand]
@@ -173,7 +167,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Clear()
     {
-        App.GetService<MusicPlayer>().ClearPlayQueue();
+        _musicPlayer.ClearPlayQueue();
     }
 
     [RelayCommand]
@@ -187,7 +181,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         var files = await picker.PickMultipleFilesAsync();
         if (files.Count > 0)
         {
-            await AddExternalFilesToPlayQueue(
+            await AddExternalFilesToPlayQueueAsync(
                 [.. files.AsValueEnumerable().Select(f => f.Path)],
                 PlayQueue.Count
             );
@@ -204,18 +198,11 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         var folder = await picker.PickSingleFolderAsync();
         if (folder is not null)
         {
-            List<StorageFile>? musicFiles = null;
-            await Task.Run(async () =>
+            var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder.Path);
+            var musicFilePaths = await GetMusicFilePathsFromFolderAsync(storageFolder);
+            if (musicFilePaths.Count > 0)
             {
-                var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder.Path);
-                musicFiles = await GetMusicFilesFromFolderAsync(storageFolder);
-            });
-            if (musicFiles?.Count > 0)
-            {
-                await AddExternalFilesToPlayQueue(
-                    [.. musicFiles.AsValueEnumerable().Select(f => f.Path)],
-                    PlayQueue.Count
-                );
+                await AddExternalFilesToPlayQueueAsync(musicFilePaths, PlayQueue.Count);
             }
         }
     }
@@ -230,147 +217,43 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         }
         if (PlayQueue.Count > 0)
         {
-            Data.PlayQueueManager.AddSongsToEnd([songInfo]);
+            _playQueueManager.AddSongsToEnd([songInfo]);
         }
         else
         {
-            Data.PlayQueueManager.SetNormalPlayQueue("UnknownOnlineSongs:Part", [songInfo]);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songInfo);
+            _playQueueManager.SetNormalPlayQueue("UnknownOnlineSongs:Part", [songInfo]);
+            _musicPlayer.PlaySongByInfo(songInfo);
         }
         IsButtonEnabled = PlayQueue.Count > 0;
     }
 
-    public void PlayQueueListView_DragItemsStarting(object _, DragItemsStartingEventArgs e)
+    public void BeginPlayQueueReorder()
     {
-        _currentSong = PlayQueue[Data.PlayState.PlayQueueIndex];
-        if (e.Items.Count > 0)
-        {
-            e.Data.RequestedOperation = DataPackageOperation.Move;
-        }
+        _currentSong = PlayQueue[_playState.PlayQueueIndex];
     }
 
-    public void PlayQueueListView_DragOver(object _, DragEventArgs e)
+    public void CompletePlayQueueReorder(IReadOnlyList<IndexedPlayQueueSong> songs)
     {
-        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        if (songs.Count == 0)
         {
-            e.AcceptedOperation = DataPackageOperation.Copy;
-            e.DragUIOverride.Caption = "PlayQueue_AddToPlayQueue".GetLocalized();
-            e.DragUIOverride.IsCaptionVisible = true;
-            e.DragUIOverride.IsContentVisible = true;
-            e.DragUIOverride.IsGlyphVisible = false;
+            return;
         }
+
+        var oldIndex = songs[0].Index;
+        var newIndex = PlayQueue.IndexOf(songs[0]);
+        if (oldIndex == newIndex)
+        {
+            return;
+        }
+
+        for (var i = 0; i < PlayQueue.Count; i++)
+        {
+            PlayQueue[i].Index = i;
+        }
+        _playState.PlayQueueIndex = _currentSong!.Index;
     }
 
-    public void PlayQueueListView_DragItemsCompleted(object _, DragItemsCompletedEventArgs args)
-    {
-        // 检查是否是重排序操作（Move操作且在同一个ListView内）
-        if (args.DropResult == DataPackageOperation.Move && args.Items.Count > 0)
-        {
-            var songs = args.Items.AsValueEnumerable().Cast<IndexedPlayQueueSong>().ToArray();
-            if (songs.Length == 0)
-            {
-                return;
-            }
-            var oldIndex = songs[0].Index;
-            var newIndex = PlayQueue.IndexOf(songs[0]);
-            if (oldIndex == newIndex)
-            {
-                return;
-            }
-            for (var i = 0; i < PlayQueue.Count; i++)
-            {
-                PlayQueue[i].Index = i;
-            }
-            Data.PlayState.PlayQueueIndex = _currentSong!.Index;
-        }
-    }
-
-    public async void PlayQueueListView_Drop(object sender, DragEventArgs e)
-    {
-        if (e.DataView.Contains(StandardDataFormats.StorageItems))
-        {
-            var def = e.GetDeferral();
-            var items = await e.DataView.GetStorageItemsAsync();
-            var musicFiles = new List<StorageFile>();
-            await Task.Run(async () =>
-            {
-                foreach (var item in items)
-                {
-                    if (item is StorageFile file)
-                    {
-                        var extension = Path.GetExtension(file.Path).ToLowerInvariant();
-                        if (AppConstants.SupportedAudioTypes.Contains(extension))
-                        {
-                            musicFiles.Add(file);
-                        }
-                    }
-                    else if (item is StorageFolder folder)
-                    {
-                        var folderFiles = await GetMusicFilesFromFolderAsync(folder);
-                        musicFiles.AddRange(folderFiles);
-                    }
-                }
-            });
-
-            if (musicFiles.Count > 0)
-            {
-                var listView = (ListView)sender;
-                var position = e.GetPosition(listView.ItemsPanelRoot);
-                var index = 0;
-
-                if (listView.Items.Count > 0)
-                {
-                    var sampleItem = (ListViewItem)listView.ContainerFromIndex(0);
-                    var itemHeight =
-                        sampleItem.ActualHeight + sampleItem.Margin.Top + sampleItem.Margin.Bottom;
-
-                    if (itemHeight > 0)
-                    {
-                        var calculatedIndex = (int)(position.Y / itemHeight);
-                        index =
-                            calculatedIndex >= listView.Items.Count
-                                ? listView.Items.Count
-                                : calculatedIndex;
-                        index = Math.Min(listView.Items.Count, Math.Max(0, index));
-                    }
-                }
-
-                await AddExternalFilesToPlayQueue(
-                    [.. musicFiles.AsValueEnumerable().Select(f => f.Path)],
-                    index
-                );
-            }
-            def.Complete();
-        }
-    }
-
-    private static async Task<List<StorageFile>> GetMusicFilesFromFolderAsync(StorageFolder folder)
-    {
-        var musicFiles = new List<StorageFile>();
-        try
-        {
-            var files = await folder.GetFilesAsync();
-            foreach (var file in files)
-            {
-                var extension = Path.GetExtension(file.Path).ToLowerInvariant();
-                if (AppConstants.SupportedAudioTypes.Contains(extension))
-                {
-                    musicFiles.Add(file);
-                }
-            }
-
-            var subFolders = await folder.GetFoldersAsync();
-            foreach (var subFolder in subFolders)
-            {
-                var subFiles = await GetMusicFilesFromFolderAsync(subFolder);
-                musicFiles.AddRange(subFiles);
-            }
-        }
-        catch { }
-        return musicFiles;
-    }
-
-    public async Task AddExternalFilesToPlayQueue(List<string> files, int insertIndex)
+    public async Task AddExternalFilesToPlayQueueAsync(IReadOnlyList<string> files, int insertIndex)
     {
         var newSongs = new List<IBriefSongInfoBase>();
         await Task.Run(() =>
@@ -393,20 +276,52 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         {
             if (PlayQueue.Count > 0)
             {
-                Data.PlayQueueManager.InsertSongsAt(newSongs, insertIndex);
+                _playQueueManager.InsertSongsAt(newSongs, insertIndex);
             }
             else
             {
-                Data.PlayQueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
-                App.GetService<MusicPlayer>().PlaySongByInfo(newSongs[0]);
+                _playQueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
+                await _musicPlayer.PlaySongByInfoAsync(newSongs[0]);
             }
         }
         IsButtonEnabled = PlayQueue.Count > 0;
     }
 
+    private static async Task<List<string>> GetMusicFilePathsFromFolderAsync(StorageFolder folder)
+    {
+        var musicFilePaths = new List<string>();
+        try
+        {
+            var files = await folder.GetFilesAsync();
+            foreach (var file in files)
+            {
+                AddIfSupportedAudioFile(musicFilePaths, file.Path);
+            }
+
+            var subFolders = await folder.GetFoldersAsync();
+            foreach (var subFolder in subFolders)
+            {
+                var subFiles = await GetMusicFilePathsFromFolderAsync(subFolder);
+                musicFilePaths.AddRange(subFiles);
+            }
+        }
+        catch { }
+
+        return musicFilePaths;
+    }
+
+    private static void AddIfSupportedAudioFile(List<string> musicFilePaths, string path)
+    {
+        var extension = Path.GetExtension(path).ToLowerInvariant();
+        if (AppConstants.SupportedAudioTypes.Contains(extension))
+        {
+            musicFilePaths.Add(path);
+        }
+    }
+
     public void Dispose()
     {
-        Data.PlayQueueManager.PropertyChanged -= OnPlayQueueChanged;
+        _playQueueManager.PropertyChanged -= OnPlayQueueChanged;
     }
 }
 

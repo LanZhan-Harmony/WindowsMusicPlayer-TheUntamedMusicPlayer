@@ -87,7 +87,7 @@
                        Margin="16,0,0,0" HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        FontSize="12"
-                       Text="{x:Bind GetCurrent(model:Data.PlayState.CurrentPlayingTime), Mode=OneWay}"/>
+                       Text="{x:Bind GetCurrent(PlayState.CurrentPlayingTime), Mode=OneWay}"/>
             <Slider x:Name="ProgressSlider" x:Uid="PlayBar_Seek"
                     Grid.Row="0" Grid.Column="1"
                     Margin="27,0,27,0" Padding="-4"
@@ -97,18 +97,18 @@
                     IsThumbToolTipEnabled="False"
                     Loaded="ProgressSlider_Loaded" Maximum="100"
                     Minimum="0" Orientation="Horizontal"
-                    Visibility="{x:Bind GetSliderVisibility(model:Data.PlayState.PlayState), Mode=OneWay}"
-                    Value="{x:Bind GetPositionPercentage(model:Data.PlayState.CurrentPlayingTime, model:Data.PlayState.TotalPlayingTime), Mode=OneWay}"/>
+                    Visibility="{x:Bind GetSliderVisibility(PlayState.PlayState), Mode=OneWay}"
+                    Value="{x:Bind GetPositionPercentage(PlayState.CurrentPlayingTime, PlayState.TotalPlayingTime), Mode=OneWay}"/>
             <ProgressBar Grid.Row="0" Grid.Column="1"
                          Margin="23,0,23,0"
                          IsIndeterminate="True" ShowError="False"
                          ShowPaused="False"
-                         Visibility="{x:Bind GetProgressVisibility(model:Data.PlayState.PlayState), Mode=OneWay}"/>
+                         Visibility="{x:Bind GetProgressVisibility(PlayState.PlayState), Mode=OneWay}"/>
             <TextBlock Grid.Row="0" Grid.Column="2"
                        Margin="0,0,16,0" HorizontalAlignment="Right"
                        VerticalAlignment="Center"
                        FontSize="12"
-                       Text="{x:Bind GetRemaining(model:Data.PlayState.CurrentPlayingTime, model:Data.PlayState.TotalPlayingTime), Mode=OneWay}"/>
+                       Text="{x:Bind GetRemaining(PlayState.CurrentPlayingTime, PlayState.TotalPlayingTime), Mode=OneWay}"/>
         </Grid>
 
         <!--  歌曲信息  -->
@@ -117,8 +117,8 @@
                 Height="80" MinWidth="162"
                 Margin="3,0,0,2" HorizontalAlignment="Left"
                 AccessKey="Z"
-                AutomationProperties.HelpText="{x:Bind model:Data.PlayState.CurrentSong.ArtistAndAlbumStr, Mode=OneWay}"
-                AutomationProperties.Name="{x:Bind model:Data.PlayState.CurrentSong.Title, Mode=OneWay}"
+                AutomationProperties.HelpText="{x:Bind PlayState.CurrentSong.ArtistAndAlbumStr, Mode=OneWay}"
+                AutomationProperties.Name="{x:Bind PlayState.CurrentSong.Title, Mode=OneWay}"
                 Click="CoverBtnClickToDetail"
                 IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                 Style="{StaticResource CoverButtonStyle}">
@@ -186,7 +186,7 @@
                                VerticalAlignment="Center"
                                Canvas.ZIndex="1" Stretch="UniformToFill">
                             <interactivity:Interaction.Behaviors>
-                                <helper:FadeImageBehavior Source="{x:Bind model:Data.PlayState.CurrentSong.Cover, Mode=OneWay}" Duration="0:0:0.45"/>
+                                <helper:FadeImageBehavior Source="{x:Bind PlayState.CurrentSong.Cover, Mode=OneWay}" Duration="0:0:0.45"/>
                             </interactivity:Interaction.Behaviors>
                         </Image>
                         <Grid Width="70" Height="70"
@@ -217,19 +217,19 @@
                                Visibility="{x:Bind GetNotDetailedVisibility(ViewModel.IsDetail), Mode=OneWay}"/>
                     <TextBlock x:Name="SongTitleTextBlock"
                                Grid.Row="0" Grid.Column="1"
-                               Margin="{x:Bind GetSongTitleMargin(model:Data.PlayState.CurrentSong.ArtistAndAlbumStr), Mode=OneWay}"
+                               Margin="{x:Bind GetSongTitleMargin(PlayState.CurrentSong.ArtistAndAlbumStr), Mode=OneWay}"
                                FontSize="20" FontWeight="SemiBold"
-                               Text="{x:Bind model:Data.PlayState.CurrentSong.Title, Mode=OneWay}"
+                               Text="{x:Bind PlayState.CurrentSong.Title, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"/>
                     <TextBlock x:Name="ArtistAndAlbumTextBlock"
                                Grid.Row="1" Grid.Column="1"
                                Margin="12,0,4,0"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind model:Data.PlayState.CurrentSong.ArtistAndAlbumStr, Mode=OneWay}"
+                               Text="{x:Bind PlayState.CurrentSong.ArtistAndAlbumStr, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
-                               Visibility="{x:Bind GetArtistAndAlbumStrVisibility(model:Data.PlayState.CurrentSong), Mode=OneWay}"/>
+                               Visibility="{x:Bind GetArtistAndAlbumStrVisibility(PlayState.CurrentSong), Mode=OneWay}"/>
                     <TextBlock Grid.RowSpan="2" Grid.Column="2"
                                Width="8"
                                Visibility="{x:Bind ViewModel.IsDetail, Mode=OneWay}"/>
@@ -245,16 +245,16 @@
             <!--  随机播放  -->
             <Button x:Name="ShuffleButton"
                     AccessKey="H"
-                    Click="{x:Bind model:Data.PlayQueueManager.ShuffleModeUpdate}"
+                    Click="{x:Bind PlayQueueManager.ShuffleModeUpdate}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource MenuButtonStyle}"
-                    ToolTipService.ToolTip="{x:Bind GetShuffleModeToolTip(model:Data.PlayState.ShuffleMode), Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind GetShuffleModeToolTip(PlayState.ShuffleMode), Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="H" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                           FontSize="16"
-                          Glyph="{x:Bind GetShuffleModeIcon(model:Data.PlayState.ShuffleMode), Mode=OneWay}"/>
+                          Glyph="{x:Bind GetShuffleModeIcon(PlayState.ShuffleMode), Mode=OneWay}"/>
             </Button>
 
             <!--  上一曲  -->
@@ -290,14 +290,14 @@
                     Click="{x:Bind MusicPlayer.PlayPauseUpdate}"
                     IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                     Style="{StaticResource PlayButtonStyle}"
-                    ToolTipService.ToolTip="{x:Bind GetPlayPauseTooltip(model:Data.PlayState.PlayState), Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind GetPlayPauseTooltip(PlayState.PlayState), Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="Space"/>
                     <KeyboardAccelerator Key="P" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                           FontSize="22"
-                          Glyph="{x:Bind GetPlayPauseIcon(model:Data.PlayState.PlayState), Mode=OneWay}"/>
+                          Glyph="{x:Bind GetPlayPauseIcon(PlayState.PlayState), Mode=OneWay}"/>
             </Button>
 
             <!--  快进30s  -->
@@ -330,15 +330,15 @@
             <!--  循环播放  -->
             <Button x:Name="RepeatButton"
                     AccessKey="T"
-                    Click="{x:Bind model:Data.PlayQueueManager.RepeatModeUpdate}"
+                    Click="{x:Bind PlayQueueManager.RepeatModeUpdate}"
                     Style="{StaticResource MenuButtonStyle}"
-                    ToolTipService.ToolTip="{x:Bind GetRepeatModeToolTip(model:Data.PlayState.RepeatMode), Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind GetRepeatModeToolTip(PlayState.RepeatMode), Mode=OneWay}">
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="T" Modifiers="Control"/>
                 </Button.KeyboardAccelerators>
                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                           FontSize="16"
-                          Glyph="{x:Bind GetRepeatModeIcon(model:Data.PlayState.RepeatMode), Mode=OneWay}"/>
+                          Glyph="{x:Bind GetRepeatModeIcon(PlayState.RepeatMode), Mode=OneWay}"/>
             </Button>
         </StackPanel>
 
@@ -367,14 +367,14 @@
                         Click="{x:Bind MusicPlayer.PlayPauseUpdate}"
                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                         Style="{StaticResource PlayButtonStyle}"
-                        ToolTipService.ToolTip="{x:Bind GetPlayPauseTooltip(model:Data.PlayState.PlayState), Mode=OneWay}">
+                        ToolTipService.ToolTip="{x:Bind GetPlayPauseTooltip(PlayState.PlayState), Mode=OneWay}">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="Space"/>
                         <KeyboardAccelerator Key="P" Modifiers="Control"/>
                     </Button.KeyboardAccelerators>
                     <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                               FontSize="16"
-                              Glyph="{x:Bind GetPlayPauseIcon(model:Data.PlayState.PlayState), Mode=OneWay}"/>
+                              Glyph="{x:Bind GetPlayPauseIcon(PlayState.PlayState), Mode=OneWay}"/>
                 </Button>
                 <!--  下一曲  -->
                 <Button x:Uid="PlayBar_Next"
@@ -396,7 +396,7 @@
                     Style="{StaticResource MenuButtonStyle}">
                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                           FontSize="16"
-                          Glyph="{x:Bind GetVolumeIcon(model:Data.PlayState.Volume, model:Data.PlayState.IsMute), Mode=OneWay}"/>
+                          Glyph="{x:Bind GetVolumeIcon(PlayState.Volume, PlayState.IsMute), Mode=OneWay}"/>
                 <Button.Flyout>
                     <Flyout>
                         <StackPanel Margin="-5,-4,-3,-5"
@@ -407,18 +407,18 @@
                                     Style="{StaticResource MenuButtonStyle}">
                                 <FontIcon FontFamily="{StaticResource UntamedFontFamily}"
                                           FontSize="16"
-                                          Glyph="{x:Bind GetVolumeIcon(model:Data.PlayState.Volume, model:Data.PlayState.IsMute), Mode=OneWay}"/>
+                                          Glyph="{x:Bind GetVolumeIcon(PlayState.Volume, PlayState.IsMute), Mode=OneWay}"/>
                             </Button>
                             <Slider x:Name="VolumeSlider" x:Uid="PlayBar_Volume"
                                     Width="180"
                                     Margin="0,3,0,0"
                                     AccessKey="V" IsThumbToolTipEnabled="False"
                                     Maximum="100" Minimum="0"
-                                    Value="{x:Bind model:Data.PlayState.Volume, Mode=TwoWay}"/>
+                                    Value="{x:Bind PlayState.Volume, Mode=TwoWay}"/>
                             <TextBlock Width="20"
                                        Margin="-1,0,0,0" VerticalAlignment="Center"
                                        Canvas.ZIndex="1" FontSize="12"
-                                       Text="{x:Bind model:Data.PlayState.Volume, Mode=OneWay}"
+                                       Text="{x:Bind PlayState.Volume, Mode=OneWay}"
                                        TextAlignment="Center"/>
                         </StackPanel>
                     </Flyout>
@@ -583,12 +583,12 @@
                         <!--  随机播放  -->
                         <MenuFlyoutItem x:Name="ShuffleMenu"
                                         AccessKey="H"
-                                        Click="{x:Bind model:Data.PlayQueueManager.ShuffleModeUpdate}"
+                                        Click="{x:Bind PlayQueueManager.ShuffleModeUpdate}"
                                         IsEnabled="{x:Bind ViewModel.Availability, Mode=OneWay}"
                                         KeyTipPlacementMode="Left"
-                                        Text="{x:Bind GetMoreShuffleModeText(model:Data.PlayState.ShuffleMode), Mode=OneWay}">
+                                        Text="{x:Bind GetMoreShuffleModeText(PlayState.ShuffleMode), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
-                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="{x:Bind GetShuffleModeIcon(model:Data.PlayState.ShuffleMode), Mode=OneWay}"/>
+                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="{x:Bind GetShuffleModeIcon(PlayState.ShuffleMode), Mode=OneWay}"/>
                             </MenuFlyoutItem.Icon>
                             <MenuFlyoutItem.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="H" Modifiers="Control"/>
@@ -598,11 +598,11 @@
                         <!--  循环播放  -->
                         <MenuFlyoutItem x:Name="RepeatMenu"
                                         AccessKey="T"
-                                        Click="{x:Bind model:Data.PlayQueueManager.RepeatModeUpdate}"
+                                        Click="{x:Bind PlayQueueManager.RepeatModeUpdate}"
                                         KeyTipPlacementMode="Left"
-                                        Text="{x:Bind GetMoreRepeatModeText(model:Data.PlayState.RepeatMode), Mode=OneWay}">
+                                        Text="{x:Bind GetMoreRepeatModeText(PlayState.RepeatMode), Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
-                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="{x:Bind GetRepeatModeIcon(model:Data.PlayState.RepeatMode), Mode=OneWay}"/>
+                                <FontIcon FontFamily="{StaticResource UntamedFontFamily}" Glyph="{x:Bind GetRepeatModeIcon(PlayState.RepeatMode), Mode=OneWay}"/>
                             </MenuFlyoutItem.Icon>
                             <MenuFlyoutItem.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="T" Modifiers="Control"/>

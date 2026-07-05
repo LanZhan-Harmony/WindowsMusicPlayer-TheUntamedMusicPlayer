@@ -98,7 +98,7 @@ public static class CurrentSongHighlightExtensions
         // 注册事件处理器
         listView.ContainerContentChanging += OnContainerContentChanging;
         listView.Unloaded += OnListViewUnloaded;
-        Data.PlayState.PropertyChanged += OnStateChanged;
+        App.GetService<MusicPlayer>().State.PropertyChanged += OnStateChanged;
 
         // 记录已注册的 ListView
         _registeredListViews[listView] = new object();
@@ -175,7 +175,7 @@ public static class CurrentSongHighlightExtensions
         // 如果没有注册的 ListView 了，移除全局事件监听
         if (_registeredListViews.Count == 0)
         {
-            Data.PlayState.PropertyChanged -= OnStateChanged;
+            App.GetService<MusicPlayer>().State.PropertyChanged -= OnStateChanged;
         }
     }
 
@@ -245,7 +245,7 @@ public static class CurrentSongHighlightExtensions
         }
 
         // 判断是否为当前播放歌曲
-        var currentSong = Data.PlayState.CurrentSong;
+        var currentSong = App.GetService<MusicPlayer>().State.CurrentSong;
         var isPlayQueue = GetIsPlayQueue(listView);
         var isCurrentlyPlaying = IsCurrentlyPlaying(currentSong, songInfo, isPlayQueue);
 
@@ -272,7 +272,7 @@ public static class CurrentSongHighlightExtensions
         // 如果是播放队列模式，直接比较包装对象和索引
         if (isPlayQueue && songInfo is IndexedPlayQueueSong indexedPlayQueueSong)
         {
-            return indexedPlayQueueSong.Index == Data.PlayState.PlayQueueIndex;
+            return indexedPlayQueueSong.Index == App.GetService<MusicPlayer>().State.PlayQueueIndex;
         }
 
         // 获取实际的歌曲对象进行比较

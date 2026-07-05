@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Services;
@@ -24,6 +23,7 @@ namespace UntamedMusicPlayer.ViewModels;
 public sealed partial class SettingsViewModel
     : ObservableRecipient,
         IRecipient<HavePlaylistMessage>,
+        IRecipient<MusicFoldersChangedMessage>,
         IDisposable
 {
     private readonly IThemeSelectorService _themeSelectorService =
@@ -39,7 +39,7 @@ public sealed partial class SettingsViewModel
     /// 是否显示文件夹为空信息
     /// </summary>
     [ObservableProperty]
-    public partial Visibility EmptyFolderMessageVisibility { get; set; } = Visibility.Collapsed;
+    public partial bool IsEmptyFolderMessageVisible { get; set; } = false;
 
     /// <summary>
     /// 歌曲下载位置
@@ -64,7 +64,7 @@ public sealed partial class SettingsViewModel
     partial void OnIsExclusiveModeChanged(bool value)
     {
         Settings.IsExclusiveMode = value;
-        App.GetService<MusicPlayer>().SetExclusiveMode(value);
+        _ = App.GetService<MusicPlayer>().SetExclusiveModeAsync(value);
     }
 
     /// <summary>
@@ -240,18 +240,22 @@ public sealed partial class SettingsViewModel
     public SettingsViewModel()
         : base(StrongReferenceMessenger.Default)
     {
-        Messenger.Register(this);
+        Messenger.Register<HavePlaylistMessage>(this);
+        Messenger.Register<MusicFoldersChangedMessage>(this);
 
-        EmptyFolderMessageVisibility =
-            App.GetService<MusicLibrary>().Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+        UpdateEmptyFolderMessageState();
         _ = LoadSongDownloadLocationAsync();
         IsExportPlaylistsButtonEnabled = App.GetService<PlaylistLibrary>().Playlists.Count > 0;
-        Data.SettingsViewModel = this;
     }
 
     public void Receive(HavePlaylistMessage message)
     {
         IsExportPlaylistsButtonEnabled = message.HasPlaylist;
+    }
+
+    public void Receive(MusicFoldersChangedMessage message)
+    {
+        UpdateEmptyFolderMessageState();
     }
 
     [RelayCommand]
@@ -271,20 +275,23 @@ public sealed partial class SettingsViewModel
         )
         {
             App.GetService<MusicLibrary>().Folders.Add(folder.Path);
-            EmptyFolderMessageVisibility =
-                App.GetService<MusicLibrary>().Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+            UpdateEmptyFolderMessageState();
             await SaveFoldersAsync();
             await App.GetService<MusicLibrary>().LoadLibraryAgainAsync(); // 重新加载音乐库
         }
     }
 
-    public async void RemoveMusicFolder(string folder)
+    public async Task RemoveMusicFolderAsync(string folder)
     {
         App.GetService<MusicLibrary>().Folders.Remove(folder);
-        EmptyFolderMessageVisibility =
-            App.GetService<MusicLibrary>().Folders.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+        UpdateEmptyFolderMessageState();
         await SaveFoldersAsync();
         await App.GetService<MusicLibrary>().LoadLibraryAgainAsync();
+    }
+
+    public void UpdateEmptyFolderMessageState()
+    {
+        IsEmptyFolderMessageVisible = App.GetService<MusicLibrary>().Folders.Count == 0;
     }
 
     [RelayCommand]
@@ -484,7 +491,7 @@ public sealed partial class SettingsViewModel
         catch { }
     }
 
-    public async void MaterialComboBox_SelectionChanged(object _1, SelectionChangedEventArgs _2)
+    public async Task UpdateSelectedMaterialAsync()
     {
         var (opacity, color) = await _materialSelectorService.SetMaterial(
             (MaterialType)SelectedMaterial,
@@ -512,128 +519,46 @@ public sealed partial class SettingsViewModel
         OnPropertyChanged(nameof(SelectedMaterial));
     }
 
-    public void FontFamilyComboBox_SelectionChanged(object _, SelectionChangedEventArgs e)
+    public void SelectFontFamily(FontFamilyInfo selectedFont)
     {
-        if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontFamilyInfo selectedFont)
-        {
-            SelectedFontFamily = new FontFamily(selectedFont.Name);
-        }
+        SelectedFontFamily = new FontFamily(selectedFont.Name);
     }
 
-    public void LyricPageCurrentFontSizeComboBox_SelectionChanged(
-        object _,
-        SelectionChangedEventArgs e
-    )
+    public void SelectLyricPageCurrentFontSize(double fontSize)
     {
-        if (e.AddedItems.Count > 0 && e.AddedItems[0] is double fontSize)
-        {
-            LyricPageCurrentFontSize = fontSize;
-        }
+        LyricPageCurrentFontSize = fontSize;
     }
 
-    public void LyricPageNotCurrentFontSizeComboBox_SelectionChanged(
-        object _,
-        SelectionChangedEventArgs e
-    )
+    public void SelectLyricPageNotCurrentFontSize(double fontSize)
     {
-        if (e.AddedItems.Count > 0 && e.AddedItems[0] is double fontSize)
-        {
-            LyricPageNotCurrentFontSize = fontSize;
-        }
+        LyricPageNotCurrentFontSize = fontSize;
     }
 
-    public void FontWeightComboBox_SelectionChanged(object _, SelectionChangedEventArgs e)
+    public void SelectFontWeight(FontWeightInfo selectedWeight)
     {
-        if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontWeightInfo selectedWeight)
-        {
-            LyricPageFontWeight = selectedWeight.FontWeight;
-        }
+        LyricPageFontWeight = selectedWeight.FontWeight;
     }
 
-    public void LyricPageCurrentFontSizeComboBox_TextSubmitted(
-        ComboBox sender,
-        ComboBoxTextSubmittedEventArgs args
-    )
+    public bool TrySubmitLyricPageCurrentFontSize(string text)
     {
-        if (double.TryParse(args.Text, out var fontSize))
+        if (double.TryParse(text, out var fontSize))
         {
             LyricPageCurrentFontSize = Math.Clamp(fontSize, 20, 100);
+            return true;
         }
-        else
-        {
-            sender.Text = $"{LyricPageCurrentFontSize}";
-        }
+
+        return false;
     }
 
-    public void LyricPageNotCurrentFontSizeComboBox_TextSubmitted(
-        ComboBox sender,
-        ComboBoxTextSubmittedEventArgs args
-    )
+    public bool TrySubmitLyricPageNotCurrentFontSize(string text)
     {
-        if (double.TryParse(args.Text, out var fontSize))
+        if (double.TryParse(text, out var fontSize))
         {
             LyricPageNotCurrentFontSize = Math.Clamp(fontSize, 5, 100);
+            return true;
         }
-        else
-        {
-            sender.Text = $"{LyricPageNotCurrentFontSize}";
-        }
-    }
 
-    public void MaterialComboBox_Loaded(object sender, RoutedEventArgs _)
-    {
-        (sender as ComboBox)!.SelectedIndex = SelectedMaterial;
-    }
-
-    public void FontFamilyComboBox_Loaded(object sender, RoutedEventArgs _)
-    {
-        var selectedFontName = SelectedFontFamily.Source;
-        var index = FontFamilies.FindIndex(f => f.Name == selectedFontName);
-        if (index >= 0)
-        {
-            (sender as ComboBox)!.SelectedIndex = index;
-        }
-    }
-
-    public void LyricPageCurrentFontSizeComboBox_Loaded(object sender, RoutedEventArgs _)
-    {
-        var selectedItem = LyricPageCurrentFontSizes.FirstOrDefault(f =>
-            f == LyricPageCurrentFontSize
-        );
-        if (selectedItem != 0.0)
-        {
-            (sender as ComboBox)!.SelectedItem = selectedItem;
-        }
-        else
-        {
-            (sender as ComboBox)!.Text = $"{LyricPageCurrentFontSize}";
-        }
-    }
-
-    public void LyricPageNotCurrentFontSizeComboBox_Loaded(object sender, RoutedEventArgs _)
-    {
-        var selectedItem = LyricPageNotCurrentFontSizes.FirstOrDefault(f =>
-            f == LyricPageNotCurrentFontSize
-        );
-        if (selectedItem != 0.0)
-        {
-            (sender as ComboBox)!.SelectedItem = selectedItem;
-        }
-        else
-        {
-            (sender as ComboBox)!.Text = $"{LyricPageNotCurrentFontSize}";
-        }
-    }
-
-    public void FontWeightComboBox_Loaded(object sender, RoutedEventArgs _)
-    {
-        var selectedItem = FontWeights.FirstOrDefault(weight =>
-            weight.FontWeight.Weight == LyricPageFontWeight.Weight
-        );
-        if (selectedItem is not null)
-        {
-            (sender as ComboBox)!.SelectedItem = selectedItem;
-        }
+        return false;
     }
 
     [RelayCommand]
@@ -722,6 +647,7 @@ public sealed partial class SettingsViewModel
     public void Dispose()
     {
         Messenger.Unregister<HavePlaylistMessage>(this);
+        Messenger.Unregister<MusicFoldersChangedMessage>(this);
     }
 }
 

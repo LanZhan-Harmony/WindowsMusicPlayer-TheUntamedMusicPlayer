@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Services;
@@ -221,6 +222,6 @@ public sealed partial class ImageViewerWindow : Window, IDisposable
         {
             Close();
         }
-        Data.ImageViewerWindows?.Remove(_windowId);
+        App.GetService<IWindowService>().RemoveImageViewerWindow(_windowId);
     }
 }

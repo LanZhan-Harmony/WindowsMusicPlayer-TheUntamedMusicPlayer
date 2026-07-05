@@ -37,6 +37,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     private bool _cursorTimerEnabled = false;
     private bool _isCursorHidden = false;
     private readonly Visual _rootPlayBarVisual;
+    private readonly RootPlayBarViewModel _rootPlayBarViewModel;
     private Microsoft.UI.Dispatching.DispatcherQueueTimer? _shellFrameMarginAnimationTimer;
     private DateTimeOffset _shellFrameMarginAnimationStart;
     private double _shellFrameMarginFrom;
@@ -58,7 +59,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     public MainWindow()
     {
         InitializeComponent();
-        Data.MainWindow = this;
+        App.GetService<IWindowService>().Initialize(this);
 
         AppWindow.SetTaskbarIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppIcon/Icon.ico"));
         AppWindow.SetTitleBarIcon(
@@ -87,6 +88,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         ElementCompositionPreview.SetIsTranslationEnabled(RootPlayBar, true);
         RootPlayBar.Translation = Vector3.Zero;
         RootPlayBar.Opacity = 1;
+        _rootPlayBarViewModel = App.GetService<RootPlayBarViewModel>();
 
         // 注册AppWindow.Closing事件来处理窗口关闭
         AppWindow.Closing += AppWindow_Closing;
@@ -105,7 +107,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         // 注册系统级全局热键
         Activated += MainWindow_Activated;
 
-        Data.RootPlayBarViewModel?.PropertyChanged += OnRootPlayBarChanged;
+        _rootPlayBarViewModel.PropertyChanged += OnRootPlayBarChanged;
     }
 
     private void OnRootPlayBarChanged(object? sender, PropertyChangedEventArgs e)
@@ -117,7 +119,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                     or nameof(RootPlayBarViewModel.IsFullScreen)
         )
         {
-            if (Data.RootPlayBarViewModel!.IsDetail && Data.RootPlayBarViewModel.IsFullScreen)
+            if (_rootPlayBarViewModel.IsDetail && _rootPlayBarViewModel.IsFullScreen)
             {
                 RootGrid.PointerMoved += RootGrid_PointerMoved;
             }
@@ -201,8 +203,8 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             () =>
             {
                 if (
-                    Data.RootPlayBarViewModel!.IsDetail
-                    && Data.RootPlayBarViewModel.IsFullScreen
+                    _rootPlayBarViewModel.IsDetail
+                    && _rootPlayBarViewModel.IsFullScreen
                     && !_isPlayBarHidden
                 )
                 {
@@ -243,8 +245,8 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         StopCursorTimer();
         if (
-            Data.RootPlayBarViewModel!.IsDetail
-            && Data.RootPlayBarViewModel.IsFullScreen
+            _rootPlayBarViewModel.IsDetail
+            && _rootPlayBarViewModel.IsFullScreen
             && !_isCursorHidden
         )
         {
@@ -396,12 +398,12 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                 switch (hotkeyId)
                 {
                     case HOTKEY_ID_VOLUME_UP: // Alt + Up: 增加音量
-                        var currentVolumeUp = Data.PlayState.Volume;
-                        Data.PlayState.Volume = Math.Min(100, currentVolumeUp + 5);
+                        var currentVolumeUp = App.GetService<MusicPlayer>().State.Volume;
+                        App.GetService<MusicPlayer>().State.Volume = Math.Min(100, currentVolumeUp + 5);
                         break;
                     case HOTKEY_ID_VOLUME_DOWN: // Alt + Down: 减少音量
-                        var currentVolumeDown = Data.PlayState.Volume;
-                        Data.PlayState.Volume = Math.Max(0, currentVolumeDown - 5);
+                        var currentVolumeDown = App.GetService<MusicPlayer>().State.Volume;
+                        App.GetService<MusicPlayer>().State.Volume = Math.Max(0, currentVolumeDown - 5);
                         break;
                 }
             });
@@ -463,13 +465,13 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
     {
         if (e.Key == VirtualKey.Escape) // ESC 键返回
         {
-            if (Data.RootPlayBarViewModel?.IsDetail == true)
+            if (_rootPlayBarViewModel.IsDetail)
             {
-                Data.RootPlayBarViewModel.DetailModeUpdate();
+                _rootPlayBarViewModel.DetailModeUpdate();
             }
             else
             {
-                Data.ShellPage?.GoBack();
+                App.GetService<INavigationService>().GoBackShell();
             }
             e.Handled = true;
             return;
@@ -484,13 +486,13 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         var properties = e.GetCurrentPoint(RootGrid).Properties;
         if (properties.IsXButton1Pressed)
         {
-            if (Data.RootPlayBarViewModel?.IsDetail == true)
+            if (_rootPlayBarViewModel.IsDetail)
             {
-                Data.RootPlayBarViewModel.DetailModeUpdate();
+                _rootPlayBarViewModel.DetailModeUpdate();
             }
             else
             {
-                Data.ShellPage?.GoBack();
+                App.GetService<INavigationService>().GoBackShell();
             }
             e.Handled = true;
         }
@@ -544,14 +546,9 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             args.Cancel = true;
             sender.Hide(); // 立即隐藏窗口，提升视觉响应
             await App.GetService<MusicPlayer>().Pause(); // 立即停止音乐播放
-            Data.DesktopLyricWindow?.Dispose(); // 立即关闭桌面歌词
-            if (Data.ImageViewerWindows is not null) // 立即关闭图片查看器
-            {
-                foreach (var window in Data.ImageViewerWindows.Values)
-                {
-                    window.Dispose();
-                }
-            }
+            var windowService = App.GetService<IWindowService>();
+            windowService.CloseDesktopLyricWindow(); // 立即关闭桌面歌词
+            windowService.CloseImageViewerWindows(); // 立即关闭图片查看器
 
             Settings.NotFirstUsed = true;
             // 并行执行保存以缩短退出后的存活时间
@@ -609,7 +606,7 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
             _shellFrameMarginAnimationTimer?.Stop();
             _shellFrameMarginAnimationTimer?.Tick -= ShellFrameMarginAnimationTick;
             _shellFrameMarginAnimationTimer = null;
-            Data.RootPlayBarViewModel?.PropertyChanged -= OnRootPlayBarChanged;
+            _rootPlayBarViewModel.PropertyChanged -= OnRootPlayBarChanged;
         }
         catch (Exception ex)
         {

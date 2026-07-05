@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
@@ -24,6 +25,7 @@ public sealed partial class OnlineArtistDetailPage : Page
 {
     public OnlineArtistDetailViewModel ViewModel { get; } =
         App.GetService<OnlineArtistDetailViewModel>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 80, 107);
@@ -82,7 +84,7 @@ public sealed partial class OnlineArtistDetailPage : Page
             await ViewModel.Initialize(artist);
         }
 
-        if (Data.ShellViewModel!.NavigatePage == nameof(OnlineArtistsPage))
+        if (_navigationService.NavigationSourcePage == nameof(OnlineArtistsPage))
         {
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -96,7 +98,7 @@ public sealed partial class OnlineArtistDetailPage : Page
         base.OnNavigatingFrom(e);
         if (
             e.NavigationMode == NavigationMode.Back
-            && Data.ShellViewModel!.NavigatePage == nameof(OnlineArtistsPage)
+            && _navigationService.NavigationSourcePage == nameof(OnlineArtistsPage)
         )
         {
             ConnectedAnimationService
@@ -605,7 +607,7 @@ public sealed partial class OnlineArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.ShellPage!.Navigate(
+                App.GetService<INavigationService>().NavigateShell(
                     nameof(OnlineAlbumDetailPage),
                     new OnlineAlbumNavigationArgs(
                         onlineAlbumInfo,
@@ -668,7 +670,7 @@ public sealed partial class OnlineArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                Data.ShellPage!.Navigate(
+                App.GetService<INavigationService>().NavigateShell(
                     nameof(OnlineAlbumDetailPage),
                     new OnlineAlbumNavigationArgs(
                         onlineAlbumInfo,

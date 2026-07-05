@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
@@ -13,6 +14,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class OnlineAlbumsPage : Page
 {
     public OnlineAlbumsViewModel ViewModel { get; set; }
+    public OnlineMusicLibrary OnlineMusicLibrary { get; } = App.GetService<OnlineMusicLibrary>();
     private bool _isInitialized = false;
     private IBriefOnlineAlbumInfo? _lastNavigatedAlbum;
     private ScrollViewer? _scrollViewer;
@@ -23,6 +25,9 @@ public sealed partial class OnlineAlbumsPage : Page
         ViewModel = App.GetService<OnlineAlbumsViewModel>();
         InitializeComponent();
     }
+
+    public Visibility ToVisibility(bool isVisible) =>
+        isVisible ? Visibility.Visible : Visibility.Collapsed;
 
     private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
     {
@@ -141,7 +146,7 @@ public sealed partial class OnlineAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedAlbum = info;
-            Data.ShellPage!.Navigate(
+            App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlineAlbumDetailPage),
                 new OnlineAlbumNavigationArgs(info, nameof(OnlineAlbumsPage)),
                 new SuppressNavigationTransitionInfo()
@@ -198,7 +203,7 @@ public sealed partial class OnlineAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedAlbum = info;
-            Data.ShellPage!.Navigate(
+            App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlineAlbumDetailPage),
                 new OnlineAlbumNavigationArgs(info, nameof(OnlineAlbumsPage)),
                 new SuppressNavigationTransitionInfo()

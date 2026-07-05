@@ -41,8 +41,7 @@
                             IsSettingsVisible="False"
                             ItemInvoked="NavigationViewControl_ItemInvoked"
                             Loaded="NavigationViewControl_Loaded"
-                            PaneDisplayMode="Auto"
-                            SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
+                            PaneDisplayMode="Auto">
                 <NavigationView.AutoSuggestBox>
                     <AutoSuggestBox x:Uid="Shell_Search"
                                     AccessKey="NE" AutomationProperties.Name="Search"
@@ -112,9 +111,9 @@
                 </NavigationView.FooterMenuItems>
                 <Frame x:Name="NavigationFrame"
                        AllowDrop="True"
-                       DragOver="{x:Bind ViewModel.NavigationFrame_DragOver}"
-                       Drop="{x:Bind ViewModel.NavigationFrame_Drop}"
-                       Navigating="{x:Bind ViewModel.NavigationFrame_Navigating}"/>
+                       DragOver="NavigationFrame_DragOver"
+                       Drop="NavigationFrame_Drop"
+                       Navigating="NavigationFrame_Navigating"/>
             </NavigationView>
         </Grid>
     </Grid>

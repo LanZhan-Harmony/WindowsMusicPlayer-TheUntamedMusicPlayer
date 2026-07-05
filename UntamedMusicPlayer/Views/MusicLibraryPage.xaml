@@ -52,7 +52,7 @@
         </VisualStateManager.VisualStateGroups>
 
         <Grid x:Name="NoMusicControl"
-                Visibility="{x:Bind ViewModel.NoMusicControlVisibility, Mode=OneWay}">
+                Visibility="{x:Bind ToVisibility(ViewModel.IsNoMusicControlVisible), Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -97,7 +97,7 @@
         </Grid>
 
         <Grid x:Name="HaveMusicControl"
-                Visibility="{x:Bind ViewModel.HaveMusicControlVisibility, Mode=OneWay}">
+                Visibility="{x:Bind ToVisibility(ViewModel.IsHaveMusicControlVisible), Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>

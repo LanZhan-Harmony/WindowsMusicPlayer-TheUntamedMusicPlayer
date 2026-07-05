@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
@@ -24,6 +25,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
 {
     public OnlineAlbumDetailViewModel ViewModel { get; } =
         App.GetService<OnlineAlbumDetailViewModel>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
 
     // 滚动进度的范围
     private int ClampSize => GetValue(50, 82, 115);
@@ -59,7 +61,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         }
 
         if (
-            Data.ShellViewModel!.NavigatePage
+            _navigationService.NavigationSourcePage
             is nameof(OnlineAlbumsPage)
                 or nameof(OnlineArtistDetailPage)
         )
@@ -76,7 +78,7 @@ public sealed partial class OnlineAlbumDetailPage : Page
         base.OnNavigatingFrom(e);
         if (
             e.NavigationMode == NavigationMode.Back
-            && Data.ShellViewModel!.NavigatePage == nameof(OnlineAlbumsPage)
+            && _navigationService.NavigationSourcePage == nameof(OnlineAlbumsPage)
         )
         {
             ConnectedAnimationService

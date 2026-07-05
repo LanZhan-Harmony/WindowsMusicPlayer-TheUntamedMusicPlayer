@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
@@ -13,6 +14,7 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class OnlinePlayListsPage : Page
 {
     public OnlinePlayListsViewModel ViewModel { get; set; }
+    public OnlineMusicLibrary OnlineMusicLibrary { get; } = App.GetService<OnlineMusicLibrary>();
     private bool _isInitialized = false;
     private IBriefOnlinePlaylistInfo? _lastNavigatedPlaylist;
     private ScrollViewer? _scrollViewer;
@@ -23,6 +25,9 @@ public sealed partial class OnlinePlayListsPage : Page
         ViewModel = App.GetService<OnlinePlayListsViewModel>();
         InitializeComponent();
     }
+
+    public Visibility ToVisibility(bool isVisible) =>
+        isVisible ? Visibility.Visible : Visibility.Collapsed;
 
     private void AddToSubItem_Loaded(object sender, RoutedEventArgs e)
     {
@@ -143,7 +148,7 @@ public sealed partial class OnlinePlayListsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedPlaylist = info;
-            Data.ShellPage!.Navigate(
+            App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlinePlayListDetailPage),
                 new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
                 new SuppressNavigationTransitionInfo()
@@ -202,7 +207,7 @@ public sealed partial class OnlinePlayListsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedPlaylist = info;
-            Data.ShellPage!.Navigate(
+            App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlinePlayListDetailPage),
                 new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
                 new SuppressNavigationTransitionInfo()

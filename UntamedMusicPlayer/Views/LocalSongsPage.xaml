@@ -29,9 +29,9 @@
                        TextTrimming="WordEllipsis"/>
         </DataTemplate>
         <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="ICollectionViewGroup">
-            <Grid Width="{x:Bind model:Data.LocalSongsViewModel.GetZoomedOutViewGridWidth(model:Data.LocalSongsViewModel.SortMode)}">
+            <Grid Width="{x:Bind ((helper:GroupInfoList)Group).ZoomedOutViewGridWidth}">
                 <TextBlock Grid.Column="1"
-                           Margin="{x:Bind model:Data.LocalSongsViewModel.GetZoomedOutViewTextBlockMargin(model:Data.LocalSongsViewModel.SortMode)}"
+                           Margin="{x:Bind ((helper:GroupInfoList)Group).ZoomedOutViewTextBlockMargin}"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Center"
                            Style="{StaticResource SubtitleTextBlockStyle}"
@@ -229,8 +229,8 @@
                                       ItemContainerStyle="{StaticResource SortFilterListViewItemStyle}"
                                       ItemTemplate="{StaticResource SortByListViewItemTemplate}"
                                       ItemsSource="{x:Bind ViewModel.SortBy}"
-                                      Loaded="{x:Bind ViewModel.SortByListView_Loaded}"
-                                      SelectionChanged="{x:Bind ViewModel.SortByListView_SelectionChanged}"/>
+                                      Loaded="SortByListView_Loaded"
+                                      SelectionChanged="SortByListView_SelectionChanged"/>
                         </Flyout>
                     </Button.Flyout>
                 </Button>
@@ -249,8 +249,8 @@
                                       ItemContainerStyle="{StaticResource SortFilterListViewItemStyle}"
                                       ItemTemplate="{StaticResource GenreListViewItemTemplate}"
                                       ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}"
-                                      Loaded="{x:Bind ViewModel.GenreListView_Loaded}"
-                                      SelectionChanged="{x:Bind ViewModel.GenreListView_SelectionChanged}"/>
+                                      Loaded="GenreListView_Loaded"
+                                      SelectionChanged="GenreListView_SelectionChanged"/>
                         </Flyout>
                     </Button.Flyout>
                 </Button>

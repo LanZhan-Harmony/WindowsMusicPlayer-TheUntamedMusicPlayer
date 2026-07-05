@@ -16,10 +16,15 @@ namespace UntamedMusicPlayer.Services;
 /// <summary>
 /// 动态背景服务，根据当前播放歌曲的封面颜色动态改变窗口背景
 /// </summary>
-public sealed partial class DynamicBackgroundService(IColorExtractionService colorExtractionService)
+public sealed partial class DynamicBackgroundService(
+    IColorExtractionService colorExtractionService,
+    IWindowService windowService,
+    MusicPlayer musicPlayer
+)
     : IDynamicBackgroundService
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<DynamicBackgroundService>();
+    private readonly SharedPlaybackState _playState = musicPlayer.State;
     private Compositor? _compositor;
     private SpriteVisual? _backgroundVisual1;
     private SpriteVisual? _backgroundVisual2;
@@ -61,11 +66,14 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
     /// <param name="targetElement">目标元素（通常是MainWindow的根容器）</param>
     public async Task InitializeAsync(FrameworkElement? targetElement = null)
     {
-        _targetElement = targetElement ?? Data.MainWindow!.GetBackgroundGrid();
+        _targetElement =
+            targetElement
+            ?? windowService.GetBackgroundGrid()
+            ?? throw new InvalidOperationException("Main window background grid is not initialized.");
         _compositor = ElementCompositionPreview.GetElementVisual(_targetElement).Compositor;
 
         // 监听当前歌曲变化
-        Data.PlayState.PropertyChanged += OnStateChanged;
+        _playState.PropertyChanged += OnStateChanged;
         await UpdateBackgroundAsync();
     }
 
@@ -79,13 +87,14 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
             return;
         }
 
-        if (Data.PlayState.CurrentSong is null)
+        var currentSong = _playState.CurrentSong;
+        if (currentSong is null)
         {
             ClearBackground();
             return;
         }
 
-        await UpdateBackgroundFromSongAsync(Data.PlayState.CurrentSong);
+        await UpdateBackgroundFromSongAsync(currentSong);
     }
 
     /// <summary>
@@ -408,7 +417,7 @@ public sealed partial class DynamicBackgroundService(IColorExtractionService col
     /// </summary>
     public void Dispose()
     {
-        Data.PlayState.PropertyChanged -= OnStateChanged;
+        _playState.PropertyChanged -= OnStateChanged;
         _targetElement?.SizeChanged -= OnTargetElementSizeChanged;
 
         _backgroundVisual1?.Dispose();

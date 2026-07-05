@@ -2,10 +2,13 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using ZLinq;
 
 namespace UntamedMusicPlayer.Views;
@@ -14,14 +17,20 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
 {
     public ShellViewModel ViewModel { get; }
 
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly string _appTitleBarText = "AppDisplayName".GetLocalized();
 
     public ShellPage() //注意修改, 不能有参数
     {
         InitializeComponent();
-        Data.ShellPage = this;
         ViewModel = App.GetService<ShellViewModel>();
-        Data.MainWindow!.SetTitleBar(AppTitleBar);
+        _navigationService.InitializeShell(
+            this,
+            NavigationFrame,
+            NavigationViewControl,
+            page => ViewModel.NavigatePage = page
+        );
+        App.GetService<IWindowService>().SetTitleBar(AppTitleBar);
     }
 
     public void Receive(HavePlaylistMessage message)
@@ -131,7 +140,7 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
     {
         if (NavigationFrame.CanGoBack)
         {
-            NavigationFrame.GoBack();
+            _navigationService.GoBackShell();
         }
     }
 
@@ -153,8 +162,8 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
                     return;
                 }
                 ViewModel.PrevPlaylistInfo = playlist;
-                NavigationFrame.Navigate(
-                    typeof(PlayListDetailPage),
+                _navigationService.NavigateShell(
+                    nameof(PlayListDetailPage),
                     new PlaylistNavigationArgs(playlist, nameof(ShellPage))
                 );
                 return;
@@ -167,17 +176,100 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
             {
                 ViewModel.PrevPlaylistInfo = null;
             }
-            var pageToNavigate = tag switch
-            {
-                nameof(HomePage) => typeof(HomePage),
-                nameof(MusicLibraryPage) => typeof(MusicLibraryPage),
-                nameof(PlayQueuePage) => typeof(PlayQueuePage),
-                nameof(PlayListsPage) => typeof(PlayListsPage),
-                nameof(PlayListDetailPage) => typeof(PlayListDetailPage),
-                nameof(SettingsPage) => typeof(SettingsPage),
-                _ => typeof(HomePage),
-            };
-            NavigationFrame.Navigate(pageToNavigate);
+            Navigate(tag, null);
+        }
+    }
+
+    private void NavigationFrame_Navigating(object sender, NavigatingCancelEventArgs e)
+    {
+        var pageName = e.SourcePageType.Name;
+        _ = ViewModel.SetCurrentPageAsync(pageName, e.NavigationMode == NavigationMode.Back);
+        SetSelectedNavigationItem(pageName);
+    }
+
+    private void SetSelectedNavigationItem(string pageName)
+    {
+        if (
+            pageName
+            is nameof(HomePage)
+                or nameof(OnlineAlbumDetailPage)
+                or nameof(OnlineArtistDetailPage)
+                or nameof(OnlinePlayListDetailPage)
+        )
+        {
+            NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems[0];
+        }
+        else if (
+            pageName
+            is nameof(MusicLibraryPage)
+                or nameof(LocalAlbumDetailPage)
+                or nameof(LocalArtistDetailPage)
+        )
+        {
+            NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems[1];
+        }
+        else if (pageName is nameof(PlayQueuePage))
+        {
+            NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems[3];
+        }
+        else if (pageName is nameof(PlayListsPage))
+        {
+            NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems[4];
+        }
+        else if (pageName is nameof(PlayListDetailPage))
+        {
+            var playlistsNavItem = NavigationViewControl.MenuItems[4] as NavigationViewItem;
+            var playlistSubItem = playlistsNavItem!
+                .MenuItems.AsValueEnumerable()
+                .Cast<NavigationViewItem>()
+                .FirstOrDefault(item =>
+                    item.DataContext is PlaylistInfo playlist
+                    && playlist == ViewModel.PrevPlaylistInfo
+                );
+            NavigationViewControl.SelectedItem = playlistSubItem ?? playlistsNavItem;
+        }
+        else if (pageName is nameof(SettingsPage))
+        {
+            NavigationViewControl.SelectedItem = NavigationViewControl.FooterMenuItems[0];
+        }
+    }
+
+    private void NavigationFrame_DragOver(object sender, DragEventArgs e)
+    {
+        if (
+            !ViewModel.CanAcceptExternalStorageItems()
+            || !e.DataView.Contains(StandardDataFormats.StorageItems)
+        )
+        {
+            return;
+        }
+
+        e.AcceptedOperation = DataPackageOperation.Copy;
+        e.DragUIOverride.Caption = "Shell_PlayFiles".GetLocalized();
+        e.DragUIOverride.IsCaptionVisible = true;
+        e.DragUIOverride.IsContentVisible = true;
+        e.DragUIOverride.IsGlyphVisible = false;
+    }
+
+    private async void NavigationFrame_Drop(object sender, DragEventArgs e)
+    {
+        if (
+            !ViewModel.CanAcceptExternalStorageItems()
+            || !e.DataView.Contains(StandardDataFormats.StorageItems)
+        )
+        {
+            return;
+        }
+
+        var deferral = e.GetDeferral();
+        try
+        {
+            var items = await e.DataView.GetStorageItemsAsync();
+            await ViewModel.AddExternalStorageItemsToPlayQueueAsync(items);
+        }
+        finally
+        {
+            deferral.Complete();
         }
     }
 
@@ -187,51 +279,12 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
         NavigationTransitionInfo? infoOverride = null
     )
     {
-        ViewModel.NavigatePage = parameter switch
-        {
-            string s => s,
-            PlaylistNavigationArgs navArgs => navArgs.FromPage,
-            LocalAlbumNavigationArgs navArgs => navArgs.FromPage,
-            LocalArtistNavigationArgs navArgs => navArgs.FromPage,
-            OnlineAlbumNavigationArgs navArgs => navArgs.FromPage,
-            OnlineArtistNavigationArgs navArgs => navArgs.FromPage,
-            OnlinePlaylistNavigationArgs navArgs => navArgs.FromPage,
-            _ => "",
-        };
-        var pageToNavigate = destPage switch
-        {
-            nameof(HomePage) => typeof(HomePage),
-            nameof(MusicLibraryPage) => typeof(MusicLibraryPage),
-            nameof(PlayQueuePage) => typeof(PlayQueuePage),
-            nameof(PlayListsPage) => typeof(PlayListsPage),
-            nameof(SettingsPage) => typeof(SettingsPage),
-            nameof(LocalAlbumDetailPage) => typeof(LocalAlbumDetailPage),
-            nameof(LocalArtistDetailPage) => typeof(LocalArtistDetailPage),
-            nameof(PlayListDetailPage) => typeof(PlayListDetailPage),
-            nameof(OnlineAlbumDetailPage) => typeof(OnlineAlbumDetailPage),
-            nameof(OnlineArtistDetailPage) => typeof(OnlineArtistDetailPage),
-            nameof(OnlinePlayListDetailPage) => typeof(OnlinePlayListDetailPage),
-            _ => typeof(HomePage),
-        };
-        var navParameter = parameter switch
-        {
-            PlaylistNavigationArgs navArgs2 => navArgs2.Playlist,
-            LocalAlbumNavigationArgs navArgs2 => navArgs2.Album,
-            LocalArtistNavigationArgs navArgs2 => navArgs2.Artist,
-            OnlineAlbumNavigationArgs navArgs2 => navArgs2.Album,
-            OnlineArtistNavigationArgs navArgs2 => navArgs2.Artist,
-            OnlinePlaylistNavigationArgs navArgs2 => navArgs2.Playlist,
-            _ => parameter,
-        };
-        NavigationFrame.Navigate(pageToNavigate, navParameter, infoOverride);
+        _navigationService.NavigateShell(destPage, parameter, infoOverride);
     }
 
     public void GoBack()
     {
-        if (NavigationFrame.CanGoBack)
-        {
-            NavigationFrame.GoBack();
-        }
+        _navigationService.GoBackShell();
     }
 }
 

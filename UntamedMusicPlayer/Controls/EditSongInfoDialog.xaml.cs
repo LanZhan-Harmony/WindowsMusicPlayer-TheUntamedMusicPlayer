@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Core.Constants;
+using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
@@ -24,6 +25,7 @@ public sealed partial class EditSongInfoDialog
         IRecipient<ThemeChangeMessage>
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<EditSongInfoDialog>();
+    private readonly IAppStateService _appStateService = App.GetService<IAppStateService>();
     private readonly DetailedLocalSongInfo _song;
     private string _title;
     private string _contributingArtists;
@@ -107,10 +109,10 @@ public sealed partial class EditSongInfoDialog
 
     private async void SaveButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        Data.IsMusicProcessing = true;
+        _appStateService.IsMusicProcessing = true;
         if (!AppConstants.SupportedAudioTypesForTagEditing.Contains(_song.ItemType))
         {
-            Data.IsMusicProcessing = false;
+            _appStateService.IsMusicProcessing = false;
             return;
         }
         LyricEditor.Document.GetText(TextGetOptions.None, out var updatedLyrics);
@@ -166,7 +168,7 @@ public sealed partial class EditSongInfoDialog
             }
         });
 
-        Data.IsMusicProcessing = false;
+        _appStateService.IsMusicProcessing = false;
     }
 
     private void OpenFileLocationButton_Click(object sender, RoutedEventArgs e)

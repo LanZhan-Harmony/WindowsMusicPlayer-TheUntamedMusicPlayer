@@ -3,11 +3,14 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 using ZLinq;
 
 namespace UntamedMusicPlayer.Views;
@@ -103,7 +106,7 @@ public sealed partial class PlayQueuePage : Page
     private async void PlayQueueListView_Loaded(object sender, RoutedEventArgs e)
     {
         await App.GetService<MusicPlayer>().WhenLoadedAsync();
-        var currentSong = Data.PlayState.CurrentBriefSong;
+        var currentSong = App.GetService<MusicPlayer>().State.CurrentBriefSong;
         if (currentSong is null)
         {
             return;
@@ -122,6 +125,156 @@ public sealed partial class PlayQueuePage : Page
             }
         }
         _isInitialized = true;
+    }
+
+    private void PlayQueueListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is IndexedPlayQueueSong info)
+        {
+            ViewModel.PlayCommand.Execute(info);
+        }
+    }
+
+    private void PlayQueueListView_DragItemsStarting(
+        object sender,
+        DragItemsStartingEventArgs e
+    )
+    {
+        ViewModel.BeginPlayQueueReorder();
+        if (e.Items.Count > 0)
+        {
+            e.Data.RequestedOperation = DataPackageOperation.Move;
+        }
+    }
+
+    private void PlayQueueListView_DragOver(object sender, DragEventArgs e)
+    {
+        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+            e.DragUIOverride.Caption = "PlayQueue_AddToPlayQueue".GetLocalized();
+            e.DragUIOverride.IsCaptionVisible = true;
+            e.DragUIOverride.IsContentVisible = true;
+            e.DragUIOverride.IsGlyphVisible = false;
+        }
+    }
+
+    private void PlayQueueListView_DragItemsCompleted(
+        object sender,
+        DragItemsCompletedEventArgs args
+    )
+    {
+        if (args.DropResult == DataPackageOperation.Move && args.Items.Count > 0)
+        {
+            var songs = args.Items.AsValueEnumerable().OfType<IndexedPlayQueueSong>().ToArray();
+            ViewModel.CompletePlayQueueReorder(songs);
+        }
+    }
+
+    private async void PlayQueueListView_Drop(object sender, DragEventArgs e)
+    {
+        if (!e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            return;
+        }
+
+        var deferral = e.GetDeferral();
+        try
+        {
+            var items = await e.DataView.GetStorageItemsAsync();
+            var musicFilePaths = await GetMusicFilePathsAsync(items);
+            if (musicFilePaths.Count == 0 || sender is not ListView listView)
+            {
+                return;
+            }
+
+            await ViewModel.AddExternalFilesToPlayQueueAsync(
+                musicFilePaths,
+                GetPlayQueueDropIndex(listView, e)
+            );
+        }
+        finally
+        {
+            deferral.Complete();
+        }
+    }
+
+    private static async Task<List<string>> GetMusicFilePathsAsync(
+        IReadOnlyList<IStorageItem> items
+    )
+    {
+        var musicFilePaths = new List<string>();
+        foreach (var item in items)
+        {
+            if (item is StorageFile file)
+            {
+                AddIfSupportedAudioFile(musicFilePaths, file.Path);
+            }
+            else if (item is StorageFolder folder)
+            {
+                var folderFiles = await GetMusicFilePathsFromFolderAsync(folder);
+                musicFilePaths.AddRange(folderFiles);
+            }
+        }
+
+        return musicFilePaths;
+    }
+
+    private static async Task<List<string>> GetMusicFilePathsFromFolderAsync(StorageFolder folder)
+    {
+        var musicFilePaths = new List<string>();
+        try
+        {
+            var files = await folder.GetFilesAsync();
+            foreach (var file in files)
+            {
+                AddIfSupportedAudioFile(musicFilePaths, file.Path);
+            }
+
+            var subFolders = await folder.GetFoldersAsync();
+            foreach (var subFolder in subFolders)
+            {
+                var subFiles = await GetMusicFilePathsFromFolderAsync(subFolder);
+                musicFilePaths.AddRange(subFiles);
+            }
+        }
+        catch { }
+
+        return musicFilePaths;
+    }
+
+    private static void AddIfSupportedAudioFile(List<string> musicFilePaths, string path)
+    {
+        var extension = Path.GetExtension(path).ToLowerInvariant();
+        if (AppConstants.SupportedAudioTypes.Contains(extension))
+        {
+            musicFilePaths.Add(path);
+        }
+    }
+
+    private static int GetPlayQueueDropIndex(ListView listView, DragEventArgs e)
+    {
+        if (listView.Items.Count == 0)
+        {
+            return 0;
+        }
+
+        UIElement relativeTarget =
+            listView.ItemsPanelRoot is not null ? listView.ItemsPanelRoot : listView;
+        var position = e.GetPosition(relativeTarget);
+        if (listView.ContainerFromIndex(0) is not ListViewItem sampleItem)
+        {
+            return listView.Items.Count;
+        }
+
+        var itemHeight = sampleItem.ActualHeight + sampleItem.Margin.Top + sampleItem.Margin.Bottom;
+        if (itemHeight <= 0)
+        {
+            return listView.Items.Count;
+        }
+
+        var calculatedIndex = (int)(position.Y / itemHeight);
+        return Math.Min(listView.Items.Count, Math.Max(0, calculatedIndex));
     }
 
     private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -144,7 +297,7 @@ public sealed partial class PlayQueuePage : Page
             && grid.DataContext is IndexedPlayQueueSong songInfo
         )
         {
-            var isCurrentlyPlaying = Data.PlayState.PlayQueueIndex == songInfo.Index;
+            var isCurrentlyPlaying = App.GetService<MusicPlayer>().State.PlayQueueIndex == songInfo.Index;
             playingFontIcon.Visibility = isCurrentlyPlaying
                 ? Visibility.Visible
                 : Visibility.Collapsed;
