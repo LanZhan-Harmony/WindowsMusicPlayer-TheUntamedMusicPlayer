@@ -1,5 +1,5 @@
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
@@ -67,9 +67,10 @@ public sealed class NavigationService : INavigationService
 
         var infoOverride = new SlideNavigationTransitionInfo
         {
-            Effect = direction == HomeNavigationDirection.Forward
-                ? SlideNavigationTransitionEffect.FromRight
-                : SlideNavigationTransitionEffect.FromLeft,
+            Effect =
+                direction == HomeNavigationDirection.Forward
+                    ? SlideNavigationTransitionEffect.FromRight
+                    : SlideNavigationTransitionEffect.FromLeft,
         };
         return _homeFrame.Navigate(ResolveHomePageType(page), parameter, infoOverride);
     }

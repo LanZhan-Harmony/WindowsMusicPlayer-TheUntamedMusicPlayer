@@ -11,7 +11,6 @@ using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using ZLinq;
 using ZLogger;
 
@@ -183,4 +182,3 @@ public class TempSongInfo(BriefLocalSongInfo originalSong)
             : originalSong.ArtistsStr;
     public BriefLocalSongInfo OriginalSong { get; } = originalSong;
 }
-

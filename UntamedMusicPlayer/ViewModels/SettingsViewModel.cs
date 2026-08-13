@@ -11,7 +11,6 @@ using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI;
@@ -34,6 +33,7 @@ public sealed partial class SettingsViewModel
         App.GetService<IDynamicBackgroundService>();
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly MusicPlayer _musicPlayer;
 
     /// <summary>
     /// 是否显示文件夹为空信息
@@ -64,7 +64,7 @@ public sealed partial class SettingsViewModel
     partial void OnIsExclusiveModeChanged(bool value)
     {
         Settings.IsExclusiveMode = value;
-        _ = App.GetService<MusicPlayer>().SetExclusiveModeAsync(value);
+        _ = _musicPlayer.SetExclusiveModeAsync(value);
     }
 
     /// <summary>
@@ -237,9 +237,10 @@ public sealed partial class SettingsViewModel
     /// </summary>
     public string VersionDescription { get; set; } = GetVersionDescription();
 
-    public SettingsViewModel()
+    public SettingsViewModel(MusicPlayer musicPlayer)
         : base(StrongReferenceMessenger.Default)
     {
+        _musicPlayer = musicPlayer;
         Messenger.Register<HavePlaylistMessage>(this);
         Messenger.Register<MusicFoldersChangedMessage>(this);
 
@@ -259,9 +260,7 @@ public sealed partial class SettingsViewModel
     }
 
     [RelayCommand]
-
     public async Task PickMusicFolderButton()
-
     {
         var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
         {
@@ -295,25 +294,19 @@ public sealed partial class SettingsViewModel
     }
 
     [RelayCommand]
-
     public async Task RefreshButton()
-
     {
         await App.GetService<MusicLibrary>().LoadLibraryAgainAsync();
     }
 
     [RelayCommand]
-
     public void SongDownloadLocationButton()
-
     {
         Process.Start("explorer.exe", SongDownloadLocation);
     }
 
     [RelayCommand]
-
     public async Task ChangeSongDownloadLocationButton()
-
     {
         try
         {
@@ -331,9 +324,7 @@ public sealed partial class SettingsViewModel
     }
 
     [RelayCommand]
-
     public async Task ImportFromM3u8Button()
-
     {
         try
         {
@@ -375,9 +366,7 @@ public sealed partial class SettingsViewModel
     }
 
     [RelayCommand]
-
     public async Task ImportFromBinButton()
-
     {
         try
         {
@@ -411,9 +400,7 @@ public sealed partial class SettingsViewModel
     }
 
     [RelayCommand]
-
     public async Task ExportToM3u8Button()
-
     {
         try
         {
@@ -446,13 +433,13 @@ public sealed partial class SettingsViewModel
     }
 
     [RelayCommand]
-
     public async Task ExportToBinButton()
-
     {
         try
         {
-            var prepareBinTask = FileManager.SavePlaylistDataAsync(App.GetService<PlaylistLibrary>().Playlists);
+            var prepareBinTask = FileManager.SavePlaylistDataAsync(
+                App.GetService<PlaylistLibrary>().Playlists
+            );
             var savePicker = new FileSavePicker(App.MainWindow!.AppWindow.Id)
             {
                 SuggestedStartLocation = PickerLocationId.MusicLibrary,
@@ -503,9 +490,7 @@ public sealed partial class SettingsViewModel
     }
 
     [RelayCommand]
-
     public async Task ResetMaterialButton()
-
     {
         IsFallBack = true;
         SelectedMaterial = (byte)MaterialType.DesktopAcrylic;
@@ -562,9 +547,7 @@ public sealed partial class SettingsViewModel
     }
 
     [RelayCommand]
-
     public void OpenLoggingFolderButton()
-
     {
         var logFolder = LoggingService.GetLogFolderPath();
         Directory.CreateDirectory(logFolder);
@@ -572,9 +555,7 @@ public sealed partial class SettingsViewModel
     }
 
     [RelayCommand]
-
     public async Task ResetSoftwareButton()
-
     {
         try
         {
@@ -622,17 +603,6 @@ public sealed partial class SettingsViewModel
         SongDownloadLocation = location;
     }
 
-
-
-
-
-
-
-
-
-
-
-
     public static async Task SaveFoldersAsync()
     {
         var folderPaths = App.GetService<MusicLibrary>().Folders?.AsValueEnumerable().ToList();
@@ -650,4 +620,3 @@ public sealed partial class SettingsViewModel
         Messenger.Unregister<MusicFoldersChangedMessage>(this);
     }
 }
-

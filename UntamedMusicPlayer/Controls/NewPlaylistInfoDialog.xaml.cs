@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 
 namespace UntamedMusicPlayer.Controls;
 
@@ -39,4 +38,3 @@ public sealed partial class NewPlaylistInfoDialog : ContentDialog, IRecipient<Th
         StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
-

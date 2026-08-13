@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using UntamedMusicPlayer.Services;
 using ZLogger;
 
 namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Helpers;
@@ -153,7 +152,8 @@ public sealed class CloudSongSearchHelper
                 .ToDictionary(
                     item => item!["id"]!.GetValue<long>(),
                     item => item!["url"] is not null
-                ) ?? [];
+                )
+            ?? [];
 
         for (var i = 0; i < actualCount; i++)
         {
@@ -195,12 +195,14 @@ public sealed class CloudSongSearchHelper
                 .ToDictionary(
                     item => item!["id"]!.GetValue<long>(),
                     item => item!["url"] is not null
-                ) ?? [];
+                )
+            ?? [];
 
         var detailsMap =
             detailsResult["songs"]
                 ?.AsArray()
-                .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item) ?? [];
+                .ToDictionary(item => item!["id"]!.GetValue<long>(), item => item)
+            ?? [];
 
         var result = new List<BriefCloudOnlineSongInfo>();
         foreach (var songId in IDs)

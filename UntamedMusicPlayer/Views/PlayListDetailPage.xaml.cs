@@ -15,7 +15,6 @@ using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Foundation;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
@@ -503,9 +502,3 @@ public sealed partial class PlayListDetailPage : Page
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
-
-
-
-
-
-

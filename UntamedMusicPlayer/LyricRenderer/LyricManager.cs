@@ -4,7 +4,6 @@ using Microsoft.UI.Dispatching;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
 
 namespace UntamedMusicPlayer.LyricRenderer;
 

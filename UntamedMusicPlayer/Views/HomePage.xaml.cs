@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 
 namespace UntamedMusicPlayer.Views;
@@ -96,8 +95,3 @@ public sealed partial class HomePage : Page
         }
     }
 }
-
-
-
-
-

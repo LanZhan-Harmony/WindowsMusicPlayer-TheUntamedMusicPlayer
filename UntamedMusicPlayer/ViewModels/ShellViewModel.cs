@@ -12,6 +12,7 @@ public sealed partial class ShellViewModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly MusicPlayer _musicPlayer;
 
     public bool IsFirstLoaded { get; set; } = true;
 
@@ -21,8 +22,9 @@ public sealed partial class ShellViewModel : ObservableObject
 
     public PlaylistInfo? PrevPlaylistInfo { get; set; }
 
-    public ShellViewModel()
+    public ShellViewModel(MusicPlayer musicPlayer)
     {
+        _musicPlayer = musicPlayer;
         _ = LoadAsync();
     }
 
@@ -97,7 +99,7 @@ public sealed partial class ShellViewModel : ObservableObject
         return musicFiles;
     }
 
-    public static async Task AddExternalFilesToPlayQueueAsync(IReadOnlyList<StorageFile> files)
+    public async Task AddExternalFilesToPlayQueueAsync(IReadOnlyList<StorageFile> files)
     {
         var newSongs = new List<IBriefSongInfoBase>();
         await Task.Run(() =>
@@ -118,8 +120,9 @@ public sealed partial class ShellViewModel : ObservableObject
         });
         if (newSongs.Count > 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
-            await App.GetService<MusicPlayer>().PlaySongByInfoAsync(newSongs[0]);
+            _musicPlayer
+                .QueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
+            await _musicPlayer.PlaySongByInfoAsync(newSongs[0]);
         }
     }
 
@@ -134,4 +137,3 @@ public sealed partial class ShellViewModel : ObservableObject
         await _localSettingsService.SaveSettingAsync("CurrentPage", CurrentPage);
     }
 }
-

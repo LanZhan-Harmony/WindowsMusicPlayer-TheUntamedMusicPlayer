@@ -1,7 +1,6 @@
 using UntamedMusicPlayer.Activation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
 using ZLinq;
 
 namespace UntamedMusicPlayer.Services;

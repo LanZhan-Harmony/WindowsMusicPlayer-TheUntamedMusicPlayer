@@ -14,7 +14,6 @@ using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using UntamedMusicPlayer.Views;
 using Windows.Foundation;
@@ -399,11 +398,17 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
                 {
                     case HOTKEY_ID_VOLUME_UP: // Alt + Up: 增加音量
                         var currentVolumeUp = App.GetService<MusicPlayer>().State.Volume;
-                        App.GetService<MusicPlayer>().State.Volume = Math.Min(100, currentVolumeUp + 5);
+                        App.GetService<MusicPlayer>().State.Volume = Math.Min(
+                            100,
+                            currentVolumeUp + 5
+                        );
                         break;
                     case HOTKEY_ID_VOLUME_DOWN: // Alt + Down: 减少音量
                         var currentVolumeDown = App.GetService<MusicPlayer>().State.Volume;
-                        App.GetService<MusicPlayer>().State.Volume = Math.Max(0, currentVolumeDown - 5);
+                        App.GetService<MusicPlayer>().State.Volume = Math.Max(
+                            0,
+                            currentVolumeDown - 5
+                        );
                         break;
                 }
             });
@@ -614,4 +619,3 @@ public sealed partial class MainWindow : WindowEx, IRecipient<LogMessage>
         }
     }
 }
-

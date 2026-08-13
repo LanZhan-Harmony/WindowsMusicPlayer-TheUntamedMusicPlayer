@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -22,8 +21,8 @@ public sealed partial class PlayListDetailViewModel
         IRecipient<PlaylistChangeMessage>,
         IDisposable
 {
-    private readonly INavigationService _navigationService =
-        App.GetService<INavigationService>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
+    private readonly MusicPlayer _musicPlayer;
 
     [ObservableProperty]
     public partial PlaylistInfo Playlist { get; set; } = null!;
@@ -35,8 +34,7 @@ public sealed partial class PlayListDetailViewModel
     public partial string TotalSongNumStr { get; set; } = "";
 
     [ObservableProperty]
-    public partial WriteableBitmap? Cover { get; set; }
-        = null;
+    public partial WriteableBitmap? Cover { get; set; } = null;
 
     [ObservableProperty]
     public partial ObservableCollection<IndexedPlaylistSong> SongList { get; set; }
@@ -44,9 +42,10 @@ public sealed partial class PlayListDetailViewModel
     [ObservableProperty]
     public partial bool IsPlayAllButtonEnabled { get; set; } = false;
 
-    public PlayListDetailViewModel()
+    public PlayListDetailViewModel(MusicPlayer musicPlayer)
         : base(StrongReferenceMessenger.Default)
     {
+        _musicPlayer = musicPlayer;
         Messenger.Register<PlaylistRenameMessage>(this);
         Messenger.Register<PlaylistChangeMessage>(this);
         SongList = [];
@@ -90,8 +89,8 @@ public sealed partial class PlayListDetailViewModel
             return;
         }
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
-        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+        _musicPlayer.QueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
+        _musicPlayer.PlaySongByInfo(songList[0]);
     }
 
     [RelayCommand]
@@ -109,64 +108,73 @@ public sealed partial class PlayListDetailViewModel
             return;
         }
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"Songs:Playlist:{Playlist.Name}",
+                songList
+            );
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
+            _musicPlayer.QueueManager.AddSongsToEnd(songList);
         }
     }
 
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
+        _musicPlayer.QueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
         if (e.ClickedItem is IndexedPlaylistSong indexedInfo)
         {
-            App.GetService<MusicPlayer>().PlaySongByInfo(indexedInfo.Song);
+            _musicPlayer.PlaySongByInfo(indexedInfo.Song);
         }
     }
 
     [RelayCommand]
     private void Play(IBriefSongInfoBase info)
     {
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
+        _musicPlayer.QueueManager.SetNormalPlayQueue(
             $"Songs:Playlist:{Playlist.Name}",
             SongList.AsValueEnumerable().Select(s => s.Song).ToArray()
         );
-        App.GetService<MusicPlayer>().PlaySongByInfo(info);
+        _musicPlayer.PlaySongByInfo(info);
     }
 
     [RelayCommand]
     private void PlayNext(IBriefSongInfoBase info)
     {
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefSongInfoBase> { info };
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
-            App.GetService<MusicPlayer>().PlaySongByInfo(info);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"Songs:Playlist:{Playlist.Name}:Part",
+                list
+            );
+            _musicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([info]);
+            _musicPlayer.QueueManager.AddSongsToNextPlay([info]);
         }
     }
 
     [RelayCommand]
     private void AddToPlayQueue(IBriefSongInfoBase info)
     {
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefSongInfoBase> { info };
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}:Part", list);
-            App.GetService<MusicPlayer>().PlaySongByInfo(info);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"Songs:Playlist:{Playlist.Name}:Part",
+                list
+            );
+            _musicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([info]);
+            _musicPlayer.QueueManager.AddSongsToEnd([info]);
         }
     }
 
@@ -233,7 +241,8 @@ public sealed partial class PlayListDetailViewModel
     {
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(localInfo.Artists[0]);
+            var localArtistInfo = App.GetService<MusicLibrary>()
+                .GetArtistInfoBySong(localInfo.Artists[0]);
             if (localArtistInfo is not null)
             {
                 _navigationService.NavigateShell(
@@ -286,4 +295,3 @@ public sealed partial class PlayListDetailViewModel
         Messenger.Unregister<PlaylistChangeMessage>(this);
     }
 }
-

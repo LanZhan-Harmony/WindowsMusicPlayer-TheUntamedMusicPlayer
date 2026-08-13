@@ -1,7 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 
 namespace UntamedMusicPlayer.Views;
@@ -73,8 +72,3 @@ public sealed partial class MusicLibraryPage : Page
         }
     }
 }
-
-
-
-
-

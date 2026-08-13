@@ -1,25 +1,21 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using UntamedMusicPlayer.Contracts.Services;
-using Microsoft.UI.Xaml;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 
-using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class LyricViewModel : ObservableObject, IDisposable
 {
-    private readonly INavigationService _navigationService =
-        App.GetService<INavigationService>();
-    private readonly IWindowService _windowService =
-        App.GetService<IWindowService>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
+    private readonly IWindowService _windowService = App.GetService<IWindowService>();
     private readonly RootPlayBarViewModel _rootPlayBarViewModel =
         App.GetService<RootPlayBarViewModel>();
     private readonly MusicPlayer _musicPlayer;
@@ -30,9 +26,9 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     public partial bool IsShowCoverEnabled { get; set; }
 
-    public LyricViewModel()
+    public LyricViewModel(MusicPlayer musicPlayer)
     {
-        _musicPlayer = App.GetService<MusicPlayer>();
+        _musicPlayer = musicPlayer;
         _playState = _musicPlayer.State;
         _playQueueManager = _musicPlayer.QueueManager;
         _lyricManager = _musicPlayer.LyricManager;
@@ -59,45 +55,35 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-
     public void PlayButton()
-
     {
         var currentSong = _playState.CurrentBriefSong;
         _musicPlayer.PlaySongByInfo(currentSong!);
     }
 
     [RelayCommand]
-
     public void PlayNextButton()
-
     {
         var currentSong = _playState.CurrentBriefSong;
         _playQueueManager.AddSongsToNextPlay([currentSong!]);
     }
 
     [RelayCommand]
-
     public void AddToPlayQueueButton()
-
     {
         var currentSong = _playState.CurrentBriefSong;
         _playQueueManager.AddSongsToEnd([currentSong!]);
     }
 
     [RelayCommand]
-
     public async Task AddToPlaylistButton(PlaylistInfo playlist)
-
     {
         var currentSong = _playState.CurrentBriefSong;
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, currentSong!);
     }
 
     [RelayCommand]
-
     public async Task ShowAlbumButton()
-
     {
         _rootPlayBarViewModel.DetailModeUpdate();
         var info = _playState.CurrentBriefSong;
@@ -128,15 +114,14 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-
     public async Task ShowArtistButton()
-
     {
         _rootPlayBarViewModel.DetailModeUpdate();
         var info = _playState.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(localInfo.Artists[0]);
+            var localArtistInfo = App.GetService<MusicLibrary>()
+                .GetArtistInfoBySong(localInfo.Artists[0]);
             if (localArtistInfo is not null)
             {
                 _navigationService.NavigateShell(
@@ -161,9 +146,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-
     public void ShowCoverButton()
-
     {
         var currentSong = _playState.CurrentSong;
         if (currentSong?.Cover is null)
@@ -177,33 +160,19 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-
     public void AddLyricAdjustButton()
-
     {
         _lyricManager.AddLyricAdjust();
     }
 
     [RelayCommand]
-
     public void SubtractLyricAdjustButton()
-
     {
         _lyricManager.SubtractLyricAdjust();
     }
-
-
-
-
-
-
-
-
 
     public void Dispose()
     {
         _playState.PropertyChanged -= OnStateChanged;
     }
-
 }
-

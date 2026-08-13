@@ -6,7 +6,12 @@ namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class OnlinePlayListsViewModel
 {
-    public OnlinePlayListsViewModel() { }
+    private readonly MusicPlayer _musicPlayer;
+
+    public OnlinePlayListsViewModel(MusicPlayer musicPlayer)
+    {
+        _musicPlayer = musicPlayer;
+    }
 
     [RelayCommand]
     private async Task Play(IBriefOnlinePlaylistInfo info)
@@ -19,8 +24,9 @@ public sealed partial class OnlinePlayListsViewModel
         {
             return;
         }
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{info.Name}", songList);
-        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+        _musicPlayer
+            .QueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{info.Name}", songList);
+        _musicPlayer.PlaySongByInfo(songList[0]);
     }
 
     [RelayCommand]
@@ -34,14 +40,15 @@ public sealed partial class OnlinePlayListsViewModel
         {
             return;
         }
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer
+                .QueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{info.Name}", songList);
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
+            _musicPlayer.QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
@@ -56,14 +63,15 @@ public sealed partial class OnlinePlayListsViewModel
         {
             return;
         }
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer
+                .QueueManager.SetNormalPlayQueue($"OnlineSongs:Playlist:{info.Name}", songList);
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
+            _musicPlayer.QueueManager.AddSongsToEnd(songList);
         }
     }
 
@@ -78,4 +86,3 @@ public sealed partial class OnlinePlayListsViewModel
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
 }
-

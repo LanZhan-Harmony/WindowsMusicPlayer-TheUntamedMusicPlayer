@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using TagLib;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Services;
 using ZLinq;
 using ZLogger;
 

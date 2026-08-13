@@ -1,6 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Models;
-using UntamedMusicPlayer.Models;
 
 namespace UntamedMusicPlayer.Messages;
 

@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Models;
-using UntamedMusicPlayer.Services;
 using ZLogger;
 
 namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Helpers;

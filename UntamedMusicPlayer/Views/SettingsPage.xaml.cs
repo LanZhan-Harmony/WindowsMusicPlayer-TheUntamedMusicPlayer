@@ -5,7 +5,6 @@ using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Helpers.Animations;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Storage;
 using Windows.System;
@@ -325,8 +324,3 @@ public sealed partial class SettingsPage : Page
         }
     }
 }
-
-
-
-
-
