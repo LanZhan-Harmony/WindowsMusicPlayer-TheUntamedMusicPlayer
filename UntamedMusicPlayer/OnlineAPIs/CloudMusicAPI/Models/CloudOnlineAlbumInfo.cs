@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Contracts.Models;
-using UntamedMusicPlayer.Services;
 using ZLogger;
 
 namespace UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Models;

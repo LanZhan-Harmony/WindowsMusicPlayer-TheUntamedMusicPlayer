@@ -1,5 +1,4 @@
 using Microsoft.UI.Xaml;
-using UntamedMusicPlayer.Services;
 using Windows.UI;
 
 namespace UntamedMusicPlayer.Contracts.Services;

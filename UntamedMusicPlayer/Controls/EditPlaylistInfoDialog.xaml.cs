@@ -9,12 +9,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
-using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLogger;
 
@@ -417,4 +416,3 @@ public sealed partial class EditPlaylistInfoDialog
         StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
-

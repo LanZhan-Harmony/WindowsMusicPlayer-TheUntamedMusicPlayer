@@ -60,16 +60,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>مشغل موسيقى حر</value>
+    <value>مشغل موسيقى Untamed</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>مشغل موسيقى حر</value>
+    <value>مشغل موسيقى Untamed</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
     <value>مكتبة الموسيقى</value>
   </data>
   <data name="Shell_PlayQueue.Content" xml:space="preserve">
-    <value>قائمة اللعب</value>
+    <value>قائمة الانتظار</value>
   </data>
   <data name="Shell_PlayLists.Content" xml:space="preserve">
     <value>قوائم التشغيل</value>
@@ -84,25 +84,25 @@
     <value>هذه كلمات أغنية مميزة</value>
   </data>
   <data name="Settings_Theme.Header" xml:space="preserve">
-    <value>قالب التطبيق</value>
+    <value>سمة التطبيق</value>
   </data>
   <data name="Settings_ResetSoftware.Header" xml:space="preserve">
-    <value>أعد ضبط هذا البرنامج</value>
+    <value>إعادة ضبط هذا البرنامج</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>الضوء</value>
+    <value>فاتح</value>
   </data>
   <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>دارك</value>
+    <value>داكن</value>
   </data>
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>استخدام إعداد النظام</value>
+    <value>استخدام إعدادات النظام</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>حول هذا الطلب</value>
+    <value>حول هذا التطبيق</value>
   </data>
   <data name="Settings_AddFolderToMusic" xml:space="preserve">
-    <value>أضف هذا المجلد إلى Music</value>
+    <value>إضافة هذا المجلد إلى الموسيقى</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
     <value>© 2026 Untamed Corporation. جميع الحقوق محفوظة.</value>
@@ -117,16 +117,16 @@
     <value>مواقع مكتبة الموسيقى</value>
   </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
-    <value>لا توجد مجلدات مدرجة في هذه المكتبة.</value>
+    <value>لا توجد مجلدات مضمنة في هذه المكتبة.</value>
   </data>
   <data name="Settings_Refresh.Content" xml:space="preserve">
     <value>تحديث</value>
   </data>
   <data name="Settings_Import.Content" xml:space="preserve">
-    <value>الاستيراد</value>
+    <value>استيراد</value>
   </data>
   <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
-    <value>استيراد قائمة تشغيل فردية</value>
+    <value>استيراد قائمة تشغيل واحدة</value>
   </data>
   <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
     <value>استيراد قوائم التشغيل دفعة واحدة من ملفات m3u8</value>
@@ -135,25 +135,25 @@
     <value>استيراد قوائم التشغيل دفعة واحدة من ملف ثنائي</value>
   </data>
   <data name="Settings_Export.Content" xml:space="preserve">
-    <value>التصدير</value>
+    <value>تصدير</value>
   </data>
   <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
     <value>تصدير قوائم التشغيل دفعة واحدة إلى ملفات m3u8 (موصى به)</value>
   </data>
   <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
-    <value>توافق أفضل ويعمل مع معظم مشغلات الموسيقى</value>
+    <value>يوفر توافقًا أفضل ويعمل مع معظم مشغلات الموسيقى.</value>
   </data>
   <data name="Settings_ExportToBin.Header" xml:space="preserve">
     <value>تصدير قوائم التشغيل دفعة واحدة إلى ملف ثنائي</value>
   </data>
   <data name="Settings_ExportToBin.Description" xml:space="preserve">
-    <value>أسرع لكنه متاح فقط لهذا البرنامج</value>
+    <value>أسرع، لكنه متاح لهذا البرنامج فقط.</value>
   </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
-    <value>مكتبات تحديث</value>
+    <value>تحديث المكتبات</value>
   </data>
   <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
-    <value>إخفاء شريط التحكم في التشغيل تلقائيا في صفحة كلمات الأغنية بملء الشاشة</value>
+    <value>إخفاء شريط التحكم في التشغيل تلقائيًا عند عرض صفحة كلمات الأغنية بملء الشاشة</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
     <value>الوضع الحصري</value>
@@ -162,46 +162,46 @@
     <value>وضع التأخير المنخفض</value>
   </data>
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
-    <value>يقلل من تأخير الصوت. موصى به للأجهزة متوسطة إلى العالية. قم بتعطيل هذا إذا واجهت تقطعا أو مشاكل في التشغيل.</value>
+    <value>يقلل من زمن انتقال الصوت. يُنصح به للأجهزة المتوسطة والعالية الأداء. عطّل هذا الخيار إذا واجهت تقطّعًا أو مشكلات في التشغيل.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
-    <value>إذا كنت في صفحة الأغاني في مكتبة الموسيقى مع تفعيل فرز المجلدات، فإن النقر على أغنية سيضيف فقط الأغاني من نفس المجلد إلى قائمة التشغيل.</value>
+    <value>إذا كنت في صفحة الأغاني بمكتبة الموسيقى مع تفعيل الفرز حسب المجلد، فلن يؤدي النقر على أغنية إلا إلى إضافة الأغاني من المجلد نفسه إلى قائمة الانتظار.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
-    <value>أضف فقط المجلد الذي توجد فيه الأغنية</value>
+    <value>إضافة مجلد الأغنية فقط</value>
   </data>
   <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
-    <value>استيراد وتصدير قائمة التشغيل</value>
+    <value>استيراد قوائم التشغيل وتصديرها</value>
   </data>
   <data name="Settings_ReIndex.Text" xml:space="preserve">
-    <value>إذا لم تكن ترى جميع الوسائط من مواقع مكتبتك، يمكنك إعادة فهرسة مكتباتك الآن.</value>
+    <value>إذا لم تتمكن من رؤية جميع الوسائط في مواقع مكتباتك، يمكنك إعادة فهرسة مكتباتك الآن.</value>
   </data>
   <data name="Shell_Search.PlaceholderText" xml:space="preserve">
-    <value>البحث (قريبا)</value>
+    <value>بحث (قريبًا)</value>
   </data>
   <data name="PlayBar_Property.Text" xml:space="preserve">
     <value>الخصائص</value>
   </data>
   <data name="PlayBar_Equalizer.Text" xml:space="preserve">
-    <value>المعادلة (قريبا)</value>
+    <value>المعادل (قريبًا)</value>
   </data>
   <data name="PlayBar_Speed.Text" xml:space="preserve">
     <value>السرعة</value>
   </data>
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
-    <value>الانتقال إلى الجهاز (قريبا)</value>
+    <value>البث إلى جهاز (قريبًا)</value>
   </data>
   <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
-    <value>ارجع 10 ثوان إلى الوراء</value>
+    <value>الرجوع 10 ثوانٍ</value>
   </data>
   <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
-    <value>تخطي 30 ثانية للأمام</value>
+    <value>التقدم 30 ثانية</value>
   </data>
   <data name="Shell_PlayLists1.Text" xml:space="preserve">
     <value>قوائم التشغيل</value>
   </data>
   <data name="Shell_PlayQueue1.Text" xml:space="preserve">
-    <value>قائمة اللعب</value>
+    <value>قائمة الانتظار</value>
   </data>
   <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
     <value>الموسيقى</value>
@@ -210,10 +210,10 @@
     <value>الإعدادات</value>
   </data>
   <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
-    <value>لم نجد أي موسيقى</value>
+    <value>لم نعثر على أي موسيقى</value>
   </data>
   <data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
-    <value>مكتبة الموسيقى الخاصة بك لا تحتوي على أي محتوى موسيقي.</value>
+    <value>لا تحتوي مكتبتك الموسيقية على أي محتوى موسيقي.</value>
   </data>
   <data name="HaveMusic_Songs.Text" xml:space="preserve">
     <value>الأغاني</value>
@@ -228,16 +228,16 @@
     <value>الفنانون</value>
   </data>
   <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
-    <value>هل ألغي هذا الملف؟</value>
+    <value>هل تريد إزالة هذا المجلد؟</value>
   </data>
   <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
-    <value>هل أنت متأكد أنك تريد إعادة ضبط هذا البرنامج؟</value>
+    <value>هل أنت متأكد من رغبتك في إعادة ضبط هذا البرنامج؟</value>
   </data>
   <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
-    <value>إذا أزلت مجلد "{title}" من الموسيقى، فلن يظهر في Music بعد الآن، ولن يتم حذفه.</value>
+    <value>إذا أزلت المجلد "{title}" من مكتبة الموسيقى، فلن يظهر فيها بعد الآن، لكنه لن يُحذف.</value>
   </data>
   <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
-    <value>سيتم تفريغ جميع بيانات هذا البرنامج، بما في ذلك الإعدادات، قائمة التشغيل، قوائم التشغيل، وغيرها، يرجى المتابعة بحذر.</value>
+    <value>سيتم مسح جميع بيانات هذا البرنامج، بما في ذلك الإعدادات وقائمة الانتظار وقوائم التشغيل وغيرها. يُرجى المتابعة بحذر.</value>
   </data>
   <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
     <value>إزالة المجلد</value>
@@ -258,19 +258,19 @@
     <value>حذف</value>
   </data>
   <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
-    <value>حذف قوائم التشغيل بشكل دائم؟</value>
+    <value>حذف قائمة التشغيل نهائيًا؟</value>
   </data>
   <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
-    <value>هل أنت متأكد أنك تريد حذف هذه القائمة التشغيلية؟ إذا حذفت '{title}'، فلن تتمكن من استعادته.</value>
+    <value>هل أنت متأكد من رغبتك في حذف قائمة التشغيل هذه؟ إذا حذفت "{title}"، فلن تتمكن من استعادتها.</value>
   </data>
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
     <value>إدارة إعدادات فهرسة النظام</value>
   </data>
   <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
-    <value>هل كنت تقصد تغيير التطبيق؟</value>
+    <value>هل تقصد التبديل بين التطبيقات؟</value>
   </data>
   <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
-    <value> "مشغل الوسائط" يحاول فتح "الإعدادات".</value>
+    <value>"مشغل الوسائط" يحاول فتح "الإعدادات".</value>
   </data>
   <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
     <value>نعم</value>
@@ -279,16 +279,16 @@
     <value>لا</value>
   </data>
   <data name="PlayBar_Volume.ToolTipService.ToolTip" xml:space="preserve">
-    <value>الحجم (Alt+↑/↓)</value>
+    <value>مستوى الصوت (Alt+↑/↓)</value>
   </data>
   <data name="PlayBar_FullScreen.ToolTipService.ToolTip" xml:space="preserve">
-    <value>الشاشة الكاملة (F11)</value>
+    <value>ملء الشاشة (F11)</value>
   </data>
   <data name="PlayBar_DesktopLyric.ToolTipService.ToolTip" xml:space="preserve">
     <value>كلمات الأغنية على سطح المكتب (Ctrl+M)</value>
   </data>
   <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
-    <value>خيارات أكثر</value>
+    <value>المزيد من الخيارات</value>
   </data>
   <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
     <value>السابق (Ctrl+B)</value>
@@ -297,82 +297,82 @@
     <value>التالي (Ctrl+F)</value>
   </data>
   <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
-    <value>اللعب الآني (Ctrl+N)</value>
+    <value>قيد التشغيل الآن (Ctrl+N)</value>
   </data>
   <data name="PlayBar_ShuffleOff" xml:space="preserve">
-    <value>التبديل بين الأخبار: إيقاف (Ctrl+H)</value>
+    <value>التشغيل العشوائي: إيقاف (Ctrl+H)</value>
   </data>
   <data name="PlayBar_ShuffleOn" xml:space="preserve">
-    <value>التبديل بين الأخفاء: على الوضع (Ctrl+H)</value>
+    <value>التشغيل العشوائي: تشغيل (Ctrl+H)</value>
   </data>
   <data name="PlayBar_RepeatOff" xml:space="preserve">
-    <value>كرر: إيقاف (Ctrl+T)</value>
+    <value>التكرار: إيقاف (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatAll" xml:space="preserve">
-    <value>كرر: الجميع (Ctrl+T)</value>
+    <value>التكرار: الكل (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatOne" xml:space="preserve">
-    <value>كرر: واحد (Ctrl+T)</value>
+    <value>التكرار: أغنية واحدة (Ctrl+T)</value>
   </data>
   <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
     <value>مكتبة الموسيقى (Ctrl+R)</value>
   </data>
   <data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
-    <value>قائمة اللعب (Ctrl+Q)</value>
+    <value>قائمة الانتظار (Ctrl+Q)</value>
   </data>
   <data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
     <value>قوائم التشغيل (Ctrl+Y)</value>
   </data>
   <data name="PlayBar_Play" xml:space="preserve">
-    <value>اللعب (Ctrl+P)</value>
+    <value>تشغيل (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Pause" xml:space="preserve">
-    <value>توقف مؤقت (Ctrl+P)</value>
+    <value>إيقاف مؤقت (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ابحث</value>
+    <value>تحديد الموضع</value>
   </data>
   <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
     <value>إزالة المجلد</value>
   </data>
   <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>أضف مجلدا إلى مكتبة الموسيقى الخاصة بك</value>
+    <value>إضافة مجلد إلى مكتبتك الموسيقية</value>
   </data>
   <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
-    <value>الشفل: شيل</value>
+    <value>التشغيل العشوائي: تشغيل</value>
   </data>
   <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
-    <value>شفل: إيقاف</value>
+    <value>التشغيل العشوائي: إيقاف</value>
   </data>
   <data name="PlayBar_More_RepeatAll" xml:space="preserve">
-    <value>كرر: الجميع</value>
+    <value>التكرار: الكل</value>
   </data>
   <data name="PlayBar_More_RepeatOne" xml:space="preserve">
-    <value>كرر: واحد</value>
+    <value>التكرار: أغنية واحدة</value>
   </data>
   <data name="PlayBar_More_RepeatOff" xml:space="preserve">
-    <value>كرر: إيقاف</value>
+    <value>التكرار: إيقاف</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>None, Mica, Mica Alt, Desktop Acrylic, Acrylic Base, Acrylic Thin, Blur, Transparent, Animated</value>
+    <value>بلا, ميكا, ميكا بديلة, أكريليك سطح المكتب, قاعدة أكريليك, أكريليك رقيق, ضبابي, شفاف, متحرك</value>
   </data>
   <data name="Songs_SortBy" xml:space="preserve">
-    <value>A-Z, Z-A, الفنان (تصاعدي), الفنان (تنازلي), الألبوم (تصاعدي), الألبوم (تنازلي), سنة الإصدار (تصاعدي), سنة الإصدار (تنازلي), تاريخ الإضافة (تصاعدي), تاريخ الإضافة (تنازلي), المجلد (تصاعدي), المجلد (تنازلي)</value>
+    <value>A-Z, Z-A, الفنان (تصاعديًا), الفنان (تنازليًا), الألبوم (تصاعديًا), الألبوم (تنازليًا), سنة الإصدار (تصاعديًا), سنة الإصدار (تنازليًا), تاريخ الإضافة (تصاعديًا), تاريخ الإضافة (تنازليًا), المجلد (تصاعديًا), المجلد (تنازليًا)</value>
   </data>
   <data name="Albums_SortBy" xml:space="preserve">
-    <value>A-Z, Z-A, سنة الإصدار (تصاعدي), سنة الإصدار (تنازلي), الفنان (تصاعدي), الفنان (تنازلي), تاريخ الإضافة (تصاعدي), تاريخ الإضافة (تنازلي)</value>
+    <value>A-Z, Z-A, سنة الإصدار (تصاعديًا), سنة الإصدار (تنازليًا), الفنان (تصاعديًا), الفنان (تنازليًا), تاريخ الإضافة (تصاعديًا), تاريخ الإضافة (تنازليًا)</value>
   </data>
   <data name="SongInfo_UnknownArtist" xml:space="preserve">
-    <value>فنان مجهول</value>
+    <value>فنان غير معروف</value>
   </data>
   <data name="SongInfo_UnknownGenre" xml:space="preserve">
-    <value>نوع غير معروف</value>
+    <value>نوع موسيقي غير معروف</value>
   </data>
   <data name="DisplaySongInfo_SourceMode0" xml:space="preserve">
-    <value>الأغنية المحلية</value>
+    <value>أغنية محلية</value>
   </data>
   <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
-    <value>أغنية على الإنترنت</value>
+    <value>أغنية عبر الإنترنت</value>
   </data>
   <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
     <value>أغنية من مكتبة الموسيقى 5</value>
@@ -396,130 +396,130 @@
     <value>ألبوم غير معروف</value>
   </data>
   <data name="Songs_SortByChosen.Text" xml:space="preserve">
-    <value>الترتيب حسب المعلومات: </value>
+    <value>فرز حسب: </value>
   </data>
   <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
-    <value>خلط اللعب واللعب</value>
+    <value>تشغيل عشوائي</value>
   </data>
   <data name="Songs_GenreChosen.Text" xml:space="preserve">
-    <value>النوع: </value>
+    <value>النوع الموسيقي: </value>
   </data>
   <data name="PlayQueue_Clear.Text" xml:space="preserve">
-    <value>واضح</value>
+    <value>مسح</value>
   </data>
   <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
-    <value>إضافة إلى قائمة اللعب</value>
+    <value>إضافة إلى قائمة الانتظار</value>
   </data>
   <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
-    <value>قائمة اللعب</value>
+    <value>قائمة الانتظار</value>
   </data>
   <data name="Songs_AddTo_NewPlaylist.Text" xml:space="preserve">
     <value>قائمة تشغيل جديدة</value>
   </data>
   <data name="PlayQueue_AddFiles.Text" xml:space="preserve">
-    <value>إضافة ملف (ملفات)</value>
+    <value>إضافة ملفات</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
-    <value>إضافة ملف (ملفات) لتشغيل قائمة الانتظار</value>
+    <value>إضافة ملفات إلى قائمة الانتظار</value>
   </data>
   <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
-    <value>تصفح الملفات لإضافتها إلى قائمة التشغيل</value>
+    <value>استعراض الملفات لإضافتها إلى قائمة الانتظار</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
-    <value>إضافة مجلد إلى قائمة التشغيل</value>
+    <value>إضافة مجلد إلى قائمة الانتظار</value>
   </data>
   <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
-    <value>اختر مجلدا، وأضف كل الوسائط في ذلك المجلد إلى قائمة التشغيل.</value>
+    <value>اختر مجلدًا، وأضف جميع الوسائط الموجودة فيه إلى قائمة الانتظار.</value>
   </data>
   <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
-    <value>إضافة وسائط من URL إلى قائمة التشغيل</value>
+    <value>إضافة وسائط من عنوان URL إلى قائمة الانتظار</value>
   </data>
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
-    <value>أدخل عنوان URL، وأضف الوسائط من ذلك العنوان إلى قائمة التشغيل</value>
+    <value>أدخل عنوان URL، وأضف الوسائط من ذلك العنوان إلى قائمة الانتظار.</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
-    <value>افتح رابط URL</value>
+    <value>فتح عنوان URL</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Cancel" xml:space="preserve">
     <value>إلغاء</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
-    <value>مفتوح</value>
+    <value>فتح</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
-    <value>أدخل رابط الملف أو البث أو قائمة التشغيل</value>
+    <value>أدخل عنوان URL لملف أو بث أو قائمة تشغيل</value>
   </data>
   <data name="Songs_Play.Text" xml:space="preserve">
-    <value>اللعب</value>
+    <value>تشغيل</value>
   </data>
   <data name="Songs_PlayNext.Text" xml:space="preserve">
-    <value>العب التالي</value>
+    <value>تشغيل التالي</value>
   </data>
   <data name="Songs_AddTo.Text" xml:space="preserve">
-    <value>أضف إلى</value>
+    <value>إضافة إلى</value>
   </data>
   <data name="Songs_EditInfo.Text" xml:space="preserve">
-    <value>معلومات تعديل</value>
+    <value>تحرير المعلومات</value>
   </data>
   <data name="Songs_Properties.Text" xml:space="preserve">
     <value>الخصائص</value>
   </data>
   <data name="Songs_ShowAlbum.Text" xml:space="preserve">
-    <value>ألبوم العرض</value>
+    <value>عرض الألبوم</value>
   </data>
   <data name="Songs_ShowArtist.Text" xml:space="preserve">
-    <value>فنان العرض</value>
+    <value>عرض الفنان</value>
   </data>
   <data name="Songs_Select.Text" xml:space="preserve">
-    <value>سيلكت</value>
+    <value>تحديد</value>
   </data>
   <data name="PlayQueue_Remove.Text" xml:space="preserve">
     <value>إزالة</value>
   </data>
   <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
-    <value>تقدم</value>
+    <value>نقل لأعلى</value>
   </data>
   <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
-    <value>تحرك للأسفل</value>
+    <value>نقل لأسفل</value>
   </data>
   <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>اللعب</value>
+    <value>تشغيل</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
-    <value>مادة النوافذ</value>
+    <value>مادة النافذة</value>
   </data>
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
     <value>اختر مادة</value>
   </data>
   <data name="Settings_LyricFont.Header" xml:space="preserve">
-    <value>عائلة خطوط الكلمات</value>
+    <value>خط كلمات الأغاني</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
-    <value>اختر عائلة الخطوط</value>
+    <value>اختر عائلة الخط</value>
   </data>
   <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
     <value>اختر حجم الخط</value>
   </data>
   <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>خلفية النافذة تتبع لون ثيمة الغلاف</value>
+    <value>تتبع خلفية النافذة لون سمة الغلاف</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="Settings_Version" xml:space="preserve">
-    <value>النسخة</value>
+    <value>الإصدار</value>
   </data>
   <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>واضح (Ctrl+Shift+X)</value>
+    <value>مسح (Ctrl+Shift+X)</value>
   </data>
   <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>تصفح الملفات لإضافتها إلى قائمة التشغيل</value>
+    <value>استعراض الملفات لإضافتها إلى قائمة الانتظار</value>
   </data>
   <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>تخطي 10 ثوان للخلف (Ctrl+left)</value>
+    <value>التراجع 10 ثوانٍ (Ctrl+Left)</value>
   </data>
   <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>تخطي 30 ثانية للأمام (Ctrl+يمين)</value>
+    <value>التقدم 30 ثانية (Ctrl+Right)</value>
   </data>
   <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
     <value>ملء الشاشة</value>
@@ -528,37 +528,37 @@
     <value>جميع الأنواع</value>
   </data>
   <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
-    <value>فهرسة المكتبات...</value>
+    <value>جارٍ فهرسة المكتبات...</value>
   </data>
   <data name="Artists_SortBy" xml:space="preserve">
-    <value>أ - ز، ز - أ</value>
+    <value>A-Z, Z-A</value>
   </data>
   <data name="Playlists_SortBy" xml:space="preserve">
-    <value>A - Z، Z - A، تاريخ تعديل (Asc)، تاريخ تعديل (Desc)</value>
+    <value>A-Z, Z-A, تاريخ التعديل (تصاعديًا), تاريخ التعديل (تنازليًا)</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
-    <value>تتوقف التحديثات في الخلفية بعد فقدان النافذة للتركيز</value>
+    <value>تتوقف الخلفية عن التحديث بعد أن تفقد النافذة التركيز.</value>
   </data>
   <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
     <value>لون خلفية النافذة</value>
   </data>
   <data name="Shell_Home.Content" xml:space="preserve">
-    <value>المنزل</value>
+    <value>الرئيسية</value>
   </data>
   <data name="Shell_Home1.Text" xml:space="preserve">
-    <value>المنزل</value>
+    <value>الرئيسية</value>
   </data>
   <data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
-    <value>المنزل (Ctrl+Shift+F)</value>
+    <value>الرئيسية (Ctrl+Shift+F)</value>
   </data>
   <data name="Home_SearchOnlineSongs.PlaceholderText" xml:space="preserve">
-    <value>ابحث عن المحتوى الإلكتروني</value>
+    <value>البحث عن المحتوى عبر الإنترنت</value>
   </data>
   <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
-    <value>عتامة اللمعان</value>
+    <value>العتامة</value>
   </data>
   <data name="Settings_Reset.Content" xml:space="preserve">
-    <value>إعادة التعيين</value>
+    <value>إعادة ضبط</value>
   </data>
   <data name="PropertiesDialog_Title.Text" xml:space="preserve">
     <value>العنوان</value>
@@ -567,10 +567,10 @@
     <value>الألبوم</value>
   </data>
   <data name="PropertiesDialog_Track.Text" xml:space="preserve">
-    <value>المضمار</value>
+    <value>المسار</value>
   </data>
   <data name="PropertiesDialog_Genre.Text" xml:space="preserve">
-    <value>النوع الأدبي</value>
+    <value>النوع الموسيقي</value>
   </data>
   <data name="PropertiesDialog_Bitrate.Text" xml:space="preserve">
     <value>معدل البت</value>
@@ -582,7 +582,7 @@
     <value>فنان الألبوم</value>
   </data>
   <data name="PropertiesDialog_Length.Text" xml:space="preserve">
-    <value>الطول</value>
+    <value>المدة</value>
   </data>
   <data name="PropertiesDialog_Year.Text" xml:space="preserve">
     <value>السنة</value>
@@ -594,7 +594,7 @@
     <value>موقع الملف</value>
   </data>
   <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
-    <value>موقع الملف المفتوح</value>
+    <value>فتح موقع الملف</value>
   </data>
   <data name="PropertiesDialog.Title" xml:space="preserve">
     <value>الخصائص</value>
@@ -603,7 +603,7 @@
     <value>المعادل</value>
   </data>
   <data name="EqualizerDialog_On" xml:space="preserve">
-    <value>شغلوا</value>
+    <value>تشغيل</value>
   </data>
   <data name="EqualizerDialog_Decibel" xml:space="preserve">
     <value>dB</value>
@@ -615,10 +615,10 @@
     <value>إعداد مسبق</value>
   </data>
   <data name="EqualizerDialog_Presets" xml:space="preserve">
-    <value>مسطح, تعزيز التريبل, تعزيز الباس, سماعات الرأس, كمبيوتر محمول, مكبرات صوت محمولة, ستيريو منزلي, تلفزيون, سيارة, مخصص</value>
+    <value>مسطح, تعزيز الطبقات العالية, تعزيز الجهير, سماعات الرأس, حاسوب محمول, مكبرات صوت محمولة, نظام استريو منزلي, تلفاز, سيارة, مخصص</value>
   </data>
   <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
-    <value>حرك السلايدرز القريبين معا</value>
+    <value>تحريك أشرطة التمرير المتجاورة معًا</value>
   </data>
   <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
     <value>هرتز</value>
@@ -627,25 +627,25 @@
     <value>كيلوهرتز</value>
   </data>
   <data name="EqualizerDialog_Off" xml:space="preserve">
-    <value>انطلق</value>
+    <value>إيقاف</value>
   </data>
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
-    <value>تعديل معلومات الأغنية</value>
+    <value>تحرير معلومات الأغنية</value>
   </data>
   <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
-    <value>الكلمات</value>
+    <value>كلمات الأغنية</value>
   </data>
   <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
     <value>صورة الغلاف</value>
   </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
-    <value>تعديل معلومات الألبوم</value>
+    <value>تحرير معلومات الألبوم</value>
   </data>
   <data name="EditPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>تعديل معلومات قائمة التشغيل</value>
+    <value>تحرير معلومات قائمة التشغيل</value>
   </data>
   <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>إضافة إلى قائمة التشغيل الجديدة</value>
+    <value>إضافة إلى قائمة تشغيل جديدة</value>
   </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
     <value>إغلاق</value>
@@ -669,13 +669,13 @@
     <value>حفظ</value>
   </data>
   <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
-    <value>الاستيراد</value>
+    <value>استيراد</value>
   </data>
   <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
     <value>إلغاء</value>
   </data>
   <data name="ImportPlaylistDialog.Title" xml:space="preserve">
-    <value>قائمة تشغيل استيراد</value>
+    <value>استيراد قائمة تشغيل</value>
   </data>
   <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
     <value>الاسم</value>
@@ -684,7 +684,7 @@
     <value>استيراد من المجلد</value>
   </data>
   <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
-    <value>أغاني مستوردة</value>
+    <value>استيراد الأغاني</value>
   </data>
   <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
     <value>عدد الأغاني</value>
@@ -702,31 +702,31 @@
     <value>حفظ</value>
   </data>
   <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>اصنع</value>
+    <value>إنشاء</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
     <value>كلمات الأغاني على سطح المكتب</value>
   </data>
   <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
-    <value>العب الجميع</value>
+    <value>تشغيل الكل</value>
   </data>
   <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
-    <value>خلط اللعب واللعب</value>
+    <value>تشغيل عشوائي</value>
   </data>
   <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
-    <value>معلومات تعديل</value>
+    <value>تحرير المعلومات</value>
   </data>
   <data name="AlbumInfo_Songs" xml:space="preserve">
-    <value>الأغاني</value>
+    <value>أغانٍ</value>
   </data>
   <data name="AlbumInfo_RunTime" xml:space="preserve">
-    <value>مدة العرض</value>
+    <value>مدة التشغيل</value>
   </data>
   <data name="ArtistInfo_Albums" xml:space="preserve">
-    <value>الألبومات</value>
+    <value>ألبومات</value>
   </data>
   <data name="ArtistInfo_Album" xml:space="preserve">
-    <value>الألبوم</value>
+    <value>ألبوم</value>
   </data>
   <data name="ArtistInfo_Hours" xml:space="preserve">
     <value>ساعات</value>
@@ -735,16 +735,16 @@
     <value>ساعة</value>
   </data>
   <data name="ArtistInfo_Min" xml:space="preserve">
-    <value>الحد الأدنى</value>
+    <value>دقيقة</value>
   </data>
   <data name="ArtistInfo_Sec" xml:space="preserve">
-    <value>الوزير</value>
+    <value>ثانية</value>
   </data>
   <data name="ArtistInfo_Secs" xml:space="preserve">
-    <value>الوزارات</value>
+    <value>ثوانٍ</value>
   </data>
   <data name="ArtistInfo_Mins" xml:space="preserve">
-    <value>الدقائق</value>
+    <value>دقائق</value>
   </data>
   <data name="AlbumInfo_Song" xml:space="preserve">
     <value>أغنية</value>
@@ -780,25 +780,25 @@
     <value>إعادة المحاولة</value>
   </data>
   <data name="Home_SearchResult.Text" xml:space="preserve">
-    <value>نتائج البحث الخاصة</value>
+    <value> - نتائج البحث</value>
   </data>
   <data name="Settings_SourceCode.Content" xml:space="preserve">
     <value>الشيفرة المصدرية</value>
   </data>
   <data name="Settings_Thanks.Header" xml:space="preserve">
-    <value>شكرا ل MoXiangTongXiu على إحياء هذا البرنامج</value>
+    <value>شكرًا لـ MoXiangTongXiu على إضفاء الحياة على هذا البرنامج.</value>
   </data>
   <data name="OnlineSongs_Download.Text" xml:space="preserve">
-    <value>تحميل</value>
+    <value>تنزيل</value>
   </data>
   <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
-    <value>موقع تحميل الأغنية</value>
+    <value>موقع تنزيل الأغاني</value>
   </data>
   <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
-    <value>التغيير</value>
+    <value>تغيير</value>
   </data>
   <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
-    <value>ابدأ بالتحميل</value>
+    <value>بدء التنزيل</value>
   </data>
   <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
     <value>إلغاء</value>
@@ -807,25 +807,25 @@
     <value>التقدم</value>
   </data>
   <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
-    <value>جار تحميل...</value>
+    <value>جارٍ التنزيل...</value>
   </data>
   <data name="OnlineMusicLibrary_Processing" xml:space="preserve">
-    <value>قيد المعالجة...</value>
+    <value>جارٍ المعالجة...</value>
   </data>
   <data name="OnlineMusicLibrary_OpenFolder" xml:space="preserve">
-    <value>المجلد المفتوح</value>
+    <value>فتح المجلد</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
-    <value>تم تحميل اللعبة</value>
+    <value>اكتمل التنزيل</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCancelled" xml:space="preserve">
-    <value>تم إلغاء التحميل</value>
+    <value>أُلغي التنزيل</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadFailed" xml:space="preserve">
-    <value>فشل التحميل</value>
+    <value>فشل التنزيل</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
-    <value>تحميل الأغنية</value>
+    <value>جارٍ تنزيل الأغنية</value>
   </data>
   <data name="Shell_Settings.Content" xml:space="preserve">
     <value>الإعدادات</value>
@@ -834,13 +834,13 @@
     <value>الإعدادات (Ctrl+G)</value>
   </data>
   <data name="PlaylistInfo_Item" xml:space="preserve">
-    <value>العنصر</value>
+    <value>عنصر</value>
   </data>
   <data name="PlaylistInfo_Items" xml:space="preserve">
-    <value>العناصر</value>
+    <value>عناصر</value>
   </data>
   <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>قائمة تشغيل العرض</value>
+    <value>عرض قائمة التشغيل</value>
   </data>
   <data name="PlayLists_Rename.Text" xml:space="preserve">
     <value>إعادة التسمية</value>
@@ -849,43 +849,43 @@
     <value>حذف</value>
   </data>
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>قائمة تشغيل العرض</value>
+    <value>عرض قائمة التشغيل</value>
   </data>
   <data name="Main_SendFeedback.Content" xml:space="preserve">
-    <value>أرسل ملاحظات</value>
+    <value>إرسال ملاحظات</value>
   </data>
   <data name="Shell_PlayFiles" xml:space="preserve">
-    <value>ملف تشغيل (ملفات)</value>
+    <value>تشغيل ملفات</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value>لا يمكننا فتح {title}. قد يكون ذلك لأن نوع الملف غير مدعوم، أو أن امتداد الملف غير صحيح، أو أن الملف تالف، أو أن الشبكة غير طبيعية.</value>
+    <value>لا يمكننا فتح {title}. قد يكون السبب عدم دعم نوع الملف، أو خطأ في امتداد الملف، أو تلف الملف، أو وجود مشكلة في الشبكة.</value>
   </data>
   <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
-    <value>جهاز تشغيل الصوت قيد الاستخدام حاليا.</value>
+    <value>جهاز تشغيل الصوت قيد الاستخدام حاليًا.</value>
   </data>
   <data name="Error_SamePlaylistName" xml:space="preserve">
-    <value>قائمة تشغيل بهذا الاسم موجودة بالفعل في هذا المجلد. أدخل اسما آخر ثم حاول مرة أخرى.</value>
+    <value>توجد بالفعل قائمة تشغيل بهذا الاسم في هذا المجلد. أدخل اسمًا آخر ثم حاول مرة أخرى.</value>
   </data>
   <data name="Error_EditingSongInfoIO" xml:space="preserve">
-    <value>لا يمكننا تعديل {title}. قد يكون ذلك لأن الملف الحالي يعمل، أو يشغل بواسطة عملية أخرى، أو أن نوع الملف غير مدعوم.</value>
+    <value>لا يمكننا تحرير {title}. قد يكون السبب أن الملف قيد التشغيل، أو أنه مشغول بواسطة عملية أخرى، أو أن نوع الملف غير مدعوم.</value>
   </data>
   <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
     <value>خيارات المطور</value>
   </data>
   <data name="Settings_Logging.Header" xml:space="preserve">
-    <value>قطع الأشجار</value>
+    <value>التسجيل</value>
   </data>
   <data name="Settings_OpenFolder.Content" xml:space="preserve">
-    <value>المجلد المفتوح</value>
+    <value>فتح المجلد</value>
   </data>
   <data name="Error_EditingSongInfoOther" xml:space="preserve">
-    <value>لا يمكننا تعديل بعض خصائص {title}. قد يكون ذلك لأن نوع الملف غير مدعوم، أو لأن الملف تالف.</value>
+    <value>لا يمكننا تحرير بعض خصائص {title}. قد يكون السبب أن نوع الملف غير مدعوم أو أن الملف تالف.</value>
   </data>
   <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
     <value>ليس لديك قوائم تشغيل</value>
   </data>
   <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
-    <value>أنشئ قائمة تشغيل جديدة</value>
+    <value>إنشاء قائمة تشغيل جديدة</value>
   </data>
   <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
     <value>قائمة تشغيل جديدة</value>
@@ -894,40 +894,40 @@
     <value>إنشاء قائمة تشغيل</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
-    <value>قائمة تشغيل غير معنونة</value>
+    <value>قائمة تشغيل بلا عنوان</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist" xml:space="preserve">
-    <value>قائمة تشغيل غير معنونة</value>
+    <value>قائمة تشغيل بلا عنوان</value>
   </data>
   <data name="PlaylistInfo_Create" xml:space="preserve">
-    <value>تم إنشاء قائمة التشغيل '{title}'.</value>
+    <value>تم إنشاء قائمة التشغيل "{title}".</value>
   </data>
   <data name="PlaylistInfo_Delete" xml:space="preserve">
-    <value>تم حذف قائمة التشغيل '{title}'.</value>
+    <value>تم حذف قائمة التشغيل "{title}".</value>
   </data>
   <data name="PlaylistInfo_AddItems" xml:space="preserve">
-    <value>{num} أضيفت إلى قائمة التشغيل '{title}'.</value>
+    <value>تمت إضافة {num} من العناصر إلى قائمة التشغيل "{title}".</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
-    <value>تم استيراد قائمة تشغيل {num}.</value>
+    <value>تم استيراد {num} قائمة تشغيل.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
-    <value>تم تصدير قائمة تشغيل {num}.</value>
+    <value>تم تصدير {num} قائمة تشغيل.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
-    <value>تم تصدير قوائم تشغيل {num}.</value>
+    <value>تم تصدير {num} من قوائم التشغيل.</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
-    <value>تم استيراد قوائم تشغيل {num}.</value>
+    <value>تم استيراد {num} من قوائم التشغيل.</value>
   </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
-    <value>{num} أضيف إلى قائمة التشغيل '{title}'.</value>
+    <value>تمت إضافة {num} عنصر إلى قائمة التشغيل "{title}".</value>
   </data>
   <data name="Settings_Lyric.Text" xml:space="preserve">
-    <value>الكلمات</value>
+    <value>كلمات الأغنية</value>
   </data>
   <data name="Settings_Play.Text" xml:space="preserve">
-    <value>اللعب</value>
+    <value>تشغيل</value>
   </data>
   <data name="Settings_PlaylistFile" xml:space="preserve">
     <value>ملف قائمة التشغيل</value>
@@ -936,61 +936,61 @@
     <value>قائمة التشغيل</value>
   </data>
   <data name="Lyric_ShowCover.Text" xml:space="preserve">
-    <value>غلاف العرض</value>
+    <value>عرض الغلاف</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
-    <value>عارض صور حر</value>
+    <value>عارض الصور Untamed</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
-    <value>التكبير (↑ / Ctrl+Mouse Wheel up)</value>
+    <value>تكبير (↑ / Ctrl+عجلة الفأرة لأعلى)</value>
   </data>
   <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
     <value>الحجم الأصلي</value>
   </data>
   <data name="ImageViewer_Copy.ToolTipService.ToolTip" xml:space="preserve">
-    <value>نسخ إلى لوحة الكتابة</value>
+    <value>نسخ إلى الحافظة</value>
   </data>
   <data name="ImageViewer_Save.ToolTipService.ToolTip" xml:space="preserve">
     <value>حفظ</value>
   </data>
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
-    <value>التكبير (↑ / Ctrl+عجلة الفأرة للأسفل)</value>
+    <value>تصغير (↓ / Ctrl+عجلة الفأرة لأسفل)</value>
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
-    <value>لا توجد كلمات متاحة</value>
+    <value>لا تتوفر كلمات الأغنية</value>
   </data>
   <data name="Home_ServerError.Text" xml:space="preserve">
-    <value>غير قادر على الاتصال بالخادم</value>
+    <value>تعذر الاتصال بالخادم</value>
   </data>
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
-    <value>قد لا يتمكن المستخدمون خارج الصين القارية من الوصول إلى هذه المكتبة الموسيقية.</value>
+    <value>قد لا يتمكن المستخدمون خارج البر الرئيسي للصين من الوصول إلى هذه المكتبة الموسيقية.</value>
   </data>
   <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
-    <value>هذه المكتبة الموسيقية لم تفتح بعد، يرجى متابعة الموضوع</value>
+    <value>لم تُفتح هذه المكتبة الموسيقية بعد، يُرجى متابعة المستجدات.</value>
   </data>
   <data name="Lyric_SpeedUpLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>تسريع الكلمات بمقدار 0.3 ثانية</value>
+    <value>تقديم كلمات الأغنية بمقدار 0.3 ثانية</value>
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>إبطاء كلمات الأغنية بمقدار 0.3 ثانية</value>
+    <value>تأخير كلمات الأغنية بمقدار 0.3 ثانية</value>
   </data>
   <data name="Settings_LyricPreview.Header" xml:space="preserve">
     <value>معاينة</value>
   </data>
   <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
-    <value>عائلة فونت</value>
+    <value>عائلة الخط</value>
   </data>
   <data name="Settings_LyricOffset.Header" xml:space="preserve">
-    <value>أوفست الكلمات العالمية</value>
+    <value>الإزاحة العامة لكلمات الأغنية</value>
   </data>
   <data name="Settings_LyricOffset.Description" xml:space="preserve">
-    <value>القيم السلبية ستدفع الكلمات إلى الأمام، بينما القيم الإيجابية ستؤخرها</value>
+    <value>تُقدّم القيم السلبية كلمات الأغنية، بينما تؤخّرها القيم الإيجابية.</value>
   </data>
   <data name="Settings_Millisecond.Text" xml:space="preserve">
-    <value>ميلي ثانية</value>
+    <value>مللي ثانية</value>
   </data>
   <data name="Settings_FontWeights" xml:space="preserve">
-    <value>رفيع ,خفيف للغاية ,خفيف ,خفيف شبه ,عادي ,متوسط ,شبه عريض ,عريض ,عريض للغاية ,أسود ,أسود للغاية</value>
+    <value>رفيع, خفيف جدًا, خفيف, شبه خفيف, عادي, متوسط, شبه عريض, عريض, عريض جدًا, أسود, أسود جدًا</value>
   </data>
   <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
     <value>اختر وزن الخط</value>
@@ -999,9 +999,9 @@
     <value>وزن الخط</value>
   </data>
   <data name="Settings_LyricPageCurrentFontSize.Header" xml:space="preserve">
-    <value>حجم خط الكلمات المميز</value>
+    <value>حجم خط الكلمات المميزة</value>
   </data>
   <data name="Settings_LyricPageNotCurrentFontSize.Header" xml:space="preserve">
-    <value>حجم خط الكلمات العادي</value>
+    <value>حجم خط الكلمات العادية</value>
   </data>
 </root>

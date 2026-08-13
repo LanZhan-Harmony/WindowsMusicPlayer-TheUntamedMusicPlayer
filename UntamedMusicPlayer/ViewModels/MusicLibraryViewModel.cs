@@ -1,12 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Models;
 using ZLinq;
 
-using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class MusicLibraryViewModel
@@ -54,9 +53,7 @@ public sealed partial class MusicLibraryViewModel
     }
 
     [RelayCommand]
-
     public async Task PickMusicFolderButton()
-
     {
         var openPicker = new FolderPicker(App.MainWindow!.AppWindow.Id)
         {
@@ -93,7 +90,5 @@ public sealed partial class MusicLibraryViewModel
         );
     }
 
-
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
-

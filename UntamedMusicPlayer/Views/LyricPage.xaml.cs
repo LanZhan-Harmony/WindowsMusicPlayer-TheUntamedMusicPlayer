@@ -11,7 +11,6 @@ using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Foundation;
 
@@ -737,9 +736,3 @@ public sealed partial class LyricPage : Page, IDisposable
         _rootPlayBarViewModel.PropertyChanged -= OnRootPlayBarChanged;
     }
 }
-
-
-
-
-
-

@@ -3,7 +3,6 @@ using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.LyricRenderer;
-using UntamedMusicPlayer.Services;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Media;
 using Windows.Media.Playback;

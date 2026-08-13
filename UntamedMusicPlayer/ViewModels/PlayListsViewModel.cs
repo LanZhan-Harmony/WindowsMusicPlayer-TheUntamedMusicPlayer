@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
@@ -7,7 +8,6 @@ using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using ZLinq;
 
-using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class PlayListsViewModel
@@ -17,6 +17,7 @@ public sealed partial class PlayListsViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly MusicPlayer _musicPlayer;
 
     private List<PlaylistInfo> _tempPlaylists = App.GetService<PlaylistLibrary>().Playlists;
 
@@ -25,7 +26,8 @@ public sealed partial class PlayListsViewModel
     public PlaylistInfo? LastNavigatedPlaylist { get; set; }
 
     [ObservableProperty]
-    public partial bool IsMainProgressRingActive { get; set; } = !App.GetService<PlaylistLibrary>().HasLoaded;
+    public partial bool IsMainProgressRingActive { get; set; } =
+        !App.GetService<PlaylistLibrary>().HasLoaded;
 
     [ObservableProperty]
     public partial bool IsNoPlaylistControlVisible { get; set; } = false;
@@ -50,9 +52,10 @@ public sealed partial class PlayListsViewModel
     [ObservableProperty]
     public partial bool IsProgressRingActive { get; set; } = false;
 
-    public PlayListsViewModel()
+    public PlayListsViewModel(MusicPlayer musicPlayer)
         : base(StrongReferenceMessenger.Default)
     {
+        _musicPlayer = musicPlayer;
         Messenger.Register(this);
         _ = LoadModeAndPlayList();
     }
@@ -161,67 +164,61 @@ public sealed partial class PlayListsViewModel
     }
 
     [RelayCommand]
-
     public void PlayButton(PlaylistInfo info)
-
     {
         var songList = info.GetAllSongs();
         if (songList.Length == 0)
         {
             return;
         }
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
-        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+        _musicPlayer
+            .QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
+        _musicPlayer.PlaySongByInfo(songList[0]);
     }
 
     [RelayCommand]
-
     public void PlayNextButton(PlaylistInfo info)
-
     {
         var songList = info.GetAllSongs();
         if (songList.Length == 0)
         {
             return;
         }
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer
+                .QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
+            _musicPlayer.QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
     [RelayCommand]
-
     public void AddToPlayQueueButton(PlaylistInfo info)
-
     {
         var songList = info.GetAllSongs();
         if (songList.Length == 0)
         {
             return;
         }
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer
+                .QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
+            _musicPlayer.QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
     [RelayCommand]
-
     public async Task AddToPlaylistButton(Tuple<PlaylistInfo, PlaylistInfo> tuple)
-
     {
-
         var (info, playlist) = tuple;
         var songList = info.GetAllSongs();
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
@@ -238,10 +235,5 @@ public sealed partial class PlayListsViewModel
         await _localSettingsService.SaveSettingAsync("PlaylistSortMode", SortMode);
     }
 
-
-
-
-
     public void Dispose() => Messenger.Unregister<HavePlaylistMessage>(this);
 }
-

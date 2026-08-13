@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
-using UntamedMusicPlayer.Services;
 using Windows.Media.Playback;
 using ZLogger;
 

@@ -6,7 +6,6 @@ using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 
 namespace UntamedMusicPlayer.Views;
@@ -33,10 +32,7 @@ public sealed partial class PlayListsPage : Page
         }
     }
 
-    private async void SortByListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs e
-    )
+    private async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ListView listView)
         {
@@ -82,7 +78,10 @@ public sealed partial class PlayListsPage : Page
             && sender is GridView gridView
         )
         {
-            gridView.ScrollIntoView(ViewModel.LastNavigatedPlaylist, ScrollIntoViewAlignment.Leading);
+            gridView.ScrollIntoView(
+                ViewModel.LastNavigatedPlaylist,
+                ScrollIntoViewAlignment.Leading
+            );
             gridView.UpdateLayout();
             var animation = ConnectedAnimationService
                 .GetForCurrentView()
@@ -114,11 +113,12 @@ public sealed partial class PlayListsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             ViewModel.LastNavigatedPlaylist = info;
-            App.GetService<INavigationService>().NavigateShell(
-                nameof(PlayListDetailPage),
-                new PlaylistNavigationArgs(info, nameof(PlayListsPage)),
-                new SuppressNavigationTransitionInfo()
-            );
+            App.GetService<INavigationService>()
+                .NavigateShell(
+                    nameof(PlayListDetailPage),
+                    new PlaylistNavigationArgs(info, nameof(PlayListsPage)),
+                    new SuppressNavigationTransitionInfo()
+                );
         }
     }
 
@@ -219,7 +219,9 @@ public sealed partial class PlayListsPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -264,9 +266,3 @@ public sealed partial class PlayListsPage : Page
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
-
-
-
-
-
-

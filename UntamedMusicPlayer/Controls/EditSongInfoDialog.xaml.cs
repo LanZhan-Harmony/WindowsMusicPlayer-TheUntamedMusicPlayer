@@ -13,7 +13,6 @@ using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using ZLinq;
 using ZLogger;
 
@@ -270,4 +269,3 @@ public sealed partial class EditSongInfoDialog
         StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
-

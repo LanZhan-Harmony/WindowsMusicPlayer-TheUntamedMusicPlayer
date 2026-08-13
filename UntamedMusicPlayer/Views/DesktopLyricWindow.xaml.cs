@@ -5,11 +5,9 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
-using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using Windows.Foundation;
 using WinRT.Interop;
 using WinUIEx;
@@ -182,8 +180,3 @@ public sealed partial class DesktopLyricWindow : WindowEx, IDisposable
         Close();
     }
 }
-
-
-
-
-

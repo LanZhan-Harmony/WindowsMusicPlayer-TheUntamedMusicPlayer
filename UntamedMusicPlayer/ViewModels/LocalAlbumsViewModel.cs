@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
@@ -11,7 +11,6 @@ using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 using ZLinq;
 
-using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class LocalAlbumsViewModel
@@ -21,8 +20,8 @@ public sealed partial class LocalAlbumsViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
-    private readonly INavigationService _navigationService =
-        App.GetService<INavigationService>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
+    private readonly MusicPlayer _musicPlayer;
 
     private bool _groupMode = true;
 
@@ -67,9 +66,10 @@ public sealed partial class LocalAlbumsViewModel
     [ObservableProperty]
     public partial string GenreStr { get; set; } = "";
 
-    public LocalAlbumsViewModel()
+    public LocalAlbumsViewModel(MusicPlayer musicPlayer)
         : base(StrongReferenceMessenger.Default)
     {
+        _musicPlayer = musicPlayer;
         Messenger.Register(this);
         _ = LoadModeAndAlbumList();
     }
@@ -354,64 +354,53 @@ public sealed partial class LocalAlbumsViewModel
     }
 
     [RelayCommand]
-
     public void PlayButton(LocalAlbumInfo info)
-
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
-        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+        _musicPlayer.QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+        _musicPlayer.PlaySongByInfo(songList[0]);
     }
 
     [RelayCommand]
-
     public void PlayNextButton(LocalAlbumInfo info)
-
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer.QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
+            _musicPlayer.QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
     [RelayCommand]
-
     public void AddToPlayQueueButton(LocalAlbumInfo info)
-
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer.QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{info.Name}", songList);
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
+            _musicPlayer.QueueManager.AddSongsToEnd(songList);
         }
     }
 
     [RelayCommand]
-
     public async Task AddToPlaylistButton(Tuple<LocalAlbumInfo, PlaylistInfo> tuple)
-
     {
-
         var (info, playlist) = tuple;
         var songList = App.GetService<MusicLibrary>().GetSongsByAlbum(info);
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
 
     [RelayCommand]
-
     public void ShowArtistButton(LocalAlbumInfo info)
-
     {
         var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(info.Artists[0]);
         if (localArtistInfo is not null)
@@ -482,11 +471,5 @@ public sealed partial class LocalAlbumsViewModel
         };
     }
 
-
-
-
-
-
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
-

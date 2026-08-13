@@ -1,10 +1,9 @@
 using System.Collections.ObjectModel;
 using MemoryPack;
 using Microsoft.Extensions.Logging;
-using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLinq;
 using ZLogger;

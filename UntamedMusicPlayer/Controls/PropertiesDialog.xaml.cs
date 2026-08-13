@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Services;
 
 namespace UntamedMusicPlayer.Controls;
 

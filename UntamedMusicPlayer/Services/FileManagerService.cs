@@ -5,8 +5,6 @@ using MemoryPack;
 using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
-using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLogger;
 

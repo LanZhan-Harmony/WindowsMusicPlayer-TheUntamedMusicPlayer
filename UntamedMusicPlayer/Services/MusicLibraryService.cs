@@ -9,7 +9,6 @@ using UntamedMusicPlayer.Core.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLinq;
 using ZLogger;

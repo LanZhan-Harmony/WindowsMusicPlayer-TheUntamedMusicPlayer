@@ -66,10 +66,10 @@
     <value>बंधनमुक्त म्यूज़िक प्लेयर</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
-    <value>संगीत पुस्तकालय</value>
+    <value>संगीत लाइब्रेरी</value>
   </data>
   <data name="Shell_PlayQueue.Content" xml:space="preserve">
-    <value>कतार खेलें</value>
+    <value>प्लेबैक कतार</value>
   </data>
   <data name="Shell_PlayLists.Content" xml:space="preserve">
     <value>प्लेलिस्ट</value>
@@ -78,10 +78,10 @@
     <value>निजीकरण</value>
   </data>
   <data name="Settings_ThisIsAnOrdinaryLyric.Text" xml:space="preserve">
-    <value>यह एक साधारण गीत है</value>
+    <value>यह सामान्य लिरिक्स की एक पंक्ति है</value>
   </data>
   <data name="Settings_ThisIsAHighlightedLyric.Text" xml:space="preserve">
-    <value>यह एक हाइलाइट किया गया गीत है</value>
+    <value>यह हाइलाइट की गई लिरिक्स की एक पंक्ति है</value>
   </data>
   <data name="Settings_Theme.Header" xml:space="preserve">
     <value>ऐप थीम</value>
@@ -90,10 +90,10 @@
     <value>इस सॉफ़्टवेयर को रीसेट करें</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>रोशनी</value>
+    <value>हल्का</value>
   </data>
   <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>अंधेरा</value>
+    <value>गहरा</value>
   </data>
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
     <value>सिस्टम सेटिंग का उपयोग करें</value>
@@ -105,109 +105,109 @@
     <value>इस फ़ोल्डर को संगीत में जोड़ें</value>
   </data>
   <data name="Settings_AboutDescription.Description" xml:space="preserve">
-    <value>© 2026 Untamed Corporation सर्वाधिकार सुरक्षित।</value>
+    <value>© 2026 Untamed Corporation. सर्वाधिकार सुरक्षित।</value>
   </data>
   <data name="Settings_Library.Text" xml:space="preserve">
-    <value>पुस्तकालय</value>
+    <value>लाइब्रेरियाँ</value>
   </data>
   <data name="Settings_AddFolder.Text" xml:space="preserve">
     <value>फ़ोल्डर जोड़ें</value>
   </data>
   <data name="Settings_MusicLibraryLocation.Header" xml:space="preserve">
-    <value>संगीत पुस्तकालय स्थान</value>
+    <value>संगीत लाइब्रेरी के स्थान</value>
   </data>
   <data name="Settings_NoFolder.Text" xml:space="preserve">
-    <value>इस लायब्रेरी में कोई फ़ोल्डर शामिल नहीं हैं.</value>
+    <value>इस लाइब्रेरी में कोई फ़ोल्डर शामिल नहीं है।</value>
   </data>
   <data name="Settings_Refresh.Content" xml:space="preserve">
-    <value>ताज़ा करना</value>
+    <value>रीफ़्रेश करें</value>
   </data>
   <data name="Settings_Import.Content" xml:space="preserve">
-    <value>आयात</value>
+    <value>आयात करें</value>
   </data>
   <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
-    <value>अलग-अलग प्लेलिस्ट आयात करें</value>
+    <value>एकल प्लेलिस्ट आयात करें</value>
   </data>
   <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
-    <value>m3u8 फ़ाइलों से प्लेलिस्ट आयात करें</value>
+    <value>m3u8 फ़ाइलों से प्लेलिस्ट बैच में आयात करें</value>
   </data>
   <data name="Settings_ImportFromBin.Header" xml:space="preserve">
-    <value>बाइनरी फ़ाइल से प्लेलिस्ट आयात करें</value>
+    <value>बाइनरी फ़ाइल से प्लेलिस्ट बैच में आयात करें</value>
   </data>
   <data name="Settings_Export.Content" xml:space="preserve">
-    <value>निर्यातित माल</value>
+    <value>निर्यात करें</value>
   </data>
   <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
-    <value>बैच निर्यात प्लेलिस्ट को m3u8 फ़ाइलों में (अनुशंसित)</value>
+    <value>प्लेलिस्ट को m3u8 फ़ाइलों में बैच के रूप में निर्यात करें (अनुशंसित)</value>
   </data>
   <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
-    <value>बेहतर संगतता और अधिकांश संगीत खिलाड़ियों के साथ काम करता है</value>
+    <value>इसमें बेहतर संगतता है और यह अधिकांश संगीत प्लेयर के साथ काम करता है।</value>
   </data>
   <data name="Settings_ExportToBin.Header" xml:space="preserve">
-    <value>बाइनरी फ़ाइल में प्लेलिस्ट निर्यात करें</value>
+    <value>प्लेलिस्ट को बाइनरी फ़ाइल में निर्यात करें</value>
   </data>
   <data name="Settings_ExportToBin.Description" xml:space="preserve">
-    <value>तेज़ लेकिन केवल इस सॉफ़्टवेयर के लिए उपलब्ध है</value>
+    <value>यह तेज़ है, लेकिन केवल इसी सॉफ़्टवेयर में उपलब्ध है।</value>
   </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
-    <value>पुस्तकालयों को ताज़ा करें</value>
+    <value>लाइब्रेरियाँ रीफ़्रेश करें</value>
   </data>
   <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
-    <value>पूर्ण स्क्रीन गीत पृष्ठ में प्लेबैक नियंत्रण पट्टी को स्वचालित रूप से छुपाएं</value>
+    <value>पूर्ण-स्क्रीन लिरिक्स पेज पर प्लेबैक नियंत्रण पट्टी अपने-आप छिपाएँ</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
-    <value>विशेष मोड</value>
+    <value>एक्सक्लूसिव मोड</value>
   </data>
   <data name="Settings_LowLatencyMode.Header" xml:space="preserve">
     <value>कम विलंबता मोड</value>
   </data>
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
-    <value>ऑडियो विलंबता को कम करता है। मध्य-से-उच्च-अंत उपकरणों के लिए अनुशंसित। यदि आप हकलाने या प्लेबैक समस्याओं का अनुभव करते हैं, तो इसे अक्षम करें।</value>
+    <value>ऑडियो विलंबता कम करता है। मध्यम से उच्च-स्तरीय डिवाइसों के लिए अनुशंसित। आवाज़ अटकने या प्लेबैक संबंधी समस्याएँ आने पर इसे अक्षम करें।</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
-    <value>यदि आप फ़ोल्डर सॉर्टिंग सक्षम के साथ संगीत लाइब्रेरी के गीत पृष्ठ पर हैं, तो किसी गीत पर क्लिक करने से केवल उसी फ़ोल्डर से प्लेबैक कतार में गाने जुड़ जाएंगे।</value>
+    <value>यदि संगीत लाइब्रेरी के गीत पृष्ठ पर फ़ोल्डर के अनुसार क्रमबद्ध करना चालू है, तो किसी गीत पर क्लिक करने पर केवल उसी फ़ोल्डर के गीत प्लेबैक कतार में जोड़े जाएंगे।</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
-    <value>केवल वह फ़ोल्डर जोड़ें जहां गीत स्थित है</value>
+    <value>केवल गीत वाला फ़ोल्डर जोड़ें</value>
   </data>
   <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
     <value>प्लेलिस्ट आयात/निर्यात</value>
   </data>
   <data name="Settings_ReIndex.Text" xml:space="preserve">
-    <value>यदि आप अपने लाइब्रेरी स्थानों से सभी मीडिया नहीं देख रहे हैं, तो आप अब अपनी लाइब्रेरीज़ को फिर से अनुक्रमित कर सकते हैं।</value>
+    <value>यदि आपको अपनी लाइब्रेरी के स्थानों से सभी मीडिया दिखाई नहीं दे रहा है, तो आप अभी अपनी लाइब्रेरियों को फिर से इंडेक्स कर सकते हैं।</value>
   </data>
   <data name="Shell_Search.PlaceholderText" xml:space="preserve">
-    <value>खोज (जल्द ही आ रहा है)</value>
+    <value>खोजें (जल्द उपलब्ध होगा)</value>
   </data>
   <data name="PlayBar_Property.Text" xml:space="preserve">
     <value>गुण</value>
   </data>
   <data name="PlayBar_Equalizer.Text" xml:space="preserve">
-    <value>तुल्यकारक (जल्द ही आ रहा है)</value>
+    <value>इक्वलाइज़र (जल्द उपलब्ध होगा)</value>
   </data>
   <data name="PlayBar_Speed.Text" xml:space="preserve">
     <value>गति</value>
   </data>
   <data name="PlayBar_CastDevice.Text" xml:space="preserve">
-    <value>डिवाइस पर कास्ट करें (जल्द ही आ रहा है)</value>
+    <value>डिवाइस पर कास्ट करें (जल्द उपलब्ध होगा)</value>
   </data>
   <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
-    <value>10 सेकंड पीछे छोड़ें</value>
+    <value>10 सेकंड पीछे जाएँ</value>
   </data>
   <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
-    <value>30 सेकंड आगे बढ़ें</value>
+    <value>30 सेकंड आगे जाएँ</value>
   </data>
   <data name="Shell_PlayLists1.Text" xml:space="preserve">
     <value>प्लेलिस्ट</value>
   </data>
   <data name="Shell_PlayQueue1.Text" xml:space="preserve">
-    <value>कतार खेलें</value>
+    <value>प्लेबैक कतार</value>
   </data>
   <data name="Shell_MusicLibrary1.Text" xml:space="preserve">
-    <value>राग</value>
+    <value>संगीत</value>
   </data>
   <data name="Shell_Settings1.Text" xml:space="preserve">
-    <value>सेटिंग</value>
+    <value>सेटिंग्स</value>
   </data>
   <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
     <value>हमें कोई संगीत नहीं मिला</value>
@@ -225,19 +225,19 @@
     <value>एल्बम</value>
   </data>
   <data name="HaveMusic_Artists.Text" xml:space="preserve">
-    <value>कलाकारों</value>
+    <value>कलाकार</value>
   </data>
   <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
-    <value>इस फ़ोल्डर को वापस ले लें?</value>
+    <value>क्या इस फ़ोल्डर को निकालना है?</value>
   </data>
   <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
     <value>क्या आप वाकई इस सॉफ़्टवेयर को रीसेट करना चाहते हैं?</value>
   </data>
   <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
-    <value>अगर आप संगीत से "{title}" फ़ोल्डर निकालते हैं, तो वह अब संगीत में दिखाई नहीं देगा, लेकिन मिटाया नहीं जाएगा.</value>
+    <value>यदि आप "{title}" फ़ोल्डर को संगीत से निकालते हैं, तो वह अब संगीत में दिखाई नहीं देगा, लेकिन हटाया नहीं जाएगा।</value>
   </data>
   <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
-    <value>इस सॉफ़्टवेयर का सारा डेटा खाली कर दिया जाएगा, जिसमें सेटिंग्स, प्ले क्यू, प्लेलिस्ट आदि शामिल हैं, कृपया सावधानी से आगे बढ़ें।</value>
+    <value>इस सॉफ़्टवेयर का सारा डेटा हटा दिया जाएगा, जिसमें सेटिंग्स, प्लेबैक कतार, प्लेलिस्ट आदि शामिल हैं। कृपया सावधानी से आगे बढ़ें।</value>
   </data>
   <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
     <value>फ़ोल्डर निकालें</value>
@@ -246,31 +246,31 @@
     <value>रीसेट करें और पुनरारंभ करें</value>
   </data>
   <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="Settings_ResetSoftwareDialogClose" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="PlayLists_DeleteDialogClose" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="PlayLists_DeleteDialogPrimary" xml:space="preserve">
-    <value>मिटाना</value>
+    <value>हटाएँ</value>
   </data>
   <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
-    <value>प्लेलिस्ट को स्थायी रूप से हटाएं?</value>
+    <value>क्या आप प्लेलिस्ट को स्थायी रूप से हटाना चाहते हैं?</value>
   </data>
   <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
-    <value>क्या आप वाकई इस प्लेलिस्ट को हटाना चाहते हैं? यदि आप "{title}" हटाते हैं, तो आप इसे पुनर्प्राप्त नहीं कर पाएंगे.</value>
+    <value>क्या आप वाकई इस प्लेलिस्ट को हटाना चाहते हैं? यदि आप "{title}" को हटाते हैं, तो इसे पुनर्प्राप्त नहीं किया जा सकेगा।</value>
   </data>
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
-    <value>सिस्टम अनुक्रमणिका सेटिंग्स प्रबंधित करें</value>
+    <value>सिस्टम इंडेक्सिंग सेटिंग्स प्रबंधित करें</value>
   </data>
   <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
-    <value>क्या आप ऐप्स स्विच करना चाहते थे?</value>
+    <value>क्या आप ऐप बदलना चाहते थे?</value>
   </data>
   <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
-    <value> "मीडिया प्लेयर" "सेटिंग्स" खोलने की कोशिश कर रहा है।</value>
+    <value>"मीडिया प्लेयर" "सेटिंग्स" खोलने की कोशिश कर रहा है।</value>
   </data>
   <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
     <value>हाँ</value>
@@ -285,82 +285,82 @@
     <value>पूर्ण स्क्रीन (F11)</value>
   </data>
   <data name="PlayBar_DesktopLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>डेस्कटॉप गीत (Ctrl+M)</value>
+    <value>डेस्कटॉप लिरिक्स (Ctrl+M)</value>
   </data>
   <data name="PlayBar_More.ToolTipService.ToolTip" xml:space="preserve">
     <value>अधिक विकल्प</value>
   </data>
   <data name="PlayBar_Prev.ToolTipService.ToolTip" xml:space="preserve">
-    <value>पिछला (Ctrl+B)</value>
+    <value>पिछला ट्रैक (Ctrl+B)</value>
   </data>
   <data name="PlayBar_Next.ToolTipService.ToolTip" xml:space="preserve">
-    <value>अगला (Ctrl+F)</value>
+    <value>अगला ट्रैक (Ctrl+F)</value>
   </data>
   <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
-    <value>नाउप्लेइंग (Ctrl+N)</value>
+    <value>अभी चल रहा है (Ctrl+N)</value>
   </data>
   <data name="PlayBar_ShuffleOff" xml:space="preserve">
-    <value>फेरबदल: बंद (Ctrl+H)</value>
+    <value>शफ़ल: बंद (Ctrl+H)</value>
   </data>
   <data name="PlayBar_ShuffleOn" xml:space="preserve">
-    <value>फेरबदल: चालू (Ctrl+H)</value>
+    <value>शफ़ल: चालू (Ctrl+H)</value>
   </data>
   <data name="PlayBar_RepeatOff" xml:space="preserve">
-    <value>दोहराएँ: बंद (Ctrl+T)</value>
+    <value>रिपीट: बंद (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatAll" xml:space="preserve">
-    <value>दोहराएँ: सभी (Ctrl+T)</value>
+    <value>रिपीट: सभी (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatOne" xml:space="preserve">
-    <value>दोहराएँ: एक (Ctrl+T)</value>
+    <value>रिपीट: एक (Ctrl+T)</value>
   </data>
   <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
     <value>संगीत लाइब्रेरी (Ctrl+R)</value>
   </data>
   <data name="Shell_PlayQueue.ToolTipService.ToolTip" xml:space="preserve">
-    <value>कतार खेलें (Ctrl+Q)</value>
+    <value>प्लेबैक कतार (Ctrl+Q)</value>
   </data>
   <data name="Shell_PlayLists.ToolTipService.ToolTip" xml:space="preserve">
     <value>प्लेलिस्ट (Ctrl+Y)</value>
   </data>
   <data name="PlayBar_Play" xml:space="preserve">
-    <value>प्ले (Ctrl+P)</value>
+    <value>चलाएँ (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Pause" xml:space="preserve">
     <value>रोकें (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
-    <value>लेना</value>
+    <value>सीक</value>
   </data>
   <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
     <value>फ़ोल्डर निकालें</value>
   </data>
   <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>अपनी संगीत लाइब्रेरी में कोई फ़ोल्डर जोड़ना</value>
+    <value>अपनी संगीत लाइब्रेरी में फ़ोल्डर जोड़ें</value>
   </data>
   <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
-    <value>फेरबदल: चालू</value>
+    <value>शफ़ल: चालू</value>
   </data>
   <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
-    <value>फेरबदल: बंद</value>
+    <value>शफ़ल: बंद</value>
   </data>
   <data name="PlayBar_More_RepeatAll" xml:space="preserve">
-    <value>दोहराएँ: सभी</value>
+    <value>रिपीट: सभी</value>
   </data>
   <data name="PlayBar_More_RepeatOne" xml:space="preserve">
-    <value>दोहराएँ: एक</value>
+    <value>रिपीट: एक</value>
   </data>
   <data name="PlayBar_More_RepeatOff" xml:space="preserve">
-    <value>दोहराएँ: बंद</value>
+    <value>रिपीट: बंद</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>कोई नहीं, अभ्रक, अभ्रक alt, डेस्कटॉप एक्रिलिक, ऐक्रेलिक आधार, ऐक्रेलिक पतला, धुंधला, पारदर्शी, एनिमेटेड</value>
+    <value>कोई नहीं, माइका, माइका ऑल्ट, डेस्कटॉप ऐक्रिलिक, ऐक्रिलिक बेस, ऐक्रिलिक थिन, ब्लर, पारदर्शी, एनिमेटेड</value>
   </data>
   <data name="Songs_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, कलाकार (आरोही), कलाकार (अवरोही), एल्बम (आरोही), एल्बम (अवरोही), रिलीज़ वर्ष (आरोही), रिलीज़ वर्ष (अवरोही), दिनांक जोड़ा गया (आरोही), दिनांक जोड़ा गया (अवरोही), फ़ोल्डर (आरोही), फ़ोल्डर (अवरोही)</value>
+    <value>A - Z, Z - A, कलाकार (आरोही), कलाकार (अवरोही), एल्बम (आरोही), एल्बम (अवरोही), रिलीज़ वर्ष (आरोही), रिलीज़ वर्ष (अवरोही), जोड़ने की तारीख (आरोही), जोड़ने की तारीख (अवरोही), फ़ोल्डर (आरोही), फ़ोल्डर (अवरोही)</value>
   </data>
   <data name="Albums_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, रिलीज़ वर्ष (आरोही), रिलीज़ वर्ष (अवरोही), कलाकार (आरोही), कलाकार (अवरोही), दिनांक जोड़ा गया (आरोही), दिनांक जोड़ा गया (अवरोही)</value>
+    <value>A - Z, Z - A, रिलीज़ वर्ष (आरोही), रिलीज़ वर्ष (अवरोही), कलाकार (आरोही), कलाकार (अवरोही), जोड़ने की तारीख (आरोही), जोड़ने की तारीख (अवरोही)</value>
   </data>
   <data name="SongInfo_UnknownArtist" xml:space="preserve">
     <value>अज्ञात कलाकार</value>
@@ -372,34 +372,34 @@
     <value>स्थानीय गीत</value>
   </data>
   <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
-    <value>ऑनलाइन गाना</value>
+    <value>ऑनलाइन गीत</value>
   </data>
   <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
-    <value>संगीत पुस्तकालय 5 से गीत</value>
+    <value>संगीत लाइब्रेरी 5 से गीत</value>
   </data>
   <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
-    <value>संगीत पुस्तकालय 6 से गीत</value>
+    <value>संगीत लाइब्रेरी 6 से गीत</value>
   </data>
   <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
-    <value>संगीत पुस्तकालय 4 से गीत</value>
+    <value>संगीत लाइब्रेरी 4 से गीत</value>
   </data>
   <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
-    <value>संगीत पुस्तकालय 3 से गीत</value>
+    <value>संगीत लाइब्रेरी 3 से गीत</value>
   </data>
   <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
-    <value>संगीत पुस्तकालय 2 से गीत</value>
+    <value>संगीत लाइब्रेरी 2 से गीत</value>
   </data>
   <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
-    <value>संगीत पुस्तकालय 1 से गीत</value>
+    <value>संगीत लाइब्रेरी 1 से गीत</value>
   </data>
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
     <value>अज्ञात एल्बम</value>
   </data>
   <data name="Songs_SortByChosen.Text" xml:space="preserve">
-    <value>इसके अनुसार क्रमबद्ध करें: </value>
+    <value>क्रमबद्ध करें: </value>
   </data>
   <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
-    <value>फेरबदल करें और खेलें</value>
+    <value>शफ़ल करके चलाएँ</value>
   </data>
   <data name="Songs_GenreChosen.Text" xml:space="preserve">
     <value>शैली: </value>
@@ -408,10 +408,10 @@
     <value>साफ़ करें</value>
   </data>
   <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
-    <value>खेलने के लिए जोड़ें कतार</value>
+    <value>प्लेबैक कतार में जोड़ें</value>
   </data>
   <data name="Songs_AddTo_PlayQueue.Text" xml:space="preserve">
-    <value>कतार खेलें</value>
+    <value>प्लेबैक कतार</value>
   </data>
   <data name="Songs_AddTo_NewPlaylist.Text" xml:space="preserve">
     <value>नई प्लेलिस्ट</value>
@@ -420,43 +420,43 @@
     <value>फ़ाइलें जोड़ें</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
-    <value>कतार चलाने के लिए फ़ाइल(फ़ाइलें) जोड़ें</value>
+    <value>फ़ाइलें प्लेबैक कतार में जोड़ें</value>
   </data>
   <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
-    <value>खेलने की कतार में जोड़ने के लिए फ़ाइलों के लिए ब्राउज़ करें</value>
+    <value>प्लेबैक कतार में जोड़ने के लिए फ़ाइलें ब्राउज़ करें</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
-    <value>कतार चलाने के लिए फ़ोल्डर जोड़ें</value>
+    <value>फ़ोल्डर को प्लेबैक कतार में जोड़ें</value>
   </data>
   <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
-    <value>एक फ़ोल्डर चुनें, और उस फ़ोल्डर के सभी मीडिया को प्ले क्यू में जोड़ें</value>
+    <value>एक फ़ोल्डर चुनें और उसमें मौजूद सभी मीडिया को प्लेबैक कतार में जोड़ें</value>
   </data>
   <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
-    <value>कतार चलाने के लिए URL से मीडिया जोड़ें</value>
+    <value>URL से मीडिया को प्लेबैक कतार में जोड़ें</value>
   </data>
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
-    <value>एक URL दर्ज करें, और उस पते से मीडिया को प्ले क्यू में जोड़ें</value>
+    <value>URL दर्ज करें और उस पते से मीडिया को प्लेबैक कतार में जोड़ें</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
     <value>एक URL खोलें</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Cancel" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
-    <value>खोलना</value>
+    <value>खोलें</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
-    <value>किसी फ़ाइल, स्ट्रीम या प्लेलिस्ट का यूआरएल डालें</value>
+    <value>किसी फ़ाइल, स्ट्रीम या प्लेलिस्ट का URL दर्ज करें</value>
   </data>
   <data name="Songs_Play.Text" xml:space="preserve">
-    <value>खेल</value>
+    <value>चलाएँ</value>
   </data>
   <data name="Songs_PlayNext.Text" xml:space="preserve">
-    <value>अगला खेलें</value>
+    <value>अगला चलाएँ</value>
   </data>
   <data name="Songs_AddTo.Text" xml:space="preserve">
-    <value>में जोड़ें</value>
+    <value>इसमें जोड़ें</value>
   </data>
   <data name="Songs_EditInfo.Text" xml:space="preserve">
     <value>जानकारी संपादित करें</value>
@@ -465,16 +465,16 @@
     <value>गुण</value>
   </data>
   <data name="Songs_ShowAlbum.Text" xml:space="preserve">
-    <value>एल्बम दिखाएं</value>
+    <value>एल्बम दिखाएँ</value>
   </data>
   <data name="Songs_ShowArtist.Text" xml:space="preserve">
-    <value>कलाकार दिखाएं</value>
+    <value>कलाकार दिखाएँ</value>
   </data>
   <data name="Songs_Select.Text" xml:space="preserve">
     <value>चुनें</value>
   </data>
   <data name="PlayQueue_Remove.Text" xml:space="preserve">
-    <value>हटाना</value>
+    <value>निकालें</value>
   </data>
   <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
     <value>ऊपर ले जाएँ</value>
@@ -483,43 +483,43 @@
     <value>नीचे ले जाएँ</value>
   </data>
   <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>खेल</value>
+    <value>चलाएँ</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
-    <value>खिड़की सामग्री</value>
+    <value>विंडो मैटीरियल</value>
   </data>
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
-    <value>एक सामग्री चुनें</value>
+    <value>मैटीरियल चुनें</value>
   </data>
   <data name="Settings_LyricFont.Header" xml:space="preserve">
-    <value>गीत फ़ॉन्ट-परिवार</value>
+    <value>लिरिक्स का फ़ॉन्ट</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
-    <value>कोई फ़ॉन्ट-परिवार चुनें</value>
+    <value>फ़ॉन्ट परिवार चुनें</value>
   </data>
   <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
-    <value>फ़ॉन्ट-आकार चुनें</value>
+    <value>फ़ॉन्ट आकार चुनें</value>
   </data>
   <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>विंडो पृष्ठभूमि कवर थीम रंग का अनुसरण करती है</value>
+    <value>विंडो की पृष्ठभूमि कवर के थीम रंग का अनुसरण करती है</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="Settings_Version" xml:space="preserve">
-    <value>विवरण</value>
+    <value>संस्करण</value>
   </data>
   <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>साफ़ करें (Ctrl+Shift+X)</value>
   </data>
   <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>खेलने की कतार में जोड़ने के लिए फ़ाइलों के लिए ब्राउज़ करें</value>
+    <value>प्लेबैक कतार में जोड़ने के लिए फ़ाइलें ब्राउज़ करें</value>
   </data>
   <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>10 सेकंड पीछे छोड़ें (Ctrl+बाएं)</value>
+    <value>10 सेकंड पीछे जाएँ (Ctrl+बायाँ तीर)</value>
   </data>
   <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>30 सेकंड आगे छोड़ें (Ctrl+दाएं)</value>
+    <value>30 सेकंड आगे जाएँ (Ctrl+दायाँ तीर)</value>
   </data>
   <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
     <value>पूर्ण स्क्रीन</value>
@@ -528,25 +528,25 @@
     <value>सभी शैलियाँ</value>
   </data>
   <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
-    <value>पुस्तकालयों का अनुक्रमण ...</value>
+    <value>लाइब्रेरियों को इंडेक्स किया जा रहा है…</value>
   </data>
   <data name="Artists_SortBy" xml:space="preserve">
-    <value>ए - जेड, जेड - ए</value>
+    <value>A - Z, Z - A</value>
   </data>
   <data name="Playlists_SortBy" xml:space="preserve">
-    <value>ए - जेड, जेड - ए, संशोधित तिथि (आरोही), संशोधित तिथि (अवरोही)</value>
+    <value>A - Z, Z - A, संशोधन की तारीख (आरोही), संशोधन की तारीख (अवरोही)</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
-    <value>विंडो फोकस खोने के बाद पृष्ठभूमि अद्यतन करना बंद कर देती है</value>
+    <value>विंडो का फ़ोकस हटने के बाद पृष्ठभूमि अपडेट होना बंद हो जाती है</value>
   </data>
   <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
-    <value>विंडो पृष्ठभूमि का रंग</value>
+    <value>विंडो की पृष्ठभूमि का रंग</value>
   </data>
   <data name="Shell_Home.Content" xml:space="preserve">
-    <value>घर</value>
+    <value>होम</value>
   </data>
   <data name="Shell_Home1.Text" xml:space="preserve">
-    <value>घर</value>
+    <value>होम</value>
   </data>
   <data name="Shell_Home.ToolTipService.ToolTip" xml:space="preserve">
     <value>होम (Ctrl+Shift+F)</value>
@@ -555,7 +555,7 @@
     <value>ऑनलाइन सामग्री खोजें</value>
   </data>
   <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
-    <value>चमक अस्पष्टता</value>
+    <value>चमक की अपारदर्शिता</value>
   </data>
   <data name="Settings_Reset.Content" xml:space="preserve">
     <value>रीसेट करें</value>
@@ -567,112 +567,112 @@
     <value>एल्बम</value>
   </data>
   <data name="PropertiesDialog_Track.Text" xml:space="preserve">
-    <value>संकरा रास्ता</value>
+    <value>ट्रैक</value>
   </data>
   <data name="PropertiesDialog_Genre.Text" xml:space="preserve">
     <value>शैली</value>
   </data>
   <data name="PropertiesDialog_Bitrate.Text" xml:space="preserve">
-    <value>बिट दर</value>
+    <value>बिटरेट</value>
   </data>
   <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
-    <value>योगदान देने वाले कलाकार</value>
+    <value>सहयोगी कलाकार</value>
   </data>
   <data name="PropertiesDialog_AlbumArtist.Text" xml:space="preserve">
     <value>एल्बम कलाकार</value>
   </data>
   <data name="PropertiesDialog_Length.Text" xml:space="preserve">
-    <value>लंबाई</value>
+    <value>अवधि</value>
   </data>
   <data name="PropertiesDialog_Year.Text" xml:space="preserve">
-    <value>सालों</value>
+    <value>वर्ष</value>
   </data>
   <data name="PropertiesDialog_ItemType.Text" xml:space="preserve">
     <value>आइटम का प्रकार</value>
   </data>
   <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
-    <value>फ़ाइल स्थान</value>
+    <value>फ़ाइल का स्थान</value>
   </data>
   <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
-    <value>फ़ाइल स्थान खोलें</value>
+    <value>फ़ाइल का स्थान खोलें</value>
   </data>
   <data name="PropertiesDialog.Title" xml:space="preserve">
     <value>गुण</value>
   </data>
   <data name="EqualizerDialog_Title.Text" xml:space="preserve">
-    <value>तुल्यकारक</value>
+    <value>इक्वलाइज़र</value>
   </data>
   <data name="EqualizerDialog_On" xml:space="preserve">
-    <value>पर</value>
+    <value>चालू</value>
   </data>
   <data name="EqualizerDialog_Decibel" xml:space="preserve">
-    <value>डीबी</value>
+    <value>dB</value>
   </data>
   <data name="EqualizerDialog_Decibel1.Text" xml:space="preserve">
-    <value>डीबी</value>
+    <value>dB</value>
   </data>
   <data name="EqualizerDialog_Preset.Text" xml:space="preserve">
-    <value>पूर्व निर्धारित</value>
+    <value>प्रीसेट</value>
   </data>
   <data name="EqualizerDialog_Presets" xml:space="preserve">
-    <value>फ्लैट, ट्रेबल बूस्ट, बास बूस्ट, हेडफ़ोन, लैपटॉप, पोर्टेबल स्पीकर, होम स्टीरियो, टीवी, कार, कस्टम</value>
+    <value>फ़्लैट, ट्रेबल बूस्ट, बास बूस्ट, हेडफ़ोन, लैपटॉप, पोर्टेबल स्पीकर, होम स्टीरियो, टीवी, कार, कस्टम</value>
   </data>
   <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
-    <value>आस-पास के स्लाइडर्स को एक साथ ले जाना</value>
+    <value>पास के स्लाइडर एक साथ चलाएँ</value>
   </data>
   <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
-    <value>हर्ट्ज</value>
+    <value>Hz</value>
   </data>
   <data name="EqualizerDialog_kHz.Text" xml:space="preserve">
-    <value>किलोहर्टज़</value>
+    <value>kHz</value>
   </data>
   <data name="EqualizerDialog_Off" xml:space="preserve">
     <value>बंद</value>
   </data>
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
-    <value>गाने की जानकारी संपादित करें</value>
+    <value>गीत की जानकारी संपादित करें</value>
   </data>
   <data name="EditSongInfoDialog_Lyric.Text" xml:space="preserve">
-    <value>आत्‍माभिव्‍यंजक</value>
+    <value>लिरिक्स</value>
   </data>
   <data name="EditSongInfoDialog_CoverImage" xml:space="preserve">
-    <value>कवर छवि</value>
+    <value>कवर इमेज</value>
   </data>
   <data name="EditAlbumInfoDialog.Title" xml:space="preserve">
     <value>एल्बम की जानकारी संपादित करें</value>
   </data>
   <data name="EditPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>प्लेलिस्ट जानकारी संपादित करें</value>
+    <value>प्लेलिस्ट की जानकारी संपादित करें</value>
   </data>
   <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
     <value>नई प्लेलिस्ट में जोड़ें</value>
   </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
-    <value>घुटनभरा</value>
+    <value>बंद करें</value>
   </data>
   <data name="EqualizerDialog.CloseButtonText" xml:space="preserve">
-    <value>घुटनभरा</value>
+    <value>बंद करें</value>
   </data>
   <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="EditAlbumInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="EditPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="NewPlaylistInfoDialog.CloseButtonText" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>सहेजें</value>
   </data>
   <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
-    <value>आयात</value>
+    <value>आयात करें</value>
   </data>
   <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="ImportPlaylistDialog.Title" xml:space="preserve">
     <value>प्लेलिस्ट आयात करें</value>
@@ -684,7 +684,7 @@
     <value>फ़ोल्डर से आयात करें</value>
   </data>
   <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
-    <value>गाने आयात करें</value>
+    <value>गीत आयात करें</value>
   </data>
   <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
     <value>गानों की संख्या</value>
@@ -702,25 +702,25 @@
     <value>सहेजें</value>
   </data>
   <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>बनाएं</value>
+    <value>बनाएँ</value>
   </data>
   <data name="DesktopLyricWindowTitle" xml:space="preserve">
-    <value>डेस्कटॉप गीत</value>
+    <value>डेस्कटॉप लिरिक्स</value>
   </data>
   <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
-    <value>सभी खेलें</value>
+    <value>सभी चलाएँ</value>
   </data>
   <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
-    <value>फेरबदल करें और खेलें</value>
+    <value>शफ़ल करके चलाएँ</value>
   </data>
   <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
     <value>जानकारी संपादित करें</value>
   </data>
   <data name="AlbumInfo_Songs" xml:space="preserve">
-    <value>गाने</value>
+    <value>गीत</value>
   </data>
   <data name="AlbumInfo_RunTime" xml:space="preserve">
-    <value>रन टाइम</value>
+    <value>अवधि</value>
   </data>
   <data name="ArtistInfo_Albums" xml:space="preserve">
     <value>एल्बम</value>
@@ -738,7 +738,7 @@
     <value>मिनट</value>
   </data>
   <data name="ArtistInfo_Sec" xml:space="preserve">
-    <value>एसईसी</value>
+    <value>सेकंड</value>
   </data>
   <data name="ArtistInfo_Secs" xml:space="preserve">
     <value>सेकंड</value>
@@ -747,10 +747,10 @@
     <value>मिनट</value>
   </data>
   <data name="AlbumInfo_Song" xml:space="preserve">
-    <value>गीत:-</value>
+    <value>गीत</value>
   </data>
   <data name="ArtistInfo_Artist" xml:space="preserve">
-    <value>कलाकृति-निर्माता</value>
+    <value>कलाकार</value>
   </data>
   <data name="ArtistDetail_InYourLibrary.Text" xml:space="preserve">
     <value>आपकी लाइब्रेरी में</value>
@@ -759,64 +759,64 @@
     <value>अज्ञात वर्ष</value>
   </data>
   <data name="Home_MusicLibrary1.Content" xml:space="preserve">
-    <value>संगीत पुस्तकालय 1</value>
+    <value>संगीत लाइब्रेरी 1</value>
   </data>
   <data name="Home_MusicLibrary6.Content" xml:space="preserve">
-    <value>संगीत पुस्तकालय 6</value>
+    <value>संगीत लाइब्रेरी 6</value>
   </data>
   <data name="Home_MusicLibrary5.Content" xml:space="preserve">
-    <value>संगीत पुस्तकालय 5</value>
+    <value>संगीत लाइब्रेरी 5</value>
   </data>
   <data name="Home_MusicLibrary4.Content" xml:space="preserve">
-    <value>संगीत पुस्तकालय 4</value>
+    <value>संगीत लाइब्रेरी 4</value>
   </data>
   <data name="Home_MusicLibrary3.Content" xml:space="preserve">
-    <value>संगीत पुस्तकालय 3</value>
+    <value>संगीत लाइब्रेरी 3</value>
   </data>
   <data name="Home_MusicLibrary2.Content" xml:space="preserve">
-    <value>संगीत पुस्तकालय 2</value>
+    <value>संगीत लाइब्रेरी 2</value>
   </data>
   <data name="Home_Retry.Text" xml:space="preserve">
     <value>पुनः प्रयास करें</value>
   </data>
   <data name="Home_SearchResult.Text" xml:space="preserve">
-    <value>के खोज परिणाम</value>
+    <value> के खोज परिणाम</value>
   </data>
   <data name="Settings_SourceCode.Content" xml:space="preserve">
     <value>स्रोत कोड</value>
   </data>
   <data name="Settings_Thanks.Header" xml:space="preserve">
-    <value>इस सॉफ़्टवेयर में जान फूंकने के लिए MoXiangTongXiu को धन्यवाद</value>
+    <value>इस सॉफ़्टवेयर में जान फूँकने के लिए MoXiangTongXiu को धन्यवाद</value>
   </data>
   <data name="OnlineSongs_Download.Text" xml:space="preserve">
-    <value>डाउनलोड</value>
+    <value>डाउनलोड करें</value>
   </data>
   <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
-    <value>गीत डाउनलोड स्थान</value>
+    <value>गीत डाउनलोड करने का स्थान</value>
   </data>
   <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
-    <value>छोटे सिक्‍के</value>
+    <value>बदलें</value>
   </data>
   <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
     <value>डाउनलोड करना शुरू करें</value>
   </data>
   <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
-    <value>रद्द करना</value>
+    <value>रद्द करें</value>
   </data>
   <data name="OnlineMusicLibrary_Progress" xml:space="preserve">
-    <value>जारी रहना</value>
+    <value>प्रगति</value>
   </data>
   <data name="OnlineMusicLibrary_Downloading" xml:space="preserve">
-    <value>डाउनलोड हो रहा है...</value>
+    <value>डाउनलोड हो रहा है…</value>
   </data>
   <data name="OnlineMusicLibrary_Processing" xml:space="preserve">
-    <value>प्रसंस्करण...</value>
+    <value>प्रोसेस हो रहा है…</value>
   </data>
   <data name="OnlineMusicLibrary_OpenFolder" xml:space="preserve">
     <value>फ़ोल्डर खोलें</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCompleted" xml:space="preserve">
-    <value>डाउनलोड पूरा हुआ</value>
+    <value>डाउनलोड पूरा हो गया</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadCancelled" xml:space="preserve">
     <value>डाउनलोड रद्द कर दिया गया</value>
@@ -825,49 +825,49 @@
     <value>डाउनलोड विफल रहा</value>
   </data>
   <data name="OnlineMusicLibrary_DownloadingSong" xml:space="preserve">
-    <value>गाना डाउनलोड करना</value>
+    <value>गीत डाउनलोड हो रहा है</value>
   </data>
   <data name="Shell_Settings.Content" xml:space="preserve">
-    <value>सेटिंग</value>
+    <value>सेटिंग्स</value>
   </data>
   <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
     <value>सेटिंग्स (Ctrl+G)</value>
   </data>
   <data name="PlaylistInfo_Item" xml:space="preserve">
-    <value>समाचार</value>
+    <value>आइटम</value>
   </data>
   <data name="PlaylistInfo_Items" xml:space="preserve">
     <value>आइटम</value>
   </data>
   <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>प्लेलिस्ट दिखाएं</value>
+    <value>प्लेलिस्ट दिखाएँ</value>
   </data>
   <data name="PlayLists_Rename.Text" xml:space="preserve">
     <value>नाम बदलें</value>
   </data>
   <data name="PlayLists_Delete.Text" xml:space="preserve">
-    <value>मिटाना</value>
+    <value>हटाएँ</value>
   </data>
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>प्लेलिस्ट दिखाएं</value>
+    <value>प्लेलिस्ट दिखाएँ</value>
   </data>
   <data name="Main_SendFeedback.Content" xml:space="preserve">
     <value>फ़ीडबैक भेजें</value>
   </data>
   <data name="Shell_PlayFiles" xml:space="preserve">
-    <value>फ़ाइल चलाएं</value>
+    <value>फ़ाइल चलाएँ</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value>हम {title} नहीं खोल सकते. ऐसा इसलिए हो सकता है क्योंकि फ़ाइल प्रकार असमर्थित है, फ़ाइल एक्सटेंशन गलत है, फ़ाइल दूषित है, या नेटवर्क असामान्य है।</value>
+    <value>हम {title} नहीं खोल सकते। ऐसा इसलिए हो सकता है क्योंकि फ़ाइल प्रकार समर्थित नहीं है, फ़ाइल एक्सटेंशन गलत है, फ़ाइल दूषित है या नेटवर्क में समस्या है।</value>
   </data>
   <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
     <value>ऑडियो प्लेबैक डिवाइस वर्तमान में उपयोग में है।</value>
   </data>
   <data name="Error_SamePlaylistName" xml:space="preserve">
-    <value>इस नाम की एक प्लेलिस्ट इस फ़ोल्डर में पहले से मौजूद है. कोई अन्य नाम दर्ज करें और फिर पुन: प्रयास करें.</value>
+    <value>इस फ़ोल्डर में इस नाम की प्लेलिस्ट पहले से मौजूद है। कोई दूसरा नाम दर्ज करके फिर कोशिश करें।</value>
   </data>
   <data name="Error_EditingSongInfoIO" xml:space="preserve">
-    <value>हम {title} संपादित नहीं कर सकते। ऐसा इसलिए हो सकता है क्योंकि वर्तमान फ़ाइल चल रही है, किसी अन्य प्रक्रिया द्वारा कब्जा कर लिया जा रहा है, या फ़ाइल प्रकार असमर्थित है।</value>
+    <value>हम {title} को संपादित नहीं कर सकते। ऐसा इसलिए हो सकता है कि फ़ाइल अभी चल रही हो, किसी अन्य प्रक्रिया द्वारा उपयोग में हो या फ़ाइल प्रकार समर्थित न हो।</value>
   </data>
   <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
     <value>डेवलपर विकल्प</value>
@@ -879,19 +879,19 @@
     <value>फ़ोल्डर खोलें</value>
   </data>
   <data name="Error_EditingSongInfoOther" xml:space="preserve">
-    <value>हम {title} के कुछ गुणों को संपादित नहीं कर सकते। ऐसा इसलिए हो सकता है क्योंकि फ़ाइल प्रकार असमर्थित है, या फ़ाइल दूषित है।</value>
+    <value>हम {title} के कुछ गुणों को संपादित नहीं कर सकते। ऐसा इसलिए हो सकता है क्योंकि फ़ाइल प्रकार समर्थित नहीं है या फ़ाइल दूषित है।</value>
   </data>
   <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
     <value>आपके पास कोई प्लेलिस्ट नहीं है</value>
   </data>
   <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
-    <value>एक नई प्लेलिस्ट बनाएं</value>
+    <value>एक नई प्लेलिस्ट बनाएँ</value>
   </data>
   <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
     <value>नई प्लेलिस्ट</value>
   </data>
   <data name="PlayLists_CreatePlaylist.Content" xml:space="preserve">
-    <value>प्लेलिस्ट बनाएं</value>
+    <value>प्लेलिस्ट बनाएँ</value>
   </data>
   <data name="PlaylistInfo_UntitledPlaylist1.SelectedText" xml:space="preserve">
     <value>शीर्षकहीन प्लेलिस्ट</value>
@@ -900,34 +900,34 @@
     <value>शीर्षकहीन प्लेलिस्ट</value>
   </data>
   <data name="PlaylistInfo_Create" xml:space="preserve">
-    <value>प्लेलिस्ट '{title}' बनाई गई.</value>
+    <value>प्लेलिस्ट '{title}' बनाई गई।</value>
   </data>
   <data name="PlaylistInfo_Delete" xml:space="preserve">
-    <value>प्लेलिस्ट '{title}' हटा दी गई.</value>
+    <value>प्लेलिस्ट '{title}' हटा दी गई।</value>
   </data>
   <data name="PlaylistInfo_AddItems" xml:space="preserve">
-    <value>{num} आइटम्स को प्लेलिस्ट '{title}' में जोड़ा जाता है.</value>
+    <value>{num} आइटम प्लेलिस्ट '{title}' में जोड़ दिए गए हैं।</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
-    <value>{num} प्लेलिस्ट आयात की गई है.</value>
+    <value>{num} प्लेलिस्ट आयात की गई है।</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
-    <value>{num} प्लेलिस्ट निर्यात कर दी गई है.</value>
+    <value>{num} प्लेलिस्ट निर्यात की गई है।</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
-    <value>{num} प्लेलिस्ट निर्यात कर दी गई हैं.</value>
+    <value>{num} प्लेलिस्ट निर्यात की गई हैं।</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
-    <value>{num} प्लेलिस्ट आयात कर दी गई हैं.</value>
+    <value>{num} प्लेलिस्ट आयात की गई हैं।</value>
   </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
-    <value>{num} आइटम को प्लेलिस्ट '{title}' में जोड़ा गया है.</value>
+    <value>{num} आइटम प्लेलिस्ट '{title}' में जोड़ दिया गया है।</value>
   </data>
   <data name="Settings_Lyric.Text" xml:space="preserve">
-    <value>आत्‍माभिव्‍यंजक</value>
+    <value>लिरिक्स</value>
   </data>
   <data name="Settings_Play.Text" xml:space="preserve">
-    <value>खेल</value>
+    <value>चलाएँ</value>
   </data>
   <data name="Settings_PlaylistFile" xml:space="preserve">
     <value>प्लेलिस्ट फ़ाइल</value>
@@ -936,13 +936,13 @@
     <value>प्लेलिस्ट</value>
   </data>
   <data name="Lyric_ShowCover.Text" xml:space="preserve">
-    <value>कवर दिखाएं</value>
+    <value>कवर दिखाएँ</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
     <value>बंधनमुक्त इमेज व्यूअर</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ज़ूम इन करें (↑ / Ctrl+माउस व्हील अप)</value>
+    <value>ज़ूम इन करें (↑ / Ctrl+माउस व्हील ऊपर)</value>
   </data>
   <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
     <value>मूल आकार</value>
@@ -954,54 +954,54 @@
     <value>सहेजें</value>
   </data>
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ज़ूम आउट करें (↑ /</value>
+    <value>ज़ूम आउट करें (↓ / Ctrl+माउस व्हील नीचे)</value>
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
-    <value>कोई गीत उपलब्ध नहीं है</value>
+    <value>कोई लिरिक्स उपलब्ध नहीं हैं</value>
   </data>
   <data name="Home_ServerError.Text" xml:space="preserve">
-    <value>सर्वर से कनेक्ट करने में असमर्थ</value>
+    <value>सर्वर से कनेक्ट नहीं हो पा रहा है</value>
   </data>
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
-    <value>मुख्य भूमि चीन के बाहर के उपयोगकर्ता इस संगीत लाइब्रेरी तक पहुंचने में सक्षम नहीं हो सकते हैं।</value>
+    <value>चीन की मुख्य भूमि के बाहर रहने वाले उपयोगकर्ता शायद इस संगीत लाइब्रेरी तक पहुँच न पाएँ।</value>
   </data>
   <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
-    <value>यह संगीत लाइब्रेरी अभी तक खुली नहीं है, कृपया बने रहें</value>
+    <value>यह संगीत लाइब्रेरी अभी उपलब्ध नहीं है। कृपया बाद में फिर देखें।</value>
   </data>
   <data name="Lyric_SpeedUpLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>गीत को 0.3 सेकंड तक गति दें</value>
+    <value>लिरिक्स को 0.3 सेकंड आगे करें</value>
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>गीत को 0.3s से धीमा करें</value>
+    <value>लिरिक्स को 0.3 सेकंड पीछे करें</value>
   </data>
   <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>पूर्वसमीक्षा</value>
+    <value>पूर्वावलोकन</value>
   </data>
   <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
     <value>फ़ॉन्ट परिवार</value>
   </data>
   <data name="Settings_LyricOffset.Header" xml:space="preserve">
-    <value>वैश्विक गीत ऑफसेट</value>
+    <value>वैश्विक लिरिक्स ऑफ़सेट</value>
   </data>
   <data name="Settings_LyricOffset.Description" xml:space="preserve">
-    <value>नकारात्मक मूल्य गीत को आगे बढ़ाएंगे, जबकि सकारात्मक मूल्य उनमें देरी करेंगे</value>
+    <value>नकारात्मक मान लिरिक्स को पहले दिखाएँगे, जबकि सकारात्मक मान उन्हें देर से दिखाएँगे।</value>
   </data>
   <data name="Settings_Millisecond.Text" xml:space="preserve">
-    <value>मिलीसेकंड</value>
+    <value>ms</value>
   </data>
   <data name="Settings_FontWeights" xml:space="preserve">
-    <value>पतला, अतिरिक्त प्रकाश, प्रकाश, अर्ध प्रकाश, नियमित, मध्यम, अर्ध बोल्ड, बोल्ड, अतिरिक्त बोल्ड, काला, अतिरिक्त काला</value>
+    <value>पतला, अतिरिक्त हल्का, हल्का, अर्ध-हल्का, सामान्य, मध्यम, अर्ध-मोटा, मोटा, अतिरिक्त मोटा, काला, अतिरिक्त काला</value>
   </data>
   <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
-    <value>फ़ॉन्ट-वेट चुनें</value>
+    <value>फ़ॉन्ट का वज़न चुनें</value>
   </data>
   <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
-    <value>फ़ॉन्ट वजन</value>
+    <value>फ़ॉन्ट का वज़न</value>
   </data>
   <data name="Settings_LyricPageCurrentFontSize.Header" xml:space="preserve">
-    <value>हाइलाइट किया गया गीत फ़ॉन्ट आकार</value>
+    <value>हाइलाइट की गई लिरिक्स का फ़ॉन्ट आकार</value>
   </data>
   <data name="Settings_LyricPageNotCurrentFontSize.Header" xml:space="preserve">
-    <value>सामान्य गीत फ़ॉन्ट आकार</value>
+    <value>सामान्य लिरिक्स का फ़ॉन्ट आकार</value>
   </data>
 </root>

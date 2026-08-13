@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -10,15 +11,13 @@ using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 
-using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class RootPlayBarViewModel : ObservableObject
 {
-    private readonly INavigationService _navigationService =
-        App.GetService<INavigationService>();
-    private readonly IWindowService _windowService =
-        App.GetService<IWindowService>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
+    private readonly IWindowService _windowService = App.GetService<IWindowService>();
+    private readonly MusicPlayer _musicPlayer;
     private LyricPage? _lyricPage;
 
     public bool IsDesktopLyricWindowStarted { get; set; } = false;
@@ -35,14 +34,14 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     [ObservableProperty]
     public partial bool Availability { get; set; } = false;
 
-    public RootPlayBarViewModel()
+    public RootPlayBarViewModel(MusicPlayer musicPlayer)
     {
-        var musicPlayer = App.GetService<MusicPlayer>();
-        ButtonVisibility = musicPlayer.State.CurrentSong is null
+        _musicPlayer = musicPlayer;
+        ButtonVisibility = _musicPlayer.State.CurrentSong is null
             ? Visibility.Collapsed
             : Visibility.Visible;
-        Availability = musicPlayer.State is not null;
-        musicPlayer.BarViewAvailabilityChanged += OnBarViewAvailabilityChanged;
+        Availability = _musicPlayer.State is not null;
+        _musicPlayer.BarViewAvailabilityChanged += OnBarViewAvailabilityChanged;
     }
 
     private void OnBarViewAvailabilityChanged(bool value)
@@ -126,9 +125,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     }
 
     [RelayCommand]
-
     public void FullScreenButton()
-
     {
         var appWindow = App.MainWindow!.AppWindow;
         if (appWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen)
@@ -144,9 +141,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     }
 
     [RelayCommand]
-
     public void DesktopLyricButton()
-
     {
         if (!IsDesktopLyricWindowStarted)
         {
@@ -161,51 +156,41 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     }
 
     [RelayCommand]
-
     public void PlayButton()
-
     {
-        var currentSong = App.GetService<MusicPlayer>().State.CurrentBriefSong;
-        App.GetService<MusicPlayer>().PlaySongByInfo(currentSong!);
+        var currentSong = _musicPlayer.State.CurrentBriefSong;
+        _musicPlayer.PlaySongByInfo(currentSong!);
     }
 
     [RelayCommand]
-
     public void PlayNextButton()
-
     {
-        var currentSong = App.GetService<MusicPlayer>().State.CurrentBriefSong;
-        App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([currentSong!]);
+        var currentSong = _musicPlayer.State.CurrentBriefSong;
+        _musicPlayer.QueueManager.AddSongsToNextPlay([currentSong!]);
     }
 
     [RelayCommand]
-
     public void AddToPlayQueueButton()
-
     {
-        var currentSong = App.GetService<MusicPlayer>().State.CurrentBriefSong;
-        App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([currentSong!]);
+        var currentSong = _musicPlayer.State.CurrentBriefSong;
+        _musicPlayer.QueueManager.AddSongsToEnd([currentSong!]);
     }
 
     [RelayCommand]
-
     public async Task AddToPlaylistButton(PlaylistInfo playlist)
-
     {
-        var currentSong = App.GetService<MusicPlayer>().State.CurrentBriefSong;
+        var currentSong = _musicPlayer.State.CurrentBriefSong;
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, currentSong!);
     }
 
     [RelayCommand]
-
     public async Task ShowAlbumButton()
-
     {
         if (IsDetail)
         {
             DetailModeUpdate();
         }
-        var info = App.GetService<MusicPlayer>().State.CurrentBriefSong;
+        var info = _musicPlayer.State.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
             var localAlbumInfo = App.GetService<MusicLibrary>().GetAlbumInfoBySong(localInfo.Album);
@@ -233,18 +218,17 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     }
 
     [RelayCommand]
-
     public async Task ShowArtistButton()
-
     {
         if (IsDetail)
         {
             DetailModeUpdate();
         }
-        var info = App.GetService<MusicPlayer>().State.CurrentBriefSong;
+        var info = _musicPlayer.State.CurrentBriefSong;
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(localInfo.Artists[0]);
+            var localArtistInfo = App.GetService<MusicLibrary>()
+                .GetArtistInfoBySong(localInfo.Artists[0]);
             if (localArtistInfo is not null)
             {
                 _navigationService.NavigateShell(
@@ -267,13 +251,4 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
             }
         }
     }
-
-
-
-
-
-
-
-
 }
-

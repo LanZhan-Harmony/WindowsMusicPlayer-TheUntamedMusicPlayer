@@ -6,7 +6,6 @@ using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Helpers;
 using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI.Models;
-using UntamedMusicPlayer.Services;
 using ZLogger;
 
 namespace UntamedMusicPlayer.Services;

@@ -60,10 +60,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Reproductor de Música Libre</value>
+    <value>Untamed Music Player</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Reproductor de Música Libre</value>
+    <value>Untamed Music Player</value>
   </data>
   <data name="Shell_MusicLibrary.Content" xml:space="preserve">
     <value>Biblioteca musical</value>
@@ -78,28 +78,28 @@
     <value>Personalización</value>
   </data>
   <data name="Settings_ThisIsAnOrdinaryLyric.Text" xml:space="preserve">
-    <value>Esta es una letra común</value>
+    <value>Esta es una letra normal</value>
   </data>
   <data name="Settings_ThisIsAHighlightedLyric.Text" xml:space="preserve">
     <value>Esta es una letra resaltada</value>
   </data>
   <data name="Settings_Theme.Header" xml:space="preserve">
-    <value>Tema de la app</value>
+    <value>Tema de la aplicación</value>
   </data>
   <data name="Settings_ResetSoftware.Header" xml:space="preserve">
-    <value>Reinicia este software</value>
+    <value>Restablecer este software</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>Luz</value>
+    <value>Claro</value>
   </data>
   <data name="Settings_Theme_Dark.Content" xml:space="preserve">
     <value>Oscuro</value>
   </data>
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>Usar configuración del sistema</value>
+    <value>Usar la configuración del sistema</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>Sobre esta aplicación</value>
+    <value>Acerca de esta aplicación</value>
   </data>
   <data name="Settings_AddFolderToMusic" xml:space="preserve">
     <value>Añadir esta carpeta a Música</value>
@@ -123,37 +123,37 @@
     <value>Actualizar</value>
   </data>
   <data name="Settings_Import.Content" xml:space="preserve">
-    <value>Importación</value>
+    <value>Importar</value>
   </data>
   <data name="Settings_ImportIndividualPlaylist.Header" xml:space="preserve">
-    <value>Importar lista de reproducción individual</value>
+    <value>Importar una lista de reproducción</value>
   </data>
   <data name="Settings_ImportFromM3u8.Header" xml:space="preserve">
-    <value>Importación por lotes de listas de reproducción desde archivos m3u8</value>
+    <value>Importar listas de reproducción por lotes desde archivos m3u8</value>
   </data>
   <data name="Settings_ImportFromBin.Header" xml:space="preserve">
-    <value>Listas de reproducción de importación por lotes desde un archivo binario</value>
+    <value>Importar listas de reproducción por lotes desde un archivo binario</value>
   </data>
   <data name="Settings_Export.Content" xml:space="preserve">
-    <value>Exportación</value>
+    <value>Exportar</value>
   </data>
   <data name="Settings_ExportToM3u8.Header" xml:space="preserve">
-    <value>Exportación por lotes de listas de reproducción a archivos m3u8 (Recomendado)</value>
+    <value>Exportar listas de reproducción por lotes a archivos m3u8 (recomendado)</value>
   </data>
   <data name="Settings_ExportToM3u8.Description" xml:space="preserve">
-    <value>Mejor compatibilidad y funciona con la mayoría de los reproductores de música</value>
+    <value>Ofrece una mejor compatibilidad y funciona con la mayoría de los reproductores de música</value>
   </data>
   <data name="Settings_ExportToBin.Header" xml:space="preserve">
-    <value>Listas de reproducción de exportación por lotes a archivo binario</value>
+    <value>Exportar listas de reproducción por lotes a un archivo binario</value>
   </data>
   <data name="Settings_ExportToBin.Description" xml:space="preserve">
-    <value>Más rápido, pero solo disponible para este software</value>
+    <value>Más rápido, pero solo compatible con este software</value>
   </data>
   <data name="Settings_RefreshLibrary.Header" xml:space="preserve">
-    <value>Bibliotecas de actualización</value>
+    <value>Actualizar bibliotecas</value>
   </data>
   <data name="Settings_AutoHidePlaybackControlBar.Header" xml:space="preserve">
-    <value>Oculta automáticamente la barra de control de reproducción en la página de letras a pantalla completa</value>
+    <value>Ocultar automáticamente la barra de controles de reproducción en la página de letras a pantalla completa</value>
   </data>
   <data name="Settings_ExclusiveMode.Header" xml:space="preserve">
     <value>Modo exclusivo</value>
@@ -162,28 +162,28 @@
     <value>Modo de baja latencia</value>
   </data>
   <data name="Settings_LowLatencyMode.Description" xml:space="preserve">
-    <value>Reduce la latencia de audio. Recomendado para dispositivos de gama media a alta. Desactiva esto si experimentas tirones o problemas de reproducción.</value>
+    <value>Reduce la latencia de audio. Se recomienda para dispositivos de gama media y alta. Desactiva esta opción si experimentas interrupciones o problemas de reproducción.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Description" xml:space="preserve">
-    <value>Si estás en la página de canciones de la biblioteca de música con la ordenación de carpetas activada, hacer clic en una canción solo añadirá canciones de esa misma carpeta a la cola de reproducción.</value>
+    <value>Si estás en la página de canciones de la biblioteca musical con la ordenación por carpetas activada, al hacer clic en una canción solo se añadirán a la cola de reproducción las canciones de esa misma carpeta.</value>
   </data>
   <data name="Settings_OnlyAddSpecificFolder.Header" xml:space="preserve">
-    <value>Añade solo la carpeta donde se encuentra la canción</value>
+    <value>Añadir solo la carpeta donde se encuentra la canción</value>
   </data>
   <data name="Settings_PlaylistImportExport.Header" xml:space="preserve">
     <value>Importación/exportación de listas de reproducción</value>
   </data>
   <data name="Settings_ReIndex.Text" xml:space="preserve">
-    <value>Si no ves todo el contenido multimedia de las ubicaciones de tus bibliotecas, puedes reindexar tus bibliotecas ahora.</value>
+    <value>Si no ves todo el contenido multimedia de las ubicaciones de tus bibliotecas, puedes volver a indexar tus bibliotecas ahora.</value>
   </data>
   <data name="Shell_Search.PlaceholderText" xml:space="preserve">
-    <value>Búsqueda (próximamente)</value>
+    <value>Buscar (próximamente)</value>
   </data>
   <data name="PlayBar_Property.Text" xml:space="preserve">
     <value>Propiedades</value>
   </data>
   <data name="PlayBar_Equalizer.Text" xml:space="preserve">
-    <value>Equalizer (próximamente)</value>
+    <value>Ecualizador (próximamente)</value>
   </data>
   <data name="PlayBar_Speed.Text" xml:space="preserve">
     <value>Velocidad</value>
@@ -192,10 +192,10 @@
     <value>Transmitir al dispositivo (próximamente)</value>
   </data>
   <data name="PlayBar_More_SkipBack10s.Text" xml:space="preserve">
-    <value>Retrocedamos 10 segundos</value>
+    <value>Retroceder 10 segundos</value>
   </data>
   <data name="PlayBar_More_SkipForw30s.Text" xml:space="preserve">
-    <value>Avancemos 30 segundos</value>
+    <value>Avanzar 30 segundos</value>
   </data>
   <data name="Shell_PlayLists1.Text" xml:space="preserve">
     <value>Listas de reproducción</value>
@@ -207,13 +207,13 @@
     <value>Música</value>
   </data>
   <data name="Shell_Settings1.Text" xml:space="preserve">
-    <value>Escenarios</value>
+    <value>Configuración</value>
   </data>
   <data name="NoMusic_MusicNotFound.Text" xml:space="preserve">
-    <value>No encontramos música</value>
+    <value>No se encontró música</value>
   </data>
   <data name="NoMusic_NoMusicContent.Text" xml:space="preserve">
-    <value>Tu biblioteca musical no contiene ningún contenido musical.</value>
+    <value>Tu biblioteca musical no contiene música.</value>
   </data>
   <data name="HaveMusic_Songs.Text" xml:space="preserve">
     <value>Canciones</value>
@@ -228,22 +228,22 @@
     <value>Artistas</value>
   </data>
   <data name="Settings_RemoveFolderDialogTitle" xml:space="preserve">
-    <value>¿Volver a esta carpeta?</value>
+    <value>¿Quitar esta carpeta?</value>
   </data>
   <data name="Settings_ResetSoftwareDialogTitle" xml:space="preserve">
-    <value>¿Estás seguro de que quieres restablecer este software?</value>
+    <value>¿Seguro que quieres restablecer este software?</value>
   </data>
   <data name="Settings_RemoveFolderDialogContent" xml:space="preserve">
-    <value>Si eliminas la carpeta "{title}" de Música, ya no aparecerá en Música, pero tampoco se eliminará.</value>
+    <value>Si quitas la carpeta "{title}" de Música, dejará de aparecer en Música, pero no se eliminará.</value>
   </data>
   <data name="Settings_ResetSoftwareDialogContent" xml:space="preserve">
-    <value>Todos los datos de este software serán vaciados, incluyendo configuración, cola de reproducción, listas de reproducción, etc.; por favor, proceda con precaución.</value>
+    <value>Se borrarán todos los datos de este software, entre ellos la configuración, la cola de reproducción, las listas de reproducción, etc. Procede con precaución.</value>
   </data>
   <data name="Settings_RemoveFolderDialogPrimary" xml:space="preserve">
-    <value>Eliminar carpeta</value>
+    <value>Quitar carpeta</value>
   </data>
   <data name="Settings_ResetSoftwareDialogPrimary" xml:space="preserve">
-    <value>Reiniciar y reiniciar</value>
+    <value>Restablecer y reiniciar</value>
   </data>
   <data name="Settings_RemoveFolderDialogClose" xml:space="preserve">
     <value>Cancelar</value>
@@ -255,22 +255,22 @@
     <value>Cancelar</value>
   </data>
   <data name="PlayLists_DeleteDialogPrimary" xml:space="preserve">
-    <value>Borrar</value>
+    <value>Eliminar</value>
   </data>
   <data name="PlayLists_DeleteDialogTitle" xml:space="preserve">
-    <value>¿Eliminar listas de reproducción para siempre?</value>
+    <value>¿Eliminar permanentemente esta lista de reproducción?</value>
   </data>
   <data name="PlayLists_DeleteDialogContent" xml:space="preserve">
-    <value>¿Estás seguro de que quieres borrar esta lista de reproducción? Si eliminas '{title}', no podrás recuperarlo.</value>
+    <value>¿Seguro que quieres eliminar esta lista de reproducción? Si eliminas '{title}', no podrás recuperarla.</value>
   </data>
   <data name="Settings_SearchSetting.Content" xml:space="preserve">
     <value>Gestionar la configuración de indexación del sistema</value>
   </data>
   <data name="Settings_OpenSettingDialogTitle" xml:space="preserve">
-    <value>¿Querías cambiar de aplicación?</value>
+    <value>¿Quieres cambiar de aplicación?</value>
   </data>
   <data name="Settings_OpenSettingDialogContent" xml:space="preserve">
-    <value> "Reproductor multimedia" está intentando abrir "Configuración".</value>
+    <value>"Reproductor multimedia" está intentando abrir "Configuración".</value>
   </data>
   <data name="Settings_OpenSettingDialogPrimary" xml:space="preserve">
     <value>Sí</value>
@@ -297,22 +297,22 @@
     <value>Siguiente (Ctrl+F)</value>
   </data>
   <data name="PlayBar_NowPlaying.ToolTipService.ToolTip" xml:space="preserve">
-    <value>AhoraReproducción (Ctrl+N)</value>
+    <value>Reproduciendo ahora (Ctrl+N)</value>
   </data>
   <data name="PlayBar_ShuffleOff" xml:space="preserve">
-    <value>Aleatorio: Apagado (Ctrl+H)</value>
+    <value>Reproducción aleatoria: desactivada (Ctrl+H)</value>
   </data>
   <data name="PlayBar_ShuffleOn" xml:space="preserve">
-    <value>Aleatorio: Activado (Ctrl+H)</value>
+    <value>Reproducción aleatoria: activada (Ctrl+H)</value>
   </data>
   <data name="PlayBar_RepeatOff" xml:space="preserve">
-    <value>Repetir: Apagado (Ctrl+T)</value>
+    <value>Repetición: desactivada (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatAll" xml:space="preserve">
-    <value>Repetir: Todos (Ctrl+T)</value>
+    <value>Repetir todo (Ctrl+T)</value>
   </data>
   <data name="PlayBar_RepeatOne" xml:space="preserve">
-    <value>Repetir: Uno (Ctrl+T)</value>
+    <value>Repetición: una canción (Ctrl+T)</value>
   </data>
   <data name="Shell_MusicLibrary.ToolTipService.ToolTip" xml:space="preserve">
     <value>Biblioteca musical (Ctrl+R)</value>
@@ -327,40 +327,40 @@
     <value>Reproducir (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Pause" xml:space="preserve">
-    <value>Pausa (Ctrl+P)</value>
+    <value>Pausar (Ctrl+P)</value>
   </data>
   <data name="PlayBar_Seek.ToolTipService.ToolTip" xml:space="preserve">
     <value>Buscar</value>
   </data>
   <data name="Settings_RemoveFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Eliminar carpeta</value>
+    <value>Quitar carpeta</value>
   </data>
   <data name="HaveMusic_AddFolder.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Añade una carpeta a tu biblioteca musical</value>
+    <value>Añadir una carpeta a tu biblioteca musical</value>
   </data>
   <data name="PlayBar_More_ShuffleOn" xml:space="preserve">
-    <value>Aleatorio: On</value>
+    <value>Reproducción aleatoria: activada</value>
   </data>
   <data name="PlayBar_More_ShuffleOff" xml:space="preserve">
-    <value>Barajador: Apagado</value>
+    <value>Reproducción aleatoria: desactivada</value>
   </data>
   <data name="PlayBar_More_RepeatAll" xml:space="preserve">
-    <value>Repito: Todos</value>
+    <value>Repetir todo</value>
   </data>
   <data name="PlayBar_More_RepeatOne" xml:space="preserve">
-    <value>Repito: Uno</value>
+    <value>Repetición: una canción</value>
   </data>
   <data name="PlayBar_More_RepeatOff" xml:space="preserve">
-    <value>Repito: Apagado</value>
+    <value>Repetición desactivada</value>
   </data>
   <data name="Settings_Materials" xml:space="preserve">
-    <value>Ninguno, Mica, Mica Alt, Acrílico de sobremesa, Base de acrílico, Acrílico fino, Desenfoque, Transparente, Animado</value>
+    <value>Ninguno, Mica, Mica Alt, Acrílico de escritorio, Base acrílica, Acrílico fino, Desenfoque, Transparente, Animado</value>
   </data>
   <data name="Songs_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Artista (Ascendente), Artista (Descendente), Álbum (Ascendente), Álbum (Descendente), Año de lanzamiento (Ascendente), Año de lanzamiento (Descendente), Fecha añadida (Ascendente), Fecha añadida (Descendente), Carpeta (Ascendente), Carpeta (Descendente)</value>
+    <value>A-Z, Z-A, Artista (ascendente), Artista (descendente), Álbum (ascendente), Álbum (descendente), Año de lanzamiento (ascendente), Año de lanzamiento (descendente), Fecha de adición (ascendente), Fecha de adición (descendente), Carpeta (ascendente), Carpeta (descendente)</value>
   </data>
   <data name="Albums_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, Año de lanzamiento (Ascendente), Año de lanzamiento (Descendente), Artista (Ascendente), Artista (Descendente), Fecha añadida (Ascendente), Fecha añadida (Descendente)</value>
+    <value>A-Z, Z-A, Año de lanzamiento (ascendente), Año de lanzamiento (descendente), Artista (ascendente), Artista (descendente), Fecha de adición (ascendente), Fecha de adición (descendente)</value>
   </data>
   <data name="SongInfo_UnknownArtist" xml:space="preserve">
     <value>Artista desconocido</value>
@@ -372,25 +372,25 @@
     <value>Canción local</value>
   </data>
   <data name="DisplaySongInfo_SourceMode1" xml:space="preserve">
-    <value>Canción online</value>
+    <value>Canción en línea</value>
   </data>
   <data name="DisplaySongInfo_SourceMode6" xml:space="preserve">
-    <value>Canción de Music Library 5</value>
+    <value>Canción de la biblioteca musical 5</value>
   </data>
   <data name="DisplaySongInfo_SourceMode7" xml:space="preserve">
-    <value>Canción de Music Library 6</value>
+    <value>Canción de la biblioteca musical 6</value>
   </data>
   <data name="DisplaySongInfo_SourceMode5" xml:space="preserve">
-    <value>Canción de Music Library 4</value>
+    <value>Canción de la biblioteca musical 4</value>
   </data>
   <data name="DisplaySongInfo_SourceMode4" xml:space="preserve">
-    <value>Canción de Music Library 3</value>
+    <value>Canción de la biblioteca musical 3</value>
   </data>
   <data name="DisplaySongInfo_SourceMode3" xml:space="preserve">
-    <value>Canción de Music Library 2</value>
+    <value>Canción de la biblioteca musical 2</value>
   </data>
   <data name="DisplaySongInfo_SourceMode2" xml:space="preserve">
-    <value>Canción de Music Library 1</value>
+    <value>Canción de la biblioteca musical 1</value>
   </data>
   <data name="SongInfo_UnknownAlbum" xml:space="preserve">
     <value>Álbum desconocido</value>
@@ -399,13 +399,13 @@
     <value>Ordenar por: </value>
   </data>
   <data name="HaveMusic_Shuffle.Text" xml:space="preserve">
-    <value>Baraja y juego</value>
+    <value>Reproducir aleatoriamente</value>
   </data>
   <data name="Songs_GenreChosen.Text" xml:space="preserve">
     <value>Género: </value>
   </data>
   <data name="PlayQueue_Clear.Text" xml:space="preserve">
-    <value>¡Libre</value>
+    <value>Limpiar</value>
   </data>
   <data name="PlayQueue_AddToPlayQueue" xml:space="preserve">
     <value>Añadir a la cola de reproducción</value>
@@ -417,25 +417,25 @@
     <value>Nueva lista de reproducción</value>
   </data>
   <data name="PlayQueue_AddFiles.Text" xml:space="preserve">
-    <value>Añadir archivo(s)</value>
+    <value>Añadir archivos</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFilesToPlayQueue.Text" xml:space="preserve">
-    <value>Añadir archivo(s) a la cola de reproducción</value>
+    <value>Añadir archivos a la cola de reproducción</value>
   </data>
   <data name="PlayQueue_AddFiles_BrowseForFiles.Text" xml:space="preserve">
-    <value>Busca archivos para añadir a la cola de reproducción</value>
+    <value>Examinar archivos para añadir a la cola de reproducción</value>
   </data>
   <data name="PlayQueue_AddFiles_AddFolderToPlayQueue.Text" xml:space="preserve">
     <value>Añadir carpeta a la cola de reproducción</value>
   </data>
   <data name="PlayQueue_AddFiles_ChooseAFolder.Text" xml:space="preserve">
-    <value>Elige una carpeta y añade todo el contenido multimedia de esa carpeta a la cola de reproducción</value>
+    <value>Elegir una carpeta y añadir todo el contenido multimedia de esa carpeta a la cola de reproducción</value>
   </data>
   <data name="PlayQueue_AddFiles_AddMediaFromURL.Text" xml:space="preserve">
-    <value>Añadir medios desde la URL a la cola de reproducción</value>
+    <value>Añadir contenido multimedia desde una URL a la cola de reproducción</value>
   </data>
   <data name="PlayQueue_AddFiles_EnterAURL.Text" xml:space="preserve">
-    <value>Introduce una URL y añade el medio de esa dirección a la cola de reproducción</value>
+    <value>Introducir una URL y añadir el contenido multimedia de esa dirección a la cola de reproducción</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_OpenAURL" xml:space="preserve">
     <value>Abrir una URL</value>
@@ -444,16 +444,16 @@
     <value>Cancelar</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_Open" xml:space="preserve">
-    <value>Abierto</value>
+    <value>Abrir</value>
   </data>
   <data name="PlayQueue_AddUrlDialog_EnterTheURL" xml:space="preserve">
-    <value>Introduce la URL de un archivo, stream o lista de reproducción</value>
+    <value>Introducir la URL de un archivo, una transmisión o una lista de reproducción</value>
   </data>
   <data name="Songs_Play.Text" xml:space="preserve">
-    <value>Juego</value>
+    <value>Reproducir</value>
   </data>
   <data name="Songs_PlayNext.Text" xml:space="preserve">
-    <value>Juego a continuación</value>
+    <value>Reproducir a continuación</value>
   </data>
   <data name="Songs_AddTo.Text" xml:space="preserve">
     <value>Añadir a</value>
@@ -465,10 +465,10 @@
     <value>Propiedades</value>
   </data>
   <data name="Songs_ShowAlbum.Text" xml:space="preserve">
-    <value>Álbum del programa</value>
+    <value>Mostrar álbum</value>
   </data>
   <data name="Songs_ShowArtist.Text" xml:space="preserve">
-    <value>Artista del programa</value>
+    <value>Mostrar artista</value>
   </data>
   <data name="Songs_Select.Text" xml:space="preserve">
     <value>Seleccionar</value>
@@ -477,49 +477,49 @@
     <value>Eliminar</value>
   </data>
   <data name="PlayQueue_MoveUp.Text" xml:space="preserve">
-    <value>Avanza</value>
+    <value>Subir</value>
   </data>
   <data name="PlayQueue_MoveDown.Text" xml:space="preserve">
-    <value>Baja</value>
+    <value>Bajar</value>
   </data>
   <data name="Songs_PlayButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Juego</value>
+    <value>Reproducir</value>
   </data>
   <data name="Settings_WindowMaterial.Header" xml:space="preserve">
-    <value>Material para ventanas</value>
+    <value>Material de la ventana</value>
   </data>
   <data name="Settings_ChooseAMaterial.PlaceholderText" xml:space="preserve">
-    <value>Elige un material</value>
+    <value>Elegir un material</value>
   </data>
   <data name="Settings_LyricFont.Header" xml:space="preserve">
-    <value>Familia de fuentes líricas</value>
+    <value>Fuente de la letra</value>
   </data>
   <data name="Settings_ChooseAFontFamily.PlaceholderText" xml:space="preserve">
-    <value>Elige una familia de fuentes</value>
+    <value>Elegir una familia de fuentes</value>
   </data>
   <data name="Settings_ChooseAFontSize.PlaceholderText" xml:space="preserve">
-    <value>Elige un tamaño de fuente</value>
+    <value>Elegir un tamaño de fuente</value>
   </data>
   <data name="Settings_WindowBackgroundFollowsCover.Header" xml:space="preserve">
-    <value>El fondo de la ventana sigue el color del tema de la portada</value>
+    <value>El fondo de la ventana se adapta al color de la portada</value>
   </data>
   <data name="Songs_Pinyin" xml:space="preserve">
-    <value>...</value>
+    <value>Pinyin</value>
   </data>
   <data name="Settings_Version" xml:space="preserve">
     <value>Versión</value>
   </data>
   <data name="PlayQueue_ClearButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Borrar (Ctrl+Shift+X)</value>
+    <value>Limpiar (Ctrl+Shift+X)</value>
   </data>
   <data name="PlayQueue_AddFilesButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Busca archivos para añadir a la cola de reproducción</value>
+    <value>Examinar archivos para añadir a la cola de reproducción</value>
   </data>
   <data name="PlayBar_SkipBack10s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Retrocedamos 10 segundos (Ctrl+Izquierda)</value>
+    <value>Retroceder 10 segundos (Ctrl+Flecha izquierda)</value>
   </data>
   <data name="PlayBar_SkipForw30s.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Avanza 30 segundos (Ctrl+Derecha)</value>
+    <value>Avanzar 30 segundos (Ctrl+Flecha derecha)</value>
   </data>
   <data name="PlayBar_Menu_FullScreeen.Text" xml:space="preserve">
     <value>Pantalla completa</value>
@@ -528,19 +528,19 @@
     <value>Todos los géneros</value>
   </data>
   <data name="Songs_IndexingLibraries.Text" xml:space="preserve">
-    <value>Indexar bibliotecas...</value>
+    <value>Indexando bibliotecas...</value>
   </data>
   <data name="Artists_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A</value>
+    <value>A-Z, Z-A</value>
   </data>
   <data name="Playlists_SortBy" xml:space="preserve">
-    <value>A - Z, Z - A, FECHA MODIFICADA (Ascendente), fecha modificada (Descendente)</value>
+    <value>A-Z, Z-A, Fecha de modificación (ascendente), Fecha de modificación (descendente)</value>
   </data>
   <data name="Settings_FallBack.Header" xml:space="preserve">
-    <value>El fondo deja de actualizarse después de que la ventana pierde el enfoque</value>
+    <value>El fondo deja de actualizarse cuando la ventana pierde el foco</value>
   </data>
   <data name="Settings_WindowBackgroundColor.Header" xml:space="preserve">
-    <value>Color de fondo de ventana</value>
+    <value>Color de fondo de la ventana</value>
   </data>
   <data name="Shell_Home.Content" xml:space="preserve">
     <value>Inicio</value>
@@ -555,10 +555,10 @@
     <value>Buscar contenido en línea</value>
   </data>
   <data name="Settings_LuminosityOpacity.Header" xml:space="preserve">
-    <value>Opacidad de la luminosidad</value>
+    <value>Opacidad de luminosidad</value>
   </data>
   <data name="Settings_Reset.Content" xml:space="preserve">
-    <value>Reinicio</value>
+    <value>Restablecer</value>
   </data>
   <data name="PropertiesDialog_Title.Text" xml:space="preserve">
     <value>Título</value>
@@ -573,7 +573,7 @@
     <value>Género</value>
   </data>
   <data name="PropertiesDialog_Bitrate.Text" xml:space="preserve">
-    <value>Tasa de bits</value>
+    <value>Velocidad de bits</value>
   </data>
   <data name="PropertiesDialog_ContributingArtists.Text" xml:space="preserve">
     <value>Artistas colaboradores</value>
@@ -582,19 +582,19 @@
     <value>Artista del álbum</value>
   </data>
   <data name="PropertiesDialog_Length.Text" xml:space="preserve">
-    <value>Longitud</value>
+    <value>Duración</value>
   </data>
   <data name="PropertiesDialog_Year.Text" xml:space="preserve">
     <value>Año</value>
   </data>
   <data name="PropertiesDialog_ItemType.Text" xml:space="preserve">
-    <value>Tipo de artículo</value>
+    <value>Tipo de elemento</value>
   </data>
   <data name="PropertiesDialog_FileLocation.Text" xml:space="preserve">
     <value>Ubicación del archivo</value>
   </data>
   <data name="PropertiesDialog_OpenFileLocation.Content" xml:space="preserve">
-    <value>Ubicación de archivo abierto</value>
+    <value>Abrir ubicación del archivo</value>
   </data>
   <data name="PropertiesDialog.Title" xml:space="preserve">
     <value>Propiedades</value>
@@ -603,7 +603,7 @@
     <value>Ecualizador</value>
   </data>
   <data name="EqualizerDialog_On" xml:space="preserve">
-    <value>On</value>
+    <value>Activado</value>
   </data>
   <data name="EqualizerDialog_Decibel" xml:space="preserve">
     <value>dB</value>
@@ -612,13 +612,13 @@
     <value>dB</value>
   </data>
   <data name="EqualizerDialog_Preset.Text" xml:space="preserve">
-    <value>Preset</value>
+    <value>Preajuste</value>
   </data>
   <data name="EqualizerDialog_Presets" xml:space="preserve">
-    <value>Plano, aumento de agudos, aumento de graves, auriculares, portátil, altavoces portátiles, equipo de música para casa, TV, coche, personalizado</value>
+    <value>Plano, realce de agudos, realce de graves, auriculares, portátil, altavoces portátiles, equipo estéreo doméstico, televisor, coche, personalizado</value>
   </data>
   <data name="EqualizerDialog_MoveNearby.Content" xml:space="preserve">
-    <value>Juntar los deslizadores cercanos</value>
+    <value>Mover juntos los deslizadores cercanos</value>
   </data>
   <data name="EqualizerDialog_Hz.Text" xml:space="preserve">
     <value>Hz</value>
@@ -627,7 +627,7 @@
     <value>kHz</value>
   </data>
   <data name="EqualizerDialog_Off" xml:space="preserve">
-    <value>Fuera</value>
+    <value>Desactivado</value>
   </data>
   <data name="EditSongInfoDialog.Title" xml:space="preserve">
     <value>Editar información de la canción</value>
@@ -645,13 +645,13 @@
     <value>Editar información de la lista de reproducción</value>
   </data>
   <data name="NewPlaylistInfoDialog.Title" xml:space="preserve">
-    <value>Añadir a la nueva lista de reproducción</value>
+    <value>Añadir a una nueva lista de reproducción</value>
   </data>
   <data name="PropertiesDialog.CloseButtonText" xml:space="preserve">
-    <value>Cierre</value>
+    <value>Cerrar</value>
   </data>
   <data name="EqualizerDialog.CloseButtonText" xml:space="preserve">
-    <value>Cierre</value>
+    <value>Cerrar</value>
   </data>
   <data name="EditSongInfoDialog.CloseButtonText" xml:space="preserve">
     <value>Cancelar</value>
@@ -666,25 +666,25 @@
     <value>Cancelar</value>
   </data>
   <data name="EditSongInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Salvar</value>
+    <value>Guardar</value>
   </data>
   <data name="ImportPlaylistDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Importación</value>
+    <value>Importar</value>
   </data>
   <data name="ImportPlaylistDialog.CloseButtonText" xml:space="preserve">
     <value>Cancelar</value>
   </data>
   <data name="ImportPlaylistDialog.Title" xml:space="preserve">
-    <value>Lista de reproducción de importación</value>
+    <value>Importar lista de reproducción</value>
   </data>
   <data name="ImportPlaylistDialog_Name.Text" xml:space="preserve">
     <value>Nombre</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromFolder.Content" xml:space="preserve">
-    <value>Importación desde carpeta</value>
+    <value>Importar desde una carpeta</value>
   </data>
   <data name="ImportPlaylistDialog_ImportSongs.Text" xml:space="preserve">
-    <value>Canciones de importación</value>
+    <value>Importar canciones</value>
   </data>
   <data name="ImportPlaylistDialog_NumberOfSongs.Text" xml:space="preserve">
     <value>Número de canciones</value>
@@ -693,13 +693,13 @@
     <value>Tipo</value>
   </data>
   <data name="ImportPlaylistDialog_ImportFromM3u8Files.Content" xml:space="preserve">
-    <value>Importación desde archivos m3u8</value>
+    <value>Importar desde archivos m3u8</value>
   </data>
   <data name="EditAlbumInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Salvar</value>
+    <value>Guardar</value>
   </data>
   <data name="EditPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Salvar</value>
+    <value>Guardar</value>
   </data>
   <data name="NewPlaylistInfoDialog.PrimaryButtonText" xml:space="preserve">
     <value>Crear</value>
@@ -708,46 +708,46 @@
     <value>Letra de escritorio</value>
   </data>
   <data name="AlbumDetail_PlayAll.Text" xml:space="preserve">
-    <value>Jugar a todos</value>
+    <value>Reproducir todo</value>
   </data>
   <data name="AlbumDetail_ShuffleAndPlay.Text" xml:space="preserve">
-    <value>Baraja y juego</value>
+    <value>Reproducir aleatoriamente</value>
   </data>
   <data name="AlbumDetail_EditInfo.Text" xml:space="preserve">
     <value>Editar información</value>
   </data>
   <data name="AlbumInfo_Songs" xml:space="preserve">
-    <value>Canciones</value>
+    <value>canciones</value>
   </data>
   <data name="AlbumInfo_RunTime" xml:space="preserve">
-    <value>Duración</value>
+    <value>de duración</value>
   </data>
   <data name="ArtistInfo_Albums" xml:space="preserve">
-    <value>Álbumes</value>
+    <value>álbumes</value>
   </data>
   <data name="ArtistInfo_Album" xml:space="preserve">
-    <value>Álbum</value>
+    <value>álbum</value>
   </data>
   <data name="ArtistInfo_Hours" xml:space="preserve">
-    <value>Horarios</value>
+    <value>horas</value>
   </data>
   <data name="ArtistInfo_Hour" xml:space="preserve">
     <value>hora</value>
   </data>
   <data name="ArtistInfo_Min" xml:space="preserve">
-    <value>min</value>
+    <value>minuto</value>
   </data>
   <data name="ArtistInfo_Sec" xml:space="preserve">
-    <value>SEC</value>
+    <value>segundo</value>
   </data>
   <data name="ArtistInfo_Secs" xml:space="preserve">
-    <value>SECs</value>
+    <value>segundos</value>
   </data>
   <data name="ArtistInfo_Mins" xml:space="preserve">
-    <value>mins</value>
+    <value>minutos</value>
   </data>
   <data name="AlbumInfo_Song" xml:space="preserve">
-    <value>Canción</value>
+    <value>canción</value>
   </data>
   <data name="ArtistInfo_Artist" xml:space="preserve">
     <value>Artista</value>
@@ -777,10 +777,10 @@
     <value>Biblioteca musical 2</value>
   </data>
   <data name="Home_Retry.Text" xml:space="preserve">
-    <value>Reintento</value>
+    <value>Reintentar</value>
   </data>
   <data name="Home_SearchResult.Text" xml:space="preserve">
-    <value>Resultados de búsqueda</value>
+    <value> - resultados de búsqueda</value>
   </data>
   <data name="Settings_SourceCode.Content" xml:space="preserve">
     <value>Código fuente</value>
@@ -792,13 +792,13 @@
     <value>Descargar</value>
   </data>
   <data name="Settings_SongDownloadLocation.Header" xml:space="preserve">
-    <value>Lugar de descarga de la canción</value>
+    <value>Ubicación de descarga de canciones</value>
   </data>
   <data name="Settings_ChangeSongDownloadLocation.Content" xml:space="preserve">
-    <value>Cambio</value>
+    <value>Cambiar</value>
   </data>
   <data name="OnlineMusicLibrary_StartDownloading" xml:space="preserve">
-    <value>Empieza a descargar</value>
+    <value>Iniciando la descarga</value>
   </data>
   <data name="OnlineMusicLibrary_Cancel" xml:space="preserve">
     <value>Cancelar</value>
@@ -828,64 +828,64 @@
     <value>Descargando canción</value>
   </data>
   <data name="Shell_Settings.Content" xml:space="preserve">
-    <value>Escenarios</value>
+    <value>Configuración</value>
   </data>
   <data name="Shell_Settings.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ajustes (Ctrl+G)</value>
+    <value>Configuración (Ctrl+G)</value>
   </data>
   <data name="PlaylistInfo_Item" xml:space="preserve">
-    <value>Ítem</value>
+    <value>elemento</value>
   </data>
   <data name="PlaylistInfo_Items" xml:space="preserve">
-    <value>Elementos</value>
+    <value>elementos</value>
   </data>
   <data name="PlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>Lista de reproducción del programa</value>
+    <value>Mostrar lista de reproducción</value>
   </data>
   <data name="PlayLists_Rename.Text" xml:space="preserve">
-    <value>Renombración</value>
+    <value>Cambiar nombre</value>
   </data>
   <data name="PlayLists_Delete.Text" xml:space="preserve">
-    <value>Borrar</value>
+    <value>Eliminar</value>
   </data>
   <data name="OnlinePlayLists_ShowPlaylist.Text" xml:space="preserve">
-    <value>Lista de reproducción del programa</value>
+    <value>Mostrar lista de reproducción</value>
   </data>
   <data name="Main_SendFeedback.Content" xml:space="preserve">
-    <value>Envía comentarios</value>
+    <value>Enviar comentarios</value>
   </data>
   <data name="Shell_PlayFiles" xml:space="preserve">
-    <value>Archivo(s) de reproducción</value>
+    <value>Reproducir archivos</value>
   </data>
   <data name="Error_SongPlayback" xml:space="preserve">
-    <value>No podemos abrir {title}. Esto puede deberse a que el tipo de archivo no está soportado, la extensión del archivo es incorrecta, el archivo está corrupto o la red es anormal.</value>
+    <value>No se puede abrir {title}. Puede deberse a que el tipo de archivo no es compatible, la extensión no es correcta, el archivo está dañado o hay un problema de red.</value>
   </data>
   <data name="Error_PlaybackDeviceBusy" xml:space="preserve">
-    <value>El dispositivo de reproducción de audio está actualmente en uso.</value>
+    <value>El dispositivo de reproducción de audio está en uso.</value>
   </data>
   <data name="Error_SamePlaylistName" xml:space="preserve">
     <value>Ya existe una lista de reproducción con este nombre en esta carpeta. Introduce otro nombre y vuelve a intentarlo.</value>
   </data>
   <data name="Error_EditingSongInfoIO" xml:space="preserve">
-    <value>No podemos editar {title}. Esto puede deberse a que el archivo actual se está reproduciendo, está ocupado por otro proceso, o el tipo de archivo no está soportado.</value>
+    <value>No se puede editar {title}. Puede deberse a que el archivo actual se está reproduciendo, está siendo utilizado por otro proceso o el tipo de archivo no es compatible.</value>
   </data>
   <data name="Settings_DeveloperOptions.Text" xml:space="preserve">
     <value>Opciones para desarrolladores</value>
   </data>
   <data name="Settings_Logging.Header" xml:space="preserve">
-    <value>Tala</value>
+    <value>Registro</value>
   </data>
   <data name="Settings_OpenFolder.Content" xml:space="preserve">
     <value>Abrir carpeta</value>
   </data>
   <data name="Error_EditingSongInfoOther" xml:space="preserve">
-    <value>No podemos editar algunas de las propiedades de {title}. Esto puede deberse a que el tipo de archivo no está soportado o a que el archivo está corrupto.</value>
+    <value>No se pueden editar algunas propiedades de {title}. Puede deberse a que el tipo de archivo no es compatible o a que el archivo está dañado.</value>
   </data>
   <data name="NoPlaylist_PlaylistDonotHave.Text" xml:space="preserve">
-    <value>No tienes listas de reproducción</value>
+    <value>No tienes ninguna lista de reproducción</value>
   </data>
   <data name="PlayLists_CreateNewPlaylist.Text" xml:space="preserve">
-    <value>Crea una nueva lista de reproducción</value>
+    <value>Crear una nueva lista de reproducción</value>
   </data>
   <data name="PlayLists_NewPlaylist.Text" xml:space="preserve">
     <value>Nueva lista de reproducción</value>
@@ -900,34 +900,34 @@
     <value>Lista de reproducción sin título</value>
   </data>
   <data name="PlaylistInfo_Create" xml:space="preserve">
-    <value>Lista de reproducción '{title}' creada.</value>
+    <value>Se ha creado la lista de reproducción '{title}'.</value>
   </data>
   <data name="PlaylistInfo_Delete" xml:space="preserve">
-    <value>Lista de reproducción '{title}' eliminada.</value>
+    <value>Se ha eliminado la lista de reproducción '{title}'.</value>
   </data>
   <data name="PlaylistInfo_AddItems" xml:space="preserve">
-    <value>{num} elementos añadidos a la lista de reproducción '{title}'.</value>
+    <value>Se han añadido {num} elementos a la lista de reproducción '{title}'.</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylist" xml:space="preserve">
-    <value>{num} ha sido importada.</value>
+    <value>Se ha importado {num} lista de reproducción.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylist" xml:space="preserve">
-    <value>{num} ha sido exportada.</value>
+    <value>Se ha exportado {num} lista de reproducción.</value>
   </data>
   <data name="PlaylistInfo_ExportPlaylists" xml:space="preserve">
-    <value>{num} se han exportado listas de reproducción.</value>
+    <value>Se han exportado {num} listas de reproducción.</value>
   </data>
   <data name="PlaylistInfo_ImportPlaylists" xml:space="preserve">
-    <value>{num} se han importado listas de reproducción.</value>
+    <value>Se han importado {num} listas de reproducción.</value>
   </data>
   <data name="PlaylistInfo_AddItem" xml:space="preserve">
-    <value>{num} elemento añadido a la lista de reproducción '{title}'.</value>
+    <value>Se ha añadido {num} elemento a la lista de reproducción '{title}'.</value>
   </data>
   <data name="Settings_Lyric.Text" xml:space="preserve">
     <value>Letra</value>
   </data>
   <data name="Settings_Play.Text" xml:space="preserve">
-    <value>Juego</value>
+    <value>Reproducción</value>
   </data>
   <data name="Settings_PlaylistFile" xml:space="preserve">
     <value>Archivo de la lista de reproducción</value>
@@ -936,25 +936,25 @@
     <value>Lista de reproducción</value>
   </data>
   <data name="Lyric_ShowCover.Text" xml:space="preserve">
-    <value>Portada del programa</value>
+    <value>Mostrar portada</value>
   </data>
   <data name="ImageViewerTitle" xml:space="preserve">
-    <value>Visor de Imágenes Libre</value>
+    <value>Untamed Image Viewer</value>
   </data>
   <data name="ImageViewer_ZoomIn.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Haz zoom (↑ / Ctrl+Mouse rueda hacia arriba)</value>
+    <value>Acercar (↑ / Ctrl+rueda del ratón hacia arriba)</value>
   </data>
   <data name="ImageViewer_OriginalSize.ToolTipService.ToolTip" xml:space="preserve">
     <value>Tamaño original</value>
   </data>
   <data name="ImageViewer_Copy.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Copia a la carpeta</value>
+    <value>Copiar al portapapeles</value>
   </data>
   <data name="ImageViewer_Save.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Salvar</value>
+    <value>Guardar</value>
   </data>
   <data name="ImageViewer_ZoomOut.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Zoom out (↑ / Ctrl+Rueda del ratón hacia abajo)</value>
+    <value>Alejar (↓ / Ctrl+rueda del ratón hacia abajo)</value>
   </data>
   <data name="Lyric_NoLyric" xml:space="preserve">
     <value>No hay letras disponibles</value>
@@ -963,45 +963,45 @@
     <value>No se puede conectar al servidor</value>
   </data>
   <data name="Home_UnableToAccess.Text" xml:space="preserve">
-    <value>Los usuarios fuera de la China continental pueden no poder acceder a esta biblioteca musical.</value>
+    <value>Es posible que los usuarios fuera de China continental no puedan acceder a esta biblioteca musical.</value>
   </data>
   <data name="Home_LibraryNotOpen.Text" xml:space="preserve">
-    <value>Esta biblioteca musical aún no está abierta, por favor, permanezcan atentos</value>
+    <value>Esta biblioteca musical aún no está disponible. Permanece atento.</value>
   </data>
   <data name="Lyric_SpeedUpLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Acelera la letra en 0,3 segundos</value>
+    <value>Adelantar la letra 0,3 s</value>
   </data>
   <data name="Lyric_SlowDownLyric.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ralentiza la letra en 0,3 segundos</value>
+    <value>Retrasar la letra 0,3 s</value>
   </data>
   <data name="Settings_LyricPreview.Header" xml:space="preserve">
-    <value>Avance</value>
+    <value>Vista previa</value>
   </data>
   <data name="Settings_LyricFontFamily.Header" xml:space="preserve">
     <value>Familia de fuentes</value>
   </data>
   <data name="Settings_LyricOffset.Header" xml:space="preserve">
-    <value>Offset lírico global</value>
+    <value>Desfase global de la letra</value>
   </data>
   <data name="Settings_LyricOffset.Description" xml:space="preserve">
-    <value>Los valores negativos avanzan la letra, mientras que los positivos la retrasan</value>
+    <value>Los valores negativos adelantan la letra y los positivos la retrasan</value>
   </data>
   <data name="Settings_Millisecond.Text" xml:space="preserve">
-    <value>milisegundos</value>
+    <value>ms</value>
   </data>
   <data name="Settings_FontWeights" xml:space="preserve">
-    <value>Fino, Extra Claro, Ligero, Semi Claro, Normal, Medio, Semi Negrita, Negrita, Extra Negro, Extra Negro</value>
+    <value>Fino, extrafino, ligero, semiligero, normal, medio, seminegrita, negrita, extranegrita, negro, extra negro</value>
   </data>
   <data name="Settings_ChooseAFontWeight.PlaceholderText" xml:space="preserve">
-    <value>Elige un grosor de fuente</value>
+    <value>Elegir un peso de fuente</value>
   </data>
   <data name="Settings_LyricFontWeight.Header" xml:space="preserve">
-    <value>Grosor de fuente</value>
+    <value>Peso de la fuente</value>
   </data>
   <data name="Settings_LyricPageCurrentFontSize.Header" xml:space="preserve">
-    <value>Tamaño de fuente resaltado de la letra</value>
+    <value>Tamaño de fuente de la letra resaltada</value>
   </data>
   <data name="Settings_LyricPageNotCurrentFontSize.Header" xml:space="preserve">
-    <value>Tamaño normal de fuente de letra</value>
+    <value>Tamaño de fuente de la letra normal</value>
   </data>
 </root>

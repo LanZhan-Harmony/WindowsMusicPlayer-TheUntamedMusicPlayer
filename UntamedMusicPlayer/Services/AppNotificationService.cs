@@ -6,14 +6,9 @@ using UntamedMusicPlayer.Helpers;
 
 namespace UntamedMusicPlayer.Services;
 
-public sealed class AppNotificationService : IAppNotificationService
+public sealed partial class AppNotificationService : IAppNotificationService, IDisposable
 {
     public AppNotificationService() { }
-
-    ~AppNotificationService()
-    {
-        Unregister();
-    }
 
     public void Initialize()
     {
@@ -58,5 +53,10 @@ public sealed class AppNotificationService : IAppNotificationService
     public void Unregister()
     {
         AppNotificationManager.Default.Unregister();
+    }
+
+    public void Dispose()
+    {
+        Unregister();
     }
 }

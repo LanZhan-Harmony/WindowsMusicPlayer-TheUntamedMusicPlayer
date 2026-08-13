@@ -6,8 +6,6 @@ using Microsoft.Windows.AppNotifications.Builder;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Core.Contracts.Services;
-using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLinq;
 using ZLogger;
@@ -530,4 +528,3 @@ public static class DownloadHelper
         return location;
     }
 }
-

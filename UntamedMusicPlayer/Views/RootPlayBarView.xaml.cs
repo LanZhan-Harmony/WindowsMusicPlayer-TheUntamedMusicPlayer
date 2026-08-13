@@ -5,7 +5,6 @@ using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Media.Playback;
 using Windows.System;
@@ -280,9 +279,3 @@ public sealed partial class RootPlayBarView : UserControl
         await dialog.ShowAsync();
     }
 }
-
-
-
-
-
-

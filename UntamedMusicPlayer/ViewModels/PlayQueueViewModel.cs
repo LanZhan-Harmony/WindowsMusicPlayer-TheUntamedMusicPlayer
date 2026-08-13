@@ -7,9 +7,7 @@ using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Core.Constants;
-using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 using Windows.Storage;
 using ZLinq;
@@ -19,7 +17,7 @@ namespace UntamedMusicPlayer.ViewModels;
 public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
 {
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
-    private readonly MusicPlayer _musicPlayer = App.GetService<MusicPlayer>();
+    private readonly MusicPlayer _musicPlayer;
     private readonly PlayQueueManager _playQueueManager;
     private readonly SharedPlaybackState _playState;
 
@@ -31,8 +29,9 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     public partial bool IsButtonEnabled { get; set; } = false;
 
-    public PlayQueueViewModel()
+    public PlayQueueViewModel(MusicPlayer musicPlayer)
     {
+        _musicPlayer = musicPlayer;
         _playQueueManager = _musicPlayer.QueueManager;
         _playState = _musicPlayer.State;
         PlayQueue = _playQueueManager.CurrentQueue;
@@ -140,7 +139,8 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
     {
         if (info is BriefLocalSongInfo localInfo)
         {
-            var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(localInfo.Artists[0]);
+            var localArtistInfo = App.GetService<MusicLibrary>()
+                .GetArtistInfoBySong(localInfo.Artists[0]);
             if (localArtistInfo is not null)
             {
                 _navigationService.NavigateShell(
@@ -324,4 +324,3 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         _playQueueManager.PropertyChanged -= OnPlayQueueChanged;
     }
 }
-

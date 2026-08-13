@@ -8,8 +8,7 @@ public sealed partial class HomeViewModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
-    private readonly INavigationService _navigationService =
-        App.GetService<INavigationService>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly OnlineMusicLibrary _onlineMusicLibrary = App.GetService<OnlineMusicLibrary>();
 
     /// <summary>
@@ -164,4 +163,3 @@ public sealed partial class HomeViewModel : ObservableObject
         IsMainGridVisible = MusicLibraryIndex == 0;
     }
 }
-

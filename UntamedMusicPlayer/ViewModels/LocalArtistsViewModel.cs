@@ -1,14 +1,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using ZLinq;
 
-using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class LocalArtistsViewModel
@@ -18,6 +17,7 @@ public sealed partial class LocalArtistsViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
+    private readonly MusicPlayer _musicPlayer;
 
     private List<LocalArtistInfo> _artistList = [.. App.GetService<MusicLibrary>().Artists.Values];
 
@@ -40,9 +40,10 @@ public sealed partial class LocalArtistsViewModel
     [ObservableProperty]
     public partial string SortByStr { get; set; } = "";
 
-    public LocalArtistsViewModel()
+    public LocalArtistsViewModel(MusicPlayer musicPlayer)
         : base(StrongReferenceMessenger.Default)
     {
+        _musicPlayer = musicPlayer;
         Messenger.Register(this);
         _ = LoadModeAndArtistList();
     }
@@ -134,55 +135,52 @@ public sealed partial class LocalArtistsViewModel
     }
 
     [RelayCommand]
-
     public void PlayButton(LocalArtistInfo info)
-
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
-        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+        _musicPlayer.QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
+        _musicPlayer.PlaySongByInfo(songList[0]);
     }
 
     [RelayCommand]
-
     public void PlayNextButton(LocalArtistInfo info)
-
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"LocalSongs:Artist:{info.Name}",
+                songList
+            );
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
+            _musicPlayer.QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
     [RelayCommand]
-
     public void AddToPlayQueueButton(LocalArtistInfo info)
-
     {
         var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"LocalSongs:Artist:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"LocalSongs:Artist:{info.Name}",
+                songList
+            );
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
+            _musicPlayer.QueueManager.AddSongsToEnd(songList);
         }
     }
 
     [RelayCommand]
-
     public async Task AddToPlaylistButton(Tuple<LocalArtistInfo, PlaylistInfo> tuple)
-
     {
-
         var (info, playlist) = tuple;
         var songList = App.GetService<MusicLibrary>().GetSongsByArtist(info);
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
@@ -204,10 +202,5 @@ public sealed partial class LocalArtistsViewModel
         return isActive ? Visibility.Collapsed : Visibility.Visible;
     }
 
-
-
-
-
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
-

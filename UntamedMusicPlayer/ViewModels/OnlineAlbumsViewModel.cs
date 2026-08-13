@@ -1,23 +1,24 @@
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 
-using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class OnlineAlbumsViewModel
 {
-    private readonly INavigationService _navigationService =
-        App.GetService<INavigationService>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
+    private readonly MusicPlayer _musicPlayer;
 
-    public OnlineAlbumsViewModel() { }
+    public OnlineAlbumsViewModel(MusicPlayer musicPlayer)
+    {
+        _musicPlayer = musicPlayer;
+    }
 
     [RelayCommand]
-
     public async Task PlayButton(IBriefOnlineAlbumInfo info)
-
     {
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
@@ -25,14 +26,13 @@ public sealed partial class OnlineAlbumsViewModel
         {
             return;
         }
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
-        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+        _musicPlayer
+            .QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+        _musicPlayer.PlaySongByInfo(songList[0]);
     }
 
     [RelayCommand]
-
     public async Task PlayNextButton(IBriefOnlineAlbumInfo info)
-
     {
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
@@ -40,21 +40,20 @@ public sealed partial class OnlineAlbumsViewModel
         {
             return;
         }
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer
+                .QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
+            _musicPlayer.QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
     [RelayCommand]
-
     public async Task AddToPlayQueueButton(IBriefOnlineAlbumInfo info)
-
     {
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
@@ -62,22 +61,20 @@ public sealed partial class OnlineAlbumsViewModel
         {
             return;
         }
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+            _musicPlayer
+                .QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
+            _musicPlayer.QueueManager.AddSongsToEnd(songList);
         }
     }
 
     [RelayCommand]
-
     public async Task AddToPlaylistButton(Tuple<IBriefOnlineAlbumInfo, PlaylistInfo> tuple)
-
     {
-
         var (info, playlist) = tuple;
         var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
         var songList = detailedInfo.SongList;
@@ -85,9 +82,7 @@ public sealed partial class OnlineAlbumsViewModel
     }
 
     [RelayCommand]
-
     public async Task ShowArtistButton(IBriefOnlineAlbumInfo info)
-
     {
         var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromAlbumInfoAsync(info);
         if (onlineArtistInfo is not null)
@@ -99,10 +94,4 @@ public sealed partial class OnlineAlbumsViewModel
             );
         }
     }
-
-
-
-
-
 }
-

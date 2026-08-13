@@ -1,25 +1,23 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 using ZLogger;
 
-using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class OnlineArtistDetailViewModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
-    private readonly INavigationService _navigationService =
-        App.GetService<INavigationService>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly ILogger _logger = LoggingService.CreateLogger<OnlinePlayListDetailViewModel>();
+    private readonly MusicPlayer _musicPlayer;
 
     private bool _isSearchingMore = false;
     private IBriefOnlineArtistInfo? _cachedBriefArtist = null;
@@ -37,7 +35,10 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     [ObservableProperty]
     public partial bool IsSearchMoreProgressRingActive { get; set; } = false;
 
-    public OnlineArtistDetailViewModel() { }
+    public OnlineArtistDetailViewModel(MusicPlayer musicPlayer)
+    {
+        _musicPlayer = musicPlayer;
+    }
 
     /// <summary>
     /// 检查并加载艺术家数据，只在艺术家变化时重新搜索
@@ -133,141 +134,126 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     }
 
     [RelayCommand]
-
     public void PlayAllButton()
-
     {
         if (Artist.AlbumList.Count == 0)
         {
             return;
         }
         var allSongs = ConvertAllSongsToFlatArray();
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
-        App.GetService<MusicPlayer>().PlaySongByInfo(allSongs[0]);
+        _musicPlayer.QueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
+        _musicPlayer.PlaySongByInfo(allSongs[0]);
     }
 
     [RelayCommand]
-
     public void ShuffledPlayAllButton()
-
     {
         if (Artist.AlbumList.Count == 0)
         {
             return;
         }
-        App.GetService<MusicPlayer>().QueueManager.SetShuffledPlayQueue(
+        _musicPlayer.QueueManager.SetShuffledPlayQueue(
             $"ShuffledOnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
-        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(App.GetService<MusicPlayer>().QueueManager.CurrentQueue[0]);
+        _musicPlayer.PlaySongByIndexedInfo(_musicPlayer.QueueManager.CurrentQueue[0]);
     }
 
-
-
     [RelayCommand]
-
     public async Task AddToPlaylistFlyoutButton(PlaylistInfo playlist)
-
     {
-        await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, ConvertAllSongsToFlatArray());
+        await App.GetService<PlaylistLibrary>()
+            .AddToPlaylist(playlist, ConvertAllSongsToFlatArray());
     }
 
     [RelayCommand]
-
     public void AddToPlayQueueFlyoutButton()
-
     {
         if (Artist.AlbumList.Count == 0)
         {
             return;
         }
         var allSongs = ConvertAllSongsToFlatArray();
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Artist:{Artist.Name}", allSongs);
-            App.GetService<MusicPlayer>().PlaySongByInfo(allSongs[0]);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Artist:{Artist.Name}",
+                allSongs
+            );
+            _musicPlayer.PlaySongByInfo(allSongs[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(allSongs);
+            _musicPlayer.QueueManager.AddSongsToEnd(allSongs);
         }
     }
 
     public void SongListView_ItemClick(IBriefOnlineSongInfo info)
     {
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
+        _musicPlayer.QueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
-        App.GetService<MusicPlayer>().PlaySongByInfo(info);
+        _musicPlayer.PlaySongByInfo(info);
     }
 
     [RelayCommand]
-
     public void SongListViewPlayButton(IBriefOnlineSongInfo info)
-
     {
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
+        _musicPlayer.QueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Artist:{Artist.Name}",
             ConvertAllSongsToFlatArray()
         );
-        App.GetService<MusicPlayer>().PlaySongByInfo(info);
+        _musicPlayer.PlaySongByInfo(info);
     }
 
     [RelayCommand]
-
     public void SongListViewPlayNextButton(IBriefOnlineSongInfo info)
-
     {
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
                 $"OnlineSongs:Artist:{Artist.Name}:Part",
                 list
             );
-            App.GetService<MusicPlayer>().PlaySongByInfo(info);
+            _musicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([info]);
+            _musicPlayer.QueueManager.AddSongsToNextPlay([info]);
         }
     }
 
     [RelayCommand]
-
     public void SongListViewAddToPlayQueueButton(IBriefOnlineSongInfo info)
-
     {
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<IBriefOnlineSongInfo> { info };
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
                 $"OnlineSongs:Artist:{Artist.Name}:Part",
                 list
             );
-            App.GetService<MusicPlayer>().PlaySongByInfo(info);
+            _musicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([info]);
+            _musicPlayer.QueueManager.AddSongsToEnd([info]);
         }
     }
 
     [RelayCommand]
-
-    public async Task SongListViewAddToPlaylistButton(Tuple<IBriefOnlineSongInfo, PlaylistInfo> tuple)
-
+    public async Task SongListViewAddToPlaylistButton(
+        Tuple<IBriefOnlineSongInfo, PlaylistInfo> tuple
+    )
     {
-
         var (info, playlist) = tuple;
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, info);
     }
 
     [RelayCommand]
-
     public async Task SongListViewShowAlbumButton(IBriefOnlineSongInfo info)
-
     {
         var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(info);
         if (onlineAlbumInfo is not null)
@@ -281,55 +267,54 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     }
 
     [RelayCommand]
-
     public void AlbumGridViewPlayButton(IOnlineArtistAlbumInfo info)
-
     {
         var songList = info.SongList;
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
-        App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+        _musicPlayer.QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+        _musicPlayer.PlaySongByInfo(songList[0]);
     }
 
     [RelayCommand]
-
     public void AlbumGridViewPlayNextButton(IOnlineArtistAlbumInfo info)
-
     {
         var songList = info.SongList;
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Album:{info.Name}",
+                songList
+            );
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay(songList);
+            _musicPlayer.QueueManager.AddSongsToNextPlay(songList);
         }
     }
 
     [RelayCommand]
-
     public void AlbumGridViewAddToPlayQueueButton(IOnlineArtistAlbumInfo info)
-
     {
         var songList = info.SongList;
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
-            App.GetService<MusicPlayer>().PlaySongByInfo(songList[0]);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Album:{info.Name}",
+                songList
+            );
+            _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd(songList);
+            _musicPlayer.QueueManager.AddSongsToEnd(songList);
         }
     }
 
     [RelayCommand]
-
-    public async Task AlbumGridViewAddToPlaylistButton(Tuple<IOnlineArtistAlbumInfo, PlaylistInfo> tuple)
-
+    public async Task AlbumGridViewAddToPlaylistButton(
+        Tuple<IOnlineArtistAlbumInfo, PlaylistInfo> tuple
+    )
     {
-
         var (info, playlist) = tuple;
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, info.SongList);
     }
@@ -353,16 +338,4 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
             selectedIndex
         );
     }
-
-
-
-
-
-
-
-
-
-
-
 }
-

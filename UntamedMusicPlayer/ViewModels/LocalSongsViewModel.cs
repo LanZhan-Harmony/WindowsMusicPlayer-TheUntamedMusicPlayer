@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -9,12 +10,10 @@ using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 using ZLinq;
 using ZLogger;
 
-using CommunityToolkit.Mvvm.Input;
 namespace UntamedMusicPlayer.ViewModels;
 
 public sealed partial class LocalSongsViewModel
@@ -24,9 +23,9 @@ public sealed partial class LocalSongsViewModel
 {
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
-    private readonly INavigationService _navigationService =
-        App.GetService<INavigationService>();
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly ILogger _logger = LoggingService.CreateLogger<LocalSongsViewModel>();
+    private readonly MusicPlayer _musicPlayer;
 
     /// <summary>
     /// 是否分组
@@ -104,9 +103,10 @@ public sealed partial class LocalSongsViewModel
     [ObservableProperty]
     public partial string GenreStr { get; set; } = "";
 
-    public LocalSongsViewModel()
+    public LocalSongsViewModel(MusicPlayer musicPlayer)
         : base(StrongReferenceMessenger.Default)
     {
+        _musicPlayer = musicPlayer;
         Messenger.Register(this);
         _ = LoadModeAndSongList();
     }
@@ -536,56 +536,49 @@ public sealed partial class LocalSongsViewModel
     }
 
     [RelayCommand]
-
     public void ShuffledPlayAllButton()
-
     {
-        App.GetService<MusicPlayer>().QueueManager.SetShuffledPlayQueue(
+        _musicPlayer.QueueManager.SetShuffledPlayQueue(
             "ShuffledLocalSongs:All",
             ConvertGroupedToFlatList()
         );
-        App.GetService<MusicPlayer>().PlaySongByIndexedInfo(App.GetService<MusicPlayer>().QueueManager.CurrentQueue[0]);
+        _musicPlayer.PlaySongByIndexedInfo(_musicPlayer.QueueManager.CurrentQueue[0]);
     }
-
 
     public void SongListView_ItemClick(object _, ItemClickEventArgs e)
     {
         if (e.ClickedItem is BriefLocalSongInfo info)
         {
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
                 $"LocalSongs:All:{SortByStr}",
                 ConvertGroupedToFlatList(info)
             );
-            App.GetService<MusicPlayer>().PlaySongByInfo(info);
+            _musicPlayer.PlaySongByInfo(info);
         }
     }
 
     [RelayCommand]
-
     public void PlayButton(BriefLocalSongInfo info)
-
     {
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue(
+        _musicPlayer.QueueManager.SetNormalPlayQueue(
             $"LocalSongs:All:{SortByStr}",
             ConvertGroupedToFlatList(info)
         );
-        App.GetService<MusicPlayer>().PlaySongByInfo(info);
+        _musicPlayer.PlaySongByInfo(info);
     }
 
     [RelayCommand]
-
     public void PlayNextButton(BriefLocalSongInfo info)
-
     {
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue("LocalSongs:Part", list);
-            App.GetService<MusicPlayer>().PlaySongByInfo(info);
+            _musicPlayer.QueueManager.SetNormalPlayQueue("LocalSongs:Part", list);
+            _musicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToNextPlay([info]);
+            _musicPlayer.QueueManager.AddSongsToNextPlay([info]);
         }
     }
 
@@ -595,32 +588,27 @@ public sealed partial class LocalSongsViewModel
     [RelayCommand]
     public void AddToPlayQueueButton(BriefLocalSongInfo info)
     {
-        if (App.GetService<MusicPlayer>().QueueManager.CurrentQueue.Count == 0)
+        if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
             var list = new List<BriefLocalSongInfo> { info };
-            App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue("LocalSongs:Part", list);
-            App.GetService<MusicPlayer>().PlaySongByInfo(info);
+            _musicPlayer.QueueManager.SetNormalPlayQueue("LocalSongs:Part", list);
+            _musicPlayer.PlaySongByInfo(info);
         }
         else
         {
-            App.GetService<MusicPlayer>().QueueManager.AddSongsToEnd([info]);
+            _musicPlayer.QueueManager.AddSongsToEnd([info]);
         }
     }
 
     [RelayCommand]
-
     public async Task AddToPlaylistButton(Tuple<BriefLocalSongInfo, PlaylistInfo> tuple)
-
     {
-
         var (info, playlist) = tuple;
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, info);
     }
 
     [RelayCommand]
-
     public void ShowAlbumButton(BriefLocalSongInfo info)
-
     {
         var localAlbumInfo = App.GetService<MusicLibrary>().GetAlbumInfoBySong(info.Album);
         if (localAlbumInfo is not null)
@@ -634,9 +622,7 @@ public sealed partial class LocalSongsViewModel
     }
 
     [RelayCommand]
-
     public void ShowArtistButton(BriefLocalSongInfo info)
-
     {
         var localArtistInfo = App.GetService<MusicLibrary>().GetArtistInfoBySong(info.Artists[0]);
         if (localArtistInfo is not null)
@@ -707,12 +693,5 @@ public sealed partial class LocalSongsViewModel
         };
     }
 
-
-
-
-
-
-
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);
 }
-

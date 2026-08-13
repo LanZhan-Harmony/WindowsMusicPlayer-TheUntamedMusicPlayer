@@ -6,8 +6,6 @@ using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
-using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -135,10 +133,7 @@ public sealed partial class PlayQueuePage : Page
         }
     }
 
-    private void PlayQueueListView_DragItemsStarting(
-        object sender,
-        DragItemsStartingEventArgs e
-    )
+    private void PlayQueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
         ViewModel.BeginPlayQueueReorder();
         if (e.Items.Count > 0)
@@ -259,8 +254,9 @@ public sealed partial class PlayQueuePage : Page
             return 0;
         }
 
-        UIElement relativeTarget =
-            listView.ItemsPanelRoot is not null ? listView.ItemsPanelRoot : listView;
+        UIElement relativeTarget = listView.ItemsPanelRoot is not null
+            ? listView.ItemsPanelRoot
+            : listView;
         var position = e.GetPosition(relativeTarget);
         if (listView.ContainerFromIndex(0) is not ListViewItem sampleItem)
         {
@@ -297,7 +293,8 @@ public sealed partial class PlayQueuePage : Page
             && grid.DataContext is IndexedPlayQueueSong songInfo
         )
         {
-            var isCurrentlyPlaying = App.GetService<MusicPlayer>().State.PlayQueueIndex == songInfo.Index;
+            var isCurrentlyPlaying =
+                App.GetService<MusicPlayer>().State.PlayQueueIndex == songInfo.Index;
             playingFontIcon.Visibility = isCurrentlyPlaying
                 ? Visibility.Visible
                 : Visibility.Collapsed;
@@ -458,9 +455,3 @@ public sealed partial class PlayQueuePage : Page
         AddFilesSplitButton.IsEnabled = true;
     }
 }
-
-
-
-
-
-

@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Hosting;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.Playback;
 using Windows.UI;
 using ZLogger;
 
@@ -20,8 +19,7 @@ public sealed partial class DynamicBackgroundService(
     IColorExtractionService colorExtractionService,
     IWindowService windowService,
     MusicPlayer musicPlayer
-)
-    : IDynamicBackgroundService
+) : IDynamicBackgroundService
 {
     private readonly ILogger _logger = LoggingService.CreateLogger<DynamicBackgroundService>();
     private readonly SharedPlaybackState _playState = musicPlayer.State;
@@ -69,7 +67,9 @@ public sealed partial class DynamicBackgroundService(
         _targetElement =
             targetElement
             ?? windowService.GetBackgroundGrid()
-            ?? throw new InvalidOperationException("Main window background grid is not initialized.");
+            ?? throw new InvalidOperationException(
+                "Main window background grid is not initialized."
+            );
         _compositor = ElementCompositionPreview.GetElementVisual(_targetElement).Compositor;
 
         // 监听当前歌曲变化
