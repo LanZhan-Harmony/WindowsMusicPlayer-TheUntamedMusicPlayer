@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
@@ -109,7 +108,7 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
                 nameof(SettingsPage) => nameof(SettingsPage),
                 _ => nameof(HomePage),
             };
-            Navigate(pageToNavigate, "", new SuppressNavigationTransitionInfo());
+            Navigate(pageToNavigate, "", NavigationTransition.Suppress);
             ViewModel.IsFirstLoaded = false;
         }
     }
@@ -276,10 +275,10 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
     public void Navigate(
         string destPage,
         object? parameter,
-        NavigationTransitionInfo? infoOverride = null
+        NavigationTransition transition = NavigationTransition.Default
     )
     {
-        _navigationService.NavigateShell(destPage, parameter, infoOverride);
+        _navigationService.NavigateShell(destPage, parameter, transition);
     }
 
     public void GoBack()
@@ -287,9 +286,3 @@ public sealed partial class ShellPage : Page, IRecipient<HavePlaylistMessage>
         _navigationService.GoBackShell();
     }
 }
-
-
-
-
-
-

@@ -252,7 +252,7 @@
                           ItemsSource="{x:Bind GroupedArtistList.View, Mode=OneWay}"
                           Loaded="ArtistGridView_Loaded"
                           SelectionMode="None"
-                          Visibility="{x:Bind ViewModel.GetArtistGridViewVisibility(ViewModel.IsProgressRingActive), Mode=OneWay}">
+                          Visibility="{x:Bind GetArtistGridViewVisibility(ViewModel.IsProgressRingActive), Mode=OneWay}">
                     <GridView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
                     </GridView.GroupStyle>

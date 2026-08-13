@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
@@ -20,6 +21,15 @@ public sealed partial class LocalAlbumsPage : Page
         ViewModel = App.GetService<LocalAlbumsViewModel>();
         InitializeComponent();
     }
+
+    public object GetAlbumGridViewSource(
+        ICollectionView grouped,
+        List<LocalAlbumInfo> notGrouped,
+        bool isGrouped
+    ) => isGrouped ? grouped : notGrouped;
+
+    public Visibility GetAlbumGridViewVisibility(bool isActive) =>
+        isActive ? Visibility.Collapsed : Visibility.Visible;
 
     private void SortByListView_Loaded(object sender, RoutedEventArgs e)
     {
@@ -150,7 +160,7 @@ public sealed partial class LocalAlbumsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(LocalAlbumDetailPage),
                 new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }
@@ -216,7 +226,7 @@ public sealed partial class LocalAlbumsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(LocalAlbumDetailPage),
                 new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

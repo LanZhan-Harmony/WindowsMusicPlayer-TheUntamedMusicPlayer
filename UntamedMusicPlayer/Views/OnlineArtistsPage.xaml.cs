@@ -149,7 +149,7 @@ public sealed partial class OnlineArtistsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlineArtistDetailPage),
                 new OnlineArtistNavigationArgs(info, nameof(OnlineArtistsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }
@@ -206,7 +206,7 @@ public sealed partial class OnlineArtistsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlineArtistDetailPage),
                 new OnlineArtistNavigationArgs(info, nameof(OnlineArtistsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

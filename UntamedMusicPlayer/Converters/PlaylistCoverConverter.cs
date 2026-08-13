@@ -7,8 +7,9 @@ public sealed partial class PlaylistCoverConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        var playlist = (PlaylistInfo)value;
-        return CoverManager.GetPlaylistCoverBitmap(playlist)!;
+        return value is PlaylistInfo playlist
+            ? CoverManager.GetPlaylistCoverBitmap(playlist)
+            : null!;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>

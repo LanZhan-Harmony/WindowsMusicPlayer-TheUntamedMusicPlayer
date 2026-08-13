@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
@@ -195,11 +194,6 @@ public sealed partial class LocalArtistsViewModel
     public async Task SaveSortModeAsync()
     {
         await _localSettingsService.SaveSettingAsync("ArtistSortMode", SortMode);
-    }
-
-    public Visibility GetArtistGridViewVisibility(bool isActive)
-    {
-        return isActive ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public void Dispose() => Messenger.Unregister<HaveMusicMessage>(this);

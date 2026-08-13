@@ -1,6 +1,4 @@
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
@@ -69,13 +67,10 @@ public sealed partial class LocalAlbumDetailViewModel
         }
     }
 
-    public void SongListView_ItemClick(object _, ItemClickEventArgs e)
+    public void SongListView_ItemClick(IBriefSongInfoBase info)
     {
         _musicPlayer.QueueManager.SetNormalPlayQueue($"LocalSongs:Album:{Album.Name}", SongList);
-        if (e.ClickedItem is BriefLocalSongInfo info)
-        {
-            _musicPlayer.PlaySongByInfo(info);
-        }
+        _musicPlayer.PlaySongByInfo(info);
     }
 
     [RelayCommand]
@@ -137,7 +132,7 @@ public sealed partial class LocalAlbumDetailViewModel
             _navigationService.NavigateShell(
                 nameof(LocalArtistDetailPage),
                 new LocalArtistNavigationArgs(localArtistInfo, nameof(LocalAlbumDetailPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

@@ -1,6 +1,4 @@
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
@@ -18,27 +16,22 @@ public sealed partial class OnlineSongsViewModel
         _musicPlayer = musicPlayer;
     }
 
-    public void OnlineSongsSongListView_ItemClick(object _, ItemClickEventArgs e)
+    public void OnlineSongsSongListView_ItemClick(IBriefOnlineSongInfo info)
     {
-        _musicPlayer
-            .QueueManager.SetNormalPlayQueue(
-                $"OnlineSongs:{App.GetService<OnlineMusicLibrary>().SearchKeyWords}",
-                App.GetService<OnlineMusicLibrary>().OnlineSongInfoList
-            );
-        if (e.ClickedItem is IBriefOnlineSongInfo info)
-        {
-            _musicPlayer.PlaySongByInfo(info);
-        }
+        _musicPlayer.QueueManager.SetNormalPlayQueue(
+            $"OnlineSongs:{App.GetService<OnlineMusicLibrary>().SearchKeyWords}",
+            App.GetService<OnlineMusicLibrary>().OnlineSongInfoList
+        );
+        _musicPlayer.PlaySongByInfo(info);
     }
 
     [RelayCommand]
     public void OnlineSongsPlayButton(IBriefOnlineSongInfo info)
     {
-        _musicPlayer
-            .QueueManager.SetNormalPlayQueue(
-                $"OnlineSongs:{App.GetService<OnlineMusicLibrary>().SearchKeyWords}",
-                App.GetService<OnlineMusicLibrary>().OnlineSongInfoList
-            );
+        _musicPlayer.QueueManager.SetNormalPlayQueue(
+            $"OnlineSongs:{App.GetService<OnlineMusicLibrary>().SearchKeyWords}",
+            App.GetService<OnlineMusicLibrary>().OnlineSongInfoList
+        );
         _musicPlayer.PlaySongByInfo(info);
     }
 
@@ -88,7 +81,7 @@ public sealed partial class OnlineSongsViewModel
             _navigationService.NavigateShell(
                 nameof(OnlineAlbumDetailPage),
                 new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(OnlineSongsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }
@@ -102,7 +95,7 @@ public sealed partial class OnlineSongsViewModel
             _navigationService.NavigateShell(
                 nameof(OnlineArtistDetailPage),
                 new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(OnlineSongsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

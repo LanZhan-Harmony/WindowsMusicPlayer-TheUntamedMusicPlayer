@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
@@ -116,7 +115,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
                 _navigationService.NavigateShell(
                     nameof(LocalAlbumDetailPage),
                     new LocalAlbumNavigationArgs(localAlbumInfo, nameof(PlayQueuePage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -128,7 +127,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
                 _navigationService.NavigateShell(
                     nameof(OnlineAlbumDetailPage),
                     new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(PlayQueuePage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -146,7 +145,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
                 _navigationService.NavigateShell(
                     nameof(LocalArtistDetailPage),
                     new LocalArtistNavigationArgs(localArtistInfo, nameof(PlayQueuePage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -158,7 +157,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
                 _navigationService.NavigateShell(
                     nameof(OnlineArtistDetailPage),
                     new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(PlayQueuePage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }

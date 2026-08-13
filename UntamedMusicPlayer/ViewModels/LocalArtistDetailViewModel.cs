@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
@@ -145,7 +144,7 @@ public sealed partial class LocalArtistDetailViewModel
             _navigationService.NavigateShell(
                 nameof(LocalAlbumDetailPage),
                 new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

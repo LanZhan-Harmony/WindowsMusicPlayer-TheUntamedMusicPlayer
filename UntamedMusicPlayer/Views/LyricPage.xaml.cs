@@ -91,6 +91,14 @@ public sealed partial class LyricPage : Page, IDisposable
         _rootPlayBarViewModel.PropertyChanged += OnRootPlayBarChanged;
     }
 
+    private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is LyricSlice lyricSlice)
+        {
+            ViewModel.ListView_ItemClick(lyricSlice);
+        }
+    }
+
     private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(SharedPlaybackState.CurrentSong))

@@ -16,6 +16,19 @@ public enum HomeNavigationDirection
     Forward,
 }
 
+public enum NavigationTransition
+{
+    Default,
+    Suppress,
+}
+
+public enum AppTheme
+{
+    Default,
+    Light,
+    Dark,
+}
+
 public sealed record PlaylistNavigationArgs(PlaylistInfo Playlist, string FromPage);
 
 public sealed record LocalAlbumNavigationArgs(LocalAlbumInfo Album, string FromPage);

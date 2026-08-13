@@ -8,8 +8,9 @@ public sealed partial class InversePlaylistCoverToVisibilityConverter : IValueCo
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        var playlist = (PlaylistInfo)value;
-        var cover = CoverManager.GetPlaylistCoverBitmap(playlist);
+        var cover = value is PlaylistInfo playlist
+            ? CoverManager.GetPlaylistCoverBitmap(playlist)
+            : null;
         return cover is null ? Visibility.Visible : Visibility.Collapsed;
     }
 

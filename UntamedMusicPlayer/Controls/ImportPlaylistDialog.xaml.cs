@@ -12,7 +12,6 @@ using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
 using Windows.Storage;
 using ZLinq;
 using ZLogger;
@@ -400,17 +399,4 @@ public sealed partial class ImportPlaylistDialog
         }
         StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
-}
-
-public class DisplaySongInfo(IBriefSongInfoBase song)
-{
-    public string Type { get; set; } =
-        song switch
-        {
-            BriefLocalSongInfo => "DisplaySongInfo_SourceMode0".GetLocalized(),
-            BriefUnknownSongInfo => "DisplaySongInfo_SourceMode1".GetLocalized(),
-            BriefCloudOnlineSongInfo => "DisplaySongInfo_SourceMode2".GetLocalized(),
-            _ => "",
-        };
-    public IBriefSongInfoBase Song { get; set; } = song;
 }

@@ -4,8 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
@@ -14,7 +12,6 @@ using UntamedMusicPlayer.Models;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Text;
 using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -94,11 +91,11 @@ public sealed partial class SettingsViewModel
     /// 选中的字体
     /// </summary>
     [ObservableProperty]
-    public partial FontFamily SelectedFontFamily { get; set; } = Settings.FontFamily;
+    public partial string SelectedFontFamily { get; set; } = Settings.FontFamilyName;
 
-    partial void OnSelectedFontFamilyChanged(FontFamily value)
+    partial void OnSelectedFontFamilyChanged(string value)
     {
-        Settings.FontFamily = value;
+        Settings.FontFamilyName = value;
     }
 
     /// <summary>
@@ -131,11 +128,11 @@ public sealed partial class SettingsViewModel
     /// 选中的字重
     /// </summary>
     [ObservableProperty]
-    public partial FontWeight LyricPageFontWeight { get; set; } = Settings.LyricPageFontWeight;
+    public partial ushort LyricPageFontWeight { get; set; } = Settings.LyricPageFontWeightValue;
 
-    partial void OnLyricPageFontWeightChanged(FontWeight value)
+    partial void OnLyricPageFontWeightChanged(ushort value)
     {
-        Settings.LyricPageFontWeight = value;
+        Settings.LyricPageFontWeightValue = value;
     }
 
     [ObservableProperty]
@@ -151,14 +148,14 @@ public sealed partial class SettingsViewModel
     /// 深浅色主题
     /// </summary>
     [ObservableProperty]
-    public partial ElementTheme ElementTheme { get; set; } = Settings.Theme;
+    public partial AppTheme Theme { get; set; } = Settings.Theme;
 
     [RelayCommand]
-    public void SwitchTheme(ElementTheme theme)
+    public void SwitchTheme(AppTheme theme)
     {
-        if (ElementTheme != theme)
+        if (Theme != theme)
         {
-            ElementTheme = theme;
+            Theme = theme;
             _themeSelectorService.SetThemeAsync(theme);
         }
     }
@@ -506,7 +503,7 @@ public sealed partial class SettingsViewModel
 
     public void SelectFontFamily(FontFamilyInfo selectedFont)
     {
-        SelectedFontFamily = new FontFamily(selectedFont.Name);
+        SelectedFontFamily = selectedFont.Name;
     }
 
     public void SelectLyricPageCurrentFontSize(double fontSize)
@@ -521,7 +518,7 @@ public sealed partial class SettingsViewModel
 
     public void SelectFontWeight(FontWeightInfo selectedWeight)
     {
-        LyricPageFontWeight = selectedWeight.FontWeight;
+        LyricPageFontWeight = selectedWeight.Weight;
     }
 
     public bool TrySubmitLyricPageCurrentFontSize(string text)

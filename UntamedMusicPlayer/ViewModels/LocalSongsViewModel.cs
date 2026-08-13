@@ -2,10 +2,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
@@ -31,6 +27,8 @@ public sealed partial class LocalSongsViewModel
     /// 是否分组
     /// </summary>
     private bool _isGrouped = true;
+
+    public bool IsGrouped => _isGrouped;
 
     /// <summary>
     /// 备用歌曲列表
@@ -73,6 +71,7 @@ public sealed partial class LocalSongsViewModel
     {
         SortByStr = SortBy[value];
         SetGroupMode();
+        OnPropertyChanged(nameof(IsGrouped));
         _ = SaveSortModeAsync();
     }
 
@@ -258,11 +257,6 @@ public sealed partial class LocalSongsViewModel
         {
             return NotGroupedSongList;
         }
-    }
-
-    public object GetSongListViewSource(ICollectionView grouped, List<BriefLocalSongInfo> _)
-    {
-        return _isGrouped ? grouped : NotGroupedSongList;
     }
 
     /// <summary>
@@ -545,16 +539,13 @@ public sealed partial class LocalSongsViewModel
         _musicPlayer.PlaySongByIndexedInfo(_musicPlayer.QueueManager.CurrentQueue[0]);
     }
 
-    public void SongListView_ItemClick(object _, ItemClickEventArgs e)
+    public void SongListView_ItemClick(BriefLocalSongInfo info)
     {
-        if (e.ClickedItem is BriefLocalSongInfo info)
-        {
-            _musicPlayer.QueueManager.SetNormalPlayQueue(
-                $"LocalSongs:All:{SortByStr}",
-                ConvertGroupedToFlatList(info)
-            );
-            _musicPlayer.PlaySongByInfo(info);
-        }
+        _musicPlayer.QueueManager.SetNormalPlayQueue(
+            $"LocalSongs:All:{SortByStr}",
+            ConvertGroupedToFlatList(info)
+        );
+        _musicPlayer.PlaySongByInfo(info);
     }
 
     [RelayCommand]
@@ -616,7 +607,7 @@ public sealed partial class LocalSongsViewModel
             _navigationService.NavigateShell(
                 nameof(LocalAlbumDetailPage),
                 new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalSongsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }
@@ -630,7 +621,7 @@ public sealed partial class LocalSongsViewModel
             _navigationService.NavigateShell(
                 nameof(LocalArtistDetailPage),
                 new LocalArtistNavigationArgs(localArtistInfo, nameof(LocalSongsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }
@@ -660,18 +651,12 @@ public sealed partial class LocalSongsViewModel
         await _localSettingsService.SaveSettingAsync("GenreMode", GenreMode);
     }
 
-    public Visibility GetSongListViewVisibility(bool isActive)
-    {
-        return isActive ? Visibility.Collapsed : Visibility.Visible;
-    }
-
     private GroupInfoList CreateGroupInfoList(IEnumerable<object> items, string key)
     {
         return new GroupInfoList(items)
         {
             Key = key,
             ZoomedOutViewGridWidth = GetZoomedOutViewGridWidth(SortMode),
-            ZoomedOutViewTextBlockMargin = GetZoomedOutViewTextBlockMargin(SortMode),
         };
     }
 
@@ -681,15 +666,6 @@ public sealed partial class LocalSongsViewModel
         {
             0 or 1 => 71,
             _ => 426,
-        };
-    }
-
-    private static Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
-    {
-        return sortmode switch
-        {
-            0 or 1 => new Thickness(0, 0, 0, 0),
-            _ => new Thickness(15, 0, 15, 0),
         };
     }
 

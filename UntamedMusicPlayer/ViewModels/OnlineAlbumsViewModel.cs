@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Models;
@@ -26,8 +25,7 @@ public sealed partial class OnlineAlbumsViewModel
         {
             return;
         }
-        _musicPlayer
-            .QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+        _musicPlayer.QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
         _musicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -42,8 +40,10 @@ public sealed partial class OnlineAlbumsViewModel
         }
         if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            _musicPlayer
-                .QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Album:{info.Name}",
+                songList
+            );
             _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
@@ -63,8 +63,10 @@ public sealed partial class OnlineAlbumsViewModel
         }
         if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            _musicPlayer
-                .QueueManager.SetNormalPlayQueue($"OnlineSongs:Album:{info.Name}", songList);
+            _musicPlayer.QueueManager.SetNormalPlayQueue(
+                $"OnlineSongs:Album:{info.Name}",
+                songList
+            );
         }
         else
         {
@@ -90,7 +92,7 @@ public sealed partial class OnlineAlbumsViewModel
             _navigationService.NavigateShell(
                 nameof(OnlineArtistDetailPage),
                 new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(OnlineAlbumsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

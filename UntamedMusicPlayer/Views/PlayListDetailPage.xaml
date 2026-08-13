@@ -2,7 +2,8 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:helper="using:UntamedMusicPlayer.Helpers"
+       xmlns:converter="using:UntamedMusicPlayer.Converters"
+       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:local="using:UntamedMusicPlayer.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,6 +15,8 @@
 
     <Page.Resources>
         <ThemeShadow x:Name="SharedShadow"/>
+        <converter:PlaylistCoverConverter x:Key="PlaylistCoverConverter"/>
+        <converter:InversePlaylistCoverToVisibilityConverter x:Key="InversePlaylistCoverToVisibilityConverter"/>
         <toolkitConverters:EmptyObjectToObjectConverter x:Key="InverseEmptyObjectToVisibilityConverter"
                                                         EmptyValue="Visible"
                 NotEmptyValue="Collapsed"/>
@@ -303,7 +306,7 @@
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch"
                                Canvas.ZIndex="1"
-                               Source="{x:Bind ViewModel.Cover, Mode=OneWay}"
+                               Source="{x:Bind ViewModel.Playlist, Mode=OneWay, Converter={StaticResource PlaylistCoverConverter}}"
                                Stretch="UniformToFill"/>
                         <Grid Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                                 Canvas.ZIndex="0">
@@ -312,7 +315,7 @@
                                       FontSize="64"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xED3B;"
-                                      Visibility="{x:Bind ViewModel.Cover, Mode=OneWay, Converter={StaticResource InverseEmptyObjectToVisibilityConverter}}"/>
+                                      Visibility="{x:Bind ViewModel.Playlist, Mode=OneWay, Converter={StaticResource InversePlaylistCoverToVisibilityConverter}}"/>
                         </Grid>
                     </Grid>
                 </Border>
@@ -459,10 +462,10 @@
                   AllowDrop="True"
                 CanDragItems="True"
                   CanReorderItems="True"
-                  DragItemsCompleted="{x:Bind ViewModel.SongListView_DragItemsCompleted}"
-                  DragItemsStarting="{x:Bind ViewModel.SongListView_DragItemsStarting}"
+                  DragItemsCompleted="SongListView_DragItemsCompleted"
+                  DragItemsStarting="SongListView_DragItemsStarting"
                   IsItemClickEnabled="True"
-                  ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
+                  ItemClick="SongListView_ItemClick"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind ViewModel.Playlist.SongList, Mode=OneWay}"
                   SelectionMode="None"

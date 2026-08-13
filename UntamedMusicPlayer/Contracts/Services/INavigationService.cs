@@ -1,5 +1,4 @@
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 
@@ -21,7 +20,7 @@ public interface INavigationService
     bool NavigateShell(
         string destPage,
         object? parameter = null,
-        NavigationTransitionInfo? infoOverride = null
+        NavigationTransition transition = NavigationTransition.Default
     );
 
     bool NavigateHome(

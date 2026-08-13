@@ -302,9 +302,9 @@
                           IsItemClickEnabled="True"
                           ItemClick="AlbumGridView_ItemClick"
                           ItemTemplate="{StaticResource AlbumGridViewTemplate}"
-                          ItemsSource="{x:Bind ViewModel.GetAlbumGridViewSource(GroupedAlbumList.View, ViewModel.NotGroupedAlbumList), Mode=OneWay}"
+                          ItemsSource="{x:Bind GetAlbumGridViewSource(GroupedAlbumList.View, ViewModel.NotGroupedAlbumList, ViewModel.IsGrouped), Mode=OneWay}"
                           Loaded="AlbumGridView_Loaded" SelectionMode="None"
-                          Visibility="{x:Bind ViewModel.GetAlbumGridViewVisibility(ViewModel.IsProgressRingActive), Mode=OneWay}">
+                          Visibility="{x:Bind GetAlbumGridViewVisibility(ViewModel.IsProgressRingActive), Mode=OneWay}">
                     <GridView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
                     </GridView.GroupStyle>

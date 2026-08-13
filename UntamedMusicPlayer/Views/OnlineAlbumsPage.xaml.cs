@@ -149,7 +149,7 @@ public sealed partial class OnlineAlbumsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlineAlbumDetailPage),
                 new OnlineAlbumNavigationArgs(info, nameof(OnlineAlbumsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }
@@ -206,7 +206,7 @@ public sealed partial class OnlineAlbumsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlineAlbumDetailPage),
                 new OnlineAlbumNavigationArgs(info, nameof(OnlineAlbumsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

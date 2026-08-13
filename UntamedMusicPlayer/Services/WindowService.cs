@@ -1,3 +1,4 @@
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Services;
@@ -13,6 +14,9 @@ public sealed class WindowService : IWindowService
     private DesktopLyricWindow? _desktopLyricWindow;
 
     public MainWindow? MainWindow => _mainWindow;
+
+    public bool IsFullScreen =>
+        _mainWindow?.AppWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen;
 
     public void Initialize(MainWindow mainWindow)
     {
@@ -60,5 +64,17 @@ public sealed class WindowService : IWindowService
         var window = _desktopLyricWindow;
         _desktopLyricWindow = null;
         window?.Dispose();
+    }
+
+    public void ToggleFullScreen()
+    {
+        if (_mainWindow is null)
+        {
+            return;
+        }
+
+        _mainWindow.AppWindow.SetPresenter(
+            IsFullScreen ? AppWindowPresenterKind.Default : AppWindowPresenterKind.FullScreen
+        );
     }
 }

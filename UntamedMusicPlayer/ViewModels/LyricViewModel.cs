@@ -1,8 +1,6 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
@@ -45,13 +43,9 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
         }
     }
 
-    public void ListView_ItemClick(object _, ItemClickEventArgs e)
+    public void ListView_ItemClick(LyricSlice lyricSlice)
     {
-        if (e.ClickedItem is LyricSlice lyricSlice)
-        {
-            var time = lyricSlice.StartTime;
-            _musicPlayer.LyricPositionUpdate(time);
-        }
+        _musicPlayer.LyricPositionUpdate(lyricSlice.StartTime);
     }
 
     [RelayCommand]
@@ -95,7 +89,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
                 _navigationService.NavigateShell(
                     nameof(LocalAlbumDetailPage),
                     new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LyricPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -107,7 +101,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
                 _navigationService.NavigateShell(
                     nameof(OnlineAlbumDetailPage),
                     new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(LyricPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -127,7 +121,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
                 _navigationService.NavigateShell(
                     nameof(LocalArtistDetailPage),
                     new LocalArtistNavigationArgs(localArtistInfo, nameof(LyricPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -139,7 +133,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
                 _navigationService.NavigateShell(
                     nameof(OnlineArtistDetailPage),
                     new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(LyricPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }

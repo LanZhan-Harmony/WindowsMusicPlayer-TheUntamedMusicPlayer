@@ -37,7 +37,7 @@ public sealed class NavigationService : INavigationService
     public bool NavigateShell(
         string destPage,
         object? parameter = null,
-        NavigationTransitionInfo? infoOverride = null
+        NavigationTransition transition = NavigationTransition.Default
     )
     {
         if (_shellFrame is null)
@@ -47,6 +47,9 @@ public sealed class NavigationService : INavigationService
 
         NavigationSourcePage = GetNavigationSourcePage(parameter);
         _setNavigationSourcePage?.Invoke(NavigationSourcePage);
+        var infoOverride = transition == NavigationTransition.Suppress
+            ? new SuppressNavigationTransitionInfo()
+            : null;
         return _shellFrame.Navigate(
             ResolveShellPageType(destPage),
             UnwrapNavigationParameter(parameter),

@@ -117,7 +117,7 @@ public sealed partial class PlayListsPage : Page
                 .NavigateShell(
                     nameof(PlayListDetailPage),
                     new PlaylistNavigationArgs(info, nameof(PlayListsPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
         }
     }

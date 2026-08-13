@@ -28,9 +28,9 @@
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0"
                          LostFocus="TextBox_LostFocus"
-                         Text="{x:Bind TrackStr}"/>
-                <TextBox Grid.Column="2" Text="{x:Bind Title}"/>
-                <TextBox Grid.Column="4" Text="{x:Bind ArtistsStr}"/>
+                         Text="{x:Bind TrackStr, Mode=TwoWay}"/>
+                <TextBox Grid.Column="2" Text="{x:Bind Title, Mode=TwoWay}"/>
+                <TextBox Grid.Column="4" Text="{x:Bind ArtistsStr, Mode=TwoWay}"/>
             </Grid>
         </DataTemplate>
     </ContentDialog.Resources>

@@ -1,4 +1,3 @@
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
 namespace UntamedMusicPlayer.Converters;
@@ -9,12 +8,12 @@ public sealed partial class EnumToBooleanConverter : IValueConverter
     {
         if (parameter is string enumString)
         {
-            if (!Enum.IsDefined(typeof(ElementTheme), value))
+            if (value is not Enum enumValue)
             {
                 throw new ArgumentException("ExceptionEnumToBooleanConverterValueMustBeAnEnum");
             }
-            var enumValue = Enum.Parse<ElementTheme>(enumString);
-            return enumValue.Equals(value);
+            var parsedValue = Enum.Parse(value.GetType(), enumString);
+            return parsedValue.Equals(enumValue);
         }
         throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName");
     }
@@ -23,7 +22,7 @@ public sealed partial class EnumToBooleanConverter : IValueConverter
     {
         if (parameter is string enumString)
         {
-            return Enum.Parse<ElementTheme>(enumString);
+            return Enum.Parse(targetType, enumString);
         }
         throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName");
     }

@@ -1,13 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
-using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
 
@@ -18,7 +12,8 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly IWindowService _windowService = App.GetService<IWindowService>();
     private readonly MusicPlayer _musicPlayer;
-    private LyricPage? _lyricPage;
+
+    public event Action? DetailModeUpdateRequested;
 
     public bool IsDesktopLyricWindowStarted { get; set; } = false;
 
@@ -29,115 +24,32 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     public partial bool IsFullScreen { get; set; } = false;
 
     [ObservableProperty]
-    public partial Visibility ButtonVisibility { get; set; } = Visibility.Collapsed;
-
-    [ObservableProperty]
     public partial bool Availability { get; set; } = false;
 
     public RootPlayBarViewModel(MusicPlayer musicPlayer)
     {
         _musicPlayer = musicPlayer;
-        ButtonVisibility = _musicPlayer.State.CurrentSong is null
-            ? Visibility.Collapsed
-            : Visibility.Visible;
-        Availability = _musicPlayer.State is not null;
+        Availability = _musicPlayer.State.CurrentSong is not null;
+        IsFullScreen = _windowService.IsFullScreen;
         _musicPlayer.BarViewAvailabilityChanged += OnBarViewAvailabilityChanged;
     }
 
     private void OnBarViewAvailabilityChanged(bool value)
     {
-        ButtonVisibility = value ? Visibility.Visible : Visibility.Collapsed;
         Availability = value;
-    }
-
-    private static void RunCompositionFadeTransition(UIElement target, Action onFadeOutCompleted)
-    {
-        var visual = ElementCompositionPreview.GetElementVisual(target);
-        var compositor = visual.Compositor;
-
-        var fadeOutAnimation = compositor.CreateScalarKeyFrameAnimation();
-        fadeOutAnimation.InsertKeyFrame(1f, 0f);
-        fadeOutAnimation.Duration = TimeSpan.FromSeconds(0.1);
-
-        var fadeInAnimation = compositor.CreateScalarKeyFrameAnimation();
-        fadeInAnimation.InsertKeyFrame(1f, 1f);
-        fadeInAnimation.Duration = TimeSpan.FromSeconds(0.2);
-
-        var fadeOutBatch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-        fadeOutBatch.Completed += (_, _) =>
-        {
-            onFadeOutCompleted();
-            visual.Opacity = 0f;
-
-            var fadeInBatch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            visual.StartAnimation(nameof(Visual.Opacity), fadeInAnimation);
-            fadeInBatch.End();
-        };
-
-        visual.StartAnimation(nameof(Visual.Opacity), fadeOutAnimation);
-        fadeOutBatch.End();
     }
 
     public void DetailModeUpdate()
     {
-        if (!IsDetail)
-        {
-            var frame = _navigationService.GetShellFrame();
-            if (frame is null)
-            {
-                return;
-            }
-            _lyricPage = new LyricPage();
-
-            RunCompositionFadeTransition(
-                frame,
-                () =>
-                {
-                    frame.Content = _lyricPage;
-                }
-            );
-
-            IsDetail = true;
-        }
-        else
-        {
-            var mainPage = _navigationService.GetShellPage();
-            var frame = _navigationService.GetShellFrame();
-            if (mainPage is null || frame is null)
-            {
-                return;
-            }
-
-            RunCompositionFadeTransition(
-                frame,
-                () =>
-                {
-                    frame.Content = mainPage;
-                    CurrentSongHighlightExtensions.ReactivateHighlightForPage(mainPage);
-                }
-            );
-
-            _lyricPage?.Dispose(); // 强制调用 Dispose 方法
-            _lyricPage = null;
-
-            IsDetail = false;
-        }
+        IsDetail = !IsDetail;
+        DetailModeUpdateRequested?.Invoke();
     }
 
     [RelayCommand]
     public void FullScreenButton()
     {
-        var appWindow = App.MainWindow!.AppWindow;
-        if (appWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen)
-        {
-            appWindow.SetPresenter(AppWindowPresenterKind.Default);
-            IsFullScreen = false;
-        }
-        else
-        {
-            appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
-            IsFullScreen = true;
-        }
+        _windowService.ToggleFullScreen();
+        IsFullScreen = _windowService.IsFullScreen;
     }
 
     [RelayCommand]
@@ -199,7 +111,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
                 _navigationService.NavigateShell(
                     nameof(LocalAlbumDetailPage),
                     new LocalAlbumNavigationArgs(localAlbumInfo, nameof(RootPlayBarView)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -211,7 +123,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
                 _navigationService.NavigateShell(
                     nameof(OnlineAlbumDetailPage),
                     new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(RootPlayBarView)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -234,7 +146,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
                 _navigationService.NavigateShell(
                     nameof(LocalArtistDetailPage),
                     new LocalArtistNavigationArgs(localArtistInfo, nameof(RootPlayBarView)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -246,7 +158,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
                 _navigationService.NavigateShell(
                     nameof(OnlineArtistDetailPage),
                     new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(RootPlayBarView)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
