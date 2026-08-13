@@ -613,7 +613,7 @@ public sealed partial class OnlineArtistDetailPage : Page
                         onlineAlbumInfo,
                         nameof(OnlineArtistDetailPage)
                     ),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -676,7 +676,7 @@ public sealed partial class OnlineArtistDetailPage : Page
                         onlineAlbumInfo,
                         nameof(OnlineArtistDetailPage)
                     ),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }

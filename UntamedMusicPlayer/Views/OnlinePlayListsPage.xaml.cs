@@ -151,7 +151,7 @@ public sealed partial class OnlinePlayListsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlinePlayListDetailPage),
                 new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }
@@ -210,7 +210,7 @@ public sealed partial class OnlinePlayListsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(OnlinePlayListDetailPage),
                 new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

@@ -1,5 +1,7 @@
+using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
@@ -8,21 +10,32 @@ using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI.Text;
 
 namespace UntamedMusicPlayer.Views;
 
-public sealed partial class SettingsPage : Page
+public sealed partial class SettingsPage : Page, INotifyPropertyChanged
 {
     public SettingsViewModel ViewModel { get; set; }
     public MusicLibrary MusicLibrary { get; } = App.GetService<MusicLibrary>();
     public string AppDisplayName { get; } = "AppDisplayName".GetLocalized();
     private bool _isInitialized = false;
 
+    public event PropertyChangedEventHandler? PropertyChanged;
+
     public SettingsPage()
     {
         ViewModel = App.GetService<SettingsViewModel>();
         InitializeComponent();
     }
+
+    public FontFamily SelectedFontFamily => new(ViewModel.SelectedFontFamily);
+
+    public FontWeight LyricPageFontWeight =>
+        FontHelper.ConvertToFontWeight(ViewModel.LyricPageFontWeight);
+
+    private void NotifyPropertyChanged(string propertyName) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     public Visibility ToVisibility(bool isVisible) =>
         isVisible ? Visibility.Visible : Visibility.Collapsed;
@@ -200,7 +213,7 @@ public sealed partial class SettingsPage : Page
             return;
         }
 
-        var selectedFontName = ViewModel.SelectedFontFamily.Source;
+        var selectedFontName = ViewModel.SelectedFontFamily;
         var index = ViewModel.FontFamilies.FindIndex(f => f.Name == selectedFontName);
         if (index >= 0)
         {
@@ -213,6 +226,7 @@ public sealed partial class SettingsPage : Page
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontFamilyInfo selectedFont)
         {
             ViewModel.SelectFontFamily(selectedFont);
+            NotifyPropertyChanged(nameof(SelectedFontFamily));
         }
     }
 
@@ -308,7 +322,7 @@ public sealed partial class SettingsPage : Page
         }
 
         var selectedItem = ViewModel.FontWeights.FirstOrDefault(weight =>
-            weight.FontWeight.Weight == ViewModel.LyricPageFontWeight.Weight
+            weight.FontWeight.Weight == ViewModel.LyricPageFontWeight
         );
         if (selectedItem is not null)
         {
@@ -321,6 +335,7 @@ public sealed partial class SettingsPage : Page
         if (e.AddedItems.Count > 0 && e.AddedItems[0] is FontWeightInfo selectedWeight)
         {
             ViewModel.SelectFontWeight(selectedWeight);
+            NotifyPropertyChanged(nameof(LyricPageFontWeight));
         }
     }
 }

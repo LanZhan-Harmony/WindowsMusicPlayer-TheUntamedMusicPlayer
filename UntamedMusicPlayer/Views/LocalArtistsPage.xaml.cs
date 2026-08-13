@@ -21,6 +21,9 @@ public sealed partial class LocalArtistsPage : Page
         InitializeComponent();
     }
 
+    public Visibility GetArtistGridViewVisibility(bool isActive) =>
+        isActive ? Visibility.Collapsed : Visibility.Visible;
+
     private void SortByListView_Loaded(object sender, RoutedEventArgs e)
     {
         if (sender is ListView listView)
@@ -131,7 +134,7 @@ public sealed partial class LocalArtistsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(LocalArtistDetailPage),
                 new LocalArtistNavigationArgs(localArtistInfo, nameof(LocalArtistsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }
@@ -188,7 +191,7 @@ public sealed partial class LocalArtistsPage : Page
             App.GetService<INavigationService>().NavigateShell(
                 nameof(LocalArtistDetailPage),
                 new LocalArtistNavigationArgs(info, nameof(LocalArtistsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

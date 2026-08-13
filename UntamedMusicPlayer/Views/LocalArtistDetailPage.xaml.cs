@@ -640,7 +640,7 @@ public sealed partial class LocalArtistDetailPage : Page
                 App.GetService<INavigationService>().NavigateShell(
                     nameof(LocalAlbumDetailPage),
                     new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -710,7 +710,7 @@ public sealed partial class LocalArtistDetailPage : Page
                 App.GetService<INavigationService>().NavigateShell(
                     nameof(LocalAlbumDetailPage),
                     new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }

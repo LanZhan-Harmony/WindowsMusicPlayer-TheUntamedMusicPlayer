@@ -52,6 +52,14 @@ public sealed partial class OnlinePlayListDetailPage : Page
         InitializeComponent();
     }
 
+    private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is IBriefOnlineSongInfo info)
+        {
+            ViewModel.SongListView_ItemClick(info);
+        }
+    }
+
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);

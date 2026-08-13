@@ -164,7 +164,7 @@
                                                        Glyph=&#xE946;}"/>
                 </MenuFlyout>
             </Button.ContextFlyout>
-            <Grid Visibility="{x:Bind ViewModel.ButtonVisibility, Mode=OneWay}">
+            <Grid Visibility="{x:Bind ToVisibility(ViewModel.Availability), Mode=OneWay}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>

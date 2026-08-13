@@ -167,7 +167,7 @@
                     <ListView x:Name="LyricView"
                               helper:ListViewExtensions.ItemCornerRadius="15"
                               IsItemClickEnabled="True"
-                              ItemClick="{x:Bind ViewModel.ListView_ItemClick}"
+                              ItemClick="ListView_ItemClick"
                               ItemTemplate="{StaticResource LyricViewTemplate}"
                               ItemsSource="{x:Bind LyricManager.CurrentLyricSlices, Mode=OneWay}"
                               Loaded="LyricView_Loaded"

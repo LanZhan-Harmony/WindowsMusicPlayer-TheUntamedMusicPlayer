@@ -7,7 +7,7 @@ namespace UntamedMusicPlayer.Services;
 
 public sealed class ThemeSelectorService : IThemeSelectorService
 {
-    public ElementTheme Theme
+    public AppTheme Theme
     {
         get => Settings.Theme;
         set => Settings.Theme = value;
@@ -21,7 +21,7 @@ public sealed class ThemeSelectorService : IThemeSelectorService
         SetRequestedThemeAsync();
     }
 
-    public void SetThemeAsync(ElementTheme theme)
+    public void SetThemeAsync(AppTheme theme)
     {
         Theme = theme;
         SetRequestedThemeAsync();
@@ -31,8 +31,14 @@ public sealed class ThemeSelectorService : IThemeSelectorService
     {
         if (App.MainWindow!.Content is FrameworkElement rootElement)
         {
-            rootElement.RequestedTheme = Theme;
-            TitleBarHelper.UpdateTitleBar(App.MainWindow.AppWindow.TitleBar, Theme);
+            var theme = Theme switch
+            {
+                AppTheme.Light => ElementTheme.Light,
+                AppTheme.Dark => ElementTheme.Dark,
+                _ => ElementTheme.Default,
+            };
+            rootElement.RequestedTheme = theme;
+            TitleBarHelper.UpdateTitleBar(App.MainWindow.AppWindow.TitleBar, theme);
         }
     }
 }

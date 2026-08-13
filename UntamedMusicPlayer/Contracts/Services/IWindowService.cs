@@ -7,6 +7,7 @@ namespace UntamedMusicPlayer.Contracts.Services;
 public interface IWindowService
 {
     MainWindow? MainWindow { get; }
+    bool IsFullScreen { get; }
 
     void Initialize(MainWindow mainWindow);
 
@@ -23,4 +24,6 @@ public interface IWindowService
     void ShowDesktopLyricWindow(Action closedCallback);
 
     void CloseDesktopLyricWindow();
+
+    void ToggleFullScreen();
 }

@@ -23,6 +23,23 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         InitializeComponent();
     }
 
+    public object GetSongListViewSource(
+        ICollectionView grouped,
+        List<BriefLocalSongInfo> notGrouped,
+        bool isGrouped
+    ) => isGrouped ? grouped : notGrouped;
+
+    public Visibility GetSongListViewVisibility(bool isActive) =>
+        isActive ? Visibility.Collapsed : Visibility.Visible;
+
+    private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is BriefLocalSongInfo info)
+        {
+            ViewModel.SongListView_ItemClick(info);
+        }
+    }
+
     private void SortByListView_Loaded(object sender, RoutedEventArgs e)
     {
         if (sender is ListView listView)

@@ -8,7 +8,6 @@
       xmlns:storage="using:Windows.Storage"
       xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
       xmlns:ui="using:CommunityToolkit.WinUI"
-      xmlns:xaml="using:Microsoft.UI.Xaml"
       Loaded="SettingsPage_Loaded"
       mc:Ignorable="d">
 
@@ -208,13 +207,13 @@
                             <toolkit:SettingsCard x:Uid="Settings_LyricPreview">
                                 <StackPanel>
                                     <TextBlock x:Uid="Settings_ThisIsAHighlightedLyric"
-                                               FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
+                                               FontFamily="{x:Bind SelectedFontFamily, Mode=OneWay}"
                                                FontSize="{x:Bind ViewModel.LyricPageCurrentFontSize, Mode=OneWay}"
-                                               FontWeight="{x:Bind ViewModel.LyricPageFontWeight, Mode=OneWay}"/>
+                                               FontWeight="{x:Bind LyricPageFontWeight, Mode=OneWay}"/>
                                     <TextBlock x:Uid="Settings_ThisIsAnOrdinaryLyric"
-                                               FontFamily="{x:Bind ViewModel.SelectedFontFamily, Mode=OneWay}"
+                                               FontFamily="{x:Bind SelectedFontFamily, Mode=OneWay}"
                                                FontSize="{x:Bind ViewModel.LyricPageNotCurrentFontSize, Mode=OneWay}"
-                                               FontWeight="{x:Bind ViewModel.LyricPageFontWeight, Mode=OneWay}"
+                                               FontWeight="{x:Bind LyricPageFontWeight, Mode=OneWay}"
                                                Opacity="0.5"/>
                                 </StackPanel>
                             </toolkit:SettingsCard>
@@ -245,25 +244,25 @@
                                     <RadioButton x:Uid="Settings_Theme_Light"
                                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
                                                  FontSize="15" GroupName="AppTheme"
-                                                 IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
+                                                 IsChecked="{x:Bind ViewModel.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
                                         <RadioButton.CommandParameter>
-                                            <xaml:ElementTheme>Light</xaml:ElementTheme>
+                                            <model:AppTheme>Light</model:AppTheme>
                                         </RadioButton.CommandParameter>
                                     </RadioButton>
                                     <RadioButton x:Uid="Settings_Theme_Dark"
                                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
                                                  FontSize="15" GroupName="AppTheme"
-                                                 IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
+                                                 IsChecked="{x:Bind ViewModel.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
                                         <RadioButton.CommandParameter>
-                                            <xaml:ElementTheme>Dark</xaml:ElementTheme>
+                                            <model:AppTheme>Dark</model:AppTheme>
                                         </RadioButton.CommandParameter>
                                     </RadioButton>
                                     <RadioButton x:Uid="Settings_Theme_Default"
                                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
                                                  FontSize="15" GroupName="AppTheme"
-                                                 IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
+                                                 IsChecked="{x:Bind ViewModel.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
                                         <RadioButton.CommandParameter>
-                                            <xaml:ElementTheme>Default</xaml:ElementTheme>
+                                            <model:AppTheme>Default</model:AppTheme>
                                         </RadioButton.CommandParameter>
                                     </RadioButton>
                                 </StackPanel>

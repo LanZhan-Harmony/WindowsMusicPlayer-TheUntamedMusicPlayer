@@ -160,7 +160,7 @@
                   helper:ListViewExtensions.ItemCornerRadius="8"
                   helper:ListViewExtensions.ItemMargin="0,3,0,3"
                   CanDragItems="True" IsItemClickEnabled="True"
-                  ItemClick="{x:Bind ViewModel.OnlineSongsSongListView_ItemClick}"
+                  ItemClick="OnlineSongsSongListView_ItemClick"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
                   Loaded="SongListView_Loaded" SelectionMode="None"

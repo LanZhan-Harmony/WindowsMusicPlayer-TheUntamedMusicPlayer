@@ -171,14 +171,3 @@ public sealed partial class EditAlbumInfoDialog
         StrongReferenceMessenger.Default.Unregister<ThemeChangeMessage>(this);
     }
 }
-
-public class TempSongInfo(BriefLocalSongInfo originalSong)
-{
-    public string TrackStr { get; set; } = originalSong.TrackStr;
-    public string Title { get; set; } = originalSong.Title;
-    public string ArtistsStr { get; set; } =
-        originalSong.ArtistsStr == "SongInfo_UnknownArtist".GetLocalized()
-            ? ""
-            : originalSong.ArtistsStr;
-    public BriefLocalSongInfo OriginalSong { get; } = originalSong;
-}

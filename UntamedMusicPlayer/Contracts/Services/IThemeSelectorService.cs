@@ -1,11 +1,11 @@
-using Microsoft.UI.Xaml;
+using UntamedMusicPlayer.Models;
 
 namespace UntamedMusicPlayer.Contracts.Services;
 
 public interface IThemeSelectorService
 {
-    ElementTheme Theme { get; set; }
+    AppTheme Theme { get; set; }
     void Initialize();
-    void SetThemeAsync(ElementTheme theme);
+    void SetThemeAsync(AppTheme theme);
     void SetRequestedThemeAsync();
 }

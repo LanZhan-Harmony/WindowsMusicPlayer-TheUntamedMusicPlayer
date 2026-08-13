@@ -2,15 +2,11 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.Views;
-using Windows.ApplicationModel.DataTransfer;
 using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -34,9 +30,6 @@ public sealed partial class PlayListDetailViewModel
     public partial string TotalSongNumStr { get; set; } = "";
 
     [ObservableProperty]
-    public partial WriteableBitmap? Cover { get; set; } = null;
-
-    [ObservableProperty]
     public partial ObservableCollection<IndexedPlaylistSong> SongList { get; set; }
 
     [ObservableProperty]
@@ -57,7 +50,6 @@ public sealed partial class PlayListDetailViewModel
         Playlist = playlist;
         PlaylistName = playlist.Name;
         TotalSongNumStr = playlist.TotalSongNumStr;
-        Cover = CoverManager.GetPlaylistCoverBitmap(playlist);
         SongList = playlist.SongList;
         IsPlayAllButtonEnabled = SongList.Count > 0;
     }
@@ -75,7 +67,6 @@ public sealed partial class PlayListDetailViewModel
         if (PlaylistName == message.Playlist.Name)
         {
             TotalSongNumStr = Playlist.TotalSongNumStr;
-            Cover = CoverManager.GetPlaylistCoverBitmap(Playlist);
             SongList = Playlist.SongList;
             IsPlayAllButtonEnabled = SongList.Count > 0;
         }
@@ -122,14 +113,11 @@ public sealed partial class PlayListDetailViewModel
         }
     }
 
-    public void SongListView_ItemClick(object _, ItemClickEventArgs e)
+    public void SongListView_ItemClick(IndexedPlaylistSong info)
     {
         var songList = SongList.AsValueEnumerable().Select(s => s.Song).ToArray();
         _musicPlayer.QueueManager.SetNormalPlayQueue($"Songs:Playlist:{Playlist.Name}", songList);
-        if (e.ClickedItem is IndexedPlaylistSong indexedInfo)
-        {
-            _musicPlayer.PlaySongByInfo(indexedInfo.Song);
-        }
+        _musicPlayer.PlaySongByInfo(info.Song);
     }
 
     [RelayCommand]
@@ -218,7 +206,7 @@ public sealed partial class PlayListDetailViewModel
                 _navigationService.NavigateShell(
                     nameof(LocalAlbumDetailPage),
                     new LocalAlbumNavigationArgs(localAlbumInfo, nameof(PlayListDetailPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -230,7 +218,7 @@ public sealed partial class PlayListDetailViewModel
                 _navigationService.NavigateShell(
                     nameof(OnlineAlbumDetailPage),
                     new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(PlayListDetailPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -248,7 +236,7 @@ public sealed partial class PlayListDetailViewModel
                 _navigationService.NavigateShell(
                     nameof(LocalArtistDetailPage),
                     new LocalArtistNavigationArgs(localArtistInfo, nameof(PlayListDetailPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
@@ -260,29 +248,17 @@ public sealed partial class PlayListDetailViewModel
                 _navigationService.NavigateShell(
                     nameof(OnlineArtistDetailPage),
                     new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(PlayListDetailPage)),
-                    new SuppressNavigationTransitionInfo()
+                    NavigationTransition.Suppress
                 );
             }
         }
     }
 
-    public void SongListView_DragItemsStarting(object _, DragItemsStartingEventArgs e)
+    public void SongListView_DragItemsCompleted(IEnumerable<IndexedPlaylistSong> songs)
     {
-        if (e.Items.Count > 0)
+        var reorderedSongs = songs.ToArray();
+        if (reorderedSongs.Length > 0)
         {
-            e.Data.RequestedOperation = DataPackageOperation.Move;
-        }
-    }
-
-    public void SongListView_DragItemsCompleted(ListViewBase _1, DragItemsCompletedEventArgs args)
-    {
-        if (args.DropResult == DataPackageOperation.Move && args.Items.Count > 0)
-        {
-            var songs = args.Items.AsValueEnumerable().OfType<IndexedPlaylistSong>().ToArray();
-            if (songs.Length == 0)
-            {
-                return;
-            }
             Playlist.ReindexSongs();
             Messenger.Send(new HavePlaylistMessage(true));
             _ = FileManager.SavePlaylistDataAsync(App.GetService<PlaylistLibrary>().Playlists);

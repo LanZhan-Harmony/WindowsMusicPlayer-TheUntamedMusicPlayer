@@ -1,7 +1,10 @@
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
@@ -14,6 +17,8 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class RootPlayBarView : UserControl
 {
     private bool _hasPointerPressed = false;
+    private LyricPage? _lyricPage;
+    private readonly INavigationService _navigationService = App.GetService<INavigationService>();
 
     public RootPlayBarViewModel ViewModel { get; }
     public MusicPlayer MusicPlayer { get; } = App.GetService<MusicPlayer>();
@@ -24,6 +29,72 @@ public sealed partial class RootPlayBarView : UserControl
     {
         InitializeComponent();
         ViewModel = App.GetService<RootPlayBarViewModel>();
+        ViewModel.DetailModeUpdateRequested += OnDetailModeUpdateRequested;
+    }
+
+    public Visibility ToVisibility(bool isVisible) =>
+        isVisible ? Visibility.Visible : Visibility.Collapsed;
+
+    private void OnDetailModeUpdateRequested()
+    {
+        var frame = _navigationService.GetShellFrame();
+        if (frame is null)
+        {
+            return;
+        }
+
+        RunCompositionFadeTransition(
+            frame,
+            () =>
+            {
+                if (ViewModel.IsDetail)
+                {
+                    _lyricPage = new LyricPage();
+                    frame.Content = _lyricPage;
+                }
+                else
+                {
+                    var mainPage = _navigationService.GetShellPage();
+                    if (mainPage is null)
+                    {
+                        return;
+                    }
+
+                    frame.Content = mainPage;
+                    CurrentSongHighlightExtensions.ReactivateHighlightForPage(mainPage);
+                    _lyricPage?.Dispose();
+                    _lyricPage = null;
+                }
+            }
+        );
+    }
+
+    private static void RunCompositionFadeTransition(UIElement target, Action onFadeOutCompleted)
+    {
+        var visual = ElementCompositionPreview.GetElementVisual(target);
+        var compositor = visual.Compositor;
+
+        var fadeOutAnimation = compositor.CreateScalarKeyFrameAnimation();
+        fadeOutAnimation.InsertKeyFrame(1f, 0f);
+        fadeOutAnimation.Duration = TimeSpan.FromSeconds(0.1);
+
+        var fadeInAnimation = compositor.CreateScalarKeyFrameAnimation();
+        fadeInAnimation.InsertKeyFrame(1f, 1f);
+        fadeInAnimation.Duration = TimeSpan.FromSeconds(0.2);
+
+        var fadeOutBatch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        fadeOutBatch.Completed += (_, _) =>
+        {
+            onFadeOutCompleted();
+            visual.Opacity = 0f;
+
+            var fadeInBatch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            visual.StartAnimation(nameof(Visual.Opacity), fadeInAnimation);
+            fadeInBatch.End();
+        };
+
+        visual.StartAnimation(nameof(Visual.Opacity), fadeOutAnimation);
+        fadeOutBatch.End();
     }
 
     public string GetCurrent(TimeSpan current) =>

@@ -1,7 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
@@ -130,16 +128,13 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
         }
     }
 
-    public void SongListView_ItemClick(object _, ItemClickEventArgs e)
+    public void SongListView_ItemClick(IBriefOnlineSongInfo info)
     {
         _musicPlayer.QueueManager.SetNormalPlayQueue(
             $"OnlineSongs:Album:{Album.Name}",
             Album.SongList
         );
-        if (e.ClickedItem is IBriefOnlineSongInfo info)
-        {
-            _musicPlayer.PlaySongByInfo(info);
-        }
+        _musicPlayer.PlaySongByInfo(info);
     }
 
     [RelayCommand]
@@ -204,7 +199,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
             _navigationService.NavigateShell(
                 nameof(OnlineArtistDetailPage),
                 new OnlineArtistNavigationArgs(onlineArtistInfo, nameof(OnlineAlbumDetailPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

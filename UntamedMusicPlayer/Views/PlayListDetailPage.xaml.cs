@@ -16,6 +16,7 @@ using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
 
@@ -49,6 +50,35 @@ public sealed partial class PlayListDetailPage : Page
     public PlayListDetailPage()
     {
         InitializeComponent();
+    }
+
+    private void SongListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+    {
+        if (e.Items.Count > 0)
+        {
+            e.Data.RequestedOperation = DataPackageOperation.Move;
+        }
+    }
+
+    private void SongListView_DragItemsCompleted(
+        object sender,
+        DragItemsCompletedEventArgs args
+    )
+    {
+        if (args.DropResult == DataPackageOperation.Move && args.Items.Count > 0)
+        {
+            ViewModel.SongListView_DragItemsCompleted(
+                args.Items.OfType<IndexedPlaylistSong>()
+            );
+        }
+    }
+
+    private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is IndexedPlaylistSong info)
+        {
+            ViewModel.SongListView_ItemClick(info);
+        }
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

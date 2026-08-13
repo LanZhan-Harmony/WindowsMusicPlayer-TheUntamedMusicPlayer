@@ -65,7 +65,7 @@ public static class Settings
     /// <summary>
     /// 歌词字体
     /// </summary>
-    public static FontFamily FontFamily
+    public static string FontFamilyName
     {
         get;
         set
@@ -73,10 +73,16 @@ public static class Settings
             if (field != value)
             {
                 field = value;
-                _localSettingsService.SaveSettingAsync(nameof(FontFamily), value.Source);
+                _localSettingsService.SaveSettingAsync(nameof(FontFamily), value);
             }
         }
-    } = null!;
+    } = "Microsoft YaHei";
+
+    public static FontFamily FontFamily
+    {
+        get => new(FontFamilyName);
+        set => FontFamilyName = value.Source;
+    }
 
     /// <summary>
     /// 歌词字号
@@ -110,7 +116,7 @@ public static class Settings
     /// <summary>
     /// 歌词字重
     /// </summary>
-    public static FontWeight LyricPageFontWeight
+    public static ushort LyricPageFontWeightValue
     {
         get;
         set
@@ -118,9 +124,15 @@ public static class Settings
             if (field != value)
             {
                 field = value;
-                _localSettingsService.SaveSettingAsync(nameof(LyricPageFontWeight), value.Weight);
+                _localSettingsService.SaveSettingAsync(nameof(LyricPageFontWeight), value);
             }
         }
+    }
+
+    public static FontWeight LyricPageFontWeight
+    {
+        get => FontHelper.ConvertToFontWeight(LyricPageFontWeightValue);
+        set => LyricPageFontWeightValue = value.Weight;
     }
 
     /// <summary>
@@ -142,7 +154,7 @@ public static class Settings
     /// <summary>
     /// 应用主题
     /// </summary>
-    public static ElementTheme Theme
+    public static AppTheme Theme
     {
         get;
         set
@@ -311,10 +323,9 @@ public static class Settings
             IsOnlyAddSpecificFolder = await _localSettingsService.ReadSettingAsync<bool>(
                 nameof(IsOnlyAddSpecificFolder)
             );
-            FontFamily = new(
+            FontFamilyName =
                 await _localSettingsService.ReadSettingAsync<string>(nameof(FontFamily))
-                    ?? "Microsoft YaHei"
-            );
+                ?? "Microsoft YaHei";
             var lyricPageCurrentFontSize = await _localSettingsService.ReadSettingAsync<double>(
                 nameof(LyricPageCurrentFontSize)
             );
@@ -330,15 +341,14 @@ public static class Settings
             var fontWeight = await _localSettingsService.ReadSettingAsync<ushort>(
                 nameof(LyricPageFontWeight)
             );
-            LyricPageFontWeight =
-                fontWeight == 0 ? FontWeights.Normal : FontHelper.ConvertToFontWeight(fontWeight);
+            LyricPageFontWeightValue = fontWeight == 0 ? FontWeights.Normal.Weight : fontWeight;
             GlobalLyricOffset = await _localSettingsService.ReadSettingAsync<int>(
                 nameof(GlobalLyricOffset)
             );
             var themeName = await _localSettingsService.ReadSettingAsync<string>(nameof(Theme));
-            Theme = Enum.TryParse<ElementTheme>(themeName, out var cacheTheme)
+            Theme = Enum.TryParse<AppTheme>(themeName, out var cacheTheme)
                 ? cacheTheme
-                : ElementTheme.Default;
+                : AppTheme.Default;
             var materialName = await _localSettingsService.ReadSettingAsync<string>(
                 nameof(Material)
             );

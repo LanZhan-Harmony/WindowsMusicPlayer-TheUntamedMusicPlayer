@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
@@ -261,7 +260,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
             _navigationService.NavigateShell(
                 nameof(OnlineAlbumDetailPage),
                 new OnlineAlbumNavigationArgs(onlineAlbumInfo, nameof(OnlineArtistDetailPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }

@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Models;
@@ -48,6 +49,14 @@ public sealed partial class LocalAlbumDetailPage : Page
     public LocalAlbumDetailPage()
     {
         InitializeComponent();
+    }
+
+    private void SongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is IBriefSongInfoBase info)
+        {
+            ViewModel.SongListView_ItemClick(info);
+        }
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -445,7 +454,9 @@ public sealed partial class LocalAlbumDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -488,9 +499,3 @@ public sealed partial class LocalAlbumDetailPage : Page
         await dialog.ShowAsync();
     }
 }
-
-
-
-
-
-

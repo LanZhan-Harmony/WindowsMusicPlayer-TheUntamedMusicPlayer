@@ -25,6 +25,14 @@ public sealed partial class OnlineSongsPage : Page
         InitializeComponent();
     }
 
+    private void OnlineSongsSongListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is IBriefOnlineSongInfo info)
+        {
+            ViewModel.OnlineSongsSongListView_ItemClick(info);
+        }
+    }
+
     public Visibility ToVisibility(bool isVisible) =>
         isVisible ? Visibility.Visible : Visibility.Collapsed;
 

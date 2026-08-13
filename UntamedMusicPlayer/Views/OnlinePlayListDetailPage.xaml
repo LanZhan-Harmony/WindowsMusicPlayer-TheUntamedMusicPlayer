@@ -382,7 +382,7 @@
                   ui:ListViewExtensions.ItemContainerStretchDirection="Horizontal"
                   ui:ScrollViewerExtensions.VerticalScrollBarMargin="0,-150,0,0"
                   IsItemClickEnabled="True"
-                  ItemClick="{x:Bind ViewModel.SongListView_ItemClick}"
+                  ItemClick="SongListView_ItemClick"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
                   ItemsSource="{x:Bind ViewModel.Playlist.SongList, Mode=OneWay}"
                   SelectionMode="None"

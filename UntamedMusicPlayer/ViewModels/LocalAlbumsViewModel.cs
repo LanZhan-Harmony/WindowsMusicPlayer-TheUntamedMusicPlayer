@@ -1,9 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
@@ -25,6 +22,8 @@ public sealed partial class LocalAlbumsViewModel
 
     private bool _groupMode = true;
 
+    public bool IsGrouped => _groupMode;
+
     private List<LocalAlbumInfo> _albumList = [.. App.GetService<MusicLibrary>().Albums.Values];
 
     public List<string> SortBy { get; set; } = [.. "Albums_SortBy".GetLocalized().Split(", ")];
@@ -45,6 +44,7 @@ public sealed partial class LocalAlbumsViewModel
     {
         SortByStr = SortBy[value];
         SetGroupMode();
+        OnPropertyChanged(nameof(IsGrouped));
         _ = SaveSortModeAsync();
     }
 
@@ -176,14 +176,6 @@ public sealed partial class LocalAlbumsViewModel
         });
         await Task.WhenAll(filterGroupedTask, filterNotGroupedTask);
         await SortAlbums();
-    }
-
-    public ICollectionView GetAlbumGridViewSource(
-        ICollectionView grouped,
-        List<LocalAlbumInfo> notgrouped
-    )
-    {
-        return _groupMode ? grouped : new CollectionViewSource { Source = notgrouped }.View;
     }
 
     public async Task SortAlbumsByTitleAscending()
@@ -408,7 +400,7 @@ public sealed partial class LocalAlbumsViewModel
             _navigationService.NavigateShell(
                 nameof(LocalArtistDetailPage),
                 new LocalArtistNavigationArgs(localArtistInfo, nameof(LocalAlbumsPage)),
-                new SuppressNavigationTransitionInfo()
+                NavigationTransition.Suppress
             );
         }
     }
@@ -438,18 +430,12 @@ public sealed partial class LocalAlbumsViewModel
         await _localSettingsService.SaveSettingAsync("AlbumGenreMode", GenreMode);
     }
 
-    public Visibility GetAlbumGridViewVisibility(bool isActive)
-    {
-        return isActive ? Visibility.Collapsed : Visibility.Visible;
-    }
-
     private GroupInfoList CreateGroupInfoList(IEnumerable<object> items, string key)
     {
         return new GroupInfoList(items)
         {
             Key = key,
             ZoomedOutViewGridWidth = GetZoomedOutViewGridWidth(SortMode),
-            ZoomedOutViewTextBlockMargin = GetZoomedOutViewTextBlockMargin(SortMode),
         };
     }
 
@@ -459,15 +445,6 @@ public sealed partial class LocalAlbumsViewModel
         {
             0 or 1 => 71,
             _ => 426,
-        };
-    }
-
-    private static Thickness GetZoomedOutViewTextBlockMargin(byte sortmode)
-    {
-        return sortmode switch
-        {
-            0 or 1 => new Thickness(0, 0, 0, 0),
-            _ => new Thickness(15, 0, 15, 0),
         };
     }
 
