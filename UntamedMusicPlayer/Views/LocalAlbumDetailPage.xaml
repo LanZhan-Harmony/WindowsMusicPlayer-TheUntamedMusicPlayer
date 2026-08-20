@@ -7,7 +7,7 @@
       xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:local="using:UntamedMusicPlayer.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:model="using:UntamedMusicPlayer.Models"
+      xmlns:model="using:UntamedMusicPlayer.Core.Models"
       xmlns:ui="using:CommunityToolkit.WinUI"
       Loaded="LocalAlbumDetailPage_Loaded"
       mc:Ignorable="d">

@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
 
@@ -39,10 +41,7 @@ public sealed partial class LocalAlbumsPage : Page
         }
     }
 
-    private async void SortByListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs e
-    )
+    private async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ListView listView)
         {
@@ -58,10 +57,7 @@ public sealed partial class LocalAlbumsPage : Page
         }
     }
 
-    private async void GenreListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs e
-    )
+    private async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ListView listView)
         {
@@ -157,11 +153,12 @@ public sealed partial class LocalAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedAlbum = info;
-            App.GetService<INavigationService>().NavigateShell(
-                nameof(LocalAlbumDetailPage),
-                new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
-                NavigationTransition.Suppress
-            );
+            App.GetService<INavigationService>()
+                .NavigateShell(
+                    nameof(LocalAlbumDetailPage),
+                    new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
+                    NavigationTransition.Suppress
+                );
         }
     }
 
@@ -198,7 +195,9 @@ public sealed partial class LocalAlbumsPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -223,11 +222,12 @@ public sealed partial class LocalAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedAlbum = info;
-            App.GetService<INavigationService>().NavigateShell(
-                nameof(LocalAlbumDetailPage),
-                new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
-                NavigationTransition.Suppress
-            );
+            App.GetService<INavigationService>()
+                .NavigateShell(
+                    nameof(LocalAlbumDetailPage),
+                    new LocalAlbumNavigationArgs(info, nameof(LocalAlbumsPage)),
+                    NavigationTransition.Suppress
+                );
         }
     }
 
@@ -241,9 +241,3 @@ public sealed partial class LocalAlbumsPage : Page
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
-
-
-
-
-
-

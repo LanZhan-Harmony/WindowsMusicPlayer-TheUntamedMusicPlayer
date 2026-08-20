@@ -1,4 +1,5 @@
-using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
 
 namespace UntamedMusicPlayer.Models;
 

@@ -4,6 +4,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
 
@@ -32,10 +34,7 @@ public sealed partial class LocalArtistsPage : Page
         }
     }
 
-    private async void SortByListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs e
-    )
+    private async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ListView listView)
         {
@@ -131,11 +130,12 @@ public sealed partial class LocalArtistsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedArtist = localArtistInfo;
-            App.GetService<INavigationService>().NavigateShell(
-                nameof(LocalArtistDetailPage),
-                new LocalArtistNavigationArgs(localArtistInfo, nameof(LocalArtistsPage)),
-                NavigationTransition.Suppress
-            );
+            App.GetService<INavigationService>()
+                .NavigateShell(
+                    nameof(LocalArtistDetailPage),
+                    new LocalArtistNavigationArgs(localArtistInfo, nameof(LocalArtistsPage)),
+                    NavigationTransition.Suppress
+                );
         }
     }
 
@@ -172,7 +172,9 @@ public sealed partial class LocalArtistsPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -188,19 +190,14 @@ public sealed partial class LocalArtistsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedArtist = info;
-            App.GetService<INavigationService>().NavigateShell(
-                nameof(LocalArtistDetailPage),
-                new LocalArtistNavigationArgs(info, nameof(LocalArtistsPage)),
-                NavigationTransition.Suppress
-            );
+            App.GetService<INavigationService>()
+                .NavigateShell(
+                    nameof(LocalArtistDetailPage),
+                    new LocalArtistNavigationArgs(info, nameof(LocalArtistsPage)),
+                    NavigationTransition.Suppress
+                );
         }
     }
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
-
-
-
-
-
-

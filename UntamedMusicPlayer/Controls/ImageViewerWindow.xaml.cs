@@ -5,10 +5,12 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
 using ZLogger;
@@ -44,7 +46,7 @@ public sealed partial class ImageViewerWindow : Window, IDisposable
         );
 
         _windowId = windowId;
-        _image = info.Cover!;
+        _image = CoverManager.GetCoverBitmap(info)!;
         _info = info;
 
         Activate();

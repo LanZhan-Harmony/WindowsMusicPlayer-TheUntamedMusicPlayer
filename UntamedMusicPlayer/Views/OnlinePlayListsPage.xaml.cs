@@ -3,9 +3,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
 
@@ -14,7 +16,6 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class OnlinePlayListsPage : Page
 {
     public OnlinePlayListsViewModel ViewModel { get; set; }
-    public OnlineMusicLibrary OnlineMusicLibrary { get; } = App.GetService<OnlineMusicLibrary>();
     private bool _isInitialized = false;
     private IBriefOnlinePlaylistInfo? _lastNavigatedPlaylist;
     private ScrollViewer? _scrollViewer;
@@ -124,13 +125,13 @@ public sealed partial class OnlinePlayListsPage : Page
     {
         if (
             !_isSearching
-            && !App.GetService<OnlineMusicLibrary>().OnlinePlaylistInfoList.HasAllLoaded
+            && ViewModel.OnlineLibrary.PlaylistSearchState.HasMore
             && _scrollViewer!.VerticalOffset + _scrollViewer.ViewportHeight
                 >= _scrollViewer.ExtentHeight - 50
         )
         {
             _isSearching = true;
-            await App.GetService<OnlineMusicLibrary>().SearchMore();
+            await ViewModel.SearchMoreAsync();
             _isSearching = false;
         }
     }
@@ -148,11 +149,12 @@ public sealed partial class OnlinePlayListsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedPlaylist = info;
-            App.GetService<INavigationService>().NavigateShell(
-                nameof(OnlinePlayListDetailPage),
-                new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
-                NavigationTransition.Suppress
-            );
+            App.GetService<INavigationService>()
+                .NavigateShell(
+                    nameof(OnlinePlayListDetailPage),
+                    new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
+                    NavigationTransition.Suppress
+                );
         }
     }
 
@@ -207,11 +209,12 @@ public sealed partial class OnlinePlayListsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedPlaylist = info;
-            App.GetService<INavigationService>().NavigateShell(
-                nameof(OnlinePlayListDetailPage),
-                new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
-                NavigationTransition.Suppress
-            );
+            App.GetService<INavigationService>()
+                .NavigateShell(
+                    nameof(OnlinePlayListDetailPage),
+                    new OnlinePlaylistNavigationArgs(info, nameof(OnlinePlayListsPage)),
+                    NavigationTransition.Suppress
+                );
         }
     }
 
@@ -222,9 +225,3 @@ public sealed partial class OnlinePlayListsPage : Page
         _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
     }
 }
-
-
-
-
-
-

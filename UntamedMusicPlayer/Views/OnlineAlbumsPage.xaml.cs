@@ -3,9 +3,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
 
@@ -14,7 +16,6 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class OnlineAlbumsPage : Page
 {
     public OnlineAlbumsViewModel ViewModel { get; set; }
-    public OnlineMusicLibrary OnlineMusicLibrary { get; } = App.GetService<OnlineMusicLibrary>();
     private bool _isInitialized = false;
     private IBriefOnlineAlbumInfo? _lastNavigatedAlbum;
     private ScrollViewer? _scrollViewer;
@@ -122,13 +123,13 @@ public sealed partial class OnlineAlbumsPage : Page
     {
         if (
             !_isSearching
-            && !App.GetService<OnlineMusicLibrary>().OnlineAlbumInfoList.HasAllLoaded
+            && ViewModel.OnlineLibrary.AlbumSearchState.HasMore
             && _scrollViewer!.VerticalOffset + _scrollViewer.ViewportHeight
                 >= _scrollViewer.ExtentHeight - 50
         )
         {
             _isSearching = true;
-            await App.GetService<OnlineMusicLibrary>().SearchMore();
+            await ViewModel.SearchMoreAsync();
             _isSearching = false;
         }
     }
@@ -146,11 +147,12 @@ public sealed partial class OnlineAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedAlbum = info;
-            App.GetService<INavigationService>().NavigateShell(
-                nameof(OnlineAlbumDetailPage),
-                new OnlineAlbumNavigationArgs(info, nameof(OnlineAlbumsPage)),
-                NavigationTransition.Suppress
-            );
+            App.GetService<INavigationService>()
+                .NavigateShell(
+                    nameof(OnlineAlbumDetailPage),
+                    new OnlineAlbumNavigationArgs(info, nameof(OnlineAlbumsPage)),
+                    NavigationTransition.Suppress
+                );
         }
     }
 
@@ -187,7 +189,9 @@ public sealed partial class OnlineAlbumsPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -203,11 +207,12 @@ public sealed partial class OnlineAlbumsPage : Page
                 .GetForCurrentView()
                 .PrepareToAnimate("ForwardConnectedAnimation", border);
             _lastNavigatedAlbum = info;
-            App.GetService<INavigationService>().NavigateShell(
-                nameof(OnlineAlbumDetailPage),
-                new OnlineAlbumNavigationArgs(info, nameof(OnlineAlbumsPage)),
-                NavigationTransition.Suppress
-            );
+            App.GetService<INavigationService>()
+                .NavigateShell(
+                    nameof(OnlineAlbumDetailPage),
+                    new OnlineAlbumNavigationArgs(info, nameof(OnlineAlbumsPage)),
+                    NavigationTransition.Suppress
+                );
         }
     }
 
@@ -226,9 +231,3 @@ public sealed partial class OnlineAlbumsPage : Page
         _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
     }
 }
-
-
-
-
-
-

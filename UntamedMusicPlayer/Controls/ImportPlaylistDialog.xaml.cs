@@ -7,11 +7,15 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Core.Constants;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLinq;
 using ZLogger;
@@ -228,7 +232,10 @@ public sealed partial class ImportPlaylistDialog
             string? coverPath = null;
             foreach (var file in files)
             {
-                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file.Path);
+                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(
+                    file.Path,
+                    App.GetService<CloudMusicApiService>()
+                );
                 foreach (var song in songs)
                 {
                     Songs.Add(new DisplaySongInfo(song));
@@ -348,7 +355,10 @@ public sealed partial class ImportPlaylistDialog
                         );
                     foreach (var m3u8File in m3u8Files)
                     {
-                        var (_, _, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(m3u8File.Path);
+                        var (_, _, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(
+                            m3u8File.Path,
+                            App.GetService<CloudMusicApiService>()
+                        );
                         foreach (var song in songs)
                         {
                             songList.Add(song);
@@ -374,7 +384,10 @@ public sealed partial class ImportPlaylistDialog
             ? "PlaylistInfo_UntitledPlaylist".GetLocalized()
             : PlaylistNameTextBox.Text;
         var playlist = new PlaylistInfo(name, _coverPath);
-        await playlist.AddSongs([.. Songs.Select(s => s.Song)]);
+        await playlist.AddSongs(
+            [.. Songs.Select(s => s.Song)],
+            App.GetService<CloudMusicApiService>()
+        );
         App.GetService<PlaylistLibrary>()!.NewPlaylists([playlist]);
         StrongReferenceMessenger.Default.Send(
             new LogMessage(

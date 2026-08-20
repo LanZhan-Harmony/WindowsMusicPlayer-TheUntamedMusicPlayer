@@ -1,26 +1,38 @@
 using CommunityToolkit.Mvvm.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public sealed partial class OnlineSongsViewModel
+public sealed partial class OnlineSongsViewModel : OnlineSearchViewModelBase
 {
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly MusicPlayer _musicPlayer;
+    private readonly CloudMusicApiService _cloudApi;
 
-    public OnlineSongsViewModel(MusicPlayer musicPlayer)
+    public OnlineSongsViewModel(
+        MusicPlayer musicPlayer,
+        OnlineMusicLibrary onlineLibrary,
+        CloudMusicApiService cloudApi
+    )
+        : base(onlineLibrary)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
     }
 
     public void OnlineSongsSongListView_ItemClick(IBriefOnlineSongInfo info)
     {
         _musicPlayer.QueueManager.SetNormalPlayQueue(
-            $"OnlineSongs:{App.GetService<OnlineMusicLibrary>().SearchKeyWords}",
-            App.GetService<OnlineMusicLibrary>().OnlineSongInfoList
+            $"OnlineSongs:{OnlineLibrary.SearchKeyWords}",
+            OnlineLibrary.SongSearchState.Items
         );
         _musicPlayer.PlaySongByInfo(info);
     }
@@ -29,8 +41,8 @@ public sealed partial class OnlineSongsViewModel
     public void OnlineSongsPlayButton(IBriefOnlineSongInfo info)
     {
         _musicPlayer.QueueManager.SetNormalPlayQueue(
-            $"OnlineSongs:{App.GetService<OnlineMusicLibrary>().SearchKeyWords}",
-            App.GetService<OnlineMusicLibrary>().OnlineSongInfoList
+            $"OnlineSongs:{OnlineLibrary.SearchKeyWords}",
+            OnlineLibrary.SongSearchState.Items
         );
         _musicPlayer.PlaySongByInfo(info);
     }
@@ -75,7 +87,10 @@ public sealed partial class OnlineSongsViewModel
     [RelayCommand]
     public async Task ShowAlbumButton(IBriefOnlineSongInfo info)
     {
-        var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(info);
+        var onlineAlbumInfo = await CloudMusicModelFactory.CreateAlbumFromSongAsync(
+            info,
+            _cloudApi
+        );
         if (onlineAlbumInfo is not null)
         {
             _navigationService.NavigateShell(
@@ -89,7 +104,10 @@ public sealed partial class OnlineSongsViewModel
     [RelayCommand]
     public async Task ShowArtistButton(IBriefOnlineSongInfo info)
     {
-        var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(info);
+        var onlineArtistInfo = await CloudMusicModelFactory.CreateArtistFromSongAsync(
+            info,
+            _cloudApi
+        );
         if (onlineArtistInfo is not null)
         {
             _navigationService.NavigateShell(

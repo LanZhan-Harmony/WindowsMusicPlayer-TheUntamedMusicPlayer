@@ -1,7 +1,7 @@
 <Page x:Class="UntamedMusicPlayer.Views.OnlineSongsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:contract="using:UntamedMusicPlayer.Contracts.Models"
+      xmlns:contract="using:UntamedMusicPlayer.Core.Contracts.Models"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
@@ -162,9 +162,9 @@
                   CanDragItems="True" IsItemClickEnabled="True"
                   ItemClick="OnlineSongsSongListView_ItemClick"
                   ItemTemplate="{StaticResource SongListViewTemplate}"
-                  ItemsSource="{x:Bind OnlineMusicLibrary.OnlineSongInfoList, Mode=OneWay}"
+                  ItemsSource="{x:Bind ViewModel.OnlineLibrary.SongSearchState.Items, Mode=OneWay}"
                   Loaded="SongListView_Loaded" SelectionMode="None"
-                  Visibility="{x:Bind ToVisibility(OnlineMusicLibrary.IsListViewVisible), Mode=OneWay}">
+                  Visibility="{x:Bind ToVisibility(ViewModel.OnlineLibrary.IsListViewVisible), Mode=OneWay}">
             <interactivity:Interaction.Behaviors>
                 <helper:AlternatingListViewBehavior AlternateBackground="{ThemeResource AlternateBackgroundBrush}"
                                                     AlternateBorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -173,7 +173,7 @@
             <ListView.Footer>
                 <ProgressRing Width="25" Height="25"
                               Margin="0,5,0,5"
-                              Visibility="{x:Bind OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
+                              Visibility="{x:Bind ViewModel.OnlineLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
             </ListView.Footer>
         </ListView>
     </Grid>

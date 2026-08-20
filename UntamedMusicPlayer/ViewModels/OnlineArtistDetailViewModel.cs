@@ -1,10 +1,17 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 using ZLogger;
 
@@ -17,6 +24,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly ILogger _logger = LoggingService.CreateLogger<OnlinePlayListDetailViewModel>();
     private readonly MusicPlayer _musicPlayer;
+    private readonly CloudMusicApiService _cloudApi;
 
     private bool _isSearchingMore = false;
     private IBriefOnlineArtistInfo? _cachedBriefArtist = null;
@@ -34,9 +42,10 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     [ObservableProperty]
     public partial bool IsSearchMoreProgressRingActive { get; set; } = false;
 
-    public OnlineArtistDetailViewModel(MusicPlayer musicPlayer)
+    public OnlineArtistDetailViewModel(MusicPlayer musicPlayer, CloudMusicApiService cloudApi)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
     }
 
     /// <summary>
@@ -92,7 +101,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
 
         try
         {
-            Artist = await IDetailedOnlineArtistInfo.SearchArtistDetailAsync(BriefArtist);
+            Artist = await CloudMusicModelFactory.CreateDetailedArtistAsync(BriefArtist, _cloudApi);
         }
         catch (Exception ex)
         {
@@ -117,7 +126,7 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
             IsSearchMoreProgressRingActive = true;
             try
             {
-                await IDetailedOnlineArtistInfo.SearchMoreArtistDetailAsync(Artist);
+                await CloudMusicModelFactory.LoadMoreArtistAsync(Artist, _cloudApi);
             }
             catch (Exception ex)
             {
@@ -254,7 +263,10 @@ public sealed partial class OnlineArtistDetailViewModel : ObservableObject
     [RelayCommand]
     public async Task SongListViewShowAlbumButton(IBriefOnlineSongInfo info)
     {
-        var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(info);
+        var onlineAlbumInfo = await CloudMusicModelFactory.CreateAlbumFromSongAsync(
+            info,
+            _cloudApi
+        );
         if (onlineAlbumInfo is not null)
         {
             _navigationService.NavigateShell(

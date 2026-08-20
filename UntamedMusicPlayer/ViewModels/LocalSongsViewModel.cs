@@ -3,9 +3,16 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 using ZLinq;
 using ZLogger;
@@ -117,12 +124,13 @@ public sealed partial class LocalSongsViewModel
 
     public async Task LoadModeAndSongList()
     {
-        _songList = [.. App.GetService<MusicLibrary>().Songs];
+        var musicLibrary = App.GetService<MusicLibrary>();
+        _songList = [.. musicLibrary.Index.Songs];
         if (_songList.Count == 0)
         {
             return;
         }
-        Genres = App.GetService<MusicLibrary>().Genres;
+        Genres = musicLibrary.GetGenreOptions();
         await LoadSortModeAsync();
         await LoadGenreModeAsync();
         try

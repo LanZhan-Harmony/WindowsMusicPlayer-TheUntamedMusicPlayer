@@ -1,8 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -12,6 +18,7 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly IWindowService _windowService = App.GetService<IWindowService>();
     private readonly MusicPlayer _musicPlayer;
+    private readonly CloudMusicApiService _cloudApi;
 
     public event Action? DetailModeUpdateRequested;
 
@@ -26,9 +33,10 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
     [ObservableProperty]
     public partial bool Availability { get; set; } = false;
 
-    public RootPlayBarViewModel(MusicPlayer musicPlayer)
+    public RootPlayBarViewModel(MusicPlayer musicPlayer, CloudMusicApiService cloudApi)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
         Availability = _musicPlayer.State.CurrentSong is not null;
         IsFullScreen = _windowService.IsFullScreen;
         _musicPlayer.BarViewAvailabilityChanged += OnBarViewAvailabilityChanged;
@@ -117,7 +125,10 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(onlineInfo);
+            var onlineAlbumInfo = await CloudMusicModelFactory.CreateAlbumFromSongAsync(
+                onlineInfo,
+                _cloudApi
+            );
             if (onlineAlbumInfo is not null)
             {
                 _navigationService.NavigateShell(
@@ -152,7 +163,10 @@ public sealed partial class RootPlayBarViewModel : ObservableObject
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(onlineInfo);
+            var onlineArtistInfo = await CloudMusicModelFactory.CreateArtistFromSongAsync(
+                onlineInfo,
+                _cloudApi
+            );
             if (onlineArtistInfo is not null)
             {
                 _navigationService.NavigateShell(

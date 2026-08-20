@@ -1,8 +1,13 @@
 using Microsoft.Extensions.Logging;
-using UntamedMusicPlayer.Contracts.Models;
+using UntamedMusicPlayer.Core.Contracts.Models;
 using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Playback;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.LyricRenderer;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Services;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Media;
 using Windows.Media.Playback;
@@ -19,6 +24,7 @@ public sealed partial class MusicPlayer : IDisposable
     private readonly SMTCManager _smtcManager;
     private readonly LyricManager _lyricManager;
     private readonly IAppStateService _appStateService;
+    private readonly CloudMusicApiService _cloudApi;
 
     /// <summary>
     /// 扩展执行会话，用于防止后台暂停
@@ -62,12 +68,18 @@ public sealed partial class MusicPlayer : IDisposable
     /// </summary>
     public event Action<bool>? BarViewAvailabilityChanged;
 
-    public MusicPlayer(IAppStateService appStateService)
+    public MusicPlayer(
+        IAppStateService appStateService,
+        CloudMusicApiService cloudApi,
+        ILocalSettingsService localSettingsService,
+        IPlaybackDispatcher playbackDispatcher
+    )
     {
         _appStateService = appStateService;
-        State = new();
-        _audioEngine = new(State);
-        _queueManager = new(State);
+        _cloudApi = cloudApi;
+        State = new(localSettingsService);
+        _audioEngine = new(State, playbackDispatcher);
+        _queueManager = new(State, cloudApi, localSettingsService);
         _smtcManager = new(State);
         _lyricManager = new(State);
 
@@ -215,8 +227,9 @@ public sealed partial class MusicPlayer : IDisposable
         State.PlayState = MediaPlaybackState.Buffering;
         var songToPlay = _queueManager.CurrentQueue[index];
         State.CurrentBriefSong = songToPlay.Song;
-        State.CurrentSong = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(
-            songToPlay.Song
+        State.CurrentSong = await CloudMusicModelFactory.CreateDetailedSongAsync(
+            songToPlay.Song,
+            _cloudApi
         );
         State.PlayQueueIndex = index;
         if (!State.CurrentSong.IsPlayAvailable)

@@ -1,9 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -12,6 +17,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
 {
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly MusicPlayer _musicPlayer;
+    private readonly CloudMusicApiService _cloudApi;
 
     private IBriefOnlineAlbumInfo? _cachedBriefAlbum = null;
     public IBriefOnlineAlbumInfo BriefAlbum { get; set; } = null!;
@@ -25,9 +31,10 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
     [ObservableProperty]
     public partial bool IsSearchProgressRingActive { get; set; } = true;
 
-    public OnlineAlbumDetailViewModel(MusicPlayer musicPlayer)
+    public OnlineAlbumDetailViewModel(MusicPlayer musicPlayer, CloudMusicApiService cloudApi)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
     }
 
     public async Task Initialize(IBriefOnlineAlbumInfo briefAlbum)
@@ -68,7 +75,7 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
             return;
         }
 
-        Album = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(BriefAlbum);
+        Album = await CloudMusicModelFactory.CreateDetailedAlbumAsync(BriefAlbum, _cloudApi);
         IsPlayAllButtonEnabled = Album.SongList.Count > 0;
         IsSearchProgressRingActive = false;
     }
@@ -193,7 +200,10 @@ public partial class OnlineAlbumDetailViewModel : ObservableObject
     [RelayCommand]
     public async Task ShowArtistButton(IBriefOnlineSongInfo info)
     {
-        var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(info);
+        var onlineArtistInfo = await CloudMusicModelFactory.CreateArtistFromSongAsync(
+            info,
+            _cloudApi
+        );
         if (onlineArtistInfo is not null)
         {
             _navigationService.NavigateShell(

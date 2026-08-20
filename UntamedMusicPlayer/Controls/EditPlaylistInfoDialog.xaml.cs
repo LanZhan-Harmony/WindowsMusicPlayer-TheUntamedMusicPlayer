@@ -9,11 +9,15 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Core.Constants;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLogger;
 
@@ -277,7 +281,10 @@ public sealed partial class EditPlaylistInfoDialog
             string? coverPath = null;
             foreach (var file in files)
             {
-                var (_, path, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file.Path);
+                var (_, path, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(
+                    file.Path,
+                    App.GetService<CloudMusicApiService>()
+                );
                 foreach (var song in songs)
                 {
                     Songs.Add(new DisplaySongInfo(song));
@@ -394,7 +401,10 @@ public sealed partial class EditPlaylistInfoDialog
             CoverManager.ForcePlaylistCoverRefresh(_playlist);
         }
         _playlist.SongList.Clear();
-        await _playlist.AddRange([.. Songs.Select(s => s.Song)]);
+        await _playlist.AddRange(
+            [.. Songs.Select(s => s.Song)],
+            App.GetService<CloudMusicApiService>()
+        );
         StrongReferenceMessenger.Default.Send(new HavePlaylistMessage(true));
         StrongReferenceMessenger.Default.Send(new PlaylistChangeMessage(_playlist));
         _ = FileManager.SavePlaylistDataAsync(App.GetService<PlaylistLibrary>().Playlists);

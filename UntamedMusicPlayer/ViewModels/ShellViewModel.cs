@@ -1,8 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using UntamedMusicPlayer.Contracts.Models;
-using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Core.Constants;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 using Windows.Storage;
 
@@ -120,8 +121,7 @@ public sealed partial class ShellViewModel : ObservableObject
         });
         if (newSongs.Count > 0)
         {
-            _musicPlayer
-                .QueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
+            _musicPlayer.QueueManager.SetNormalPlayQueue("LocalSongs:Part", newSongs);
             await _musicPlayer.PlaySongByInfoAsync(newSongs[0]);
         }
     }

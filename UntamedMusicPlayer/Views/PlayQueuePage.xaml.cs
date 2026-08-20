@@ -1,11 +1,18 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
 using UntamedMusicPlayer.Core.Constants;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Playback;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -369,7 +376,10 @@ public sealed partial class PlayQueuePage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlayQueueSong info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info.Song);
+            var song = await CloudMusicModelFactory.CreateDetailedSongAsync(
+                info.Song,
+                App.GetService<CloudMusicApiService>()
+            );
             var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }

@@ -2,6 +2,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graphics.Canvas;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Services;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.UI;
@@ -15,7 +16,7 @@ namespace UntamedMusicPlayer.Services;
 /// </summary>
 public sealed class ColorExtractionService : IColorExtractionService
 {
-    private readonly ILogger _logger = LoggingService.CreateLogger<ColorExtractionService>();
+    private readonly ILogger _logger = CoreLoggingService.CreateLogger<ColorExtractionService>();
 
     /// <summary>
     /// 从字节数组中提取主色调

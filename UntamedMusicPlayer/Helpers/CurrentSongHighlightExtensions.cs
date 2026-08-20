@@ -3,8 +3,11 @@ using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using UntamedMusicPlayer.Contracts.Models;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Playback;
+using UntamedMusicPlayer.Playback;
 using ZLinq;
 
 namespace UntamedMusicPlayer.Helpers;

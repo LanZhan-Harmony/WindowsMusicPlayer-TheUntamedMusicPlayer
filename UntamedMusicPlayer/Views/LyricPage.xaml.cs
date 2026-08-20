@@ -8,9 +8,14 @@ using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UntamedMusicPlayer.Controls;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Playback;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Foundation;
 
@@ -192,7 +197,7 @@ public sealed partial class LyricPage : Page, IDisposable
 
     private async Task RecalculateCoverSizeWhenCoverReadyAsync(CancellationToken cancellationToken)
     {
-        var cover = PlayState.CurrentSong?.Cover;
+        var cover = CoverManager.GetCoverBitmap(PlayState.CurrentSong);
         if (cover is null)
         {
             return;
@@ -537,7 +542,7 @@ public sealed partial class LyricPage : Page, IDisposable
         var availableWidth = Math.Max(0, width - scalingMargin);
         var availableHeight = Math.Max(0, height - scalingMargin);
 
-        var currentCover = PlayState.CurrentSong?.Cover;
+        var currentCover = CoverManager.GetCoverBitmap(PlayState.CurrentSong);
         double coverWidth,
             coverHeight;
 

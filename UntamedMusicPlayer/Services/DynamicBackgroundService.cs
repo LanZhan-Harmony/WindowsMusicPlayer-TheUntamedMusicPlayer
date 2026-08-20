@@ -4,9 +4,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Hosting;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Playback;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
 using Windows.UI;
 using ZLogger;
 

@@ -1,11 +1,18 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Playback;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.LyricRenderer;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -20,18 +27,20 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     private readonly SharedPlaybackState _playState;
     private readonly PlayQueueManager _playQueueManager;
     private readonly LyricManager _lyricManager;
+    private readonly CloudMusicApiService _cloudApi;
 
     [ObservableProperty]
     public partial bool IsShowCoverEnabled { get; set; }
 
-    public LyricViewModel(MusicPlayer musicPlayer)
+    public LyricViewModel(MusicPlayer musicPlayer, CloudMusicApiService cloudApi)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
         _playState = _musicPlayer.State;
         _playQueueManager = _musicPlayer.QueueManager;
         _lyricManager = _musicPlayer.LyricManager;
 
-        IsShowCoverEnabled = _playState.CurrentSong?.Cover is not null;
+        IsShowCoverEnabled = CoverManager.HasCover(_playState.CurrentSong);
         _playState.PropertyChanged += OnStateChanged;
     }
 
@@ -39,7 +48,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     {
         if (e.PropertyName is nameof(SharedPlaybackState.CurrentSong))
         {
-            IsShowCoverEnabled = _playState.CurrentSong?.Cover is not null;
+            IsShowCoverEnabled = CoverManager.HasCover(_playState.CurrentSong);
         }
     }
 
@@ -95,7 +104,10 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(onlineInfo);
+            var onlineAlbumInfo = await CloudMusicModelFactory.CreateAlbumFromSongAsync(
+                onlineInfo,
+                _cloudApi
+            );
             if (onlineAlbumInfo is not null)
             {
                 _navigationService.NavigateShell(
@@ -127,7 +139,10 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(onlineInfo);
+            var onlineArtistInfo = await CloudMusicModelFactory.CreateArtistFromSongAsync(
+                onlineInfo,
+                _cloudApi
+            );
             if (onlineArtistInfo is not null)
             {
                 _navigationService.NavigateShell(
@@ -143,7 +158,7 @@ public sealed partial class LyricViewModel : ObservableObject, IDisposable
     public void ShowCoverButton()
     {
         var currentSong = _playState.CurrentSong;
-        if (currentSong?.Cover is null)
+        if (currentSong is null || !CoverManager.HasCover(currentSong))
         {
             return;
         }

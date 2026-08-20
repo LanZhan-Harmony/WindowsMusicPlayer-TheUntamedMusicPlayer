@@ -1,7 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Dispatching;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Lyrics;
+using UntamedMusicPlayer.Core.Playback;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
 
@@ -90,10 +92,11 @@ public sealed partial class LyricManager
     /// </summary>
     public async void GetSongLyric()
     {
-        var slices = await LyricParser.GetLyricSlices(
+        var parsedSlices = await LyricParser.GetLyricSlices(
             _state.CurrentSong!.Lyric,
             _state.CurrentSong!.Duration
         );
+        var slices = parsedSlices.Select(LyricSlice.FromCore).ToList();
 
         _dispatcher.TryEnqueue(() =>
         {

@@ -2,14 +2,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.ApplicationModel.Resources;
 using UntamedMusicPlayer.Activation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
 using UntamedMusicPlayer.Core.Services;
-using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using WinUIEx;
 using ZLogger;
@@ -49,6 +54,9 @@ public sealed partial class App : Application
 
         // 初始化日志服务（必须在任何日志记录之前）
         LoggingService.Initialize();
+        CoreLoggingService.Configure(LoggingService.LoggerFactory);
+        var resourceLoader = new ResourceLoader();
+        ResourceExtensions.Configure(resourceLoader.GetString);
 
         // 初始化 MemoryPack 格式化器（用于 AOT 支持）
         MemoryPackAotHelper.RegisterFormatters();
@@ -73,6 +81,20 @@ public sealed partial class App : Application
                     services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
                     services.AddSingleton<IMaterialSelectorService, MaterialSelectorService>();
                     services.AddSingleton<IColorExtractionService, ColorExtractionService>();
+                    services.AddSingleton<IPlaybackDispatcher>(_ =>
+                    {
+                        var dispatcher = DispatcherQueue.GetForCurrentThread();
+                        return new DispatcherQueuePlaybackDispatcher(
+                            dispatcher
+                                ?? throw new InvalidOperationException(
+                                    "Playback services must be created on the UI thread."
+                                )
+                        );
+                    });
+                    services.AddSingleton<
+                        ICoverCacheInvalidationService,
+                        CoverCacheInvalidationService
+                    >();
                     services.AddSingleton<IDynamicBackgroundService, DynamicBackgroundService>();
                     services.AddSingleton<IActivationService, ActivationService>();
                     services.AddSingleton<INavigationService, NavigationService>();
@@ -85,6 +107,7 @@ public sealed partial class App : Application
 
                     // Online Services
                     services.AddSingleton<CloudMusicApiService>();
+                    services.AddSingleton<CloudMusicSearchService>();
 
                     // Views and ViewModels
                     services.AddTransient<MainViewModel>();

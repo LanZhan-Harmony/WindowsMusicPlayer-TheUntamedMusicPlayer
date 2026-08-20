@@ -10,11 +10,16 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -60,16 +65,11 @@ public sealed partial class PlayListDetailPage : Page
         }
     }
 
-    private void SongListView_DragItemsCompleted(
-        object sender,
-        DragItemsCompletedEventArgs args
-    )
+    private void SongListView_DragItemsCompleted(object sender, DragItemsCompletedEventArgs args)
     {
         if (args.DropResult == DataPackageOperation.Move && args.Items.Count > 0)
         {
-            ViewModel.SongListView_DragItemsCompleted(
-                args.Items.OfType<IndexedPlaylistSong>()
-            );
+            ViewModel.SongListView_DragItemsCompleted(args.Items.OfType<IndexedPlaylistSong>());
         }
     }
 
@@ -524,7 +524,10 @@ public sealed partial class PlayListDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IndexedPlaylistSong info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info.Song);
+            var song = await CloudMusicModelFactory.CreateDetailedSongAsync(
+                info.Song,
+                App.GetService<CloudMusicApiService>()
+            );
             var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }

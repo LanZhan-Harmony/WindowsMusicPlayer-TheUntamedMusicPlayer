@@ -47,9 +47,10 @@ public sealed class NavigationService : INavigationService
 
         NavigationSourcePage = GetNavigationSourcePage(parameter);
         _setNavigationSourcePage?.Invoke(NavigationSourcePage);
-        var infoOverride = transition == NavigationTransition.Suppress
-            ? new SuppressNavigationTransitionInfo()
-            : null;
+        var infoOverride =
+            transition == NavigationTransition.Suppress
+                ? new SuppressNavigationTransitionInfo()
+                : null;
         return _shellFrame.Navigate(
             ResolveShellPageType(destPage),
             UnwrapNavigationParameter(parameter),

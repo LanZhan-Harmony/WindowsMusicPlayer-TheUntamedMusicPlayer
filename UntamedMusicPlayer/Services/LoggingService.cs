@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using UntamedMusicPlayer.Messages;
+using UntamedMusicPlayer.Core.Messages;
 using Windows.Storage;
 using ZLogger;
 

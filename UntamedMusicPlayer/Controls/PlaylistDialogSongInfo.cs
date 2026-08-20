@@ -1,7 +1,7 @@
-using UntamedMusicPlayer.Contracts.Models;
-using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Models;
-using UntamedMusicPlayer.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI.Models;
 
 namespace UntamedMusicPlayer.Controls;
 

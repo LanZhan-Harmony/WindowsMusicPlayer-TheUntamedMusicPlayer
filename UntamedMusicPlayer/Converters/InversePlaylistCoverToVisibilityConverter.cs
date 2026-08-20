@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Services;
 
 namespace UntamedMusicPlayer.Converters;
 

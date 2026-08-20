@@ -2,10 +2,14 @@ using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.ViewModels;
 using ZLinq;
 
@@ -14,7 +18,6 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class OnlineSongsPage : Page
 {
     public OnlineSongsViewModel ViewModel { get; set; }
-    public OnlineMusicLibrary OnlineMusicLibrary { get; } = App.GetService<OnlineMusicLibrary>();
     private bool _isInitialized = false;
     private ScrollViewer? _scrollViewer;
     private bool _isSearching;
@@ -102,7 +105,8 @@ public sealed partial class OnlineSongsPage : Page
 
         if (
             !_isInitialized
-            && App.GetService<MusicPlayer>().State.CurrentBriefSong is IBriefOnlineSongInfo currentSong
+            && App.GetService<MusicPlayer>().State.CurrentBriefSong
+                is IBriefOnlineSongInfo currentSong
             && listView.ItemsSource is IEnumerable<IBriefOnlineSongInfo> songs
         )
         {
@@ -121,13 +125,13 @@ public sealed partial class OnlineSongsPage : Page
     {
         if (
             !_isSearching
-            && !App.GetService<OnlineMusicLibrary>().OnlineSongInfoList.HasAllLoaded
+            && ViewModel.OnlineLibrary.SongSearchState.HasMore
             && _scrollViewer!.VerticalOffset + _scrollViewer.ViewportHeight
                 >= _scrollViewer.ExtentHeight - 50
         )
         {
             _isSearching = true;
-            await App.GetService<OnlineMusicLibrary>().SearchMore();
+            await ViewModel.SearchMoreAsync();
             _isSearching = false;
         }
     }
@@ -152,7 +156,10 @@ public sealed partial class OnlineSongsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            await DownloadHelper.DownloadOnlineSongAsync(info);
+            await DownloadHelper.DownloadOnlineSongAsync(
+                info,
+                App.GetService<CloudMusicApiService>()
+            );
         }
     }
 
@@ -173,7 +180,9 @@ public sealed partial class OnlineSongsPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -182,7 +191,10 @@ public sealed partial class OnlineSongsPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            var song = await CloudMusicModelFactory.CreateDetailedSongAsync(
+                info,
+                App.GetService<CloudMusicApiService>()
+            );
             var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
@@ -211,9 +223,3 @@ public sealed partial class OnlineSongsPage : Page
         _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
     }
 }
-
-
-
-
-
-

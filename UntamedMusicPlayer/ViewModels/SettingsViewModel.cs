@@ -6,9 +6,17 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI;
@@ -31,6 +39,7 @@ public sealed partial class SettingsViewModel
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
     private readonly MusicPlayer _musicPlayer;
+    private readonly CloudMusicApiService _cloudApi;
 
     /// <summary>
     /// 是否显示文件夹为空信息
@@ -234,10 +243,11 @@ public sealed partial class SettingsViewModel
     /// </summary>
     public string VersionDescription { get; set; } = GetVersionDescription();
 
-    public SettingsViewModel(MusicPlayer musicPlayer)
+    public SettingsViewModel(MusicPlayer musicPlayer, CloudMusicApiService cloudApi)
         : base(StrongReferenceMessenger.Default)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
         Messenger.Register<HavePlaylistMessage>(this);
         Messenger.Register<MusicFoldersChangedMessage>(this);
 
@@ -338,9 +348,12 @@ public sealed partial class SettingsViewModel
             var infos = new List<PlaylistInfo>();
             foreach (var file in files)
             {
-                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(file.Path);
+                var (name, cover, songs) = await M3u8Helper.GetNameAndSongsFromM3u8(
+                    file.Path,
+                    App.GetService<CloudMusicApiService>()
+                );
                 var info = new PlaylistInfo(name, cover);
-                await info.AddSongs(songs);
+                await info.AddSongs(songs, _cloudApi);
                 infos.Add(info);
             }
             App.GetService<PlaylistLibrary>().NewPlaylists(infos);
@@ -409,7 +422,10 @@ public sealed partial class SettingsViewModel
             var count = App.GetService<PlaylistLibrary>().Playlists.Count;
             if (folder is not null && count != 0)
             {
-                await M3u8Helper.ExportPlaylistsToM3u8Async(folder.Path);
+                await M3u8Helper.ExportPlaylistsToM3u8Async(
+                    folder.Path,
+                    App.GetService<PlaylistLibrary>().Playlists
+                );
                 Messenger.Send(
                     new LogMessage(
                         LogLevel.None,

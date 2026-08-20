@@ -2,10 +2,12 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using UntamedMusicPlayer.Contracts.Services;
-using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
+using UntamedMusicPlayer.Playback;
 using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -171,8 +173,7 @@ public sealed partial class PlayListsViewModel
         {
             return;
         }
-        _musicPlayer
-            .QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
+        _musicPlayer.QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
         _musicPlayer.PlaySongByInfo(songList[0]);
     }
 
@@ -186,8 +187,7 @@ public sealed partial class PlayListsViewModel
         }
         if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            _musicPlayer
-                .QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
+            _musicPlayer.QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
             _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else
@@ -206,8 +206,7 @@ public sealed partial class PlayListsViewModel
         }
         if (_musicPlayer.QueueManager.CurrentQueue.Count == 0)
         {
-            _musicPlayer
-                .QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
+            _musicPlayer.QueueManager.SetNormalPlayQueue($"Songs:Playlist:{info.Name}", songList);
             _musicPlayer.PlaySongByInfo(songList[0]);
         }
         else

@@ -3,10 +3,17 @@ using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Windows.Storage.Pickers;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Core.Constants;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Playback;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 using Windows.Storage;
 using ZLinq;
@@ -19,6 +26,7 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
     private readonly MusicPlayer _musicPlayer;
     private readonly PlayQueueManager _playQueueManager;
     private readonly SharedPlaybackState _playState;
+    private readonly CloudMusicApiService _cloudApi;
 
     private IndexedPlayQueueSong? _currentSong;
 
@@ -28,9 +36,10 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     public partial bool IsButtonEnabled { get; set; } = false;
 
-    public PlayQueueViewModel(MusicPlayer musicPlayer)
+    public PlayQueueViewModel(MusicPlayer musicPlayer, CloudMusicApiService cloudApi)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
         _playQueueManager = _musicPlayer.QueueManager;
         _playState = _musicPlayer.State;
         PlayQueue = _playQueueManager.CurrentQueue;
@@ -121,7 +130,10 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(onlineInfo);
+            var onlineAlbumInfo = await CloudMusicModelFactory.CreateAlbumFromSongAsync(
+                onlineInfo,
+                _cloudApi
+            );
             if (onlineAlbumInfo is not null)
             {
                 _navigationService.NavigateShell(
@@ -151,7 +163,10 @@ public sealed partial class PlayQueueViewModel : ObservableObject, IDisposable
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(onlineInfo);
+            var onlineArtistInfo = await CloudMusicModelFactory.CreateArtistFromSongAsync(
+                onlineInfo,
+                _cloudApi
+            );
             if (onlineArtistInfo is not null)
             {
                 _navigationService.NavigateShell(

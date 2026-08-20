@@ -1,9 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UntamedMusicPlayer.OnlineAPI\UntamedMusicPlayer.OnlineAPI.csproj" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.11" />
+    <PackageReference Include="TagLibSharp" Version="2.3.0" />
+    <PackageReference Include="hyjiacan.pinyin4net" Version="4.1.1" />
+    <PackageReference Include="ZLinq" Version="1.5.6" />
+    <PackageReference Include="ZLogger" Version="2.5.10" />
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
     <Folder Include="Models\" />

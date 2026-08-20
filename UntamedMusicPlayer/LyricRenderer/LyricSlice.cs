@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using UntamedMusicPlayer.Models;
+using CoreLyricSlice = UntamedMusicPlayer.Core.Lyrics.LyricSlice;
 
 namespace UntamedMusicPlayer.LyricRenderer;
 
@@ -17,6 +18,12 @@ public sealed partial class LyricSlice(double startTime, string content) : Obser
     /// 歌词切片结束时间，单位为毫秒
     /// </summary>
     public double EndTime { get; set; }
+
+    public static LyricSlice FromCore(CoreLyricSlice slice)
+    {
+        ArgumentNullException.ThrowIfNull(slice);
+        return new LyricSlice(slice.StartTime, slice.Content) { EndTime = slice.EndTime };
+    }
 
     /// <summary>
     /// 是否为当前播放的歌词

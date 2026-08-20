@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:model="using:UntamedMusicPlayer.Models"
+      xmlns:model="using:UntamedMusicPlayer.Core.Models"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -123,7 +123,7 @@
                             Margin="0,7,0,0" VerticalAlignment="Center"
                             AccessKey="S"
                             ItemTemplate="{StaticResource SuggestResultTemplate}"
-                            ItemsSource="{x:Bind OnlineMusicLibrary.SuggestResultList, Mode=OneWay}"
+                            ItemsSource="{x:Bind ViewModel.OnlineLibrary.SuggestResultList, Mode=OneWay}"
                             Loaded="AutoSuggestBox_Loaded"
                             QueryIcon="Find"
                             QuerySubmitted="AutoSuggestBox_QuerySubmitted"
@@ -174,22 +174,22 @@
             <TextBlock x:Name="KeyWordsTextBlock"
                        Grid.Row="0"
                        TextTrimming="WordEllipsis"
-                       Visibility="{x:Bind ToVisibility(OnlineMusicLibrary.IsKeyWordsTextBlockVisible), Mode=OneWay}">
+                       Visibility="{x:Bind ToVisibility(ViewModel.OnlineLibrary.IsKeyWordsTextBlockVisible), Mode=OneWay}">
                 <Run FontSize="30" FontWeight="Bold"
-                     Text="{x:Bind OnlineMusicLibrary.SearchKeyWords, Mode=OneWay}"/>
+                     Text="{x:Bind ViewModel.OnlineLibrary.SearchKeyWords, Mode=OneWay}"/>
                 <Run x:Uid="Home_SearchResult" FontSize="20"/>
             </TextBlock>
             <ProgressRing Grid.Row="0" Grid.RowSpan="2"
                           Width="50" Height="50"
                           Margin="0,24,0,0"
                           Canvas.ZIndex="1"
-                          IsActive="{x:Bind OnlineMusicLibrary.IsSearchProgressRingActive, Mode=OneWay}"/>
+                          IsActive="{x:Bind ViewModel.OnlineLibrary.IsSearchProgressRingActive, Mode=OneWay}"/>
             <StackPanel x:Name="NetworkErrorStackPanel"
                         Grid.Row="0" Grid.RowSpan="2"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Canvas.ZIndex="1" Orientation="Horizontal"
-                        Visibility="{x:Bind ToVisibility(OnlineMusicLibrary.IsNetworkErrorVisible), Mode=OneWay}">
+                        Visibility="{x:Bind ToVisibility(ViewModel.OnlineLibrary.IsNetworkErrorVisible), Mode=OneWay}">
                 <FontIcon x:Name="NetworkErrorFontIcon"
                           FontFamily="{StaticResource UntamedFontFamily}"
                           Glyph="&#xEB56;"/>

@@ -2,7 +2,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Core.Contracts.Services;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Storage;
 
@@ -27,7 +28,7 @@ public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEve
             == ExtendedActivationKind.File;
     }
 
-    protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
+    protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
         // 设置文件激活标志
         _appStateService.IsFileActivationLaunch = true;
@@ -88,9 +89,9 @@ public sealed class FileActivationHandler : ActivationHandler<LaunchActivatedEve
     /// </summary>
     private static void PlayMusicFiles(List<BriefLocalSongInfo> musicFiles)
     {
-        App.GetService<MusicPlayer>().QueueManager.SetNormalPlayQueue("LocalSongs:Part", musicFiles);
+        App.GetService<MusicPlayer>()
+            .QueueManager.SetNormalPlayQueue("LocalSongs:Part", musicFiles);
         App.GetService<MusicPlayer>().PlaySongByInfo(musicFiles[0]);
         App.GetService<RootPlayBarViewModel>().DetailModeUpdate();
     }
 }
-
