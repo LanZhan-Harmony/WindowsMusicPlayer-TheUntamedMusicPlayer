@@ -2,10 +2,16 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
-using UntamedMusicPlayer.Messages;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 using ZLinq;
 
@@ -19,6 +25,7 @@ public sealed partial class PlayListDetailViewModel
 {
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly MusicPlayer _musicPlayer;
+    private readonly CloudMusicApiService _cloudApi;
 
     [ObservableProperty]
     public partial PlaylistInfo Playlist { get; set; } = null!;
@@ -35,10 +42,11 @@ public sealed partial class PlayListDetailViewModel
     [ObservableProperty]
     public partial bool IsPlayAllButtonEnabled { get; set; } = false;
 
-    public PlayListDetailViewModel(MusicPlayer musicPlayer)
+    public PlayListDetailViewModel(MusicPlayer musicPlayer, CloudMusicApiService cloudApi)
         : base(StrongReferenceMessenger.Default)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
         Messenger.Register<PlaylistRenameMessage>(this);
         Messenger.Register<PlaylistChangeMessage>(this);
         SongList = [];
@@ -212,7 +220,10 @@ public sealed partial class PlayListDetailViewModel
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(onlineInfo);
+            var onlineAlbumInfo = await CloudMusicModelFactory.CreateAlbumFromSongAsync(
+                onlineInfo,
+                _cloudApi
+            );
             if (onlineAlbumInfo is not null)
             {
                 _navigationService.NavigateShell(
@@ -242,7 +253,10 @@ public sealed partial class PlayListDetailViewModel
         }
         else if (info is IBriefOnlineSongInfo onlineInfo)
         {
-            var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(onlineInfo);
+            var onlineArtistInfo = await CloudMusicModelFactory.CreateArtistFromSongAsync(
+                onlineInfo,
+                _cloudApi
+            );
             if (onlineArtistInfo is not null)
             {
                 _navigationService.NavigateShell(

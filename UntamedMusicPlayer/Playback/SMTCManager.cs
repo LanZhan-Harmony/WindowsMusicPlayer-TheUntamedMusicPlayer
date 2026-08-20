@@ -1,9 +1,11 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI.Dispatching;
-using UntamedMusicPlayer.Contracts.Models;
-using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Playback;
+using UntamedMusicPlayer.Services;
 using Windows.Media;
 using Windows.Media.Playback;
 using Windows.Storage.Streams;
@@ -170,7 +172,7 @@ public sealed partial class SMTCManager : IDisposable
         var song = _state.CurrentSong!;
         var defaultCoverUri = new Uri("ms-appx:///Assets/NoCover.png");
 
-        if (song.Cover is null) // 没有封面时使用默认图片
+        if (!CoverManager.HasCover(song)) // 没有封面时使用默认图片
         {
             _displayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(defaultCoverUri);
             _displayUpdater.Update();

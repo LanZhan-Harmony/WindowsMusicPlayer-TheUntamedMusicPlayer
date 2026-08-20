@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Text;
+using UntamedMusicPlayer.Core.Helpers;
 using UntamedMusicPlayer.Models;
 using Windows.UI.Text;
 using ZLinq;

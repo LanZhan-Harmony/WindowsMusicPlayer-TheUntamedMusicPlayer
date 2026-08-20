@@ -1,7 +1,8 @@
 <Page x:Class="UntamedMusicPlayer.Views.OnlineAlbumsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:contract="using:UntamedMusicPlayer.Contracts.Models"
+      xmlns:contract="using:UntamedMusicPlayer.Core.Contracts.Models"
+      xmlns:converter="using:UntamedMusicPlayer.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helper="using:UntamedMusicPlayer.Helpers"
       xmlns:local="using:UntamedMusicPlayer.Views"
@@ -12,6 +13,7 @@
       mc:Ignorable="d">
 
     <Page.Resources>
+        <converter:CoverConverter x:Key="CoverConverter"/>
         <DataTemplate x:Key="AlbumGridViewTemplate" x:DataType="contract:IBriefOnlineAlbumInfo">
             <Grid x:Name="TemplateContent"
                   Width="170" Height="228"
@@ -140,7 +142,7 @@
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                x:Phase="1" Canvas.ZIndex="1"
-                               Source="{x:Bind Cover}"
+                               Source="{x:Bind CoverPath, Converter={StaticResource CoverConverter}}"
                                Stretch="UniformToFill"/>
                         <Grid Width="160" Height="160"
                               Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
@@ -197,13 +199,13 @@
                   IsItemClickEnabled="True"
                   ItemClick="AlbumGridView_ItemClick"
                   ItemTemplate="{StaticResource AlbumGridViewTemplate}"
-                  ItemsSource="{x:Bind OnlineMusicLibrary.OnlineAlbumInfoList, Mode=OneWay}"
+                  ItemsSource="{x:Bind ViewModel.OnlineLibrary.AlbumSearchState.Items, Mode=OneWay}"
                   Loaded="AlbumGridView_Loaded" SelectionMode="None"
-                  Visibility="{x:Bind ToVisibility(OnlineMusicLibrary.IsListViewVisible), Mode=OneWay}">
+                  Visibility="{x:Bind ToVisibility(ViewModel.OnlineLibrary.IsListViewVisible), Mode=OneWay}">
             <GridView.Footer>
                 <ProgressRing Width="25" Height="25"
                               Margin="0,5,0,5"
-                              Visibility="{x:Bind OnlineMusicLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
+                              Visibility="{x:Bind ViewModel.OnlineLibrary.IsSearchMoreProgressRingActive, Mode=OneWay}"/>
             </GridView.Footer>
         </GridView>
     </Grid>

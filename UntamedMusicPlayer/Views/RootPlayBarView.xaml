@@ -2,12 +2,17 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converter="using:UntamedMusicPlayer.Converters"
              xmlns:helper="using:UntamedMusicPlayer.Helpers"
              xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:model="using:UntamedMusicPlayer.Models"
              xmlns:ui="using:CommunityToolkit.WinUI"
              mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converter:CoverConverter x:Key="CoverConverter"/>
+    </UserControl.Resources>
 
     <Grid x:Name="RootGrid"
           ColumnSpacing="10" KeyTipPlacementMode="Top">
@@ -186,7 +191,7 @@
                                VerticalAlignment="Center"
                                Canvas.ZIndex="1" Stretch="UniformToFill">
                             <interactivity:Interaction.Behaviors>
-                                <helper:FadeImageBehavior Source="{x:Bind PlayState.CurrentSong.Cover, Mode=OneWay}" Duration="0:0:0.45"/>
+                                <helper:FadeImageBehavior Source="{x:Bind PlayState.CurrentSong, Converter={StaticResource CoverConverter}, Mode=OneWay}" Duration="0:0:0.45"/>
                             </interactivity:Interaction.Behaviors>
                         </Image>
                         <Grid Width="70" Height="70"

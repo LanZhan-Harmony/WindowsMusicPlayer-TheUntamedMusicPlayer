@@ -1,8 +1,8 @@
 using System.Net;
-using System.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
-using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI.Extensions;
+using System.Text.Json.Serialization.Metadata;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI.Models;
 using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI.Utils;
 
 namespace UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
@@ -15,12 +15,6 @@ public sealed partial class CloudMusicApiService : IDisposable
     private readonly HttpClient _client;
     private readonly HttpClientHandler _clientHandler;
 
-    [GeneratedRegex(
-        @"<div class=""cver u-cover u-cover-3"">[\s\S]*?<img src=""([^""]+)"">[\s\S]*?<a class=""sname f-fs1 s-fc0"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>[\s\S]*?<a class=""nm nm f-thide s-fc3"" href=""([^""]+)""[^>]*>([^<]+?)<\/a>",
-        RegexOptions.Compiled
-    )]
-    private static partial Regex RelatedPlaylistRegex();
-
     public CloudMusicApiService()
     {
         _clientHandler = new HttpClientHandler
@@ -31,13 +25,150 @@ public sealed partial class CloudMusicApiService : IDisposable
         _client = new HttpClient(_clientHandler);
     }
 
-    /// <summary>
-    /// API请求
-    /// </summary>
-    /// <param name="provider">API提供者</param>
-    /// <param name="queries">参数</param>
-    /// <returns></returns>
-    public Task<(bool, JsonObject)> RequestAsync(
+    public Task<(bool IsOk, CloudSearchSongsResponse? Result)> SearchSongsAsync(
+        string keywords,
+        int limit,
+        int offset
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.Search,
+            new Dictionary<string, string>
+            {
+                ["keywords"] = keywords,
+                ["type"] = "1",
+                ["limit"] = $"{limit}",
+                ["offset"] = $"{offset}",
+            },
+            CloudJsonContext.Default.CloudSearchSongsResponse
+        );
+
+    public Task<(bool IsOk, CloudSearchAlbumsResponse? Result)> SearchAlbumsAsync(
+        string keywords,
+        int limit,
+        int offset
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.Search,
+            new Dictionary<string, string>
+            {
+                ["keywords"] = keywords,
+                ["type"] = "10",
+                ["limit"] = $"{limit}",
+                ["offset"] = $"{offset}",
+            },
+            CloudJsonContext.Default.CloudSearchAlbumsResponse
+        );
+
+    public Task<(bool IsOk, CloudSearchArtistsResponse? Result)> SearchArtistsAsync(
+        string keywords,
+        int limit,
+        int offset
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.Search,
+            new Dictionary<string, string>
+            {
+                ["keywords"] = keywords,
+                ["type"] = "100",
+                ["limit"] = $"{limit}",
+                ["offset"] = $"{offset}",
+            },
+            CloudJsonContext.Default.CloudSearchArtistsResponse
+        );
+
+    public Task<(bool IsOk, CloudSearchPlaylistsResponse? Result)> SearchPlaylistsAsync(
+        string keywords,
+        int limit,
+        int offset
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.Search,
+            new Dictionary<string, string>
+            {
+                ["keywords"] = keywords,
+                ["type"] = "1000",
+                ["limit"] = $"{limit}",
+                ["offset"] = $"{offset}",
+            },
+            CloudJsonContext.Default.CloudSearchPlaylistsResponse
+        );
+
+    public Task<(bool IsOk, CloudSearchSuggestResponse? Result)> SearchSuggestionsAsync(
+        string keywords
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.SearchSuggest,
+            new Dictionary<string, string> { ["keywords"] = keywords },
+            CloudJsonContext.Default.CloudSearchSuggestResponse
+        );
+
+    public Task<(bool IsOk, CloudSongUrlResponse? Result)> GetSongUrlsAsync(
+        IEnumerable<long> songIds
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.SongUrl,
+            CreateIdQuery(songIds, "id"),
+            CloudJsonContext.Default.CloudSongUrlResponse
+        );
+
+    public Task<(bool IsOk, CloudSongDetailResponse? Result)> GetSongDetailsAsync(
+        IEnumerable<long> songIds
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.SongDetail,
+            CreateIdQuery(songIds, "ids"),
+            CloudJsonContext.Default.CloudSongDetailResponse
+        );
+
+    public Task<(bool IsOk, CloudAlbumResponse? Result)> GetAlbumAsync(long albumId) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.Album,
+            new Dictionary<string, string> { ["id"] = $"{albumId}" },
+            CloudJsonContext.Default.CloudAlbumResponse
+        );
+
+    public Task<(bool IsOk, CloudLyricResponse? Result)> GetLyricAsync(long songId) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.Lyric,
+            new Dictionary<string, string> { ["id"] = $"{songId}" },
+            CloudJsonContext.Default.CloudLyricResponse
+        );
+
+    public Task<(bool IsOk, CloudArtistAlbumResponse? Result)> GetArtistAlbumsAsync(
+        long artistId,
+        int limit,
+        int offset
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.ArtistAlbum,
+            new Dictionary<string, string>
+            {
+                ["id"] = $"{artistId}",
+                ["limit"] = $"{limit}",
+                ["offset"] = $"{offset}",
+            },
+            CloudJsonContext.Default.CloudArtistAlbumResponse
+        );
+
+    public Task<(bool IsOk, CloudArtistDescriptionResponse? Result)> GetArtistDescriptionAsync(
+        long artistId
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.ArtistDesc,
+            new Dictionary<string, string> { ["id"] = $"{artistId}" },
+            CloudJsonContext.Default.CloudArtistDescriptionResponse
+        );
+
+    public Task<(bool IsOk, CloudPlaylistDetailResponse? Result)> GetPlaylistDetailAsync(
+        long playlistId
+    ) =>
+        RequestTypedAsync(
+            CloudMusicApiProviders.PlaylistDetail,
+            new Dictionary<string, string> { ["id"] = $"{playlistId}" },
+            CloudJsonContext.Default.CloudPlaylistDetailResponse
+        );
+
+    private Task<(bool, JsonObject)> RequestJsonAsync(
         CloudMusicApiProvider provider,
         Dictionary<string, string> queries
     )
@@ -45,24 +176,7 @@ public sealed partial class CloudMusicApiService : IDisposable
         ArgumentNullException.ThrowIfNull(provider);
         ArgumentNullException.ThrowIfNull(queries);
 
-        if (provider == CloudMusicApiProviders.CheckMusic)
-        {
-            return HandleCheckMusicAsync(queries);
-        }
-        if (provider == CloudMusicApiProviders.Login)
-        {
-            return HandleLoginAsync(queries);
-        }
-        if (provider == CloudMusicApiProviders.LoginStatus)
-        {
-            return HandleLoginStatusAsync();
-        }
-        if (provider == CloudMusicApiProviders.RelatedPlaylist)
-        {
-            return HandleRelatedPlaylistAsync(queries);
-        }
-
-        return RequestAsync(
+        return RequestJsonAsync(
             provider.Method,
             provider.Url(queries),
             provider.Data(queries),
@@ -70,7 +184,18 @@ public sealed partial class CloudMusicApiService : IDisposable
         );
     }
 
-    private async Task<(bool, JsonObject)> RequestAsync(
+    private async Task<(bool IsOk, T? Result)> RequestTypedAsync<T>(
+        CloudMusicApiProvider provider,
+        Dictionary<string, string> queries,
+        JsonTypeInfo<T> typeInfo
+    )
+    {
+        ArgumentNullException.ThrowIfNull(typeInfo);
+        var (isOk, json) = await RequestJsonAsync(provider, queries);
+        return (isOk, json.Deserialize(typeInfo));
+    }
+
+    private async Task<(bool, JsonObject)> RequestJsonAsync(
         HttpMethod method,
         string url,
         IEnumerable<KeyValuePair<string, string>> data,
@@ -100,157 +225,21 @@ public sealed partial class CloudMusicApiService : IDisposable
         return (isOk, json);
     }
 
-    private async Task<(bool, JsonObject)> HandleCheckMusicAsync(Dictionary<string, string> queries)
-    {
-        var provider = CloudMusicApiProviders.CheckMusic;
-
-        var (isOk, json) = await RequestAsync(
-            provider.Method,
-            provider.Url(queries),
-            provider.Data(queries),
-            provider.Options
-        );
-        if (!isOk)
-        {
-            return (false, json);
-        }
-
-        var playable =
-            (int?)json["code"] == 200
-            && json["data"] is JsonArray dataArray
-            && dataArray.Count > 0
-            && (int?)dataArray[0]?["code"] == 200;
-        var result = new JsonObject
-        {
-            { "success", playable },
-            { "message", playable ? "ok" : "亲爱的,暂无版权" },
-        };
-        return (true, result);
-    }
-
-    private async Task<(bool, JsonObject)> HandleLoginAsync(Dictionary<string, string> queries)
-    {
-        var provider = CloudMusicApiProviders.Login;
-
-        var (isOk, json) = await RequestAsync(
-            provider.Method,
-            provider.Url(queries),
-            provider.Data(queries),
-            provider.Options
-        );
-        if (!isOk)
-        {
-            return (false, json);
-        }
-
-        if ((int?)json["code"] == 502)
-        {
-            json = new JsonObject
-            {
-                { "msg", "账号或密码错误" },
-                { "code", 502 },
-                { "message", "账号或密码错误" },
-            };
-        }
-
-        return (isOk, json);
-    }
-
-    private async Task<(bool, JsonObject)> HandleLoginStatusAsync()
-    {
-        HttpResponseMessage? response = null;
-        try
-        {
-            const string GUSER = "GUser=";
-            const string GBINDS = "GBinds=";
-
-            response = await _client.GetAsync("https://music.163.com");
-            var s = await response.Content.ReadAsStringAsync();
-            var index = s.IndexOf(GUSER, StringComparison.Ordinal);
-            if (index == -1)
-            {
-                goto errorExit;
-            }
-
-            var json = new JsonObject { { "code", 200 } };
-            var profileJson = JsonNode.Parse(s[(index + GUSER.Length)..]);
-            if (profileJson is not null)
-            {
-                json.Add("profile", profileJson.AsObject());
-            }
-
-            index = s.IndexOf(GBINDS, StringComparison.Ordinal);
-            if (index == -1)
-            {
-                goto errorExit;
-            }
-
-            var bindingsJson = JsonNode.Parse(s[(index + GBINDS.Length)..]);
-            if (bindingsJson is not null)
-            {
-                json.Add("bindings", bindingsJson.AsArray());
-            }
-
-            return (true, json);
-        }
-        catch
-        {
-            goto errorExit;
-        }
-        finally
-        {
-            response?.Dispose();
-        }
-        errorExit:
-        return (false, new JsonObject { { "code", 301 } });
-    }
-
-    private async Task<(bool, JsonObject)> HandleRelatedPlaylistAsync(
-        Dictionary<string, string> queries
+    private static Dictionary<string, string> CreateIdQuery(
+        IEnumerable<long> ids,
+        string parameterName
     )
     {
-        HttpResponseMessage? response = null;
-        try
-        {
-            response = await _client.SendAsync(
-                HttpMethod.Get,
-                "https://music.163.com/playlist",
-                new QueryCollection { { "id", queries["id"] } },
-                new QueryCollection { { "User-Agent", Request.ChooseUserAgent("pc") } }
-            );
-            var s = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
-            var matchs = RelatedPlaylistRegex().Matches(s);
-            var playlists = new JsonArray();
-            foreach (Match match in matchs)
-            {
-                playlists.Add(
-                    new JsonObject
-                    {
-                        {
-                            "creator",
-                            new JsonObject
-                            {
-                                { "userId", match.Groups[4].Value["/user/home?id=".Length..] },
-                                { "nickname", match.Groups[5].Value },
-                            }
-                        },
-                        { "coverImgUrl", match.Groups[1].Value[..^"?param=50y50".Length] },
-                        { "name", match.Groups[3].Value },
-                        { "id", match.Groups[2].Value["/playlist?id=".Length..] },
-                    }
-                );
-            }
+        ArgumentNullException.ThrowIfNull(ids);
+        ArgumentException.ThrowIfNullOrEmpty(parameterName);
 
-            return (true, new JsonObject { { "code", 200 }, { "playlists", playlists } });
-        }
-        catch (Exception ex)
+        var idValues = ids.Distinct().ToArray();
+        if (idValues.Length == 0)
         {
-            return (false, new JsonObject { { "code", 500 }, { "msg", ex.ToFullString() } });
+            throw new ArgumentException("至少需要一个 ID。", nameof(ids));
         }
-        finally
-        {
-            response?.Dispose();
-        }
+
+        return new Dictionary<string, string> { [parameterName] = string.Join(',', idValues) };
     }
 
     public void Dispose()

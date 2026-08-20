@@ -2,7 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Core.Models;
 using UntamedMusicPlayer.ViewModels;
 
 namespace UntamedMusicPlayer.Views;
@@ -10,7 +10,6 @@ namespace UntamedMusicPlayer.Views;
 public sealed partial class HomePage : Page
 {
     public HomeViewModel ViewModel { get; }
-    public OnlineMusicLibrary OnlineMusicLibrary { get; } = App.GetService<OnlineMusicLibrary>();
 
     public HomePage()
     {
@@ -42,7 +41,7 @@ public sealed partial class HomePage : Page
     {
         if (sender is AutoSuggestBox autoSuggestBox)
         {
-            autoSuggestBox.Text = OnlineMusicLibrary.SearchKeyWords;
+            autoSuggestBox.Text = ViewModel.OnlineLibrary.SearchKeyWords;
         }
     }
 
@@ -84,7 +83,7 @@ public sealed partial class HomePage : Page
 
     private async void RetryButton_Click(object sender, RoutedEventArgs e)
     {
-        await OnlineMusicLibrary.RetryAsync();
+        await ViewModel.OnlineLibrary.RetryAsync();
     }
 
     private void SetSelectedHomeSection(int selectedIndex)

@@ -10,11 +10,14 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Foundation;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
@@ -436,7 +439,10 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            await DownloadHelper.DownloadOnlineSongAsync(info);
+            await DownloadHelper.DownloadOnlineSongAsync(
+                info,
+                App.GetService<CloudMusicApiService>()
+            );
         }
     }
 
@@ -457,7 +463,9 @@ public sealed partial class OnlineAlbumDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -466,7 +474,10 @@ public sealed partial class OnlineAlbumDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            var song = await CloudMusicModelFactory.CreateDetailedSongAsync(
+                info,
+                App.GetService<CloudMusicApiService>()
+            );
             if (song is not null)
             {
                 var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
@@ -485,9 +496,3 @@ public sealed partial class OnlineAlbumDetailPage : Page
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
-
-
-
-
-
-

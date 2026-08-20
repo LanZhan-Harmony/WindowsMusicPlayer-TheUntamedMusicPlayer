@@ -3,9 +3,12 @@ using ATL;
 using Microsoft.Extensions.Logging;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
-using UntamedMusicPlayer.Contracts.Models;
-using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Models;
 using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Services;
 using Windows.Storage;
 using ZLinq;
 using ZLogger;
@@ -26,6 +29,7 @@ public static class DownloadHelper
 
     public static async Task DownloadOnlineSongAsync(
         IBriefSongInfoBase info,
+        CloudMusicApiService cloudApi,
         CancellationToken cancellationToken = default
     )
     {
@@ -51,7 +55,7 @@ public static class DownloadHelper
                     await ShowStartNotificationAsync(info.Title);
 
                     var detailedInfo = (IDetailedOnlineSongInfo)
-                        await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+                        await CloudMusicModelFactory.CreateDetailedSongAsync(info, cloudApi);
 
                     var (tempPath, finalPath) = await PrepareDownloadPathAsync(detailedInfo);
                     _currentDownloadPath = tempPath;

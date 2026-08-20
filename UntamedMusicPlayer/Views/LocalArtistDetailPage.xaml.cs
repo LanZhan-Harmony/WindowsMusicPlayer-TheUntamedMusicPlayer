@@ -12,7 +12,10 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Foundation;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
@@ -409,7 +412,9 @@ public sealed partial class LocalArtistDetailPage : Page
         if (sender is MenuFlyoutItem { DataContext: Tuple<BriefLocalSongInfo, PlaylistInfo> tuple })
         {
             var (songInfo, playlist) = tuple;
-            ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(Tuple.Create(songInfo, playlist));
+            ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(
+                Tuple.Create(songInfo, playlist)
+            );
         }
     }
 
@@ -444,7 +449,9 @@ public sealed partial class LocalArtistDetailPage : Page
         )
         {
             var (albumInfo, playlist) = tuple;
-            ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(Tuple.Create(albumInfo, playlist));
+            ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(
+                Tuple.Create(albumInfo, playlist)
+            );
         }
     }
 
@@ -585,7 +592,9 @@ public sealed partial class LocalArtistDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -626,7 +635,7 @@ public sealed partial class LocalArtistDetailPage : Page
     {
         if (e.ClickedItem is LocalArtistAlbumInfo info)
         {
-            var localAlbumInfo = App.GetService<MusicLibrary>().Albums[info.Name];
+            var localAlbumInfo = App.GetService<MusicLibrary>().Index.Albums[info.Name];
             if (localAlbumInfo is not null)
             {
                 var grid = (Grid)
@@ -637,11 +646,12 @@ public sealed partial class LocalArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                App.GetService<INavigationService>().NavigateShell(
-                    nameof(LocalAlbumDetailPage),
-                    new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
-                    NavigationTransition.Suppress
-                );
+                App.GetService<INavigationService>()
+                    .NavigateShell(
+                        nameof(LocalAlbumDetailPage),
+                        new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
+                        NavigationTransition.Suppress
+                    );
             }
         }
     }
@@ -679,7 +689,9 @@ public sealed partial class LocalArtistDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -688,7 +700,7 @@ public sealed partial class LocalArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: LocalArtistAlbumInfo info })
         {
-            var localAlbumInfo = App.GetService<MusicLibrary>().Albums[info.Name];
+            var localAlbumInfo = App.GetService<MusicLibrary>().Index.Albums[info.Name];
             var dialog = new EditAlbumInfoDialog(localAlbumInfo) { XamlRoot = XamlRoot };
             await dialog.ShowAsync();
         }
@@ -698,7 +710,7 @@ public sealed partial class LocalArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: LocalArtistAlbumInfo info })
         {
-            var localAlbumInfo = App.GetService<MusicLibrary>().Albums[info.Name];
+            var localAlbumInfo = App.GetService<MusicLibrary>().Index.Albums[info.Name];
             if (localAlbumInfo is not null)
             {
                 var grid = (Grid)
@@ -707,20 +719,15 @@ public sealed partial class LocalArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                App.GetService<INavigationService>().NavigateShell(
-                    nameof(LocalAlbumDetailPage),
-                    new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
-                    NavigationTransition.Suppress
-                );
+                App.GetService<INavigationService>()
+                    .NavigateShell(
+                        nameof(LocalAlbumDetailPage),
+                        new LocalAlbumNavigationArgs(localAlbumInfo, nameof(LocalArtistDetailPage)),
+                        NavigationTransition.Suppress
+                    );
             }
         }
     }
 
     private void AlbumGridViewSelectButton_Click(object sender, RoutedEventArgs e) { }
 }
-
-
-
-
-
-

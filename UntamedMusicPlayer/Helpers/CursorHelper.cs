@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.Marshalling;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
+using UntamedMusicPlayer.Services;
 using WinRT;
 using ZLogger;
 

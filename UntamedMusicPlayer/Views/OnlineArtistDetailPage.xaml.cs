@@ -10,11 +10,15 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
 using UntamedMusicPlayer.ViewModels;
 using Windows.Foundation;
 using EF = CommunityToolkit.WinUI.Animations.Expressions.ExpressionFunctions;
@@ -380,7 +384,9 @@ public sealed partial class OnlineArtistDetailPage : Page
         )
         {
             var (songInfo, playlist) = tuple;
-            ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(Tuple.Create(songInfo, playlist));
+            ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(
+                Tuple.Create(songInfo, playlist)
+            );
         }
     }
 
@@ -415,7 +421,9 @@ public sealed partial class OnlineArtistDetailPage : Page
         )
         {
             var (albumInfo, playlist) = tuple;
-            ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(Tuple.Create(albumInfo, playlist));
+            ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(
+                Tuple.Create(albumInfo, playlist)
+            );
         }
     }
 
@@ -543,7 +551,10 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            await DownloadHelper.DownloadOnlineSongAsync(info);
+            await DownloadHelper.DownloadOnlineSongAsync(
+                info,
+                App.GetService<CloudMusicApiService>()
+            );
         }
     }
 
@@ -564,7 +575,9 @@ public sealed partial class OnlineArtistDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.SongListViewAddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -573,7 +586,10 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IBriefOnlineSongInfo info })
         {
-            var song = await IDetailedSongInfoBase.CreateDetailedSongInfoAsync(info);
+            var song = await CloudMusicModelFactory.CreateDetailedSongAsync(
+                info,
+                App.GetService<CloudMusicApiService>()
+            );
             if (song is not null)
             {
                 var dialog = new PropertiesDialog(song) { XamlRoot = XamlRoot };
@@ -596,7 +612,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (e.ClickedItem is IOnlineArtistAlbumInfo info)
         {
-            var onlineAlbumInfo = IBriefOnlineAlbumInfo.CreateFromArtistAlbumAsync(info);
+            var onlineAlbumInfo = CloudMusicModelFactory.CreateAlbumFromArtistAlbum(info);
             if (onlineAlbumInfo is not null)
             {
                 var grid = (Grid)
@@ -607,14 +623,15 @@ public sealed partial class OnlineArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                App.GetService<INavigationService>().NavigateShell(
-                    nameof(OnlineAlbumDetailPage),
-                    new OnlineAlbumNavigationArgs(
-                        onlineAlbumInfo,
-                        nameof(OnlineArtistDetailPage)
-                    ),
-                    NavigationTransition.Suppress
-                );
+                App.GetService<INavigationService>()
+                    .NavigateShell(
+                        nameof(OnlineAlbumDetailPage),
+                        new OnlineAlbumNavigationArgs(
+                            onlineAlbumInfo,
+                            nameof(OnlineArtistDetailPage)
+                        ),
+                        NavigationTransition.Suppress
+                    );
             }
         }
     }
@@ -652,7 +669,9 @@ public sealed partial class OnlineArtistDetailPage : Page
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AlbumGridViewAddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -661,7 +680,7 @@ public sealed partial class OnlineArtistDetailPage : Page
     {
         if (sender is FrameworkElement { DataContext: IOnlineArtistAlbumInfo info })
         {
-            var onlineAlbumInfo = IBriefOnlineAlbumInfo.CreateFromArtistAlbumAsync(info);
+            var onlineAlbumInfo = CloudMusicModelFactory.CreateAlbumFromArtistAlbum(info);
             if (onlineAlbumInfo is not null)
             {
                 var grid = (Grid)
@@ -670,14 +689,15 @@ public sealed partial class OnlineArtistDetailPage : Page
                 ConnectedAnimationService
                     .GetForCurrentView()
                     .PrepareToAnimate("ForwardConnectedAnimation", border);
-                App.GetService<INavigationService>().NavigateShell(
-                    nameof(OnlineAlbumDetailPage),
-                    new OnlineAlbumNavigationArgs(
-                        onlineAlbumInfo,
-                        nameof(OnlineArtistDetailPage)
-                    ),
-                    NavigationTransition.Suppress
-                );
+                App.GetService<INavigationService>()
+                    .NavigateShell(
+                        nameof(OnlineAlbumDetailPage),
+                        new OnlineAlbumNavigationArgs(
+                            onlineAlbumInfo,
+                            nameof(OnlineArtistDetailPage)
+                        ),
+                        NavigationTransition.Suppress
+                    );
             }
         }
     }
@@ -689,9 +709,3 @@ public sealed partial class OnlineArtistDetailPage : Page
         _scrollViewer?.ViewChanged -= ScrollViewer_ViewChanged;
     }
 }
-
-
-
-
-
-

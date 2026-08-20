@@ -2,9 +2,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Messages;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 using ZLinq;
 
@@ -24,7 +30,10 @@ public sealed partial class LocalAlbumsViewModel
 
     public bool IsGrouped => _groupMode;
 
-    private List<LocalAlbumInfo> _albumList = [.. App.GetService<MusicLibrary>().Albums.Values];
+    private List<LocalAlbumInfo> _albumList =
+    [
+        .. App.GetService<MusicLibrary>().Index.Albums.Values,
+    ];
 
     public List<string> SortBy { get; set; } = [.. "Albums_SortBy".GetLocalized().Split(", ")];
 
@@ -32,7 +41,7 @@ public sealed partial class LocalAlbumsViewModel
 
     public List<LocalAlbumInfo> NotGroupedAlbumList { get; set; } = [];
 
-    public List<string> Genres { get; set; } = App.GetService<MusicLibrary>().Genres;
+    public List<string> Genres { get; set; } = App.GetService<MusicLibrary>().GetGenreOptions();
 
     [ObservableProperty]
     public partial bool IsProgressRingActive { get; set; } = true;
@@ -81,12 +90,13 @@ public sealed partial class LocalAlbumsViewModel
 
     public async Task LoadModeAndAlbumList()
     {
-        _albumList = [.. App.GetService<MusicLibrary>().Albums.Values];
+        var musicLibrary = App.GetService<MusicLibrary>();
+        _albumList = [.. musicLibrary.Index.Albums.Values];
         if (_albumList.Count == 0)
         {
             return;
         }
-        Genres = App.GetService<MusicLibrary>().Genres;
+        Genres = musicLibrary.GetGenreOptions();
         await LoadSortModeAsync();
         await LoadGenreModeAsync();
         await FilterAlbums();

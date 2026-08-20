@@ -2,7 +2,8 @@ using System.Collections.Concurrent;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using ZLogger;
@@ -18,8 +19,11 @@ public static class CoverManager
         string,
         WeakReference<WriteableBitmap>
     > _playlistCovers = new();
+    private static readonly ConcurrentDictionary<string, WeakReference<BitmapImage>> _onlineCovers =
+        new();
     private static readonly Lock _albumLock = new();
     private static readonly Lock _playlistLock = new();
+    private static readonly Lock _onlineLock = new();
     private static int _accessCount;
 
     // 定时清理（每 5 分钟）
@@ -31,27 +35,118 @@ public static class CoverManager
     );
 
     /// <summary>
+    /// 获取在线音乐封面。
+    /// </summary>
+    public static BitmapImage? GetOnlineCoverBitmap(string? coverPath)
+    {
+        var path = coverPath?.Trim();
+        if (
+            string.IsNullOrEmpty(path)
+            || !Uri.TryCreate(path, UriKind.Absolute, out var uri)
+            || uri.Scheme is not ("http" or "https")
+        )
+        {
+            return null;
+        }
+
+        if (
+            _onlineCovers.TryGetValue(path, out var weakRef)
+            && weakRef.TryGetTarget(out var cachedCover)
+        )
+        {
+            return cachedCover;
+        }
+
+        lock (_onlineLock)
+        {
+            if (
+                _onlineCovers.TryGetValue(path, out var cachedRef)
+                && cachedRef.TryGetTarget(out var existingCover)
+            )
+            {
+                return existingCover;
+            }
+
+            try
+            {
+                var bitmapImage = new BitmapImage(uri);
+                _onlineCovers[path] = new WeakReference<BitmapImage>(bitmapImage);
+                return bitmapImage;
+            }
+            catch (Exception ex)
+            {
+                _logger.ZLogWarning(ex, $"加载在线封面失败: {path}");
+                return null;
+            }
+        }
+    }
+
+    public static Task<BitmapImage?> GetOnlineCoverBitmapAsync(string? coverPath) =>
+        Task.FromResult(GetOnlineCoverBitmap(coverPath));
+
+    /// <summary>
+    /// Resolves a model cover on the UI side. Core models only expose paths or raw bytes.
+    /// </summary>
+    public static BitmapImage? GetCoverBitmap(IDetailedSongInfoBase? song)
+    {
+        return song switch
+        {
+            DetailedLocalSongInfo localSong => GetSongCoverBitmap(localSong),
+            IDetailedOnlineSongInfo onlineSong => GetOnlineCoverBitmap(onlineSong.CoverPath),
+            _ => null,
+        };
+    }
+
+    public static BitmapImage? GetCoverBitmap(string? coverPath)
+    {
+        if (string.IsNullOrWhiteSpace(coverPath))
+        {
+            return null;
+        }
+
+        return
+            Uri.TryCreate(coverPath, UriKind.Absolute, out var uri)
+            && uri.Scheme is "http" or "https"
+            ? GetOnlineCoverBitmap(coverPath)
+            : GetEmbeddedCoverBitmap(coverPath);
+    }
+
+    public static bool HasCover(IDetailedSongInfoBase? song) =>
+        song switch
+        {
+            DetailedLocalSongInfo localSong => localSong.CoverBuffer is { Length: > 0 },
+            IDetailedOnlineSongInfo onlineSong => !string.IsNullOrWhiteSpace(onlineSong.CoverPath),
+            _ => false,
+        };
+
+    /// <summary>
     /// 获取专辑封面
     /// </summary>
     /// <param name="album"></param>
     /// <returns></returns>
     public static BitmapImage? GetAlbumCoverBitmap(LocalAlbumInfo album)
     {
-        // 自动触发清理机制
-        if (Interlocked.Increment(ref _accessCount) % 50 == 0)
-        {
-            Task.Run(CleanupDeadReferences);
-        }
+        ArgumentNullException.ThrowIfNull(album);
+        return GetEmbeddedCoverBitmap(album.CoverPath);
+    }
 
-        var path = album.CoverPath;
-        if (string.IsNullOrEmpty(path))
+    public static BitmapImage? GetSongCoverBitmap(DetailedLocalSongInfo song)
+    {
+        ArgumentNullException.ThrowIfNull(song);
+        return song.CoverBuffer is { Length: > 0 }
+            ? CreateBitmap(song.Path, song.CoverBuffer)
+            : GetEmbeddedCoverBitmap(song.Path);
+    }
+
+    public static BitmapImage? GetEmbeddedCoverBitmap(string? coverPath)
+    {
+        if (string.IsNullOrEmpty(coverPath))
         {
             return null;
         }
 
-        // 双重检查锁定预检
         if (
-            _songCovers.TryGetValue(path, out var weakRef)
+            _songCovers.TryGetValue(coverPath, out var weakRef)
             && weakRef.TryGetTarget(out var cachedCover)
         )
         {
@@ -60,30 +155,35 @@ public static class CoverManager
 
         lock (_albumLock)
         {
-            if (_songCovers.TryGetValue(path, out weakRef) && weakRef.TryGetTarget(out cachedCover))
+            if (
+                _songCovers.TryGetValue(coverPath, out weakRef)
+                && weakRef.TryGetTarget(out cachedCover)
+            )
             {
                 return cachedCover;
             }
 
-            var picture = GetSongCoverPicture(path);
-            if (picture?.Data.Data is not { Length: > 0 } data)
-            {
-                return null;
-            }
+            var picture = GetSongCoverPicture(coverPath);
+            return picture?.Data.Data is { Length: > 0 } data
+                ? CreateBitmap(coverPath, data)
+                : null;
+        }
+    }
 
-            try
-            {
-                var bitmapImage = new BitmapImage { DecodePixelWidth = 160 };
-                using var stream = new MemoryStream(data);
-                _ = bitmapImage.SetSourceAsync(stream.AsRandomAccessStream());
-                _songCovers[path] = new WeakReference<BitmapImage>(bitmapImage);
-                return bitmapImage;
-            }
-            catch (Exception ex)
-            {
-                _logger.ZLogWarning(ex, $"渲染封面失败: {path}");
-                return null;
-            }
+    private static BitmapImage? CreateBitmap(string cacheKey, byte[] data)
+    {
+        try
+        {
+            var bitmapImage = new BitmapImage { DecodePixelWidth = 160 };
+            using var stream = new MemoryStream(data);
+            _ = bitmapImage.SetSourceAsync(stream.AsRandomAccessStream());
+            _songCovers[cacheKey] = new WeakReference<BitmapImage>(bitmapImage);
+            return bitmapImage;
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogWarning(ex, $"渲染封面失败: {cacheKey}");
+            return null;
         }
     }
 
@@ -493,6 +593,25 @@ public static class CoverManager
     }
 
     /// <summary>
+    /// 清除指定在线封面缓存。
+    /// </summary>
+    public static void ForceOnlineCoverRefresh(string? coverPath)
+    {
+        if (!string.IsNullOrWhiteSpace(coverPath))
+        {
+            _onlineCovers.TryRemove(coverPath.Trim(), out _);
+        }
+    }
+
+    /// <summary>
+    /// 清除全部在线封面缓存。
+    /// </summary>
+    public static void ForceAllOnlineCoversRefresh()
+    {
+        _onlineCovers.Clear();
+    }
+
+    /// <summary>
     /// 清理已被回收的图片引用，防止字典无限增长
     /// </summary>
     public static void CleanupDeadReferences()
@@ -509,6 +628,13 @@ public static class CoverManager
             if (!weakRef.TryGetTarget(out _))
             {
                 _playlistCovers.TryRemove(key, out _);
+            }
+        }
+        foreach (var (key, weakRef) in _onlineCovers)
+        {
+            if (!weakRef.TryGetTarget(out _))
+            {
+                _onlineCovers.TryRemove(key, out _);
             }
         }
         GC.Collect();

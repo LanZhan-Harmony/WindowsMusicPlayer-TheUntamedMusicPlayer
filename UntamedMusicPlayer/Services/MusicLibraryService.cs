@@ -6,9 +6,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Core.Contracts.Services;
-using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using Windows.Storage;
 using ZLinq;
 using ZLogger;
@@ -20,10 +21,18 @@ public sealed partial class MusicLibrary : ObservableRecipient
     private static readonly ILogger _logger = LoggingService.CreateLogger<MusicLibrary>();
 
     /// <summary>
+    /// UI-independent read index built from the current song snapshot.
+    /// </summary>
+    public LocalLibraryIndex Index { get; } = new();
+
+    private readonly LocalMusicLibraryScanner _scanner = new();
+
+    /// <summary>
     /// 调度器队列
     /// </summary>
     private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
     private readonly IAppStateService _appStateService;
+    private readonly ICoverCacheInvalidationService _coverCache;
 
     /// <summary>
     /// 信号量, 只允许一个线程访问
@@ -41,9 +50,9 @@ public sealed partial class MusicLibrary : ObservableRecipient
     private ConcurrentDictionary<string, byte> _musicFolders = [];
 
     /// <summary>
-    /// 音乐流派(临时)
+    /// 当前扫描任务收集到的歌曲。扫描完成后会一次性发布到 Index。
     /// </summary>
-    private readonly ConcurrentDictionary<string, byte> _musicGenres = [];
+    private ConcurrentBag<BriefLocalSongInfo> _scannedSongs = [];
 
     public bool HasLoaded { get; private set; } = false;
 
@@ -51,21 +60,6 @@ public sealed partial class MusicLibrary : ObservableRecipient
     /// 文件夹监视器
     /// </summary>
     public List<FileSystemWatcher> FolderWatchers { get; set; } = [];
-
-    /// <summary>
-    /// 歌曲列表
-    /// </summary>
-    public ConcurrentBag<BriefLocalSongInfo> Songs { get; set; } = [];
-
-    /// <summary>
-    /// 专辑列表
-    /// </summary>
-    public ConcurrentDictionary<string, LocalAlbumInfo> Albums { get; set; } = [];
-
-    /// <summary>
-    /// 艺术家列表
-    /// </summary>
-    public ConcurrentDictionary<string, LocalArtistInfo> Artists { get; set; } = [];
 
     /// <summary>
     /// 是否显示正在重新扫描进度环
@@ -78,15 +72,12 @@ public sealed partial class MusicLibrary : ObservableRecipient
     /// </summary>
     public ObservableCollection<string> Folders { get; set; } = [];
 
-    /// <summary>
-    /// 流派列表
-    /// </summary>
-    public List<string> Genres { get; set; } = [];
-
-    public MusicLibrary(IAppStateService appStateService)
+    public MusicLibrary(IAppStateService appStateService, ICoverCacheInvalidationService coverCache)
         : base(StrongReferenceMessenger.Default)
     {
-        _appStateService = appStateService;
+        _appStateService =
+            appStateService ?? throw new ArgumentNullException(nameof(appStateService));
+        _coverCache = coverCache ?? throw new ArgumentNullException(nameof(coverCache));
         RunFireAndForget(LoadFoldersAsync());
     }
 
@@ -131,19 +122,16 @@ public sealed partial class MusicLibrary : ObservableRecipient
             await _librarySemaphore.WaitAsync(); // 等待信号量, 只允许一个线程访问此函数
             try
             {
-                Songs.Clear();
-                Artists.Clear();
-                Albums.Clear();
+                _scannedSongs = [];
+                Index.RebuildFromSongs(_scannedSongs);
                 var (needRescan, libraryData) = await FileManager.LoadLibraryDataAsync(Folders);
                 if (!needRescan)
                 {
-                    Songs = libraryData.Songs;
-                    Albums = libraryData.Albums;
-                    Artists = libraryData.Artists;
-                    Genres = libraryData.Genres;
+                    _scannedSongs = libraryData.Songs;
                     _musicFolders = libraryData.MusicFolders;
+                    Index.RebuildFromSongs(_scannedSongs);
                     _dispatcher.TryEnqueue(() =>
-                        Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
+                        Messenger.Send(new HaveMusicMessage(Index.HasSongs))
                     );
                 }
                 else
@@ -156,24 +144,21 @@ public sealed partial class MusicLibrary : ObservableRecipient
                             _musicFolders.TryAdd(folder, 0);
                             var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder);
                             loadMusicTasks.Add(
-                                LoadMusicAsync(storageFolder, storageFolder.DisplayName)
+                                _scanner.ScanAsync(
+                                    storageFolder,
+                                    storageFolder.DisplayName,
+                                    _musicFolders,
+                                    _scannedSongs
+                                )
                             );
                         }
                     }
                     await Task.WhenAll(loadMusicTasks);
-                    Genres =
-                    [
-                        .. _musicGenres
-                            .Keys.AsValueEnumerable()
-                            .Concat(["SongInfo_AllGenres".GetLocalized()])
-                            .OrderBy(x => x, new GenreComparer()),
-                    ];
+                    Index.RebuildFromSongs(_scannedSongs);
                     _dispatcher.TryEnqueue(() =>
-                        Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty))
+                        Messenger.Send(new HaveMusicMessage(Index.HasSongs))
                     );
-                    _musicGenres.Clear();
-                    var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
-                    FileManager.SaveLibraryDataAsync(Folders, data);
+                    await FileManager.SaveLibraryDataAsync(Folders, CreateLibraryData());
                 }
                 HasLoaded = true;
             }
@@ -184,7 +169,7 @@ public sealed partial class MusicLibrary : ObservableRecipient
             finally
             {
                 _ = Task.Run(AddFolderWatcher);
-                CoverManager.ForceAllSongCoversRefresh();
+                _coverCache.InvalidateAllSongCovers();
                 _librarySemaphore.Release();
             }
         });
@@ -198,9 +183,8 @@ public sealed partial class MusicLibrary : ObservableRecipient
             try
             {
                 _dispatcher.TryEnqueue(() => IsProgressRingActive = true);
-                Songs.Clear();
-                Artists.Clear();
-                Albums.Clear();
+                _scannedSongs = [];
+                Index.RebuildFromSongs(_scannedSongs);
                 _musicFolders.Clear();
                 var loadMusicTasks = new List<Task>();
                 if (Folders.Count > 0)
@@ -210,25 +194,22 @@ public sealed partial class MusicLibrary : ObservableRecipient
                         _musicFolders.TryAdd(folder, 0);
                         var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder);
                         loadMusicTasks.Add(
-                            LoadMusicAsync(storageFolder, storageFolder.DisplayName)
+                            _scanner.ScanAsync(
+                                storageFolder,
+                                storageFolder.DisplayName,
+                                _musicFolders,
+                                _scannedSongs
+                            )
                         );
                     }
                 }
                 await Task.WhenAll(loadMusicTasks);
-                Genres =
-                [
-                    .. _musicGenres
-                        .Keys.AsValueEnumerable()
-                        .Concat(["SongInfo_AllGenres".GetLocalized()])
-                        .OrderBy(x => x, new GenreComparer()),
-                ];
-                _dispatcher.TryEnqueue(() => Messenger.Send(new HaveMusicMessage(!Songs.IsEmpty)));
-                _musicGenres.Clear();
+                Index.RebuildFromSongs(_scannedSongs);
+                _dispatcher.TryEnqueue(() => Messenger.Send(new HaveMusicMessage(Index.HasSongs)));
                 FolderWatchers.Clear();
-                var data = new MusicLibraryData(Songs, Albums, Artists, Genres, _musicFolders);
                 _ = Task.Run(AddFolderWatcher);
-                CoverManager.ForceAllSongCoversRefresh();
-                FileManager.SaveLibraryDataAsync(Folders, data);
+                _coverCache.InvalidateAllSongCovers();
+                await FileManager.SaveLibraryDataAsync(Folders, CreateLibraryData());
             }
             catch (Exception ex)
             {
@@ -240,82 +221,6 @@ public sealed partial class MusicLibrary : ObservableRecipient
                 _librarySemaphore.Release();
             }
         });
-    }
-
-    private async Task LoadMusicAsync(StorageFolder folder, string foldername)
-    {
-        try
-        {
-            var entries = await folder.GetItemsAsync();
-            var loadMusicTasks = new List<Task>();
-
-            // 先分配扫描子文件夹的任务
-            foreach (var subFolder in entries.OfType<StorageFolder>())
-            {
-                if (_musicFolders.TryAdd(subFolder.Path, 0))
-                {
-                    var subfoldername = $"{foldername}/{subFolder.DisplayName}";
-                    loadMusicTasks.Add(LoadMusicAsync(subFolder, subfoldername));
-                }
-            }
-
-            // 同时处理当前文件夹的文件
-            var supportedFiles = entries
-                .AsValueEnumerable()
-                .OfType<StorageFile>()
-                .Where(file => AppConstants.SupportedAudioTypes.Contains(file.FileType.ToLower()));
-
-            foreach (var file in supportedFiles)
-            {
-                var briefLocalSongInfo = new BriefLocalSongInfo(file.Path, foldername);
-                if (!briefLocalSongInfo.IsPlayAvailable)
-                {
-                    continue;
-                }
-                Songs.Add(briefLocalSongInfo);
-                _musicGenres.TryAdd(briefLocalSongInfo.GenreStr, 0);
-                UpdateAlbumInfo(briefLocalSongInfo);
-                UpdateArtistInfo(briefLocalSongInfo);
-            }
-
-            // 等待所有子文件夹的扫描任务完成
-            await Task.WhenAll(loadMusicTasks);
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogInformation(ex, $"加载音乐文件失败: {folder.Path}");
-        }
-    }
-
-    private void UpdateAlbumInfo(BriefLocalSongInfo briefLocalSongInfo)
-    {
-        var album = briefLocalSongInfo.Album;
-
-        if (!Albums.TryGetValue(album, out var localAlbumInfo))
-        {
-            localAlbumInfo = new LocalAlbumInfo(briefLocalSongInfo);
-            Albums[album] = localAlbumInfo;
-        }
-        else
-        {
-            localAlbumInfo.Update(briefLocalSongInfo);
-        }
-    }
-
-    private void UpdateArtistInfo(BriefLocalSongInfo briefLocalSongInfo)
-    {
-        foreach (var artist in briefLocalSongInfo.Artists)
-        {
-            if (!Artists.TryGetValue(artist, out var localArtistInfo))
-            {
-                localArtistInfo = new LocalArtistInfo(briefLocalSongInfo, artist);
-                Artists[artist] = localArtistInfo;
-            }
-            else
-            {
-                localArtistInfo.Update(briefLocalSongInfo);
-            }
-        }
     }
 
     private void AddFolderWatcher()
@@ -390,20 +295,14 @@ public sealed partial class MusicLibrary : ObservableRecipient
     /// <param name="localAlbumInfo"></param>
     /// <returns></returns>
     public BriefLocalSongInfo[] GetSongsByAlbum(LocalAlbumInfo localAlbumInfo) =>
-        [
-            .. Songs
-                .AsValueEnumerable()
-                .Where(m => m.Album == localAlbumInfo.Name)
-                .OrderBy(m => m.Title, new TitleComparer()),
-        ];
+        Index.GetSongsByAlbum(localAlbumInfo);
 
     /// <summary>
     /// 根据歌曲信息获取专辑信息
     /// </summary>
     /// <param name="briefLocalSongInfo"></param>
     /// <returns></returns>
-    public LocalAlbumInfo? GetAlbumInfoBySong(string album) =>
-        Albums.TryGetValue(album, out var localAlbumInfo) ? localAlbumInfo : null;
+    public LocalAlbumInfo? GetAlbumInfoBySong(string album) => Index.GetAlbumInfoBySong(album);
 
     /// <summary>
     /// 根据艺术家信息获取专辑列表
@@ -412,9 +311,13 @@ public sealed partial class MusicLibrary : ObservableRecipient
     /// <returns></returns>
     public List<LocalArtistAlbumInfo> GetAlbumsByArtist(LocalArtistInfo localArtistInfo) =>
         [
-            .. localArtistInfo
-                .Albums.AsValueEnumerable()
-                .Select(album => new LocalArtistAlbumInfo(Albums[album]))
+            .. Index
+                .GetAlbumsByArtist(localArtistInfo)
+                .Select(album => new LocalArtistAlbumInfo(
+                    album,
+                    Index.GetSongsByAlbum(album),
+                    album.CoverPath
+                ))
                 .OrderBy(m => m.Name, new AlbumTitleComparer()),
         ];
 
@@ -424,20 +327,27 @@ public sealed partial class MusicLibrary : ObservableRecipient
     /// <param name="localArtistInfo"></param>
     /// <returns></returns>
     public BriefLocalSongInfo[] GetSongsByArtist(LocalArtistInfo localArtistInfo) =>
-        [
-            .. localArtistInfo
-                .Albums.AsValueEnumerable()
-                .OrderBy(album => album, new AlbumTitleComparer())
-                .SelectMany(album => GetSongsByAlbum(Albums[album])),
-        ];
+        Index.GetSongsByArtist(localArtistInfo);
 
     /// <summary>
     /// 根据歌曲信息获取艺术家信息
     /// </summary>
     /// <param name="briefLocalSongInfo"></param>
     /// <returns></returns>
-    public LocalArtistInfo? GetArtistInfoBySong(string artist) =>
-        Artists.TryGetValue(artist, out var localArtistInfo) ? localArtistInfo : null;
+    public LocalArtistInfo? GetArtistInfoBySong(string artist) => Index.GetArtistInfoBySong(artist);
+
+    /// <summary>
+    /// Gets the localized genre options used by local-library filters.
+    /// The all-genres entry is a presentation option and is not part of the index data.
+    /// </summary>
+    public List<string> GetGenreOptions() =>
+        [
+            .. Index
+                .Genres.Concat(["SongInfo_AllGenres".GetLocalized()])
+                .OrderBy(x => x, new GenreComparer()),
+        ];
+
+    private MusicLibraryData CreateLibraryData() => new(Index.GetSongsSnapshot(), _musicFolders);
 
     private void RunFireAndForget(Task task)
     {

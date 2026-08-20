@@ -1,5 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -9,7 +12,7 @@ public sealed partial class HomeViewModel : ObservableObject
     private readonly ILocalSettingsService _localSettingsService =
         App.GetService<ILocalSettingsService>();
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
-    private readonly OnlineMusicLibrary _onlineMusicLibrary = App.GetService<OnlineMusicLibrary>();
+    public OnlineMusicLibrary OnlineLibrary { get; }
 
     /// <summary>
     /// 页面索引, 0为歌曲, 1为专辑, 2为艺术家, 3为歌单
@@ -20,7 +23,7 @@ public sealed partial class HomeViewModel : ObservableObject
         set
         {
             field = value;
-            _onlineMusicLibrary.PageIndex = value;
+            OnlineLibrary.PageIndex = value;
             _ = SavePageIndexAsync();
         }
     }
@@ -30,13 +33,13 @@ public sealed partial class HomeViewModel : ObservableObject
 
     partial void OnMusicLibraryIndexChanged(byte value)
     {
-        _onlineMusicLibrary.MusicLibraryIndex = value;
+        OnlineLibrary.MusicLibraryIndex = value;
         UpdateLibraryVisibilityState();
         _ = SaveMusicLibraryIndexAsync();
         // 音乐库索引改变时强制重新搜索
-        if (!string.IsNullOrWhiteSpace(_onlineMusicLibrary.SearchKeyWords))
+        if (!string.IsNullOrWhiteSpace(OnlineLibrary.SearchKeyWords))
         {
-            _ = _onlineMusicLibrary.ForceSearch();
+            _ = OnlineLibrary.ForceSearch();
         }
     }
 
@@ -52,8 +55,9 @@ public sealed partial class HomeViewModel : ObservableObject
     [ObservableProperty]
     public partial bool IsMainGridVisible { get; set; }
 
-    public HomeViewModel()
+    public HomeViewModel(OnlineMusicLibrary onlineLibrary)
     {
+        OnlineLibrary = onlineLibrary;
         _ = InitializeAsync();
     }
 
@@ -68,8 +72,8 @@ public sealed partial class HomeViewModel : ObservableObject
     {
         if (isUserInput)
         {
-            _onlineMusicLibrary.SuggestKeyWords = text;
-            await _onlineMusicLibrary.UpdateSuggestResult();
+            OnlineLibrary.SuggestKeyWords = text;
+            await OnlineLibrary.UpdateSuggestResult();
         }
     }
 
@@ -78,7 +82,7 @@ public sealed partial class HomeViewModel : ObservableObject
         if (chosenSuggestion is SuggestResult result)
         {
             var keyWords = result.Label;
-            _onlineMusicLibrary.ClearSuggestResult();
+            OnlineLibrary.ClearSuggestResult();
             var currentSelectedIndex = result.Icon switch
             {
                 "\uE8D6" => 0,
@@ -87,17 +91,17 @@ public sealed partial class HomeViewModel : ObservableObject
                 "\uE728" => 3,
                 _ => 0,
             };
-            _onlineMusicLibrary.SearchKeyWords = keyWords;
+            OnlineLibrary.SearchKeyWords = keyWords;
             Navigate(currentSelectedIndex);
             // 搜索关键词改变时强制重新搜索
-            await _onlineMusicLibrary.ForceSearch();
+            await OnlineLibrary.ForceSearch();
         }
         else
         {
-            _onlineMusicLibrary.SearchKeyWords = queryText;
-            _onlineMusicLibrary.ClearSuggestResult();
+            OnlineLibrary.SearchKeyWords = queryText;
+            OnlineLibrary.ClearSuggestResult();
             // 搜索关键词改变时强制重新搜索
-            await _onlineMusicLibrary.ForceSearch();
+            await OnlineLibrary.ForceSearch();
         }
     }
 
@@ -133,7 +137,7 @@ public sealed partial class HomeViewModel : ObservableObject
                 : HomeNavigationDirection.Backward;
         PageIndex = (byte)currentSelectedIndex;
 
-        _ = _onlineMusicLibrary.Search();
+        _ = OnlineLibrary.Search();
         _navigationService.NavigateHome(page, null, direction);
     }
 

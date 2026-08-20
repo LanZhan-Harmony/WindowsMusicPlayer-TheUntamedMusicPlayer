@@ -1,25 +1,37 @@
 using CommunityToolkit.Mvvm.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
 
-public sealed partial class OnlineAlbumsViewModel
+public sealed partial class OnlineAlbumsViewModel : OnlineSearchViewModelBase
 {
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly MusicPlayer _musicPlayer;
+    private readonly CloudMusicApiService _cloudApi;
 
-    public OnlineAlbumsViewModel(MusicPlayer musicPlayer)
+    public OnlineAlbumsViewModel(
+        MusicPlayer musicPlayer,
+        OnlineMusicLibrary onlineLibrary,
+        CloudMusicApiService cloudApi
+    )
+        : base(onlineLibrary)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
     }
 
     [RelayCommand]
     public async Task PlayButton(IBriefOnlineAlbumInfo info)
     {
-        var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
+        var detailedInfo = await CloudMusicModelFactory.CreateDetailedAlbumAsync(info, _cloudApi);
         var songList = detailedInfo.SongList;
         if (songList.Count == 0)
         {
@@ -32,7 +44,7 @@ public sealed partial class OnlineAlbumsViewModel
     [RelayCommand]
     public async Task PlayNextButton(IBriefOnlineAlbumInfo info)
     {
-        var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
+        var detailedInfo = await CloudMusicModelFactory.CreateDetailedAlbumAsync(info, _cloudApi);
         var songList = detailedInfo.SongList;
         if (songList.Count == 0)
         {
@@ -55,7 +67,7 @@ public sealed partial class OnlineAlbumsViewModel
     [RelayCommand]
     public async Task AddToPlayQueueButton(IBriefOnlineAlbumInfo info)
     {
-        var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
+        var detailedInfo = await CloudMusicModelFactory.CreateDetailedAlbumAsync(info, _cloudApi);
         var songList = detailedInfo.SongList;
         if (songList.Count == 0)
         {
@@ -78,7 +90,7 @@ public sealed partial class OnlineAlbumsViewModel
     public async Task AddToPlaylistButton(Tuple<IBriefOnlineAlbumInfo, PlaylistInfo> tuple)
     {
         var (info, playlist) = tuple;
-        var detailedInfo = await IDetailedOnlineAlbumInfo.CreateDetailedOnlineAlbumInfoAsync(info);
+        var detailedInfo = await CloudMusicModelFactory.CreateDetailedAlbumAsync(info, _cloudApi);
         var songList = detailedInfo.SongList;
         await App.GetService<PlaylistLibrary>().AddToPlaylist(playlist, songList);
     }
@@ -86,7 +98,10 @@ public sealed partial class OnlineAlbumsViewModel
     [RelayCommand]
     public async Task ShowArtistButton(IBriefOnlineAlbumInfo info)
     {
-        var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromAlbumInfoAsync(info);
+        var onlineArtistInfo = await CloudMusicModelFactory.CreateArtistFromAlbumAsync(
+            info,
+            _cloudApi
+        );
         if (onlineArtistInfo is not null)
         {
             _navigationService.NavigateShell(

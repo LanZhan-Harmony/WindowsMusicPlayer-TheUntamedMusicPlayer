@@ -3,10 +3,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Models;
 using UntamedMusicPlayer.ViewModels;
 using ZLinq;
 
@@ -48,10 +49,7 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         }
     }
 
-    private async void SortByListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs e
-    )
+    private async void SortByListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ListView listView)
         {
@@ -67,10 +65,7 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
         }
     }
 
-    private async void GenreListView_SelectionChanged(
-        object sender,
-        SelectionChangedEventArgs e
-    )
+    private async void GenreListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ListView listView)
         {
@@ -211,7 +206,9 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
 
             if (result == ContentDialogResult.Primary && dialog.CreatedPlaylist is not null)
             {
-                ViewModel.AddToPlaylistButtonCommand.Execute(Tuple.Create(info, dialog.CreatedPlaylist));
+                ViewModel.AddToPlaylistButtonCommand.Execute(
+                    Tuple.Create(info, dialog.CreatedPlaylist)
+                );
             }
         }
     }
@@ -253,9 +250,3 @@ public sealed partial class LocalSongsPage : Page, IRecipient<ScrollToSongMessag
 
     private void SelectButton_Click(object sender, RoutedEventArgs e) { }
 }
-
-
-
-
-
-

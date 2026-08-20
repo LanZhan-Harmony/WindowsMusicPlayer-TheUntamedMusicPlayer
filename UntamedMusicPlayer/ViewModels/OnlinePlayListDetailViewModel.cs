@@ -1,9 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.OnlineAPIs.CloudMusicAPI;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.OnlineAPI.CloudMusicAPI;
+using UntamedMusicPlayer.Playback;
 using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -12,6 +17,7 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
 {
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly MusicPlayer _musicPlayer;
+    private readonly CloudMusicApiService _cloudApi;
 
     private IBriefOnlinePlaylistInfo? _cachedBriefPlaylist = null;
     public IBriefOnlinePlaylistInfo BriefPlaylist { get; set; } = null!;
@@ -25,9 +31,10 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
     [ObservableProperty]
     public partial bool IsSearchProgressRingActive { get; set; } = true;
 
-    public OnlinePlayListDetailViewModel(MusicPlayer musicPlayer)
+    public OnlinePlayListDetailViewModel(MusicPlayer musicPlayer, CloudMusicApiService cloudApi)
     {
         _musicPlayer = musicPlayer;
+        _cloudApi = cloudApi;
     }
 
     public async Task Initialize(IBriefOnlinePlaylistInfo briefPlaylist)
@@ -68,8 +75,9 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
             return;
         }
 
-        Playlist = await IDetailedOnlinePlaylistInfo.CreateDetailedOnlinePlaylistInfoAsync(
-            BriefPlaylist
+        Playlist = await CloudMusicModelFactory.CreateDetailedPlaylistAsync(
+            BriefPlaylist,
+            _cloudApi
         );
         IsPlayAllButtonEnabled = Playlist.SongList.Count > 0;
         IsSearchProgressRingActive = false;
@@ -187,7 +195,10 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
     [RelayCommand]
     public async Task ShowAlbumButton(IBriefOnlineSongInfo info)
     {
-        var onlineAlbumInfo = await IBriefOnlineAlbumInfo.CreateFromSongInfoAsync(info);
+        var onlineAlbumInfo = await CloudMusicModelFactory.CreateAlbumFromSongAsync(
+            info,
+            _cloudApi
+        );
         if (onlineAlbumInfo is not null)
         {
             _navigationService.NavigateShell(
@@ -201,7 +212,10 @@ public sealed partial class OnlinePlayListDetailViewModel : ObservableObject
     [RelayCommand]
     public async Task ShowArtistButton(IBriefOnlineSongInfo info)
     {
-        var onlineArtistInfo = await IBriefOnlineArtistInfo.CreateFromSongInfoAsync(info);
+        var onlineArtistInfo = await CloudMusicModelFactory.CreateArtistFromSongAsync(
+            info,
+            _cloudApi
+        );
         if (onlineArtistInfo is not null)
         {
             _navigationService.NavigateShell(

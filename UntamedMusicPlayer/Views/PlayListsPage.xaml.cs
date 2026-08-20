@@ -4,8 +4,12 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using UntamedMusicPlayer.Contracts.Services;
 using UntamedMusicPlayer.Controls;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.ViewModels;
 
 namespace UntamedMusicPlayer.Views;

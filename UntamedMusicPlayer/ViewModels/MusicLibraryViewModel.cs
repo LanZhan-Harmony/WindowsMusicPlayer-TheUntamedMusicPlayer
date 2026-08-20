@@ -2,8 +2,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.Storage.Pickers;
-using UntamedMusicPlayer.Contracts.Services;
-using UntamedMusicPlayer.Messages;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Services;
 using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -48,8 +49,9 @@ public sealed partial class MusicLibraryViewModel
             await App.GetService<MusicLibrary>().LoadLibraryAsync();
         }
         IsProgressRingActive = false;
-        IsNoMusicControlVisible = App.GetService<MusicLibrary>().Songs.IsEmpty;
-        IsHaveMusicControlVisible = !App.GetService<MusicLibrary>().Songs.IsEmpty;
+        var musicLibrary = App.GetService<MusicLibrary>();
+        IsNoMusicControlVisible = !musicLibrary.Index.HasSongs;
+        IsHaveMusicControlVisible = musicLibrary.Index.HasSongs;
     }
 
     [RelayCommand]

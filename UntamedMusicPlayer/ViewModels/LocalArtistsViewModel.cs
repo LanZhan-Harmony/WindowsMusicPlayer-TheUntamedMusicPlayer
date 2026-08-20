@@ -1,10 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Messages;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Helpers;
-using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using ZLinq;
 
 namespace UntamedMusicPlayer.ViewModels;
@@ -18,7 +22,10 @@ public sealed partial class LocalArtistsViewModel
         App.GetService<ILocalSettingsService>();
     private readonly MusicPlayer _musicPlayer;
 
-    private List<LocalArtistInfo> _artistList = [.. App.GetService<MusicLibrary>().Artists.Values];
+    private List<LocalArtistInfo> _artistList =
+    [
+        .. App.GetService<MusicLibrary>().Index.Artists.Values,
+    ];
 
     public List<string> SortBy { get; set; } = [.. "Artists_SortBy".GetLocalized().Split(", ")];
 
@@ -54,7 +61,7 @@ public sealed partial class LocalArtistsViewModel
 
     public async Task LoadModeAndArtistList()
     {
-        _artistList = [.. App.GetService<MusicLibrary>().Artists.Values];
+        _artistList = [.. App.GetService<MusicLibrary>().Index.Artists.Values];
         if (_artistList.Count == 0)
         {
             return;

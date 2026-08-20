@@ -8,9 +8,11 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.Storage.Pickers;
 using UntamedMusicPlayer.Core.Constants;
 using UntamedMusicPlayer.Core.Contracts.Services;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Core.Helpers;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Messages;
-using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Services;
 using ZLinq;
 using ZLogger;
 

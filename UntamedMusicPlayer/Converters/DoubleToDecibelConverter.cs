@@ -1,5 +1,5 @@
 using Microsoft.UI.Xaml.Data;
-using UntamedMusicPlayer.Helpers;
+using UntamedMusicPlayer.Core.Helpers;
 
 namespace UntamedMusicPlayer.Converters;
 

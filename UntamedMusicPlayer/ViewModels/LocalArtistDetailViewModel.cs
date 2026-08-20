@@ -1,7 +1,12 @@
 using CommunityToolkit.Mvvm.Input;
-using UntamedMusicPlayer.Contracts.Models;
 using UntamedMusicPlayer.Contracts.Services;
+using UntamedMusicPlayer.Core.Contracts.Models;
+using UntamedMusicPlayer.Core.Contracts.Services;
+using UntamedMusicPlayer.Core.Models;
+using UntamedMusicPlayer.Core.Services;
 using UntamedMusicPlayer.Models;
+using UntamedMusicPlayer.Playback;
+using UntamedMusicPlayer.Services;
 using UntamedMusicPlayer.Views;
 
 namespace UntamedMusicPlayer.ViewModels;
