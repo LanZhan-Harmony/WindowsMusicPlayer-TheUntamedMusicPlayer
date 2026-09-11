@@ -80,11 +80,12 @@ dotnet_style_object_initializer = true:suggestion
 # 样式 - 隐式和显式类型
 
 # 在所有情况下都首选 var 而非显式类型，除非被其他代码样式规则覆盖
-csharp_style_var_elsewhere = true:suggestion
+csharp_style_var_elsewhere = true:silent
+dotnet_diagnostic.IDE0007.severity = none
 # 首选使用 var 来声明内置系统类型（如 int）的变量
-csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_for_built_in_types = true:silent
 # 当声明表达式的右侧已提及类型时，首选 var
-csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_when_type_is_apparent = true:silent
 
 # 样式 - 语言关键字和框架类型选项
 
