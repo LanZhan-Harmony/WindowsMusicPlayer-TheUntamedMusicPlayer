@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "UntamedMusicPlayer (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "UntamedMusicPlayer (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

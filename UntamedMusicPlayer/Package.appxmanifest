@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+        xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+        xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+        xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+        xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
+        xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+        xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+        IgnorableNamespaces="uap uap2 uap3 rescap">
+
+  <Identity
+          Name="C19A3696.28439CB846862"
+          Publisher="CN=D8BFD4E9-94E2-482B-A987-F96C72D65FDF"
+          Version="0.6.0.0"/>
+
+  <mp:PhoneIdentity PhoneProductId="d70bca12-cf5d-4556-8309-a020712db728"
+                    PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+
+  <Properties>
+    <DisplayName>无羁 音乐播放器</DisplayName>
+    <PublisherDisplayName>蓝忘机</PublisherDisplayName>
+    <Logo>Assets\AppIcon\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26226.0"/>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26226.0"/>
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+                 Executable="$targetnametoken$.exe"
+                 EntryPoint="windows.partialTrustApplication">
+      <uap:VisualElements
+              DisplayName="ms-resource:AppDisplayName"
+              Description="ms-resource:AppDescription"
+              BackgroundColor="transparent"
+              Square150x150Logo="Assets\AppIcon\MedTile.png"
+              Square44x44Logo="Assets\AppIcon\AppList.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\AppIcon\WideTile.png"
+                         Square71x71Logo="Assets\AppIcon\SmallTile.png"
+                         Square310x310Logo="Assets\AppIcon\LargeTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\AppIcon\SplashScreen.png"/>
+        <uap:LockScreen BadgeLogo="Assets\AppIcon\BadgeLogo.png" Notification="badgeAndTileText"/>
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/>
+          <uap:Rotation Preference="portrait"/>
+          <uap:Rotation Preference="landscapeFlipped"/>
+          <uap:Rotation Preference="portraitFlipped"/>
+        </uap:InitialRotationPreference>
+      </uap:VisualElements>
+
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="fileassociations">
+            <uap:Logo>Assets\AppIcon\FileExtension.png</uap:Logo>
+            <uap2:SupportedVerbs>
+              <uap3:Verb Id="Play" Extended="false" MultiSelectModel="Player">ms-resource:ShellIntegrationPlay</uap3:Verb>
+              <uap3:Verb Id="Enqueue" Extended="false" MultiSelectModel="Player">ms-resource:ShellIntegrationEnqueue</uap3:Verb>
+            </uap2:SupportedVerbs>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.mp3</uap:FileType>
+              <uap:FileType>.flac</uap:FileType>
+              <uap:FileType>.ogg</uap:FileType>
+              <uap:FileType>.m4a</uap:FileType>
+              <uap:FileType>.wav</uap:FileType>
+              <uap:FileType>.opus</uap:FileType>
+              <uap:FileType>.dsf</uap:FileType>
+              <uap:FileType>.dff</uap:FileType>
+              <uap:FileType>.mid</uap:FileType>
+              <uap:FileType>.midi</uap:FileType>
+              <uap:FileType>.cda</uap:FileType>
+              <uap:FileType>.ape</uap:FileType>
+              <uap:FileType>.webm</uap:FileType>
+              <uap:FileType>.wv</uap:FileType>
+              <uap:FileType>.mp2</uap:FileType>
+              <uap:FileType>.mp1</uap:FileType>
+              <uap:FileType>.aif</uap:FileType>
+              <uap:FileType>.aiff</uap:FileType>
+              <uap:FileType>.m2a</uap:FileType>
+              <uap:FileType>.m1a</uap:FileType>
+              <uap:FileType>.mp3pro</uap:FileType>
+              <uap:FileType>.bwf</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="mswindowsmusic"/>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-media-player"/>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-playto-audio"/>
+        </uap:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!--<rescap:Capability Name="runFullTrust"/>-->
+    <Capability Name="internetClient"/>
+    <uap3:Capability Name="backgroundMediaPlayback"/>
+    <uap:Capability Name="musicLibrary"/>
+  </Capabilities>
+</Package>
