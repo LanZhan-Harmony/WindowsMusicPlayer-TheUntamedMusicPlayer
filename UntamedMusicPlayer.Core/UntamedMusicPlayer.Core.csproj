@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net11.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+        <IsAotCompatible>True</IsAotCompatible>
+        <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.EntityFrameworkCore.GeneratedInterceptors</InterceptorsNamespaces>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm"/>
+        <PackageReference Include="MemoryPack"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="ZLinq"/>
+        <PackageReference Include="ZLogger"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Services\"/>
+        <Folder Include="Messages\"/>
+        <Folder Include="Factories\"/>
+        <Folder Include="Models\"/>
+        <Folder Include="ViewModels\"/>
+        <Folder Include="Contracts\"/>
+    </ItemGroup>
+
+</Project>
