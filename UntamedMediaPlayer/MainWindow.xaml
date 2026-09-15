@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Window x:Class="UntamedMediaPlayer.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:helpers="using:UntamedMediaPlayer.Helpers"
-        xmlns:local="using:UntamedMediaPlayer"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:strings="using:UntamedMediaPlayer.Strings"
-        Title="UntamedMediaPlayer"
-        mc:Ignorable="d">
+<windowex:WindowEx x:Class="UntamedMediaPlayer.MainWindow"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+                   xmlns:local="using:UntamedMediaPlayer"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:strings="using:UntamedMediaPlayer.Strings"
+                   xmlns:windowex="using:WinUIEx"
+                   Title="UntamedMediaPlayer"
+                   mc:Ignorable="d">
 
     <Window.SystemBackdrop>
         <MicaBackdrop/>
@@ -20,4 +21,4 @@
         </Grid.RowDefinitions>
         <ContentPresenter x:Name="MainContent" Grid.Row="0"/>
     </Grid>
-</Window>
+</windowex:WindowEx>

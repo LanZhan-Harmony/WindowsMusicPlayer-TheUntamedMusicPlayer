@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using UntamedMediaPlayer.Contracts.Activation;
+using UntamedMediaPlayer.Contracts.Services;
 using UntamedMediaPlayer.Pages;
 
 namespace UntamedMediaPlayer.Activation;

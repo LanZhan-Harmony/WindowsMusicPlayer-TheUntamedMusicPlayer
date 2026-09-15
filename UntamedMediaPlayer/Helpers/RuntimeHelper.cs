@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace UntamedMediaPlayer.Core.Helpers;
+namespace UntamedMediaPlayer.Helpers;
 
 internal sealed partial class RuntimeHelper
 {

@@ -1,4 +1,4 @@
-namespace UntamedMediaPlayer.Contracts.Activation;
+namespace UntamedMediaPlayer.Contracts.Services;
 
 internal interface IActivationService
 {

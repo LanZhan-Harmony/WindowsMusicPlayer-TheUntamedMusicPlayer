@@ -76,9 +76,6 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Contracts\Services\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\UntamedMediaPlayer.Core\UntamedMediaPlayer.Core.csproj" />
   </ItemGroup>
 
