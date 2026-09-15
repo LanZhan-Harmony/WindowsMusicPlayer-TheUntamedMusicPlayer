@@ -5,7 +5,7 @@ using UntamedMediaPlayer.Core.ViewModels;
 
 namespace UntamedMediaPlayer.Core.Helpers;
 
-public class ServicesHelper
+public static class ServicesHelper
 {
     public static void ConfigureCoreServices(IServiceCollection services)
     {

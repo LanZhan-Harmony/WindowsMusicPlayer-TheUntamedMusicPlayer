@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using UntamedMediaPlayer.Core.Models;
 
 namespace UntamedMediaPlayer.Core.Helpers;
 
@@ -21,6 +22,7 @@ namespace UntamedMediaPlayer.Core.Helpers;
 [JsonSerializable(typeof(float))]
 [JsonSerializable(typeof(double))]
 [JsonSerializable(typeof(string))]
+[JsonSerializable(typeof(AppSettings))]
 internal sealed partial class SourceGenerationContext : JsonSerializerContext;
 
 internal static class JsonAotSerializer

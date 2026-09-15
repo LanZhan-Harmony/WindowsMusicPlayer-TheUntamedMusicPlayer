@@ -10,16 +10,16 @@
         IgnorableNamespaces="uap uap2 uap3 rescap">
 
   <Identity
-          Name="C19A3696.28439CB846862"
+          Name="C19A3696.UntamedMediaPlayer"
           Publisher="CN=D8BFD4E9-94E2-482B-A987-F96C72D65FDF"
           Version="0.6.0.0"/>
 
-  <mp:PhoneIdentity PhoneProductId="d70bca12-cf5d-4556-8309-a020712db728"
+  <mp:PhoneIdentity PhoneProductId="e00bc628-4f28-459c-acef-9302665ac889"
                     PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>无羁 音乐播放器</DisplayName>
-    <PublisherDisplayName>蓝忘机</PublisherDisplayName>
+    <DisplayName>Untamed Media Player</DisplayName>
+    <PublisherDisplayName>LanZhan</PublisherDisplayName>
     <Logo>Assets\AppIcon\StoreLogo.png</Logo>
   </Properties>
 

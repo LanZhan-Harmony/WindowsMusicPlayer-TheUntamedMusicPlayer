@@ -1,9 +1,14 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.Storage;
 using UntamedMediaPlayer.Activation;
 using UntamedMediaPlayer.Contracts.Activation;
+using UntamedMediaPlayer.Contracts.Services;
 using UntamedMediaPlayer.Core.Contracts.Services;
+using UntamedMediaPlayer.Core.Helpers;
+using UntamedMediaPlayer.Core.Services;
+using UntamedMediaPlayer.Helpers;
 using UntamedMediaPlayer.Pages;
 using UntamedMediaPlayer.Services;
 
@@ -36,8 +41,19 @@ public partial class App : Application
             // Services
             .AddSingleton<IActivationService, ActivationService>()
             .AddSingleton<INavigationService, NavigationService>()
+            .AddSingleton<IPathService>(sp =>
+            {
+                string rootPath = RuntimeHelper.IsMSIX
+                    ? ApplicationData.GetDefault().LocalPath
+                    : Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "UntamedMediaPlayer"
+                    );
+                return new PathService(rootPath);
+            })
             // Pages
             .AddTransient<NavigationHost>();
+        ServicesHelper.ConfigureCoreServices(services);
         return services.BuildServiceProvider();
     }
 

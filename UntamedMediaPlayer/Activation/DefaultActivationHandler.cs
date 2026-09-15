@@ -12,7 +12,7 @@ internal class DefaultActivationHandler(INavigationService navigationService)
     protected override bool CanHandleInternal(LaunchActivatedEventArgs args) =>
         false;
 
-    protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
+    protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
         await Task.CompletedTask;
     }
