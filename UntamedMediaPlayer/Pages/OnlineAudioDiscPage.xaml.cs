@@ -2,7 +2,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Pages;
 
-public sealed partial class OnlineAudioDiscPage : Page
+internal sealed partial class OnlineAudioDiscPage : Page
 {
     public OnlineAudioDiscPage()
     {

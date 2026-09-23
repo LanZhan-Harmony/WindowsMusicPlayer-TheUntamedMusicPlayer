@@ -1,4 +1,4 @@
-using UntamedMediaPlayer.Core.Models;
+using AppSettings = UntamedMediaPlayer.Core.Models.Settings.AppSettings;
 
 namespace UntamedMediaPlayer.Core.Contracts.Services;
 

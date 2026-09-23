@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Pages;
 
-public sealed partial class NavigationHost : UserControl
+internal sealed partial class NavigationHost : UserControl
 {
     public NavigationHost()
     {
@@ -21,7 +21,7 @@ public sealed partial class NavigationHost : UserControl
         NavigationViewDisplayModeChangedEventArgs args
     )
     {
-        AppTitleBar.Margin = new Thickness()
+        AppTitleBar.Margin = new Thickness
         {
             Left =
                 sender.CompactPaneLength

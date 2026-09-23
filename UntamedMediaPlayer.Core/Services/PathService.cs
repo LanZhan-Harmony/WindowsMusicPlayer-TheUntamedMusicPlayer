@@ -4,25 +4,25 @@ namespace UntamedMediaPlayer.Core.Services;
 
 public class PathService : IPathService
 {
-    public string RootPath { get; }
-    public string SettingsPath { get; }
-    public string DatabasePath { get; }
+    public string RootFolderPath { get; }
+    public string SettingsFolderPath { get; }
+    public string DatabaseFolderPath { get; }
+    public string LogFolderPath { get; }
 
-    public PathService(string rootPath)
+    public PathService(string rootFolderPath)
     {
-        RootPath = rootPath;
-        SettingsPath = Path.Combine(RootPath, "Settings");
-        DatabasePath = Path.Combine(RootPath, "Database");
-        _ = EnsureDirectoryExists();
+        RootFolderPath = rootFolderPath;
+        SettingsFolderPath = Path.Combine(RootFolderPath, "Settings");
+        DatabaseFolderPath = Path.Combine(RootFolderPath, "Database");
+        LogFolderPath = Path.Combine(RootFolderPath, "Logs");
+        EnsureDirectoryExists();
     }
 
-    private async Task EnsureDirectoryExists()
+    private void EnsureDirectoryExists()
     {
-        await Task.Run(() =>
-        {
-            Directory.CreateDirectory(RootPath);
-            Directory.CreateDirectory(SettingsPath);
-            Directory.CreateDirectory(DatabasePath);
-        });
+        Directory.CreateDirectory(RootFolderPath);
+        Directory.CreateDirectory(SettingsFolderPath);
+        Directory.CreateDirectory(DatabaseFolderPath);
+        Directory.CreateDirectory(LogFolderPath);
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net11.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -10,20 +10,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="MemoryPack" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="CommunityToolkit.Mvvm"/>
+    <PackageReference Include="MemoryPack"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="ZLinq" />
-    <PackageReference Include="ZLogger" />
+    <PackageReference Include="ZLinq"/>
+    <PackageReference Include="ZLogger"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Messages\" />
-    <Folder Include="Factories\" />
+    <Folder Include="Messages\"/>
+    <Folder Include="Factories\"/>
   </ItemGroup>
 
 </Project>

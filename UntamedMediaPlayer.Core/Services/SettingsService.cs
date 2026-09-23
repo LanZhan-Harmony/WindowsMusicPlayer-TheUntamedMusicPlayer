@@ -1,31 +1,56 @@
-using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 using System.Text.Json;
 using UntamedMediaPlayer.Core.Contracts.Services;
 using UntamedMediaPlayer.Core.Helpers;
-using UntamedMediaPlayer.Core.Models;
+using UntamedMediaPlayer.Core.Models.Settings;
+using ZLogger;
 
 namespace UntamedMediaPlayer.Core.Services;
 
-public class SettingsService : ISettingsService
+public sealed class SettingsService : ISettingsService
 {
     private readonly IPathService _pathService;
+    private readonly ILogger<SettingsService> _logger;
     private readonly string _folderPath;
     private readonly string _filePath;
+    private readonly ILoggingService? _loggingService;
 
-    private readonly Debouncer _writeSettingsDebouncer = new(
-        TimeSpan.FromSeconds(1000),
-        onError: ex => Debug.WriteLine($"[SettingsService] 写入设置失败：{ex.Message}")
-    );
+    private readonly Debouncer _writeSettingsDebouncer;
 
-    public AppSettings Settings { get; set; }
+    public AppSettings Settings
+    {
+        get;
+        set
+        {
+            if (field == value)
+            {
+                return;
+            }
 
-    public SettingsService(IPathService pathService)
+            UnsubscribeFromSettings(value);
+            field = value;
+            SubscribeToSettings(value);
+            _loggingService?.ApplySettings(value.DeveloperSettings);
+        }
+    }
+
+    public SettingsService(
+        IPathService pathService,
+        ILogger<SettingsService> logger,
+        ILoggingService? loggingService = null
+    )
     {
         _pathService = pathService;
-        _folderPath = _pathService.SettingsPath;
+        _logger = logger;
+        _loggingService = loggingService;
+        _folderPath = _pathService.SettingsFolderPath;
         _filePath = Path.Combine(_folderPath, "settings.json");
+        _writeSettingsDebouncer = new Debouncer(
+            TimeSpan.FromSeconds(1000),
+            ex => _logger.ZLogError(ex, $"[SettingsService] Failed to save settings to disk")
+        );
         Settings = LoadFromDisk();
-        Settings.PropertyChanged += (s, e) => _ = SaveToDisk();
     }
 
     private AppSettings LoadFromDisk()
@@ -34,7 +59,9 @@ public class SettingsService : ISettingsService
         {
             if (!File.Exists(_filePath))
             {
-                Debug.WriteLine("[SettingsService] 设置文件不存在，使用默认值。");
+                _logger.ZLogInformation(
+                    $"[SettingsService] Settings file does not exist, using default values"
+                );
                 return new AppSettings();
             }
 
@@ -44,13 +71,19 @@ public class SettingsService : ISettingsService
         }
         catch (JsonException ex)
         {
-            Debug.WriteLine($"[SettingsService] JSON 解析失败：{ex.Message}，已备份并回退默认值。");
+            _logger.ZLogError(
+                ex,
+                $"[SettingsService] JSON parsing failed, file backed up and default values used."
+            );
             BackupCorruptedFile();
             return new AppSettings();
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[SettingsService] 加载失败：{ex.Message}，使用默认值。");
+            _logger.ZLogError(
+                ex,
+                $"[SettingsService] Failed to load settings, using default values."
+            );
             return new AppSettings();
         }
     }
@@ -62,7 +95,7 @@ public class SettingsService : ISettingsService
             string json = JsonAotSerializer.Serialize(Settings);
             string tmpPath = _filePath + ".tmp";
             await File.WriteAllTextAsync(tmpPath, json);
-            File.Move(tmpPath, _filePath, overwrite: true);
+            File.Move(tmpPath, _filePath, true);
         });
     }
 
@@ -72,17 +105,78 @@ public class SettingsService : ISettingsService
         {
             if (File.Exists(_filePath))
             {
-                var backup = _filePath + $".corrupted_{DateTime.Now:yyyyMMddHHmmss}";
+                string backup = _filePath + $".corrupted_{DateTime.Now:yyyyMMddHHmmss}";
                 File.Move(_filePath, backup);
-                Debug.WriteLine($"[SettingsService] 损坏文件已备份到：{backup}");
+                _logger.ZLogInformation(
+                    $"[SettingsService] Corrupted file has been backed up to: {backup}"
+                );
             }
         }
-        catch
-        { /* 备份失败不影响主流程 */
+        catch (Exception ex)
+        {
+            _logger.ZLogWarning(ex, $"[SettingsService] Failed to backup corrupted settings file.");
         }
     }
 
-    public Task ExportSettings(string filePath) => throw new NotImplementedException();
+    private void SubscribeToSettings(AppSettings settings)
+    {
+        settings.LibrarySettings.PropertyChanged += OnSettingsChanged;
+        settings.MusicPlaybackSettings.PropertyChanged += OnSettingsChanged;
+        settings.VideoPlaybackSettings.PropertyChanged += OnSettingsChanged;
+        settings.LyricSettings.PropertyChanged += OnSettingsChanged;
+        settings.PersonalizationSettings.PropertyChanged += OnSettingsChanged;
+        settings.PrivacySettings.PropertyChanged += OnSettingsChanged;
+        settings.DeveloperSettings.PropertyChanged += OnSettingsChanged;
+    }
 
-    public Task ImportSettings(string filePath) => throw new NotImplementedException();
+    private void UnsubscribeFromSettings(AppSettings? settings)
+    {
+        if (settings is null)
+        {
+            return;
+        }
+
+        settings.LibrarySettings.PropertyChanged -= OnSettingsChanged;
+        settings.MusicPlaybackSettings.PropertyChanged -= OnSettingsChanged;
+        settings.VideoPlaybackSettings.PropertyChanged -= OnSettingsChanged;
+        settings.LyricSettings.PropertyChanged -= OnSettingsChanged;
+        settings.PersonalizationSettings.PropertyChanged -= OnSettingsChanged;
+        settings.PrivacySettings.PropertyChanged -= OnSettingsChanged;
+        settings.DeveloperSettings.PropertyChanged -= OnSettingsChanged;
+    }
+
+    private void OnSettingsChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        _ = SaveToDisk();
+    }
+
+    public async Task ExportSettings(string filePath)
+    {
+        try
+        {
+            string json = JsonAotSerializer.Serialize(Settings);
+            await File.WriteAllTextAsync(filePath, json);
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogError(ex, $"[SettingsService] Failed to export settings to {filePath}");
+            throw;
+        }
+    }
+
+    public async Task ImportSettings(string filePath)
+    {
+        try
+        {
+            string json = await File.ReadAllTextAsync(filePath);
+            AppSettings? imported = JsonAotSerializer.Deserialize<AppSettings>(json);
+            Settings = imported ?? throw new InvalidOperationException("Imported settings are null.");
+            _ = SaveToDisk();
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogError(ex, $"[SettingsService] Failed to import settings from {filePath}");
+            throw;
+        }
+    }
 }

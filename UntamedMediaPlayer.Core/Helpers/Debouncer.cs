@@ -1,21 +1,18 @@
+using System.Diagnostics;
+
 namespace UntamedMediaPlayer.Core.Helpers;
 
-using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-
 /// <summary>
-/// 防抖器
-/// <para>
-/// 连续多次调用时，只有「静默 <see cref="DefaultDelay"/> 后仍未被取代」的
-/// 最后一次调用会被执行；期间每次调用都会重置计时器。
-/// </para>
+/// Debouncer
 /// </summary>
+/// <remarks>
+/// When multiple calls are made in quick succession,
+/// only the last call that remains un-replaced after a silent period of <see cref="DefaultDelay" /> will be executed;
+/// each call during this period resets the timer.
+/// </remarks>
 public sealed class Debouncer : IDisposable
 {
     private readonly Lock _gate = new();
-    private readonly TimeSpan _defaultDelay;
     private readonly Action<Exception>? _onError;
     private readonly Timer _timer; // 复用同一个 Timer
 
@@ -24,30 +21,10 @@ public sealed class Debouncer : IDisposable
     private long _cancelEpoch; // Cancel/Dispose 时递增，用于竞态检测
     private bool _disposed;
 
-    public Debouncer(TimeSpan delay, Action<Exception>? onError = null)
-    {
-        if (delay < TimeSpan.Zero)
-        {
-            throw new ArgumentOutOfRangeException(nameof(delay), delay, "延迟不能为负数。");
-        }
+    /// <summary>Default silent period</summary>
+    public TimeSpan DefaultDelay { get; }
 
-        _defaultDelay = delay;
-        _onError = onError;
-        _timer = new Timer(
-            static s => ((Debouncer)s!).OnTimerElapsed(),
-            this,
-            Timeout.InfiniteTimeSpan,
-            Timeout.InfiniteTimeSpan
-        );
-    }
-
-    public Debouncer(int millisecondsDelay, Action<Exception>? onError = null)
-        : this(TimeSpan.FromMilliseconds(millisecondsDelay), onError) { }
-
-    /// <summary>默认静默时长。</summary>
-    public TimeSpan DefaultDelay => _defaultDelay;
-
-    /// <summary>是否存在尚未执行的挂起调用。</summary>
+    /// <summary>If there are pending calls that have not been executed yet</summary>
     public bool IsPending
     {
         get
@@ -59,7 +36,7 @@ public sealed class Debouncer : IDisposable
         }
     }
 
-    /// <summary>是否已释放。</summary>
+    /// <summary>If the debouncer has been disposed.</summary>
     public bool IsDisposed
     {
         get
@@ -71,42 +48,62 @@ public sealed class Debouncer : IDisposable
         }
     }
 
-    // ================== Fire-and-forget 重载 ==================
+    public Debouncer(TimeSpan delay, Action<Exception>? onError = null)
+    {
+        if (delay < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(delay), delay, "延迟不能为负数。");
+        }
 
-    /// <summary>提交一次调用，不关心是否真正执行。</summary>
+        DefaultDelay = delay;
+        _onError = onError;
+        _timer = new Timer(
+            static s => ((Debouncer)s!).OnTimerElapsed(),
+            this,
+            Timeout.InfiniteTimeSpan,
+            Timeout.InfiniteTimeSpan
+        );
+    }
+
+    // ================== Fire-and-forget Overloads ==================
+
+    /// <summary>Submit a call without caring if it actually executes</summary>
     public void Debounce(Action action, TimeSpan? delay = null)
     {
         ArgumentNullException.ThrowIfNull(action);
         _ = ScheduleAsync(
             static (_, s) =>
             {
-                ((Action)s!).Invoke();
+                s.Invoke();
                 return Task.CompletedTask;
             },
             action,
             delay,
-            wantResult: false
+            false
         );
     }
 
-    /// <summary>提交一次异步调用，不关心是否真正执行。</summary>
+    /// <summary>Submit an asynchronous call without caring if it actually executes</summary>
     public void Debounce(Func<Task> action, TimeSpan? delay = null)
     {
         ArgumentNullException.ThrowIfNull(action);
         _ = ScheduleAsync(
-            static (_, s) => ((Func<Task>)s!).Invoke(),
+            static (_, s) => s.Invoke(),
             action,
             delay,
-            wantResult: false
+            false
         );
     }
 
-    // ================== Await 重载 ==================
+    // ================== Await Overloads ==================
 
     /// <summary>
-    /// 提交一次调用并等待结果。
-    /// 返回 <c>true</c> 表示本次调用真正执行；<c>false</c> 表示被后续调用取代。
+    /// Submit a call and wait for the result
     /// </summary>
+    /// <param name="action">The action to submit</param>
+    /// <param name="delay">The delay before executing the action</param>
+    /// <returns><c>true</c> if the action was executed, <c>false</c> if it was cancelled</returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public Task<bool> RunAsync(Action action, TimeSpan? delay = null)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -118,39 +115,46 @@ public sealed class Debouncer : IDisposable
             },
             action,
             delay,
-            wantResult: true
+            true
         );
     }
 
-    /// <summary>提交一次异步调用并等待结果。</summary>
+    /// <summary>Submit an asynchronous call and wait for the result</summary>
+    /// <param name="action">The asynchronous action to submit</param>
+    /// <param name="delay">The delay before executing the action</param>
+    /// <returns><c>true</c> if the action was executed, <c>false</c> if it was cancelled</returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public Task<bool> RunAsync(Func<Task> action, TimeSpan? delay = null)
     {
         ArgumentNullException.ThrowIfNull(action);
         return ScheduleAsync(
-            static (_, s) => ((Func<Task>)s!).Invoke(),
+            static (_, s) => s.Invoke(),
             action,
             delay,
-            wantResult: true
+            true
         );
     }
-
-    /// <summary>提交一次带取消令牌的异步调用并等待结果。</summary>
+    /// <summary>
+    /// Submit an asynchronous call with cancellation support and wait for the result
+    /// </summary>
+    /// <param name="action">The asynchronous action to submit</param>
+    /// <param name="delay">The delay before executing the action</param>
+    /// <returns><c>true</c> if the action was executed, <c>false</c> if it was cancelled</returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public Task<bool> RunAsync(Func<CancellationToken, Task> action, TimeSpan? delay = null)
     {
         ArgumentNullException.ThrowIfNull(action);
         return ScheduleAsync(
-            static (ct, s) => ((Func<CancellationToken, Task>)s!).Invoke(ct),
+            static (ct, s) => s.Invoke(ct),
             action,
             delay,
-            wantResult: true
+            true
         );
     }
 
-    // ================== 控制方法 ==================
-
     /// <summary>
-    /// 取消挂起调用，并取消正在执行的调用（若其响应取消令牌）。
-    /// 已经完成、且不响应取消令牌的同步调用不受影响。
+    /// Cancel the pending call and cancel the currently executing call (if it responds to the cancellation token).
+    /// Already completed synchronous calls that do not respond to the cancellation token are not affected.
     /// </summary>
     public void Cancel()
     {
@@ -179,9 +183,10 @@ public sealed class Debouncer : IDisposable
     }
 
     /// <summary>
-    /// 立即执行挂起的调用（如果有），并重置计时器。
-    /// 适合窗口关闭、页面离开等需要立即落盘的场景。
-    /// 若当前没有挂起项，则什么也不做。
+    /// Execute the pending call immediately (if any) and reset the timer.
+    /// Suitable for scenarios where you need to persist data immediately,
+    /// such as when closing a window or leaving a page.
+    /// If there is no pending call, do nothing.
     /// </summary>
     public void Flush()
     {
@@ -201,7 +206,8 @@ public sealed class Debouncer : IDisposable
     }
 
     /// <summary>
-    /// 释放资源、弃置挂起调用、取消正在执行的任务。可重复调用。
+    /// Release resources, discard pending calls, and cancel executing tasks.
+    /// Can be called multiple times.
     /// </summary>
     public void Dispose()
     {
@@ -235,13 +241,14 @@ public sealed class Debouncer : IDisposable
             {
                 execCts.Cancel();
             }
-            catch { } // ignore
+            catch
+            {
+                // ignore
+            }
         }
 
         GC.SuppressFinalize(this);
     }
-
-    // ================== 内部实现 ==================
 
     private Task<bool> ScheduleAsync<TState>(
         Func<CancellationToken, TState, Task> action,
@@ -250,7 +257,7 @@ public sealed class Debouncer : IDisposable
         bool wantResult
     )
     {
-        TimeSpan effectiveDelay = delay ?? _defaultDelay;
+        TimeSpan effectiveDelay = delay ?? DefaultDelay;
         if (effectiveDelay < TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(nameof(delay), "延迟不能为负数。");
@@ -277,7 +284,7 @@ public sealed class Debouncer : IDisposable
         // 被取代的调用立刻完成，避免调用方无谓等待
         previous?.Completion?.TrySetResult(false);
 
-        return (Task<bool>)(tcs?.Task ?? Task.CompletedTask);
+        return tcs?.Task ?? Task.FromResult(false);
     }
 
     private void OnTimerElapsed()
@@ -298,10 +305,12 @@ public sealed class Debouncer : IDisposable
         }
     }
 
-    private async Task ExecuteAsync(PendingCall call) =>
+    private async Task ExecuteAsync(PendingCall call)
+    {
         await ExecuteAsync(call, -1).ConfigureAwait(false);
+    }
 
-    private async Task ExecuteAsync(PendingCall call, long epochAtSchedule)
+    private async ValueTask ExecuteAsync(PendingCall call, long epochAtSchedule)
     {
         CancellationTokenSource cts;
 
@@ -379,9 +388,9 @@ public sealed class Debouncer : IDisposable
         TaskCompletionSource<bool>? completion
     ) : PendingCall(completion)
     {
-        private readonly Func<CancellationToken, TState, Task> _action = action;
-        private readonly TState _state = state;
-
-        public override Task InvokeAsync(CancellationToken ct) => _action(ct, _state);
+        public override Task InvokeAsync(CancellationToken ct)
+        {
+            return action(ct, state);
+        }
     }
 }

@@ -2,7 +2,8 @@ namespace UntamedMediaPlayer.Core.Contracts.Services;
 
 public interface IPathService
 {
-    string RootPath { get; }
-    string SettingsPath { get; }
-    string DatabasePath { get; }
+    string RootFolderPath { get; }
+    string SettingsFolderPath { get; }
+    string DatabaseFolderPath { get; }
+    string LogFolderPath { get; }
 }
