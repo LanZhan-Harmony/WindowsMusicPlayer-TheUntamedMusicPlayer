@@ -1,8 +1,8 @@
+using MemoryPack;
+using MemoryPack.Formatters;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using MemoryPack;
-using MemoryPack.Formatters;
 
 namespace UntamedMediaPlayer.Core.Helpers;
 
@@ -11,11 +11,7 @@ namespace UntamedMediaPlayer.Core.Helpers;
 /// </summary>
 /// <remarks>
 /// <para>
-/// 问题根因: MemoryPack 的 IMemoryPackFormatter
-/// <T>
-/// .Serialize
-/// <TBufferWriter>
-/// ()是一个 Generic Virtual Method (GVM)。
+/// 问题根因: MemoryPack 的 IMemoryPackFormatter&lt;T&gt;.Serialize&lt;TBufferWriter&gt;() 是一个 Generic Virtual Method (GVM)。
 /// 在 NativeAOT 中，当 TBufferWriter 是引用类型（如内部的 ReusableLinkedArrayBufferWriter）时，
 /// 所有引用类型泛型实例共享同一份机器码（shared generics）。
 /// 当多个复杂类型（特别是包含 [MemoryPackUnion] 的类型如 IBriefSongInfoBase）的 formatter 链交叉执行时，
@@ -25,7 +21,7 @@ namespace UntamedMediaPlayer.Core.Helpers;
 /// 修复原理: 使用值类型 (struct) 的 AotSafeBufferWriter 作为 TBufferWriter，
 /// 迫使 NativeAOT 为整个 formatter 链生成完全独立的、非共享的专用机器码。
 /// 值类型泛型参数在 NativeAOT 中永远不会使用 shared generics，
-/// 因此每个 formatter 的 Serialize<AotSafeBufferWriter> 都有自己独立的 GVM 表项，从根本上避免了分派表冲突。
+/// 因此每个 formatter 的 Serialize&lt;AotSafeBufferWriter&gt; 都有自己独立的 GVM 表项，从根本上避免了分派表冲突。
 /// </para>
 /// <para>
 /// 当前默认初始容量设为 8KB，用于覆盖常见的 1KB~5KB 序列化结果，并尽量减少扩容和数组拷贝次数。
@@ -105,7 +101,10 @@ internal struct AotSafeBufferWriter(int initialCapacity) : IBufferWriter<byte>
     private byte[] _buffer = new byte[initialCapacity];
     private int _written = 0;
 
-    public void Advance(int count) => _written += count;
+    public void Advance(int count)
+    {
+        _written += count;
+    }
 
     public Memory<byte> GetMemory(int sizeHint = 0)
     {
@@ -131,10 +130,16 @@ internal struct AotSafeBufferWriter(int initialCapacity) : IBufferWriter<byte>
         }
     }
 
-    internal readonly byte[] ToArray() => [.. _buffer.AsSpan(0, _written)];
+    internal readonly byte[] ToArray()
+    {
+        return [.. _buffer.AsSpan(0, _written)];
+    }
 
     internal readonly ValueTask WriteToAsync(
         Stream stream,
         CancellationToken cancellationToken = default
-    ) => stream.WriteAsync(_buffer.AsMemory(0, _written), cancellationToken);
+    )
+    {
+        return stream.WriteAsync(_buffer.AsMemory(0, _written), cancellationToken);
+    }
 }

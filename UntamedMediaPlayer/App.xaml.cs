@@ -1,16 +1,18 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.Storage;
 using UntamedMediaPlayer.Activation;
 using UntamedMediaPlayer.Contracts.Activation;
 using UntamedMediaPlayer.Contracts.Services;
+using UntamedMediaPlayer.Core.Compatibility;
+using UntamedMediaPlayer.Core.Contracts.Compatibility;
 using UntamedMediaPlayer.Core.Contracts.Services;
 using UntamedMediaPlayer.Core.Helpers;
 using UntamedMediaPlayer.Core.Services;
 using UntamedMediaPlayer.Helpers;
 using UntamedMediaPlayer.Pages;
 using UntamedMediaPlayer.Services;
+using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace UntamedMediaPlayer;
 
@@ -19,7 +21,6 @@ namespace UntamedMediaPlayer;
 /// </summary>
 public partial class App : Application
 {
-    private readonly IServiceProvider _services;
     public static MainWindow MainWindow { get; private set; } = null!;
 
     /// <summary>
@@ -29,11 +30,15 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        _services = ConfigureServices();
-        Ioc.Default.ConfigureServices(_services);
+        ServiceProvider services = ConfigureServices();
+        Ioc.Default.ConfigureServices(services);
         UnhandledException += App_UnhandledException;
     }
 
+    /// <summary>
+    /// Configures the services required by the application.
+    /// </summary>
+    /// <returns>The configured service provider.</returns>
     private static ServiceProvider ConfigureServices()
     {
         IServiceCollection services = new ServiceCollection()
@@ -41,16 +46,11 @@ public partial class App : Application
             // Services
             .AddSingleton<IActivationService, ActivationService>()
             .AddSingleton<INavigationService, NavigationService>()
-            .AddSingleton<IPathService>(sp =>
-            {
-                string rootPath = RuntimeHelper.IsMSIX
-                    ? ApplicationData.GetDefault().LocalPath
-                    : Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "UntamedMediaPlayer"
-                    );
-                return new PathService(rootPath);
-            })
+            .AddSingleton<ILocalizationService, LocalizationService>()
+            .AddSingleton<IPathService>(sp => new PathService(PathHelper.GetApplicationDataRoot()))
+            .AddTransient<IDeprecatedPathService>(sp => new DeprecatedPathService(
+                PathHelper.GetPackagedApplicationDataRoot()
+            ))
             // Pages
             .AddTransient<NavigationHost>();
         ServicesHelper.ConfigureCoreServices(services);
@@ -73,10 +73,7 @@ public partial class App : Application
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data.</param>
-    private void App_UnhandledException(
-        object sender,
-        Microsoft.UI.Xaml.UnhandledExceptionEventArgs e
-    )
+    private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
         // TODO: Log and handle exceptions as appropriate.
     }

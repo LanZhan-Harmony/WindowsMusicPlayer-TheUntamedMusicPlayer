@@ -1,14 +1,15 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using UntamedMediaPlayer.Core.Models;
+using UntamedMediaPlayer.Core.Models.Settings;
 
 namespace UntamedMediaPlayer.Core.Helpers;
 
 [JsonSourceGenerationOptions(
     WriteIndented = true,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-    PropertyNameCaseInsensitive = true
+    PropertyNameCaseInsensitive = true,
+    UseStringEnumConverter = true
 )]
 [JsonSerializable(typeof(bool))]
 [JsonSerializable(typeof(char))]

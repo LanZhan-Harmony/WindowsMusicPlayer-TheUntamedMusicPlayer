@@ -2,5 +2,5 @@ namespace UntamedMediaPlayer.Contracts.Services;
 
 internal interface IActivationService
 {
-    Task ActivateAsync(object activationArgs);
+    ValueTask ActivateAsync(object activationArgs);
 }
