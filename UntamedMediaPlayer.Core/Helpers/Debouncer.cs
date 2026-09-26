@@ -1,4 +1,6 @@
-using System.Diagnostics;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using ZLogger;
 
 namespace UntamedMediaPlayer.Core.Helpers;
 
@@ -12,13 +14,14 @@ namespace UntamedMediaPlayer.Core.Helpers;
 /// </remarks>
 public sealed class Debouncer : IDisposable
 {
+    private readonly ILogger<Debouncer> _logger = Ioc.Default.GetRequiredService<ILogger<Debouncer>>();
     private readonly Lock _gate = new();
     private readonly Action<Exception>? _onError;
-    private readonly Timer _timer; // 复用同一个 Timer
+    private readonly Timer _timer; // Reuse the same Timer
 
-    private PendingCall? _pending; // 等待中的调用（最多一个）
-    private CancellationTokenSource? _executingCts; // 正在执行的调用的取消源
-    private long _cancelEpoch; // Cancel/Dispose 时递增，用于竞态检测
+    private PendingCall? _pending; // The pending call (at most one)
+    private CancellationTokenSource? _executingCts; // Cancellation source for the executing call
+    private long _cancelEpoch; // Incremented by Cancel/Dispose for race detection
     private bool _disposed;
 
     /// <summary>Default silent period</summary>
@@ -52,7 +55,7 @@ public sealed class Debouncer : IDisposable
     {
         if (delay < TimeSpan.Zero)
         {
-            throw new ArgumentOutOfRangeException(nameof(delay), delay, "延迟不能为负数。");
+            throw new ArgumentOutOfRangeException(nameof(delay), delay, "Delay cannot be negative.");
         }
 
         DefaultDelay = delay;
@@ -178,7 +181,7 @@ public sealed class Debouncer : IDisposable
             {
                 execCts.Cancel();
             }
-            catch (ObjectDisposedException) { } // 与 ExecuteAsync 的 finally 竞争
+            catch (ObjectDisposedException) { } // Races with ExecuteAsync's finally block
         }
     }
 
@@ -243,7 +246,7 @@ public sealed class Debouncer : IDisposable
             }
             catch
             {
-                // ignore
+                // Ignore
             }
         }
 
@@ -260,10 +263,10 @@ public sealed class Debouncer : IDisposable
         TimeSpan effectiveDelay = delay ?? DefaultDelay;
         if (effectiveDelay < TimeSpan.Zero)
         {
-            throw new ArgumentOutOfRangeException(nameof(delay), "延迟不能为负数。");
+            throw new ArgumentOutOfRangeException(nameof(delay), "Delay cannot be negative.");
         }
 
-        // fire-and-forget 时不分配 TCS
+        // Avoid allocating a TCS for fire-and-forget calls
         TaskCompletionSource<bool>? tcs = wantResult
             ? new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously)
             : null;
@@ -277,11 +280,11 @@ public sealed class Debouncer : IDisposable
             previous = _pending;
             _pending = new PendingCall<TState>(action, state, tcs);
 
-            // 复用同一个 Timer，仅原子地重置到期时间
+            // Reuse the same Timer and atomically reset its due time
             _timer.Change(effectiveDelay, Timeout.InfiniteTimeSpan);
         }
 
-        // 被取代的调用立刻完成，避免调用方无谓等待
+        // Complete the replaced call immediately so callers do not wait unnecessarily
         previous?.Completion?.TrySetResult(false);
 
         return tcs?.Task ?? Task.FromResult(false);
@@ -316,7 +319,7 @@ public sealed class Debouncer : IDisposable
 
         lock (_gate)
         {
-            // Cancel / Dispose 恰好发生在「取走挂起项」与「开始执行」之间
+            // Cancel / Dispose may occur between taking the pending call and starting execution
             if (_disposed || (epochAtSchedule >= 0 && _cancelEpoch != epochAtSchedule))
             {
                 call.Completion?.TrySetResult(false);
@@ -351,7 +354,7 @@ public sealed class Debouncer : IDisposable
                 }
             }
 
-            // Cancel / Dispose 可能已经释放了它；再次 Dispose 是安全的
+            // Cancel / Dispose may have already released it; disposing it again is safe
             cts.Dispose();
         }
     }
@@ -360,8 +363,8 @@ public sealed class Debouncer : IDisposable
     {
         if (_onError is null)
         {
-            // 不允许异常逃逸到线程池
-            Debug.WriteLine($"[Debouncer] 回调抛出未处理异常: {ex}");
+            // Do not allow exceptions to escape to the thread pool
+            _logger.ZLogError(ex, $"[Debouncer] Unhandled callback exception");
             return;
         }
 
@@ -371,7 +374,7 @@ public sealed class Debouncer : IDisposable
         }
         catch (Exception he)
         {
-            Debug.WriteLine($"[Debouncer] 错误处理器自身抛出异常: {he}");
+            _logger.ZLogError(he, $"[Debouncer] Error handler threw an exception");
         }
     }
 

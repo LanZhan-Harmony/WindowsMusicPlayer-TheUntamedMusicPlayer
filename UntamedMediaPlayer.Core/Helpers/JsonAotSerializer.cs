@@ -29,10 +29,10 @@ internal sealed partial class SourceGenerationContext : JsonSerializerContext;
 internal static class JsonAotSerializer
 {
     /// <summary>
-    /// 将对象序列化为 JSON 字符串。
+    /// Serializes an object to a JSON string.
     /// </summary>
-    /// <param name="value">要序列化的对象</param>
-    /// <returns>序列化后的 JSON 字符串</returns>
+    /// <param name="value">The object to serialize</param>
+    /// <returns>The serialized JSON string</returns>
     internal static string Serialize<T>(T value)
     {
         if (
@@ -42,18 +42,18 @@ internal static class JsonAotSerializer
         {
             throw new ArgumentNullException(
                 nameof(value),
-                $"SourceGenerationContext 特性中未声明 {typeof(T)}."
+                $"{typeof(T)} is not declared in the SourceGenerationContext attributes."
             );
         }
         return JsonSerializer.Serialize(value, jsonTypeInfo);
     }
 
     /// <summary>
-    /// 将 JSON 字符串反序列化为指定类型的对象。
+    /// Deserializes a JSON string to the specified type.
     /// </summary>
-    /// <typeparam name="T">目标类型</typeparam>
-    /// <param name="value">JSON 字符串</param>
-    /// <returns>反序列化后的对象</returns>
+    /// <typeparam name="T">The target type</typeparam>
+    /// <param name="value">The JSON string</param>
+    /// <returns>The deserialized object</returns>
     internal static T? Deserialize<T>(string value)
     {
         if (
@@ -63,7 +63,7 @@ internal static class JsonAotSerializer
         {
             throw new ArgumentNullException(
                 nameof(T),
-                $"SourceGenerationContext 特性中未声明 {typeof(T)}."
+                $"{typeof(T)} is not declared in the SourceGenerationContext attributes."
             );
         }
         return JsonSerializer.Deserialize(value, jsonTypeInfo);
@@ -77,7 +77,7 @@ internal static class JsonAotSerializer
         )
         {
             throw new InvalidOperationException(
-                $"SourceGenerationContext 特性中未声明 {typeof(T)}."
+                $"{typeof(T)} is not declared in the SourceGenerationContext attributes."
             );
         }
         return jsonTypeInfo;

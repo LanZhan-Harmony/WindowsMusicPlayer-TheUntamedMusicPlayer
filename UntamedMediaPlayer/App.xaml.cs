@@ -1,17 +1,15 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using UntamedMediaPlayer.Activation;
 using UntamedMediaPlayer.Contracts.Activation;
 using UntamedMediaPlayer.Contracts.Services;
-using UntamedMediaPlayer.Core.Compatibility;
-using UntamedMediaPlayer.Core.Contracts.Compatibility;
 using UntamedMediaPlayer.Core.Contracts.Services;
 using UntamedMediaPlayer.Core.Helpers;
-using UntamedMediaPlayer.Core.Services;
-using UntamedMediaPlayer.Helpers;
 using UntamedMediaPlayer.Pages;
 using UntamedMediaPlayer.Services;
+using ZLogger;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace UntamedMediaPlayer;
@@ -47,10 +45,6 @@ public partial class App : Application
             .AddSingleton<IActivationService, ActivationService>()
             .AddSingleton<INavigationService, NavigationService>()
             .AddSingleton<ILocalizationService, LocalizationService>()
-            .AddSingleton<IPathService>(sp => new PathService(PathHelper.GetApplicationDataRoot()))
-            .AddTransient<IDeprecatedPathService>(sp => new DeprecatedPathService(
-                PathHelper.GetPackagedApplicationDataRoot()
-            ))
             // Pages
             .AddTransient<NavigationHost>();
         ServicesHelper.ConfigureCoreServices(services);
@@ -61,11 +55,11 @@ public partial class App : Application
     /// Invoked when the application is launched.
     /// </summary>
     /// <param name="args">Details about the launch request and process.</param>
-    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
         MainWindow = new MainWindow();
-        Ioc.Default.GetRequiredService<IActivationService>().ActivateAsync(args);
+        await Ioc.Default.GetRequiredService<IActivationService>().ActivateAsync(args);
     }
 
     /// <summary>
@@ -75,6 +69,8 @@ public partial class App : Application
     /// <param name="e">The event data.</param>
     private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-        // TODO: Log and handle exceptions as appropriate.
+        ILogger<App> logger = Ioc.Default.GetRequiredService<ILogger<App>>();
+        logger.ZLogError(e.Exception, $"[App] An unhandled exception occurred");
+        // e.Handled = true; // Uncomment this line to prevent the application from crashing on unhandled exceptions
     }
 }

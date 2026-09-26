@@ -1,5 +1,5 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace UntamedMediaPlayer.Core.Models.Settings;
 
@@ -12,5 +12,6 @@ public sealed partial class LibrarySettings : ObservableObject
     public partial ObservableCollection<string> VideoFolders { get; set; } = [];
 
     [ObservableProperty]
-    public partial string MusicDownloadFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+    public partial string MusicDownloadFolder { get; set; } =
+        Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
 }

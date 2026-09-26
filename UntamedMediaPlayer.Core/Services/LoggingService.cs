@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using UntamedMediaPlayer.Core.Contracts.Services;
 using UntamedMediaPlayer.Core.Helpers;
 using UntamedMediaPlayer.Core.Models.Settings;
@@ -17,7 +17,7 @@ public sealed class LoggingService : ILoggingService, IDisposable
     private const LogLevel DefaultMinimumLevel = LogLevel.Information;
     private const int DefaultRetentionDays = 7;
 
-    private readonly string _logFolderPath;
+    private readonly string _logFolderPath = PathHelper.LogFolderPath;
     private DeveloperSettings? _developerSettings;
     private LogLevel _minimumLevel = DefaultMinimumLevel;
     private int _retentionDays = DefaultRetentionDays;
@@ -26,10 +26,8 @@ public sealed class LoggingService : ILoggingService, IDisposable
     /// <inheritdoc />
     public ILoggerFactory LoggerFactory { get; }
 
-    public LoggingService(IPathService pathService)
+    public LoggingService()
     {
-        _logFolderPath = pathService.LogFolderPath;
-
         // SettingsService also needs ILogger<SettingsService>. The logger must therefore
         // be usable before settings.json has been loaded; defaults are applied first and
         // SettingsService binds the persisted DeveloperSettings afterwards.
@@ -64,8 +62,8 @@ public sealed class LoggingService : ILoggingService, IDisposable
         if (
             e.PropertyName
             is null
-            or nameof(DeveloperSettings.LogMinimalLevel)
-            or nameof(DeveloperSettings.LogRetentionDays)
+                or nameof(DeveloperSettings.LogMinimalLevel)
+                or nameof(DeveloperSettings.LogRetentionDays)
         )
         {
             UpdateSettings((sender as DeveloperSettings)!);
@@ -87,8 +85,7 @@ public sealed class LoggingService : ILoggingService, IDisposable
 
     private bool IsEnabled(LogLevel level)
     {
-        return
-            level != LogLevel.None && _minimumLevel != LogLevel.None && level >= _minimumLevel;
+        return level != LogLevel.None && _minimumLevel != LogLevel.None && level >= _minimumLevel;
     }
 
     private string GetLogFilePath(DateTimeOffset timestamp, int sequence)
