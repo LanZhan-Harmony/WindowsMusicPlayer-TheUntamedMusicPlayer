@@ -15,9 +15,9 @@ public static class ServicesHelper
             .AddSingleton<ILoggingService>(sp => sp.GetRequiredService<LoggingService>())
             .AddSingleton<ILoggerFactory>(sp => sp.GetRequiredService<LoggingService>().LoggerFactory)
             .AddSingleton(typeof(ILogger<>), typeof(Logger<>))
+            .AddSingleton<ISettingsService, SettingsService>()
             .AddTransient<SettingsViewModel>()
             .AddTransient<PlayQueueViewModel>()
-            .AddTransient<PlaylistViewModel>()
-            .AddSingleton<ISettingsService, SettingsService>();
+            .AddTransient<PlaylistViewModel>();
     }
 }

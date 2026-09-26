@@ -1,4 +1,4 @@
-﻿namespace UntamedMediaPlayer.Core.Contracts.Compatibility;
+namespace UntamedMediaPlayer.Core.Contracts.Compatibility;
 
 public interface IDeprecatedPathService
 {

@@ -40,11 +40,11 @@
               DisplayName="ms-resource:AppDisplayName"
               Description="ms-resource:AppDescription"
               BackgroundColor="transparent"
-              Square150x150Logo="Assets\AppIcon\MedTile.png"
+              Square150x150Logo="Assets\AppIcon\Logo.png"
               Square44x44Logo="Assets\AppIcon\AppList.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\AppIcon\WideTile.png"
-                         Square71x71Logo="Assets\AppIcon\SmallTile.png"
-                         Square310x310Logo="Assets\AppIcon\LargeTile.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\AppIcon\WideLogo.png"
+                         Square71x71Logo="Assets\AppIcon\SmallLogo.png"
+                         Square310x310Logo="Assets\AppIcon\LargeLogo.png">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo"/>
             <uap:ShowOn Tile="wide310x150Logo"/>
@@ -52,7 +52,6 @@
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\AppIcon\SplashScreen.png"/>
-        <uap:LockScreen BadgeLogo="Assets\AppIcon\BadgeLogo.png" Notification="badgeAndTileText"/>
         <uap:InitialRotationPreference>
           <uap:Rotation Preference="landscape"/>
           <uap:Rotation Preference="portrait"/>

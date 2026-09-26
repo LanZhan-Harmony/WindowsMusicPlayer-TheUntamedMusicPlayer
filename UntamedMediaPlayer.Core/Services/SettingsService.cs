@@ -10,9 +10,8 @@ namespace UntamedMediaPlayer.Core.Services;
 
 public sealed class SettingsService : ISettingsService
 {
-    private readonly IPathService _pathService;
     private readonly ILogger<SettingsService> _logger;
-    private readonly string _folderPath;
+    private readonly string _folderPath = PathHelper.SettingsFolderPath;
     private readonly string _filePath;
     private readonly ILoggingService? _loggingService;
 
@@ -35,16 +34,10 @@ public sealed class SettingsService : ISettingsService
         }
     }
 
-    public SettingsService(
-        IPathService pathService,
-        ILogger<SettingsService> logger,
-        ILoggingService? loggingService = null
-    )
+    public SettingsService(ILogger<SettingsService> logger, ILoggingService? loggingService = null)
     {
-        _pathService = pathService;
         _logger = logger;
         _loggingService = loggingService;
-        _folderPath = _pathService.SettingsFolderPath;
         _filePath = Path.Combine(_folderPath, "settings.json");
         _writeSettingsDebouncer = new Debouncer(
             TimeSpan.FromSeconds(1000),
@@ -73,7 +66,7 @@ public sealed class SettingsService : ISettingsService
         {
             _logger.ZLogError(
                 ex,
-                $"[SettingsService] JSON parsing failed, file backed up and default values used."
+                $"[SettingsService] JSON parsing failed, file backed up and default values used"
             );
             BackupCorruptedFile();
             return new AppSettings();
@@ -82,7 +75,7 @@ public sealed class SettingsService : ISettingsService
         {
             _logger.ZLogError(
                 ex,
-                $"[SettingsService] Failed to load settings, using default values."
+                $"[SettingsService] Failed to load settings, using default values"
             );
             return new AppSettings();
         }
@@ -114,7 +107,7 @@ public sealed class SettingsService : ISettingsService
         }
         catch (Exception ex)
         {
-            _logger.ZLogWarning(ex, $"[SettingsService] Failed to backup corrupted settings file.");
+            _logger.ZLogWarning(ex, $"[SettingsService] Failed to backup corrupted settings file");
         }
     }
 
@@ -170,7 +163,8 @@ public sealed class SettingsService : ISettingsService
         {
             string json = await File.ReadAllTextAsync(filePath);
             AppSettings? imported = JsonAotSerializer.Deserialize<AppSettings>(json);
-            Settings = imported ?? throw new InvalidOperationException("Imported settings are null.");
+            Settings =
+                imported ?? throw new InvalidOperationException("Imported settings are null.");
             _ = SaveToDisk();
         }
         catch (Exception ex)

@@ -1,30 +1,30 @@
-using MemoryPack;
-using MemoryPack.Formatters;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using MemoryPack;
+using MemoryPack.Formatters;
 
 namespace UntamedMediaPlayer.Core.Helpers;
 
 /// <summary>
-/// NativeAOT 安全的 MemoryPack 序列化包装器
+/// NativeAOT-safe MemoryPack serialization wrapper.
 /// </summary>
 /// <remarks>
 /// <para>
-/// 问题根因: MemoryPack 的 IMemoryPackFormatter&lt;T&gt;.Serialize&lt;TBufferWriter&gt;() 是一个 Generic Virtual Method (GVM)。
-/// 在 NativeAOT 中，当 TBufferWriter 是引用类型（如内部的 ReusableLinkedArrayBufferWriter）时，
-/// 所有引用类型泛型实例共享同一份机器码（shared generics）。
-/// 当多个复杂类型（特别是包含 [MemoryPackUnion] 的类型如 IBriefSongInfoBase）的 formatter 链交叉执行时，
-/// 共享的 GVM 分派表会发生冲突，导致空函数指针调用 (0xc0000005)。
+/// Root cause: MemoryPack's IMemoryPackFormatter&lt;T&gt;.Serialize&lt;TBufferWriter&gt;() is a Generic Virtual Method (GVM).
+/// In NativeAOT, when TBufferWriter is a reference type (such as the internal ReusableLinkedArrayBufferWriter),
+/// all reference-type generic instances share the same machine code (shared generics).
+/// When formatter chains for multiple complex types, especially types containing [MemoryPackUnion] such as IBriefSongInfoBase, overlap,
+/// the shared GVM dispatch table can conflict, resulting in a null function pointer call (0xc0000005).
 /// </para>
 /// <para>
-/// 修复原理: 使用值类型 (struct) 的 AotSafeBufferWriter 作为 TBufferWriter，
-/// 迫使 NativeAOT 为整个 formatter 链生成完全独立的、非共享的专用机器码。
-/// 值类型泛型参数在 NativeAOT 中永远不会使用 shared generics，
-/// 因此每个 formatter 的 Serialize&lt;AotSafeBufferWriter&gt; 都有自己独立的 GVM 表项，从根本上避免了分派表冲突。
+/// Fix: use the value type (struct) AotSafeBufferWriter as TBufferWriter,
+/// forcing NativeAOT to generate fully independent, non-shared specialized machine code for the entire formatter chain.
+/// Value-type generic parameters never use shared generics in NativeAOT,
+/// so each formatter's Serialize&lt;AotSafeBufferWriter&gt; has its own GVM entry, fundamentally avoiding dispatch table conflicts.
 /// </para>
 /// <para>
-/// 当前默认初始容量设为 8KB，用于覆盖常见的 1KB~5KB 序列化结果，并尽量减少扩容和数组拷贝次数。
+/// The default initial capacity is 8 KB to cover common 1 KB to 5 KB serialized results while minimizing buffer growth and array copies.
 /// </para>
 /// </remarks>
 internal static class MemoryPackAotSerializer
@@ -35,8 +35,8 @@ internal static class MemoryPackAotSerializer
     }
 
     /// <summary>
-    /// NativeAOT 安全的序列化
-    /// 使用 struct BufferWriter 避免 GVM 分派崩溃
+    /// NativeAOT-safe serialization.
+    /// Uses a struct buffer writer to avoid GVM dispatch crashes.
     /// </summary>
     internal static byte[] Serialize<T>(in T? value)
     {
@@ -59,11 +59,11 @@ internal static class MemoryPackAotSerializer
 
     private static void RegisterFormatters()
     {
-        // 为 [MemoryPackable] 类型显式注册 MemoryPackableFormatter 以支持 NativeAOT
-        // 这样可以避开 MemoryPack 内部探测时使用的反射（容易因 NativeAOT 裁剪而失败）
-        // 示例：Register<BriefLocalSongInfo>();
+        // Explicitly register MemoryPackableFormatter for [MemoryPackable] types to support NativeAOT.
+        // This avoids reflection during MemoryPack's internal discovery, which can fail after NativeAOT trimming.
+        // Example: Register<BriefLocalSongInfo>();
 
-        // 显式注册集合类型格式化器，以解决 NativeAOT 中的反射和修剪问题
+        // Explicitly register collection formatters to address reflection and trimming issues in NativeAOT.
         MemoryPackFormatterProvider.Register(new ListFormatter<string>());
         MemoryPackFormatterProvider.Register(new DictionaryFormatter<string, string>());
         MemoryPackFormatterProvider.Register(new HashSetFormatter<string>());
@@ -79,22 +79,18 @@ internal static class MemoryPackAotSerializer
     >()
         where T : class, IMemoryPackable<T>
     {
-        // 运行静态构造函数以激活内部注册逻辑
+        // Run the static constructor to activate the internal registration logic.
         RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
-        // 同时提供显式格式化器以防万一
+        // Also provide an explicit formatter as a fallback.
         MemoryPackFormatterProvider.Register(new MemoryPackableFormatter<T>());
     }
 }
 
 /// <summary>
-/// NativeAOT 安全的缓冲写入器
-/// 使用值类型（struct）迫使 NativeAOT 为 IMemoryPackFormatter
-/// <T>
-/// .Serialize
-/// <TBufferWriter>
-/// ()
-/// 这一 GVM（Generic Virtual Method）生成专门的机器码，
-/// 避免引用类型共享泛型（shared generics）导致的 GVM 分派表冲突/崩溃。
+/// NativeAOT-safe buffer writer.
+/// Uses a value type (struct) to force NativeAOT to generate specialized machine code for
+/// IMemoryPackFormatter&lt;T&gt;.Serialize&lt;TBufferWriter&gt;(),
+/// avoiding GVM dispatch table conflicts and crashes caused by shared generics for reference types.
 /// </summary>
 internal struct AotSafeBufferWriter(int initialCapacity) : IBufferWriter<byte>
 {
