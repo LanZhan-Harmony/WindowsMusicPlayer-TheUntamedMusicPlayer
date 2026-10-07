@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+                    xmlns:ctrl="using:UntamedMediaPlayer.Controls">
+    <Style TargetType="ctrl:MediaItemVisualization">
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ctrl:MediaItemVisualization">
+                    <Grid>
+                        <Grid.Resources>
+                            <Style x:Key="ThumbnailCoverArtImageStyle"
+                                   BasedOn="{StaticResource DefaultCoverArtImageStyle}"
+                                   TargetType="ctrl:CoverArtImage">
+                                <Setter Property="Height" Value="{StaticResource CoverArtDefaultSize}"/>
+                                <Setter Property="HorizontalAlignment" Value="Left"/>
+                                <Setter Property="ImageContext" Value="NowPlaying"/>
+                                <Setter Property="Margin" Value="{StaticResource ContentBottomLeftSpacing}"/>
+                                <Setter Property="NormalizedCenterPoint" Value="0.5"/>
+                                <Setter Property="Shadow" Value="{StaticResource NowPlayingShadow}"/>
+                                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="Width" Value="{StaticResource CoverArtDefaultSize}"/>
+                            </Style>
+                            <Style x:Key="ForegroundImageStyle"
+                                   BasedOn="{StaticResource BackgroundImageStyle}"
+                                   TargetType="Image">
+                                <Setter Property="Stretch" Value="Uniform"/>
+                            </Style>
+                            <Style x:Key="CompactThumbnailCoverArtImageStyle"
+                                   BasedOn="{StaticResource ThumbnailCoverArtImageStyle}"
+                                   TargetType="ctrl:CoverArtImage">
+                                <Setter Property="Height" Value="{StaticResource CoverArtCompactSize}"/>
+                                <Setter Property="Margin" Value="{StaticResource ContentMediumSmallBottomLeftSpacing}"/>
+                                <Setter Property="Width" Value="{StaticResource CoverArtCompactSize}"/>
+                            </Style>
+                            <Style x:Key="BackgroundImageStyle" TargetType="Image">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="Stretch" Value="UniformToFill"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </Style>
+                        </Grid.Resources>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="LayoutGroup">
+                                <VisualState x:Name="DefaultLayout"/>
+                                <VisualState x:Name="FullScreenLayout">
+                                    <VisualState.Setters>
+                                        <Setter Target="thumbnailContainer.Margin" Value="{StaticResource MTCFullScreenOffsetForTasksbar}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CompactLayout">
+                                    <VisualState.Setters>
+                                        <Setter Target="thumbnail1.Style" Value="{StaticResource CompactThumbnailCoverArtImageStyle}"/>
+                                        <Setter Target="thumbnail2.Style" Value="{StaticResource CompactThumbnailCoverArtImageStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="BackgroundOnlyLayout">
+                                    <VisualState.Setters>
+                                        <Setter Target="foregroundContainer.Opacity" Value="0"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ItemDisplayStates">
+                                <VisualState x:Name="NothingVisible"/>
+                                <VisualState x:Name="Item1Visible">
+                                    <VisualState.Setters>
+                                        <Setter Target="artistBackground1.Visibility" Value="Visible"/>
+                                        <Setter Target="backgroundOverlay.Visibility" Value="Visible"/>
+                                        <Setter Target="artistForeground1.Visibility" Value="Visible"/>
+                                        <Setter Target="thumbnail1.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Item2Visible">
+                                    <VisualState.Setters>
+                                        <Setter Target="artistBackground2.Visibility" Value="Visible"/>
+                                        <Setter Target="backgroundOverlay.Visibility" Value="Visible"/>
+                                        <Setter Target="artistForeground2.Visibility" Value="Visible"/>
+                                        <Setter Target="thumbnail2.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Item1CoverVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="coverBackground1.Visibility" Value="Visible"/>
+                                        <Setter Target="backgroundOverlay.Visibility" Value="Visible"/>
+                                        <Setter Target="thumbnail1.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Item2CoverVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="coverBackground2.Visibility" Value="Visible"/>
+                                        <Setter Target="backgroundOverlay.Visibility" Value="Visible"/>
+                                        <Setter Target="thumbnail2.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Item1ThumbnailVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="thumbnail1.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Item2ThumbnailVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="thumbnail2.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="Item2ThumbnailVisible" To="Item1ThumbnailVisible"/>
+                                    <VisualTransition From="Item1ThumbnailVisible" To="Item2ThumbnailVisible"/>
+                                    <VisualTransition From="Item2ThumbnailVisible" To="NothingVisible"/>
+                                    <VisualTransition From="Item1ThumbnailVisible" To="NothingVisible"/>
+                                    <VisualTransition From="*" To="Item1ThumbnailVisible">
+                                        <VisualTransition.Storyboard>
+                                            <Storyboard Duration="{StaticResource AnimationDuration}">
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="thumbnail1" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backgroundOverlay" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualTransition.Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="*" To="Item2ThumbnailVisible">
+                                        <VisualTransition.Storyboard>
+                                            <Storyboard Duration="{StaticResource AnimationDuration}">
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="thumbnail2" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backgroundOverlay" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualTransition.Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="*" To="NothingVisible">
+                                        <VisualTransition.Storyboard>
+                                            <Storyboard Duration="{StaticResource AnimationDuration}">
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backgroundOverlay" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualTransition.Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Image x:Name="coverBackground1" Style="{StaticResource BackgroundImageStyle}">
+                            <animations:Implicit.ShowAnimations>
+                                <animations:OpacityAnimation From="0"
+                                                             To="1"
+                                                             Duration="{StaticResource AnimationDuration}"/>
+                            </animations:Implicit.ShowAnimations>
+                            <animations:Implicit.HideAnimations>
+                                <animations:OpacityAnimation From="1"
+                                                             To="0"
+                                                             Duration="{StaticResource AnimationDuration}"/>
+                            </animations:Implicit.HideAnimations>
+                        </Image>
+                        <Image x:Name="coverBackground2" Style="{StaticResource BackgroundImageStyle}">
+                            <animations:Implicit.ShowAnimations>
+                                <animations:OpacityAnimation From="0"
+                                                             To="1"
+                                                             Duration="{StaticResource AnimationDuration}"/>
+                            </animations:Implicit.ShowAnimations>
+                            <animations:Implicit.HideAnimations>
+                                <animations:OpacityAnimation From="1"
+                                                             To="0"
+                                                             Duration="{StaticResource AnimationDuration}"/>
+                            </animations:Implicit.HideAnimations>
+                        </Image>
+                        <Image x:Name="artistBackground1" Style="{StaticResource BackgroundImageStyle}">
+                            <animations:Implicit.ShowAnimations>
+                                <animations:OpacityAnimation From="0"
+                                                             To="1"
+                                                             Duration="{StaticResource AnimationDuration}"/>
+                            </animations:Implicit.ShowAnimations>
+                            <animations:Implicit.HideAnimations>
+                                <animations:OpacityAnimation From="1"
+                                                             To="0"
+                                                             Duration="{StaticResource AnimationDuration}"/>
+                            </animations:Implicit.HideAnimations>
+                        </Image>
+                        <Image x:Name="artistBackground2" Style="{StaticResource BackgroundImageStyle}">
+                            <animations:Implicit.ShowAnimations>
+                                <animations:OpacityAnimation From="0"
+                                                             To="1"
+                                                             Duration="{StaticResource AnimationDuration}"/>
+                            </animations:Implicit.ShowAnimations>
+                            <animations:Implicit.HideAnimations>
+                                <animations:OpacityAnimation From="1"
+                                                             To="0"
+                                                             Duration="{StaticResource AnimationDuration}"/>
+                            </animations:Implicit.HideAnimations>
+                        </Image>
+                        <Grid x:Name="foregroundContainer">
+                            <Border x:Name="backgroundOverlay"
+                                    Background="{ThemeResource AlwaysOnAcrylicElementBrush}"
+                                    Visibility="Collapsed"/>
+                            <Image x:Name="artistForeground1" Style="{StaticResource ForegroundImageStyle}">
+                                <animations:Implicit.ShowAnimations>
+                                    <animations:OpacityAnimation From="0"
+                                                                 To="1"
+                                                                 Duration="{StaticResource AnimationDuration}"/>
+                                </animations:Implicit.ShowAnimations>
+                                <animations:Implicit.HideAnimations>
+                                    <animations:OpacityAnimation From="1"
+                                                                 To="0"
+                                                                 Duration="{StaticResource AnimationDuration}"/>
+                                </animations:Implicit.HideAnimations>
+                            </Image>
+                            <Image x:Name="artistForeground2" Style="{StaticResource ForegroundImageStyle}">
+                                <animations:Implicit.ShowAnimations>
+                                    <animations:OpacityAnimation From="0"
+                                                                 To="1"
+                                                                 Duration="{StaticResource AnimationDuration}"/>
+                                </animations:Implicit.ShowAnimations>
+                                <animations:Implicit.HideAnimations>
+                                    <animations:OpacityAnimation From="1"
+                                                                 To="0"
+                                                                 Duration="{StaticResource AnimationDuration}"/>
+                                </animations:Implicit.HideAnimations>
+                            </Image>
+                            <Grid x:Name="thumbnailContainer" Padding="{TemplateBinding MtcSafeZoneMargin}">
+                                <ctrl:CoverArtImage x:Name="thumbnail1" Style="{StaticResource ThumbnailCoverArtImageStyle}">
+                                    <animations:Implicit.ShowAnimations>
+                                        <animations:OpacityAnimation From="0"
+                                                                     To="1"
+                                                                     Duration="{StaticResource ShortAnimationDuration}"/>
+                                    </animations:Implicit.ShowAnimations>
+                                    <animations:Implicit.HideAnimations>
+                                        <animations:OpacityAnimation From="1"
+                                                                     To="0"
+                                                                     Duration="{StaticResource ShortAnimationDuration}"/>
+                                    </animations:Implicit.HideAnimations>
+                                </ctrl:CoverArtImage>
+                                <ctrl:CoverArtImage x:Name="thumbnail2" Style="{StaticResource ThumbnailCoverArtImageStyle}">
+                                    <animations:Implicit.ShowAnimations>
+                                        <animations:OpacityAnimation From="0"
+                                                                     To="1"
+                                                                     Duration="{StaticResource ShortAnimationDuration}"/>
+                                    </animations:Implicit.ShowAnimations>
+                                    <animations:Implicit.HideAnimations>
+                                        <animations:OpacityAnimation From="1"
+                                                                     To="0"
+                                                                     Duration="{StaticResource ShortAnimationDuration}"/>
+                                    </animations:Implicit.HideAnimations>
+                                </ctrl:CoverArtImage>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

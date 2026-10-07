@@ -1,12 +1,311 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="UntamedMediaPlayer.Controls.MediaProperties"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+             xmlns:local="using:UntamedMediaPlayer.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <DataTemplate x:Key="videoTemplate">
+            <UserControl>
+                <Grid x:Name="RootGrid" ColumnSpacing="{StaticResource MediaPropertiesColumnSpacing}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition x:Name="RightColumnDef" Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.Children>
+                        <StackPanel Grid.Row="0">
+                            <TextBlock x:Uid="MediaPropertiesControlTitle" Style="{StaticResource CompactHeader}"/>
+                            <TextBlock Style="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1">
+                            <TextBlock x:Uid="MediaPropertiesControlArtists" Style="{StaticResource CompactHeader}"/>
+                            <local:MetadataControl TextBlockStyle="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2">
+                            <TextBlock x:Uid="MediaPropertiesControlGenre" Style="{StaticResource CompactHeader}"/>
+                            <TextBlock Style="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="3">
+                            <TextBlock x:Uid="MediaPropertiesControlVideoResolution" Style="{StaticResource CompactHeader}"/>
+                            <TextBlock Style="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="4">
+                            <TextBlock x:Uid="MediaPropertiesControlVideoAudioChannels" Style="{StaticResource CompactHeader}"/>
+                            <TextBlock Style="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                        <StackPanel x:Name="SubtitleFields"
+                                    Grid.Row="0"
+                                    Grid.Column="1">
+                            <TextBlock x:Uid="MediaPropertiesControlVideoSubtitle" Style="{StaticResource CompactHeader}"/>
+                            <TextBlock Style="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                        <StackPanel x:Name="LengthFields"
+                                    Grid.Row="1"
+                                    Grid.Column="1">
+                            <TextBlock x:Uid="MediaPropertiesControlLength" Style="{StaticResource CompactHeader}"/>
+                            <TextBlock Style="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                        <StackPanel x:Name="YearFields"
+                                    Grid.Row="2"
+                                    Grid.Column="1">
+                            <TextBlock x:Uid="MediaPropertiesControlYear" Style="{StaticResource CompactHeader}"/>
+                            <TextBlock Style="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                        <StackPanel x:Name="FrameRateFields"
+                                    Grid.Row="3"
+                                    Grid.Column="1">
+                            <TextBlock x:Uid="MediaPropertiesControlVideoFrameRate" Style="{StaticResource CompactHeader}"/>
+                            <TextBlock Style="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                        <StackPanel x:Name="ItemTypeFields"
+                                    Grid.Row="4"
+                                    Grid.Column="1">
+                            <TextBlock x:Uid="MediaPropertiesControlItemType" Style="{StaticResource CompactHeader}"/>
+                            <TextBlock Style="{StaticResource SelectableContentText}"/>
+                        </StackPanel>
+                    </Grid.Children>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name="AdaptiveLayout">
+                            <VisualState x:Name="Default"/>
+                            <VisualState x:Name="Narrow">
+                                <VisualState.StateTriggers>
+                                    <helpers:ViewportStateTrigger State="Narrow"/>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="SubtitleFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="SubtitleFields.(Grid.Row)" Value="5"/>
+                                    <Setter Target="LengthFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="LengthFields.(Grid.Row)" Value="6"/>
+                                    <Setter Target="YearFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="YearFields.(Grid.Row)" Value="7"/>
+                                    <Setter Target="FrameRateFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="FrameRateFields.(Grid.Row)" Value="8"/>
+                                    <Setter Target="ItemTypeFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="ItemTypeFields.(Grid.Row)" Value="9"/>
+                                    <Setter Target="RightColumnDef.Width" Value="0"/>
+                                    <Setter Target="RootGrid.ColumnSpacing" Value="0"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                </Grid>
+            </UserControl>
+        </DataTemplate>
 
-<UserControl
-    x:Class="UntamedMediaPlayer.Controls.MediaProperties"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+        <DataTemplate x:Key="musicTemplate">
+            <UserControl>
+                <Grid x:Name="RootGrid" ColumnSpacing="{StaticResource MediaPropertiesColumnSpacing}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition x:Name="RightColumnDef" Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name="AdaptiveLayout">
+                            <VisualState x:Name="Default"/>
+                            <VisualState x:Name="Narrow">
+                                <VisualState.StateTriggers>
+                                    <helpers:ViewportStateTrigger State="Narrow"/>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="ArtistsFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="ArtistsFields.(Grid.Row)" Value="5"/>
+                                    <Setter Target="AlbumArtistFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="AlbumArtistFields.(Grid.Row)" Value="6"/>
+                                    <Setter Target="LengthFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="LengthFields.(Grid.Row)" Value="7"/>
+                                    <Setter Target="YearFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="YearFields.(Grid.Row)" Value="8"/>
+                                    <Setter Target="ItemTypeFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="ItemTypeFields.(Grid.Row)" Value="9"/>
+                                    <Setter Target="RightColumnDef.Width" Value="0"/>
+                                    <Setter Target="RootGrid.ColumnSpacing" Value="0"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                    <StackPanel Grid.Row="0">
+                        <TextBlock x:Uid="MediaPropertiesControlTitle" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1">
+                        <TextBlock x:Uid="MediaPropertiesControlMusicAlbum" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2">
+                        <TextBlock x:Uid="MediaPropertiesControlMusicTrack" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3">
+                        <TextBlock x:Uid="MediaPropertiesControlGenre" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4">
+                        <TextBlock x:Uid="MediaPropertiesControlMusicBitRate" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="ArtistsFields"
+                                Grid.Row="0"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlArtists" Style="{StaticResource CompactHeader}"/>
+                        <local:MetadataControl Margin="{StaticResource TextBottomLargeSpacing}" TextBlockStyle="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="AlbumArtistFields"
+                                Grid.Row="1"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlMusicAlbumArtist" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="LengthFields"
+                                Grid.Row="2"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlLength" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="YearFields"
+                                Grid.Row="3"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlYear" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="ItemTypeFields"
+                                Grid.Row="4"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlItemType" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                </Grid>
+            </UserControl>
+        </DataTemplate>
 
-    <Grid />
+        <local:MediaDisplayPropertiesTemplateSelector x:Key="displayPropertiesSelector"
+                                                      DefaultTemplate="{StaticResource defaultTemplate}"
+                                                      MusicTemplate="{StaticResource musicTemplate}"
+                                                      VideoTemplate="{StaticResource videoTemplate}"/>
+
+        <DataTemplate x:Key="defaultTemplate">
+            <UserControl>
+                <Grid x:Name="RootGrid" ColumnSpacing="{StaticResource MediaPropertiesColumnSpacing}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition x:Name="RightColumnDef" Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name="AdaptiveLayout">
+                            <VisualState x:Name="Default"/>
+                            <VisualState x:Name="Narrow">
+                                <VisualState.StateTriggers>
+                                    <helpers:ViewportStateTrigger State="Narrow"/>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="ArtistsFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="ArtistsFields.(Grid.Row)" Value="3"/>
+                                    <Setter Target="LengthFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="LengthFields.(Grid.Row)" Value="4"/>
+                                    <Setter Target="YearFields.(Grid.Column)" Value="0"/>
+                                    <Setter Target="YearFields.(Grid.Row)" Value="5"/>
+                                    <Setter Target="RightColumnDef.Width" Value="0"/>
+                                    <Setter Target="RootGrid.ColumnSpacing" Value="0"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock x:Uid="MediaPropertiesControlTitle" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1">
+                        <TextBlock x:Uid="MediaPropertiesControlGenre" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2">
+                        <TextBlock x:Uid="MediaPropertiesControlItemType" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="ArtistsFields"
+                                Grid.Row="0"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlArtists" Style="{StaticResource CompactHeader}"/>
+                        <local:MetadataControl TextBlockStyle="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="LengthFields"
+                                Grid.Row="1"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlLength" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="YearFields"
+                                Grid.Row="2"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlYear" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                </Grid>
+            </UserControl>
+        </DataTemplate>
+        <x:Double x:Key="ContentWidth">650</x:Double>
+    </UserControl.Resources>
+
+    <StackPanel x:Name="Root"
+                Width="{StaticResource ContentWidth}"
+                HorizontalAlignment="Stretch">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveLayout">
+                <VisualState x:Name="Default"/>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Root.Width" Value="NaN"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <ContentControl Margin="{StaticResource ScrollViewerWithHyperLinkInnerMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        ContentTemplateSelector="{StaticResource displayPropertiesSelector}"
+                        IsTabStop="False"/>
+        <TextBlock x:Uid="MediaPropertiesControlFileLocation"
+                   Margin="{StaticResource ScrollViewerWithHyperLinkInnerMargin}"
+                   Style="{StaticResource CompactHeader}"/>
+        <TextBlock Margin="{StaticResource ScrollViewerWithHyperLinkInnerMarginBottom}" Style="{StaticResource SelectableContentText}"/>
+        <HyperlinkButton x:Uid="DialogOpenFileLocationButton"/>
+    </StackPanel>
 </UserControl>

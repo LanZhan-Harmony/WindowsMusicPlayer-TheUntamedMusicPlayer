@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="UntamedMediaPlayer.Controls.VideoEnhancer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:UntamedMediaPlayer.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/SliderWithoutFillColorResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Style BasedOn="{StaticResource DefaultSliderStyle}" TargetType="local:ValueSlider">
+                <Setter Property="LargeChange" Value="10"/>
+                <Setter Property="SmallChange" Value="1"/>
+                <Setter Property="StepFrequency" Value="1"/>
+                <Setter Property="TickPlacement" Value="None"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <Grid Margin="{StaticResource ElementBottomMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Uid="VideoEnhancerTitle"
+                       Margin="{StaticResource ElementRightMargin}"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource SubTitleNoMargin}"/>
+            <ToggleSwitch x:Uid="VideoEnhancerEnableDisableToggleSwitch"
+                          Grid.Column="1"
+                          VerticalAlignment="Center"
+                          Style="{StaticResource RightAlignedCompactToggleSwitchStyle}"/>
+        </Grid>
+        <local:ValueSlider x:Uid="VideoEnhancerBrightness"/>
+        <local:ValueSlider x:Uid="VideoEnhancerContrast"/>
+        <local:ValueSlider x:Uid="VideoEnhancerSaturation"/>
+        <local:ValueSlider x:Uid="VideoEnhancerHue"/>
+        <Grid Margin="{StaticResource ElementTopMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Uid="VideoEnhancerReset" VerticalAlignment="Center"/>
+            <CheckBox x:Name="showAll"
+                      x:Uid="VideoEnhancerShowAll"
+                      Grid.Column="1"
+                      MinWidth="0"
+                      VerticalAlignment="Center"/>
+        </Grid>
+    </StackPanel>
+</UserControl>

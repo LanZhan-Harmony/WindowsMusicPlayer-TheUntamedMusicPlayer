@@ -123,6 +123,12 @@
   <data name="AppDisplayName" xml:space="preserve">
     <value>无羁 媒体播放器</value>
   </data>
+  <data name="DragItemsCountMessage_One" xml:space="preserve">
+    <value>{0} 个项目</value>
+  </data>
+  <data name="DragItemsCountMessage_Other" xml:space="preserve">
+    <value>{0} 个项目</value>
+  </data>
   <data name="ShellIntegrationEnqueue" xml:space="preserve">
     <value>添加到无羁媒体播放器播放队列</value>
   </data>

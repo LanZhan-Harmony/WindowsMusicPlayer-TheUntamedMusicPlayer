@@ -1,4 +1,81 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <StaticResource x:Key="HyperlinkForeground" ResourceKey="AccentTextFillColorPrimaryBrush"/>
+                    <StaticResource x:Key="HyperlinkForegroundPressed" ResourceKey="AccentTextFillColorTertiaryBrush"/>
+                    <StaticResource x:Key="HyperlinkForegroundPointerOver" ResourceKey="AccentTextFillColorSecondaryBrush"/>
+                    <StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="AccentTextFillColorPrimaryBrush"/>
+                    <StaticResource x:Key="HyperlinkButtonForegroundPressed" ResourceKey="AccentTextFillColorTertiaryBrush"/>
+                    <StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="AccentTextFillColorSecondaryBrush"/>
+                    <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+                    <SolidColorBrush x:Key="AccentTextFillColorSecondaryBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+                    <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+                    <SolidColorBrush x:Key="AccentTextFillColorDisabledBrush" Color="{StaticResource AccentTextFillColorDisabled}"/>
+                    <StaticResource x:Key="AccentGradientBrush" ResourceKey="AccentFillColorDefaultBrush"/>
+                    <StaticResource x:Key="AccentGradientBrushPressed" ResourceKey="AccentFillColorTertiaryBrush"/>
+                    <StaticResource x:Key="AccentGradientBrushHover" ResourceKey="AccentFillColorSecondaryBrush"/>
+                    <StaticResource x:Key="AccentGradientBrushDisabled" ResourceKey="TextFillColorDisabledBrush"/>
+                    <StaticResource x:Key="AccentGradientBackgroundPressedBrush" ResourceKey="ControlFillColorTertiaryBrush"/>
+                    <StaticResource x:Key="AccentGradientBackgroundHoverBrush" ResourceKey="ControlFillColorSecondaryBrush"/>
+                    <StaticResource x:Key="AccentGradientBackgroundDisabledBrush" ResourceKey="ControlFillColorDisabledBrush"/>
+                    <StaticResource x:Key="AccentGradientBackgroundBrush" ResourceKey="ControlFillColorDefaultBrush"/>
+                    <SolidColorBrush x:Key="AccentFillColorTertiaryBrush"
+                                     Opacity="0.8"
+                                     Color="{ThemeResource SystemAccentColorLight2}"/>
+                    <SolidColorBrush x:Key="AccentFillColorSecondaryBrush"
+                                     Opacity="0.9"
+                                     Color="{ThemeResource SystemAccentColorLight2}"/>
+                    <SolidColorBrush x:Key="AccentFillColorDisabledBrush" Color="{StaticResource AccentFillColorDisabled}"/>
+                    <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
 
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" />
+        <ResourceDictionary x:Key="Light">
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <StaticResource x:Key="HyperlinkForeground" ResourceKey="AccentTextFillColorPrimaryBrush"/>
+                    <StaticResource x:Key="HyperlinkForegroundPressed" ResourceKey="AccentTextFillColorTertiaryBrush"/>
+                    <StaticResource x:Key="HyperlinkForegroundPointerOver" ResourceKey="AccentTextFillColorSecondaryBrush"/>
+                    <StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="AccentTextFillColorPrimaryBrush"/>
+                    <StaticResource x:Key="HyperlinkButtonForegroundPressed" ResourceKey="AccentTextFillColorTertiaryBrush"/>
+                    <StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="AccentTextFillColorSecondaryBrush"/>
+                    <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+                    <SolidColorBrush x:Key="AccentTextFillColorSecondaryBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+                    <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+                    <SolidColorBrush x:Key="AccentTextFillColorDisabledBrush" Color="{StaticResource AccentTextFillColorDisabled}"/>
+                    <StaticResource x:Key="AccentGradientBrush" ResourceKey="AccentFillColorDefaultBrush"/>
+                    <StaticResource x:Key="AccentGradientBrushPressed" ResourceKey="AccentFillColorTertiaryBrush"/>
+                    <StaticResource x:Key="AccentGradientBrushHover" ResourceKey="AccentFillColorSecondaryBrush"/>
+                    <StaticResource x:Key="AccentGradientBrushDisabled" ResourceKey="ControlStrokeColorOnAccentDisabledBrush"/>
+                    <StaticResource x:Key="AccentGradientBackgroundPressedBrush" ResourceKey="ControlFillColorTertiaryBrush"/>
+                    <StaticResource x:Key="AccentGradientBackgroundHoverBrush" ResourceKey="ControlFillColorSecondaryBrush"/>
+                    <StaticResource x:Key="AccentGradientBackgroundDisabledBrush" ResourceKey="ControlFillColorDisabledBrush"/>
+                    <StaticResource x:Key="AccentGradientBackgroundBrush" ResourceKey="ControlFillColorDefaultBrush"/>
+                    <SolidColorBrush x:Key="AccentFillColorTertiaryBrush"
+                                     Opacity="0.8"
+                                     Color="{ThemeResource SystemAccentColorDark1}"/>
+                    <SolidColorBrush x:Key="AccentFillColorSecondaryBrush"
+                                     Opacity="0.9"
+                                     Color="{ThemeResource SystemAccentColorDark1}"/>
+                    <SolidColorBrush x:Key="AccentFillColorDisabledBrush" Color="{StaticResource AccentFillColorDisabled}"/>
+                    <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="HighContrast">
+            <SolidColorBrush x:Key="AccentGradientBrush" Color="{ThemeResource SystemAccentColor}"/>
+            <SolidColorBrush x:Key="AccentGradientBrushPressed" Color="{ThemeResource SystemAccentColor}"/>
+            <SolidColorBrush x:Key="AccentGradientBrushHover" Color="{ThemeResource SystemAccentColor}"/>
+            <StaticResource x:Key="AccentGradientBrushDisabled" ResourceKey="SystemControlDisabledBaseLowBrush"/>
+            <StaticResource x:Key="AccentGradientBackgroundPressedBrush" ResourceKey="AppBarButtonBackgroundPressed"/>
+            <StaticResource x:Key="AccentGradientBackgroundHoverBrush" ResourceKey="AppBarButtonBackgroundPointerOver"/>
+            <StaticResource x:Key="AccentGradientBackgroundDisabledBrush" ResourceKey="AppBarButtonBackgroundDisabled"/>
+            <StaticResource x:Key="AccentGradientBackgroundBrush" ResourceKey="AppBarButtonBackground"/>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

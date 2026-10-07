@@ -123,6 +123,12 @@
   <data name="AppDisplayName" xml:space="preserve">
     <value>Untamed Media Player</value>
   </data>
+  <data name="DragItemsCountMessage_One" xml:space="preserve">
+    <value>{0} item</value>
+  </data>
+  <data name="DragItemsCountMessage_Other" xml:space="preserve">
+    <value>{0} items</value>
+  </data>
   <data name="ShellIntegrationEnqueue" xml:space="preserve">
     <value>Add to Untamed Music Player play queue</value>
   </data>

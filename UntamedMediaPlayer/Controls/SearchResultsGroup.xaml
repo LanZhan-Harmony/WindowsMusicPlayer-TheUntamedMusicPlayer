@@ -1,12 +1,99 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<UserControl
-    x:Class="UntamedMediaPlayer.Controls.SearchResultsGroup"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-
-    <Grid />
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="UntamedMediaPlayer.Controls.SearchResultsGroup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+             xmlns:i="using:Microsoft.Xaml.Interactivity"
+             xmlns:local="using:UntamedMediaPlayer.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:ResponsiveListBreakpointCollection x:Key="VideoItemsBreakpoints">
+            <local:ResponsiveListBreakpoint Columns="2" MinContainerWidth="0"/>
+            <local:ResponsiveListBreakpoint Columns="3" MinContainerWidth="712"/>
+            <local:ResponsiveListBreakpoint Columns="4" MinContainerWidth="952"/>
+            <local:ResponsiveListBreakpoint Columns="5" MinContainerWidth="1192"/>
+            <local:ResponsiveListBreakpoint Columns="6" MinContainerWidth="1432"/>
+            <local:ResponsiveListBreakpoint Columns="7" MinContainerWidth="1672"/>
+            <local:ResponsiveListBreakpoint Columns="8" MinContainerWidth="1912"/>
+            <local:ResponsiveListBreakpoint Columns="9" MinContainerWidth="2152"/>
+        </local:ResponsiveListBreakpointCollection>
+        <local:ResponsiveListBreakpointCollection x:Key="MusicItemsBreakpoints">
+            <local:ResponsiveListBreakpoint Columns="2" MinContainerWidth="0"/>
+            <local:ResponsiveListBreakpoint Columns="3" MinContainerWidth="520"/>
+            <local:ResponsiveListBreakpoint Columns="4" MinContainerWidth="696"/>
+            <local:ResponsiveListBreakpoint Columns="5" MinContainerWidth="872"/>
+            <local:ResponsiveListBreakpoint Columns="6" MinContainerWidth="1048"/>
+            <local:ResponsiveListBreakpoint Columns="7" MinContainerWidth="1224"/>
+            <local:ResponsiveListBreakpoint Columns="8" MinContainerWidth="1400"/>
+            <local:ResponsiveListBreakpoint Columns="9" MinContainerWidth="1576"/>
+        </local:ResponsiveListBreakpointCollection>
+        <Style BasedOn="{StaticResource MediaPlayerGridViewItemStyle}" TargetType="GridViewItem">
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.Children>
+            <TextBlock x:Name="SubTitle"
+                       Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                       Style="{StaticResource SubTitle}"/>
+            <HyperlinkButton x:Name="SeeAllButton"
+                             x:Uid="SeeAllSearchResults"
+                             Grid.Column="1"
+                             Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"/>
+            <local:ResponsiveItemsRepeaterList x:Name="ResultsList"
+                                               Margin="{StaticResource ResponsiveItemsRepeaterListContentExtraLargeMargin}"
+                                               Breakpoints="{StaticResource MusicItemsBreakpoints}"
+                                               CanDragItems="True"
+                                               ColumnSpan="2"
+                                               DefaultColumnSpacing="8"
+                                               Row="1"
+                                               StretchContent="False">
+                <local:ResponsiveItemsRepeaterList.ItemsMenuFlyout>
+                    <MenuFlyout/>
+                </local:ResponsiveItemsRepeaterList.ItemsMenuFlyout>
+                <i:Interaction.Behaviors>
+                    <behaviors:ResponsiveItemsRepeaterListDragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
+                </i:Interaction.Behaviors>
+            </local:ResponsiveItemsRepeaterList>
+        </Grid.Children>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState/>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ResultsList.Breakpoints" Value="{StaticResource VideoItemsBreakpoints}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="AdaptiveLayout">
+                <VisualStateGroup.States>
+                    <VisualState x:Name="Default"/>
+                    <VisualState x:Name="Narrow">
+                        <VisualState.StateTriggers>
+                            <helpers:ViewportStateTrigger State="Narrow"/>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="SubTitle.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                            <Setter Target="SeeAllButton.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                            <Setter Target="ResultsList.Margin" Value="{StaticResource ResponsiveItemsRepeaterListContentMargin}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup.States>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
 </UserControl>
