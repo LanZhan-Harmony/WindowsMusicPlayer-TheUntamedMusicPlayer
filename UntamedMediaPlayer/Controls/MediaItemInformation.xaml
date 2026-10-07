@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="UntamedMediaPlayer.Controls.MediaItemInformation"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:UntamedMediaPlayer.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <Grid HorizontalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="DisplayModeGroup">
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="metadataPanel.Margin" Value="{StaticResource ElementSideMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="videoPreview.MediaPlayer"/>
+                        <Setter Target="videoPreviewContainer.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="mediaItemImage.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="mediaItemImage.ImageType" Value="Video"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="mediaItemImage.ImageType" Value="AudioDisc"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Border x:Name="videoPreviewContainer"
+                Margin="{StaticResource ElementRightMargin}"
+                VerticalAlignment="Center"
+                CornerRadius="{ThemeResource ControlCornerRadius}"
+                Visibility="Collapsed">
+
+            <MediaPlayerPresenter x:Name="videoPreview"
+                                  Width="{StaticResource VideoThumbnailWidth}"
+                                  Height="{StaticResource VideoThumbnailHeight}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+            <animations:Implicit.ShowAnimations>
+                <animations:OpacityAnimation From="0"
+                                             To="1"
+                                             Duration="{StaticResource ShortAnimationDuration}"/>
+            </animations:Implicit.ShowAnimations>
+            <animations:Implicit.HideAnimations>
+                <animations:OpacityAnimation From="1"
+                                             To="0"
+                                             Duration="{StaticResource ShortAnimationDuration}"/>
+            </animations:Implicit.HideAnimations>
+        </Border>
+        <local:CoverArtImage x:Name="mediaItemImage"
+                             Width="{StaticResource CoverArtSmallSize}"
+                             Height="{StaticResource CoverArtSmallSize}"
+                             Margin="{StaticResource ContentRightSpacing}"
+                             VerticalAlignment="Center"
+                             ImageContext="MTC"
+                             ImageType="Music"
+                             Visibility="Collapsed">
+            <animations:Implicit.ShowAnimations>
+                <animations:OpacityAnimation From="0"
+                                             To="1"
+                                             Duration="{StaticResource ShortAnimationDuration}"/>
+            </animations:Implicit.ShowAnimations>
+            <animations:Implicit.HideAnimations>
+                <animations:OpacityAnimation From="1"
+                                             To="0"
+                                             Duration="{StaticResource ShortAnimationDuration}"/>
+            </animations:Implicit.HideAnimations>
+        </local:CoverArtImage>
+        <StackPanel x:Name="metadataPanel"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center">
+            <animations:Implicit.Animations>
+                <animations:Vector3Animation Target="Offset" Duration="{StaticResource ShortAnimationDuration}"/>
+            </animations:Implicit.Animations>
+            <TextBlock x:Name="mediaItemTitle"
+                       AutomationProperties.HeadingLevel="None"
+                       Style="{StaticResource MediaItemTitleDefault}"/>
+            <TextBlock x:Name="mediaItemMetadata" Style="{StaticResource MediaItemMetadataDefault}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

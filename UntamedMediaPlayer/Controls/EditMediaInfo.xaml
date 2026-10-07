@@ -1,12 +1,236 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="UntamedMediaPlayer.Controls.EditMediaInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+             xmlns:i="using:Microsoft.Xaml.Interactivity"
+             xmlns:local="using:UntamedMediaPlayer.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <DataTemplate x:Key="musicTemplate">
+            <UserControl>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition x:Name="MiddleColumnDef" Width="{StaticResource ContentDialogSpacingColumnWidth}"/>
+                        <ColumnDefinition x:Name="RightColumnDef" Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name="AdaptiveLayout">
+                            <VisualState x:Name="Default"/>
+                            <VisualState x:Name="Narrow">
+                                <VisualState.StateTriggers>
+                                    <helpers:ViewportStateTrigger State="Narrow"/>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="ArtistField.(Grid.Column)" Value="0"/>
+                                    <Setter Target="ArtistField.(Grid.Row)" Value="4"/>
+                                    <Setter Target="AlbumArtistField.(Grid.Column)" Value="0"/>
+                                    <Setter Target="AlbumArtistField.(Grid.Row)" Value="5"/>
+                                    <Setter Target="GenreField.(Grid.Column)" Value="0"/>
+                                    <Setter Target="GenreField.(Grid.Row)" Value="6"/>
+                                    <Setter Target="RightColumnDef.Width" Value="0"/>
+                                    <Setter Target="MiddleColumnDef.Width" Value="0"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name="IsBasicMetadataMandatory">
+                            <VisualState x:Name="NoMandatoryFields"/>
+                            <VisualState x:Name="MandatoryTitleArtistAlbumAndAlbumArtist">
+                                <VisualState.StateTriggers>
+                                    <StateTrigger>
+                                        <StateTrigger.IsActive>
+                                            <Binding Path="IsBasicMetadataMandatory.Value"/>
+                                        </StateTrigger.IsActive>
+                                    </StateTrigger>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="TitleField.Style" Value="{StaticResource MandatoryContentTextBox}"/>
+                                    <Setter Target="AlbumField.Style" Value="{StaticResource MandatoryContentTextBox}"/>
+                                    <Setter Target="ArtistField.Visibility" Value="Collapsed"/>
+                                    <Setter Target="AlbumArtistField.Visibility" Value="Collapsed"/>
+                                    <Setter Target="ArtistFieldMandatory.Visibility" Value="Visible"/>
+                                    <Setter Target="AlbumArtistFieldMandatory.Visibility" Value="Visible"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                    <TextBox x:Name="TitleField"
+                             x:Uid="EditMediaInfoControlTitle"
+                             Grid.Row="0"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource ContentTextBox}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <TextBox x:Name="AlbumField"
+                             x:Uid="EditMediaInfoControlMusicAlbum"
+                             Grid.Row="1"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource ContentTextBox}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <local:NumberBoxEx x:Uid="EditMediaInfoControlMusicTrack"
+                                       Grid.Row="2"
+                                       MinWidth="{StaticResource ContentBoxWidth}"
+                                       Style="{StaticResource ContentNumberBox}"/>
+                    <local:NumberBoxEx x:Uid="EditMediaInfoControlYear"
+                                       Grid.Row="3"
+                                       MinWidth="{StaticResource ContentBoxWidth}"
+                                       Style="{StaticResource ContentNumberBox}"/>
+                    <TextBox x:Name="ArtistField"
+                             x:Uid="EditMediaInfoControlArtist"
+                             Grid.Row="0"
+                             Grid.Column="2"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource ContentTextBox}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <TextBox x:Name="ArtistFieldMandatory"
+                             x:Uid="EditMediaInfoControlArtist"
+                             Grid.Row="0"
+                             Grid.Column="2"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource MandatoryContentTextBox}"
+                             Visibility="Collapsed">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <TextBox x:Name="AlbumArtistField"
+                             x:Uid="EditMediaInfoControlMusicAlbumArtist"
+                             Grid.Row="1"
+                             Grid.Column="2"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource ContentTextBox}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <TextBox x:Name="AlbumArtistFieldMandatory"
+                             x:Uid="EditMediaInfoControlMusicAlbumArtist"
+                             Grid.Row="1"
+                             Grid.Column="2"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource MandatoryContentTextBox}"
+                             Visibility="Collapsed">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <TextBox x:Name="GenreField"
+                             x:Uid="EditMediaInfoControlGenre"
+                             Grid.Row="2"
+                             Grid.Column="2"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource ContentTextBox}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                </Grid>
+            </UserControl>
+        </DataTemplate>
+        <local:EditableMediaDisplayPropertiesTemplateSelector x:Key="displayPropertiesSelector"
+                                                              DefaultTemplate="{StaticResource defaultTemplate}"
+                                                              MusicTemplate="{StaticResource musicTemplate}"/>
+        <DataTemplate x:Key="defaultTemplate">
+            <UserControl>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition x:Name="MiddleColumnDef" Width="{StaticResource ContentDialogSpacingColumnWidth}"/>
+                        <ColumnDefinition x:Name="RightColumnDef" Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name="AdaptiveLayout">
+                            <VisualState x:Name="Default"/>
+                            <VisualState x:Name="Narrow">
+                                <VisualState.StateTriggers>
+                                    <helpers:ViewportStateTrigger State="Narrow"/>
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="ArtistField.(Grid.Column)" Value="0"/>
+                                    <Setter Target="ArtistField.(Grid.Row)" Value="2"/>
+                                    <Setter Target="YearField.(Grid.Column)" Value="0"/>
+                                    <Setter Target="YearField.(Grid.Row)" Value="3"/>
+                                    <Setter Target="RightColumnDef.Width" Value="0"/>
+                                    <Setter Target="MiddleColumnDef.Width" Value="0"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                    <TextBox x:Uid="EditMediaInfoControlTitle"
+                             Grid.Row="0"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource ContentTextBox}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <TextBox x:Uid="EditMediaInfoControlGenre"
+                             Grid.Row="1"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource ContentTextBox}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <TextBox x:Name="ArtistField"
+                             x:Uid="EditMediaInfoControlArtist"
+                             Grid.Row="0"
+                             Grid.Column="2"
+                             MinWidth="{StaticResource ContentBoxWidth}"
+                             Style="{StaticResource ContentTextBox}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:SelectTextOnFocusBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <local:NumberBoxEx x:Name="YearField"
+                                       x:Uid="EditMediaInfoControlYear"
+                                       Grid.Row="1"
+                                       Grid.Column="2"
+                                       MinWidth="{StaticResource ContentBoxWidth}"
+                                       Style="{StaticResource ContentNumberBox}"/>
+                </Grid>
+            </UserControl>
+        </DataTemplate>
+        <x:Double x:Key="ContentBoxWidth">280</x:Double>
+    </UserControl.Resources>
 
-<UserControl
-    x:Class="UntamedMediaPlayer.Controls.EditMediaInfo"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-
-    <Grid />
+    <StackPanel HorizontalAlignment="Stretch">
+        <ContentControl Margin="{StaticResource ScrollViewerWithHyperLinkInnerMarginBottom}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        ContentTemplateSelector="{StaticResource displayPropertiesSelector}"
+                        IsTabStop="False"/>
+        <TextBlock x:Uid="MediaPropertiesControlFileLocation"
+                   Margin="{StaticResource ScrollViewerWithHyperLinkInnerMarginSmallBottom}"
+                   Style="{StaticResource CompactHeader}"/>
+        <TextBlock Margin="{StaticResource ScrollViewerWithHyperLinkInnerMarginBottom}" Style="{StaticResource SelectableContentText}"/>
+        <HyperlinkButton x:Uid="DialogOpenFileLocationButton"/>
+    </StackPanel>
 </UserControl>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="UntamedMediaPlayer.Controls.ResponsiveItemsRepeaterList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:UntamedMediaPlayer.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:ItemContentPresenterDataCollection x:Key="PresenterCollection" x:Name="PresenterCollection"/>
+        <local:MaxCountCollectionProxy x:Key="MaxCountCollection" x:Name="MaxCountCollection"/>
+        <local:NonVirtualizingAdaptiveGridLayout x:Key="Layout" x:Name="Layout"/>
+        <DataTemplate x:Key="ItemTemplate">
+            <local:ResponsiveListCardItemPresenter DisplayMode="CardItemPresenterWithWideVideoImage">
+                <local:ResponsiveListCardItemPresenter.ViewModel>
+                    <Binding/>
+                </local:ResponsiveListCardItemPresenter.ViewModel>
+            </local:ResponsiveListCardItemPresenter>
+        </DataTemplate>
+        <Style BasedOn="{StaticResource DefaultCardItemPresenterStyle}" TargetType="local:ResponsiveListCardItemPresenter"/>
+    </UserControl.Resources>
+
+    <ItemsRepeater x:Name="Repeater"
+                   ItemTemplate="{StaticResource ItemTemplate}"
+                   ItemsSource="{StaticResource PresenterCollection}"
+                   Layout="{StaticResource Layout}"/>
+</UserControl>

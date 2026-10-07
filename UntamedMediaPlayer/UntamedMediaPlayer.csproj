@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\**\*"/>
+    <None Remove="Assets\**\*" />
     <Content Update="Assets\Cursors\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -30,18 +30,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Manifest Include="$(ApplicationManifest)"/>
+    <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls"/>
-    <PackageReference Include="CommunityToolkit.WinUI.Converters"/>
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools"/>
+    <PackageReference Include="CommunityToolkit.WinUI.Behaviors" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" />
+    <PackageReference Include="CommunityToolkit.WinUI.Converters" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
     <PackageReference Include="Microsoft.WindowsAppSDK">
       <!--<ExcludeAssets>all</ExcludeAssets>-->
     </PackageReference>
-    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI"/>
-    <PackageReference Include="Microsoft.WindowsAppSDK.Runtime"/>
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" />
     <PackageReference Include="Microsoft.WindowsAppSDK.AI">
       <ExcludeAssets>all</ExcludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -62,9 +63,8 @@
       <ExcludeAssets>all</ExcludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed"/>
-    <PackageReference Include="ReswPlus"/>
-    <PackageReference Include="WinUIEx"/>
+    <PackageReference Include="ReswPlus" />
+    <PackageReference Include="WinUIEx" />
   </ItemGroup>
 
   <!--
@@ -73,12 +73,12 @@
         package has not yet been restored.
       -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix"/>
+    <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UntamedMediaPlayer.Core\UntamedMediaPlayer.Core.csproj"/>
+    <ProjectReference Include="..\UntamedMediaPlayer.Core\UntamedMediaPlayer.Core.csproj" />
   </ItemGroup>
-
+  
   <!--
         Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
         Explorer "Package and Publish" context menu entry to be enabled for this project even if

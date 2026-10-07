@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ctrl="using:UntamedMediaPlayer.Controls">
+    <Style TargetType="ctrl:CustomMediaPlayerElement">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ctrl:CustomMediaPlayerElement">
+                    <Page RequestedTheme="{TemplateBinding RequestedTheme}">
+                        <Grid x:Name="LayoutRoot">
+                            <Border x:Name="MediaPlayerBackground"/>
+                            <Image x:Name="PosterImage"
+                                   Source="{TemplateBinding PosterSource}"
+                                   Stretch="{TemplateBinding Stretch}"
+                                   Visibility="Collapsed"/>
+                            <ContentPresenter
+                                              Content="{TemplateBinding MediaVisualization}"
+                                              Visibility="{Binding MediaVisualization.Visibility, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=Collapsed}"/>
+                            <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
+                                                  FlowDirection="LeftToRight"
+                                                  IsFullWindow="{TemplateBinding IsFullWindow}"
+                                                  MediaPlayer="{TemplateBinding MediaPlayer}"
+                                                  Stretch="{TemplateBinding Stretch}"/>
+                            <Grid x:Name="TimedTextSourcePresenter"
+                                  FlowDirection="LeftToRight"
+                                  Visibility="{Binding AreSubtitlesVisible, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            <ContentPresenter x:Name="TransportControlsPresenter" Visibility="{TemplateBinding AreTransportControlsEnabled}"/>
+                        </Grid>
+                    </Page>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

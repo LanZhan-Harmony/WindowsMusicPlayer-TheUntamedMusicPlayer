@@ -1,4 +1,1417 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" />
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+                    xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+                    xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+                    xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+                    xmlns:i="using:Microsoft.Xaml.Interactivity"
+                    xmlns:presenters="using:UntamedMediaPlayer.Controls.CustomItemPresenters"
+                    xmlns:tkConverters="using:CommunityToolkit.WinUI.Converters">
+    <tkConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+    <DataTemplate x:Key="VideoListItemTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <FontIcon VerticalAlignment="Center" Glyph="{StaticResource NowPlayingVideoGlyph}"/>
+            <TextBlock Grid.Column="1"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource ListViewItemTextBlockStyle}"/>
+            <Button x:Uid="PlayButton"
+                    Grid.Column="2"
+                    Margin="1"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource TextButtonStyle}">
+                <FontIcon VerticalAlignment="Center" Glyph="{StaticResource PlayCommandGlyph}"/>
+            </Button>
+            <TextBlock Grid.Column="4"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource ListViewItemTextBlockStyle}"/>
+            <TextBlock Grid.Column="5"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource ListViewItemTextBlockStyle}"/>
+        </Grid>
+    </DataTemplate>
+
+    <x:String x:Key="TwoEmptyLines">&#10;&#10;</x:String>
+    <Thickness x:Key="TrackHyperlinkButtonMargin">5,0,-11,0</Thickness>
+
+    <Style x:Key="MediaListViewItemContainerStyle" TargetType="ListViewItem">
+        <Setter Property="Padding" Value="{StaticResource ContentSmallMargin}"/>
+    </Style>
+
+    <Style x:Key="MediaListItemsControlItemContainerStyle" TargetType="ContentPresenter">
+        <Setter Property="MinHeight" Value="40"/>
+        <Setter Property="Padding" Value="{StaticResource ContentSmallMargin}"/>
+    </Style>
+
+    <Style x:Key="MediaItemDataTemplateTitleStyle"
+           BasedOn="{StaticResource BodyTextBlockStyle}"
+           TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="MaxLines" Value="2"/>
+        <Setter Property="Padding" Value="{StaticResource ElementSideMargin}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <Style x:Key="MediaItemDataTemplateSubtitleStyle"
+           BasedOn="{StaticResource SubtleCaptionTextBlockStyle}"
+           TargetType="TextBlock">
+        <Setter Property="Padding" Value="{StaticResource ElementSideMargin}"/>
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+    </Style>
+
+    <DataTemplate x:Key="MediaGroupItemTemplate">
+        <TextBlock AutomationProperties.AccessibilityView="Raw"
+                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                   TextTrimming="CharacterEllipsis"
+                   TextWrapping="NoWrap"/>
+    </DataTemplate>
+
+    <Style x:Key="ListViewItemTextBlockStyle"
+           BasedOn="{StaticResource BodyTextBlockStyle}"
+           TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource ListViewItemTextBlockFontSize}"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <x:Double x:Key="ListViewItemTextBlockFontSize">12</x:Double>
+
+    <Style x:Key="DefaultSimpleCardItemPresenter" TargetType="presenters:SimpleCardItemPresenter">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="presenters:SimpleCardItemPresenter">
+                    <Grid x:Name="root"
+                          Margin="{StaticResource ElementSmallBottomDefaultRightMargin}"
+                          Background="#00FFFFFF"
+                          BorderBrush="#00FFFFFF"
+                          BorderThickness="{ThemeResource PageHeaderBorderThickness}"
+                          CornerRadius="{ThemeResource OverlayCornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="AdaptiveLayout">
+                                <VisualState x:Name="Default"/>
+                                <VisualState x:Name="Narrow">
+                                    <VisualState.StateTriggers>
+                                        <helpers:ViewportStateTrigger State="Narrow"/>
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="root.Margin" Value="{StaticResource ElementBottomMargin}"/>
+                                        <Setter Target="mainPanel.Width" Value="Auto"/>
+                                        <Setter Target="mainPanel.Orientation" Value="Horizontal"/>
+                                        <Setter Target="coverArtImage.Width" Value="{StaticResource CoverArtSmallSize}"/>
+                                        <Setter Target="coverArtImage.Height" Value="{StaticResource CoverArtSmallSize}"/>
+                                        <Setter Target="placeHolderPanel.VerticalAlignment" Value="Center"/>
+                                        <Setter Target="contentPanel.VerticalAlignment" Value="Center"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <StackPanel x:Name="mainPanel" Width="{StaticResource CoverArtListItemSize}">
+                            <ctrl:CoverArtImage x:Name="coverArtImage"
+                                                Width="{StaticResource CoverArtListItemSize}"
+                                                Height="{StaticResource CoverArtListItemSize}"
+                                                ImageContext="LibraryPage"/>
+                            <Grid>
+                                <StackPanel x:Name="placeHolderPanel" Opacity="0">
+                                    <TextBlock AutomationProperties.AccessibilityView="Raw"
+                                               Style="{StaticResource MediaItemDataTemplateTitleStyle}"
+                                               Text="{StaticResource TwoEmptyLines}"/>
+                                    <TextBlock AutomationProperties.AccessibilityView="Raw" Style="{StaticResource MediaItemDataTemplateSubtitleStyle}"/>
+                                </StackPanel>
+                                <StackPanel x:Name="contentPanel">
+                                    <TextBlock x:Name="title"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               Style="{StaticResource MediaItemDataTemplateTitleStyle}">
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip Content="{Binding ElementName=title, Path=Text}" IsEnabled="{Binding ElementName=title, Path=IsTextTrimmed}"/>
+                                        </ToolTipService.ToolTip>
+                                    </TextBlock>
+                                    <TextBlock AutomationProperties.AccessibilityView="Raw" Style="{StaticResource MediaItemDataTemplateSubtitleStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultSimpleCardItemPresenter}" TargetType="presenters:SimpleCardItemPresenter"/>
+
+    <Style x:Key="DefaultCardItemPresenterStyle" TargetType="presenters:CardItemPresenter">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="KeyTipPlacementMode" Value="Right"/>
+        <Setter Property="Margin" Value="{StaticResource ContentSmallBottomSpacing}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="presenters:CardItemPresenter">
+                    <Grid x:Name="Root"
+                          Background="#00FFFFFF"
+                          BorderBrush="#00FFFFFF"
+                          BorderThickness="{ThemeResource PageHeaderBorderThickness}"
+                          CornerRadius="{ThemeResource OverlayCornerRadius}"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Grid.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary>
+                                        <ResourceDictionary.ThemeDictionaries>
+                                            <ResourceDictionary x:Key="Dark">
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUnchecked" ResourceKey="RoundButtonStroke"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" ResourceKey="RoundButtonStrokePressed"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" ResourceKey="RoundButtonStrokePointerOver"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="RoundButtonFill"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPressed" ResourceKey="RoundButtonFillPressed"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPointerOver" ResourceKey="RoundButtonFillPointerOver"/>
+                                            </ResourceDictionary>
+                                            <ResourceDictionary x:Key="Light">
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUnchecked" ResourceKey="RoundButtonStroke"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" ResourceKey="RoundButtonStrokePressed"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" ResourceKey="RoundButtonStrokePointerOver"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="RoundButtonFill"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPressed" ResourceKey="RoundButtonFillPressed"/>
+                                                <StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPointerOver" ResourceKey="RoundButtonFillPointerOver"/>
+                                            </ResourceDictionary>
+                                            <ResourceDictionary x:Key="HighContrast"/>
+                                        </ResourceDictionary.ThemeDictionaries>
+                                    </ResourceDictionary>
+                                </ResourceDictionary.MergedDictionaries>
+                            </ResourceDictionary>
+                        </Grid.Resources>
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="RootScale"/>
+                        </Grid.RenderTransform>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="PointerOver"/>
+                                <VisualState x:Name="Pressed"/>
+                                <VisualState x:Name="Selected"/>
+                                <VisualState x:Name="PointerOverSelected"/>
+                                <VisualState x:Name="PressedSelected"/>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="States">
+                                <VisualState x:Name="DefaultNormal">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackground}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                        <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPressed}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                        <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultNoCheckboxPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                        <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultNoCheckboxPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPressed}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                        <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultPointerOverMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultPressedMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPressed}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultSelectedMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackground}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultSelectedPointerOverMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultSelectedPressedMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPressed}"/>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ImageSizeStates">
+                                <VisualState x:Name="ImageDefaultSize"/>
+                                <VisualState x:Name="ImageWideSize">
+                                    <VisualState.StateTriggers>
+                                        <StateTrigger IsActive="{TemplateBinding IsWideImage}"/>
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="Content.Width" Value="232"/>
+                                        <Setter Target="CoverArtImage.Height" Value="{StaticResource VideoItemCoverHeightSize}"/>
+                                        <Setter Target="CoverArtImage.Width" Value="{StaticResource VideoItemCoverWidthSize}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <StackPanel x:Name="Content" Width="168">
+                            <Grid Margin="{StaticResource ContentSmallMargin}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <ctrl:CoverArtImage x:Name="CoverArtImage"
+                                                    Grid.RowSpan="2"
+                                                    Grid.ColumnSpan="2"
+                                                    Width="{StaticResource CoverArtListItemSize}"
+                                                    Height="{StaticResource CoverArtListItemSize}"
+                                                    ImageContext="LibraryPage"/>
+                                <ctrl:CheckboxEx x:Name="MultiSelectCheckbox"
+                                                 x:Uid="SelectionCheckBox"
+                                                 MinWidth="0"
+                                                 MinHeight="32"
+                                                 Margin="16,8"
+                                                 Padding="0"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Top"
+                                                 Visibility="Collapsed">
+                                    <animations:Implicit.ShowAnimations>
+                                        <animations:OpacityAnimation From="0"
+                                                                     To="1"
+                                                                     Duration="{StaticResource ShortAnimationDuration}"/>
+                                    </animations:Implicit.ShowAnimations>
+                                </ctrl:CheckboxEx>
+                                <ctrl:ButtonEx x:Name="PlayButton"
+                                               x:Uid="PlayButton"
+                                               Grid.Row="1"
+                                               Margin="10,8"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Bottom"
+                                               Content="{StaticResource PlayCommandGlyph}"
+                                               Style="{StaticResource RoundButtonStyle}"
+                                               Visibility="Collapsed"/>
+                                <ctrl:ButtonEx x:Name="MoreButton"
+                                               x:Uid="MoreButton"
+                                               Grid.Row="1"
+                                               Grid.Column="1"
+                                               Margin="10,8"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Bottom"
+                                               Content="{StaticResource MoreButtonGlyph}"
+                                               Style="{StaticResource RoundButtonStyle}"
+                                               Visibility="Collapsed">
+                                    <ctrl:ButtonEx.Flyout>
+                                        <MenuFlyout x:Name="MoreButtonMenuFlyout"/>
+                                    </ctrl:ButtonEx.Flyout>
+                                </ctrl:ButtonEx>
+                            </Grid>
+                            <Grid>
+                                <StackPanel Opacity="0">
+                                    <TextBlock AutomationProperties.AccessibilityView="Raw"
+                                               Style="{StaticResource MediaItemDataTemplateTitleStyle}"
+                                               Text="{StaticResource TwoEmptyLines}"/>
+                                    <TextBlock AutomationProperties.AccessibilityView="Raw" Style="{StaticResource MediaItemDataTemplateSubtitleStyle}"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock x:Name="title"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               Style="{StaticResource MediaItemDataTemplateTitleStyle}">
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip Content="{Binding ElementName=title, Path=Text}" IsEnabled="{Binding ElementName=title, Path=IsTextTrimmed}"/>
+                                        </ToolTipService.ToolTip>
+                                    </TextBlock>
+                                    <TextBlock AutomationProperties.AccessibilityView="Raw" Style="{StaticResource MediaItemDataTemplateSubtitleStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultCardItemPresenterStyle}" TargetType="presenters:CardItemPresenter"/>
+
+    <Style TargetType="presenters:CustomListViewItemPresenter">
+        <Setter Property="AlternateBackground" Value="{ThemeResource TrackListViewItemAlternateBackground}"/>
+        <Setter Property="AlternateBorderBrush" Value="{ThemeResource TrackListViewItemAlternateBorderBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource TrackListViewItemBackground}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource TrackListViewItemBorderBrush}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="KeyTipPlacementMode" Value="Right"/>
+        <Setter Property="Margin" Value="{StaticResource ContentSmallBottomSpacing}"/>
+        <Setter Property="MinHeight" Value="{StaticResource TrackMinHeight}"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="presenters:CustomListViewItemPresenter">
+                    <Grid x:Name="Root"
+                          Margin="4,0"
+                          Padding="16,0"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{ThemeResource PageHeaderBorderThickness}"
+                          CornerRadius="{ThemeResource OverlayCornerRadius}"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="RootScale"/>
+                        </Grid.RenderTransform>
+                        <Grid.Resources>
+                            <Style x:Key="HyperlinkTextButton"
+                                   BasedOn="{StaticResource ListViewItemTextBlockStyle}"
+                                   TargetType="TextBlock">
+                                <Setter Property="AutomationProperties.AccessibilityView" Value="Raw"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            </Style>
+                            <Style BasedOn="{StaticResource ListViewItemTextBlockStyle}" TargetType="TextBlock"/>
+                            <Style BasedOn="{StaticResource DefaultHyperlinkButtonStyle}" TargetType="HyperlinkButton">
+                                <Setter Property="FontSize" Value="{StaticResource ListViewItemTextBlockFontSize}"/>
+                                <Setter Property="Foreground" Value="{ThemeResource ListViewItemHyperlinkButtonForegroundThemeBrush}"/>
+                            </Style>
+                            <Style BasedOn="{StaticResource InlineMediaFontIcon}" TargetType="FontIcon"/>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="PointerOver"/>
+                                <VisualState x:Name="Pressed"/>
+                                <VisualState x:Name="Selected"/>
+                                <VisualState x:Name="PointerOverSelected"/>
+                                <VisualState x:Name="PressedSelected"/>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="States">
+                                <VisualState x:Name="DefaultNormal">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource TrackListViewItemBackgroundSelected}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="InformationButton.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="SecondaryInformationButton.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="TrackNumber.Visibility" Value="Collapsed"/>
+                                        <Setter Target="MediaTypeIcon.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="TrackNumber.Visibility" Value="Collapsed"/>
+                                        <Setter Target="MediaTypeIcon.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultNoCheckboxPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="InformationButton.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="SecondaryInformationButton.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="TrackNumber.Visibility" Value="Collapsed"/>
+                                        <Setter Target="MediaTypeIcon.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultNoCheckboxPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="InformationButton.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="SecondaryInformationButton.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="TrackNumber.Visibility" Value="Collapsed"/>
+                                        <Setter Target="MediaTypeIcon.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultPointerOverMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultPressedMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultSelectedMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource TrackListViewItemBackgroundSelected}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource TrackListViewItemForegroundSelected}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultSelectedPointerOverMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource ListViewItemForegroundPointerOver}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DefaultSelectedPressedMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource ListViewItemForegroundPressed}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingNormal">
+                                    <VisualState.Setters>
+                                        <Setter Target="IsCurrentItemIcon.Visibility" Value="Visible"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="TrackNumber.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="MediaTypeIcon.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="InformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="SecondaryInformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource TrackListViewItemBackgroundSelected}"/>
+                                        <Setter Target="IsCurrentItemIcon.Visibility" Value="Visible"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="TrackNumber.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="MediaTypeIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="TrackNumber.Visibility" Value="Collapsed"/>
+                                        <Setter Target="MediaTypeIcon.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="TrackNumber.Visibility" Value="Collapsed"/>
+                                        <Setter Target="MediaTypeIcon.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingNoCheckboxPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="TrackNumber.Visibility" Value="Collapsed"/>
+                                        <Setter Target="MediaTypeIcon.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                        <Setter Target="IsCurrentItemIcon.Visibility" Value="Visible"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingNoCheckboxPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                        <Setter Target="TrackNumber.Visibility" Value="Collapsed"/>
+                                        <Setter Target="MediaTypeIcon.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                        <Setter Target="IsCurrentItemIcon.Visibility" Value="Visible"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationButton.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="TrackNumber.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="MediaTypeIcon.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForeground}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingPointerOverMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="TrackNumber.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="MediaTypeIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingPressedMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="TrackNumber.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="MediaTypeIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingSelectedMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource TrackListViewItemBackgroundSelected}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="TrackNumber.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="MediaTypeIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingSelectedPointerOverMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="TrackNumber.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="MediaTypeIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="NowPlayingSelectedPressedMultiSelectionMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                        <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                        <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                        <Setter Target="IsCurrentItemIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="TrackNumber.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="MediaTypeIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="PlayQueueErrorIcon.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Title.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="ReleaseYear.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Genre.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="Duration.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="InformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                        <Setter Target="SecondaryInformationText.Foreground" Value="{ThemeResource NowPlayingTrackForegroundHighlighted}"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ReorderHintStates">
+
+                                <VisualState x:Name="NoReorderHint"/>
+                                <VisualState x:Name="BottomReorderHint">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DragOverThemeAnimation Direction="Bottom"
+                                                                    ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                    Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="TopReorderHint">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DragOverThemeAnimation Direction="Top"
+                                                                    ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                    Storyboard.TargetName="Root"/>
+
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="RightReorderHint">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DragOverThemeAnimation Direction="Right"
+                                                                    ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                    Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="LeftReorderHint">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DragOverThemeAnimation Direction="Left"
+                                                                    ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                    Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition GeneratedDuration="0:0:0.2" To="NoReorderHint"/>
+                                </VisualStateGroup.Transitions>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DragStates">
+                                <VisualState x:Name="NotDragging"/>
+                                <VisualState x:Name="Dragging">
+                                    <VisualState.Setters>
+                                        <Setter Target="MultiSelect.Visibility" Value="Collapsed"/>
+                                        <Setter Target="ResponsiveStackPanel.Visibility" Value="Collapsed"/>
+                                        <Setter Target="AlternativeContentForDrag.Visibility" Value="Visible"/>
+                                        <Setter Target="Root.HorizontalAlignment" Value="Left"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Root"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                             Duration="0"/>
+                                            <DragItemThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MultipleDraggingPrimary">
+                                    <VisualState.Setters>
+                                        <Setter Target="MultiSelect.Visibility" Value="Collapsed"/>
+                                        <Setter Target="ResponsiveStackPanel.Visibility" Value="Collapsed"/>
+                                        <Setter Target="AlternativeContentForDrag.Visibility" Value="Visible"/>
+                                        <Setter Target="Root.HorizontalAlignment" Value="Left"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Root"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                             Duration="0"/>
+                                            <DragItemThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MultipleDraggingSecondary"/>
+                                <VisualState x:Name="DraggedPlaceholder"/>
+                                <VisualState x:Name="DraggingTarget"/>
+                                <VisualState x:Name="Reordering">
+                                    <VisualState.Setters>
+                                        <Setter Target="MultiSelect.Visibility" Value="Collapsed"/>
+                                        <Setter Target="ResponsiveStackPanel.Visibility" Value="Collapsed"/>
+                                        <Setter Target="AlternativeContentForDrag.Visibility" Value="Visible"/>
+                                        <Setter Target="Root.HorizontalAlignment" Value="Left"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Root"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="{ThemeResource ListViewItemReorderThemeOpacity}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ReorderingTarget">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Root"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeOpacity}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MultipleReorderingPrimary">
+                                    <VisualState.Setters>
+                                        <Setter Target="MultiSelect.Visibility" Value="Collapsed"/>
+                                        <Setter Target="ResponsiveStackPanel.Visibility" Value="Collapsed"/>
+                                        <Setter Target="AlternativeContentForDrag.Visibility" Value="Visible"/>
+                                        <Setter Target="Root.HorizontalAlignment" Value="Left"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Root"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                             Duration="0:0:0.240"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ReorderedPlaceholder">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <FadeOutThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DragOver">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <DropTargetItemThemeAnimation Storyboard.TargetName="Root"/>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition GeneratedDuration="0:0:0.2" To="NotDragging"/>
+                                </VisualStateGroup.Transitions>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="RipOperationStates">
+                                <VisualState x:Name="DefaultRipStatus"/>
+                                <VisualState x:Name="RipInProgress">
+                                    <VisualState.Setters>
+                                        <Setter Target="RipStatusLabel.FontWeight" Value="SemiBold"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="RipSuccess">
+                                    <VisualState.Setters>
+                                        <Setter Target="RipStatusIcon.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="RipFailed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RipStatusIcon.Visibility" Value="Visible"/>
+                                        <Setter Target="RipStatusIcon.Glyph" Value="{StaticResource MediaItemErrorBadgeGlyph}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="InformationLinkStates">
+                                <VisualState x:Name="InformationLinkDefault"/>
+                                <VisualState x:Name="InformationLinkNotInteractive">
+                                    <VisualState.Setters>
+                                        <Setter Target="InformationButton.Visibility" Value="Collapsed"/>
+                                        <Setter Target="InformationText.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SecondaryInformationLinkStates">
+                                <VisualState x:Name="SecondaryInformationLinkDefault"/>
+                                <VisualState x:Name="SecondaryInformationLinkNotInteractive">
+                                    <VisualState.Setters>
+                                        <Setter Target="SecondaryInformationButton.Visibility" Value="Collapsed"/>
+                                        <Setter Target="SecondaryInformationText.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="MultiSelect"
+                              Width="28"
+                              Height="{StaticResource CheckBoxHeight}">
+                            <ctrl:CheckboxEx x:Name="MultiSelectCheckbox"
+                                             x:Uid="SelectionCheckBox"
+                                             MinWidth="0"
+                                             MinHeight="32"
+                                             Padding="0"
+                                             VerticalAlignment="Center"
+                                             Visibility="Collapsed">
+                                <animations:Implicit.ShowAnimations>
+                                    <animations:OpacityAnimation From="0"
+                                                                 To="1"
+                                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                                </animations:Implicit.ShowAnimations>
+                            </ctrl:CheckboxEx>
+                            <ctrl:MediaTypeIcon x:Name="IsCurrentItemIcon"
+                                                Margin="{StaticResource ContentSmallRightSpacing}"
+                                                VerticalAlignment="Center"
+                                                IsPlaying="{TemplateBinding IsCurrentItem}"
+                                                MediaType="{TemplateBinding MediaType}"
+                                                Visibility="Collapsed">
+                                <animations:Implicit.ShowAnimations>
+                                    <animations:OpacityAnimation From="0"
+                                                                 To="1"
+                                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                                </animations:Implicit.ShowAnimations>
+                            </ctrl:MediaTypeIcon>
+                        </Grid>
+                        <ctrl:ResponsiveHorizontalStackPanel x:Name="ResponsiveStackPanel"
+                                                             Grid.Column="1"
+                                                             TabFocusNavigation="Local">
+                            <ctrl:ResponsiveHorizontalStackPanel.Children>
+                                <Grid ctrl:ResponsiveHorizontalStackPanel.StretchFactor="2" ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="220">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid MinWidth="16" Margin="{StaticResource ElementRightMargin}">
+                                        <TextBlock x:Name="Spacer"
+                                                   Margin="0"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   AutomationProperties.AccessibilityView="Raw"
+                                                   HorizontalTextAlignment="Right"
+                                                   Opacity="0"
+                                                   Text="00.."/>
+                                        <TextBlock x:Name="TrackNumber"
+                                                   Margin="0"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalTextAlignment="Right"
+                                                   Visibility="Collapsed"/>
+                                        <ctrl:MediaTypeIcon x:Name="MediaTypeIcon"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            MediaType="{TemplateBinding MediaType}"
+                                                            Visibility="Collapsed"/>
+                                        <ctrl:ButtonEx x:Name="PlayButton"
+                                                       x:Uid="PlayButton"
+                                                       Margin="-5,0"
+                                                       Padding="5,5,5,6"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Style="{StaticResource TextButtonStyle}"
+                                                       Visibility="Collapsed">
+                                            <FontIcon VerticalAlignment="Center" Glyph="{StaticResource PlayCommandGlyph}"/>
+                                        </ctrl:ButtonEx>
+                                    </Grid>
+                                    <FontIcon x:Name="PlayQueueErrorIcon"
+                                              x:Uid="PlayQueueErrorIcon"
+                                              Grid.Column="1"
+                                              Margin="{StaticResource ElementRightMargin}"
+                                              VerticalAlignment="Center"
+                                              Glyph="{StaticResource MediaItemErrorBadgeGlyph}"
+                                              ToolTipService.ToolTip="{TemplateBinding ToolTip}"
+                                              Visibility="{Binding HasPlaybackError, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    <TextBlock x:Name="Title" Grid.Column="2">
+                                        <animations:Implicit.Animations>
+                                            <animations:Vector3Animation Target="Offset" Duration="{StaticResource ShortAnimationDuration}"/>
+                                        </animations:Implicit.Animations>
+                                    </TextBlock>
+                                </Grid>
+                                <Grid x:Name="Information"
+                                      Padding="{StaticResource TrackHyperlinkButtonMargin}"
+                                      ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="4"
+                                      ctrl:ResponsiveHorizontalStackPanel.StretchFactor="2"
+                                      ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="120">
+                                    <HyperlinkButton x:Name="InformationButton">
+                                        <TextBlock x:Name="InformationLinkText" Style="{StaticResource HyperlinkTextButton}"/>
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip Content="{Binding ElementName=InformationLinkText, Path=Text}" IsEnabled="{Binding ElementName=InformationLinkText, Path=IsTextTrimmed}"/>
+                                        </ToolTipService.ToolTip>
+                                    </HyperlinkButton>
+                                    <TextBlock x:Name="InformationText"
+                                               Padding="{StaticResource ScrollViewerWithHyperLinkInnerMargin}"
+                                               Visibility="Collapsed"/>
+                                </Grid>
+                                <Grid x:Name="SecondaryInformation"
+                                      Padding="{StaticResource TrackHyperlinkButtonMargin}"
+                                      ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="3"
+                                      ctrl:ResponsiveHorizontalStackPanel.StretchFactor="1"
+                                      ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="120">
+                                    <HyperlinkButton x:Name="SecondaryInformationButton">
+                                        <TextBlock x:Name="SecondaryInformationLinkText" Style="{StaticResource HyperlinkTextButton}"/>
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip Content="{Binding ElementName=SecondaryInformationLinkText, Path=Text}" IsEnabled="{Binding ElementName=SecondaryInformationLinkText, Path=IsTextTrimmed}"/>
+                                        </ToolTipService.ToolTip>
+                                    </HyperlinkButton>
+                                    <TextBlock x:Name="SecondaryInformationText"
+                                               Padding="{StaticResource ScrollViewerWithHyperLinkInnerMargin}"
+                                               Visibility="Collapsed"/>
+                                </Grid>
+                                <Grid Padding="{StaticResource ContentLeftSpacing}" ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="1">
+                                    <TextBlock AutomationProperties.AccessibilityView="Raw"
+                                               Opacity="0"
+                                               Text="0000"/>
+                                    <TextBlock x:Name="ReleaseYear"
+                                               HorizontalAlignment="Stretch"
+                                               TextAlignment="Center"/>
+                                </Grid>
+                                <TextBlock x:Name="Genre"
+                                           Padding="{StaticResource ContentLeftSpacing}"
+                                           ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="2"
+                                           ctrl:ResponsiveHorizontalStackPanel.StretchFactor="1"
+                                           ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="120"/>
+                                <Grid Padding="{StaticResource ContentLeftSpacing}">
+                                    <TextBlock AutomationProperties.AccessibilityView="Raw"
+                                               Opacity="0"
+                                               Text="00:00:00"/>
+                                    <TextBlock x:Name="Duration"
+                                               HorizontalAlignment="Stretch"
+                                               TextAlignment="Right"/>
+                                </Grid>
+                                <Grid x:Name="RipStatusGrid"
+                                      Padding="{StaticResource ContentLeftSpacing}"
+                                      ctrl:ResponsiveHorizontalStackPanel.StretchFactor="1"
+                                      ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="112"
+                                      DataContext="{Binding RipStatusLabel}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon x:Name="RipStatusIcon"
+                                              Margin="{StaticResource ElementRightMargin}"
+                                              VerticalAlignment="Center"
+                                              Glyph="{StaticResource CheckMarkGlyph}"
+                                              Visibility="Collapsed"/>
+                                    <TextBlock x:Name="RipStatusLabel"
+                                               Grid.Column="1"
+                                               VerticalAlignment="Center"/>
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="{Binding Text}" IsEnabled="{Binding IsTextTrimmed}"/>
+                                    </ToolTipService.ToolTip>
+                                </Grid>
+                            </ctrl:ResponsiveHorizontalStackPanel.Children>
+                        </ctrl:ResponsiveHorizontalStackPanel>
+                        <TextBlock x:Name="AlternativeContentForDrag"
+                                   Text="{Binding TemplateSettings.DragItemsCount, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DragItemsCountConverter}}"
+                                   Visibility="Collapsed"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+</ResourceDictionary>

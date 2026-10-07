@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="UntamedMediaPlayer.Controls.LibraryPageHeader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:UntamedMediaPlayer.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Name="NavigationViewHeaderStyle"
+               x:Key="NavigationViewHeader"
+               TargetType="NavigationViewItemHeader">
+            <Setter Property="AutomationProperties.AccessibilityView" Value="Raw"/>
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="IsEnabled" Value="False"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="NavigationViewItemHeader">
+                        <TextBlock Margin="{StaticResource ContentSideMargin}"
+                                   VerticalAlignment="Center"
+                                   Style="{StaticResource TitleNoWrap}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style BasedOn="{StaticResource NavigationViewItemSelectorStyle}" TargetType="NavigationViewItem"/>
+    </UserControl.Resources>
+
+    <NavigationView x:Name="navigationView"
+                    Margin="-16,0,0,0"
+                    Style="{StaticResource ItemSelectorNavigationView}">
+        <NavigationView.PaneFooter>
+            <local:AddFolderButton VerticalAlignment="Center" SupportNarrowMode="True"/>
+        </NavigationView.PaneFooter>
+    </NavigationView>
+</UserControl>

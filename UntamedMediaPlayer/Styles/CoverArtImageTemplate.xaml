@@ -1,4 +1,131 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" />
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ctrl="using:UntamedMediaPlayer.Controls">
+    <Style x:Key="DefaultCoverArtImageStyle" TargetType="ctrl:CoverArtImage">
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ctrl:CoverArtImage">
+                    <Grid x:Name="Root"
+                          Background="{ThemeResource CoverArtBackgroundBrush}"
+                          BorderBrush="{ThemeResource CoverArtBorderBrush}"
+                          BorderThickness="{ThemeResource CovertArtBorderThickness}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ImageStateGroup">
+                                <VisualState x:Name="ImageNotLoadedState">
+                                    <VisualState.Setters>
+                                        <Setter Target="CoverImage.Visibility" Value="Collapsed"/>
+                                        <Setter Target="placeholderGlyphContainer.Visibility" Value="Visible"/>
+                                        <Setter Target="placeholderGlyphContainer.Opacity" Value="1"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="ImageLoadedState">
+                                    <VisualState.Setters>
+                                        <Setter Target="CoverImage.Visibility" Value="Visible"/>
+                                        <Setter Target="placeholderGlyphContainer.Visibility" Value="Collapsed"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="ImageNotLoadedState" To="ImageLoadedState">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CoverImage" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimation Storyboard.TargetName="CoverImage"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             From="0"
+                                                             To="1"
+                                                             Duration="{StaticResource ShortAnimationDuration}"/>
+                                            <DoubleAnimation Storyboard.TargetName="placeholderGlyphContainer"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             From="1"
+                                                             To="0"
+                                                             Duration="{StaticResource ShortAnimationDuration}"/>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="MediaItemTypeGroup">
+                                <VisualState x:Name="AudioItemTypeState"/>
+                                <VisualState x:Name="VideoItemTypeState">
+                                    <VisualState.Setters>
+                                        <Setter Target="placeholderGlyph.Glyph" Value="{StaticResource VideoLibraryCommandGlyph}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PlaylistItemTypeState">
+                                    <VisualState.Setters>
+                                        <Setter Target="placeholderGlyph.Glyph" Value="{StaticResource PlaylistsCommandGlyph}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="UrlItemTypeState">
+                                    <VisualState.Setters>
+                                        <Setter Target="placeholderGlyph.Glyph" Value="{StaticResource OpenURLCommandGlyph}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="FolderItemTypeState">
+                                    <VisualState.Setters>
+                                        <Setter Target="placeholderGlyph.Glyph" Value="{StaticResource OpenFolderCommandGlyph}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="FileItemTypeState">
+                                    <VisualState.Setters>
+                                        <Setter Target="placeholderGlyph.Glyph" Value="{StaticResource GenericFileGlyph}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="AudioDiscTypeState">
+                                    <VisualState.Setters>
+                                        <Setter Target="placeholderGlyph.Glyph" Value="{StaticResource DiscMusic}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="AlbumTypeState">
+                                    <VisualState.Setters>
+                                        <Setter Target="placeholderGlyph.Glyph" Value="{StaticResource MusicAlbum}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="ArtistTypeState">
+                                    <VisualState.Setters>
+                                        <Setter Target="placeholderGlyph.Glyph" Value="{StaticResource MusicArtist}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Viewbox x:Name="placeholderGlyphContainer"
+                                 Grid.Row="1"
+                                 Grid.Column="1"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch">
+                            <FontIcon x:Name="placeholderGlyph"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      AutomationProperties.AccessibilityView="Raw"
+                                      Foreground="{ThemeResource CoverArtForegroundBrush}"
+                                      Glyph="{StaticResource MusicLibraryCommandGlyph}"
+                                      Style="{StaticResource MediaFontIcon}"/>
+                        </Viewbox>
+                        <Grid x:Name="CoverImage"
+                              ColumnSpan="3"
+                              RowSpan="3"
+                              Visibility="Collapsed">
+                            <Image HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   AutomationProperties.AccessibilityView="Raw"/>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultCoverArtImageStyle}" TargetType="ctrl:CoverArtImage"/>
+</ResourceDictionary>

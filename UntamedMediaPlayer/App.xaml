@@ -7,9 +7,24 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
-                <ResourceDictionary>
-                    <FontFamily x:Key="UntamedFontFamily">ms-appx:///Assets/Fonts/UntamedFluentIcons.ttf#Untamed Fluent Icons</FontFamily>
-                </ResourceDictionary>
+                <ResourceDictionary Source="/Styles/AccentuatedAppBarButtonResources.xaml"/>
+                <ResourceDictionary Source="/Styles/CommonStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/ContentDialogStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/CoverArtImageTemplate.xaml"/>
+                <ResourceDictionary Source="/Styles/CustomItemPresenterStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/CustomMediaPlayerElementTemplate.xaml"/>
+                <ResourceDictionary Source="/Styles/DurationTextBlockTemplate.xaml"/>
+                <ResourceDictionary Source="/Styles/ExpandableGroupHeaderTemplate.xaml"/>
+                <ResourceDictionary Source="/Styles/Icons.xaml"/>
+                <ResourceDictionary Source="/Styles/MediaItemVisualizationTemplate.xaml"/>
+                <ResourceDictionary Source="/Styles/MediaTransportControlsStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/MediaTypeIconTemplate.xaml"/>
+                <ResourceDictionary Source="/Styles/MetadataControl.xaml"/>
+                <ResourceDictionary Source="/Styles/SemanticZoomStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/SliderWithoutFillColorResources.xaml"/>
+                <ResourceDictionary Source="/Styles/SortAndFilterControlTemplate.xaml"/>
+                <ResourceDictionary Source="/Styles/SystemColors.xaml"/>
+                <ResourceDictionary Source="/Styles/ZestColors.xaml"/>
                 <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
             <!--  Other app resources here  -->

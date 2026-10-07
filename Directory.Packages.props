@@ -3,6 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="CommunityToolkit.WinUI.Behaviors" Version="8.2.251219" />
     <PackageVersion Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
     <PackageVersion Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
     <PackageVersion Include="FFmpegInteropX" Version="2.1.0.81200" />
@@ -24,6 +25,6 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tasks" Version="10.0.12" />
     <PackageVersion Include="ZLinq" Version="1.5.6" />
     <PackageVersion Include="ZLogger" Version="2.5.10" />
-    <PackageVersion Include="TUnit" Version="1.69.16" />
+    <PackageVersion Include="TUnit" Version="1.72.16" />
   </ItemGroup>
 </Project>

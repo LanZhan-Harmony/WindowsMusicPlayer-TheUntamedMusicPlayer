@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using UntamedMediaPlayer.Core.Contracts.Services;
 using UntamedMediaPlayer.Core.Helpers;
 using UntamedMediaPlayer.Core.Models.Settings;
