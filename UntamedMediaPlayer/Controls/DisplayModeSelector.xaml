@@ -53,26 +53,24 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <UserControl.Content>
-        <NavigationView Style="{StaticResource DisplayModeSelectorNavigationView}">
-            <NavigationView.FooterMenuItems>
-                <NavigationViewItem x:Name="ListViewDisplayMode" x:Uid="ListViewDisplayMode">
-                    <i:Interaction.Behaviors>
-                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,L"/>
-                    </i:Interaction.Behaviors>
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="{StaticResource ListViewGlyph}"/>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem x:Name="GridViewDisplayMode" x:Uid="GridViewDisplayMode">
-                    <i:Interaction.Behaviors>
-                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,G"/>
-                    </i:Interaction.Behaviors>
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="{StaticResource GridViewGlyph}"/>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-            </NavigationView.FooterMenuItems>
-        </NavigationView>
-    </UserControl.Content>
+    <NavigationView x:Name="rootNavigationView" Style="{StaticResource DisplayModeSelectorNavigationView}">
+        <NavigationView.FooterMenuItems>
+            <NavigationViewItem x:Name="ListViewDisplayMode" x:Uid="ListViewDisplayMode">
+                <i:Interaction.Behaviors>
+                    <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,L"/>
+                </i:Interaction.Behaviors>
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="{StaticResource ListViewGlyph}"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Name="GridViewDisplayMode" x:Uid="GridViewDisplayMode">
+                <i:Interaction.Behaviors>
+                    <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,G"/>
+                </i:Interaction.Behaviors>
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="{StaticResource GridViewGlyph}"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+        </NavigationView.FooterMenuItems>
+    </NavigationView>
 </UserControl>

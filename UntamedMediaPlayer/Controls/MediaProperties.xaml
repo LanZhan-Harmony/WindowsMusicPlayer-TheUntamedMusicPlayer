@@ -27,58 +27,6 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Grid.Children>
-                        <StackPanel Grid.Row="0">
-                            <TextBlock x:Uid="MediaPropertiesControlTitle" Style="{StaticResource CompactHeader}"/>
-                            <TextBlock Style="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="1">
-                            <TextBlock x:Uid="MediaPropertiesControlArtists" Style="{StaticResource CompactHeader}"/>
-                            <local:MetadataControl TextBlockStyle="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2">
-                            <TextBlock x:Uid="MediaPropertiesControlGenre" Style="{StaticResource CompactHeader}"/>
-                            <TextBlock Style="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="3">
-                            <TextBlock x:Uid="MediaPropertiesControlVideoResolution" Style="{StaticResource CompactHeader}"/>
-                            <TextBlock Style="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="4">
-                            <TextBlock x:Uid="MediaPropertiesControlVideoAudioChannels" Style="{StaticResource CompactHeader}"/>
-                            <TextBlock Style="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                        <StackPanel x:Name="SubtitleFields"
-                                    Grid.Row="0"
-                                    Grid.Column="1">
-                            <TextBlock x:Uid="MediaPropertiesControlVideoSubtitle" Style="{StaticResource CompactHeader}"/>
-                            <TextBlock Style="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                        <StackPanel x:Name="LengthFields"
-                                    Grid.Row="1"
-                                    Grid.Column="1">
-                            <TextBlock x:Uid="MediaPropertiesControlLength" Style="{StaticResource CompactHeader}"/>
-                            <TextBlock Style="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                        <StackPanel x:Name="YearFields"
-                                    Grid.Row="2"
-                                    Grid.Column="1">
-                            <TextBlock x:Uid="MediaPropertiesControlYear" Style="{StaticResource CompactHeader}"/>
-                            <TextBlock Style="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                        <StackPanel x:Name="FrameRateFields"
-                                    Grid.Row="3"
-                                    Grid.Column="1">
-                            <TextBlock x:Uid="MediaPropertiesControlVideoFrameRate" Style="{StaticResource CompactHeader}"/>
-                            <TextBlock Style="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                        <StackPanel x:Name="ItemTypeFields"
-                                    Grid.Row="4"
-                                    Grid.Column="1">
-                            <TextBlock x:Uid="MediaPropertiesControlItemType" Style="{StaticResource CompactHeader}"/>
-                            <TextBlock Style="{StaticResource SelectableContentText}"/>
-                        </StackPanel>
-                    </Grid.Children>
                     <VisualStateManager.VisualStateGroups>
                         <VisualStateGroup x:Name="AdaptiveLayout">
                             <VisualState x:Name="Default"/>
@@ -103,6 +51,57 @@
                             </VisualState>
                         </VisualStateGroup>
                     </VisualStateManager.VisualStateGroups>
+
+                    <StackPanel Grid.Row="0">
+                        <TextBlock x:Uid="MediaPropertiesControlTitle" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1">
+                        <TextBlock x:Uid="MediaPropertiesControlArtists" Style="{StaticResource CompactHeader}"/>
+                        <local:MetadataControl TextBlockStyle="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2">
+                        <TextBlock x:Uid="MediaPropertiesControlGenre" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3">
+                        <TextBlock x:Uid="MediaPropertiesControlVideoResolution" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4">
+                        <TextBlock x:Uid="MediaPropertiesControlVideoAudioChannels" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="SubtitleFields"
+                                Grid.Row="0"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlVideoSubtitle" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="LengthFields"
+                                Grid.Row="1"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlLength" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="YearFields"
+                                Grid.Row="2"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlYear" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="FrameRateFields"
+                                Grid.Row="3"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlVideoFrameRate" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="ItemTypeFields"
+                                Grid.Row="4"
+                                Grid.Column="1">
+                        <TextBlock x:Uid="MediaPropertiesControlItemType" Style="{StaticResource CompactHeader}"/>
+                        <TextBlock Style="{StaticResource SelectableContentText}"/>
+                    </StackPanel>
                 </Grid>
             </UserControl>
         </DataTemplate>

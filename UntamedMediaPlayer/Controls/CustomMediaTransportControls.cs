@@ -1,11 +1,38 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using UntamedMediaPlayer.Compatibility;
 using UntamedMediaPlayer.Core.ViewModels;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class CustomMediaTransportControls : Control
+public sealed partial class CustomMediaTransportControls : MediaTransportControls
 {
+    public DropConfiguration? DropConfiguration
+    {
+        get => (DropConfiguration?)GetValue(DropConfigurationProperty);
+        set => SetValue(DropConfigurationProperty, value);
+    }
+
+    public static readonly DependencyProperty DropConfigurationProperty =
+        DependencyProperty.Register(
+            nameof(DropConfiguration),
+            typeof(DropConfiguration),
+            typeof(CustomMediaTransportControls),
+            new PropertyMetadata(null, OnDropConfigurationChanged)
+        );
+
+    private static void OnDropConfigurationChanged(
+        DependencyObject dependencyObject,
+        DependencyPropertyChangedEventArgs args
+    )
+    {
+        if (dependencyObject is CustomMediaTransportControls controls)
+        {
+            UIElementEx.SetDropConfiguration(controls, args.NewValue as DropConfiguration);
+        }
+    }
+
     public MediaPlayerViewModel? MediaPlayerViewModel
     {
         get => (MediaPlayerViewModel?)GetValue(MediaPlayerViewModelProperty);
@@ -52,12 +79,13 @@ public sealed partial class CustomMediaTransportControls : Control
         set => SetValue(CommandPanelHeaderProperty, value);
     }
 
-    public static readonly DependencyProperty CommandPanelHeaderProperty = DependencyProperty.Register(
-        nameof(CommandPanelHeader),
-        typeof(object),
-        typeof(CustomMediaTransportControls),
-        new PropertyMetadata(null)
-    );
+    public static readonly DependencyProperty CommandPanelHeaderProperty =
+        DependencyProperty.Register(
+            nameof(CommandPanelHeader),
+            typeof(object),
+            typeof(CustomMediaTransportControls),
+            new PropertyMetadata(null)
+        );
 
     public object? FullWindowTitleBar
     {
@@ -65,12 +93,13 @@ public sealed partial class CustomMediaTransportControls : Control
         set => SetValue(FullWindowTitleBarProperty, value);
     }
 
-    public static readonly DependencyProperty FullWindowTitleBarProperty = DependencyProperty.Register(
-        nameof(FullWindowTitleBar),
-        typeof(object),
-        typeof(CustomMediaTransportControls),
-        new PropertyMetadata(null)
-    );
+    public static readonly DependencyProperty FullWindowTitleBarProperty =
+        DependencyProperty.Register(
+            nameof(FullWindowTitleBar),
+            typeof(object),
+            typeof(CustomMediaTransportControls),
+            new PropertyMetadata(null)
+        );
 
     public object? TitleBarMargin
     {
@@ -91,12 +120,13 @@ public sealed partial class CustomMediaTransportControls : Control
         set => SetValue(SystemTitleBarHeightProperty, value);
     }
 
-    public static readonly DependencyProperty SystemTitleBarHeightProperty = DependencyProperty.Register(
-        nameof(SystemTitleBarHeight),
-        typeof(double),
-        typeof(CustomMediaTransportControls),
-        new PropertyMetadata(0d)
-    );
+    public static readonly DependencyProperty SystemTitleBarHeightProperty =
+        DependencyProperty.Register(
+            nameof(SystemTitleBarHeight),
+            typeof(double),
+            typeof(CustomMediaTransportControls),
+            new PropertyMetadata(0d)
+        );
 
     public bool IsInPlaybackMode
     {
@@ -104,12 +134,13 @@ public sealed partial class CustomMediaTransportControls : Control
         set => SetValue(IsInPlaybackModeProperty, value);
     }
 
-    public static readonly DependencyProperty IsInPlaybackModeProperty = DependencyProperty.Register(
-        nameof(IsInPlaybackMode),
-        typeof(bool),
-        typeof(CustomMediaTransportControls),
-        new PropertyMetadata(false)
-    );
+    public static readonly DependencyProperty IsInPlaybackModeProperty =
+        DependencyProperty.Register(
+            nameof(IsInPlaybackMode),
+            typeof(bool),
+            typeof(CustomMediaTransportControls),
+            new PropertyMetadata(false)
+        );
 
     public bool IsInVideoOrPlaybackMode
     {
@@ -117,12 +148,13 @@ public sealed partial class CustomMediaTransportControls : Control
         set => SetValue(IsInVideoOrPlaybackModeProperty, value);
     }
 
-    public static readonly DependencyProperty IsInVideoOrPlaybackModeProperty = DependencyProperty.Register(
-        nameof(IsInVideoOrPlaybackMode),
-        typeof(bool),
-        typeof(CustomMediaTransportControls),
-        new PropertyMetadata(false)
-    );
+    public static readonly DependencyProperty IsInVideoOrPlaybackModeProperty =
+        DependencyProperty.Register(
+            nameof(IsInVideoOrPlaybackMode),
+            typeof(bool),
+            typeof(CustomMediaTransportControls),
+            new PropertyMetadata(false)
+        );
 
     public bool IsLiveStream
     {
@@ -143,12 +175,13 @@ public sealed partial class CustomMediaTransportControls : Control
         set => SetValue(IsTitleBarBackgroundVisibleProperty, value);
     }
 
-    public static readonly DependencyProperty IsTitleBarBackgroundVisibleProperty = DependencyProperty.Register(
-        nameof(IsTitleBarBackgroundVisible),
-        typeof(bool),
-        typeof(CustomMediaTransportControls),
-        new PropertyMetadata(false)
-    );
+    public static readonly DependencyProperty IsTitleBarBackgroundVisibleProperty =
+        DependencyProperty.Register(
+            nameof(IsTitleBarBackgroundVisible),
+            typeof(bool),
+            typeof(CustomMediaTransportControls),
+            new PropertyMetadata(false)
+        );
 
     public object? DisplayMode
     {
@@ -162,6 +195,34 @@ public sealed partial class CustomMediaTransportControls : Control
         typeof(CustomMediaTransportControls),
         new PropertyMetadata(null)
     );
+
+    public FlyoutBase? VideoEnhancerFlyout
+    {
+        get => (FlyoutBase?)GetValue(VideoEnhancerFlyoutProperty);
+        set => SetValue(VideoEnhancerFlyoutProperty, value);
+    }
+
+    public static readonly DependencyProperty VideoEnhancerFlyoutProperty =
+        DependencyProperty.Register(
+            nameof(VideoEnhancerFlyout),
+            typeof(FlyoutBase),
+            typeof(CustomMediaTransportControls),
+            new PropertyMetadata(null)
+        );
+
+    public MenuFlyout? NowPlayingContextMenuFlyout
+    {
+        get => (MenuFlyout?)GetValue(NowPlayingContextMenuFlyoutProperty);
+        set => SetValue(NowPlayingContextMenuFlyoutProperty, value);
+    }
+
+    public static readonly DependencyProperty NowPlayingContextMenuFlyoutProperty =
+        DependencyProperty.Register(
+            nameof(NowPlayingContextMenuFlyout),
+            typeof(MenuFlyout),
+            typeof(CustomMediaTransportControls),
+            new PropertyMetadata(null)
+        );
     public bool IsCompactOverlayButtonVisible
     {
         get => (bool)GetValue(IsCompactOverlayButtonVisibleProperty);
@@ -217,172 +278,6 @@ public sealed partial class CustomMediaTransportControls : Control
             typeof(CustomMediaTransportControls),
             new PropertyMetadata(false)
         );
-
-    public bool IsNextTrackButtonVisible
-    {
-        get => (bool)GetValue(IsNextTrackButtonVisibleProperty);
-        set => SetValue(IsNextTrackButtonVisibleProperty, value);
-    }
-
-    public static readonly DependencyProperty IsNextTrackButtonVisibleProperty =
-        DependencyProperty.Register(
-            nameof(IsNextTrackButtonVisible),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsPlaybackRateButtonVisible
-    {
-        get => (bool)GetValue(IsPlaybackRateButtonVisibleProperty);
-        set => SetValue(IsPlaybackRateButtonVisibleProperty, value);
-    }
-
-    public static readonly DependencyProperty IsPlaybackRateButtonVisibleProperty =
-        DependencyProperty.Register(
-            nameof(IsPlaybackRateButtonVisible),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsPlaybackRateEnabled
-    {
-        get => (bool)GetValue(IsPlaybackRateEnabledProperty);
-        set => SetValue(IsPlaybackRateEnabledProperty, value);
-    }
-
-    public static readonly DependencyProperty IsPlaybackRateEnabledProperty =
-        DependencyProperty.Register(
-            nameof(IsPlaybackRateEnabled),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsPreviousTrackButtonVisible
-    {
-        get => (bool)GetValue(IsPreviousTrackButtonVisibleProperty);
-        set => SetValue(IsPreviousTrackButtonVisibleProperty, value);
-    }
-
-    public static readonly DependencyProperty IsPreviousTrackButtonVisibleProperty =
-        DependencyProperty.Register(
-            nameof(IsPreviousTrackButtonVisible),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsRepeatButtonVisible
-    {
-        get => (bool)GetValue(IsRepeatButtonVisibleProperty);
-        set => SetValue(IsRepeatButtonVisibleProperty, value);
-    }
-
-    public static readonly DependencyProperty IsRepeatButtonVisibleProperty =
-        DependencyProperty.Register(
-            nameof(IsRepeatButtonVisible),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsRepeatEnabled
-    {
-        get => (bool)GetValue(IsRepeatEnabledProperty);
-        set => SetValue(IsRepeatEnabledProperty, value);
-    }
-
-    public static readonly DependencyProperty IsRepeatEnabledProperty = DependencyProperty.Register(
-        nameof(IsRepeatEnabled),
-        typeof(bool),
-        typeof(CustomMediaTransportControls),
-        new PropertyMetadata(false)
-    );
-
-    public bool IsSkipBackwardButtonVisible
-    {
-        get => (bool)GetValue(IsSkipBackwardButtonVisibleProperty);
-        set => SetValue(IsSkipBackwardButtonVisibleProperty, value);
-    }
-
-    public static readonly DependencyProperty IsSkipBackwardButtonVisibleProperty =
-        DependencyProperty.Register(
-            nameof(IsSkipBackwardButtonVisible),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsSkipBackwardEnabled
-    {
-        get => (bool)GetValue(IsSkipBackwardEnabledProperty);
-        set => SetValue(IsSkipBackwardEnabledProperty, value);
-    }
-
-    public static readonly DependencyProperty IsSkipBackwardEnabledProperty =
-        DependencyProperty.Register(
-            nameof(IsSkipBackwardEnabled),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsSkipForwardButtonVisible
-    {
-        get => (bool)GetValue(IsSkipForwardButtonVisibleProperty);
-        set => SetValue(IsSkipForwardButtonVisibleProperty, value);
-    }
-
-    public static readonly DependencyProperty IsSkipForwardButtonVisibleProperty =
-        DependencyProperty.Register(
-            nameof(IsSkipForwardButtonVisible),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsSkipForwardEnabled
-    {
-        get => (bool)GetValue(IsSkipForwardEnabledProperty);
-        set => SetValue(IsSkipForwardEnabledProperty, value);
-    }
-
-    public static readonly DependencyProperty IsSkipForwardEnabledProperty =
-        DependencyProperty.Register(
-            nameof(IsSkipForwardEnabled),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsZoomButtonVisible
-    {
-        get => (bool)GetValue(IsZoomButtonVisibleProperty);
-        set => SetValue(IsZoomButtonVisibleProperty, value);
-    }
-
-    public static readonly DependencyProperty IsZoomButtonVisibleProperty =
-        DependencyProperty.Register(
-            nameof(IsZoomButtonVisible),
-            typeof(bool),
-            typeof(CustomMediaTransportControls),
-            new PropertyMetadata(false)
-        );
-
-    public bool IsZoomEnabled
-    {
-        get => (bool)GetValue(IsZoomEnabledProperty);
-        set => SetValue(IsZoomEnabledProperty, value);
-    }
-
-    public static readonly DependencyProperty IsZoomEnabledProperty = DependencyProperty.Register(
-        nameof(IsZoomEnabled),
-        typeof(bool),
-        typeof(CustomMediaTransportControls),
-        new PropertyMetadata(false)
-    );
 
     public CustomMediaTransportControls()
     {

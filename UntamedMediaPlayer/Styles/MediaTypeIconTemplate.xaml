@@ -13,99 +13,97 @@
                               Style="{StaticResource InlineMediaFontIcon}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="IconTypeGroup">
-                                <VisualStateGroup.States>
-                                    <VisualState x:Name="MusicItem"/>
-                                    <VisualState x:Name="MusicItemPlaying">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource PlayQueueNowPlayingMusicItemGlyph}"/>
-                                            <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="AudioDiscItem">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource DiscMusic}"/>
-                                            <Setter x:Uid="MediaTypeIconAudioDiscItem" Target="mediaType.(AutomationProperties.Name)" Value="CD audio"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="AudioDiscItemPlaying">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource PlayQueueNowPlayingMusicItemGlyph}"/>
-                                            <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="VideoItem">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource VideoLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="MediaTypeIconVideo" Target="mediaType.(AutomationProperties.Name)" Value="Video"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="VideoItemPlaying">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource PlayQueueNowPlayingVideoItemGlyph}"/>
-                                            <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="FileItem">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource FileLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="MediaTypeIconFile" Target="mediaType.(AutomationProperties.Name)" Value="File"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="FileItemPlaying">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource FileLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="FolderItem">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource FolderLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="MediaTypeIconFolder" Target="mediaType.(AutomationProperties.Name)" Value="Folder"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="FolderItemPlaying">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource FolderLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="AlbumItem">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource AlbumLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="MediaTypeIconAlbum" Target="mediaType.(AutomationProperties.Name)" Value="Album"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="AlbumItemPlaying">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource AlbumLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="ArtistItem">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource ArtistLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="MediaTypeIconArtist" Target="mediaType.(AutomationProperties.Name)" Value="Artist"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="ArtistItemPlaying">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource ArtistLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="PlaylistItem">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource PlaylistLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="MediaTypeIconPlaylist" Target="mediaType.(AutomationProperties.Name)" Value="Playlist"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="PlaylistItemPlaying">
-                                        <VisualState.Setters>
-                                            <Setter Target="mediaType.Glyph" Value="{StaticResource PlaylistLibraryCommandGlyph}"/>
-                                            <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup.States>
+                                <VisualState x:Name="MusicItem"/>
+                                <VisualState x:Name="MusicItemPlaying">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource PlayQueueNowPlayingMusicItemGlyph}"/>
+                                        <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="AudioDiscItem">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource DiscMusic}"/>
+                                        <Setter x:Uid="MediaTypeIconAudioDiscItem" Target="mediaType.(AutomationProperties.Name)" Value="CD audio"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="AudioDiscItemPlaying">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource PlayQueueNowPlayingMusicItemGlyph}"/>
+                                        <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="VideoItem">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource VideoLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="MediaTypeIconVideo" Target="mediaType.(AutomationProperties.Name)" Value="Video"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="VideoItemPlaying">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource PlayQueueNowPlayingVideoItemGlyph}"/>
+                                        <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="FileItem">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource FileLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="MediaTypeIconFile" Target="mediaType.(AutomationProperties.Name)" Value="File"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="FileItemPlaying">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource FileLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="FolderItem">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource FolderLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="MediaTypeIconFolder" Target="mediaType.(AutomationProperties.Name)" Value="Folder"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="FolderItemPlaying">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource FolderLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="AlbumItem">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource AlbumLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="MediaTypeIconAlbum" Target="mediaType.(AutomationProperties.Name)" Value="Album"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="AlbumItemPlaying">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource AlbumLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="ArtistItem">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource ArtistLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="MediaTypeIconArtist" Target="mediaType.(AutomationProperties.Name)" Value="Artist"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="ArtistItemPlaying">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource ArtistLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PlaylistItem">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource PlaylistLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="MediaTypeIconPlaylist" Target="mediaType.(AutomationProperties.Name)" Value="Playlist"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PlaylistItemPlaying">
+                                    <VisualState.Setters>
+                                        <Setter Target="mediaType.Glyph" Value="{StaticResource PlaylistLibraryCommandGlyph}"/>
+                                        <Setter x:Uid="PlayQueueNowPlayingIcon" Target="mediaType.(AutomationProperties.Name)" Value="Playing"/>
+                                    </VisualState.Setters>
+                                </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </FontIcon>

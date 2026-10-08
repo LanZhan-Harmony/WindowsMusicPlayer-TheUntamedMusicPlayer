@@ -1278,131 +1278,129 @@
                         <ctrl:ResponsiveHorizontalStackPanel x:Name="ResponsiveStackPanel"
                                                              Grid.Column="1"
                                                              TabFocusNavigation="Local">
-                            <ctrl:ResponsiveHorizontalStackPanel.Children>
-                                <Grid ctrl:ResponsiveHorizontalStackPanel.StretchFactor="2" ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="220">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid MinWidth="16" Margin="{StaticResource ElementRightMargin}">
-                                        <TextBlock x:Name="Spacer"
-                                                   Margin="0"
-                                                   HorizontalAlignment="Right"
-                                                   VerticalAlignment="Center"
-                                                   AutomationProperties.AccessibilityView="Raw"
-                                                   HorizontalTextAlignment="Right"
-                                                   Opacity="0"
-                                                   Text="00.."/>
-                                        <TextBlock x:Name="TrackNumber"
-                                                   Margin="0"
-                                                   HorizontalAlignment="Right"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalTextAlignment="Right"
-                                                   Visibility="Collapsed"/>
-                                        <ctrl:MediaTypeIcon x:Name="MediaTypeIcon"
-                                                            HorizontalAlignment="Center"
-                                                            VerticalAlignment="Center"
-                                                            MediaType="{TemplateBinding MediaType}"
-                                                            Visibility="Collapsed"/>
-                                        <ctrl:ButtonEx x:Name="PlayButton"
-                                                       x:Uid="PlayButton"
-                                                       Margin="-5,0"
-                                                       Padding="5,5,5,6"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center"
-                                                       Style="{StaticResource TextButtonStyle}"
-                                                       Visibility="Collapsed">
-                                            <FontIcon VerticalAlignment="Center" Glyph="{StaticResource PlayCommandGlyph}"/>
-                                        </ctrl:ButtonEx>
-                                    </Grid>
-                                    <FontIcon x:Name="PlayQueueErrorIcon"
-                                              x:Uid="PlayQueueErrorIcon"
-                                              Grid.Column="1"
-                                              Margin="{StaticResource ElementRightMargin}"
-                                              VerticalAlignment="Center"
-                                              Glyph="{StaticResource MediaItemErrorBadgeGlyph}"
-                                              ToolTipService.ToolTip="{TemplateBinding ToolTip}"
-                                              Visibility="{Binding HasPlaybackError, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                    <TextBlock x:Name="Title" Grid.Column="2">
-                                        <animations:Implicit.Animations>
-                                            <animations:Vector3Animation Target="Offset" Duration="{StaticResource ShortAnimationDuration}"/>
-                                        </animations:Implicit.Animations>
-                                    </TextBlock>
-                                </Grid>
-                                <Grid x:Name="Information"
-                                      Padding="{StaticResource TrackHyperlinkButtonMargin}"
-                                      ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="4"
-                                      ctrl:ResponsiveHorizontalStackPanel.StretchFactor="2"
-                                      ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="120">
-                                    <HyperlinkButton x:Name="InformationButton">
-                                        <TextBlock x:Name="InformationLinkText" Style="{StaticResource HyperlinkTextButton}"/>
-                                        <ToolTipService.ToolTip>
-                                            <ToolTip Content="{Binding ElementName=InformationLinkText, Path=Text}" IsEnabled="{Binding ElementName=InformationLinkText, Path=IsTextTrimmed}"/>
-                                        </ToolTipService.ToolTip>
-                                    </HyperlinkButton>
-                                    <TextBlock x:Name="InformationText"
-                                               Padding="{StaticResource ScrollViewerWithHyperLinkInnerMargin}"
-                                               Visibility="Collapsed"/>
-                                </Grid>
-                                <Grid x:Name="SecondaryInformation"
-                                      Padding="{StaticResource TrackHyperlinkButtonMargin}"
-                                      ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="3"
-                                      ctrl:ResponsiveHorizontalStackPanel.StretchFactor="1"
-                                      ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="120">
-                                    <HyperlinkButton x:Name="SecondaryInformationButton">
-                                        <TextBlock x:Name="SecondaryInformationLinkText" Style="{StaticResource HyperlinkTextButton}"/>
-                                        <ToolTipService.ToolTip>
-                                            <ToolTip Content="{Binding ElementName=SecondaryInformationLinkText, Path=Text}" IsEnabled="{Binding ElementName=SecondaryInformationLinkText, Path=IsTextTrimmed}"/>
-                                        </ToolTipService.ToolTip>
-                                    </HyperlinkButton>
-                                    <TextBlock x:Name="SecondaryInformationText"
-                                               Padding="{StaticResource ScrollViewerWithHyperLinkInnerMargin}"
-                                               Visibility="Collapsed"/>
-                                </Grid>
-                                <Grid Padding="{StaticResource ContentLeftSpacing}" ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="1">
-                                    <TextBlock AutomationProperties.AccessibilityView="Raw"
+                            <Grid ctrl:ResponsiveHorizontalStackPanel.StretchFactor="2" ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="220">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid MinWidth="16" Margin="{StaticResource ElementRightMargin}">
+                                    <TextBlock x:Name="Spacer"
+                                               Margin="0"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               HorizontalTextAlignment="Right"
                                                Opacity="0"
-                                               Text="0000"/>
-                                    <TextBlock x:Name="ReleaseYear"
-                                               HorizontalAlignment="Stretch"
-                                               TextAlignment="Center"/>
+                                               Text="00.."/>
+                                    <TextBlock x:Name="TrackNumber"
+                                               Margin="0"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               HorizontalTextAlignment="Right"
+                                               Visibility="Collapsed"/>
+                                    <ctrl:MediaTypeIcon x:Name="MediaTypeIcon"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        MediaType="{TemplateBinding MediaType}"
+                                                        Visibility="Collapsed"/>
+                                    <ctrl:ButtonEx x:Name="PlayButton"
+                                                   x:Uid="PlayButton"
+                                                   Margin="-5,0"
+                                                   Padding="5,5,5,6"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Style="{StaticResource TextButtonStyle}"
+                                                   Visibility="Collapsed">
+                                        <FontIcon VerticalAlignment="Center" Glyph="{StaticResource PlayCommandGlyph}"/>
+                                    </ctrl:ButtonEx>
                                 </Grid>
-                                <TextBlock x:Name="Genre"
-                                           Padding="{StaticResource ContentLeftSpacing}"
-                                           ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="2"
-                                           ctrl:ResponsiveHorizontalStackPanel.StretchFactor="1"
-                                           ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="120"/>
-                                <Grid Padding="{StaticResource ContentLeftSpacing}">
-                                    <TextBlock AutomationProperties.AccessibilityView="Raw"
-                                               Opacity="0"
-                                               Text="00:00:00"/>
-                                    <TextBlock x:Name="Duration"
-                                               HorizontalAlignment="Stretch"
-                                               TextAlignment="Right"/>
-                                </Grid>
-                                <Grid x:Name="RipStatusGrid"
-                                      Padding="{StaticResource ContentLeftSpacing}"
-                                      ctrl:ResponsiveHorizontalStackPanel.StretchFactor="1"
-                                      ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="112"
-                                      DataContext="{Binding RipStatusLabel}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <FontIcon x:Name="RipStatusIcon"
-                                              Margin="{StaticResource ElementRightMargin}"
-                                              VerticalAlignment="Center"
-                                              Glyph="{StaticResource CheckMarkGlyph}"
-                                              Visibility="Collapsed"/>
-                                    <TextBlock x:Name="RipStatusLabel"
-                                               Grid.Column="1"
-                                               VerticalAlignment="Center"/>
+                                <FontIcon x:Name="PlayQueueErrorIcon"
+                                          x:Uid="PlayQueueErrorIcon"
+                                          Grid.Column="1"
+                                          Margin="{StaticResource ElementRightMargin}"
+                                          VerticalAlignment="Center"
+                                          Glyph="{StaticResource MediaItemErrorBadgeGlyph}"
+                                          ToolTipService.ToolTip="{TemplateBinding ToolTip}"
+                                          Visibility="{Binding HasPlaybackError, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                <TextBlock x:Name="Title" Grid.Column="2">
+                                    <animations:Implicit.Animations>
+                                        <animations:Vector3Animation Target="Offset" Duration="{StaticResource ShortAnimationDuration}"/>
+                                    </animations:Implicit.Animations>
+                                </TextBlock>
+                            </Grid>
+                            <Grid x:Name="Information"
+                                  Padding="{StaticResource TrackHyperlinkButtonMargin}"
+                                  ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="4"
+                                  ctrl:ResponsiveHorizontalStackPanel.StretchFactor="2"
+                                  ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="120">
+                                <HyperlinkButton x:Name="InformationButton">
+                                    <TextBlock x:Name="InformationLinkText" Style="{StaticResource HyperlinkTextButton}"/>
                                     <ToolTipService.ToolTip>
-                                        <ToolTip Content="{Binding Text}" IsEnabled="{Binding IsTextTrimmed}"/>
+                                        <ToolTip Content="{Binding ElementName=InformationLinkText, Path=Text}" IsEnabled="{Binding ElementName=InformationLinkText, Path=IsTextTrimmed}"/>
                                     </ToolTipService.ToolTip>
-                                </Grid>
-                            </ctrl:ResponsiveHorizontalStackPanel.Children>
+                                </HyperlinkButton>
+                                <TextBlock x:Name="InformationText"
+                                           Padding="{StaticResource ScrollViewerWithHyperLinkInnerMargin}"
+                                           Visibility="Collapsed"/>
+                            </Grid>
+                            <Grid x:Name="SecondaryInformation"
+                                  Padding="{StaticResource TrackHyperlinkButtonMargin}"
+                                  ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="3"
+                                  ctrl:ResponsiveHorizontalStackPanel.StretchFactor="1"
+                                  ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="120">
+                                <HyperlinkButton x:Name="SecondaryInformationButton">
+                                    <TextBlock x:Name="SecondaryInformationLinkText" Style="{StaticResource HyperlinkTextButton}"/>
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="{Binding ElementName=SecondaryInformationLinkText, Path=Text}" IsEnabled="{Binding ElementName=SecondaryInformationLinkText, Path=IsTextTrimmed}"/>
+                                    </ToolTipService.ToolTip>
+                                </HyperlinkButton>
+                                <TextBlock x:Name="SecondaryInformationText"
+                                           Padding="{StaticResource ScrollViewerWithHyperLinkInnerMargin}"
+                                           Visibility="Collapsed"/>
+                            </Grid>
+                            <Grid Padding="{StaticResource ContentLeftSpacing}" ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="1">
+                                <TextBlock AutomationProperties.AccessibilityView="Raw"
+                                           Opacity="0"
+                                           Text="0000"/>
+                                <TextBlock x:Name="ReleaseYear"
+                                           HorizontalAlignment="Stretch"
+                                           TextAlignment="Center"/>
+                            </Grid>
+                            <TextBlock x:Name="Genre"
+                                       Padding="{StaticResource ContentLeftSpacing}"
+                                       ctrl:ResponsiveHorizontalStackPanel.FallOffOrder="2"
+                                       ctrl:ResponsiveHorizontalStackPanel.StretchFactor="1"
+                                       ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="120"/>
+                            <Grid Padding="{StaticResource ContentLeftSpacing}">
+                                <TextBlock AutomationProperties.AccessibilityView="Raw"
+                                           Opacity="0"
+                                           Text="00:00:00"/>
+                                <TextBlock x:Name="Duration"
+                                           HorizontalAlignment="Stretch"
+                                           TextAlignment="Right"/>
+                            </Grid>
+                            <Grid x:Name="RipStatusGrid"
+                                  Padding="{StaticResource ContentLeftSpacing}"
+                                  ctrl:ResponsiveHorizontalStackPanel.StretchFactor="1"
+                                  ctrl:ResponsiveHorizontalStackPanel.UnstretchedWidth="112"
+                                  DataContext="{Binding RipStatusLabel}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <FontIcon x:Name="RipStatusIcon"
+                                          Margin="{StaticResource ElementRightMargin}"
+                                          VerticalAlignment="Center"
+                                          Glyph="{StaticResource CheckMarkGlyph}"
+                                          Visibility="Collapsed"/>
+                                <TextBlock x:Name="RipStatusLabel"
+                                           Grid.Column="1"
+                                           VerticalAlignment="Center"/>
+                                <ToolTipService.ToolTip>
+                                    <ToolTip Content="{Binding Text}" IsEnabled="{Binding IsTextTrimmed}"/>
+                                </ToolTipService.ToolTip>
+                            </Grid>
                         </ctrl:ResponsiveHorizontalStackPanel>
                         <TextBlock x:Name="AlternativeContentForDrag"
                                    Text="{Binding TemplateSettings.DragItemsCount, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DragItemsCountConverter}}"

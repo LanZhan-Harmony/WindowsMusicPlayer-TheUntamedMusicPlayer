@@ -1,12 +1,194 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
+<Page x:Class="UntamedMediaPlayer.Pages.PlayQueuePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+      xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+      xmlns:compat="using:UntamedMediaPlayer.Compatibility"
+      xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlAttached="using:UntamedMediaPlayer.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:tkBehaviors="using:CommunityToolkit.WinUI.Behaviors"
+      mc:Ignorable="d">
+    <Page.Resources>
+        <compat:DropConfiguration x:Key="PlayQueueDropConfiguration"
+                                  AcceptedOperation="Link"
+                                  AcceptedUIOverride="{StaticResource DragAndDropAcceptInPlayQueue}"
+                                  RejectedUIOverride="{StaticResource DragAndDropReject}">
+            <compat:DropConfiguration.Command>
+                <compat:PlayQueueDropCommandAdapter/>
+            </compat:DropConfiguration.Command>
+        </compat:DropConfiguration>
+    </Page.Resources>
 
-<Page
-    x:Class="UntamedMediaPlayer.Pages.PlayQueuePage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    <i:Interaction.Behaviors>
+        <tkBehaviors:FocusBehavior>
+            <tkBehaviors:FocusBehavior.Targets>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+            </tkBehaviors:FocusBehavior.Targets>
+        </tkBehaviors:FocusBehavior>
+    </i:Interaction.Behaviors>
 
-    <Grid />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto">
+                <i:Interaction.Behaviors>
+                    <behaviors:RowDefinitionTextScaleFactorBehavior MinHeight="{StaticResource SelectionCommandBarMinHeight}"/>
+                </i:Interaction.Behaviors>
+            </RowDefinition>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SelectionMode">
+                <VisualState x:Name="Extended"/>
+                <VisualState x:Name="Multiple">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="trackList.(ctrlAttached:ListViewBaseEx.IsItemDoubleClickEnabled)" Value="False"/>
+                        <Setter Target="pageHeaderLeftControls.Visibility" Value="Collapsed"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.IsEnabled" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="AdaptiveLayout">
+                <VisualState x:Name="Default"/>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeaderLeftControls.DefaultLabelPosition" Value="Collapsed"/>
+                        <Setter Target="PlayQueuePageTitle.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderLeftControls.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderSelectionControlsBarContainer.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="trackList.Padding" Value="{StaticResource ListViewPaddingForNarrowMode}"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <TextBlock x:Name="PlayQueuePageTitle"
+                   x:Uid="PlayQueuePageTitle"
+                   Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                   Style="{StaticResource TitleNoWrap}"/>
+        <ctrl:OpenMediaMenu x:Name="openMediaMenu"
+                            Grid.Column="1"
+                            Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"/>
+        <CommandBar x:Name="pageHeaderLeftControls"
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                    HorizontalAlignment="Left"
+                    DefaultLabelPosition="Right"
+                    KeyTipPlacementMode="Bottom">
+            <i:Interaction.Behaviors>
+                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,J"/>
+            </i:Interaction.Behaviors>
+            <animations:Implicit.ShowAnimations>
+                <animations:OpacityAnimation From="0"
+                                             To="1"
+                                             Duration="{StaticResource ShortAnimationDuration}"/>
+            </animations:Implicit.ShowAnimations>
+            <animations:Implicit.HideAnimations>
+                <animations:OpacityAnimation From="1"
+                                             To="0"
+                                             Duration="{StaticResource ShortAnimationDuration}"/>
+            </animations:Implicit.HideAnimations>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton x:Uid="PlayQueueCommandClear" KeyTipPlacementMode="Bottom">
+                    <i:Interaction.Behaviors>
+                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,X"/>
+                    </i:Interaction.Behaviors>
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="{StaticResource PlayQueueClearGlyph}"/>
+                    </AppBarButton.Icon>
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="X" Modifiers="Control,Shift"/>
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+                <AppBarButton x:Name="SavePlayQueueButton"
+                              x:Uid="PlayQueueCommandSaveAsPlaylist"
+                              x:Load="False"
+                              KeyTipPlacementMode="Bottom">
+                    <i:Interaction.Behaviors>
+                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,W"/>
+                    </i:Interaction.Behaviors>
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="{StaticResource PlayQueueSaveAsPlaylistGlyph}"/>
+                    </AppBarButton.Icon>
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+                <AppBarButton x:Name="AddToButton"
+                              x:Uid="PlayQueueAddToButton"
+                              x:Load="False"
+                              KeyTipPlacementMode="Bottom">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="{StaticResource PlayQueueAddItemsGlyph}"/>
+                    </AppBarButton.Icon>
+                    <i:Interaction.Behaviors>
+                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,W"/>
+                        <behaviors:MenuFlyoutItemsDynamicLoadBehavior/>
+                    </i:Interaction.Behaviors>
+                </AppBarButton>
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+        <Border x:Name="pageHeaderSelectionControlsBarContainer"
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}">
+            <ctrl:SelectionControlsBar x:Name="pageHeaderSelectionControlsBar"
+                                       x:Load="False"
+                                       IsEnabled="False"
+                                       Visibility="Collapsed">
+                <animations:Implicit.ShowAnimations>
+                    <animations:OpacityAnimation From="0"
+                                                 To="1"
+                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                </animations:Implicit.ShowAnimations>
+                <animations:Implicit.HideAnimations>
+                    <animations:OpacityAnimation From="1"
+                                                 To="0"
+                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                </animations:Implicit.HideAnimations>
+            </ctrl:SelectionControlsBar>
+        </Border>
+        <ctrl:ListViewEx x:Name="trackList"
+                         Grid.Row="2"
+                         Grid.ColumnSpan="2"
+                         AllowDrop="True"
+                         CanDragItems="True"
+                         CanReorderItems="True"
+                         DropConfiguration="{StaticResource PlayQueueDropConfiguration}"
+                         IsMultiSelectCheckBoxEnabled="False"
+                         KeyTipPlacementMode="Center"
+                         SelectionMode="Extended"
+                         Style="{StaticResource ListViewExtraLargeContentStyle}"
+                         UseCustomItemPresenterWithDisplayMode="ListItemPresenterWithMediaTypeIcon">
+            <ctrl:ListViewEx.ItemsMenuFlyout>
+                <MenuFlyout/>
+            </ctrl:ListViewEx.ItemsMenuFlyout>
+            <i:Interaction.Behaviors>
+                <behaviors:SelectionManagerBehavior/>
+                <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
+                <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
+            </i:Interaction.Behaviors>
+        </ctrl:ListViewEx>
+    </Grid>
 </Page>

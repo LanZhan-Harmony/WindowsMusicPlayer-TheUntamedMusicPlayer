@@ -1,33 +1,14 @@
+using CommunityToolkit.WinUI.Behaviors;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
 /// <summary>Moves keyboard focus to the associated element when it is loaded.</summary>
-public sealed class AutoFocusBehavior : Behavior<FrameworkElement>
+public sealed class AutoFocusBehavior : BehaviorBase<Control>
 {
-    protected override void OnAttached()
+    protected override void OnAssociatedObjectLoaded()
     {
-        base.OnAttached();
-        AssociatedObject.Loaded += OnLoaded;
-    }
-
-    protected override void OnDetaching()
-    {
-        AssociatedObject.Loaded -= OnLoaded;
-        base.OnDetaching();
-    }
-
-    private static void OnLoaded(object sender, RoutedEventArgs args)
-    {
-        if (sender is Control control)
-        {
-            control.Focus(FocusState.Programmatic);
-        }
-        else if (sender is UIElement element)
-        {
-            element.Focus(FocusState.Programmatic);
-        }
+        AssociatedObject.Focus(FocusState.Programmatic);
     }
 }

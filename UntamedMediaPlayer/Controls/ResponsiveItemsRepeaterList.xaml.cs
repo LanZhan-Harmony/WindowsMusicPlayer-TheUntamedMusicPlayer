@@ -1,13 +1,18 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.Generic;
 
 namespace UntamedMediaPlayer.Controls;
 
 public sealed partial class ResponsiveItemsRepeaterList : UserControl
 {
+    private readonly HashSet<UIElement> _realizedElements = new();
+
     public ResponsiveItemsRepeaterList()
     {
         InitializeComponent();
+        Repeater.ElementPrepared += OnElementPrepared;
+        Repeater.ElementClearing += OnElementClearing;
     }
 
     public ResponsiveListBreakpointCollection? Breakpoints
@@ -35,7 +40,7 @@ public sealed partial class ResponsiveItemsRepeaterList : UserControl
             nameof(CanDragItems),
             typeof(bool),
             typeof(ResponsiveItemsRepeaterList),
-            new PropertyMetadata(false)
+            new PropertyMetadata(false, OnCanDragItemsChanged)
         );
 
     public int ColumnSpan
@@ -107,4 +112,35 @@ public sealed partial class ResponsiveItemsRepeaterList : UserControl
             typeof(ResponsiveItemsRepeaterList),
             new PropertyMetadata(null)
         );
+
+    private static void OnCanDragItemsChanged(
+        DependencyObject dependencyObject,
+        DependencyPropertyChangedEventArgs args
+    )
+    {
+        if (dependencyObject is ResponsiveItemsRepeaterList list)
+        {
+            list.UpdateRealizedDragState((bool)args.NewValue);
+        }
+    }
+
+    private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+    {
+        _realizedElements.Add(args.Element);
+        args.Element.CanDrag = CanDragItems;
+    }
+
+    private void OnElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
+    {
+        args.Element.CanDrag = false;
+        _realizedElements.Remove(args.Element);
+    }
+
+    private void UpdateRealizedDragState(bool canDrag)
+    {
+        foreach (UIElement element in _realizedElements)
+        {
+            element.CanDrag = canDrag;
+        }
+    }
 }

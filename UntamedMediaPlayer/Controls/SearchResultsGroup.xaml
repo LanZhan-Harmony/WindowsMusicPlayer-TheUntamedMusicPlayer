@@ -43,30 +43,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.Children>
-            <TextBlock x:Name="SubTitle"
-                       Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
-                       Style="{StaticResource SubTitle}"/>
-            <HyperlinkButton x:Name="SeeAllButton"
-                             x:Uid="SeeAllSearchResults"
-                             Grid.Column="1"
-                             Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"/>
-            <local:ResponsiveItemsRepeaterList x:Name="ResultsList"
-                                               Margin="{StaticResource ResponsiveItemsRepeaterListContentExtraLargeMargin}"
-                                               Breakpoints="{StaticResource MusicItemsBreakpoints}"
-                                               CanDragItems="True"
-                                               ColumnSpan="2"
-                                               DefaultColumnSpacing="8"
-                                               Row="1"
-                                               StretchContent="False">
-                <local:ResponsiveItemsRepeaterList.ItemsMenuFlyout>
-                    <MenuFlyout/>
-                </local:ResponsiveItemsRepeaterList.ItemsMenuFlyout>
-                <i:Interaction.Behaviors>
-                    <behaviors:ResponsiveItemsRepeaterListDragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
-                </i:Interaction.Behaviors>
-            </local:ResponsiveItemsRepeaterList>
-        </Grid.Children>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState/>
@@ -80,20 +56,41 @@
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="AdaptiveLayout">
-                <VisualStateGroup.States>
-                    <VisualState x:Name="Default"/>
-                    <VisualState x:Name="Narrow">
-                        <VisualState.StateTriggers>
-                            <helpers:ViewportStateTrigger State="Narrow"/>
-                        </VisualState.StateTriggers>
-                        <VisualState.Setters>
-                            <Setter Target="SubTitle.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
-                            <Setter Target="SeeAllButton.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
-                            <Setter Target="ResultsList.Margin" Value="{StaticResource ResponsiveItemsRepeaterListContentMargin}"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup.States>
+                <VisualState x:Name="Default"/>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SubTitle.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="SeeAllButton.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="ResultsList.Margin" Value="{StaticResource ResponsiveItemsRepeaterListContentMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+
+        <TextBlock x:Name="SubTitle"
+                   Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                   Style="{StaticResource SubTitle}"/>
+        <HyperlinkButton x:Name="SeeAllButton"
+                         x:Uid="SeeAllSearchResults"
+                         Grid.Column="1"
+                         Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"/>
+        <local:ResponsiveItemsRepeaterList x:Name="ResultsList"
+                                           Grid.Row="1"
+                                           Grid.ColumnSpan="2"
+                                           Margin="{StaticResource ResponsiveItemsRepeaterListContentExtraLargeMargin}"
+                                           Breakpoints="{StaticResource MusicItemsBreakpoints}"
+                                           CanDragItems="True"
+                                           DefaultColumnSpacing="8"
+                                           StretchContent="False">
+            <local:ResponsiveItemsRepeaterList.ItemsMenuFlyout>
+                <MenuFlyout/>
+            </local:ResponsiveItemsRepeaterList.ItemsMenuFlyout>
+            <i:Interaction.Behaviors>
+                <behaviors:ResponsiveItemsRepeaterListDragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
+            </i:Interaction.Behaviors>
+        </local:ResponsiveItemsRepeaterList>
     </Grid>
 </UserControl>
