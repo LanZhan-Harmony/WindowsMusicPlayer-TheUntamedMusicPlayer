@@ -1,12 +1,328 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version="1.0" encoding="utf-8" ?>
 <Page x:Class="UntamedMediaPlayer.Pages.VideoFoldersLibraryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+      xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+      xmlns:ctrl="using:UntamedMediaPlayer.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
       xmlns:local="using:UntamedMediaPlayer.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:tkBehaviors="using:CommunityToolkit.WinUI.Behaviors"
       mc:Ignorable="d">
+    <Page.Resources>
+        <CollectionViewSource x:Name="VideoCollectionSourceView"
+                              x:Key="VideoCollectionSourceView"
+                              IsSourceGrouped="True"/>
+        <Style x:Key="NotExpandableGridViewHeaderItemStyle"
+               BasedOn="{StaticResource DefaultGridViewHeaderItemStyle}"
+               TargetType="GridViewHeaderItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewHeaderItem">
+                        <Grid BorderBrush="{ThemeResource ControlStrokeColorDefault}" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Margin="{StaticResource ElementRightMargin}"
+                                      VerticalAlignment="Center"
+                                      Glyph="{StaticResource FolderGlyph}"/>
+                            <TextBlock Grid.Column="1"
+                                       VerticalAlignment="Center"
+                                       AutomationProperties.AccessibilityView="Raw"
+                                       Style="{StaticResource BodyNoMargin}"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap">
+                                <Run FontSize="20"/>
+                                <Run Text=" "/>
+                                <Run Foreground="{ThemeResource TextFillColorSecondary}"/>
+                            </TextBlock>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ExpandableGridViewHeaderItemStyle"
+               BasedOn="{StaticResource DefaultGridViewHeaderItemStyle}"
+               TargetType="GridViewHeaderItem">
+            <Setter Property="AutomationProperties.AccessibilityView" Value="Raw"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewHeaderItem">
+                        <ctrl:ExpandableGroupHeader>
+                            <ctrl:ExpandableGroupHeader.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.ThemeDictionaries>
+                                        <ResourceDictionary x:Key="Dark">
+                                            <StaticResource x:Key="ExpanderHeaderDisabledForeground" ResourceKey="ExpanderHeaderForeground"/>
+                                            <StaticResource x:Key="ExpanderHeaderDisabledBorderBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                            <StaticResource x:Key="ExpanderHeaderBorderPressedBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                            <StaticResource x:Key="ExpanderHeaderBorderPointerOverBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                            <StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                        </ResourceDictionary>
+                                        <ResourceDictionary x:Key="Light">
+                                            <StaticResource x:Key="ExpanderHeaderDisabledForeground" ResourceKey="ExpanderHeaderForeground"/>
+                                            <StaticResource x:Key="ExpanderHeaderDisabledBorderBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                            <StaticResource x:Key="ExpanderHeaderBorderPressedBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                            <StaticResource x:Key="ExpanderHeaderBorderPointerOverBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                            <StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                        </ResourceDictionary>
+                                        <ResourceDictionary x:Key="HighContrast">
+                                            <StaticResource x:Key="ExpanderHeaderDisabledForeground" ResourceKey="ExpanderHeaderForeground"/>
+                                            <StaticResource x:Key="ExpanderHeaderDisabledBorderBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                            <StaticResource x:Key="ExpanderHeaderBorderPressedBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                            <StaticResource x:Key="ExpanderHeaderBorderPointerOverBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                            <StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="ControlStrokeColorDefault"/>
+                                        </ResourceDictionary>
+                                    </ResourceDictionary.ThemeDictionaries>
+                                    <StaticResource x:Key="ExpanderChevronMargin" ResourceKey="ElementLeftMargin"/>
+                                </ResourceDictionary>
+                            </ctrl:ExpandableGroupHeader.Resources>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Margin="{StaticResource ElementRightMargin}"
+                                          VerticalAlignment="Center"
+                                          Glyph="{StaticResource FolderGlyph}"/>
+                                <TextBlock Grid.Column="1"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Style="{StaticResource BodyNoMargin}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap">
+                                    <Run FontSize="20"/>
+                                    <Run Text=" "/>
+                                    <Run Foreground="{ThemeResource TextFillColorSecondary}"/>
+                                </TextBlock>
+                            </Grid>
+                        </ctrl:ExpandableGroupHeader>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
-    <Grid />
+    <i:Interaction.Behaviors>
+        <tkBehaviors:FocusBehavior>
+            <tkBehaviors:FocusBehavior.Targets>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+            </tkBehaviors:FocusBehavior.Targets>
+        </tkBehaviors:FocusBehavior>
+    </i:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto">
+                <i:Interaction.Behaviors>
+                    <behaviors:RowDefinitionTextScaleFactorBehavior MinHeight="{StaticResource SelectionCommandBarMinHeight}"/>
+                </i:Interaction.Behaviors>
+            </RowDefinition>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PageStates">
+                <VisualState x:Name="LibraryAccessDenied">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="noAccessMessageControl.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeader.IsAddFolderButtonVisible" Value="False"/>
+                        <Setter Target="pageHeader.IsPageSelectorVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ContentLoading">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="progress.Visibility" Value="Visible"/>
+                        <Setter Target="progress.IsActive" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ContentRefreshing">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="contentList.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderControls.Visibility" Value="Visible"/>
+                        <Setter Target="progress.Visibility" Value="Visible"/>
+                        <Setter Target="progress.IsActive" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NoData">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="noVideosMessageControl.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeader.IsAddFolderButtonVisible" Value="False"/>
+                        <Setter Target="pageHeader.IsPageSelectorVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DataAvailable">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="contentList.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderControls.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Selection">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="contentList.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.IsEnabled" Value="True"/>
+                        <Setter Target="contentList.IsMultiSelectCheckBoxEnabled" Value="True"/>
+                        <Setter Target="contentList.IsItemClickEnabled" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="AdaptiveLayoutMargins">
+                <VisualState/>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="noAccessMessageControl.Margin" Value="{StaticResource ContentMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="noVideosMessageControl.Margin" Value="{StaticResource ContentMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderControls.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderSelectionControlsBarContainer.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="contentList.Padding" Value="{StaticResource GridViewPaddingForNarrowMode}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState/>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="contentListGroupStyle.HeaderContainerStyle" Value="{StaticResource ExpandableGridViewHeaderItemStyle}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <ctrl:LibraryPageHeader x:Name="pageHeader" Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"/>
+        <ctrl:PageHeader x:Name="pageHeaderControls"
+                         Grid.Row="1"
+                         Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                         Visibility="Collapsed"/>
+        <Border x:Name="pageHeaderSelectionControlsBarContainer"
+                Grid.Row="1"
+                Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}">
+            <ctrl:SelectionControlsBar x:Name="pageHeaderSelectionControlsBar"
+                                       x:Load="False"
+                                       IsEnabled="False"
+                                       Visibility="Collapsed">
+                <animations:Implicit.ShowAnimations>
+                    <animations:OpacityAnimation From="0"
+                                                 To="1"
+                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                </animations:Implicit.ShowAnimations>
+                <animations:Implicit.HideAnimations>
+                    <animations:OpacityAnimation From="1"
+                                                 To="0"
+                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                </animations:Implicit.HideAnimations>
+            </ctrl:SelectionControlsBar>
+        </Border>
+        <ctrl:GridViewEx x:Name="contentList"
+                         Grid.Row="2"
+                         CanDragItems="True"
+                         IsItemClickEnabled="True"
+                         IsMultiSelectCheckBoxEnabled="False"
+                         IsSynchronizedWithCurrentItem="False"
+                         SelectionMode="None"
+                         Style="{StaticResource GridViewExtraLargeContentStyle}"
+                         UseCustomItemPresenterWithDisplayMode="CardItemPresenterWithWideImage"
+                         Visibility="Collapsed">
+            <GridView.GroupStyle>
+                <GroupStyle x:Name="contentListGroupStyle"
+                            HeaderContainerStyle="{StaticResource NotExpandableGridViewHeaderItemStyle}"
+                            HidesIfEmpty="False"/>
+            </GridView.GroupStyle>
+            <ctrl:GridViewEx.ItemsMenuFlyout>
+                <MenuFlyout/>
+            </ctrl:GridViewEx.ItemsMenuFlyout>
+            <i:Interaction.Behaviors>
+                <behaviors:ListViewBasePersistentScrollingBehavior/>
+                <behaviors:SelectionManagerBehavior/>
+                <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
+                <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
+                <behaviors:ListViewBaseGroupHeaderAutomationNameBehavior/>
+            </i:Interaction.Behaviors>
+        </ctrl:GridViewEx>
+        <ctrl:EmptyPageMessageControl x:Name="noVideosMessageControl"
+                                      x:Uid="NoVideosErrorMessage"
+                                      Grid.Row="1"
+                                      Grid.RowSpan="2"
+                                      Margin="{StaticResource ContentExtraLargeLeftRightDefaultTopBottomMargin}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      x:Load="False"
+                                      CommandAccessVirtualKey="C,A"
+                                      ImageSource="ms-appx:///Assets/VideoGradient.svg"
+                                      Visibility="Collapsed"/>
+        <ctrl:ErrorMessageControl x:Name="noAccessMessageControl"
+                                  x:Uid="NoVideosLibraryAccessErrorMessage"
+                                  Grid.Row="1"
+                                  Grid.RowSpan="2"
+                                  Margin="{StaticResource ContentExtraLargeLeftRightDefaultTopBottomMargin}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  x:Load="False"
+                                  Visibility="Collapsed"/>
+        <ProgressRing x:Name="progress"
+                      Grid.Row="2"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      IsActive="False"
+                      Visibility="Collapsed"/>
+    </Grid>
 </Page>

@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="UntamedMediaPlayer.Controls.AppChrome"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+             xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+             xmlns:compat="using:UntamedMediaPlayer.Compatibility"
+             xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+             xmlns:ctrlAttached="using:UntamedMediaPlayer.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+             xmlns:i="using:Microsoft.Xaml.Interactivity"
+             xmlns:local="using:UntamedMediaPlayer.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:services="using:UntamedMediaPlayer.Services"
+             xmlns:tkCtrl="using:CommunityToolkit.WinUI.Controls"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <compat:DropConfiguration x:Key="PlaylistsDropConfiguration"
+                                      AcceptedOperation="Copy"
+                                      AcceptedUIOverride="{StaticResource DragAndDropAcceptOnPlaylists}"
+                                      RejectedUIOverride="{StaticResource DragAndDropRejectOnPlaylists}">
+                <compat:DropConfiguration.Command>
+                    <compat:PlaylistsDropCommandAdapter/>
+                </compat:DropConfiguration.Command>
+            </compat:DropConfiguration>
+
+            <services:GlobalKeyboardAcceleratorService x:Key="globalKeyboardAccelerators" x:Name="globalKeyboardAccelerators">
+                <services:GlobalKeyboardAcceleratorService.KeyboardAccelerators>
+                    <compat:CommandKeyboardAccelerator Key="Enter" Modifiers="Menu"/>
+                    <compat:CommandKeyboardAccelerator Key="{StaticResource toggleFullScreenModeAcceleratorKey}"/>
+                    <compat:CommandKeyboardAccelerator Key="{StaticResource toggleMiniPlayerModeAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+                    <compat:CommandKeyboardAccelerator Key="Left" Modifiers="Menu"/>
+                    <compat:CommandKeyboardAccelerator KeyCode="{StaticResource vkGoBack}"/>
+                    <compat:CommandKeyboardAccelerator Key="Space"/>
+                    <compat:CommandKeyboardAccelerator Key="Add"
+                                                       CommandParameter="{StaticResource VolumeUpDelta}"
+                                                       Modifiers="{StaticResource acceleratorModifierKey}"/>
+                    <compat:CommandKeyboardAccelerator CommandParameter="{StaticResource VolumeUpDelta}"
+                                                       KeyCode="{StaticResource vkOemPlusKeyCode}"
+                                                       Modifiers="{StaticResource acceleratorModifierKey}"/>
+                    <compat:CommandKeyboardAccelerator Key="Subtract"
+                                                       CommandParameter="{StaticResource VolumeDownDelta}"
+                                                       Modifiers="{StaticResource acceleratorModifierKey}"/>
+                    <compat:CommandKeyboardAccelerator CommandParameter="{StaticResource VolumeDownDelta}"
+                                                       KeyCode="{StaticResource vkOemMinusKeyCode}"
+                                                       Modifiers="{StaticResource acceleratorModifierKey}"/>
+                    <compat:CommandKeyboardAccelerator Key="{StaticResource repeatTrackAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+                    <compat:CommandKeyboardAccelerator Key="{StaticResource shufflePlaybackAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+                </services:GlobalKeyboardAcceleratorService.KeyboardAccelerators>
+            </services:GlobalKeyboardAcceleratorService>
+            <x:Double x:Key="VolumeUpDelta">0.02</x:Double>
+            <x:Double x:Key="VolumeDownDelta">-0.02</x:Double>
+            <Thickness x:Key="NavigationViewMinimalHeaderMargin">0</Thickness>
+            <Thickness x:Key="NavigationViewMinimalContentGridBorderThickness">0</Thickness>
+            <Thickness x:Key="NavigationViewHeaderMargin">0</Thickness>
+            <CornerRadius x:Key="NavigationViewContentGridCornerRadius">0</CornerRadius>
+            <Thickness x:Key="NavigationViewContentGridBorderThickness">1,0,0,0</Thickness>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator x:Name="openSearchAccelerator"
+                                 Key="{StaticResource openSearchAcceleratorKey}"
+                                 Modifiers="{StaticResource acceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource openMusicLibraryAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource openVideoLibraryAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource openPlaylistLibraryAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource openNowPlayingAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource openPlayQueueAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+            <KeyboardAccelerator x:Name="openSettingsAccelerator"
+                                 Key="{StaticResource openSettingsAcceleratorKey}"
+                                 Modifiers="{StaticResource acceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource openFileAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource openFileAcceleratorKey}" Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource openUrlAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource addFileAcceleratorKey}" Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource addFolderAcceleratorKey}" Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource addUrlAcceleratorKey}" Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="{StaticResource openHomePageAcceleratorKey}" Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+            <KeyboardAccelerator Key="GoHome"/>
+        </Grid.KeyboardAccelerators>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AppTitleBarStates">
+                <VisualState x:Name="TitleBarFullScreenMode">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="FullScreen"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="TitleBarCompactOverlayMode">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="AnyCompactOverlay"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="appTitleBarTitle.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TitleBarTheaterMode">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="exitNowPlayingButton.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TitleBarDesktopMode">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger PrimaryInteractionMode="Mouse" State="Narrow,Normal,Large,ExtraLarge"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="TitleBarTabletMode">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger PrimaryInteractionMode="Touch" State="Narrow,Normal,Large,ExtraLarge"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="navigationBar.AlwaysShowHeader" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="VisualizationLayoutStates">
+                <VisualState x:Name="VisualizationDefaultLayout">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="NormalHeight"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="VisualizationFullScreenLayout">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="FullScreen"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="visualization.DisplayMode" Value="FullScreen"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualizationCompactLayout">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                        <helpers:ViewportStateTrigger State="NarrowHeight"/>
+                        <helpers:ViewportStateTrigger State="NormalWidthNormalHeightCompactOverlay"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="visualization.DisplayMode" Value="Compact"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualizationBackgroundOnlyLayout">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="NarrowCompactOverlay"/>
+                        <helpers:ViewportStateTrigger State="NormalWidthNarrowHeightCompactOverlay"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="visualization.DisplayMode" Value="BackgroundOnly"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="VisualizationVisibilityStates">
+                <VisualState x:Name="NoMediaContentState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="visualization.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="HasVideoStreamState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="visualization.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NoVideoStreamState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="visualization.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="NavigationBarStateGroup">
+                <VisualState x:Name="DefaultNavigationBarState"/>
+                <VisualState x:Name="NarrowNavigationBarState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                        <helpers:ViewportStateTrigger State="Narrow, NarrowHeight"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="navigationBar.PaneDisplayMode" Value="LeftMinimal"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="LargeNavigationBarState">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="ExtraLargeWidthNormalHeight"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="navigationBar.PaneDisplayMode" Value="Left"/>
+                        <Setter Target="navigationBar.IsPaneToggleButtonVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="MtcInformationLevelStates">
+                <VisualState x:Name="HiddenState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="mtcMediaInformationButton.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="MetadataOnlyState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="mtcMediaInformation.DisplayMode" Value="MetadataOnly"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VideoPreviewAndMetadataState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="mtcMediaInformation.DisplayMode" Value="VideoPreviewAndMetadata"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="CoverAndMetadataState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="mtcMediaInformation.DisplayMode" Value="CoverAndMetadata"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="AllowDragAndDropOnAppChrome">
+                <VisualState/>
+                <VisualState x:Name="Allow">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="mediaTransportControls.DropConfiguration">
+                            <Setter.Value>
+                                <compat:DropConfiguration AcceptedOperation="Link"
+                                                          AcceptedUIOverride="{StaticResource DragAndDropAcceptInPlayPage}"
+                                                          RejectedUIOverride="{StaticResource DragAndDropReject}">
+                                    <compat:DropConfiguration.Command>
+                                        <compat:PlayQueueDropCommandAdapter OpenPlayPage="True"/>
+                                    </compat:DropConfiguration.Command>
+                                </compat:DropConfiguration>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="EnableLibrary">
+                <VisualState/>
+                <VisualState x:Name="Disable">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="musicLibraryNavigationViewItem.Visibility" Value="Collapsed"/>
+                        <Setter Target="videoLibraryNavigationViewItem.Visibility" Value="Collapsed"/>
+                        <Setter Target="playlistsNavigationViewItem.Visibility" Value="Collapsed"/>
+                        <Setter Target="libraryNavigationViewSeparator.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="NowPlayingState">
+                <VisualState x:Name="NavigateBackState"/>
+                <VisualState x:Name="HomeState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="exitNowPlayingButton.Content" Value="{StaticResource HomeGlyph}"/>
+                        <Setter Target="exitNowPlayingButton.FontSize" Value="16"/>
+                        <Setter x:Uid="ExitNowPlayingAndOpenHomeButtonAutomationPropertiesName" Target="exitNowPlayingButton.(AutomationProperties.Name)" Value="Home"/>
+                        <Setter x:Uid="ExitNowPlayingAndOpenHomeButtonToolTip" Target="exitNowPlayingButton.(ToolTipService.ToolTip)" Value="Home"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="indexerNotice.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <ToolTipService.ToolTip>
+            <ToolTip IsEnabled="False"/>
+        </ToolTipService.ToolTip>
+
+        <ctrl:CustomMediaPlayerElement x:Name="mediaPlayerElement"
+                                       AreTransportControlsEnabled="True"
+                                       AutoPlay="False">
+            <ctrl:CustomMediaPlayerElement.TransportControls>
+                <ctrl:CustomMediaTransportControls x:Name="mediaTransportControls" AllowDrop="True">
+                    <ctrl:CustomMediaTransportControls.Content>
+                        <NavigationView x:Name="navigationBar"
+                                        x:Uid="navigationBar"
+                                        AlwaysShowHeader="True"
+                                        CompactPaneLength="{StaticResource NavigationViewCompactPaneLength}"
+                                        IsPaneOpen="False"
+                                        IsSettingsVisible="True"
+                                        IsTitleBarAutoPaddingEnabled="False"
+                                        OverflowLabelMode="NoLabel"
+                                        PaneDisplayMode="LeftCompact">
+                            <NavigationView.AutoSuggestBox>
+                                <AutoSuggestBox x:Name="searchBox"
+                                                x:Uid="CommandBarSearchMenu"
+                                                KeyTipPlacementMode="Right"
+                                                QueryIcon="Find">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="N,E"/>
+                                    </i:Interaction.Behaviors>
+                                    <AutoSuggestBox.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource openSearchAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </AutoSuggestBox.KeyboardAccelerators>
+                                    <AutoSuggestBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <FontIcon Margin="{StaticResource ElementRightMargin}" Style="{StaticResource InlineMediaFontIcon}"/>
+                                                <TextBlock Grid.Column="1"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </AutoSuggestBox.ItemTemplate>
+                                </AutoSuggestBox>
+                            </NavigationView.AutoSuggestBox>
+                            <NavigationView.MenuItems>
+                                <NavigationViewItem x:Name="homeNavigationViewItem"
+                                                    x:Uid="CommandBarHomePage"
+                                                    KeyTipPlacementMode="Right">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="N,O"/>
+                                    </i:Interaction.Behaviors>
+                                    <NavigationViewItem.Icon>
+                                        <FontIcon Glyph="{StaticResource HomeGlyph}"/>
+                                    </NavigationViewItem.Icon>
+                                    <NavigationViewItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource openHomePageAcceleratorKey}" Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                    </NavigationViewItem.KeyboardAccelerators>
+                                </NavigationViewItem>
+                                <NavigationViewItem x:Name="musicLibraryNavigationViewItem"
+                                                    x:Uid="CommandBarMusicLibrary"
+                                                    KeyTipPlacementMode="Right">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="N,S"/>
+                                    </i:Interaction.Behaviors>
+                                    <NavigationViewItem.Icon>
+                                        <FontIcon Glyph="{StaticResource MusicLibraryCommandGlyph}"/>
+                                    </NavigationViewItem.Icon>
+                                    <NavigationViewItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource openMusicLibraryAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </NavigationViewItem.KeyboardAccelerators>
+                                </NavigationViewItem>
+                                <NavigationViewItem x:Name="videoLibraryNavigationViewItem"
+                                                    x:Uid="CommandBarVideoLibrary"
+                                                    KeyTipPlacementMode="Right">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="N,V"/>
+                                    </i:Interaction.Behaviors>
+                                    <NavigationViewItem.Icon>
+                                        <FontIcon Glyph="{StaticResource VideoLibraryCommandGlyph}"/>
+                                    </NavigationViewItem.Icon>
+                                    <NavigationViewItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource openVideoLibraryAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </NavigationViewItem.KeyboardAccelerators>
+                                </NavigationViewItem>
+                                <NavigationViewItemSeparator x:Name="additionalSourcesSeparator"/>
+                                <NavigationViewItemSeparator x:Name="libraryNavigationViewSeparator"/>
+                                <NavigationViewItem x:Name="openPlayQueueNavigationViewItem"
+                                                    x:Uid="CommandBarPlayQueueMenu"
+                                                    KeyTipPlacementMode="Right">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="N,Q"/>
+                                    </i:Interaction.Behaviors>
+                                    <NavigationViewItem.Icon>
+                                        <FontIcon Glyph="{StaticResource PlayQueueCommandGlyph}"/>
+                                    </NavigationViewItem.Icon>
+                                    <NavigationViewItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource openPlayQueueAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </NavigationViewItem.KeyboardAccelerators>
+                                </NavigationViewItem>
+                                <ctrl:NavigationViewItemEx x:Name="playlistsNavigationViewItem"
+                                                           x:Uid="CommandBarPlaylists"
+                                                           AllowDrop="True"
+                                                           DropConfiguration="{StaticResource PlaylistsDropConfiguration}"
+                                                           KeyTipPlacementMode="Right">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="N,P"/>
+                                    </i:Interaction.Behaviors>
+                                    <NavigationViewItem.Icon>
+                                        <FontIcon Glyph="{StaticResource PlaylistsCommandGlyph}"/>
+                                    </NavigationViewItem.Icon>
+                                    <NavigationViewItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource openPlaylistLibraryAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </NavigationViewItem.KeyboardAccelerators>
+                                </ctrl:NavigationViewItemEx>
+                            </NavigationView.MenuItems>
+                            <NavigationView.Header>
+                                <Border x:Name="navigationPageHeader"/>
+                            </NavigationView.Header>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <ContentPresenter x:Name="navigationHostContainer"/>
+                                <InfoBar x:Name="indexerNotice"
+                                         x:Uid="IndexerNotice"
+                                         Grid.Row="1"
+                                         x:Load="False"
+                                         IsClosable="True"
+                                         Style="{StaticResource IndexerStatusInfoBarStyle}"
+                                         Visibility="Collapsed"/>
+                            </Grid>
+                        </NavigationView>
+                    </ctrl:CustomMediaTransportControls.Content>
+                    <ctrl:CustomMediaTransportControls.FullWindowTitleBar>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.Resources>
+                                <Style x:Key="ExitNowPlayingStyle"
+                                       BasedOn="{StaticResource NavigationBackButtonNormalStyle}"
+                                       TargetType="Button">
+                                    <Setter Property="FontFamily" Value="{StaticResource MediaPlayerIconsFontFamily}"/>
+                                    <Setter Property="KeyTipPlacementMode" Value="Bottom"/>
+                                    <Setter Property="Width" Value="{StaticResource NavigationViewCompactPaneLength}"/>
+                                </Style>
+                            </Grid.Resources>
+                            <Button x:Name="exitNowPlayingButton"
+                                    x:Uid="ExitNowPlayingAndGoBackButton"
+                                    Content="{StaticResource BackGlyph}"
+                                    FontSize="12"
+                                    Style="{StaticResource ExitNowPlayingStyle}"
+                                    Visibility="Collapsed">
+                                <i:Interaction.Behaviors>
+                                    <behaviors:LiveAccessKeyBehavior AccessVirtualKey="A"/>
+                                </i:Interaction.Behaviors>
+                                <animations:Implicit.ShowAnimations>
+                                    <animations:OpacityAnimation From="0"
+                                                                 To="1"
+                                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                                </animations:Implicit.ShowAnimations>
+                            </Button>
+                            <StackPanel x:Name="appTitleBarTitle"
+                                        Grid.Column="1"
+                                        Orientation="Horizontal">
+                                <Border MaxWidth="32"
+                                        Margin="{StaticResource ContentSmallLeftSpacing}"
+                                        Padding="{StaticResource ContentSmallMargin}"
+                                        VerticalAlignment="Center">
+                                    <Image AutomationProperties.AccessibilityView="Raw" Source="Assets/MediaPlayerAppList.png"/>
+                                </Border>
+                                <TextBlock Margin="{StaticResource ContentSmallLeftSpacing}"
+                                           VerticalAlignment="Center"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                            <Border x:Name="appTitleBar"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Top"
+                                    Background="#00FFFFFF"/>
+                        </Grid>
+                    </ctrl:CustomMediaTransportControls.FullWindowTitleBar>
+                    <ctrl:CustomMediaTransportControls.Notifications>
+                        <ctrl:InAppNotification x:Name="inAppNotification"
+                                                BorderBrush="{ThemeResource PageHeaderBorderBrush}"
+                                                BorderThickness="{ThemeResource PageHeaderBorderThickness}">
+                            <ctrl:InAppNotification.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource ErrorTextBlockStyle}"/>
+                                        <TextBlock Margin="{StaticResource ElementTopMargin}" Style="{StaticResource SubtleCaptionTextBlockStyle}"/>
+                                        <tkCtrl:WrapPanel Margin="0,2,0,-7">
+                                            <HyperlinkButton Margin="-12,0"
+                                                             VerticalAlignment="Center"
+                                                             Visibility="Collapsed"/>
+                                            <Rectangle Width="1"
+                                                       Height="16"
+                                                       Margin="12,0"
+                                                       VerticalAlignment="Center"
+                                                       Fill="{ThemeResource SystemBaseHighColor}"/>
+                                            <HyperlinkButton x:Uid="NotificationSendFeedback"
+                                                             Margin="-12,0"
+                                                             VerticalAlignment="Center"/>
+                                        </tkCtrl:WrapPanel>
+                                        <ProgressBar Margin="{StaticResource ElementTopMargin}"
+                                                     HorizontalAlignment="Stretch"
+                                                     Maximum="100"
+                                                     Minimum="0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ctrl:InAppNotification.ContentTemplate>
+                        </ctrl:InAppNotification>
+                    </ctrl:CustomMediaTransportControls.Notifications>
+                    <ctrl:CustomMediaTransportControls.CommandPanelHeader>
+                        <Border>
+                            <Border.Resources>
+                                <ResourceDictionary>
+                                    <compat:DropConfiguration x:Key="PlaylistsDropConfiguration"
+                                                              AcceptedOperation="Copy"
+                                                              AcceptedUIOverride="{StaticResource DragAndDropAcceptOnPlaylists}"
+                                                              RejectedUIOverride="{StaticResource DragAndDropRejectOnPlaylists}">
+                                        <compat:DropConfiguration.Command>
+                                            <compat:PlaylistsDropCommandAdapter/>
+                                        </compat:DropConfiguration.Command>
+                                    </compat:DropConfiguration>
+
+                                    <ResourceDictionary.ThemeDictionaries>
+                                        <ResourceDictionary x:Key="Dark">
+                                            <StaticResource x:Key="ButtonForeground" ResourceKey="AppBarButtonForeground"/>
+                                            <StaticResource x:Key="ButtonForegroundPressed" ResourceKey="AppBarButtonForegroundPressed"/>
+                                            <StaticResource x:Key="ButtonForegroundPointerOver" ResourceKey="AppBarButtonForegroundPointerOver"/>
+                                            <StaticResource x:Key="ButtonForegroundDisabled" ResourceKey="AppBarButtonForeground"/>
+                                            <Thickness x:Key="ButtonBorderThemeThickness">0</Thickness>
+                                            <StaticResource x:Key="ButtonBorderBrush" ResourceKey="AppBarButtonBorderBrush"/>
+                                            <StaticResource x:Key="ButtonBorderBrushPressed" ResourceKey="AppBarButtonBorderBrushPressed"/>
+                                            <StaticResource x:Key="ButtonBorderBrushPointerOver" ResourceKey="AppBarButtonBorderBrushPointerOver"/>
+                                            <StaticResource x:Key="ButtonBorderBrushDisabled" ResourceKey="AppBarButtonBorderBrushDisabled"/>
+                                            <StaticResource x:Key="ButtonBackground" ResourceKey="AppBarButtonBackground"/>
+                                            <StaticResource x:Key="ButtonBackgroundPressed" ResourceKey="AppBarButtonBackgroundPressed"/>
+                                            <StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="AppBarButtonBackgroundPointerOver"/>
+                                            <StaticResource x:Key="ButtonBackgroundDisabled" ResourceKey="AppBarButtonBackgroundDisabled"/>
+                                        </ResourceDictionary>
+                                        <ResourceDictionary x:Key="Light">
+                                            <StaticResource x:Key="ButtonForeground" ResourceKey="AppBarButtonForeground"/>
+                                            <StaticResource x:Key="ButtonForegroundPressed" ResourceKey="AppBarButtonForegroundPressed"/>
+                                            <StaticResource x:Key="ButtonForegroundPointerOver" ResourceKey="AppBarButtonForegroundPointerOver"/>
+                                            <StaticResource x:Key="ButtonForegroundDisabled" ResourceKey="AppBarButtonForeground"/>
+                                            <Thickness x:Key="ButtonBorderThemeThickness">0</Thickness>
+                                            <StaticResource x:Key="ButtonBorderBrush" ResourceKey="AppBarButtonBorderBrush"/>
+                                            <StaticResource x:Key="ButtonBorderBrushPressed" ResourceKey="AppBarButtonBorderBrushPressed"/>
+                                            <StaticResource x:Key="ButtonBorderBrushPointerOver" ResourceKey="AppBarButtonBorderBrushPointerOver"/>
+                                            <StaticResource x:Key="ButtonBorderBrushDisabled" ResourceKey="AppBarButtonBorderBrushDisabled"/>
+                                            <StaticResource x:Key="ButtonBackground" ResourceKey="AppBarButtonBackground"/>
+                                            <StaticResource x:Key="ButtonBackgroundPressed" ResourceKey="AppBarButtonBackgroundPressed"/>
+                                            <StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="AppBarButtonBackgroundPointerOver"/>
+                                            <StaticResource x:Key="ButtonBackgroundDisabled" ResourceKey="AppBarButtonBackgroundDisabled"/>
+                                        </ResourceDictionary>
+                                        <ResourceDictionary x:Key="HighContrast">
+                                            <StaticResource x:Key="ButtonForeground" ResourceKey="AppBarButtonForeground"/>
+                                            <StaticResource x:Key="ButtonForegroundPressed" ResourceKey="AppBarButtonForegroundPressed"/>
+                                            <StaticResource x:Key="ButtonForegroundPointerOver" ResourceKey="AppBarButtonForegroundPointerOver"/>
+                                            <StaticResource x:Key="ButtonForegroundDisabled" ResourceKey="AppBarButtonForeground"/>
+                                            <Thickness x:Key="ButtonBorderThemeThickness">0</Thickness>
+                                            <StaticResource x:Key="ButtonBorderBrush" ResourceKey="AppBarButtonBorderBrush"/>
+                                            <StaticResource x:Key="ButtonBorderBrushPressed" ResourceKey="AppBarButtonBorderBrushPressed"/>
+                                            <StaticResource x:Key="ButtonBorderBrushPointerOver" ResourceKey="AppBarButtonBorderBrushPointerOver"/>
+                                            <StaticResource x:Key="ButtonBorderBrushDisabled" ResourceKey="AppBarButtonBorderBrushDisabled"/>
+                                            <StaticResource x:Key="ButtonBackground" ResourceKey="AppBarButtonBackground"/>
+                                            <StaticResource x:Key="ButtonBackgroundPressed" ResourceKey="AppBarButtonBackgroundPressed"/>
+                                            <StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="AppBarButtonBackgroundPointerOver"/>
+                                            <StaticResource x:Key="ButtonBackgroundDisabled" ResourceKey="AppBarButtonBackgroundDisabled"/>
+                                        </ResourceDictionary>
+                                    </ResourceDictionary.ThemeDictionaries>
+                                </ResourceDictionary>
+                            </Border.Resources>
+                            <Button x:Name="mtcMediaInformationButton"
+                                    MinWidth="160"
+                                    Padding="{StaticResource ElementSmallSideMargin}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch"
+                                    KeyTipPlacementMode="Top"
+                                    Style="{StaticResource DefaultButtonStyle}">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Margin="0"/>
+                                            <StackPanel>
+                                                <TextBlock Margin="{StaticResource ElementTopMargin}" Opacity="{StaticResource SubtleTextOpacity}"/>
+                                                <TextBlock Margin="{StaticResource SmallTextTopSpacing}" Opacity="{StaticResource SubtleTextOpacity}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </ToolTip>
+                                </ToolTipService.ToolTip>
+                                <i:Interaction.Behaviors>
+                                    <behaviors:LiveAccessKeyBehavior AccessVirtualKey="Z"/>
+                                </i:Interaction.Behaviors>
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="{StaticResource openNowPlayingAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                </Button.KeyboardAccelerators>
+                                <animations:Implicit.ShowAnimations>
+                                    <animations:TranslationAnimation From="0,20,0"
+                                                                     To="0"
+                                                                     Duration="{StaticResource ShortAnimationDuration}"/>
+                                    <animations:OpacityAnimation From="0"
+                                                                 To="1"
+                                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                                </animations:Implicit.ShowAnimations>
+                                <animations:Implicit.HideAnimations>
+                                    <animations:TranslationAnimation From="0"
+                                                                     To="0,20,0"
+                                                                     Duration="{StaticResource ShortAnimationDuration}"/>
+                                    <animations:OpacityAnimation From="1"
+                                                                 To="0"
+                                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                                </animations:Implicit.HideAnimations>
+                                <ctrl:MediaItemInformation x:Name="mtcMediaInformation" AutomationProperties.AccessibilityView="Raw"/>
+                            </Button>
+                        </Border>
+                    </ctrl:CustomMediaTransportControls.CommandPanelHeader>
+                    <ctrl:CustomMediaTransportControls.VideoEnhancerFlyout>
+                        <Flyout>
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                                    <Setter Property="Margin" Value="-4,-8"/>
+                                    <Setter Property="MaxHeight" Value="Infinity"/>
+                                    <Setter Property="MaxWidth" Value="Infinity"/>
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <ctrl:VideoEnhancer/>
+                        </Flyout>
+                    </ctrl:CustomMediaTransportControls.VideoEnhancerFlyout>
+                    <ctrl:CustomMediaTransportControls.NowPlayingContextMenuFlyout>
+                        <MenuFlyout>
+                            <MenuFlyout.Items>
+                                <MenuFlyoutItem x:Uid="OpenFilesMenuFlyoutItem" KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="O"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource OpenFilesCommandGlyph}"/>
+                                    </MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource openFileAcceleratorKey}"
+                                                             IsEnabled="True"
+                                                             Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem x:Uid="OpenPlayQueueMenuFlyoutItem" KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="Q"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource PlayQueueCommandGlyph}"/>
+                                    </MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource openPlayQueueAcceleratorKey}"
+                                                             IsEnabled="True"
+                                                             Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutSeparator/>
+                                <MenuFlyoutItem x:Uid="ShowAlbumMenuFlyoutItem" KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="M"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource MusicAlbum}"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem x:Uid="ShowArtistMenuFlyoutItem" KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="T"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource MusicArtist}"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutSeparator/>
+                                <MenuFlyoutItem x:Uid="MTCViewFileInfo" KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="P"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource ShowFilePropertiesCommandGlyph}"/>
+                                    </MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="I"
+                                                             IsEnabled="True"
+                                                             Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutSeparator/>
+                                <MenuFlyoutItem x:Uid="MTCEditWithClipChamp" KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="D"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource ClipChampGlyph}"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutSeparator/>
+                                <MenuFlyoutItem x:Uid="MTCShowEqualizer" KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="E"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource MTCEqualizerGlyph}"/>
+                                    </MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="E"
+                                                             IsEnabled="True"
+                                                             Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutSubItem x:Uid="MTCPlaybackRateButton"
+                                                   IsAccessKeyScope="True"
+                                                   KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="S"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutSubItem.Icon>
+                                        <FontIcon Glyph="{StaticResource MTCPlaybackRateGlyph}"/>
+                                    </MenuFlyoutSubItem.Icon>
+                                    <MenuFlyoutSubItem.Items>
+                                        <ctrl:MenuFlyoutSelectableItem x:Uid="MTCPlaybackRateButtonVerySlow"
+                                                                       CommandParameter="{StaticResource PlaybackRateVerySlow}"
+                                                                       KeyTipPlacementMode="Left">
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="G"/>
+                                            </i:Interaction.Behaviors>
+                                            <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="G"
+                                                                     IsEnabled="True"
+                                                                     Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                            </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                        </ctrl:MenuFlyoutSelectableItem>
+                                        <ctrl:MenuFlyoutSelectableItem x:Uid="MTCPlaybackRateButtonSlow"
+                                                                       CommandParameter="{StaticResource PlaybackRateSlow}"
+                                                                       KeyTipPlacementMode="Left">
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="H"/>
+                                            </i:Interaction.Behaviors>
+                                            <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="H"
+                                                                     IsEnabled="True"
+                                                                     Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                            </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                        </ctrl:MenuFlyoutSelectableItem>
+                                        <ctrl:MenuFlyoutSelectableItem x:Uid="MTCPlaybackRateButtonDefault"
+                                                                       CommandParameter="{StaticResource PlaybackRateDefault}"
+                                                                       KeyTipPlacementMode="Left">
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="J"/>
+                                            </i:Interaction.Behaviors>
+                                            <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="J"
+                                                                     IsEnabled="True"
+                                                                     Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                            </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                        </ctrl:MenuFlyoutSelectableItem>
+                                        <ctrl:MenuFlyoutSelectableItem x:Uid="MTCPlaybackRateButtonFast"
+                                                                       CommandParameter="{StaticResource PlaybackRateFast}"
+                                                                       KeyTipPlacementMode="Left">
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="K"/>
+                                            </i:Interaction.Behaviors>
+                                            <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="K"
+                                                                     IsEnabled="True"
+                                                                     Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                            </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                        </ctrl:MenuFlyoutSelectableItem>
+                                        <ctrl:MenuFlyoutSelectableItem x:Uid="MTCPlaybackRateButtonVeryFast"
+                                                                       CommandParameter="{StaticResource PlaybackRateVeryFast}"
+                                                                       KeyTipPlacementMode="Left">
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="L"/>
+                                            </i:Interaction.Behaviors>
+                                            <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="L"
+                                                                     IsEnabled="True"
+                                                                     Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                            </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
+                                        </ctrl:MenuFlyoutSelectableItem>
+                                    </MenuFlyoutSubItem.Items>
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutItem x:Name="flyoutCastToItem"
+                                                x:Uid="MTCCastToButton"
+                                                KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource MTCCastToGlyph}"/>
+                                    </MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="K"
+                                                             IsEnabled="True"
+                                                             Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutSubItem x:Uid="MTCVideoSettings"
+                                                   IsAccessKeyScope="True"
+                                                   KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="V"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutSubItem.Icon>
+                                        <FontIcon Glyph="{StaticResource VideoSettingsGlyph}"/>
+                                    </MenuFlyoutSubItem.Icon>
+                                    <MenuFlyoutSubItem.Items>
+                                        <MenuFlyoutItem x:Uid="MTCRotateVideo" KeyTipPlacementMode="Left">
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="R"/>
+                                            </i:Interaction.Behaviors>
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="{StaticResource RotateVideoGlyph}"/>
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="R"
+                                                                     IsEnabled="True"
+                                                                     Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <ToggleMenuFlyoutItem x:Uid="MTCZoomToFillButton" KeyTipPlacementMode="Left">
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="Z"/>
+                                            </i:Interaction.Behaviors>
+                                            <ToggleMenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="{StaticResource MTCZoomToFillGlyph}"/>
+                                            </ToggleMenuFlyoutItem.Icon>
+                                            <ToggleMenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="Z"
+                                                                     IsEnabled="True"
+                                                                     Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                            </ToggleMenuFlyoutItem.KeyboardAccelerators>
+                                        </ToggleMenuFlyoutItem>
+                                        <MenuFlyoutItem x:Name="flyoutVideoEnhancerItem"
+                                                        x:Uid="MTCVideoEnhancer"
+                                                        KeyTipPlacementMode="Left">
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="E"/>
+                                            </i:Interaction.Behaviors>
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="{StaticResource VideoEnhancerGlyph}"/>
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="V"
+                                                                     IsEnabled="True"
+                                                                     Modifiers="{StaticResource secondaryAcceleratorModifierKey}"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyoutSubItem.Items>
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutSeparator/>
+                                <MenuFlyoutItem KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="U"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource MTCExitFullScreenGlyph}"/>
+                                    </MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource toggleFullScreenModeAcceleratorKey}" IsEnabled="True"/>
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem KeyTipPlacementMode="Left">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="M"/>
+                                    </i:Interaction.Behaviors>
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{StaticResource MTCExitMiniPlayerGlyph}"/>
+                                    </MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="{StaticResource toggleMiniPlayerModeAcceleratorKey}"
+                                                             IsEnabled="True"
+                                                             Modifiers="{StaticResource acceleratorModifierKey}"/>
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                            </MenuFlyout.Items>
+                        </MenuFlyout>
+                    </ctrl:CustomMediaTransportControls.NowPlayingContextMenuFlyout>
+                </ctrl:CustomMediaTransportControls>
+            </ctrl:CustomMediaPlayerElement.TransportControls>
+            <ctrl:CustomMediaPlayerElement.MediaVisualization>
+                <ctrl:MediaItemVisualization x:Name="visualization" Visibility="Collapsed"/>
+            </ctrl:CustomMediaPlayerElement.MediaVisualization>
+        </ctrl:CustomMediaPlayerElement>
+        <Grid Background="{ThemeResource SystemControlTransparentBrush}">
+            <ProgressRing HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+    </Grid>
+</UserControl>

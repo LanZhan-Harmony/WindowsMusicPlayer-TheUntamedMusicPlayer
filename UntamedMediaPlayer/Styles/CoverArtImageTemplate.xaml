@@ -114,8 +114,8 @@
                                       Style="{StaticResource MediaFontIcon}"/>
                         </Viewbox>
                         <Grid x:Name="CoverImage"
-                              ColumnSpan="3"
-                              RowSpan="3"
+                              Grid.RowSpan="3"
+                              Grid.ColumnSpan="3"
                               Visibility="Collapsed">
                             <Image HorizontalAlignment="Center"
                                    VerticalAlignment="Center"

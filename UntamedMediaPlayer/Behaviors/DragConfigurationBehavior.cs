@@ -5,11 +5,25 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>
-/// 为 ListViewBase 配置拖放。简化实现：启用拖放并在拖放完成时执行 Command。
-/// </summary>
-internal class DragConfigurationBehavior : Behavior<ListViewBase>
+/// <summary>Enables item dragging and forwards completed drags to the configured command.</summary>
+public class DragConfigurationBehavior : Behavior<ListViewBase>
 {
+    private bool _previousCanDragItems;
+    private bool _previousAllowDrop;
+
+    public bool CanDragItems
+    {
+        get => (bool)GetValue(CanDragItemsProperty);
+        set => SetValue(CanDragItemsProperty, value);
+    }
+
+    public static readonly DependencyProperty CanDragItemsProperty = DependencyProperty.Register(
+        nameof(CanDragItems),
+        typeof(bool),
+        typeof(DragConfigurationBehavior),
+        new PropertyMetadata(true, OnCanDragItemsChanged)
+    );
+
     public ICommand? Command
     {
         get => (ICommand?)GetValue(CommandProperty);
@@ -27,7 +41,9 @@ internal class DragConfigurationBehavior : Behavior<ListViewBase>
     protected override void OnAttached()
     {
         base.OnAttached();
-        AssociatedObject.CanDragItems = true;
+        _previousCanDragItems = AssociatedObject.CanDragItems;
+        _previousAllowDrop = AssociatedObject.AllowDrop;
+        AssociatedObject.CanDragItems = CanDragItems;
         AssociatedObject.AllowDrop = true;
         AssociatedObject.DragItemsCompleted += OnDragItemsCompleted;
     }
@@ -36,6 +52,19 @@ internal class DragConfigurationBehavior : Behavior<ListViewBase>
     {
         base.OnDetaching();
         AssociatedObject.DragItemsCompleted -= OnDragItemsCompleted;
+        AssociatedObject.CanDragItems = _previousCanDragItems;
+        AssociatedObject.AllowDrop = _previousAllowDrop;
+    }
+
+    private static void OnCanDragItemsChanged(
+        DependencyObject dependencyObject,
+        DependencyPropertyChangedEventArgs args
+    )
+    {
+        if (dependencyObject is DragConfigurationBehavior behavior && behavior.AssociatedObject is not null)
+        {
+            behavior.AssociatedObject.CanDragItems = (bool)args.NewValue;
+        }
     }
 
     private void OnDragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)

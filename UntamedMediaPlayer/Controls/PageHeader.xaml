@@ -25,13 +25,11 @@
                 <Button.ContentTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <StackPanel.Children>
-                                <FontIcon Margin="{StaticResource ElementRightMargin}"
-                                          VerticalAlignment="Center"
-                                          FontSize="{StaticResource IconFontSize}"
-                                          Style="{StaticResource MediaFontIcon}"/>
-                                <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyNoMargin}"/>
-                            </StackPanel.Children>
+                            <FontIcon Margin="{StaticResource ElementRightMargin}"
+                                      VerticalAlignment="Center"
+                                      FontSize="{StaticResource IconFontSize}"
+                                      Style="{StaticResource MediaFontIcon}"/>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyNoMargin}"/>
                         </StackPanel>
                     </DataTemplate>
                 </Button.ContentTemplate>

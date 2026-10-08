@@ -23,115 +23,109 @@
             <Setter Property="Margin" Value="{StaticResource ContentLeftSpacing}"/>
         </Style>
     </UserControl.Resources>
-    <UserControl.Content>
-        <Border Padding="{StaticResource ContentSideMargin}"
-                Background="{ThemeResource PageHeaderBackgroundBrush}"
-                BorderBrush="{ThemeResource PageHeaderBorderBrush}"
-                BorderThickness="{ThemeResource PageHeaderBorderThickness}"
-                CornerRadius="{ThemeResource OverlayCornerRadius}">
-            <Grid>
-                <CommandBar x:Name="CommandBarForSingleSelection"
-                            x:Uid="SelectionCommandBar"
-                            x:Load="False">
-                    <CommandBar.Content>
-                        <CheckBox x:Uid="SelectAllItems"
-                                  MinWidth="0"
-                                  VerticalAlignment="Center">
-                            <CheckBox.Content>
-                                <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyNoMargin}">
-                                    <Run/>
-                                    <Run Text=" "/>
-                                    <Run Text=" • "/>
-                                    <Run Text=" "/>
-                                    <Hyperlink UnderlineStyle="None">
-                                        <Run/>
-                                    </Hyperlink>
-                                </TextBlock>
-                            </CheckBox.Content>
-                        </CheckBox>
-                    </CommandBar.Content>
-                    <CommandBar.PrimaryCommands>
-                        <AppBarButton>
-                            <AppBarButton.Resources>
-                                <ResourceDictionary Source="../Styles/AccentuatedAppBarButtonResources.xaml"/>
-                            </AppBarButton.Resources>
-                        </AppBarButton>
-                        <AppBarButton>
-                            <AppBarButton.Resources>
-                                <ResourceDictionary Source="../Styles/AccentuatedAppBarButtonResources.xaml"/>
-                            </AppBarButton.Resources>
-                        </AppBarButton>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton x:Uid="AddToButton">
-                            <AppBarButton.Icon>
-                                <FontIcon Glyph="{StaticResource PlayQueueAddItemsGlyph}"/>
-                            </AppBarButton.Icon>
-                            <i:Interaction.Behaviors>
-                                <behaviors:MenuFlyoutItemsDynamicLoadBehavior/>
-                            </i:Interaction.Behaviors>
-                        </AppBarButton>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                    </CommandBar.PrimaryCommands>
-                </CommandBar>
-                <CommandBar x:Name="CommandBarForMultipleSelection"
-                            x:Uid="SelectionCommandBar"
-                            x:Load="False">
-                    <CommandBar.Content>
-                        <CheckBox x:Name="SelectAllItemsCheckboxInMultiSelectionMode"
-                                  x:Uid="SelectAllItems"
-                                  MinWidth="0"
-                                  VerticalAlignment="Center">
-                            <CheckBox.Content>
-                                <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyNoMargin}">
-                                    <Run/>
-                                    <Run Text=" "/>
-                                    <Run Text=" • "/>
-                                    <Run Text=" "/>
-                                    <Hyperlink UnderlineStyle="None">
-                                        <Run/>
-                                    </Hyperlink>
-                                </TextBlock>
-                            </CheckBox.Content>
-                        </CheckBox>
-                    </CommandBar.Content>
-                    <CommandBar.PrimaryCommands>
-                        <AppBarButton>
-                            <AppBarButton.Resources>
-                                <ResourceDictionary Source="../Styles/AccentuatedAppBarButtonResources.xaml"/>
-                            </AppBarButton.Resources>
-                        </AppBarButton>
-                        <AppBarButton>
-                            <AppBarButton.Resources>
-                                <ResourceDictionary Source="../Styles/AccentuatedAppBarButtonResources.xaml"/>
-                            </AppBarButton.Resources>
-                        </AppBarButton>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton x:Uid="AddToButton">
-                            <AppBarButton.Icon>
-                                <FontIcon Glyph="{StaticResource PlayQueueAddItemsGlyph}"/>
-                            </AppBarButton.Icon>
-                            <i:Interaction.Behaviors>
-                                <behaviors:MenuFlyoutItemsDynamicLoadBehavior/>
-                            </i:Interaction.Behaviors>
-                        </AppBarButton>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                        <AppBarButton/>
-                    </CommandBar.PrimaryCommands>
-                </CommandBar>
-            </Grid>
-        </Border>
-    </UserControl.Content>
+    <Border Padding="{StaticResource ContentSideMargin}"
+            Background="{ThemeResource PageHeaderBackgroundBrush}"
+            BorderBrush="{ThemeResource PageHeaderBorderBrush}"
+            BorderThickness="{ThemeResource PageHeaderBorderThickness}"
+            CornerRadius="{ThemeResource OverlayCornerRadius}">
+        <Grid>
+            <CommandBar x:Name="CommandBarForSingleSelection"
+                        x:Uid="SelectionCommandBar"
+                        x:Load="False">
+                <CommandBar.Content>
+                    <CheckBox x:Uid="SelectAllItems"
+                              MinWidth="0"
+                              VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyNoMargin}">
+                            <Run/>
+                            <Run Text=" "/>
+                            <Run Text=" • "/>
+                            <Run Text=" "/>
+                            <Hyperlink UnderlineStyle="None">
+                                <Run/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </CheckBox>
+                </CommandBar.Content>
+                <CommandBar.PrimaryCommands>
+                    <AppBarButton>
+                        <AppBarButton.Resources>
+                            <ResourceDictionary Source="../Styles/AccentuatedAppBarButtonResources.xaml"/>
+                        </AppBarButton.Resources>
+                    </AppBarButton>
+                    <AppBarButton>
+                        <AppBarButton.Resources>
+                            <ResourceDictionary Source="../Styles/AccentuatedAppBarButtonResources.xaml"/>
+                        </AppBarButton.Resources>
+                    </AppBarButton>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton x:Uid="AddToButton">
+                        <AppBarButton.Icon>
+                            <FontIcon Glyph="{StaticResource PlayQueueAddItemsGlyph}"/>
+                        </AppBarButton.Icon>
+                        <i:Interaction.Behaviors>
+                            <behaviors:MenuFlyoutItemsDynamicLoadBehavior/>
+                        </i:Interaction.Behaviors>
+                    </AppBarButton>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                </CommandBar.PrimaryCommands>
+            </CommandBar>
+            <CommandBar x:Name="CommandBarForMultipleSelection"
+                        x:Uid="SelectionCommandBar"
+                        x:Load="False">
+                <CommandBar.Content>
+                    <CheckBox x:Name="SelectAllItemsCheckboxInMultiSelectionMode"
+                              x:Uid="SelectAllItems"
+                              MinWidth="0"
+                              VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyNoMargin}">
+                            <Run/>
+                            <Run Text=" "/>
+                            <Run Text=" • "/>
+                            <Run Text=" "/>
+                            <Hyperlink UnderlineStyle="None">
+                                <Run/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </CheckBox>
+                </CommandBar.Content>
+                <CommandBar.PrimaryCommands>
+                    <AppBarButton>
+                        <AppBarButton.Resources>
+                            <ResourceDictionary Source="../Styles/AccentuatedAppBarButtonResources.xaml"/>
+                        </AppBarButton.Resources>
+                    </AppBarButton>
+                    <AppBarButton>
+                        <AppBarButton.Resources>
+                            <ResourceDictionary Source="../Styles/AccentuatedAppBarButtonResources.xaml"/>
+                        </AppBarButton.Resources>
+                    </AppBarButton>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton x:Uid="AddToButton">
+                        <AppBarButton.Icon>
+                            <FontIcon Glyph="{StaticResource PlayQueueAddItemsGlyph}"/>
+                        </AppBarButton.Icon>
+                        <i:Interaction.Behaviors>
+                            <behaviors:MenuFlyoutItemsDynamicLoadBehavior/>
+                        </i:Interaction.Behaviors>
+                    </AppBarButton>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                    <AppBarButton/>
+                </CommandBar.PrimaryCommands>
+            </CommandBar>
+        </Grid>
+    </Border>
 </UserControl>

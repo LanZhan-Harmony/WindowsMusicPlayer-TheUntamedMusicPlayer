@@ -126,7 +126,7 @@
                                                        Height="{StaticResource CoverArtHeaderLargeSize}"/>
                 </i:Interaction.Behaviors>
             </local:CoverArtImage>
-            <Grid Margin="{StaticResource ContentTopRightBottomMediumMargin}" Column="1">
+            <Grid Grid.Column="1" Margin="{StaticResource ContentTopRightBottomMediumMargin}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -185,8 +185,8 @@
             </Grid>
         </Grid>
         <Grid x:Name="pageHeaderBarContainer"
-              Margin="{StaticResource PageHeaderContentExtraLargeLeftRightDefaultBottomMargin}"
-              Row="1">
+              Grid.Row="1"
+              Margin="{StaticResource PageHeaderContentExtraLargeLeftRightDefaultBottomMargin}">
             <i:Interaction.Behaviors>
                 <behaviors:TextScaleFactorBehavior MinHeight="{StaticResource PageHeaderSelectionCommandBarMinHeight}"/>
             </i:Interaction.Behaviors>

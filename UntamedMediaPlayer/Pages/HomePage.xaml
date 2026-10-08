@@ -1,12 +1,234 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<Page
-    x:Class="UntamedMediaPlayer.Pages.HomePage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-
-    <Grid />
+<?xml version="1.0" encoding="utf-8" ?>
+<Page x:Class="UntamedMediaPlayer.Pages.HomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+      xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+      xmlns:compat="using:UntamedMediaPlayer.Compatibility"
+      xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlAttached="using:UntamedMediaPlayer.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
+    <Page.Resources>
+        <compat:DropConfiguration x:Key="HomeDropConfiguration"
+                                  AcceptedOperation="Link"
+                                  AcceptedUIOverride="{StaticResource DragAndDropAcceptInPlayPage}"
+                                  RejectedUIOverride="{StaticResource DragAndDropReject}">
+            <compat:DropConfiguration.Command>
+                <compat:PlayQueueDropCommandAdapter OpenPlayPage="True"/>
+            </compat:DropConfiguration.Command>
+        </compat:DropConfiguration>
+    </Page.Resources>
+    <ctrl:GridEx AllowDrop="True"
+                 Background="#00FFFFFF"
+                 DropConfiguration="{StaticResource HomeDropConfiguration}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveLayout">
+                <VisualState x:Name="Default"/>
+                <VisualState x:Name="ListViewNarrow">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HomePageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="OpenMediaMenu.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="RecentMediaTitle.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="displayModeSelector.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderSelectionControlsBarContainer.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="listView.Padding" Value="{StaticResource ListViewPaddingForNarrowMode}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="GridViewNarrow">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HomePageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="OpenMediaMenu.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="RecentMediaTitle.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="displayModeSelector.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderSelectionControlsBarContainer.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="gridView.Padding" Value="{StaticResource GridViewPaddingForNarrowMode}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="PageStates">
+                <VisualState x:Name="ContentLoading">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="progress.Visibility" Value="Visible"/>
+                        <Setter Target="progress.IsActive" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NoData">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="NoRecentMediaNotice.Visibility" Value="Visible"/>
+                        <Setter Target="displayModeSelector.Visibility" Value="Collapsed"/>
+                        <Setter Target="RecentMediaTitle.Visibility" Value="Collapsed"/>
+                        <Setter Target="OpenMediaMenu.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="GridViewMultiSelectState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="gridView.IsMultiSelectCheckBoxEnabled" Value="True"/>
+                        <Setter Target="gridView.IsItemClickEnabled" Value="False"/>
+                        <Setter Target="RecentMediaTitle.Visibility" Value="Collapsed"/>
+                        <Setter Target="displayModeSelector.Visibility" Value="Collapsed"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.IsEnabled" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ListViewMultiSelectState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="listView.IsMultiSelectCheckBoxEnabled" Value="True"/>
+                        <Setter Target="listView.IsItemClickEnabled" Value="False"/>
+                        <Setter Target="RecentMediaTitle.Visibility" Value="Collapsed"/>
+                        <Setter Target="displayModeSelector.Visibility" Value="Collapsed"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.IsEnabled" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto">
+                <i:Interaction.Behaviors>
+                    <behaviors:RowDefinitionTextScaleFactorBehavior MinHeight="{StaticResource SelectionCommandBarMinHeight}"/>
+                </i:Interaction.Behaviors>
+            </RowDefinition>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="HomePageHeader"
+                   x:Uid="HomePageHeader"
+                   Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource Title}"/>
+        <ctrl:OpenMediaMenu x:Name="OpenMediaMenu"
+                            Grid.Column="1"
+                            Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+            <i:Interaction.Behaviors>
+                <behaviors:AutoFocusBehavior/>
+            </i:Interaction.Behaviors>
+        </ctrl:OpenMediaMenu>
+        <TextBlock x:Name="RecentMediaTitle"
+                   x:Uid="RecentMediaTitle"
+                   Grid.Row="1"
+                   Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource SubTitle}"/>
+        <ctrl:DisplayModeSelector x:Name="displayModeSelector"
+                                  Grid.Row="1"
+                                  Grid.Column="1"
+                                  Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Visibility="Collapsed"/>
+        <Border x:Name="pageHeaderSelectionControlsBarContainer"
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}">
+            <ctrl:SelectionControlsBar x:Name="pageHeaderSelectionControlsBar"
+                                       x:Load="False"
+                                       IsEnabled="False"
+                                       Visibility="Collapsed">
+                <animations:Implicit.ShowAnimations>
+                    <animations:OpacityAnimation From="0"
+                                                 To="1"
+                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                </animations:Implicit.ShowAnimations>
+                <animations:Implicit.HideAnimations>
+                    <animations:OpacityAnimation From="1"
+                                                 To="0"
+                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                </animations:Implicit.HideAnimations>
+            </ctrl:SelectionControlsBar>
+        </Border>
+        <ctrl:ListViewEx x:Name="listView"
+                         Grid.Row="2"
+                         Grid.ColumnSpan="2"
+                         x:Load="False"
+                         CanDragItems="True"
+                         IsItemClickEnabled="True"
+                         IsMultiSelectCheckBoxEnabled="False"
+                         IsSynchronizedWithCurrentItem="False"
+                         SelectionMode="None"
+                         Style="{StaticResource ListViewExtraLargeContentStyle}">
+            <i:Interaction.Behaviors>
+                <behaviors:ListViewBaseItemsAccessVirtualKeyBehavior AccessVirtualKeyPrefix="Y"/>
+                <behaviors:ListViewBasePersistentScrollingBehavior/>
+                <behaviors:SelectionManagerBehavior/>
+                <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
+                <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
+            </i:Interaction.Behaviors>
+            <ctrl:ListViewEx.ItemsMenuFlyout>
+                <MenuFlyout/>
+            </ctrl:ListViewEx.ItemsMenuFlyout>
+        </ctrl:ListViewEx>
+        <ctrl:GridViewEx x:Name="gridView"
+                         Grid.Row="2"
+                         Grid.ColumnSpan="2"
+                         x:Load="False"
+                         CanDragItems="True"
+                         IsItemClickEnabled="True"
+                         IsMultiSelectCheckBoxEnabled="False"
+                         IsSynchronizedWithCurrentItem="False"
+                         SelectionMode="None"
+                         Style="{StaticResource GridViewExtraLargeContentStyle}"
+                         UseCustomItemPresenterWithDisplayMode="CardItemPresenter">
+            <i:Interaction.Behaviors>
+                <behaviors:ListViewBaseItemsAccessVirtualKeyBehavior AccessVirtualKeyPrefix="Y"/>
+                <behaviors:ListViewBasePersistentScrollingBehavior/>
+                <behaviors:SelectionManagerBehavior/>
+                <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
+                <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
+            </i:Interaction.Behaviors>
+            <ctrl:GridViewEx.ItemsMenuFlyout>
+                <MenuFlyout/>
+            </ctrl:GridViewEx.ItemsMenuFlyout>
+        </ctrl:GridViewEx>
+        <ctrl:EmptyPageMessageControl x:Name="NoRecentMediaNotice"
+                                      x:Uid="NoRecentMediaNotice"
+                                      Grid.Row="1"
+                                      Grid.RowSpan="2"
+                                      Grid.ColumnSpan="2"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      x:Load="False"
+                                      CommandIcon="{StaticResource OpenFilesCommandGlyph}"
+                                      ImageSource="ms-appx:///Assets/HomeGradient.png"
+                                      IsHomePage="True"
+                                      Visibility="Collapsed">
+            <i:Interaction.Behaviors>
+                <behaviors:AutoFocusBehavior/>
+            </i:Interaction.Behaviors>
+        </ctrl:EmptyPageMessageControl>
+        <ProgressRing x:Name="progress"
+                      Grid.Row="2"
+                      Grid.ColumnSpan="2"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      IsActive="False"
+                      Visibility="Collapsed"/>
+    </ctrl:GridEx>
 </Page>

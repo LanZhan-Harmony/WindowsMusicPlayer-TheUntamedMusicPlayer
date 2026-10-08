@@ -1,12 +1,234 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
+<Page x:Class="UntamedMediaPlayer.Pages.LocalAlbumLibraryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+      xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+      xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:tkBehaviors="using:CommunityToolkit.WinUI.Behaviors"
+      mc:Ignorable="d">
 
-<Page
-    x:Class="UntamedMediaPlayer.Pages.LocalAlbumLibraryPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    <Page.Resources>
+        <CollectionViewSource x:Name="AlbumGroupedCollectionSourceView"
+                              x:Key="AlbumGroupedCollectionSourceView"
+                              IsSourceGrouped="True"/>
+        <CollectionViewSource x:Key="AlbumCollectionSourceView" x:Name="AlbumCollectionSourceView"/>
+    </Page.Resources>
 
-    <Grid />
+    <i:Interaction.Behaviors>
+        <tkBehaviors:FocusBehavior>
+            <tkBehaviors:FocusBehavior.Targets>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+            </tkBehaviors:FocusBehavior.Targets>
+        </tkBehaviors:FocusBehavior>
+    </i:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto">
+                <i:Interaction.Behaviors>
+                    <behaviors:RowDefinitionTextScaleFactorBehavior MinHeight="{StaticResource SelectionCommandBarMinHeight}"/>
+                </i:Interaction.Behaviors>
+            </RowDefinition>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PageStates">
+                <VisualState x:Name="LibraryAccessDenied">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="noAccessMessageControl.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeader.IsAddFolderButtonVisible" Value="False"/>
+                        <Setter Target="pageHeader.IsPageSelectorVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ContentLoading">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="progress.Visibility" Value="Visible"/>
+                        <Setter Target="progress.IsActive" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ContentRefreshing">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeaderControls.Visibility" Value="Visible"/>
+                        <Setter Target="progress.Visibility" Value="Visible"/>
+                        <Setter Target="progress.IsActive" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NoData">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="noMusicMessageControl.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeader.IsAddFolderButtonVisible" Value="False"/>
+                        <Setter Target="pageHeader.IsPageSelectorVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DataAvailable">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="contentList.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderControls.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Selection">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="contentList.Visibility" Value="Visible"/>
+                        <Setter Target="albumsList.IsMultiSelectCheckBoxEnabled" Value="True"/>
+                        <Setter Target="albumsList.IsItemClickEnabled" Value="False"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.IsEnabled" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="AdaptiveLayoutMargins">
+                <VisualState x:Name="DefaultMargins"/>
+                <VisualState x:Name="LibraryAccessDeniedNarrowMargins">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="noAccessMessageControl.Margin" Value="{StaticResource ContentMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ContentLoadingMargins">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NoDataMargins">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="noMusicMessageControl.Margin" Value="{StaticResource ContentMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DataAvailableOrSelectionNarrowMargins">
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderControls.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderSelectionControlsBarContainer.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="albumsList.Padding" Value="{StaticResource GridViewPaddingForNarrowMode}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <ctrl:LibraryPageHeader x:Name="pageHeader" Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"/>
+        <ctrl:PageHeader x:Name="pageHeaderControls"
+                         Grid.Row="1"
+                         Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                         Visibility="Collapsed"/>
+        <Border x:Name="pageHeaderSelectionControlsBarContainer"
+                Grid.Row="1"
+                Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}">
+            <ctrl:SelectionControlsBar x:Name="pageHeaderSelectionControlsBar"
+                                       x:Load="False"
+                                       IsEnabled="False"
+                                       Visibility="Collapsed">
+                <animations:Implicit.ShowAnimations>
+                    <animations:OpacityAnimation From="0"
+                                                 To="1"
+                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                </animations:Implicit.ShowAnimations>
+                <animations:Implicit.HideAnimations>
+                    <animations:OpacityAnimation From="1"
+                                                 To="0"
+                                                 Duration="{StaticResource ShortAnimationDuration}"/>
+                </animations:Implicit.HideAnimations>
+            </ctrl:SelectionControlsBar>
+        </Border>
+        <SemanticZoom x:Name="contentList"
+                      Grid.Row="2"
+                      Visibility="Collapsed">
+            <SemanticZoom.ZoomedInView>
+                <ctrl:GridViewEx x:Name="albumsList"
+                                 CanDragItems="True"
+                                 IsItemClickEnabled="True"
+                                 IsMultiSelectCheckBoxEnabled="False"
+                                 IsSynchronizedWithCurrentItem="False"
+                                 SelectionMode="None"
+                                 Style="{StaticResource GridViewExtraLargeContentStyle}"
+                                 UseCustomItemPresenterWithDisplayMode="CardItemPresenter">
+                    <GridView.GroupStyle>
+                        <GroupStyle HeaderTemplate="{StaticResource MediaGroupItemTemplate}" HidesIfEmpty="True"/>
+                    </GridView.GroupStyle>
+                    <ctrl:GridViewEx.ItemsMenuFlyout>
+                        <MenuFlyout/>
+                    </ctrl:GridViewEx.ItemsMenuFlyout>
+                    <i:Interaction.Behaviors>
+                        <behaviors:ListViewBaseMultipleSourcesBehavior/>
+                        <behaviors:ListViewBasePersistentScrollingBehavior/>
+                        <behaviors:SelectionManagerBehavior/>
+                        <behaviors:ListViewBaseGroupHeaderAutomationNameBehavior/>
+                        <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
+                    </i:Interaction.Behaviors>
+                </ctrl:GridViewEx>
+            </SemanticZoom.ZoomedInView>
+            <SemanticZoom.ZoomedOutView>
+                <ctrl:GridViewEx Style="{StaticResource SemanticZoomGroupNamesGridViewStyle}"/>
+            </SemanticZoom.ZoomedOutView>
+            <i:Interaction.Behaviors>
+                <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
+            </i:Interaction.Behaviors>
+        </SemanticZoom>
+        <ctrl:EmptyPageMessageControl x:Name="noMusicMessageControl"
+                                      x:Uid="NoMusicErrorMessage"
+                                      Grid.Row="1"
+                                      Grid.RowSpan="2"
+                                      Margin="{StaticResource ContentExtraLargeLeftRightDefaultTopBottomMargin}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      x:Load="False"
+                                      CommandAccessVirtualKey="C,A"
+                                      ImageSource="ms-appx:///Assets/MusicGradient.svg"
+                                      Visibility="Collapsed"/>
+        <ctrl:ErrorMessageControl x:Name="noAccessMessageControl"
+                                  x:Uid="NoMusicLibraryAccessErrorMessage"
+                                  Grid.Row="1"
+                                  Grid.RowSpan="2"
+                                  Margin="{StaticResource ContentExtraLargeLeftRightDefaultTopBottomMargin}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  x:Load="False"
+                                  Visibility="Collapsed"/>
+        <ProgressRing x:Name="progress"
+                      Grid.Row="2"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      IsActive="False"
+                      Visibility="Collapsed"/>
+    </Grid>
 </Page>

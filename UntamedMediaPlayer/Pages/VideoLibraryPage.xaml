@@ -1,12 +1,264 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version="1.0" encoding="utf-8" ?>
 <Page x:Class="UntamedMediaPlayer.Pages.VideoLibraryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+      xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+      xmlns:ctrl="using:UntamedMediaPlayer.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
       xmlns:local="using:UntamedMediaPlayer.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:tkBehaviors="using:CommunityToolkit.WinUI.Behaviors"
       mc:Ignorable="d">
+    <Page.Resources>
+        <CollectionViewSource x:Name="AllVideoCollectionSourceView"
+                              x:Key="AllVideoCollectionSourceView"
+                              IsSourceGrouped="False"/>
+    </Page.Resources>
 
-    <Grid />
+    <i:Interaction.Behaviors>
+        <tkBehaviors:FocusBehavior>
+            <tkBehaviors:FocusBehavior.Targets>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+                <tkBehaviors:FocusTarget/>
+            </tkBehaviors:FocusBehavior.Targets>
+        </tkBehaviors:FocusBehavior>
+    </i:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PageStates">
+                <VisualState x:Name="LibraryAccessDenied">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="noAccessMessageControl.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeader.IsAddFolderButtonVisible" Value="False"/>
+                        <Setter Target="pageHeader.IsPageSelectorVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ContentLoading">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="progress.Visibility" Value="Visible"/>
+                        <Setter Target="progress.IsActive" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ContentRefreshing">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="videoPage.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderControls.Visibility" Value="Visible"/>
+                        <Setter Target="progress.Visibility" Value="Visible"/>
+                        <Setter Target="progress.IsActive" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NoData">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="noVideosMessageControl.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeader.IsAddFolderButtonVisible" Value="False"/>
+                        <Setter Target="pageHeader.IsPageSelectorVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DataAvailable">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="videoPage.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderControls.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="GridSelection">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="videoPage.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.IsEnabled" Value="True"/>
+                        <Setter Target="AllVideosGrid.IsMultiSelectCheckBoxEnabled" Value="True"/>
+                        <Setter Target="AllVideosGrid.IsItemClickEnabled" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ListSelection">
+                    <VisualState.StateTriggers>
+                        <StateTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="videoPage.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.Visibility" Value="Visible"/>
+                        <Setter Target="pageHeaderSelectionControlsBar.IsEnabled" Value="True"/>
+                        <Setter Target="AllVideosList.IsMultiSelectCheckBoxEnabled" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="AdaptiveLayoutMargins">
+                <VisualState/>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="noAccessMessageControl.Margin" Value="{StaticResource ContentMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="noVideosMessageControl.Margin" Value="{StaticResource ContentMargin}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderControls.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderSelectionControlsBarContainer.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="AllVideosList.Padding" Value="{StaticResource ListViewPaddingForNarrowMode}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="pageHeader.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderControls.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="pageHeaderSelectionControlsBarContainer.Margin" Value="{StaticResource ContentLeftRightBottomMargin}"/>
+                        <Setter Target="AllVideosGrid.Padding" Value="{StaticResource GridViewPaddingForNarrowMode}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <ctrl:LibraryPageHeader x:Name="pageHeader" Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"/>
+        <ctrl:EmptyPageMessageControl x:Name="noVideosMessageControl"
+                                      x:Uid="NoVideosErrorMessage"
+                                      Grid.Row="1"
+                                      Margin="{StaticResource ContentExtraLargeLeftRightDefaultTopBottomMargin}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      x:Load="False"
+                                      CommandAccessVirtualKey="C,A"
+                                      ImageSource="ms-appx:///Assets/VideoGradient.svg"
+                                      Visibility="Collapsed"/>
+        <ctrl:ErrorMessageControl x:Name="noAccessMessageControl"
+                                  x:Uid="NoVideosLibraryAccessErrorMessage"
+                                  Grid.Row="1"
+                                  Margin="{StaticResource ContentExtraLargeLeftRightDefaultTopBottomMargin}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  x:Load="False"
+                                  Visibility="Collapsed"/>
+        <Grid x:Name="videoPage"
+              Grid.Row="1"
+              Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto">
+                    <i:Interaction.Behaviors>
+                        <behaviors:RowDefinitionTextScaleFactorBehavior MinHeight="{StaticResource SelectionCommandBarMinHeight}"/>
+                    </i:Interaction.Behaviors>
+                </RowDefinition>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ctrl:PageHeader x:Name="pageHeaderControls"
+                             Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
+                             Visibility="Collapsed"/>
+            <ctrl:DisplayModeSelector x:Name="displayModeSelector" Visibility="Collapsed"/>
+            <Border x:Name="pageHeaderSelectionControlsBarContainer" Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}">
+                <ctrl:SelectionControlsBar x:Name="pageHeaderSelectionControlsBar"
+                                           x:Load="False"
+                                           IsEnabled="False"
+                                           Visibility="Collapsed">
+                    <animations:Implicit.ShowAnimations>
+                        <animations:OpacityAnimation From="0"
+                                                     To="1"
+                                                     Duration="{StaticResource ShortAnimationDuration}"/>
+                    </animations:Implicit.ShowAnimations>
+                    <animations:Implicit.HideAnimations>
+                        <animations:OpacityAnimation From="1"
+                                                     To="0"
+                                                     Duration="{StaticResource ShortAnimationDuration}"/>
+                    </animations:Implicit.HideAnimations>
+                </ctrl:SelectionControlsBar>
+            </Border>
+            <ctrl:GridViewEx x:Name="AllVideosGrid"
+                             Grid.Row="1"
+                             x:Load="False"
+                             CanDragItems="True"
+                             IsItemClickEnabled="True"
+                             IsMultiSelectCheckBoxEnabled="False"
+                             IsSynchronizedWithCurrentItem="False"
+                             SelectionMode="None"
+                             Style="{StaticResource GridViewExtraLargeContentStyle}"
+                             UseCustomItemPresenterWithDisplayMode="CardItemPresenterWithWideVideoImage">
+                <ctrl:GridViewEx.ItemsMenuFlyout>
+                    <MenuFlyout/>
+                </ctrl:GridViewEx.ItemsMenuFlyout>
+                <i:Interaction.Behaviors>
+                    <behaviors:ListViewBasePersistentScrollingBehavior/>
+                    <behaviors:SelectionManagerBehavior/>
+                    <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
+                    <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
+                </i:Interaction.Behaviors>
+            </ctrl:GridViewEx>
+            <ctrl:ListViewEx x:Name="AllVideosList"
+                             Grid.Row="1"
+                             x:Load="False"
+                             CanDragItems="True"
+                             IsMultiSelectCheckBoxEnabled="False"
+                             IsSynchronizedWithCurrentItem="False"
+                             ItemTemplate="{StaticResource VideoListItemTemplate}"
+                             SelectionMode="Extended"
+                             Style="{StaticResource ListViewExtraLargeContentStyle}">
+                <ctrl:ListViewEx.ItemsMenuFlyout>
+                    <MenuFlyout/>
+                </ctrl:ListViewEx.ItemsMenuFlyout>
+                <i:Interaction.Behaviors>
+                    <behaviors:ListViewBasePersistentScrollingBehavior/>
+                    <behaviors:SelectionManagerBehavior/>
+                    <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
+                    <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
+                </i:Interaction.Behaviors>
+            </ctrl:ListViewEx>
+        </Grid>
+        <ProgressRing x:Name="progress"
+                      Grid.Row="1"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      IsActive="False"
+                      Visibility="Collapsed"/>
+    </Grid>
 </Page>

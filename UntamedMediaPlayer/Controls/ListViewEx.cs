@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using UntamedMediaPlayer.Compatibility;
 
 namespace UntamedMediaPlayer.Controls;
 
@@ -51,6 +52,30 @@ public sealed partial class ListViewEx : ListView
         typeof(ListViewEx),
         new PropertyMetadata(null, OnItemsMenuFlyoutChanged)
     );
+
+    public DropConfiguration? DropConfiguration
+    {
+        get => (DropConfiguration?)GetValue(DropConfigurationProperty);
+        set => SetValue(DropConfigurationProperty, value);
+    }
+
+    public static readonly DependencyProperty DropConfigurationProperty = DependencyProperty.Register(
+        nameof(DropConfiguration),
+        typeof(DropConfiguration),
+        typeof(ListViewEx),
+        new PropertyMetadata(null, OnDropConfigurationChanged)
+    );
+
+    private static void OnDropConfigurationChanged(
+        DependencyObject dependencyObject,
+        DependencyPropertyChangedEventArgs args
+    )
+    {
+        if (dependencyObject is ListViewEx listView)
+        {
+            UIElementEx.SetDropConfiguration(listView, args.NewValue as DropConfiguration);
+        }
+    }
 
     private static void OnItemsMenuFlyoutChanged(
         DependencyObject dependencyObject,

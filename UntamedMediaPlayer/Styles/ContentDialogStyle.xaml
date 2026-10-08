@@ -443,11 +443,11 @@
                                                       Height="48"/>
                                     </Grid>
                                     <Grid x:Name="CommandSpace"
+                                          Grid.Row="2"
                                           Margin="{ThemeResource ContentDialogPadding}"
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Bottom"
                                           Background="{TemplateBinding Background}"
-                                          Row="2"
                                           XYFocusKeyboardNavigation="Enabled">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition x:Name="PrimaryColumn" Width="*"/>

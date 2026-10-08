@@ -149,7 +149,8 @@
                         <behaviors:LiveAccessKeyBehavior/>
                     </i:Interaction.Behaviors>
                     <StackPanel Orientation="Horizontal">
-                        <FontIcon Margin="{StaticResource ElementRightMargin}"
+                        <FontIcon x:Name="commandIcon"
+                                  Margin="{StaticResource ElementRightMargin}"
                                   VerticalAlignment="Center"
                                   FontSize="{StaticResource IconFontSize}"/>
                         <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyNoMargin}"/>

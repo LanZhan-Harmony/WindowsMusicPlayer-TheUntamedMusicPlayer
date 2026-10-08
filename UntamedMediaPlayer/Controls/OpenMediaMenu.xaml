@@ -11,18 +11,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
     <SplitButton x:Uid="OpenMediaSplitButton">
-        <SplitButton.Content>
-            <StackPanel Orientation="Horizontal">
-                <StackPanel.Children>
-                    <FontIcon FontSize="{StaticResource IconFontSize}"/>
-                    <TextBlock x:Name="OpenMediaSplitButtonName"
-                               Margin="{StaticResource ElementLeftMargin}"
-                               AutomationProperties.AccessibilityView="Raw"
-                               Style="{StaticResource BodyNoMargin}"
-                               TextWrapping="NoWrap"/>
-                </StackPanel.Children>
-            </StackPanel>
-        </SplitButton.Content>
         <SplitButton.Flyout>
             <MenuFlyout Placement="Bottom">
                 <MenuFlyout.Items>
@@ -64,19 +52,25 @@
         </SplitButton.Flyout>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualStateGroup.States>
-                    <VisualState/>
-                    <VisualState>
-                        <VisualState.StateTriggers>
-                            <helpers:ViewportStateTrigger State="Narrow"/>
-                        </VisualState.StateTriggers>
-                        <VisualState.Setters>
-                            <Setter Target="OpenMediaSplitButtonName.Width" Value="0"/>
-                            <Setter Target="OpenMediaSplitButtonName.Margin" Value="0"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup.States>
+                <VisualState/>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <helpers:ViewportStateTrigger State="Narrow"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="OpenMediaSplitButtonName.Width" Value="0"/>
+                        <Setter Target="OpenMediaSplitButtonName.Margin" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        <StackPanel Orientation="Horizontal">
+            <FontIcon FontSize="{StaticResource IconFontSize}"/>
+            <TextBlock x:Name="OpenMediaSplitButtonName"
+                       Margin="{StaticResource ElementLeftMargin}"
+                       AutomationProperties.AccessibilityView="Raw"
+                       Style="{StaticResource BodyNoMargin}"
+                       TextWrapping="NoWrap"/>
+        </StackPanel>
     </SplitButton>
 </UserControl>

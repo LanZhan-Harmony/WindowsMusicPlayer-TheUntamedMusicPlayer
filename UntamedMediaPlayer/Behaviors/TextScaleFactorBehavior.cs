@@ -3,9 +3,7 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>
-/// 根据可用空间缩放文本/内容。简化实现：暴露 MinHeight 用于布局约束。
-/// </summary>
+/// <summary>Applies the configured minimum and fixed dimensions to its associated element.</summary>
 public sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
 {
     public double MinHeight
@@ -18,7 +16,7 @@ public sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
         nameof(MinHeight),
         typeof(double),
         typeof(TextScaleFactorBehavior),
-        new PropertyMetadata(0d)
+        new PropertyMetadata(0d, OnLayoutValueChanged)
     );
 
     public double Width
@@ -31,7 +29,7 @@ public sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
         nameof(Width),
         typeof(double),
         typeof(TextScaleFactorBehavior),
-        new PropertyMetadata(double.NaN)
+        new PropertyMetadata(double.NaN, OnLayoutValueChanged)
     );
 
     public double Height
@@ -44,6 +42,46 @@ public sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
         nameof(Height),
         typeof(double),
         typeof(TextScaleFactorBehavior),
-        new PropertyMetadata(double.NaN)
+        new PropertyMetadata(double.NaN, OnLayoutValueChanged)
     );
+
+    protected override void OnAttached()
+    {
+        base.OnAttached();
+        ApplyLayoutValues();
+    }
+
+    private static void OnLayoutValueChanged(
+        DependencyObject dependencyObject,
+        DependencyPropertyChangedEventArgs args
+    )
+    {
+        if (dependencyObject is TextScaleFactorBehavior behavior)
+        {
+            behavior.ApplyLayoutValues();
+        }
+    }
+
+    private void ApplyLayoutValues()
+    {
+        if (AssociatedObject is not { } element)
+        {
+            return;
+        }
+
+        if (MinHeight > 0)
+        {
+            element.MinHeight = MinHeight;
+        }
+
+        if (!double.IsNaN(Width))
+        {
+            element.Width = Width;
+        }
+
+        if (!double.IsNaN(Height))
+        {
+            element.Height = Height;
+        }
+    }
 }
