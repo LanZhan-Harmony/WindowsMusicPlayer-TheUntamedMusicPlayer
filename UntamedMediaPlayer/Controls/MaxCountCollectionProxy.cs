@@ -7,12 +7,12 @@ namespace UntamedMediaPlayer.Controls;
 /// <summary>
 /// 包装一个源集合，只暴露前 MaxCount 项。简化实现。
 /// </summary>
-public sealed class MaxCountCollectionProxy
+internal sealed partial class MaxCountCollectionProxy
     : DependencyObject,
         IEnumerable<object>,
         INotifyCollectionChanged
 {
-    public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
         nameof(Source),
         typeof(IEnumerable),
         typeof(MaxCountCollectionProxy),
@@ -25,7 +25,7 @@ public sealed class MaxCountCollectionProxy
         set => SetValue(SourceProperty, value);
     }
 
-    public static readonly DependencyProperty MaxCountProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty MaxCountProperty = DependencyProperty.Register(
         nameof(MaxCount),
         typeof(int),
         typeof(MaxCountCollectionProxy),
@@ -49,7 +49,10 @@ public sealed class MaxCountCollectionProxy
         return Source.Cast<object>().Take(MaxCount).GetEnumerator();
     }
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
     private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {

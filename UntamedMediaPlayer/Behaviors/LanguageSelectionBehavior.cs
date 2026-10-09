@@ -6,6 +6,9 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
+/// <summary>
+/// A behavior that handles the selection of a language in the application.
+/// </summary>
 internal sealed class LanguageSelectionBehavior : Behavior<AppBarButton>
 {
     public object? ViewModel
@@ -14,7 +17,7 @@ internal sealed class LanguageSelectionBehavior : Behavior<AppBarButton>
         set => SetValue(ViewModelProperty, value);
     }
 
-    public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
         nameof(ViewModel),
         typeof(object),
         typeof(LanguageSelectionBehavior),
@@ -69,7 +72,7 @@ internal sealed class LanguageSelectionBehavior : Behavior<AppBarButton>
 
         if (ViewModel is IEnumerable options && ViewModel is not string)
         {
-            var flyout = new MenuFlyout();
+            MenuFlyout flyout = new();
             foreach (object? option in options)
             {
                 if (option is MenuFlyoutItemBase menuItem)
@@ -78,7 +81,11 @@ internal sealed class LanguageSelectionBehavior : Behavior<AppBarButton>
                     continue;
                 }
 
-                var item = new MenuFlyoutItem { Text = option?.ToString() ?? string.Empty, Tag = option };
+                MenuFlyoutItem item = new()
+                {
+                    Text = option?.ToString() ?? string.Empty,
+                    Tag = option,
+                };
                 item.Click += OnLanguageItemClick;
                 flyout.Items.Add(item);
             }

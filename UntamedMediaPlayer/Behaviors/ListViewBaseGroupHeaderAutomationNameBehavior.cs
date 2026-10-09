@@ -5,8 +5,10 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Supplies an automation name for realized grouped-list items that have no text name.</summary>
-public sealed class ListViewBaseGroupHeaderAutomationNameBehavior : Behavior<ListViewBase>
+/// <summary>
+/// Supplies an automation name for realized grouped-list items that have no text name.
+/// </summary>
+internal sealed class ListViewBaseGroupHeaderAutomationNameBehavior : Behavior<ListViewBase>
 {
     protected override void OnAttached()
     {
@@ -25,7 +27,11 @@ public sealed class ListViewBaseGroupHeaderAutomationNameBehavior : Behavior<Lis
         ContainerContentChangingEventArgs args
     )
     {
-        if (args.Phase != 0 || args.InRecycleQueue || args.ItemContainer is not DependencyObject container)
+        if (
+            args.Phase != 0
+            || args.InRecycleQueue
+            || args.ItemContainer is not DependencyObject container
+        )
         {
             return;
         }

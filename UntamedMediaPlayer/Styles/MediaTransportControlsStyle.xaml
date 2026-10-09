@@ -1242,14 +1242,11 @@
                                                              MinWidth="80"
                                                              Margin="{StaticResource ContentSideMargin}"
                                                              VerticalAlignment="Center"
+                                                             AccessKey="S"
                                                              IsThumbToolTipEnabled="False"
                                                              KeyTipPlacementMode="Top"
                                                              Style="{StaticResource DefaultSliderStyle}"
-                                                             Duration="{Binding MediaPlayerViewModel.Duration, RelativeSource={RelativeSource TemplatedParent}}">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="S"/>
-                                            </i:Interaction.Behaviors>
-                                        </ctrl:DurationSlider>
+                                                             Duration="{Binding MediaPlayerViewModel.Duration, RelativeSource={RelativeSource TemplatedParent}}"/>
                                         <ProgressBar x:Name="MiniProgressBar"
                                                      Grid.Column="1"
                                                      Maximum="{Binding ElementName=ProgressSlider, Path=Maximum}"
@@ -1320,12 +1317,10 @@
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Collapsed"/>
                                         <AppBarButton x:Name="ShuffleButton"
+                                                      AccessKey="H"
                                                       Command="{Binding MediaPlayerViewModel.ToggleShuffleModeCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Label="{Binding MediaPlayerViewModel.ToggleShuffleModeCommand.Label, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource AppBarButtonStyle}">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="H"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon x:Name="ShuffleButtonIcon"
                                                           Glyph="{StaticResource MTCShuffleOffCommandGlyph}"
@@ -1334,7 +1329,6 @@
                                             <AppBarButton.KeyboardAccelerators>
                                                 <KeyboardAccelerator x:Name="MTCShuffleKeyboardAccelerator"
                                                                      Key="{StaticResource shufflePlaybackAcceleratorKey}"
-                                                                     IsEnabled="True"
                                                                      Modifiers="{StaticResource acceleratorModifierKey}"/>
                                             </AppBarButton.KeyboardAccelerators>
                                             <animations:Implicit.ShowAnimations>
@@ -1345,28 +1339,22 @@
                                         </AppBarButton>
                                         <AppBarButton x:Name="MTCPreviousTrackButton"
                                                       x:Uid="MTCPreviousTrackButton"
+                                                      AccessKey="B"
                                                       Command="{Binding MediaPlayerViewModel.MoveToPreviousTrackCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource AppBarButtonStyle}">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="B"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon Glyph="{StaticResource MTCPreviousTrackGlyph}" Style="{StaticResource CommandFontIcon}"/>
                                             </AppBarButton.Icon>
                                             <AppBarButton.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="B"
-                                                                     IsEnabled="True"
-                                                                     Modifiers="Control"/>
+                                                <KeyboardAccelerator Key="B" Modifiers="Control"/>
                                             </AppBarButton.KeyboardAccelerators>
                                         </AppBarButton>
                                         <AppBarButton x:Name="MTCSkipBackwardButton"
                                                       x:Uid="MTCSkipBackwardButton"
+                                                      AccessKey="I"
                                                       Command="{Binding MediaPlayerViewModel.SkipBackwardCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Collapsed">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="I"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon Glyph="{StaticResource MTCSkipBackwardGlyph}" Style="{StaticResource CommandFontIcon}"/>
                                             </AppBarButton.Icon>
@@ -1390,22 +1378,18 @@
                                             </AppBarButton.Icon>
                                         </AppBarButton>
                                         <AppBarButton x:Name="MTCPlayPauseButton"
+                                                      AccessKey="P"
                                                       Command="{Binding MediaPlayerViewModel.TogglePlayPauseCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Label="{Binding MediaPlayerViewModel.TogglePlayPauseCommand.Label, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource PlayCommandAppBarButtonStyle}">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="P"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon x:Name="PlayPauseGlyph"
                                                           Glyph="{StaticResource MTCPlayGlyph}"
                                                           Style="{StaticResource PlayCommandFontIcon}"/>
                                             </AppBarButton.Icon>
                                             <AppBarButton.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="P"
-                                                                     IsEnabled="True"
-                                                                     Modifiers="Control"/>
-                                                <KeyboardAccelerator Key="Space" IsEnabled="True"/>
+                                                <KeyboardAccelerator Key="P" Modifiers="Control"/>
+                                                <KeyboardAccelerator Key="Space"/>
                                             </AppBarButton.KeyboardAccelerators>
                                         </AppBarButton>
                                         <AppBarButton x:Name="FastForwardButton"
@@ -1417,12 +1401,10 @@
                                         </AppBarButton>
                                         <AppBarButton x:Name="MTCSkipForwardButton"
                                                       x:Uid="MTCSkipForwardButton"
+                                                      AccessKey="O"
                                                       Command="{Binding MediaPlayerViewModel.SkipForwardCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Collapsed">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="O"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon Glyph="{StaticResource MTCSkipForwardGlyph}" Style="{StaticResource CommandFontIcon}"/>
                                             </AppBarButton.Icon>
@@ -1440,27 +1422,21 @@
                                         </AppBarButton>
                                         <AppBarButton x:Name="MTCNextTrackButton"
                                                       x:Uid="MTCNextTrackButton"
+                                                      AccessKey="F"
                                                       Command="{Binding MediaPlayerViewModel.MoveToNextTrackCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource AppBarButtonStyle}">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="F"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon Glyph="{StaticResource MTCNextTrackGlyph}" Style="{StaticResource CommandFontIcon}"/>
                                             </AppBarButton.Icon>
                                             <AppBarButton.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F"
-                                                                     IsEnabled="True"
-                                                                     Modifiers="Control"/>
+                                                <KeyboardAccelerator Key="F" Modifiers="Control"/>
                                             </AppBarButton.KeyboardAccelerators>
                                         </AppBarButton>
                                         <AppBarButton x:Name="MTCRepeatButton"
+                                                      AccessKey="T"
                                                       Command="{Binding MediaPlayerViewModel.ToggleRepeatModeCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Label="{Binding MediaPlayerViewModel.ToggleRepeatModeCommand.Label, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource AppBarButtonStyle}">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="T"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon x:Name="RepeatButtonIcon"
                                                           Glyph="{StaticResource MTCRepeatOffGlyph}"
@@ -1469,7 +1445,6 @@
                                             <AppBarButton.KeyboardAccelerators>
                                                 <KeyboardAccelerator x:Name="MTCRepeatKeyboardAccelerator"
                                                                      Key="{StaticResource repeatTrackAcceleratorKey}"
-                                                                     IsEnabled="True"
                                                                      Modifiers="{StaticResource acceleratorModifierKey}"/>
                                             </AppBarButton.KeyboardAccelerators>
                                             <animations:Implicit.ShowAnimations>
@@ -1494,6 +1469,7 @@
                                         </AppBarButton>
                                         <AppBarButton x:Name="MTCLanguageButton"
                                                       x:Uid="MTCLanguageButton"
+                                                      AccessKey="L"
                                                       IsEnabled="{Binding MediaPlayerViewModel.IsPlayingVideo, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Collapsed">
@@ -1503,18 +1479,15 @@
                                             <AppBarButton.KeyboardAccelerators>
                                                 <KeyboardAccelerator x:Name="MTCLanguageKeyboardAccelerator"
                                                                      Key="L"
-                                                                     IsEnabled="True"
                                                                      Modifiers="Control"/>
                                             </AppBarButton.KeyboardAccelerators>
                                             <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="L"/>
                                                 <behaviors:LanguageSelectionBehavior ViewModel="{Binding MediaPlayerViewModel.LanguageSelection, RelativeSource={RelativeSource TemplatedParent}}"/>
                                             </i:Interaction.Behaviors>
                                         </AppBarButton>
-                                        <AppBarButton x:Name="VolumeMuteButton" Style="{StaticResource AppBarButtonStyle}">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="V"/>
-                                            </i:Interaction.Behaviors>
+                                        <AppBarButton x:Name="VolumeMuteButton"
+                                                      AccessKey="V"
+                                                      Style="{StaticResource AppBarButtonStyle}">
                                             <AppBarButton.Icon>
                                                 <FontIcon x:Name="VolumeMuteGlyph"
                                                           Glyph="{StaticResource MTCVolumeGlyph}"
@@ -1529,10 +1502,8 @@
                                                                       Margin="12"
                                                                       HorizontalAlignment="Center"
                                                                       VerticalAlignment="Center"
+                                                                      AccessKey="M"
                                                                       Style="{StaticResource AppBarButtonStyle}">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="M"/>
-                                                            </i:Interaction.Behaviors>
                                                             <AppBarButton.Resources>
                                                                 <ResourceDictionary>
                                                                     <Thickness x:Key="AppBarButtonContentViewboxCompactMargin">0,16</Thickness>
@@ -1545,12 +1516,8 @@
                                                                           Style="{StaticResource CommandFontIcon}"/>
                                                             </AppBarButton.Icon>
                                                             <AppBarButton.KeyboardAccelerators>
-                                                                <KeyboardAccelerator Key="Number0"
-                                                                                     IsEnabled="True"
-                                                                                     Modifiers="Control"/>
-                                                                <KeyboardAccelerator Key="NumberPad0"
-                                                                                     IsEnabled="True"
-                                                                                     Modifiers="Control"/>
+                                                                <KeyboardAccelerator Key="Number0" Modifiers="Control"/>
+                                                                <KeyboardAccelerator Key="NumberPad0" Modifiers="Control"/>
                                                             </AppBarButton.KeyboardAccelerators>
                                                         </AppBarButton>
                                                         <Slider x:Name="VolumeSlider"
@@ -1558,12 +1525,9 @@
                                                                 Margin="0"
                                                                 HorizontalAlignment="Center"
                                                                 VerticalAlignment="Center"
+                                                                AccessKey="V"
                                                                 IsThumbToolTipEnabled="False"
-                                                                Value="50">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="V"/>
-                                                            </i:Interaction.Behaviors>
-                                                        </Slider>
+                                                                Value="50"/>
                                                         <Grid Margin="12" VerticalAlignment="Center">
                                                             <TextBlock HorizontalAlignment="Center"
                                                                        VerticalAlignment="Center"
@@ -1582,12 +1546,10 @@
                                             </AppBarButton.Flyout>
                                         </AppBarButton>
                                         <AppBarButton x:Name="MTCFullWindowButton"
+                                                      AccessKey="U"
                                                       Command="{Binding MediaPlayerViewModel.ToggleFullScreenModeCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Label="{Binding MediaPlayerViewModel.ToggleFullScreenModeCommand.Label, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource AppBarButtonStyle}">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="U"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon x:Name="FullWindowGlyph"
                                                           Glyph="{StaticResource MTCEnterFullScreenGlyph}"
@@ -1603,13 +1565,11 @@
                                             </animations:Implicit.ShowAnimations>
                                         </AppBarButton>
                                         <AppBarButton x:Name="MTCMiniPlayerButton"
+                                                      AccessKey="M"
                                                       Command="{Binding MediaPlayerViewModel.ToggleMiniPlayerModeCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Label="{Binding MediaPlayerViewModel.ToggleMiniPlayerModeCommand.Label, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Collapsed">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="M"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon x:Name="MiniPlayerIcon"
                                                           Glyph="{StaticResource MTCEnterMiniPlayerGlyph}"
@@ -1621,10 +1581,8 @@
                                         </AppBarButton>
                                         <AppBarButton x:Name="OverFlowButton"
                                                       x:Uid="MTCOverFlowButton"
+                                                      AccessKey="R"
                                                       Style="{StaticResource AppBarButtonStyle}">
-                                            <i:Interaction.Behaviors>
-                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="R"/>
-                                            </i:Interaction.Behaviors>
                                             <AppBarButton.Icon>
                                                 <FontIcon Glyph="{StaticResource MTCOverFlowButtonGlyph}" Style="{StaticResource CommandFontIcon}"/>
                                             </AppBarButton.Icon>
@@ -1632,253 +1590,195 @@
                                                 <MenuFlyout>
                                                     <MenuFlyout.Items>
                                                         <MenuFlyoutItem x:Uid="MTCViewFileInfo"
+                                                                        AccessKey="P"
                                                                         Command="{Binding MediaPlayerViewModel.ShowFilePropertiesCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         KeyTipPlacementMode="Left">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="P"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon Glyph="{StaticResource MTCViewFileInfoGlyph}" Style="{StaticResource MediaFontIcon}"/>
                                                             </MenuFlyoutItem.Icon>
                                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                                <KeyboardAccelerator Key="I"
-                                                                                     IsEnabled="True"
-                                                                                     Modifiers="Control"/>
+                                                                <KeyboardAccelerator Key="I" Modifiers="Control"/>
                                                             </MenuFlyoutItem.KeyboardAccelerators>
                                                         </MenuFlyoutItem>
                                                         <MenuFlyoutSeparator/>
                                                         <MenuFlyoutItem x:Uid="MTCEditWithClipChamp"
+                                                                        AccessKey="D"
                                                                         Command="{Binding MediaPlayerViewModel.EditWithClipChampCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         KeyTipPlacementMode="Left"
                                                                         Visibility="{Binding MediaPlayerViewModel.EditWithClipChampCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EmptyObjectToVisibilityConverter}}">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="D"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon Glyph="{StaticResource ClipChampGlyph}" Style="{StaticResource MediaFontIcon}"/>
                                                             </MenuFlyoutItem.Icon>
                                                         </MenuFlyoutItem>
                                                         <MenuFlyoutSeparator Visibility="{Binding MediaPlayerViewModel.EditWithClipChampCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EmptyObjectToVisibilityConverter}}"/>
                                                         <MenuFlyoutItem x:Uid="MTCShowEqualizer"
+                                                                        AccessKey="E"
                                                                         Command="{Binding MediaPlayerViewModel.ShowEqualizerCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         KeyTipPlacementMode="Left">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="E"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon Glyph="{StaticResource MTCEqualizerGlyph}" Style="{StaticResource MediaFontIcon}"/>
                                                             </MenuFlyoutItem.Icon>
                                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                                <KeyboardAccelerator Key="E"
-                                                                                     IsEnabled="True"
-                                                                                     Modifiers="Control,Shift"/>
+                                                                <KeyboardAccelerator Key="E" Modifiers="Control,Shift"/>
                                                             </MenuFlyoutItem.KeyboardAccelerators>
                                                         </MenuFlyoutItem>
                                                         <MenuFlyoutSubItem x:Uid="MTCPlaybackRateButton"
+                                                                           AccessKey="S"
                                                                            IsAccessKeyScope="True"
                                                                            IsEnabled="{Binding MediaPlayerViewModel.ChangePlaybackRateCommand.IsEnabled, RelativeSource={RelativeSource TemplatedParent}}"
                                                                            KeyTipPlacementMode="Left">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="S"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutSubItem.Icon>
                                                                 <FontIcon Glyph="{StaticResource MTCPlaybackRateGlyph}" Style="{StaticResource MediaFontIcon}"/>
                                                             </MenuFlyoutSubItem.Icon>
                                                             <MenuFlyoutSubItem.Items>
                                                                 <ctrl:MenuFlyoutSelectableItem x:Name="MTCPlaybackRateButtonVerySlow"
                                                                                                x:Uid="MTCPlaybackRateButtonVerySlow"
+                                                                                               AccessKey="G"
                                                                                                Command="{Binding MediaPlayerViewModel.ChangePlaybackRateCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                                CommandParameter="{StaticResource PlaybackRateVerySlow}"
                                                                                                KeyTipPlacementMode="Left">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="G"/>
-                                                                    </i:Interaction.Behaviors>
                                                                     <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
-                                                                        <KeyboardAccelerator Key="G"
-                                                                                             IsEnabled="True"
-                                                                                             Modifiers="Control,Shift"/>
+                                                                        <KeyboardAccelerator Key="G" Modifiers="Control,Shift"/>
                                                                     </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
                                                                 </ctrl:MenuFlyoutSelectableItem>
                                                                 <ctrl:MenuFlyoutSelectableItem x:Name="MTCPlaybackRateButtonSlow"
                                                                                                x:Uid="MTCPlaybackRateButtonSlow"
+                                                                                               AccessKey="H"
                                                                                                Command="{Binding MediaPlayerViewModel.ChangePlaybackRateCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                                CommandParameter="{StaticResource PlaybackRateSlow}"
                                                                                                KeyTipPlacementMode="Left">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="H"/>
-                                                                    </i:Interaction.Behaviors>
                                                                     <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
-                                                                        <KeyboardAccelerator Key="H"
-                                                                                             IsEnabled="True"
-                                                                                             Modifiers="Control,Shift"/>
+                                                                        <KeyboardAccelerator Key="H" Modifiers="Control,Shift"/>
                                                                     </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
                                                                 </ctrl:MenuFlyoutSelectableItem>
                                                                 <ctrl:MenuFlyoutSelectableItem x:Name="MTCPlaybackRateButtonDefault"
                                                                                                x:Uid="MTCPlaybackRateButtonDefault"
+                                                                                               AccessKey="J"
                                                                                                Command="{Binding MediaPlayerViewModel.ChangePlaybackRateCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                                CommandParameter="{StaticResource PlaybackRateDefault}"
                                                                                                KeyTipPlacementMode="Left">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="J"/>
-                                                                    </i:Interaction.Behaviors>
                                                                     <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
-                                                                        <KeyboardAccelerator Key="J"
-                                                                                             IsEnabled="True"
-                                                                                             Modifiers="Control,Shift"/>
+                                                                        <KeyboardAccelerator Key="J" Modifiers="Control,Shift"/>
                                                                     </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
                                                                 </ctrl:MenuFlyoutSelectableItem>
                                                                 <ctrl:MenuFlyoutSelectableItem x:Name="MTCPlaybackRateButtonFast"
                                                                                                x:Uid="MTCPlaybackRateButtonFast"
+                                                                                               AccessKey="K"
                                                                                                Command="{Binding MediaPlayerViewModel.ChangePlaybackRateCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                                CommandParameter="{StaticResource PlaybackRateFast}"
                                                                                                KeyTipPlacementMode="Left">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="K"/>
-                                                                    </i:Interaction.Behaviors>
                                                                     <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
-                                                                        <KeyboardAccelerator Key="K"
-                                                                                             IsEnabled="True"
-                                                                                             Modifiers="Control,Shift"/>
+                                                                        <KeyboardAccelerator Key="K" Modifiers="Control,Shift"/>
                                                                     </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
                                                                 </ctrl:MenuFlyoutSelectableItem>
                                                                 <ctrl:MenuFlyoutSelectableItem x:Name="MTCPlaybackRateButtonVeryFast"
                                                                                                x:Uid="MTCPlaybackRateButtonVeryFast"
+                                                                                               AccessKey="L"
                                                                                                Command="{Binding MediaPlayerViewModel.ChangePlaybackRateCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                                CommandParameter="{StaticResource PlaybackRateVeryFast}"
                                                                                                KeyTipPlacementMode="Left">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="L"/>
-                                                                    </i:Interaction.Behaviors>
                                                                     <ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
-                                                                        <KeyboardAccelerator Key="L"
-                                                                                             IsEnabled="True"
-                                                                                             Modifiers="Control,Shift"/>
+                                                                        <KeyboardAccelerator Key="L" Modifiers="Control,Shift"/>
                                                                     </ctrl:MenuFlyoutSelectableItem.KeyboardAccelerators>
                                                                 </ctrl:MenuFlyoutSelectableItem>
                                                             </MenuFlyoutSubItem.Items>
                                                         </MenuFlyoutSubItem>
                                                         <MenuFlyoutItem x:Name="MTCCastToButton"
                                                                         x:Uid="MTCCastToButton"
+                                                                        AccessKey="C"
                                                                         KeyTipPlacementMode="Left">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon x:Name="MTCCastToButtonIcon"
                                                                           Glyph="{StaticResource MTCCastToGlyph}"
                                                                           Style="{StaticResource MediaFontIcon}"/>
                                                             </MenuFlyoutItem.Icon>
                                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                                <KeyboardAccelerator Key="K"
-                                                                                     IsEnabled="True"
-                                                                                     Modifiers="Control"/>
+                                                                <KeyboardAccelerator Key="K" Modifiers="Control"/>
                                                             </MenuFlyoutItem.KeyboardAccelerators>
                                                         </MenuFlyoutItem>
                                                         <MenuFlyoutSubItem x:Uid="MTCVideoSettings"
+                                                                           AccessKey="V"
                                                                            IsAccessKeyScope="True"
                                                                            IsEnabled="{Binding MediaPlayerViewModel.IsPlayingVideo, RelativeSource={RelativeSource TemplatedParent}}"
                                                                            KeyTipPlacementMode="Left">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="V"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutSubItem.Icon>
                                                                 <FontIcon Glyph="{StaticResource VideoSettingsGlyph}" Style="{StaticResource MediaFontIcon}"/>
                                                             </MenuFlyoutSubItem.Icon>
                                                             <MenuFlyoutSubItem.Items>
                                                                 <MenuFlyoutItem x:Uid="MTCRotateVideo"
+                                                                                AccessKey="R"
                                                                                 Command="{Binding MediaPlayerViewModel.RotateMediaCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                 KeyTipPlacementMode="Left">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="R"/>
-                                                                    </i:Interaction.Behaviors>
                                                                     <MenuFlyoutItem.Icon>
                                                                         <FontIcon Glyph="{StaticResource RotateVideoGlyph}" Style="{StaticResource MediaFontIcon}"/>
                                                                     </MenuFlyoutItem.Icon>
                                                                     <MenuFlyoutItem.KeyboardAccelerators>
-                                                                        <KeyboardAccelerator Key="R"
-                                                                                             IsEnabled="True"
-                                                                                             Modifiers="Control,Shift"/>
+                                                                        <KeyboardAccelerator Key="R" Modifiers="Control,Shift"/>
                                                                     </MenuFlyoutItem.KeyboardAccelerators>
                                                                 </MenuFlyoutItem>
                                                                 <ToggleMenuFlyoutItem x:Uid="MTCZoomToFillButton"
+                                                                                      AccessKey="Z"
                                                                                       Command="{Binding MediaPlayerViewModel.ToggleZoomToFillCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                       IsChecked="{Binding MediaPlayerViewModel.IsZoomedToFill, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                       KeyTipPlacementMode="Left">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="Z"/>
-                                                                    </i:Interaction.Behaviors>
                                                                     <ToggleMenuFlyoutItem.Icon>
                                                                         <FontIcon x:Name="MTCZoomToFillButtonIcon"
                                                                                   Glyph="{StaticResource MTCZoomToFillGlyph}"
                                                                                   Style="{StaticResource MediaFontIcon}"/>
                                                                     </ToggleMenuFlyoutItem.Icon>
                                                                     <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                                                        <KeyboardAccelerator Key="Z"
-                                                                                             IsEnabled="True"
-                                                                                             Modifiers="Control,Shift"/>
+                                                                        <KeyboardAccelerator Key="Z" Modifiers="Control,Shift"/>
                                                                     </ToggleMenuFlyoutItem.KeyboardAccelerators>
                                                                 </ToggleMenuFlyoutItem>
                                                                 <MenuFlyoutItem x:Name="videoEnhancerItem"
                                                                                 x:Uid="MTCVideoEnhancer"
+                                                                                AccessKey="E"
                                                                                 KeyTipPlacementMode="Left">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="E"/>
-                                                                    </i:Interaction.Behaviors>
                                                                     <MenuFlyoutItem.Icon>
                                                                         <FontIcon Glyph="{StaticResource VideoEnhancerGlyph}" Style="{StaticResource MediaFontIcon}"/>
                                                                     </MenuFlyoutItem.Icon>
                                                                     <MenuFlyoutItem.KeyboardAccelerators>
-                                                                        <KeyboardAccelerator Key="V"
-                                                                                             IsEnabled="True"
-                                                                                             Modifiers="Control,Shift"/>
+                                                                        <KeyboardAccelerator Key="V" Modifiers="Control,Shift"/>
                                                                     </MenuFlyoutItem.KeyboardAccelerators>
                                                                 </MenuFlyoutItem>
                                                             </MenuFlyoutSubItem.Items>
                                                         </MenuFlyoutSubItem>
                                                         <MenuFlyoutItem x:Name="MTCOverflowSkipBackwardButton"
                                                                         x:Uid="MTCOverflowSkipBackwardButton"
+                                                                        AccessKey="I"
                                                                         Command="{Binding MediaPlayerViewModel.SkipBackwardCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         KeyTipPlacementMode="Left"
                                                                         Visibility="Visible">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="I"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon Glyph="{StaticResource MTCSkipBackwardGlyph}" Style="{StaticResource MediaFontIcon}"/>
                                                             </MenuFlyoutItem.Icon>
                                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                                 <KeyboardAccelerator x:Name="MTCOverflowSkipBackwardButtonAccelerator"
                                                                                      Key="Left"
-                                                                                     IsEnabled="True"
                                                                                      Modifiers="Control"/>
                                                             </MenuFlyoutItem.KeyboardAccelerators>
                                                         </MenuFlyoutItem>
                                                         <MenuFlyoutItem x:Name="MTCOverflowSkipForwardButton"
                                                                         x:Uid="MTCOverflowSkipForwardButton"
+                                                                        AccessKey="O"
                                                                         Command="{Binding MediaPlayerViewModel.SkipForwardCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         KeyTipPlacementMode="Left"
                                                                         Visibility="Visible">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="O"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon Glyph="{StaticResource MTCSkipForwardGlyph}" Style="{StaticResource CommandFontIcon}"/>
                                                             </MenuFlyoutItem.Icon>
                                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                                 <KeyboardAccelerator x:Name="MTCOverflowSkipForwardButtonAccelerator"
                                                                                      Key="Right"
-                                                                                     IsEnabled="True"
                                                                                      Modifiers="Control"/>
                                                             </MenuFlyoutItem.KeyboardAccelerators>
                                                         </MenuFlyoutItem>
                                                         <MenuFlyoutItem x:Name="OverflowShuffleButton"
+                                                                        AccessKey="H"
                                                                         Command="{Binding MediaPlayerViewModel.ToggleShuffleModeCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         KeyTipPlacementMode="Left"
                                                                         Text="{Binding MediaPlayerViewModel.ToggleShuffleModeCommand.Label, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         Visibility="Collapsed">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="H"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon x:Name="OverflowShuffleButtonIcon"
                                                                           Glyph="{StaticResource MTCShuffleOffCommandGlyph}"
@@ -1892,13 +1792,11 @@
                                                             </MenuFlyoutItem.KeyboardAccelerators>
                                                         </MenuFlyoutItem>
                                                         <MenuFlyoutItem x:Name="OverflowRepeatButton"
+                                                                        AccessKey="T"
                                                                         Command="{Binding MediaPlayerViewModel.ToggleRepeatModeCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         KeyTipPlacementMode="Left"
                                                                         Text="{Binding MediaPlayerViewModel.ToggleRepeatModeCommand.Label, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         Visibility="Collapsed">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="T"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon x:Name="OverflowRepeatButtonIcon"
                                                                           Glyph="{StaticResource MTCRepeatOffGlyph}"
@@ -1912,13 +1810,11 @@
                                                             </MenuFlyoutItem.KeyboardAccelerators>
                                                         </MenuFlyoutItem>
                                                         <MenuFlyoutItem x:Name="MTCOverflowFullWindowButton"
+                                                                        AccessKey="U"
                                                                         Command="{Binding MediaPlayerViewModel.ToggleFullScreenModeCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         KeyTipPlacementMode="Left"
                                                                         Text="{Binding MediaPlayerViewModel.ToggleFullScreenModeCommand.Label, RelativeSource={RelativeSource TemplatedParent}}"
                                                                         Visibility="Collapsed">
-                                                            <i:Interaction.Behaviors>
-                                                                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="U"/>
-                                                            </i:Interaction.Behaviors>
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon x:Name="OverflowFullWindowGlyph"
                                                                           Glyph="{StaticResource MTCEnterFullScreenGlyph}"

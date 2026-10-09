@@ -1,13 +1,16 @@
-using Microsoft.UI.Xaml;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.Xaml.Interactivity;
 using Windows.System;
+using Windows.UI.Core;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Adds the standard Select All and Escape-to-clear keyboard actions to a list.</summary>
-public sealed class SelectionManagerBehavior : Behavior<ListViewBase>
+/// <summary>
+/// Adds the standard Select All and Escape-to-clear keyboard actions to a list.
+/// </summary>
+internal sealed class SelectionManagerBehavior : Behavior<ListViewBase>
 {
     protected override void OnAttached()
     {
@@ -23,7 +26,10 @@ public sealed class SelectionManagerBehavior : Behavior<ListViewBase>
 
     private void OnKeyDown(object sender, KeyRoutedEventArgs args)
     {
-        if (AssociatedObject.SelectionMode is not (ListViewSelectionMode.Multiple or ListViewSelectionMode.Extended))
+        if (
+            AssociatedObject.SelectionMode
+            is not (ListViewSelectionMode.Multiple or ListViewSelectionMode.Extended)
+        )
         {
             if (args.Key == VirtualKey.Escape && AssociatedObject.SelectedItem is not null)
             {
@@ -46,7 +52,9 @@ public sealed class SelectionManagerBehavior : Behavior<ListViewBase>
         }
     }
 
-    private static bool IsControlDown() =>
-        Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control)
-            .HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down);
+    private static bool IsControlDown()
+    {
+        return InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control)
+            .HasFlag(CoreVirtualKeyStates.Down);
+    }
 }

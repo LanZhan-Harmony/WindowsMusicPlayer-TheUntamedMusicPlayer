@@ -6,7 +6,7 @@ namespace UntamedMediaPlayer.Controls;
 /// <summary>
 /// 描述一个响应式列表断点：当容器宽度达到 MinContainerWidth 时使用 Columns 列。
 /// </summary>
-public sealed class ResponsiveListBreakpoint : DependencyObject
+internal sealed class ResponsiveListBreakpoint : DependencyObject
 {
     public int Columns
     {
@@ -14,7 +14,7 @@ public sealed class ResponsiveListBreakpoint : DependencyObject
         set => SetValue(ColumnsProperty, value);
     }
 
-    public static readonly DependencyProperty ColumnsProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty ColumnsProperty = DependencyProperty.Register(
         nameof(Columns),
         typeof(int),
         typeof(ResponsiveListBreakpoint),
@@ -27,7 +27,7 @@ public sealed class ResponsiveListBreakpoint : DependencyObject
         set => SetValue(MinContainerWidthProperty, value);
     }
 
-    public static readonly DependencyProperty MinContainerWidthProperty =
+    private static readonly DependencyProperty MinContainerWidthProperty =
         DependencyProperty.Register(
             nameof(MinContainerWidth),
             typeof(double),
@@ -39,7 +39,7 @@ public sealed class ResponsiveListBreakpoint : DependencyObject
 /// <summary>
 /// 响应式断点集合，根据容器宽度解析当前列数。
 /// </summary>
-public sealed partial class ResponsiveListBreakpointCollection
+internal sealed partial class ResponsiveListBreakpointCollection
     : Collection<ResponsiveListBreakpoint>
 {
     public int GetColumnsForWidth(double width)

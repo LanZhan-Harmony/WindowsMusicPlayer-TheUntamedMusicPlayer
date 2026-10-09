@@ -3,8 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Controls;
 
-/// <summary>A lightweight content notification surface for the migrated transport controls.</summary>
-public sealed partial class InAppNotification : ContentControl
+/// <summary>
+/// A lightweight content notification surface for the migrated transport controls.
+/// </summary>
+internal sealed partial class InAppNotification : ContentControl
 {
     public bool IsOpen
     {
@@ -12,7 +14,7 @@ public sealed partial class InAppNotification : ContentControl
         set => SetValue(IsOpenProperty, value);
     }
 
-    public static readonly DependencyProperty IsOpenProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty IsOpenProperty = DependencyProperty.Register(
         nameof(IsOpen),
         typeof(bool),
         typeof(InAppNotification),
@@ -31,7 +33,9 @@ public sealed partial class InAppNotification : ContentControl
     {
         if (dependencyObject is InAppNotification notification)
         {
-            notification.Visibility = (bool)args.NewValue ? Visibility.Visible : Visibility.Collapsed;
+            notification.Visibility = (bool)args.NewValue
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
     }
 }

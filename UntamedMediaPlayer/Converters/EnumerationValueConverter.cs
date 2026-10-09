@@ -11,7 +11,7 @@ internal sealed partial class EnumerationValueConverter : DependencyObject, IVal
         set => SetValue(TrueValueProperty, value);
     }
 
-    public static readonly DependencyProperty TrueValueProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty TrueValueProperty = DependencyProperty.Register(
         nameof(TrueValue),
         typeof(object),
         typeof(EnumerationValueConverter),
@@ -24,7 +24,7 @@ internal sealed partial class EnumerationValueConverter : DependencyObject, IVal
         set => SetValue(FalseValueProperty, value);
     }
 
-    public static readonly DependencyProperty FalseValueProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty FalseValueProperty = DependencyProperty.Register(
         nameof(FalseValue),
         typeof(object),
         typeof(EnumerationValueConverter),

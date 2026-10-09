@@ -8,6 +8,7 @@
              xmlns:i="using:Microsoft.Xaml.Interactivity"
              xmlns:local="using:UntamedMediaPlayer.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:selectors="using:UntamedMediaPlayer.Controls.CustomDataTemplateSelectors"
              mc:Ignorable="d">
     <UserControl.Resources>
         <DataTemplate x:Key="musicTemplate">
@@ -148,9 +149,9 @@
                 </Grid>
             </UserControl>
         </DataTemplate>
-        <local:EditableMediaDisplayPropertiesTemplateSelector x:Key="displayPropertiesSelector"
-                                                              DefaultTemplate="{StaticResource defaultTemplate}"
-                                                              MusicTemplate="{StaticResource musicTemplate}"/>
+        <selectors:EditableMediaDisplayPropertiesTemplateSelector x:Key="displayPropertiesSelector"
+                                                                  DefaultTemplate="{StaticResource defaultTemplate}"
+                                                                  MusicTemplate="{StaticResource musicTemplate}"/>
         <DataTemplate x:Key="defaultTemplate">
             <UserControl>
                 <Grid>

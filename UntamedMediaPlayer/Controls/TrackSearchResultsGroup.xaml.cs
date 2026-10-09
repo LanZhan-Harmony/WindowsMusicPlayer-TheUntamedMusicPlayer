@@ -2,7 +2,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class TrackSearchResultsGroup : UserControl
+internal sealed partial class TrackSearchResultsGroup : UserControl
 {
     public TrackSearchResultsGroup()
     {

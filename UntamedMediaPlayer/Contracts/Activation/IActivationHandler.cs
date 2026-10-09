@@ -1,6 +1,6 @@
 namespace UntamedMediaPlayer.Contracts.Activation;
 
-public interface IActivationHandler
+internal interface IActivationHandler
 {
     bool CanHandle(object args);
     ValueTask HandleAsync(object args);

@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class SortAndFilterControl : AppBarButton
+internal sealed partial class SortAndFilterControl : AppBarButton
 {
     public object? SelectedItem
     {
@@ -11,7 +11,7 @@ public sealed partial class SortAndFilterControl : AppBarButton
         set => SetValue(SelectedItemProperty, value);
     }
 
-    public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
         nameof(SelectedItem),
         typeof(object),
         typeof(SortAndFilterControl),

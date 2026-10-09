@@ -3,8 +3,10 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Applies the configured minimum and fixed dimensions to its associated element.</summary>
-public sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
+/// <summary>
+/// Applies the configured minimum and fixed dimensions to its associated element.
+/// </summary>
+internal sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
 {
     public double MinHeight
     {
@@ -12,7 +14,7 @@ public sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
         set => SetValue(MinHeightProperty, value);
     }
 
-    public static readonly DependencyProperty MinHeightProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty MinHeightProperty = DependencyProperty.Register(
         nameof(MinHeight),
         typeof(double),
         typeof(TextScaleFactorBehavior),
@@ -25,7 +27,7 @@ public sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
         set => SetValue(WidthProperty, value);
     }
 
-    public static readonly DependencyProperty WidthProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty WidthProperty = DependencyProperty.Register(
         nameof(Width),
         typeof(double),
         typeof(TextScaleFactorBehavior),
@@ -38,7 +40,7 @@ public sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
         set => SetValue(HeightProperty, value);
     }
 
-    public static readonly DependencyProperty HeightProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty HeightProperty = DependencyProperty.Register(
         nameof(Height),
         typeof(double),
         typeof(TextScaleFactorBehavior),

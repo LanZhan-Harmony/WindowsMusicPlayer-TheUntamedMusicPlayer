@@ -2,7 +2,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class MenuFlyoutItemWithSecondaryText : MenuFlyoutItem
+internal sealed partial class MenuFlyoutItemWithSecondaryText : MenuFlyoutItem
 {
     public MenuFlyoutItemWithSecondaryText()
     {

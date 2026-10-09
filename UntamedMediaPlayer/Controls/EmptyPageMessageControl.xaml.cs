@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Media;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class EmptyPageMessageControl : UserControl
+internal sealed partial class EmptyPageMessageControl : UserControl
 {
     public string CommandIcon
     {
@@ -13,7 +13,7 @@ public sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(CommandIconProperty, value);
     }
 
-    public static readonly DependencyProperty CommandIconProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty CommandIconProperty = DependencyProperty.Register(
         nameof(CommandIcon),
         typeof(string),
         typeof(EmptyPageMessageControl),
@@ -26,7 +26,7 @@ public sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(ImageSourceProperty, value);
     }
 
-    public static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(
         nameof(ImageSource),
         typeof(ImageSource),
         typeof(EmptyPageMessageControl),
@@ -39,7 +39,7 @@ public sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(IsHomePageProperty, value);
     }
 
-    public static readonly DependencyProperty IsHomePageProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty IsHomePageProperty = DependencyProperty.Register(
         nameof(IsHomePage),
         typeof(bool),
         typeof(EmptyPageMessageControl),
@@ -52,7 +52,7 @@ public sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(CommandAccessVirtualKeyProperty, value);
     }
 
-    public static readonly DependencyProperty CommandAccessVirtualKeyProperty =
+    private static readonly DependencyProperty CommandAccessVirtualKeyProperty =
         DependencyProperty.Register(
             nameof(CommandAccessVirtualKey),
             typeof(string),
@@ -66,7 +66,7 @@ public sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(CommandButtonFlyoutProperty, value);
     }
 
-    public static readonly DependencyProperty CommandButtonFlyoutProperty =
+    private static readonly DependencyProperty CommandButtonFlyoutProperty =
         DependencyProperty.Register(
             nameof(CommandButtonFlyout),
             typeof(FlyoutBase),
@@ -84,7 +84,10 @@ public sealed partial class EmptyPageMessageControl : UserControl
         ApplyHomePageState();
     }
 
-    private static void OnCommandIconChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+    private static void OnCommandIconChanged(
+        DependencyObject sender,
+        DependencyPropertyChangedEventArgs args
+    )
     {
         if (sender is EmptyPageMessageControl control)
         {
@@ -92,7 +95,10 @@ public sealed partial class EmptyPageMessageControl : UserControl
         }
     }
 
-    private static void OnImageSourceChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+    private static void OnImageSourceChanged(
+        DependencyObject sender,
+        DependencyPropertyChangedEventArgs args
+    )
     {
         if (sender is EmptyPageMessageControl control)
         {
@@ -122,7 +128,10 @@ public sealed partial class EmptyPageMessageControl : UserControl
         }
     }
 
-    private static void OnIsHomePageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+    private static void OnIsHomePageChanged(
+        DependencyObject sender,
+        DependencyPropertyChangedEventArgs args
+    )
     {
         if (sender is EmptyPageMessageControl control)
         {
@@ -132,36 +141,26 @@ public sealed partial class EmptyPageMessageControl : UserControl
 
     private void ApplyCommandIcon()
     {
-        if (commandIcon is not null)
-        {
-            commandIcon.Glyph = CommandIcon;
-        }
+        commandIcon?.Glyph = CommandIcon;
     }
 
     private void ApplyImageSource()
     {
-        if (image is not null)
-        {
-            image.Source = ImageSource;
-        }
+        image?.Source = ImageSource;
     }
 
     private void ApplyCommandAccessVirtualKey()
     {
-        if (button is not null)
-        {
-            button.AccessKey = CommandAccessVirtualKey;
-        }
+        button?.AccessKey = CommandAccessVirtualKey;
     }
 
     private void ApplyCommandButtonFlyout()
     {
-        if (button is not null)
-        {
-            button.Flyout = CommandButtonFlyout;
-        }
+        button?.Flyout = CommandButtonFlyout;
     }
 
-    private void ApplyHomePageState() =>
-        VisualStateManager.GoToState(this, IsHomePage ? "HomePageState" : "Default", useTransitions: false);
+    private void ApplyHomePageState()
+    {
+        VisualStateManager.GoToState(this, IsHomePage ? "HomePageState" : "Default", false);
+    }
 }

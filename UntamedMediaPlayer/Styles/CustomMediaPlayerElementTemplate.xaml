@@ -13,9 +13,7 @@
                                    Source="{TemplateBinding PosterSource}"
                                    Stretch="{TemplateBinding Stretch}"
                                    Visibility="Collapsed"/>
-                            <ContentPresenter
-                                              Content="{TemplateBinding MediaVisualization}"
-                                              Visibility="{Binding MediaVisualization.Visibility, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=Collapsed}"/>
+                            <ContentPresenter Content="{TemplateBinding MediaVisualization}" Visibility="{Binding MediaVisualization.Visibility, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=Collapsed}"/>
                             <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
                                                   FlowDirection="LeftToRight"
                                                   IsFullWindow="{TemplateBinding IsFullWindow}"

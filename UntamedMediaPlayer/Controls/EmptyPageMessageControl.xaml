@@ -10,67 +10,65 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <ResourceDictionary>
-            <Style x:Key="NarrowEmptyPageScrollViewer"
-                   BasedOn="{StaticResource ContentContainerScrollViewer}"
-                   TargetType="ScrollViewer">
-                <Setter Property="Padding" Value="4,0"/>
-            </Style>
-            <Style x:Key="NarrowEmptyPagePanel"
-                   BasedOn="{StaticResource EmptyPagePanel}"
-                   TargetType="StackPanel">
-                <Setter Property="Margin" Value="16,0,0,0"/>
-            </Style>
-            <Style x:Key="NarrowEmptyHomePageScrollViewer"
-                   BasedOn="{StaticResource ContentContainerScrollViewer}"
-                   TargetType="ScrollViewer">
-                <Setter Property="Padding" Value="4,0,8,0"/>
-            </Style>
-            <Style x:Key="NarrowEmptyHomePagePanel"
-                   BasedOn="{StaticResource EmptyPagePanel}"
-                   TargetType="StackPanel">
-                <Setter Property="Margin" Value="12,0,0,0"/>
-            </Style>
-            <x:Double x:Key="HomeEmptyPageImageSize">280</x:Double>
-            <x:Double x:Key="HomeEmptyPageImageNarrowSize">168</x:Double>
-            <Style x:Key="EmptyPageTitle"
-                   BasedOn="{StaticResource Title}"
-                   TargetType="TextBlock">
-                <Setter Property="FontSize" Value="28"/>
-                <Setter Property="HorizontalAlignment" Value="Left"/>
-                <Setter Property="LineHeight" Value="36"/>
-            </Style>
-            <Style x:Key="EmptyPageSubTitle"
-                   BasedOn="{StaticResource SubTitle}"
-                   TargetType="TextBlock">
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="FontWeight" Value="SemiLight"/>
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
-                <Setter Property="HorizontalAlignment" Value="Left"/>
-                <Setter Property="LineHeight" Value="20"/>
-            </Style>
-            <Style x:Key="EmptyPageScrollViewer"
-                   BasedOn="{StaticResource ContentContainerScrollViewer}"
-                   TargetType="ScrollViewer">
-                <Setter Property="Padding" Value="40,0"/>
-            </Style>
-            <Style x:Key="EmptyPagePanel" TargetType="StackPanel">
-                <Setter Property="Margin" Value="32,0,0,0"/>
-                <Setter Property="MaxWidth" Value="416"/>
-            </Style>
-            <x:Double x:Key="EmptyPageImageSize">150</x:Double>
-            <x:Double x:Key="EmptyPageImageNarrowSize">90</x:Double>
-            <Style x:Key="EmptyHomePageScrollViewer"
-                   BasedOn="{StaticResource ContentContainerScrollViewer}"
-                   TargetType="ScrollViewer">
-                <Setter Property="Padding" Value="38,0"/>
-            </Style>
-            <Style x:Key="EmptyHomePagePanel"
-                   BasedOn="{StaticResource EmptyPagePanel}"
-                   TargetType="StackPanel">
-                <Setter Property="Margin" Value="24,0,0,0"/>
-            </Style>
-        </ResourceDictionary>
+        <Style x:Key="NarrowEmptyPageScrollViewer"
+               BasedOn="{StaticResource ContentContainerScrollViewer}"
+               TargetType="ScrollViewer">
+            <Setter Property="Padding" Value="4,0"/>
+        </Style>
+        <Style x:Key="NarrowEmptyPagePanel"
+               BasedOn="{StaticResource EmptyPagePanel}"
+               TargetType="StackPanel">
+            <Setter Property="Margin" Value="16,0,0,0"/>
+        </Style>
+        <Style x:Key="NarrowEmptyHomePageScrollViewer"
+               BasedOn="{StaticResource ContentContainerScrollViewer}"
+               TargetType="ScrollViewer">
+            <Setter Property="Padding" Value="4,0,8,0"/>
+        </Style>
+        <Style x:Key="NarrowEmptyHomePagePanel"
+               BasedOn="{StaticResource EmptyPagePanel}"
+               TargetType="StackPanel">
+            <Setter Property="Margin" Value="12,0,0,0"/>
+        </Style>
+        <x:Double x:Key="HomeEmptyPageImageSize">280</x:Double>
+        <x:Double x:Key="HomeEmptyPageImageNarrowSize">168</x:Double>
+        <Style x:Key="EmptyPageTitle"
+               BasedOn="{StaticResource Title}"
+               TargetType="TextBlock">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="LineHeight" Value="36"/>
+        </Style>
+        <Style x:Key="EmptyPageSubTitle"
+               BasedOn="{StaticResource SubTitle}"
+               TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiLight"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="LineHeight" Value="20"/>
+        </Style>
+        <Style x:Key="EmptyPageScrollViewer"
+               BasedOn="{StaticResource ContentContainerScrollViewer}"
+               TargetType="ScrollViewer">
+            <Setter Property="Padding" Value="40,0"/>
+        </Style>
+        <Style x:Key="EmptyPagePanel" TargetType="StackPanel">
+            <Setter Property="Margin" Value="32,0,0,0"/>
+            <Setter Property="MaxWidth" Value="416"/>
+        </Style>
+        <x:Double x:Key="EmptyPageImageSize">150</x:Double>
+        <x:Double x:Key="EmptyPageImageNarrowSize">90</x:Double>
+        <Style x:Key="EmptyHomePageScrollViewer"
+               BasedOn="{StaticResource ContentContainerScrollViewer}"
+               TargetType="ScrollViewer">
+            <Setter Property="Padding" Value="38,0"/>
+        </Style>
+        <Style x:Key="EmptyHomePagePanel"
+               BasedOn="{StaticResource EmptyPagePanel}"
+               TargetType="StackPanel">
+            <Setter Property="Margin" Value="24,0,0,0"/>
+        </Style>
     </UserControl.Resources>
 
     <ScrollViewer x:Name="content" Style="{StaticResource EmptyPageScrollViewer}">
@@ -145,9 +143,6 @@
                 <Button x:Name="button"
                         HorizontalAlignment="Left"
                         Style="{StaticResource AccentButtonStyle}">
-                    <i:Interaction.Behaviors>
-                        <behaviors:LiveAccessKeyBehavior/>
-                    </i:Interaction.Behaviors>
                     <StackPanel Orientation="Horizontal">
                         <FontIcon x:Name="commandIcon"
                                   Margin="{StaticResource ElementRightMargin}"

@@ -6,8 +6,10 @@ using Windows.Foundation.Collections;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Restores the list's vertical offset after its item collection changes.</summary>
-public sealed class ListViewBasePersistentScrollingBehavior : Behavior<ListViewBase>
+/// <summary>
+/// Restores the list's vertical offset after its item collection changes.
+/// </summary>
+internal sealed class ListViewBasePersistentScrollingBehavior : Behavior<ListViewBase>
 {
     private ScrollViewer? _scrollViewer;
     private double _verticalOffset;
@@ -27,17 +29,15 @@ public sealed class ListViewBasePersistentScrollingBehavior : Behavior<ListViewB
         AssociatedObject.Loaded -= OnLoaded;
         AssociatedObject.Unloaded -= OnUnloaded;
         AssociatedObject.Items.VectorChanged -= OnItemsChanged;
-
-        if (_scrollViewer is not null)
-        {
-            _scrollViewer.ViewChanged -= OnViewChanged;
-        }
-
+        _scrollViewer?.ViewChanged -= OnViewChanged;
         _scrollViewer = null;
         base.OnDetaching();
     }
 
-    private void OnLoaded(object sender, RoutedEventArgs args) => HookScrollViewer();
+    private void OnLoaded(object sender, RoutedEventArgs args)
+    {
+        HookScrollViewer();
+    }
 
     private void OnUnloaded(object sender, RoutedEventArgs args)
     {
@@ -49,7 +49,7 @@ public sealed class ListViewBasePersistentScrollingBehavior : Behavior<ListViewB
 
     private void HookScrollViewer()
     {
-        var scrollViewer = AssociatedObject.FindDescendant<ScrollViewer>();
+        ScrollViewer? scrollViewer = AssociatedObject.FindDescendant<ScrollViewer>();
         if (ReferenceEquals(_scrollViewer, scrollViewer))
         {
             return;
@@ -88,7 +88,7 @@ public sealed class ListViewBasePersistentScrollingBehavior : Behavior<ListViewB
             }
 
             _isRestoring = true;
-            _scrollViewer.ChangeView(null, _verticalOffset, null, disableAnimation: true);
+            _scrollViewer.ChangeView(null, _verticalOffset, null, true);
             _isRestoring = false;
         });
     }

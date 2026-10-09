@@ -14,14 +14,14 @@
       xmlns:tkBehaviors="using:CommunityToolkit.WinUI.Behaviors"
       mc:Ignorable="d">
     <Page.Resources>
-        <compat:DropConfiguration x:Key="PlayQueueDropConfiguration"
-                                  AcceptedOperation="Link"
-                                  AcceptedUIOverride="{StaticResource DragAndDropAcceptInPlayQueue}"
-                                  RejectedUIOverride="{StaticResource DragAndDropReject}">
-            <compat:DropConfiguration.Command>
-                <compat:PlayQueueDropCommandAdapter/>
-            </compat:DropConfiguration.Command>
-        </compat:DropConfiguration>
+        <helpers:DropConfiguration x:Key="PlayQueueDropConfiguration"
+                                   AcceptedOperation="Link"
+                                   AcceptedUIOverride="{StaticResource DragAndDropAcceptInPlayQueue}"
+                                   RejectedUIOverride="{StaticResource DragAndDropReject}">
+            <helpers:DropConfiguration.Command>
+                <helpers:PlayQueueDropCommandAdapter/>
+            </helpers:DropConfiguration.Command>
+        </helpers:DropConfiguration>
     </Page.Resources>
 
     <i:Interaction.Behaviors>
@@ -94,11 +94,9 @@
                     Grid.ColumnSpan="2"
                     Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"
                     HorizontalAlignment="Left"
+                    AccessKey="CJ"
                     DefaultLabelPosition="Right"
                     KeyTipPlacementMode="Bottom">
-            <i:Interaction.Behaviors>
-                <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,J"/>
-            </i:Interaction.Behaviors>
             <animations:Implicit.ShowAnimations>
                 <animations:OpacityAnimation From="0"
                                              To="1"
@@ -110,10 +108,9 @@
                                              Duration="{StaticResource ShortAnimationDuration}"/>
             </animations:Implicit.HideAnimations>
             <CommandBar.PrimaryCommands>
-                <AppBarButton x:Uid="PlayQueueCommandClear" KeyTipPlacementMode="Bottom">
-                    <i:Interaction.Behaviors>
-                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,X"/>
-                    </i:Interaction.Behaviors>
+                <AppBarButton x:Uid="PlayQueueCommandClear"
+                              AccessKey="CX"
+                              KeyTipPlacementMode="Bottom">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="{StaticResource PlayQueueClearGlyph}"/>
                     </AppBarButton.Icon>
@@ -124,10 +121,8 @@
                 <AppBarButton x:Name="SavePlayQueueButton"
                               x:Uid="PlayQueueCommandSaveAsPlaylist"
                               x:Load="False"
+                              AccessKey="CW"
                               KeyTipPlacementMode="Bottom">
-                    <i:Interaction.Behaviors>
-                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,W"/>
-                    </i:Interaction.Behaviors>
                     <AppBarButton.Icon>
                         <FontIcon Glyph="{StaticResource PlayQueueSaveAsPlaylistGlyph}"/>
                     </AppBarButton.Icon>
@@ -138,12 +133,12 @@
                 <AppBarButton x:Name="AddToButton"
                               x:Uid="PlayQueueAddToButton"
                               x:Load="False"
+                              AccessKey="CW"
                               KeyTipPlacementMode="Bottom">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="{StaticResource PlayQueueAddItemsGlyph}"/>
                     </AppBarButton.Icon>
                     <i:Interaction.Behaviors>
-                        <behaviors:LiveAccessKeyBehavior AccessVirtualKey="C,W"/>
                         <behaviors:MenuFlyoutItemsDynamicLoadBehavior/>
                     </i:Interaction.Behaviors>
                 </AppBarButton>

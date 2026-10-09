@@ -4,16 +4,22 @@ using Windows.Foundation;
 
 namespace UntamedMediaPlayer.Controls;
 
-/// <summary>Compatibility panel for the responsive track row recovered from UWP.</summary>
-public sealed partial class ResponsiveHorizontalStackPanel : Panel
+/// <summary>
+/// Compatibility panel for the responsive track row recovered from UWP.
+/// </summary>
+internal sealed partial class ResponsiveHorizontalStackPanel : Panel
 {
-    public static double GetStretchFactor(DependencyObject obj) =>
-        (double)obj.GetValue(StretchFactorProperty);
+    public static double GetStretchFactor(DependencyObject obj)
+    {
+        return (double)obj.GetValue(StretchFactorProperty);
+    }
 
-    public static void SetStretchFactor(DependencyObject obj, double value) =>
+    public static void SetStretchFactor(DependencyObject obj, double value)
+    {
         obj.SetValue(StretchFactorProperty, value);
+    }
 
-    public static readonly DependencyProperty StretchFactorProperty =
+    private static readonly DependencyProperty StretchFactorProperty =
         DependencyProperty.RegisterAttached(
             "StretchFactor",
             typeof(double),
@@ -21,13 +27,17 @@ public sealed partial class ResponsiveHorizontalStackPanel : Panel
             new PropertyMetadata(1d)
         );
 
-    public static double GetUnstretchedWidth(DependencyObject obj) =>
-        (double)obj.GetValue(UnstretchedWidthProperty);
+    public static double GetUnstretchedWidth(DependencyObject obj)
+    {
+        return (double)obj.GetValue(UnstretchedWidthProperty);
+    }
 
-    public static void SetUnstretchedWidth(DependencyObject obj, double value) =>
+    public static void SetUnstretchedWidth(DependencyObject obj, double value)
+    {
         obj.SetValue(UnstretchedWidthProperty, value);
+    }
 
-    public static readonly DependencyProperty UnstretchedWidthProperty =
+    private static readonly DependencyProperty UnstretchedWidthProperty =
         DependencyProperty.RegisterAttached(
             "UnstretchedWidth",
             typeof(double),
@@ -35,13 +45,17 @@ public sealed partial class ResponsiveHorizontalStackPanel : Panel
             new PropertyMetadata(0d)
         );
 
-    public static int GetFallOffOrder(DependencyObject obj) =>
-        (int)obj.GetValue(FallOffOrderProperty);
+    public static int GetFallOffOrder(DependencyObject obj)
+    {
+        return (int)obj.GetValue(FallOffOrderProperty);
+    }
 
-    public static void SetFallOffOrder(DependencyObject obj, int value) =>
+    public static void SetFallOffOrder(DependencyObject obj, int value)
+    {
         obj.SetValue(FallOffOrderProperty, value);
+    }
 
-    public static readonly DependencyProperty FallOffOrderProperty =
+    private static readonly DependencyProperty FallOffOrderProperty =
         DependencyProperty.RegisterAttached(
             "FallOffOrder",
             typeof(int),
@@ -51,8 +65,8 @@ public sealed partial class ResponsiveHorizontalStackPanel : Panel
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var width = 0d;
-        var height = 0d;
+        double width = 0d;
+        double height = 0d;
         foreach (UIElement? child in Children)
         {
             child.Measure(new Size(double.PositiveInfinity, availableSize.Height));
@@ -71,10 +85,10 @@ public sealed partial class ResponsiveHorizontalStackPanel : Panel
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        var x = 0d;
+        double x = 0d;
         foreach (UIElement? child in Children)
         {
-            var width = Math.Max(child.DesiredSize.Width, GetUnstretchedWidth(child));
+            double width = Math.Max(child.DesiredSize.Width, GetUnstretchedWidth(child));
             child.Arrange(new Rect(x, 0, width, finalSize.Height));
             x += width;
         }

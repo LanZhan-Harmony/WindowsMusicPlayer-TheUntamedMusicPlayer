@@ -5,8 +5,10 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Assigns a stable access-key sequence to the realized item containers.</summary>
-public sealed class ListViewBaseItemsAccessVirtualKeyBehavior : Behavior<ListViewBase>
+/// <summary>
+/// Assigns a stable access-key sequence to the realized item containers.
+/// </summary>
+internal sealed class ListViewBaseItemsAccessVirtualKeyBehavior : Behavior<ListViewBase>
 {
     public string AccessVirtualKeyPrefix
     {
@@ -14,7 +16,7 @@ public sealed class ListViewBaseItemsAccessVirtualKeyBehavior : Behavior<ListVie
         set => SetValue(AccessVirtualKeyPrefixProperty, value);
     }
 
-    public static readonly DependencyProperty AccessVirtualKeyPrefixProperty =
+    private static readonly DependencyProperty AccessVirtualKeyPrefixProperty =
         DependencyProperty.Register(
             nameof(AccessVirtualKeyPrefix),
             typeof(string),
@@ -48,7 +50,10 @@ public sealed class ListViewBaseItemsAccessVirtualKeyBehavior : Behavior<ListVie
         }
     }
 
-    private void OnLoaded(object sender, RoutedEventArgs args) => UpdateRealizedContainers();
+    private void OnLoaded(object sender, RoutedEventArgs args)
+    {
+        UpdateRealizedContainers();
+    }
 
     private void OnContainerContentChanging(
         ListViewBase sender,

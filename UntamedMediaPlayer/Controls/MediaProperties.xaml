@@ -6,6 +6,7 @@
              xmlns:helpers="using:UntamedMediaPlayer.Helpers"
              xmlns:local="using:UntamedMediaPlayer.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:selectors="using:UntamedMediaPlayer.Controls.CustomDataTemplateSelectors"
              mc:Ignorable="d">
     <UserControl.Resources>
         <DataTemplate x:Key="videoTemplate">
@@ -203,10 +204,10 @@
             </UserControl>
         </DataTemplate>
 
-        <local:MediaDisplayPropertiesTemplateSelector x:Key="displayPropertiesSelector"
-                                                      DefaultTemplate="{StaticResource defaultTemplate}"
-                                                      MusicTemplate="{StaticResource musicTemplate}"
-                                                      VideoTemplate="{StaticResource videoTemplate}"/>
+        <selectors:MediaDisplayPropertiesTemplateSelector x:Key="displayPropertiesSelector"
+                                                          DefaultTemplate="{StaticResource defaultTemplate}"
+                                                          MusicTemplate="{StaticResource musicTemplate}"
+                                                          VideoTemplate="{StaticResource videoTemplate}"/>
 
         <DataTemplate x:Key="defaultTemplate">
             <UserControl>

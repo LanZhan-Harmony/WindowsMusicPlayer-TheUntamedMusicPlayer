@@ -14,10 +14,7 @@
         <SplitButton.Flyout>
             <MenuFlyout Placement="Bottom">
                 <MenuFlyout.Items>
-                    <ctrl:MenuFlyoutItemWithSecondaryText KeyTipPlacementMode="Left">
-                        <i:Interaction.Behaviors>
-                            <behaviors:LiveAccessKeyBehavior AccessVirtualKey="F"/>
-                        </i:Interaction.Behaviors>
+                    <ctrl:MenuFlyoutItemWithSecondaryText AccessKey="F" KeyTipPlacementMode="Left">
                         <ctrl:MenuFlyoutItemWithSecondaryText.Icon>
                             <FontIcon/>
                         </ctrl:MenuFlyoutItemWithSecondaryText.Icon>
@@ -25,10 +22,7 @@
                             <KeyboardAccelerator/>
                         </ctrl:MenuFlyoutItemWithSecondaryText.KeyboardAccelerators>
                     </ctrl:MenuFlyoutItemWithSecondaryText>
-                    <ctrl:MenuFlyoutItemWithSecondaryText KeyTipPlacementMode="Left">
-                        <i:Interaction.Behaviors>
-                            <behaviors:LiveAccessKeyBehavior AccessVirtualKey="O"/>
-                        </i:Interaction.Behaviors>
+                    <ctrl:MenuFlyoutItemWithSecondaryText AccessKey="O" KeyTipPlacementMode="Left">
                         <ctrl:MenuFlyoutItemWithSecondaryText.Icon>
                             <FontIcon/>
                         </ctrl:MenuFlyoutItemWithSecondaryText.Icon>
@@ -36,10 +30,7 @@
                             <KeyboardAccelerator/>
                         </ctrl:MenuFlyoutItemWithSecondaryText.KeyboardAccelerators>
                     </ctrl:MenuFlyoutItemWithSecondaryText>
-                    <ctrl:MenuFlyoutItemWithSecondaryText KeyTipPlacementMode="Left">
-                        <i:Interaction.Behaviors>
-                            <behaviors:LiveAccessKeyBehavior AccessVirtualKey="U"/>
-                        </i:Interaction.Behaviors>
+                    <ctrl:MenuFlyoutItemWithSecondaryText AccessKey="U" KeyTipPlacementMode="Left">
                         <ctrl:MenuFlyoutItemWithSecondaryText.Icon>
                             <FontIcon/>
                         </ctrl:MenuFlyoutItemWithSecondaryText.Icon>

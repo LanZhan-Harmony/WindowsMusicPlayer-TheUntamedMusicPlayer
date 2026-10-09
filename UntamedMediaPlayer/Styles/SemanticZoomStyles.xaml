@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:compat="using:UntamedMediaPlayer.Compatibility">
-    <compat:SemanticZoomOutTemplateSelector x:Key="SemanticZoomOutTemplateSelector" GroupTemplate="{StaticResource SemanticZoomOutGroupTemplate}"/>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:selectors="using:UntamedMediaPlayer.Controls.CustomDataTemplateSelectors">
+    <selectors:SemanticZoomOutTemplateSelector x:Key="SemanticZoomOutTemplateSelector" GroupTemplate="{StaticResource SemanticZoomOutGroupTemplate}"/>
 
     <DataTemplate x:Key="SemanticZoomOutGroupTemplate">
         <Grid AutomationProperties.AccessibilityView="Raw">

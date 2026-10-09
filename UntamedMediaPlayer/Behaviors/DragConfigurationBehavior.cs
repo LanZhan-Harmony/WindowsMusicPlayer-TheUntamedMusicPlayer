@@ -5,8 +5,10 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Enables item dragging and forwards completed drags to the configured command.</summary>
-public class DragConfigurationBehavior : Behavior<ListViewBase>
+/// <summary>
+/// Enables item dragging and forwards completed drags to the configured command.
+/// </summary>
+internal sealed class DragConfigurationBehavior : Behavior<ListViewBase>
 {
     private bool _previousCanDragItems;
     private bool _previousAllowDrop;
@@ -17,7 +19,7 @@ public class DragConfigurationBehavior : Behavior<ListViewBase>
         set => SetValue(CanDragItemsProperty, value);
     }
 
-    public static readonly DependencyProperty CanDragItemsProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty CanDragItemsProperty = DependencyProperty.Register(
         nameof(CanDragItems),
         typeof(bool),
         typeof(DragConfigurationBehavior),
@@ -30,13 +32,12 @@ public class DragConfigurationBehavior : Behavior<ListViewBase>
         set => SetValue(CommandProperty, value);
     }
 
-    public static readonly DependencyProperty CommandProperty =
-        DependencyProperty.Register(
-            nameof(Command),
-            typeof(ICommand),
-            typeof(DragConfigurationBehavior),
-            new PropertyMetadata(null)
-        );
+    private static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+        nameof(Command),
+        typeof(ICommand),
+        typeof(DragConfigurationBehavior),
+        new PropertyMetadata(null)
+    );
 
     protected override void OnAttached()
     {
@@ -61,7 +62,10 @@ public class DragConfigurationBehavior : Behavior<ListViewBase>
         DependencyPropertyChangedEventArgs args
     )
     {
-        if (dependencyObject is DragConfigurationBehavior behavior && behavior.AssociatedObject is not null)
+        if (
+            dependencyObject is DragConfigurationBehavior behavior
+            && behavior.AssociatedObject is not null
+        )
         {
             behavior.AssociatedObject.CanDragItems = (bool)args.NewValue;
         }

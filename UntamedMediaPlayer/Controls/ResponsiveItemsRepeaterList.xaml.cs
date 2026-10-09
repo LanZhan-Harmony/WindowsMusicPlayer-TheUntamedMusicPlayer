@@ -1,10 +1,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.Collections.Generic;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class ResponsiveItemsRepeaterList : UserControl
+internal sealed partial class ResponsiveItemsRepeaterList : UserControl
 {
     private readonly HashSet<UIElement> _realizedElements = new();
 
@@ -21,13 +20,12 @@ public sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(BreakpointsProperty, value);
     }
 
-    public static readonly DependencyProperty BreakpointsProperty =
-        DependencyProperty.Register(
-            nameof(Breakpoints),
-            typeof(ResponsiveListBreakpointCollection),
-            typeof(ResponsiveItemsRepeaterList),
-            new PropertyMetadata(null)
-        );
+    private static readonly DependencyProperty BreakpointsProperty = DependencyProperty.Register(
+        nameof(Breakpoints),
+        typeof(ResponsiveListBreakpointCollection),
+        typeof(ResponsiveItemsRepeaterList),
+        new PropertyMetadata(null)
+    );
 
     public bool CanDragItems
     {
@@ -35,13 +33,12 @@ public sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(CanDragItemsProperty, value);
     }
 
-    public static readonly DependencyProperty CanDragItemsProperty =
-        DependencyProperty.Register(
-            nameof(CanDragItems),
-            typeof(bool),
-            typeof(ResponsiveItemsRepeaterList),
-            new PropertyMetadata(false, OnCanDragItemsChanged)
-        );
+    private static readonly DependencyProperty CanDragItemsProperty = DependencyProperty.Register(
+        nameof(CanDragItems),
+        typeof(bool),
+        typeof(ResponsiveItemsRepeaterList),
+        new PropertyMetadata(false, OnCanDragItemsChanged)
+    );
 
     public int ColumnSpan
     {
@@ -49,13 +46,12 @@ public sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(ColumnSpanProperty, value);
     }
 
-    public static readonly DependencyProperty ColumnSpanProperty =
-        DependencyProperty.Register(
-            nameof(ColumnSpan),
-            typeof(int),
-            typeof(ResponsiveItemsRepeaterList),
-            new PropertyMetadata(1)
-        );
+    private static readonly DependencyProperty ColumnSpanProperty = DependencyProperty.Register(
+        nameof(ColumnSpan),
+        typeof(int),
+        typeof(ResponsiveItemsRepeaterList),
+        new PropertyMetadata(1)
+    );
 
     public int Row
     {
@@ -63,13 +59,12 @@ public sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(RowProperty, value);
     }
 
-    public static readonly DependencyProperty RowProperty =
-        DependencyProperty.Register(
-            nameof(Row),
-            typeof(int),
-            typeof(ResponsiveItemsRepeaterList),
-            new PropertyMetadata(0)
-        );
+    private static readonly DependencyProperty RowProperty = DependencyProperty.Register(
+        nameof(Row),
+        typeof(int),
+        typeof(ResponsiveItemsRepeaterList),
+        new PropertyMetadata(0)
+    );
 
     public double DefaultColumnSpacing
     {
@@ -77,7 +72,7 @@ public sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(DefaultColumnSpacingProperty, value);
     }
 
-    public static readonly DependencyProperty DefaultColumnSpacingProperty =
+    private static readonly DependencyProperty DefaultColumnSpacingProperty =
         DependencyProperty.Register(
             nameof(DefaultColumnSpacing),
             typeof(double),
@@ -91,13 +86,12 @@ public sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(StretchContentProperty, value);
     }
 
-    public static readonly DependencyProperty StretchContentProperty =
-        DependencyProperty.Register(
-            nameof(StretchContent),
-            typeof(bool),
-            typeof(ResponsiveItemsRepeaterList),
-            new PropertyMetadata(true)
-        );
+    private static readonly DependencyProperty StretchContentProperty = DependencyProperty.Register(
+        nameof(StretchContent),
+        typeof(bool),
+        typeof(ResponsiveItemsRepeaterList),
+        new PropertyMetadata(true)
+    );
 
     public MenuFlyout? ItemsMenuFlyout
     {
@@ -105,7 +99,7 @@ public sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(ItemsMenuFlyoutProperty, value);
     }
 
-    public static readonly DependencyProperty ItemsMenuFlyoutProperty =
+    private static readonly DependencyProperty ItemsMenuFlyoutProperty =
         DependencyProperty.Register(
             nameof(ItemsMenuFlyout),
             typeof(MenuFlyout),

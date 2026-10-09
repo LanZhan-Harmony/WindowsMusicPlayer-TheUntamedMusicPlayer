@@ -4,6 +4,9 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
+/// <summary>
+/// Selects all text in a TextBox when it receives keyboard focus.
+/// </summary>
 internal sealed class SelectTextOnFocusBehavior : Behavior<TextBox>
 {
     protected override void OnAttached()

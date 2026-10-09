@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class CustomMediaPlayerElement : MediaPlayerElement
+internal sealed partial class CustomMediaPlayerElement : MediaPlayerElement
 {
     public UIElement? MediaVisualization
     {
@@ -11,15 +11,16 @@ public sealed partial class CustomMediaPlayerElement : MediaPlayerElement
         set => SetValue(MediaVisualizationProperty, value);
     }
 
-    public static readonly DependencyProperty MediaVisualizationProperty = DependencyProperty.Register(
-        nameof(MediaVisualization),
-        typeof(UIElement),
-        typeof(CustomMediaPlayerElement),
-        new PropertyMetadata(null)
-    );
+    private static readonly DependencyProperty MediaVisualizationProperty =
+        DependencyProperty.Register(
+            nameof(MediaVisualization),
+            typeof(UIElement),
+            typeof(CustomMediaPlayerElement),
+            new PropertyMetadata(null)
+        );
 
     public CustomMediaPlayerElement()
     {
-        this.DefaultStyleKey = typeof(CustomMediaPlayerElement);
+        DefaultStyleKey = typeof(CustomMediaPlayerElement);
     }
 }
