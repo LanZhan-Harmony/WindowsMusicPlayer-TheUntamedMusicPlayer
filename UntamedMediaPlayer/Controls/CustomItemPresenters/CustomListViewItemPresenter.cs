@@ -6,7 +6,7 @@ using UntamedMediaPlayer.Behaviors;
 
 namespace UntamedMediaPlayer.Controls.CustomItemPresenters;
 
-public sealed partial class CustomListViewItemPresenter : ListViewItemPresenter
+internal sealed partial class CustomListViewItemPresenter : ListViewItemPresenter
 {
     public ControlTemplate? Template
     {
@@ -14,7 +14,7 @@ public sealed partial class CustomListViewItemPresenter : ListViewItemPresenter
         set => SetValue(TemplateProperty, value);
     }
 
-    public static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
         nameof(Template),
         typeof(ControlTemplate),
         typeof(CustomListViewItemPresenter),
@@ -27,7 +27,7 @@ public sealed partial class CustomListViewItemPresenter : ListViewItemPresenter
         set => SetValue(MediaTypeProperty, value);
     }
 
-    public static readonly DependencyProperty MediaTypeProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty MediaTypeProperty = DependencyProperty.Register(
         nameof(MediaType),
         typeof(object),
         typeof(CustomListViewItemPresenter),
@@ -40,7 +40,7 @@ public sealed partial class CustomListViewItemPresenter : ListViewItemPresenter
         set => SetValue(IsCurrentItemProperty, value);
     }
 
-    public static readonly DependencyProperty IsCurrentItemProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty IsCurrentItemProperty = DependencyProperty.Register(
         nameof(IsCurrentItem),
         typeof(bool),
         typeof(CustomListViewItemPresenter),
@@ -53,7 +53,7 @@ public sealed partial class CustomListViewItemPresenter : ListViewItemPresenter
         set => SetValue(AlternateBackgroundProperty, value);
     }
 
-    public static readonly DependencyProperty AlternateBackgroundProperty =
+    private static readonly DependencyProperty AlternateBackgroundProperty =
         DependencyProperty.Register(
             nameof(AlternateBackground),
             typeof(Brush),
@@ -67,7 +67,7 @@ public sealed partial class CustomListViewItemPresenter : ListViewItemPresenter
         set => SetValue(AlternateBorderThicknessProperty, value);
     }
 
-    public static readonly DependencyProperty AlternateBorderThicknessProperty =
+    private static readonly DependencyProperty AlternateBorderThicknessProperty =
         DependencyProperty.Register(
             nameof(AlternateBorderThickness),
             typeof(Thickness),
@@ -81,7 +81,7 @@ public sealed partial class CustomListViewItemPresenter : ListViewItemPresenter
         set => SetValue(AlternateBorderBrushProperty, value);
     }
 
-    public static readonly DependencyProperty AlternateBorderBrushProperty =
+    private static readonly DependencyProperty AlternateBorderBrushProperty =
         DependencyProperty.Register(
             nameof(AlternateBorderBrush),
             typeof(Brush),
@@ -95,7 +95,7 @@ public sealed partial class CustomListViewItemPresenter : ListViewItemPresenter
         set => SetValue(IsAlternateProperty, value);
     }
 
-    public static readonly DependencyProperty IsAlternateProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty IsAlternateProperty = DependencyProperty.Register(
         nameof(IsAlternate),
         typeof(bool),
         typeof(CustomListViewItemPresenter),

@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class MediaTypeIcon : Control
+internal sealed partial class MediaTypeIcon : Control
 {
     public object? MediaType
     {
@@ -11,7 +11,7 @@ public sealed partial class MediaTypeIcon : Control
         set => SetValue(MediaTypeProperty, value);
     }
 
-    public static readonly DependencyProperty MediaTypeProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty MediaTypeProperty = DependencyProperty.Register(
         nameof(MediaType),
         typeof(object),
         typeof(MediaTypeIcon),
@@ -24,7 +24,7 @@ public sealed partial class MediaTypeIcon : Control
         set => SetValue(IsPlayingProperty, value);
     }
 
-    public static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register(
         nameof(IsPlaying),
         typeof(bool),
         typeof(MediaTypeIcon),

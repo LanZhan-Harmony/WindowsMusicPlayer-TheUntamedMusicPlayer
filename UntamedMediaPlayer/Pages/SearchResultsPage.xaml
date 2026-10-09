@@ -6,20 +6,21 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:selectors="using:UntamedMediaPlayer.Controls.CustomDataTemplateSelectors"
       mc:Ignorable="d">
     <Page.Resources>
-        <ctrl:SearchResultsGroupTemplateSelector x:Key="searchResultsGroupTemplateSelector">
-            <ctrl:SearchResultsGroupTemplateSelector.DefaultTemplate>
+        <selectors:SearchResultsGroupTemplateSelector x:Key="searchResultsGroupTemplateSelector">
+            <selectors:SearchResultsGroupTemplateSelector.DefaultTemplate>
                 <DataTemplate>
                     <ctrl:SearchResultsGroup Margin="{StaticResource ContentLargeBottomSpacing}"/>
                 </DataTemplate>
-            </ctrl:SearchResultsGroupTemplateSelector.DefaultTemplate>
-            <ctrl:SearchResultsGroupTemplateSelector.TrackTemplate>
+            </selectors:SearchResultsGroupTemplateSelector.DefaultTemplate>
+            <selectors:SearchResultsGroupTemplateSelector.TrackTemplate>
                 <DataTemplate>
                     <ctrl:TrackSearchResultsGroup Margin="{StaticResource ContentLargeBottomSpacing}"/>
                 </DataTemplate>
-            </ctrl:SearchResultsGroupTemplateSelector.TrackTemplate>
-        </ctrl:SearchResultsGroupTemplateSelector>
+            </selectors:SearchResultsGroupTemplateSelector.TrackTemplate>
+        </selectors:SearchResultsGroupTemplateSelector>
     </Page.Resources>
 
     <Grid>

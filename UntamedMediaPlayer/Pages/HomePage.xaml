@@ -13,14 +13,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
     <Page.Resources>
-        <compat:DropConfiguration x:Key="HomeDropConfiguration"
-                                  AcceptedOperation="Link"
-                                  AcceptedUIOverride="{StaticResource DragAndDropAcceptInPlayPage}"
-                                  RejectedUIOverride="{StaticResource DragAndDropReject}">
-            <compat:DropConfiguration.Command>
-                <compat:PlayQueueDropCommandAdapter OpenPlayPage="True"/>
-            </compat:DropConfiguration.Command>
-        </compat:DropConfiguration>
+        <helpers:DropConfiguration x:Key="HomeDropConfiguration"
+                                   AcceptedOperation="Link"
+                                   AcceptedUIOverride="{StaticResource DragAndDropAcceptInPlayPage}"
+                                   RejectedUIOverride="{StaticResource DragAndDropReject}">
+            <helpers:DropConfiguration.Command>
+                <helpers:PlayQueueDropCommandAdapter OpenPlayPage="True"/>
+            </helpers:DropConfiguration.Command>
+        </helpers:DropConfiguration>
     </Page.Resources>
     <ctrl:GridEx AllowDrop="True"
                  Background="#00FFFFFF"

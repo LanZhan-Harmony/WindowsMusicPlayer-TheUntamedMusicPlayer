@@ -8,6 +8,10 @@ using Windows.Foundation.Collections;
 
 namespace UntamedMediaPlayer.Behaviors;
 
+/// <summary>
+/// Enables alternate layout for items in a ListViewBase by setting the IsAlternate property on the
+/// CustomListViewItemPresenter based on the item index.
+/// </summary>
 internal sealed class AlternateListViewBehavior : Behavior<ListViewBase>
 {
     protected override void OnAttached()
@@ -53,7 +57,7 @@ internal sealed class AlternateListViewBehavior : Behavior<ListViewBase>
             return;
         }
 
-        for (var i = 0; i < AssociatedObject.Items.Count; i++)
+        for (int i = 0; i < AssociatedObject.Items.Count; i++)
         {
             if (AssociatedObject.ContainerFromIndex(i) is SelectorItem itemContainer)
             {

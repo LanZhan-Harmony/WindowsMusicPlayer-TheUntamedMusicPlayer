@@ -4,7 +4,7 @@ using UntamedMediaPlayer.Core.ViewModels;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class DurationTextBlock : Control
+internal sealed partial class DurationTextBlock : Control
 {
     public object? Content
     {
@@ -12,7 +12,7 @@ public sealed partial class DurationTextBlock : Control
         set => SetValue(ContentProperty, value);
     }
 
-    public static readonly DependencyProperty ContentProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty ContentProperty = DependencyProperty.Register(
         nameof(Content),
         typeof(object),
         typeof(DurationTextBlock),
@@ -25,7 +25,7 @@ public sealed partial class DurationTextBlock : Control
         set => SetValue(IsRemainingDurationProperty, value);
     }
 
-    public static readonly DependencyProperty IsRemainingDurationProperty =
+    private static readonly DependencyProperty IsRemainingDurationProperty =
         DependencyProperty.Register(
             nameof(IsRemainingDuration),
             typeof(bool),
@@ -39,7 +39,7 @@ public sealed partial class DurationTextBlock : Control
         set => SetValue(TextStyleProperty, value);
     }
 
-    public static readonly DependencyProperty TextStyleProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty TextStyleProperty = DependencyProperty.Register(
         nameof(TextStyle),
         typeof(Style),
         typeof(DurationTextBlock),
@@ -52,7 +52,7 @@ public sealed partial class DurationTextBlock : Control
         set => SetValue(ViewModelProperty, value);
     }
 
-    public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
         nameof(ViewModel),
         typeof(MediaPlayerViewModel),
         typeof(DurationTextBlock),

@@ -6,8 +6,10 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Returns focus to an item after its container is recycled during a layout change.</summary>
-public sealed class RestoreListViewItemFocusOnVisualStateChangeBehavior : Behavior<ListViewBase>
+/// <summary>
+/// Returns focus to an item after its container is recycled during a layout change.
+/// </summary>
+internal sealed class RestoreListViewItemFocusOnVisualStateChangeBehavior : Behavior<ListViewBase>
 {
     private object? _focusedItem;
     private bool _restorePending;
@@ -28,7 +30,10 @@ public sealed class RestoreListViewItemFocusOnVisualStateChangeBehavior : Behavi
 
     private void OnGotFocus(object sender, RoutedEventArgs args)
     {
-        if (args.OriginalSource is DependencyObject source && FindItemContainer(source) is { } container)
+        if (
+            args.OriginalSource is DependencyObject source
+            && FindItemContainer(source) is { } container
+        )
         {
             int index = AssociatedObject.IndexFromContainer(container);
             if (index >= 0 && index < AssociatedObject.Items.Count)

@@ -1,29 +1,30 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
-using UntamedMediaPlayer.Compatibility;
+using UntamedMediaPlayer.Helpers;
 using Windows.System;
 
 namespace UntamedMediaPlayer.Services;
 
-/// <summary>Registers configured accelerators on a visual root and routes them to commands.</summary>
-public sealed class GlobalKeyboardAcceleratorService
+/// <summary>
+/// Registers configured accelerators on a visual root and routes them to commands.
+/// </summary>
+internal sealed class GlobalKeyboardAcceleratorService
 {
-    private readonly Dictionary<CommandKeyboardAccelerator, KeyboardAccelerator> _registered = new();
+    private readonly Dictionary<CommandKeyboardAccelerator, KeyboardAccelerator> _registered = [];
     private UIElement? _target;
 
-    public ObservableCollection<CommandKeyboardAccelerator> KeyboardAccelerators { get; } = new();
+    internal ObservableCollection<CommandKeyboardAccelerator> KeyboardAccelerators { get; } = [];
 
-    public event EventHandler<CommandKeyboardAccelerator>? Invoked;
+    internal event EventHandler<CommandKeyboardAccelerator>? Invoked;
 
-    public GlobalKeyboardAcceleratorService()
+    internal GlobalKeyboardAcceleratorService()
     {
         KeyboardAccelerators.CollectionChanged += OnKeyboardAcceleratorsChanged;
     }
 
-    public void Attach(UIElement target)
+    internal void Attach(UIElement target)
     {
         ArgumentNullException.ThrowIfNull(target);
         if (ReferenceEquals(_target, target))
@@ -36,14 +37,14 @@ public sealed class GlobalKeyboardAcceleratorService
         RegisterAll();
     }
 
-    public void Detach()
+    internal void Detach()
     {
         if (_target is null)
         {
             return;
         }
 
-        foreach (var pair in _registered)
+        foreach (KeyValuePair<CommandKeyboardAccelerator, KeyboardAccelerator> pair in _registered)
         {
             pair.Value.Invoked -= OnAcceleratorInvoked;
             _target.KeyboardAccelerators.Remove(pair.Value);
@@ -56,7 +57,10 @@ public sealed class GlobalKeyboardAcceleratorService
     private void OnKeyboardAcceleratorsChanged(
         object? sender,
         NotifyCollectionChangedEventArgs args
-    ) => RegisterAll();
+    )
+    {
+        RegisterAll();
+    }
 
     private void RegisterAll()
     {
@@ -66,9 +70,9 @@ public sealed class GlobalKeyboardAcceleratorService
         }
 
         DetachRegisteredAccelerators();
-        foreach (var definition in KeyboardAccelerators)
+        foreach (CommandKeyboardAccelerator definition in KeyboardAccelerators)
         {
-            var accelerator = new KeyboardAccelerator
+            KeyboardAccelerator accelerator = new()
             {
                 Key = definition.KeyCode == 0 ? definition.Key : (VirtualKey)definition.KeyCode,
                 Modifiers = definition.Modifiers,
@@ -86,7 +90,7 @@ public sealed class GlobalKeyboardAcceleratorService
             return;
         }
 
-        foreach (var accelerator in _registered.Values)
+        foreach (KeyboardAccelerator accelerator in _registered.Values)
         {
             accelerator.Invoked -= OnAcceleratorInvoked;
             _target.KeyboardAccelerators.Remove(accelerator);
@@ -100,7 +104,9 @@ public sealed class GlobalKeyboardAcceleratorService
         KeyboardAcceleratorInvokedEventArgs args
     )
     {
-        var definition = _registered.FirstOrDefault(pair => ReferenceEquals(pair.Value, sender)).Key;
+        CommandKeyboardAccelerator? definition = _registered
+            .FirstOrDefault(pair => ReferenceEquals(pair.Value, sender))
+            .Key;
         if (definition is null)
         {
             return;

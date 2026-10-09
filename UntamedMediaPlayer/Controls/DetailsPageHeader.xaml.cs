@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class DetailsPageHeader : UserControl
+internal sealed partial class DetailsPageHeader : UserControl
 {
     public string? ImageType
     {
@@ -11,7 +11,7 @@ public sealed partial class DetailsPageHeader : UserControl
         set => SetValue(ImageTypeProperty, value);
     }
 
-    public static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register(
         nameof(ImageType),
         typeof(string),
         typeof(DetailsPageHeader),
@@ -24,12 +24,13 @@ public sealed partial class DetailsPageHeader : UserControl
         set => SetValue(TitleContentBarProperty, value);
     }
 
-    public static readonly DependencyProperty TitleContentBarProperty = DependencyProperty.Register(
-        nameof(TitleContentBar),
-        typeof(UIElement),
-        typeof(DetailsPageHeader),
-        new PropertyMetadata(null, OnTitleContentBarChanged)
-    );
+    private static readonly DependencyProperty TitleContentBarProperty =
+        DependencyProperty.Register(
+            nameof(TitleContentBar),
+            typeof(UIElement),
+            typeof(DetailsPageHeader),
+            new PropertyMetadata(null, OnTitleContentBarChanged)
+        );
 
     public DetailsPageHeader()
     {
@@ -38,7 +39,10 @@ public sealed partial class DetailsPageHeader : UserControl
         ApplyTitleContentBar();
     }
 
-    private static void OnImageTypeChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+    private static void OnImageTypeChanged(
+        DependencyObject sender,
+        DependencyPropertyChangedEventArgs args
+    )
     {
         if (sender is DetailsPageHeader header)
         {
@@ -59,17 +63,11 @@ public sealed partial class DetailsPageHeader : UserControl
 
     private void ApplyImageType()
     {
-        if (image is not null)
-        {
-            image.ImageType = ImageType;
-        }
+        image?.ImageType = ImageType;
     }
 
     private void ApplyTitleContentBar()
     {
-        if (pageHeaderTitleContentBarContainer is not null)
-        {
-            pageHeaderTitleContentBarContainer.Child = TitleContentBar;
-        }
+        pageHeaderTitleContentBarContainer?.Child = TitleContentBar;
     }
 }

@@ -4,8 +4,10 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Moves keyboard focus to the associated element when it is loaded.</summary>
-public sealed class AutoFocusBehavior : BehaviorBase<Control>
+/// <summary>
+/// Moves keyboard focus to the associated element when it is loaded.
+/// </summary>
+internal sealed class AutoFocusBehavior : BehaviorBase<Control>
 {
     protected override void OnAssociatedObjectLoaded()
     {

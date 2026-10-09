@@ -1,11 +1,13 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UntamedMediaPlayer.Compatibility;
+using UntamedMediaPlayer.Helpers;
 
 namespace UntamedMediaPlayer.Controls;
 
-/// <summary>NavigationViewItem with the recovered markup's drop configuration.</summary>
-public sealed partial class NavigationViewItemEx : NavigationViewItem
+/// <summary>
+/// NavigationViewItem with the recovered markup's drop configuration.
+/// </summary>
+internal sealed partial class NavigationViewItemEx : NavigationViewItem
 {
     public DropConfiguration? DropConfiguration
     {
@@ -13,7 +15,7 @@ public sealed partial class NavigationViewItemEx : NavigationViewItem
         set => SetValue(DropConfigurationProperty, value);
     }
 
-    public static readonly DependencyProperty DropConfigurationProperty =
+    private static readonly DependencyProperty DropConfigurationProperty =
         DependencyProperty.Register(
             nameof(DropConfiguration),
             typeof(DropConfiguration),

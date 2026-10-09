@@ -1,14 +1,15 @@
 using System.Windows.Input;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.Xaml.Interactivity;
 using UntamedMediaPlayer.Controls;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Enables drag and drop on the responsive repeater and forwards drops to a command.</summary>
-public sealed partial class ResponsiveItemsRepeaterListDragConfigurationBehavior
+/// <summary>
+/// Enables drag and drop on the responsive repeater and forwards drops to a command.
+/// </summary>
+internal sealed class ResponsiveItemsRepeaterListDragConfigurationBehavior
     : Behavior<ResponsiveItemsRepeaterList>
 {
     private bool _previousAllowDrop;
@@ -19,7 +20,7 @@ public sealed partial class ResponsiveItemsRepeaterListDragConfigurationBehavior
         set => SetValue(CommandProperty, value);
     }
 
-    public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
         nameof(Command),
         typeof(ICommand),
         typeof(ResponsiveItemsRepeaterListDragConfigurationBehavior),

@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class AddFolderButton : UserControl
+internal sealed partial class AddFolderButton : UserControl
 {
     public bool SupportNarrowMode
     {
@@ -11,7 +11,7 @@ public sealed partial class AddFolderButton : UserControl
         set => SetValue(SupportNarrowModeProperty, value);
     }
 
-    public static readonly DependencyProperty SupportNarrowModeProperty =
+    private static readonly DependencyProperty SupportNarrowModeProperty =
         DependencyProperty.Register(
             nameof(SupportNarrowMode),
             typeof(bool),
@@ -25,7 +25,7 @@ public sealed partial class AddFolderButton : UserControl
         set => SetValue(IsAccessKeyEnabledProperty, value);
     }
 
-    public static readonly DependencyProperty IsAccessKeyEnabledProperty =
+    private static readonly DependencyProperty IsAccessKeyEnabledProperty =
         DependencyProperty.Register(
             nameof(IsAccessKeyEnabled),
             typeof(bool),

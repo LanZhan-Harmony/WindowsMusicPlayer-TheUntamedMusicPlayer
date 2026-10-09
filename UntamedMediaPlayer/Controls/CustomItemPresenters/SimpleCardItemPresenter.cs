@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace UntamedMediaPlayer.Controls.CustomItemPresenters;
 
-public sealed partial class SimpleCardItemPresenter : ListViewItemPresenter
+internal sealed partial class SimpleCardItemPresenter : ListViewItemPresenter
 {
     public ControlTemplate? Template
     {
@@ -12,6 +12,10 @@ public sealed partial class SimpleCardItemPresenter : ListViewItemPresenter
         set => SetValue(TemplateProperty, value);
     }
 
-    public static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
-        nameof(Template), typeof(ControlTemplate), typeof(SimpleCardItemPresenter), new PropertyMetadata(null));
+    private static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
+        nameof(Template),
+        typeof(ControlTemplate),
+        typeof(SimpleCardItemPresenter),
+        new PropertyMetadata(null)
+    );
 }

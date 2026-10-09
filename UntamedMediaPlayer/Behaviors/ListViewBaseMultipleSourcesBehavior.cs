@@ -1,12 +1,13 @@
-using System.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Keeps selection valid when a list switches between item sources.</summary>
-public sealed class ListViewBaseMultipleSourcesBehavior : Behavior<ListViewBase>
+/// <summary>
+/// Keeps selection valid when a list switches between item sources.
+/// </summary>
+internal sealed class ListViewBaseMultipleSourcesBehavior : Behavior<ListViewBase>
 {
     private long _itemsSourceChangedToken;
 
@@ -45,10 +46,13 @@ public sealed class ListViewBaseMultipleSourcesBehavior : Behavior<ListViewBase>
             return;
         }
 
-        var currentItems = AssociatedObject.Items.Cast<object>().ToHashSet();
+        HashSet<object> currentItems = [.. AssociatedObject.Items];
         if (AssociatedObject.SelectionMode == ListViewSelectionMode.Single)
         {
-            if (AssociatedObject.SelectedItem is { } selectedItem && !currentItems.Contains(selectedItem))
+            if (
+                AssociatedObject.SelectedItem is { } selectedItem
+                && !currentItems.Contains(selectedItem)
+            )
             {
                 AssociatedObject.SelectedItem = null;
             }
@@ -56,7 +60,7 @@ public sealed class ListViewBaseMultipleSourcesBehavior : Behavior<ListViewBase>
             return;
         }
 
-        foreach (object selectedItem in AssociatedObject.SelectedItems.Cast<object>().ToArray())
+        foreach (object selectedItem in AssociatedObject.SelectedItems.ToArray())
         {
             if (!currentItems.Contains(selectedItem))
             {

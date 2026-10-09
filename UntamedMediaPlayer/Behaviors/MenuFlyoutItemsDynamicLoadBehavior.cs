@@ -7,7 +7,9 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Builds menu entries from the current data context when its flyout opens.</summary>
+/// <summary>
+/// Builds menu entries from the current data context when its flyout opens.
+/// </summary>
 internal sealed class MenuFlyoutItemsDynamicLoadBehavior : Behavior<AppBarButton>
 {
     private MenuFlyout? _flyout;
@@ -31,17 +33,16 @@ internal sealed class MenuFlyoutItemsDynamicLoadBehavior : Behavior<AppBarButton
 
     protected override void OnDetaching()
     {
-        if (_flyout is not null)
-        {
-            _flyout.Opening -= OnOpening;
-        }
-
+        _flyout?.Opening -= OnOpening;
         AssociatedObject.DataContextChanged -= OnDataContextChanged;
         WatchSource(null);
         base.OnDetaching();
     }
 
-    private void OnOpening(object? sender, object args) => RebuildItems();
+    private void OnOpening(object? sender, object args)
+    {
+        RebuildItems();
+    }
 
     private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
@@ -56,20 +57,15 @@ internal sealed class MenuFlyoutItemsDynamicLoadBehavior : Behavior<AppBarButton
             return;
         }
 
-        if (_notifyingSource is not null)
-        {
-            _notifyingSource.CollectionChanged -= OnSourceCollectionChanged;
-        }
-
+        _notifyingSource?.CollectionChanged -= OnSourceCollectionChanged;
         _notifyingSource = source;
-        if (_notifyingSource is not null)
-        {
-            _notifyingSource.CollectionChanged += OnSourceCollectionChanged;
-        }
+        _notifyingSource?.CollectionChanged += OnSourceCollectionChanged;
     }
 
-    private void OnSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args) =>
+    private void OnSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
+    {
         RebuildItems();
+    }
 
     private void RebuildItems()
     {
@@ -92,7 +88,7 @@ internal sealed class MenuFlyoutItemsDynamicLoadBehavior : Behavior<AppBarButton
                 continue;
             }
 
-            var generatedItem = new MenuFlyoutItem
+            MenuFlyoutItem generatedItem = new()
             {
                 Text = item?.ToString() ?? string.Empty,
                 Tag = item,

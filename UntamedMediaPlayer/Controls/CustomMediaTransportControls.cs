@@ -1,12 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using UntamedMediaPlayer.Compatibility;
 using UntamedMediaPlayer.Core.ViewModels;
+using UntamedMediaPlayer.Helpers;
 
 namespace UntamedMediaPlayer.Controls;
 
-public sealed partial class CustomMediaTransportControls : MediaTransportControls
+internal sealed partial class CustomMediaTransportControls : MediaTransportControls
 {
     public DropConfiguration? DropConfiguration
     {
@@ -14,7 +14,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(DropConfigurationProperty, value);
     }
 
-    public static readonly DependencyProperty DropConfigurationProperty =
+    private static readonly DependencyProperty DropConfigurationProperty =
         DependencyProperty.Register(
             nameof(DropConfiguration),
             typeof(DropConfiguration),
@@ -39,7 +39,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(MediaPlayerViewModelProperty, value);
     }
 
-    public static readonly DependencyProperty MediaPlayerViewModelProperty =
+    private static readonly DependencyProperty MediaPlayerViewModelProperty =
         DependencyProperty.Register(
             nameof(MediaPlayerViewModel),
             typeof(MediaPlayerViewModel),
@@ -53,7 +53,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(ContentProperty, value);
     }
 
-    public static readonly DependencyProperty ContentProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty ContentProperty = DependencyProperty.Register(
         nameof(Content),
         typeof(object),
         typeof(CustomMediaTransportControls),
@@ -66,7 +66,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(NotificationsProperty, value);
     }
 
-    public static readonly DependencyProperty NotificationsProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty NotificationsProperty = DependencyProperty.Register(
         nameof(Notifications),
         typeof(object),
         typeof(CustomMediaTransportControls),
@@ -79,7 +79,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(CommandPanelHeaderProperty, value);
     }
 
-    public static readonly DependencyProperty CommandPanelHeaderProperty =
+    private static readonly DependencyProperty CommandPanelHeaderProperty =
         DependencyProperty.Register(
             nameof(CommandPanelHeader),
             typeof(object),
@@ -93,7 +93,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(FullWindowTitleBarProperty, value);
     }
 
-    public static readonly DependencyProperty FullWindowTitleBarProperty =
+    private static readonly DependencyProperty FullWindowTitleBarProperty =
         DependencyProperty.Register(
             nameof(FullWindowTitleBar),
             typeof(object),
@@ -107,7 +107,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(TitleBarMarginProperty, value);
     }
 
-    public static readonly DependencyProperty TitleBarMarginProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty TitleBarMarginProperty = DependencyProperty.Register(
         nameof(TitleBarMargin),
         typeof(object),
         typeof(CustomMediaTransportControls),
@@ -120,7 +120,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(SystemTitleBarHeightProperty, value);
     }
 
-    public static readonly DependencyProperty SystemTitleBarHeightProperty =
+    private static readonly DependencyProperty SystemTitleBarHeightProperty =
         DependencyProperty.Register(
             nameof(SystemTitleBarHeight),
             typeof(double),
@@ -134,7 +134,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(IsInPlaybackModeProperty, value);
     }
 
-    public static readonly DependencyProperty IsInPlaybackModeProperty =
+    private static readonly DependencyProperty IsInPlaybackModeProperty =
         DependencyProperty.Register(
             nameof(IsInPlaybackMode),
             typeof(bool),
@@ -148,7 +148,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(IsInVideoOrPlaybackModeProperty, value);
     }
 
-    public static readonly DependencyProperty IsInVideoOrPlaybackModeProperty =
+    private static readonly DependencyProperty IsInVideoOrPlaybackModeProperty =
         DependencyProperty.Register(
             nameof(IsInVideoOrPlaybackMode),
             typeof(bool),
@@ -162,7 +162,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(IsLiveStreamProperty, value);
     }
 
-    public static readonly DependencyProperty IsLiveStreamProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty IsLiveStreamProperty = DependencyProperty.Register(
         nameof(IsLiveStream),
         typeof(bool),
         typeof(CustomMediaTransportControls),
@@ -175,7 +175,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(IsTitleBarBackgroundVisibleProperty, value);
     }
 
-    public static readonly DependencyProperty IsTitleBarBackgroundVisibleProperty =
+    private static readonly DependencyProperty IsTitleBarBackgroundVisibleProperty =
         DependencyProperty.Register(
             nameof(IsTitleBarBackgroundVisible),
             typeof(bool),
@@ -189,7 +189,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(DisplayModeProperty, value);
     }
 
-    public static readonly DependencyProperty DisplayModeProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty DisplayModeProperty = DependencyProperty.Register(
         nameof(DisplayMode),
         typeof(object),
         typeof(CustomMediaTransportControls),
@@ -202,7 +202,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(VideoEnhancerFlyoutProperty, value);
     }
 
-    public static readonly DependencyProperty VideoEnhancerFlyoutProperty =
+    private static readonly DependencyProperty VideoEnhancerFlyoutProperty =
         DependencyProperty.Register(
             nameof(VideoEnhancerFlyout),
             typeof(FlyoutBase),
@@ -216,7 +216,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(NowPlayingContextMenuFlyoutProperty, value);
     }
 
-    public static readonly DependencyProperty NowPlayingContextMenuFlyoutProperty =
+    private static readonly DependencyProperty NowPlayingContextMenuFlyoutProperty =
         DependencyProperty.Register(
             nameof(NowPlayingContextMenuFlyout),
             typeof(MenuFlyout),
@@ -229,7 +229,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(IsCompactOverlayButtonVisibleProperty, value);
     }
 
-    public static readonly DependencyProperty IsCompactOverlayButtonVisibleProperty =
+    private static readonly DependencyProperty IsCompactOverlayButtonVisibleProperty =
         DependencyProperty.Register(
             nameof(IsCompactOverlayButtonVisible),
             typeof(bool),
@@ -243,7 +243,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(IsCompactOverlayEnabledProperty, value);
     }
 
-    public static readonly DependencyProperty IsCompactOverlayEnabledProperty =
+    private static readonly DependencyProperty IsCompactOverlayEnabledProperty =
         DependencyProperty.Register(
             nameof(IsCompactOverlayEnabled),
             typeof(bool),
@@ -257,7 +257,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(IsFullWindowButtonVisibleProperty, value);
     }
 
-    public static readonly DependencyProperty IsFullWindowButtonVisibleProperty =
+    private static readonly DependencyProperty IsFullWindowButtonVisibleProperty =
         DependencyProperty.Register(
             nameof(IsFullWindowButtonVisible),
             typeof(bool),
@@ -271,7 +271,7 @@ public sealed partial class CustomMediaTransportControls : MediaTransportControl
         set => SetValue(IsFullWindowEnabledProperty, value);
     }
 
-    public static readonly DependencyProperty IsFullWindowEnabledProperty =
+    private static readonly DependencyProperty IsFullWindowEnabledProperty =
         DependencyProperty.Register(
             nameof(IsFullWindowEnabled),
             typeof(bool),

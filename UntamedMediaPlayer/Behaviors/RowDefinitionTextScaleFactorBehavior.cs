@@ -4,8 +4,10 @@ using Microsoft.Xaml.Interactivity;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Applies the minimum height used by a responsive row to its RowDefinition.</summary>
-public sealed partial class RowDefinitionTextScaleFactorBehavior : Behavior<RowDefinition>
+/// <summary>
+/// Applies the minimum height used by a responsive row to its RowDefinition.
+/// </summary>
+internal sealed class RowDefinitionTextScaleFactorBehavior : Behavior<RowDefinition>
 {
     public double MinHeight
     {
@@ -13,7 +15,7 @@ public sealed partial class RowDefinitionTextScaleFactorBehavior : Behavior<RowD
         set => SetValue(MinHeightProperty, value);
     }
 
-    public static readonly DependencyProperty MinHeightProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty MinHeightProperty = DependencyProperty.Register(
         nameof(MinHeight),
         typeof(double),
         typeof(RowDefinitionTextScaleFactorBehavior),

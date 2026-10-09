@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UntamedMediaPlayer.Compatibility;
+using UntamedMediaPlayer.Helpers;
 
 namespace UntamedMediaPlayer.Controls;
 
@@ -10,7 +10,7 @@ namespace UntamedMediaPlayer.Controls;
 /// keeping them as dependency properties lets the migrated markup compile
 /// while retaining the values for templates and later interaction logic.
 /// </summary>
-public sealed partial class ListViewEx : ListView
+internal sealed partial class ListViewEx : ListView
 {
     public bool IsItemDoubleClickEnabled
     {
@@ -18,7 +18,7 @@ public sealed partial class ListViewEx : ListView
         set => SetValue(IsItemDoubleClickEnabledProperty, value);
     }
 
-    public static readonly DependencyProperty IsItemDoubleClickEnabledProperty =
+    private static readonly DependencyProperty IsItemDoubleClickEnabledProperty =
         DependencyProperty.Register(
             nameof(IsItemDoubleClickEnabled),
             typeof(bool),
@@ -32,7 +32,7 @@ public sealed partial class ListViewEx : ListView
         set => SetValue(UseCustomItemPresenterWithDisplayModeProperty, value);
     }
 
-    public static readonly DependencyProperty UseCustomItemPresenterWithDisplayModeProperty =
+    private static readonly DependencyProperty UseCustomItemPresenterWithDisplayModeProperty =
         DependencyProperty.Register(
             nameof(UseCustomItemPresenterWithDisplayMode),
             typeof(string),
@@ -46,12 +46,13 @@ public sealed partial class ListViewEx : ListView
         set => SetValue(ItemsMenuFlyoutProperty, value);
     }
 
-    public static readonly DependencyProperty ItemsMenuFlyoutProperty = DependencyProperty.Register(
-        nameof(ItemsMenuFlyout),
-        typeof(MenuFlyout),
-        typeof(ListViewEx),
-        new PropertyMetadata(null, OnItemsMenuFlyoutChanged)
-    );
+    private static readonly DependencyProperty ItemsMenuFlyoutProperty =
+        DependencyProperty.Register(
+            nameof(ItemsMenuFlyout),
+            typeof(MenuFlyout),
+            typeof(ListViewEx),
+            new PropertyMetadata(null, OnItemsMenuFlyoutChanged)
+        );
 
     public DropConfiguration? DropConfiguration
     {
@@ -59,12 +60,13 @@ public sealed partial class ListViewEx : ListView
         set => SetValue(DropConfigurationProperty, value);
     }
 
-    public static readonly DependencyProperty DropConfigurationProperty = DependencyProperty.Register(
-        nameof(DropConfiguration),
-        typeof(DropConfiguration),
-        typeof(ListViewEx),
-        new PropertyMetadata(null, OnDropConfigurationChanged)
-    );
+    private static readonly DependencyProperty DropConfigurationProperty =
+        DependencyProperty.Register(
+            nameof(DropConfiguration),
+            typeof(DropConfiguration),
+            typeof(ListViewEx),
+            new PropertyMetadata(null, OnDropConfigurationChanged)
+        );
 
     private static void OnDropConfigurationChanged(
         DependencyObject dependencyObject,

@@ -1,14 +1,16 @@
+using System.Collections;
+using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.Xaml.Interactivity;
-using System.Collections;
-using System.Windows.Input;
 using UntamedMediaPlayer.Controls;
 
 namespace UntamedMediaPlayer.Behaviors;
 
-/// <summary>Creates selectable flyout entries from the converter's current option sequence.</summary>
+/// <summary>
+/// Creates selectable flyout entries from the converter's current option sequence.
+/// </summary>
 internal sealed class MenuFlyoutSelectableItemsDynamicLoadBehavior : Behavior<AppBarButton>
 {
     private MenuFlyout? _flyout;
@@ -19,7 +21,7 @@ internal sealed class MenuFlyoutSelectableItemsDynamicLoadBehavior : Behavior<Ap
         set => SetValue(ConverterProperty, value);
     }
 
-    public static readonly DependencyProperty ConverterProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty ConverterProperty = DependencyProperty.Register(
         nameof(Converter),
         typeof(IValueConverter),
         typeof(MenuFlyoutSelectableItemsDynamicLoadBehavior),
@@ -43,19 +45,20 @@ internal sealed class MenuFlyoutSelectableItemsDynamicLoadBehavior : Behavior<Ap
 
     protected override void OnDetaching()
     {
-        if (_flyout is not null)
-        {
-            _flyout.Opening -= OnOpening;
-        }
-
+        _flyout?.Opening -= OnOpening;
         AssociatedObject.DataContextChanged -= OnDataContextChanged;
         base.OnDetaching();
     }
 
-    private void OnOpening(object? sender, object args) => RebuildItems();
-
-    private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args) =>
+    private void OnOpening(object? sender, object args)
+    {
         RebuildItems();
+    }
+
+    private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+    {
+        RebuildItems();
+    }
 
     private void RebuildItems()
     {
@@ -73,7 +76,7 @@ internal sealed class MenuFlyoutSelectableItemsDynamicLoadBehavior : Behavior<Ap
 
         if (source is MenuFlyout menuFlyout)
         {
-            foreach (var item in menuFlyout.Items)
+            foreach (MenuFlyoutItemBase? item in menuFlyout.Items)
             {
                 _flyout.Items.Add(item);
             }
@@ -88,11 +91,12 @@ internal sealed class MenuFlyoutSelectableItemsDynamicLoadBehavior : Behavior<Ap
 
         foreach (object? value in values)
         {
-            var item = new ToggleMenuFlyoutItem
+            ToggleMenuFlyoutItem item = new()
             {
                 Text = value?.ToString() ?? string.Empty,
                 Tag = value,
-                IsChecked = AssociatedObject is SortAndFilterControl sortControl
+                IsChecked =
+                    AssociatedObject is SortAndFilterControl sortControl
                     && Equals(sortControl.SelectedItem, value),
                 IsEnabled = value is not null,
             };

@@ -1,11 +1,13 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UntamedMediaPlayer.Compatibility;
+using UntamedMediaPlayer.Helpers;
 
 namespace UntamedMediaPlayer.Controls;
 
-/// <summary>Grid with the drop configuration property used by the recovered page markup.</summary>
-public sealed partial class GridEx : Grid
+/// <summary>
+/// Grid with the drop configuration property used by the recovered page markup.
+/// </summary>
+internal sealed partial class GridEx : Grid
 {
     public DropConfiguration? DropConfiguration
     {
@@ -13,12 +15,13 @@ public sealed partial class GridEx : Grid
         set => SetValue(DropConfigurationProperty, value);
     }
 
-    public static readonly DependencyProperty DropConfigurationProperty = DependencyProperty.Register(
-        nameof(DropConfiguration),
-        typeof(DropConfiguration),
-        typeof(GridEx),
-        new PropertyMetadata(null, OnDropConfigurationChanged)
-    );
+    private static readonly DependencyProperty DropConfigurationProperty =
+        DependencyProperty.Register(
+            nameof(DropConfiguration),
+            typeof(DropConfiguration),
+            typeof(GridEx),
+            new PropertyMetadata(null, OnDropConfigurationChanged)
+        );
 
     private static void OnDropConfigurationChanged(
         DependencyObject dependencyObject,

@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace UntamedMediaPlayer.Controls.CustomItemPresenters;
 
-public sealed partial class CardItemPresenter : ListViewItemPresenter
+internal sealed partial class CardItemPresenter : ListViewItemPresenter
 {
     public ControlTemplate? Template
     {
@@ -12,8 +12,12 @@ public sealed partial class CardItemPresenter : ListViewItemPresenter
         set => SetValue(TemplateProperty, value);
     }
 
-    public static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
-        nameof(Template), typeof(ControlTemplate), typeof(CardItemPresenter), new PropertyMetadata(null));
+    private static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
+        nameof(Template),
+        typeof(ControlTemplate),
+        typeof(CardItemPresenter),
+        new PropertyMetadata(null)
+    );
 
     public bool IsWideImage
     {
@@ -21,6 +25,10 @@ public sealed partial class CardItemPresenter : ListViewItemPresenter
         set => SetValue(IsWideImageProperty, value);
     }
 
-    public static readonly DependencyProperty IsWideImageProperty = DependencyProperty.Register(
-        nameof(IsWideImage), typeof(bool), typeof(CardItemPresenter), new PropertyMetadata(false));
+    private static readonly DependencyProperty IsWideImageProperty = DependencyProperty.Register(
+        nameof(IsWideImage),
+        typeof(bool),
+        typeof(CardItemPresenter),
+        new PropertyMetadata(false)
+    );
 }

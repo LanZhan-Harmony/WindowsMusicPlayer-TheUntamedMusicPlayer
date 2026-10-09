@@ -3,6 +3,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:compat="using:UntamedMediaPlayer.Compatibility"
                     xmlns:converters="using:UntamedMediaPlayer.Converters"
+                    xmlns:helpers="using:UntamedMediaPlayer.Helpers"
                     xmlns:ws="using:Windows.System">
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
@@ -164,12 +165,10 @@
 
     <FontFamily x:Key="UntamedFontFamily">ms-appx:///Assets/Fonts/UntamedFluentIcons.ttf#Untamed Fluent Icons</FontFamily>
 
-    <x:Int32 x:Key="vkOemPlusKeyCode">187</x:Int32>
-    <x:Int32 x:Key="vkOemMinusKeyCode">189</x:Int32>
-    <x:Int32 x:Key="vkGoHome">172</x:Int32>
-    <x:Int32 x:Key="vkGoBack">166</x:Int32>
     <x:Double x:Key="TopNavigationViewPaneCustomContentMinWidth">0</x:Double>
 
+    <x:Int32 x:Key="vkOemPlusKeyCode">187</x:Int32>
+    <x:Int32 x:Key="vkOemMinusKeyCode">189</x:Int32>
     <ws:VirtualKey x:Key="toggleMiniPlayerModeAcceleratorKey">M</ws:VirtualKey>
     <ws:VirtualKey x:Key="toggleFullScreenModeAcceleratorKey">F11</ws:VirtualKey>
     <ws:VirtualKey x:Key="shufflePlaybackAcceleratorKey">H</ws:VirtualKey>
@@ -195,7 +194,6 @@
     <compat:PlaybackRate x:Key="PlaybackRateSlow" Value="Slow"/>
     <compat:PlaybackRate x:Key="PlaybackRateFast" Value="Fast"/>
     <compat:PlaybackRate x:Key="PlaybackRateDefault" Value="Default"/>
-    <compat:PlaylistsDropCommandAdapter x:Key="playlistsDropCommandAdapter"/>
 
     <converters:SortAndFilterConverter x:Key="SortAndFilterConverter"/>
     <converters:EmptyObjectToVisibilityConverter x:Key="EmptyObjectToVisibilityConverter"/>
@@ -209,29 +207,31 @@
         </converters:EnumerationValueConverter.FalseValue>
     </converters:EnumerationValueConverter>
 
-    <compat:DragAndDropUIOverride x:Key="DragAndDropReject"
-                                  x:Uid="DragAndDropReject"
-                                  IsCaptionVisible="True"
-                                  IsContentVisible="True"
-                                  IsGlyphVisible="True"/>
-    <compat:DragAndDropUIOverride x:Key="DragAndDropRejectOnPlaylists"
-                                  x:Uid="DragAndDropRejectOnPlaylists"
-                                  IsCaptionVisible="True"
-                                  IsContentVisible="True"
-                                  IsGlyphVisible="True"/>
-    <compat:DragAndDropUIOverride x:Key="DragAndDropAcceptOnPlaylists"
-                                  x:Uid="DragAndDropAcceptOnPlaylists"
-                                  IsCaptionVisible="True"
-                                  IsContentVisible="True"
-                                  IsGlyphVisible="False"/>
-    <compat:DragAndDropUIOverride x:Key="DragAndDropAcceptInPlayQueue"
-                                  x:Uid="DragAndDropAcceptInPlayQueue"
-                                  IsCaptionVisible="True"
-                                  IsContentVisible="True"
-                                  IsGlyphVisible="False"/>
-    <compat:DragAndDropUIOverride x:Key="DragAndDropAcceptInPlayPage"
-                                  x:Uid="DragAndDropAcceptInPlayPage"
-                                  IsCaptionVisible="True"
-                                  IsContentVisible="True"
-                                  IsGlyphVisible="False"/>
+    <helpers:PlaylistsDropCommandAdapter x:Key="playlistsDropCommandAdapter"/>
+
+    <helpers:DragAndDropUIOverride x:Key="DragAndDropReject"
+                                   x:Uid="DragAndDropReject"
+                                   IsCaptionVisible="True"
+                                   IsContentVisible="True"
+                                   IsGlyphVisible="True"/>
+    <helpers:DragAndDropUIOverride x:Key="DragAndDropRejectOnPlaylists"
+                                   x:Uid="DragAndDropRejectOnPlaylists"
+                                   IsCaptionVisible="True"
+                                   IsContentVisible="True"
+                                   IsGlyphVisible="True"/>
+    <helpers:DragAndDropUIOverride x:Key="DragAndDropAcceptOnPlaylists"
+                                   x:Uid="DragAndDropAcceptOnPlaylists"
+                                   IsCaptionVisible="True"
+                                   IsContentVisible="True"
+                                   IsGlyphVisible="False"/>
+    <helpers:DragAndDropUIOverride x:Key="DragAndDropAcceptInPlayQueue"
+                                   x:Uid="DragAndDropAcceptInPlayQueue"
+                                   IsCaptionVisible="True"
+                                   IsContentVisible="True"
+                                   IsGlyphVisible="False"/>
+    <helpers:DragAndDropUIOverride x:Key="DragAndDropAcceptInPlayPage"
+                                   x:Uid="DragAndDropAcceptInPlayPage"
+                                   IsCaptionVisible="True"
+                                   IsContentVisible="True"
+                                   IsGlyphVisible="False"/>
 </ResourceDictionary>

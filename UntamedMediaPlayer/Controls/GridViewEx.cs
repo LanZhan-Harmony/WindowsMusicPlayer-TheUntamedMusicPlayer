@@ -3,8 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace UntamedMediaPlayer.Controls;
 
-/// <summary>GridView compatibility surface used by the recovered XAML.</summary>
-public sealed partial class GridViewEx : GridView
+/// <summary>
+/// GridView compatibility surface used by the recovered XAML.
+/// </summary>
+internal sealed partial class GridViewEx : GridView
 {
     public string? UseCustomItemPresenterWithDisplayMode
     {
@@ -12,7 +14,7 @@ public sealed partial class GridViewEx : GridView
         set => SetValue(UseCustomItemPresenterWithDisplayModeProperty, value);
     }
 
-    public static readonly DependencyProperty UseCustomItemPresenterWithDisplayModeProperty =
+    private static readonly DependencyProperty UseCustomItemPresenterWithDisplayModeProperty =
         DependencyProperty.Register(
             nameof(UseCustomItemPresenterWithDisplayMode),
             typeof(string),
@@ -26,12 +28,13 @@ public sealed partial class GridViewEx : GridView
         set => SetValue(ItemsMenuFlyoutProperty, value);
     }
 
-    public static readonly DependencyProperty ItemsMenuFlyoutProperty = DependencyProperty.Register(
-        nameof(ItemsMenuFlyout),
-        typeof(MenuFlyout),
-        typeof(GridViewEx),
-        new PropertyMetadata(null, OnItemsMenuFlyoutChanged)
-    );
+    private static readonly DependencyProperty ItemsMenuFlyoutProperty =
+        DependencyProperty.Register(
+            nameof(ItemsMenuFlyout),
+            typeof(MenuFlyout),
+            typeof(GridViewEx),
+            new PropertyMetadata(null, OnItemsMenuFlyoutChanged)
+        );
 
     private static void OnItemsMenuFlyoutChanged(
         DependencyObject dependencyObject,
