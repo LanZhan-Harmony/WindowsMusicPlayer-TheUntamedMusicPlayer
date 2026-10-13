@@ -6,7 +6,7 @@
              xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
              xmlns:compat="using:UntamedMediaPlayer.Compatibility"
              xmlns:ctrl="using:UntamedMediaPlayer.Controls"
-             xmlns:ctrlAttached="using:UntamedMediaPlayer.Controls"
+             xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:helpers="using:UntamedMediaPlayer.Helpers"
              xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -383,19 +383,19 @@
                                         <KeyboardAccelerator Key="{StaticResource openPlayQueueAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
                                     </NavigationViewItem.KeyboardAccelerators>
                                 </NavigationViewItem>
-                                <ctrl:NavigationViewItemEx x:Name="playlistsNavigationViewItem"
-                                                           x:Uid="CommandBarPlaylists"
-                                                           AccessKey="NP"
-                                                           AllowDrop="True"
-                                                           DropConfiguration="{StaticResource PlaylistsDropConfiguration}"
-                                                           KeyTipPlacementMode="Right">
+                                <ctrlEx:NavigationViewItemEx x:Name="playlistsNavigationViewItem"
+                                                             x:Uid="CommandBarPlaylists"
+                                                             AccessKey="NP"
+                                                             AllowDrop="True"
+                                                             DropConfiguration="{StaticResource PlaylistsDropConfiguration}"
+                                                             KeyTipPlacementMode="Right">
                                     <NavigationViewItem.Icon>
                                         <FontIcon Glyph="{StaticResource PlaylistsCommandGlyph}"/>
                                     </NavigationViewItem.Icon>
                                     <NavigationViewItem.KeyboardAccelerators>
                                         <KeyboardAccelerator Key="{StaticResource openPlaylistLibraryAcceleratorKey}" Modifiers="{StaticResource acceleratorModifierKey}"/>
                                     </NavigationViewItem.KeyboardAccelerators>
-                                </ctrl:NavigationViewItemEx>
+                                </ctrlEx:NavigationViewItemEx>
                             </NavigationView.MenuItems>
                             <NavigationView.Header>
                                 <Border x:Name="navigationPageHeader"/>

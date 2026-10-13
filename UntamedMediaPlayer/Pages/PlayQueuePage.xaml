@@ -6,7 +6,7 @@
       xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
       xmlns:compat="using:UntamedMediaPlayer.Compatibility"
       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
-      xmlns:ctrlAttached="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -55,7 +55,6 @@
                         <StateTrigger/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="trackList.(ctrlAttached:ListViewBaseEx.IsItemDoubleClickEnabled)" Value="False"/>
                         <Setter Target="pageHeaderLeftControls.Visibility" Value="Collapsed"/>
                         <Setter Target="pageHeaderSelectionControlsBar.Visibility" Value="Visible"/>
                         <Setter Target="pageHeaderSelectionControlsBar.IsEnabled" Value="True"/>
@@ -164,26 +163,26 @@
                 </animations:Implicit.HideAnimations>
             </ctrl:SelectionControlsBar>
         </Border>
-        <ctrl:ListViewEx x:Name="trackList"
-                         Grid.Row="2"
-                         Grid.ColumnSpan="2"
-                         AllowDrop="True"
-                         CanDragItems="True"
-                         CanReorderItems="True"
-                         DropConfiguration="{StaticResource PlayQueueDropConfiguration}"
-                         IsMultiSelectCheckBoxEnabled="False"
-                         KeyTipPlacementMode="Center"
-                         SelectionMode="Extended"
-                         Style="{StaticResource ListViewExtraLargeContentStyle}"
-                         UseCustomItemPresenterWithDisplayMode="ListItemPresenterWithMediaTypeIcon">
-            <ctrl:ListViewEx.ItemsMenuFlyout>
+        <ctrlEx:ListViewEx x:Name="trackList"
+                           Grid.Row="2"
+                           Grid.ColumnSpan="2"
+                           AllowDrop="True"
+                           CanDragItems="True"
+                           CanReorderItems="True"
+                           DropConfiguration="{StaticResource PlayQueueDropConfiguration}"
+                           IsMultiSelectCheckBoxEnabled="False"
+                           KeyTipPlacementMode="Center"
+                           SelectionMode="Extended"
+                           Style="{StaticResource ListViewExtraLargeContentStyle}"
+                           UseCustomItemPresenterWithDisplayMode="ListItemPresenterWithMediaTypeIcon">
+            <ctrlEx:ListViewEx.ItemsMenuFlyout>
                 <MenuFlyout/>
-            </ctrl:ListViewEx.ItemsMenuFlyout>
+            </ctrlEx:ListViewEx.ItemsMenuFlyout>
             <i:Interaction.Behaviors>
                 <behaviors:SelectionManagerBehavior/>
                 <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                 <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
             </i:Interaction.Behaviors>
-        </ctrl:ListViewEx>
+        </ctrlEx:ListViewEx>
     </Grid>
 </Page>

@@ -6,7 +6,7 @@
       xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
       xmlns:compat="using:UntamedMediaPlayer.Compatibility"
       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
-      xmlns:ctrlAttached="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -22,9 +22,9 @@
             </helpers:DropConfiguration.Command>
         </helpers:DropConfiguration>
     </Page.Resources>
-    <ctrl:GridEx AllowDrop="True"
-                 Background="#00FFFFFF"
-                 DropConfiguration="{StaticResource HomeDropConfiguration}">
+    <ctrlEx:GridEx AllowDrop="True"
+                   Background="#00FFFFFF"
+                   DropConfiguration="{StaticResource HomeDropConfiguration}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptiveLayout">
                 <VisualState x:Name="Default"/>
@@ -164,7 +164,7 @@
                 </animations:Implicit.HideAnimations>
             </ctrl:SelectionControlsBar>
         </Border>
-        <ctrl:ListViewEx x:Name="listView"
+        <ctrlEx:ListViewEx x:Name="listView"
                          Grid.Row="2"
                          Grid.ColumnSpan="2"
                          x:Load="False"
@@ -181,11 +181,11 @@
                 <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                 <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
             </i:Interaction.Behaviors>
-            <ctrl:ListViewEx.ItemsMenuFlyout>
+            <ctrlEx:ListViewEx.ItemsMenuFlyout>
                 <MenuFlyout/>
-            </ctrl:ListViewEx.ItemsMenuFlyout>
-        </ctrl:ListViewEx>
-        <ctrl:GridViewEx x:Name="gridView"
+            </ctrlEx:ListViewEx.ItemsMenuFlyout>
+        </ctrlEx:ListViewEx>
+        <ctrlEx:GridViewEx x:Name="gridView"
                          Grid.Row="2"
                          Grid.ColumnSpan="2"
                          x:Load="False"
@@ -203,10 +203,10 @@
                 <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                 <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
             </i:Interaction.Behaviors>
-            <ctrl:GridViewEx.ItemsMenuFlyout>
+            <ctrlEx:GridViewEx.ItemsMenuFlyout>
                 <MenuFlyout/>
-            </ctrl:GridViewEx.ItemsMenuFlyout>
-        </ctrl:GridViewEx>
+            </ctrlEx:GridViewEx.ItemsMenuFlyout>
+        </ctrlEx:GridViewEx>
         <ctrl:EmptyPageMessageControl x:Name="NoRecentMediaNotice"
                                       x:Uid="NoRecentMediaNotice"
                                       Grid.Row="1"
@@ -230,5 +230,5 @@
                       VerticalAlignment="Center"
                       IsActive="False"
                       Visibility="Collapsed"/>
-    </ctrl:GridEx>
+    </ctrlEx:GridEx>
 </Page>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ToggleButton x:Class="UntamedMediaPlayer.Controls.ExpandableGroupHeader"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:local="using:UntamedMediaPlayer.Controls"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              mc:Ignorable="d">
+    <ToggleButton.Style>
+        <Style BasedOn="{StaticResource ExpanderHeaderDownStyle}" TargetType="local:ExpandableGroupHeader">
+            <Setter Property="AutomationProperties.AccessibilityView" Value="Content"/>
+            <Setter Property="Background" Value="#00FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="FocusVisualMargin" Value="-3,0,-3,-3"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}"/>
+        </Style>
+    </ToggleButton.Style>
+</ToggleButton>

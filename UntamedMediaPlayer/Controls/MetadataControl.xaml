@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Control x:Class="UntamedMediaPlayer.Controls.MetadataControl"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         xmlns:local="using:UntamedMediaPlayer.Controls"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         mc:Ignorable="d">
+    <Control.Resources>
+        <Style x:Key="DefaultTextContainerStyle" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </Control.Resources>
+
+    <Control.Style>
+        <Style TargetType="local:MetadataControl">
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="local:MetadataControl">
+                        <TextBlock x:Name="TextContainer"
+                                   AutomationProperties.AccessibilityView="{TemplateBinding AccessibilityView}"
+                                   Style="{TemplateBinding TextBlockStyle}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="TextBlockStyle" Value="{StaticResource DefaultTextContainerStyle}"/>
+        </Style>
+    </Control.Style>
+</Control>

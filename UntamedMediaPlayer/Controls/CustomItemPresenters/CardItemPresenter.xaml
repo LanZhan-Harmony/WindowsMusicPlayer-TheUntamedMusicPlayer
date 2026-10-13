@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ListViewItemPresenter x:Class="UntamedMediaPlayer.Controls.CustomItemPresenters.CardItemPresenter"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+                       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+                       xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:local="using:UntamedMediaPlayer.Controls.CustomItemPresenters"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d">
+    <ListViewItemPresenter.Style>
+        <Style TargetType="local:CardItemPresenter">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="KeyTipPlacementMode" Value="Right"/>
+            <Setter Property="Margin" Value="{StaticResource ContentSmallBottomSpacing}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="local:CardItemPresenter">
+                        <Grid x:Name="Root"
+                              Background="#00FFFFFF"
+                              BorderBrush="#00FFFFFF"
+                              BorderThickness="{ThemeResource PageHeaderBorderThickness}"
+                              CornerRadius="{ThemeResource OverlayCornerRadius}"
+                              RenderTransformOrigin="0.5,0.5">
+                            <Grid.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.MergedDictionaries>
+                                        <ResourceDictionary>
+                                            <ResourceDictionary.ThemeDictionaries>
+                                                <ResourceDictionary x:Key="Dark">
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUnchecked" ResourceKey="RoundButtonStroke"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" ResourceKey="RoundButtonStrokePressed"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" ResourceKey="RoundButtonStrokePointerOver"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="RoundButtonFill"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPressed" ResourceKey="RoundButtonFillPressed"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPointerOver" ResourceKey="RoundButtonFillPointerOver"/>
+                                                </ResourceDictionary>
+                                                <ResourceDictionary x:Key="Light">
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUnchecked" ResourceKey="RoundButtonStroke"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" ResourceKey="RoundButtonStrokePressed"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" ResourceKey="RoundButtonStrokePointerOver"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="RoundButtonFill"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPressed" ResourceKey="RoundButtonFillPressed"/>
+                                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPointerOver" ResourceKey="RoundButtonFillPointerOver"/>
+                                                </ResourceDictionary>
+                                                <ResourceDictionary x:Key="HighContrast"/>
+                                            </ResourceDictionary.ThemeDictionaries>
+                                        </ResourceDictionary>
+                                    </ResourceDictionary.MergedDictionaries>
+                                </ResourceDictionary>
+                            </Grid.Resources>
+                            <Grid.RenderTransform>
+                                <ScaleTransform x:Name="RootScale"/>
+                            </Grid.RenderTransform>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver"/>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Selected"/>
+                                    <VisualState x:Name="PointerOverSelected"/>
+                                    <VisualState x:Name="PressedSelected"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="States">
+                                    <VisualState x:Name="DefaultNormal">
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackground}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultPointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPointerOver}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                            <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                            <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                            <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                            <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultPressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPressed}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                            <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                            <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                            <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                            <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                                 Storyboard.TargetProperty="ScaleX"
+                                                                 To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                                 Duration="0:0:0.240"/>
+                                                <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                                 Storyboard.TargetProperty="ScaleY"
+                                                                 To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                                 Duration="0:0:0.240"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultNoCheckboxPointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPointerOver}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                            <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                            <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultNoCheckboxPressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPressed}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                            <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                                            <Setter Target="MoreButton.Visibility" Value="Visible"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                                 Storyboard.TargetProperty="ScaleX"
+                                                                 To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                                 Duration="0:0:0.240"/>
+                                                <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                                 Storyboard.TargetProperty="ScaleY"
+                                                                 To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                                 Duration="0:0:0.240"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultMultiSelectionMode">
+                                        <VisualState.Setters>
+                                            <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                            <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultPointerOverMultiSelectionMode">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPointerOver}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                            <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                            <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultPressedMultiSelectionMode">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPressed}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                            <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                            <Setter Target="MultiSelectCheckbox.IsChecked" Value="False"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                                 Storyboard.TargetProperty="ScaleX"
+                                                                 To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                                 Duration="0:0:0.240"/>
+                                                <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                                 Storyboard.TargetProperty="ScaleY"
+                                                                 To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                                 Duration="0:0:0.240"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultSelectedMultiSelectionMode">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackground}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                            <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                            <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultSelectedPointerOverMultiSelectionMode">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPointerOver}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                            <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                            <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Root"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DefaultSelectedPressedMultiSelectionMode">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.Background" Value="{ThemeResource GridViewItemBackgroundPressed}"/>
+                                            <Setter Target="Root.BorderBrush" Value="{ThemeResource GridListViewItemBorderBrush}"/>
+                                            <Setter Target="MultiSelectCheckbox.Visibility" Value="Visible"/>
+                                            <Setter Target="MultiSelectCheckbox.IsChecked" Value="True"/>
+                                        </VisualState.Setters>
+                                        <VisualState.Storyboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                                 Storyboard.TargetProperty="ScaleX"
+                                                                 To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                                 Duration="0:0:0.240"/>
+                                                <DoubleAnimation Storyboard.TargetName="RootScale"
+                                                                 Storyboard.TargetProperty="ScaleY"
+                                                                 To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                                                 Duration="0:0:0.240"/>
+                                            </Storyboard>
+                                        </VisualState.Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="ImageSizeStates">
+                                    <VisualState x:Name="ImageDefaultSize"/>
+                                    <VisualState x:Name="ImageWideSize">
+                                        <VisualState.StateTriggers>
+                                            <StateTrigger IsActive="{TemplateBinding IsWideImage}"/>
+                                        </VisualState.StateTriggers>
+                                        <VisualState.Setters>
+                                            <Setter Target="Content.Width" Value="232"/>
+                                            <Setter Target="CoverArtImage.Height" Value="{StaticResource VideoItemCoverHeightSize}"/>
+                                            <Setter Target="CoverArtImage.Width" Value="{StaticResource VideoItemCoverWidthSize}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <StackPanel x:Name="Content" Width="168">
+                                <Grid Margin="{StaticResource ContentSmallMargin}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <ctrl:CoverArtImage x:Name="CoverArtImage"
+                                                        Grid.RowSpan="2"
+                                                        Grid.ColumnSpan="2"
+                                                        Width="{StaticResource CoverArtListItemSize}"
+                                                        Height="{StaticResource CoverArtListItemSize}"
+                                                        ImageContext="LibraryPage"/>
+                                    <ctrlEx:CheckboxEx x:Name="MultiSelectCheckbox"
+                                                       x:Uid="SelectionCheckBox"
+                                                       MinWidth="0"
+                                                       MinHeight="32"
+                                                       Margin="16,8"
+                                                       Padding="0"
+                                                       HorizontalAlignment="Left"
+                                                       VerticalAlignment="Top"
+                                                       Visibility="Collapsed">
+                                        <animations:Implicit.ShowAnimations>
+                                            <animations:OpacityAnimation From="0"
+                                                                         To="1"
+                                                                         Duration="{StaticResource ShortAnimationDuration}"/>
+                                        </animations:Implicit.ShowAnimations>
+                                    </ctrlEx:CheckboxEx>
+                                    <ctrlEx:ButtonEx x:Name="PlayButton"
+                                                     x:Uid="PlayButton"
+                                                     Grid.Row="1"
+                                                     Margin="10,8"
+                                                     HorizontalAlignment="Left"
+                                                     VerticalAlignment="Bottom"
+                                                     Content="{StaticResource PlayCommandGlyph}"
+                                                     Style="{StaticResource RoundButtonStyle}"
+                                                     Visibility="Collapsed"/>
+                                    <ctrlEx:ButtonEx x:Name="MoreButton"
+                                                     x:Uid="MoreButton"
+                                                     Grid.Row="1"
+                                                     Grid.Column="1"
+                                                     Margin="10,8"
+                                                     HorizontalAlignment="Right"
+                                                     VerticalAlignment="Bottom"
+                                                     Content="{StaticResource MoreButtonGlyph}"
+                                                     Style="{StaticResource RoundButtonStyle}"
+                                                     Visibility="Collapsed">
+                                        <ctrlEx:ButtonEx.Flyout>
+                                            <MenuFlyout x:Name="MoreButtonMenuFlyout"/>
+                                        </ctrlEx:ButtonEx.Flyout>
+                                    </ctrlEx:ButtonEx>
+                                </Grid>
+                                <Grid>
+                                    <StackPanel Opacity="0">
+                                        <TextBlock AutomationProperties.AccessibilityView="Raw"
+                                                   Style="{StaticResource MediaItemDataTemplateTitleStyle}"
+                                                   Text="{StaticResource TwoEmptyLines}"/>
+                                        <TextBlock AutomationProperties.AccessibilityView="Raw" Style="{StaticResource MediaItemDataTemplateSubtitleStyle}"/>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock x:Name="title"
+                                                   AutomationProperties.AccessibilityView="Raw"
+                                                   Style="{StaticResource MediaItemDataTemplateTitleStyle}">
+                                            <ToolTipService.ToolTip>
+                                                <ToolTip Content="{Binding ElementName=title, Path=Text}" IsEnabled="{Binding ElementName=title, Path=IsTextTrimmed}"/>
+                                            </ToolTipService.ToolTip>
+                                        </TextBlock>
+                                        <TextBlock AutomationProperties.AccessibilityView="Raw" Style="{StaticResource MediaItemDataTemplateSubtitleStyle}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </ListViewItemPresenter.Style>
+</ListViewItemPresenter>

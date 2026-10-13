@@ -29,7 +29,7 @@
                                         XYFocusKeyboardNavigation="Enabled">
                                 <Grid x:Name="TopNavGrid"
                                       BorderBrush="{ThemeResource NavigationViewItemSeparatorForeground}"
-                                      Visibility="{Binding TemplateSettings.TopPaneVisibility, RelativeSource={RelativeSource TemplatedParent}}">
+                                      Visibility="{x:Bind TemplateSettings.TopPaneVisibility, Mode=OneWay}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>

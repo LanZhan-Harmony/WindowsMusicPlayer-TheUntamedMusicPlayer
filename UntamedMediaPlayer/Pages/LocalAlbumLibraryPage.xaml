@@ -5,6 +5,7 @@
       xmlns:animations="using:CommunityToolkit.WinUI.Animations"
       xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -174,20 +175,20 @@
                       Grid.Row="2"
                       Visibility="Collapsed">
             <SemanticZoom.ZoomedInView>
-                <ctrl:GridViewEx x:Name="albumsList"
-                                 CanDragItems="True"
-                                 IsItemClickEnabled="True"
-                                 IsMultiSelectCheckBoxEnabled="False"
-                                 IsSynchronizedWithCurrentItem="False"
-                                 SelectionMode="None"
-                                 Style="{StaticResource GridViewExtraLargeContentStyle}"
-                                 UseCustomItemPresenterWithDisplayMode="CardItemPresenter">
+                <ctrlEx:GridViewEx x:Name="albumsList"
+                                   CanDragItems="True"
+                                   IsItemClickEnabled="True"
+                                   IsMultiSelectCheckBoxEnabled="False"
+                                   IsSynchronizedWithCurrentItem="False"
+                                   SelectionMode="None"
+                                   Style="{StaticResource GridViewExtraLargeContentStyle}"
+                                   UseCustomItemPresenterWithDisplayMode="CardItemPresenter">
                     <GridView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource MediaGroupItemTemplate}" HidesIfEmpty="True"/>
                     </GridView.GroupStyle>
-                    <ctrl:GridViewEx.ItemsMenuFlyout>
+                    <ctrlEx:GridViewEx.ItemsMenuFlyout>
                         <MenuFlyout/>
-                    </ctrl:GridViewEx.ItemsMenuFlyout>
+                    </ctrlEx:GridViewEx.ItemsMenuFlyout>
                     <i:Interaction.Behaviors>
                         <behaviors:ListViewBaseMultipleSourcesBehavior/>
                         <behaviors:ListViewBasePersistentScrollingBehavior/>
@@ -195,10 +196,10 @@
                         <behaviors:ListViewBaseGroupHeaderAutomationNameBehavior/>
                         <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                     </i:Interaction.Behaviors>
-                </ctrl:GridViewEx>
+                </ctrlEx:GridViewEx>
             </SemanticZoom.ZoomedInView>
             <SemanticZoom.ZoomedOutView>
-                <ctrl:GridViewEx Style="{StaticResource SemanticZoomGroupNamesGridViewStyle}"/>
+                <ctrlEx:GridViewEx Style="{StaticResource SemanticZoomGroupNamesGridViewStyle}"/>
             </SemanticZoom.ZoomedOutView>
             <i:Interaction.Behaviors>
                 <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>

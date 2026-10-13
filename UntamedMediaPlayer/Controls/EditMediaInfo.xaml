@@ -3,6 +3,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+             xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:helpers="using:UntamedMediaPlayer.Helpers"
              xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -51,11 +52,7 @@
                             <VisualState x:Name="NoMandatoryFields"/>
                             <VisualState x:Name="MandatoryTitleArtistAlbumAndAlbumArtist">
                                 <VisualState.StateTriggers>
-                                    <StateTrigger>
-                                        <StateTrigger.IsActive>
-                                            <Binding Path="IsBasicMetadataMandatory.Value"/>
-                                        </StateTrigger.IsActive>
-                                    </StateTrigger>
+                                    <StateTrigger IsActive="{Binding IsBasicMetadataMandatory.Value}"/>
                                 </VisualState.StateTriggers>
                                 <VisualState.Setters>
                                     <Setter Target="TitleField.Style" Value="{StaticResource MandatoryContentTextBox}"/>
@@ -86,14 +83,14 @@
                             <behaviors:SelectTextOnFocusBehavior/>
                         </i:Interaction.Behaviors>
                     </TextBox>
-                    <local:NumberBoxEx x:Uid="EditMediaInfoControlMusicTrack"
-                                       Grid.Row="2"
-                                       MinWidth="{StaticResource ContentBoxWidth}"
-                                       Style="{StaticResource ContentNumberBox}"/>
-                    <local:NumberBoxEx x:Uid="EditMediaInfoControlYear"
-                                       Grid.Row="3"
-                                       MinWidth="{StaticResource ContentBoxWidth}"
-                                       Style="{StaticResource ContentNumberBox}"/>
+                    <ctrlEx:NumberBoxEx x:Uid="EditMediaInfoControlMusicTrack"
+                                        Grid.Row="2"
+                                        MinWidth="{StaticResource ContentBoxWidth}"
+                                        Style="{StaticResource ContentNumberBox}"/>
+                    <ctrlEx:NumberBoxEx x:Uid="EditMediaInfoControlYear"
+                                        Grid.Row="3"
+                                        MinWidth="{StaticResource ContentBoxWidth}"
+                                        Style="{StaticResource ContentNumberBox}"/>
                     <TextBox x:Name="ArtistField"
                              x:Uid="EditMediaInfoControlArtist"
                              Grid.Row="0"
@@ -210,12 +207,12 @@
                             <behaviors:SelectTextOnFocusBehavior/>
                         </i:Interaction.Behaviors>
                     </TextBox>
-                    <local:NumberBoxEx x:Name="YearField"
-                                       x:Uid="EditMediaInfoControlYear"
-                                       Grid.Row="1"
-                                       Grid.Column="2"
-                                       MinWidth="{StaticResource ContentBoxWidth}"
-                                       Style="{StaticResource ContentNumberBox}"/>
+                    <ctrlEx:NumberBoxEx x:Name="YearField"
+                                        x:Uid="EditMediaInfoControlYear"
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        MinWidth="{StaticResource ContentBoxWidth}"
+                                        Style="{StaticResource ContentNumberBox}"/>
                 </Grid>
             </UserControl>
         </DataTemplate>

@@ -27,7 +27,7 @@ public sealed class SettingsService : ISettingsService
                 return;
             }
 
-            UnsubscribeFromSettings(value);
+            UnsubscribeFromSettings(field);
             field = value;
             SubscribeToSettings(value);
             _loggingService?.ApplySettings(value.DeveloperSettings);

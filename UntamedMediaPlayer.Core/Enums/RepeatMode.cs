@@ -1,6 +1,6 @@
 namespace UntamedMediaPlayer.Core.Enums;
 
-internal enum RepeatMode
+public enum RepeatMode
 {
     NoRepeat,
     RepeatAll,

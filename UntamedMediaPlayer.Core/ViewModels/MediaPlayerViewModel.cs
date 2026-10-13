@@ -1,5 +1,6 @@
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using UntamedMediaPlayer.Core.Enums;
 
 namespace UntamedMediaPlayer.Core.ViewModels;
 
@@ -8,58 +9,74 @@ namespace UntamedMediaPlayer.Core.ViewModels;
 /// The media engine is not part of the migrated project yet, so these
 /// properties provide stable bindable defaults until the engine is connected.
 /// </summary>
-public class MediaPlayerViewModel : ObservableObject
+public partial class MediaPlayerViewModel : ObservableObject
 {
-    public bool IsPlaying { get; set; }
-    public bool IsPlayingVideo { get; set; }
-    public bool IsShuffleEnabled { get; set; }
-    public bool IsZoomedToFill { get; set; }
-    public TimeSpan Duration { get; set; }
-    public object? RepeatMode { get; set; }
-    public object? DisplayMode { get; set; }
-    public object? LanguageSelection { get; set; }
+    [ObservableProperty]
+    public partial bool IsPlaying { get; set; }
 
-    public MediaPlayerCommand ToggleShuffleModeCommand { get; } = new("Shuffle");
-    public MediaPlayerCommand MoveToPreviousTrackCommand { get; } = new("Previous");
-    public MediaPlayerCommand SkipBackwardCommand { get; } = new("Skip backward");
-    public MediaPlayerCommand TogglePlayPauseCommand { get; } = new("Play");
-    public MediaPlayerCommand SkipForwardCommand { get; } = new("Skip forward");
-    public MediaPlayerCommand MoveToNextTrackCommand { get; } = new("Next");
-    public MediaPlayerCommand ToggleRepeatModeCommand { get; } = new("Repeat");
-    public MediaPlayerCommand ToggleFullScreenModeCommand { get; } = new("Full screen");
-    public MediaPlayerCommand ToggleMiniPlayerModeCommand { get; } = new("Mini player");
-    public MediaPlayerCommand ShowFilePropertiesCommand { get; } = new("Properties");
-    public MediaPlayerCommand EditWithClipChampCommand { get; } = new("Edit");
-    public MediaPlayerCommand ShowEqualizerCommand { get; } = new("Equalizer");
-    public MediaPlayerCommand ChangePlaybackRateCommand { get; } = new("Playback rate");
-    public MediaPlayerCommand RotateMediaCommand { get; } = new("Rotate");
-    public MediaPlayerCommand ToggleZoomToFillCommand { get; } = new("Zoom");
-}
+    [ObservableProperty]
+    public partial bool IsPlayingVideo { get; set; }
 
-/// <summary>Small command adapter used by the migrated XAML until real commands are wired.</summary>
-public sealed class MediaPlayerCommand : ObservableObject, ICommand
-{
-    private bool _isEnabled = true;
+    [ObservableProperty]
+    public partial bool IsShuffleEnabled { get; set; }
 
-    public MediaPlayerCommand(string label) => Label = label;
+    [ObservableProperty]
+    public partial bool IsZoomedToFill { get; set; }
 
-    public string Label { get; }
+    [ObservableProperty]
+    public partial TimeSpan Duration { get; set; }
 
-    public bool IsEnabled
-    {
-        get => _isEnabled;
-        set
-        {
-            if (SetProperty(ref _isEnabled, value))
-            {
-                CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial RepeatMode RepeatMode { get; set; }
 
-    public event EventHandler? CanExecuteChanged;
+    [ObservableProperty]
+    public partial DisplayMode DisplayMode { get; set; }
 
-    public bool CanExecute(object? parameter) => IsEnabled;
+    [ObservableProperty]
+    public partial string? LanguageSelection { get; set; }
 
-    public void Execute(object? parameter) { }
+    [RelayCommand]
+    public void TogglePlayPause() { }
+
+    [RelayCommand]
+    public void ToggleShuffleMode() { }
+
+    [RelayCommand]
+    public void ToggleRepeatMode() { }
+
+    [RelayCommand]
+    public void ToggleFullScreenMode() { }
+
+    [RelayCommand]
+    public void ToggleMiniPlayerMode() { }
+
+    [RelayCommand]
+    public void ToggleZoomToFill() { }
+
+    [RelayCommand]
+    public void MoveToPreviousTrack() { }
+
+    [RelayCommand]
+    public void MoveToNextTrack() { }
+
+    [RelayCommand]
+    public void SkipBackward() { }
+
+    [RelayCommand]
+    public void SkipForward() { }
+
+    [RelayCommand]
+    public void ShowFileProperties() { }
+
+    [RelayCommand]
+    public void EditWithClipChamp() { }
+
+    [RelayCommand]
+    public void ShowEqualizer() { }
+
+    [RelayCommand]
+    public void ChangePlaybackRate() { }
+
+    [RelayCommand]
+    public void RotateMedia() { }
 }

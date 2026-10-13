@@ -3,6 +3,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
+             xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:helpers="using:UntamedMediaPlayer.Helpers"
              xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -46,22 +47,21 @@
                          x:Uid="SeeAllSearchResults"
                          Grid.Column="1"
                          Margin="{StaticResource ContentExtraLargeLeftRightDefaultBottomMargin}"/>
-        <local:ListViewEx x:Name="ResultsList"
-                          Grid.Row="1"
-                          Grid.ColumnSpan="2"
-                          CanDragItems="True"
-                          IsItemDoubleClickEnabled="True"
-                          IsMultiSelectCheckBoxEnabled="False"
-                          IsSynchronizedWithCurrentItem="False"
-                          SelectionMode="Single"
-                          Style="{StaticResource ListViewExtraLargeContentStyle}"
-                          UseCustomItemPresenterWithDisplayMode="ListItemPresenterWithoutCheckbox">
-            <local:ListViewEx.ItemsMenuFlyout>
+        <ctrlEx:ListViewEx x:Name="ResultsList"
+                           Grid.Row="1"
+                           Grid.ColumnSpan="2"
+                           CanDragItems="True"
+                           IsMultiSelectCheckBoxEnabled="False"
+                           IsSynchronizedWithCurrentItem="False"
+                           SelectionMode="Single"
+                           Style="{StaticResource ListViewExtraLargeContentStyle}"
+                           UseCustomItemPresenterWithDisplayMode="ListItemPresenterWithoutCheckbox">
+            <ctrlEx:ListViewEx.ItemsMenuFlyout>
                 <MenuFlyout/>
-            </local:ListViewEx.ItemsMenuFlyout>
+            </ctrlEx:ListViewEx.ItemsMenuFlyout>
             <i:Interaction.Behaviors>
                 <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
             </i:Interaction.Behaviors>
-        </local:ListViewEx>
+        </ctrlEx:ListViewEx>
     </Grid>
 </UserControl>
