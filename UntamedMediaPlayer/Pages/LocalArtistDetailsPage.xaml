@@ -4,7 +4,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
-      xmlns:ctrlAttached="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -136,7 +136,6 @@
                         <StateTrigger/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="list.(ctrlAttached:ListViewBaseEx.IsItemDoubleClickEnabled)" Value="False"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ListViewDisplayModeWithoutSelection">
@@ -144,19 +143,18 @@
                         <StateTrigger/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="list.(ctrlAttached:ListViewBaseEx.IsItemDoubleClickEnabled)" Value="True"/>
                         <Setter Target="list.SelectionMode" Value="Extended"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <ctrl:ListViewEx x:Name="list"
-                         CanDragItems="True"
-                         IsMultiSelectCheckBoxEnabled="False"
-                         IsSynchronizedWithCurrentItem="False"
-                         Style="{StaticResource ListViewBaseExtraLargeContentStyle}"
-                         Visibility="Collapsed">
+        <ctrlEx:ListViewEx x:Name="list"
+                           CanDragItems="True"
+                           IsMultiSelectCheckBoxEnabled="False"
+                           IsSynchronizedWithCurrentItem="False"
+                           Style="{StaticResource ListViewBaseExtraLargeContentStyle}"
+                           Visibility="Collapsed">
             <ListView.Header>
                 <ctrl:DetailsPageHeader x:Name="listHeader" ImageType="Artist">
                     <ctrl:DetailsPageHeader.TitleContentBar>
@@ -171,16 +169,16 @@
                     </ctrl:DetailsPageHeader.TitleContentBar>
                 </ctrl:DetailsPageHeader>
             </ListView.Header>
-            <ctrl:ListViewEx.ItemsMenuFlyout>
+            <ctrlEx:ListViewEx.ItemsMenuFlyout>
                 <MenuFlyout/>
-            </ctrl:ListViewEx.ItemsMenuFlyout>
+            </ctrlEx:ListViewEx.ItemsMenuFlyout>
             <i:Interaction.Behaviors>
                 <behaviors:ListViewBasePersistentScrollingBehavior/>
                 <behaviors:SelectionManagerBehavior/>
                 <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                 <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
             </i:Interaction.Behaviors>
-        </ctrl:ListViewEx>
+        </ctrlEx:ListViewEx>
         <ProgressRing x:Name="progress"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center"

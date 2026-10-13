@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ListViewItemPresenter x:Class="UntamedMediaPlayer.Controls.CustomItemPresenters.SimpleCardItemPresenter"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
+                       xmlns:local="using:UntamedMediaPlayer.Controls.CustomItemPresenters"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d">
+    <ListViewItemPresenter.Style>
+        <Style TargetType="local:SimpleCardItemPresenter">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="local:SimpleCardItemPresenter">
+                        <Grid x:Name="root"
+                              Margin="{StaticResource ElementSmallBottomDefaultRightMargin}"
+                              Background="#00FFFFFF"
+                              BorderBrush="#00FFFFFF"
+                              BorderThickness="{ThemeResource PageHeaderBorderThickness}"
+                              CornerRadius="{ThemeResource OverlayCornerRadius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="AdaptiveLayout">
+                                    <VisualState x:Name="Default"/>
+                                    <VisualState x:Name="Narrow">
+                                        <VisualState.StateTriggers>
+                                            <helpers:ViewportStateTrigger State="Narrow"/>
+                                        </VisualState.StateTriggers>
+                                        <VisualState.Setters>
+                                            <Setter Target="root.Margin" Value="{StaticResource ElementBottomMargin}"/>
+                                            <Setter Target="mainPanel.Width" Value="Auto"/>
+                                            <Setter Target="mainPanel.Orientation" Value="Horizontal"/>
+                                            <Setter Target="coverArtImage.Width" Value="{StaticResource CoverArtSmallSize}"/>
+                                            <Setter Target="coverArtImage.Height" Value="{StaticResource CoverArtSmallSize}"/>
+                                            <Setter Target="placeHolderPanel.VerticalAlignment" Value="Center"/>
+                                            <Setter Target="contentPanel.VerticalAlignment" Value="Center"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <StackPanel x:Name="mainPanel" Width="{StaticResource CoverArtListItemSize}">
+                                <ctrl:CoverArtImage x:Name="coverArtImage"
+                                                    Width="{StaticResource CoverArtListItemSize}"
+                                                    Height="{StaticResource CoverArtListItemSize}"
+                                                    ImageContext="LibraryPage"/>
+                                <Grid>
+                                    <StackPanel x:Name="placeHolderPanel" Opacity="0">
+                                        <TextBlock AutomationProperties.AccessibilityView="Raw"
+                                                   Style="{StaticResource MediaItemDataTemplateTitleStyle}"
+                                                   Text="{StaticResource TwoEmptyLines}"/>
+                                        <TextBlock AutomationProperties.AccessibilityView="Raw" Style="{StaticResource MediaItemDataTemplateSubtitleStyle}"/>
+                                    </StackPanel>
+                                    <StackPanel x:Name="contentPanel">
+                                        <TextBlock x:Name="title"
+                                                   AutomationProperties.AccessibilityView="Raw"
+                                                   Style="{StaticResource MediaItemDataTemplateTitleStyle}">
+                                            <ToolTipService.ToolTip>
+                                                <ToolTip Content="{Binding ElementName=title, Path=Text}" IsEnabled="{Binding ElementName=title, Path=IsTextTrimmed}"/>
+                                            </ToolTipService.ToolTip>
+                                        </TextBlock>
+                                        <TextBlock AutomationProperties.AccessibilityView="Raw" Style="{StaticResource MediaItemDataTemplateSubtitleStyle}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ListViewItemPresenter.Style>
+</ListViewItemPresenter>

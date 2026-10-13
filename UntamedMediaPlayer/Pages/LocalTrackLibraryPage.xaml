@@ -5,7 +5,7 @@
       xmlns:animations="using:CommunityToolkit.WinUI.Animations"
       xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
-      xmlns:ctrlAttached="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -101,7 +101,6 @@
                         <Setter Target="contentList.Visibility" Value="Visible"/>
                         <Setter Target="pageHeaderSelectionControlsBar.Visibility" Value="Visible"/>
                         <Setter Target="pageHeaderSelectionControlsBar.IsEnabled" Value="True"/>
-                        <Setter Target="tracksList.(ctrlAttached:ListViewBaseEx.IsItemDoubleClickEnabled)" Value="False"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -175,7 +174,7 @@
                       Grid.Row="2"
                       Visibility="Collapsed">
             <SemanticZoom.ZoomedInView>
-                <ctrl:ListViewEx x:Name="tracksList"
+                <ctrlEx:ListViewEx x:Name="tracksList"
                                  CanDragItems="True"
                                  IsMultiSelectCheckBoxEnabled="False"
                                  IsSynchronizedWithCurrentItem="False"
@@ -185,9 +184,9 @@
                     <ListView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource MediaGroupItemTemplate}" HidesIfEmpty="True"/>
                     </ListView.GroupStyle>
-                    <ctrl:ListViewEx.ItemsMenuFlyout>
+                    <ctrlEx:ListViewEx.ItemsMenuFlyout>
                         <MenuFlyout/>
-                    </ctrl:ListViewEx.ItemsMenuFlyout>
+                    </ctrlEx:ListViewEx.ItemsMenuFlyout>
                     <i:Interaction.Behaviors>
                         <behaviors:ListViewBaseMultipleSourcesBehavior/>
                         <behaviors:ListViewBasePersistentScrollingBehavior/>
@@ -195,10 +194,10 @@
                         <behaviors:ListViewBaseGroupHeaderAutomationNameBehavior/>
                         <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                     </i:Interaction.Behaviors>
-                </ctrl:ListViewEx>
+                </ctrlEx:ListViewEx>
             </SemanticZoom.ZoomedInView>
             <SemanticZoom.ZoomedOutView>
-                <ctrl:GridViewEx Style="{StaticResource SemanticZoomGroupNamesGridViewStyle}"/>
+                <ctrlEx:GridViewEx Style="{StaticResource SemanticZoomGroupNamesGridViewStyle}"/>
             </SemanticZoom.ZoomedOutView>
             <i:Interaction.Behaviors>
                 <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>

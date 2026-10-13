@@ -11,11 +11,7 @@
         <local:MaxCountCollectionProxy x:Key="MaxCountCollection" x:Name="MaxCountCollection"/>
         <local:NonVirtualizingAdaptiveGridLayout x:Key="Layout" x:Name="Layout"/>
         <DataTemplate x:Key="ItemTemplate">
-            <local:ResponsiveListCardItemPresenter DisplayMode="CardItemPresenterWithWideVideoImage">
-                <local:ResponsiveListCardItemPresenter.ViewModel>
-                    <Binding/>
-                </local:ResponsiveListCardItemPresenter.ViewModel>
-            </local:ResponsiveListCardItemPresenter>
+            <local:ResponsiveListCardItemPresenter DisplayMode="CardItemPresenterWithWideVideoImage" ViewModel="{Binding}"/>
         </DataTemplate>
         <Style BasedOn="{StaticResource DefaultCardItemPresenterStyle}" TargetType="local:ResponsiveListCardItemPresenter"/>
     </UserControl.Resources>

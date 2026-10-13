@@ -5,6 +5,7 @@
       xmlns:animations="using:CommunityToolkit.WinUI.Animations"
       xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -124,25 +125,25 @@
                 </animations:Implicit.HideAnimations>
             </ctrl:SelectionControlsBar>
         </Border>
-        <ctrl:GridViewEx x:Name="contentList"
-                         Grid.Row="2"
-                         CanDragItems="True"
-                         IsItemClickEnabled="True"
-                         IsMultiSelectCheckBoxEnabled="False"
-                         IsSynchronizedWithCurrentItem="False"
-                         SelectionMode="None"
-                         Style="{StaticResource GridViewExtraLargeContentStyle}"
-                         UseCustomItemPresenterWithDisplayMode="CardItemPresenterWithWideImage">
-            <ctrl:GridViewEx.ItemsMenuFlyout>
+        <ctrlEx:GridViewEx x:Name="contentList"
+                           Grid.Row="2"
+                           CanDragItems="True"
+                           IsItemClickEnabled="True"
+                           IsMultiSelectCheckBoxEnabled="False"
+                           IsSynchronizedWithCurrentItem="False"
+                           SelectionMode="None"
+                           Style="{StaticResource GridViewExtraLargeContentStyle}"
+                           UseCustomItemPresenterWithDisplayMode="CardItemPresenterWithWideImage">
+            <ctrlEx:GridViewEx.ItemsMenuFlyout>
                 <MenuFlyout/>
-            </ctrl:GridViewEx.ItemsMenuFlyout>
+            </ctrlEx:GridViewEx.ItemsMenuFlyout>
             <i:Interaction.Behaviors>
                 <behaviors:ListViewBasePersistentScrollingBehavior/>
                 <behaviors:SelectionManagerBehavior/>
                 <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                 <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
             </i:Interaction.Behaviors>
-        </ctrl:GridViewEx>
+        </ctrlEx:GridViewEx>
         <ProgressRing x:Name="progress"
                       Grid.Row="2"
                       HorizontalAlignment="Center"

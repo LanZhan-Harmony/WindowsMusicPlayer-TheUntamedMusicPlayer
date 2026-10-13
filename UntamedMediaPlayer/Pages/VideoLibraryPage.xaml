@@ -5,6 +5,7 @@
       xmlns:animations="using:CommunityToolkit.WinUI.Animations"
       xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -214,27 +215,27 @@
                     </animations:Implicit.HideAnimations>
                 </ctrl:SelectionControlsBar>
             </Border>
-            <ctrl:GridViewEx x:Name="AllVideosGrid"
-                             Grid.Row="1"
-                             x:Load="False"
-                             CanDragItems="True"
-                             IsItemClickEnabled="True"
-                             IsMultiSelectCheckBoxEnabled="False"
-                             IsSynchronizedWithCurrentItem="False"
-                             SelectionMode="None"
-                             Style="{StaticResource GridViewExtraLargeContentStyle}"
-                             UseCustomItemPresenterWithDisplayMode="CardItemPresenterWithWideVideoImage">
-                <ctrl:GridViewEx.ItemsMenuFlyout>
+            <ctrlEx:GridViewEx x:Name="AllVideosGrid"
+                               Grid.Row="1"
+                               x:Load="False"
+                               CanDragItems="True"
+                               IsItemClickEnabled="True"
+                               IsMultiSelectCheckBoxEnabled="False"
+                               IsSynchronizedWithCurrentItem="False"
+                               SelectionMode="None"
+                               Style="{StaticResource GridViewExtraLargeContentStyle}"
+                               UseCustomItemPresenterWithDisplayMode="CardItemPresenterWithWideVideoImage">
+                <ctrlEx:GridViewEx.ItemsMenuFlyout>
                     <MenuFlyout/>
-                </ctrl:GridViewEx.ItemsMenuFlyout>
+                </ctrlEx:GridViewEx.ItemsMenuFlyout>
                 <i:Interaction.Behaviors>
                     <behaviors:ListViewBasePersistentScrollingBehavior/>
                     <behaviors:SelectionManagerBehavior/>
                     <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                     <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
                 </i:Interaction.Behaviors>
-            </ctrl:GridViewEx>
-            <ctrl:ListViewEx x:Name="AllVideosList"
+            </ctrlEx:GridViewEx>
+            <ctrlEx:ListViewEx x:Name="AllVideosList"
                              Grid.Row="1"
                              x:Load="False"
                              CanDragItems="True"
@@ -243,16 +244,16 @@
                              ItemTemplate="{StaticResource VideoListItemTemplate}"
                              SelectionMode="Extended"
                              Style="{StaticResource ListViewExtraLargeContentStyle}">
-                <ctrl:ListViewEx.ItemsMenuFlyout>
+                <ctrlEx:ListViewEx.ItemsMenuFlyout>
                     <MenuFlyout/>
-                </ctrl:ListViewEx.ItemsMenuFlyout>
+                </ctrlEx:ListViewEx.ItemsMenuFlyout>
                 <i:Interaction.Behaviors>
                     <behaviors:ListViewBasePersistentScrollingBehavior/>
                     <behaviors:SelectionManagerBehavior/>
                     <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                     <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
                 </i:Interaction.Behaviors>
-            </ctrl:ListViewEx>
+            </ctrlEx:ListViewEx>
         </Grid>
         <ProgressRing x:Name="progress"
                       Grid.Row="1"

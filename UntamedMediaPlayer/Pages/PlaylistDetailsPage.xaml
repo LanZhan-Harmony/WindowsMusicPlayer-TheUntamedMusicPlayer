@@ -4,7 +4,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:behaviors="using:UntamedMediaPlayer.Behaviors"
       xmlns:ctrl="using:UntamedMediaPlayer.Controls"
-      xmlns:ctrlAttached="using:UntamedMediaPlayer.Controls"
+      xmlns:ctrlEx="using:UntamedMediaPlayer.Controls.Extensions"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:helpers="using:UntamedMediaPlayer.Helpers"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -96,34 +96,32 @@
                     <VisualState.StateTriggers>
                         <StateTrigger/>
                     </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="list.(ctrlAttached:ListViewBaseEx.IsItemDoubleClickEnabled)" Value="False"/>
-                    </VisualState.Setters>
+                    <VisualState.Setters/>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <ctrl:ListViewEx x:Name="list"
-                         AllowDrop="True"
-                         CanDragItems="True"
-                         CanReorderItems="True"
-                         IsMultiSelectCheckBoxEnabled="False"
-                         IsSynchronizedWithCurrentItem="False"
-                         SelectionMode="Extended"
-                         Style="{StaticResource ListViewExtraLargeContentStyle}"
-                         UseCustomItemPresenterWithDisplayMode="ListItemPresenterWithMediaTypeIcon">
+        <ctrlEx:ListViewEx x:Name="list"
+                           AllowDrop="True"
+                           CanDragItems="True"
+                           CanReorderItems="True"
+                           IsMultiSelectCheckBoxEnabled="False"
+                           IsSynchronizedWithCurrentItem="False"
+                           SelectionMode="Extended"
+                           Style="{StaticResource ListViewExtraLargeContentStyle}"
+                           UseCustomItemPresenterWithDisplayMode="ListItemPresenterWithMediaTypeIcon">
             <ListView.Header>
                 <ctrl:DetailsPageHeader x:Name="header" ImageType="Playlist"/>
             </ListView.Header>
-            <ctrl:ListViewEx.ItemsMenuFlyout>
+            <ctrlEx:ListViewEx.ItemsMenuFlyout>
                 <MenuFlyout/>
-            </ctrl:ListViewEx.ItemsMenuFlyout>
+            </ctrlEx:ListViewEx.ItemsMenuFlyout>
             <i:Interaction.Behaviors>
                 <behaviors:ListViewBasePersistentScrollingBehavior/>
                 <behaviors:SelectionManagerBehavior/>
                 <behaviors:DragConfigurationBehavior Command="{StaticResource playlistsDropCommandAdapter}"/>
                 <behaviors:RestoreListViewItemFocusOnVisualStateChangeBehavior/>
             </i:Interaction.Behaviors>
-        </ctrl:ListViewEx>
+        </ctrlEx:ListViewEx>
         <ProgressRing x:Name="progress"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center"
