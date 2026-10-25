@@ -16,7 +16,7 @@ public sealed class PlaybackRate : DependencyObject
         set => SetValue(ValueProperty, value);
     }
 
-    private static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
         nameof(Value),
         typeof(string),
         typeof(PlaybackRate),
@@ -38,7 +38,7 @@ public abstract class PlaybackModeValue : DependencyObject
         set => SetValue(ValueProperty, value);
     }
 
-    private static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
         nameof(Value),
         typeof(string),
         typeof(PlaybackModeValue),

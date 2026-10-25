@@ -12,7 +12,7 @@ internal sealed partial class MetadataControl : Control
         set => SetValue(TextBlockStyleProperty, value);
     }
 
-    private static readonly DependencyProperty TextBlockStyleProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty TextBlockStyleProperty = DependencyProperty.Register(
         nameof(TextBlockStyle),
         typeof(Style),
         typeof(MetadataControl),
@@ -25,7 +25,7 @@ internal sealed partial class MetadataControl : Control
         set => SetValue(AlternateBrushProperty, value);
     }
 
-    private static readonly DependencyProperty AlternateBrushProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty AlternateBrushProperty = DependencyProperty.Register(
         nameof(AlternateBrush),
         typeof(SolidColorBrush),
         typeof(MetadataControl),

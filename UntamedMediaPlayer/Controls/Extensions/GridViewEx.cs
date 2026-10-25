@@ -14,7 +14,7 @@ internal sealed partial class GridViewEx : GridView
         set => SetValue(UseCustomItemPresenterWithDisplayModeProperty, value);
     }
 
-    private static readonly DependencyProperty UseCustomItemPresenterWithDisplayModeProperty =
+    public static readonly DependencyProperty UseCustomItemPresenterWithDisplayModeProperty =
         DependencyProperty.Register(
             nameof(UseCustomItemPresenterWithDisplayMode),
             typeof(string),
@@ -28,7 +28,7 @@ internal sealed partial class GridViewEx : GridView
         set => SetValue(ItemsMenuFlyoutProperty, value);
     }
 
-    private static readonly DependencyProperty ItemsMenuFlyoutProperty =
+    public static readonly DependencyProperty ItemsMenuFlyoutProperty =
         DependencyProperty.Register(
             nameof(ItemsMenuFlyout),
             typeof(MenuFlyout),

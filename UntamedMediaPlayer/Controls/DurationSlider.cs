@@ -11,7 +11,7 @@ internal sealed partial class DurationSlider : Slider
         set => SetValue(DurationProperty, value);
     }
 
-    private static readonly DependencyProperty DurationProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty DurationProperty = DependencyProperty.Register(
         nameof(Duration),
         typeof(TimeSpan),
         typeof(DurationSlider),

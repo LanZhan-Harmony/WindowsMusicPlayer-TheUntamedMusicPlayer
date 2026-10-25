@@ -10,7 +10,7 @@ internal sealed class DragAndDropUIOverride : DependencyObject
         set => SetValue(IsCaptionVisibleProperty, value);
     }
 
-    private static readonly DependencyProperty IsCaptionVisibleProperty =
+    public static readonly DependencyProperty IsCaptionVisibleProperty =
         DependencyProperty.Register(
             nameof(IsCaptionVisible),
             typeof(bool),
@@ -24,7 +24,7 @@ internal sealed class DragAndDropUIOverride : DependencyObject
         set => SetValue(IsContentVisibleProperty, value);
     }
 
-    private static readonly DependencyProperty IsContentVisibleProperty =
+    public static readonly DependencyProperty IsContentVisibleProperty =
         DependencyProperty.Register(
             nameof(IsContentVisible),
             typeof(bool),
@@ -38,7 +38,7 @@ internal sealed class DragAndDropUIOverride : DependencyObject
         set => SetValue(IsGlyphVisibleProperty, value);
     }
 
-    private static readonly DependencyProperty IsGlyphVisibleProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty IsGlyphVisibleProperty = DependencyProperty.Register(
         nameof(IsGlyphVisible),
         typeof(bool),
         typeof(DragAndDropUIOverride),

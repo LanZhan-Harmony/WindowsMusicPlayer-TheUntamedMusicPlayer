@@ -15,7 +15,7 @@ internal sealed class RowDefinitionTextScaleFactorBehavior : Behavior<RowDefinit
         set => SetValue(MinHeightProperty, value);
     }
 
-    private static readonly DependencyProperty MinHeightProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty MinHeightProperty = DependencyProperty.Register(
         nameof(MinHeight),
         typeof(double),
         typeof(RowDefinitionTextScaleFactorBehavior),

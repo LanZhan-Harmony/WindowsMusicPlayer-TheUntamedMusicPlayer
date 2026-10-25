@@ -16,7 +16,7 @@ internal sealed partial class EqualizerBandSliderControl : Slider
         set => SetValue(RowProperty, value);
     }
 
-    private static readonly DependencyProperty RowProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty RowProperty = DependencyProperty.Register(
         nameof(Row),
         typeof(int),
         typeof(EqualizerBandSliderControl),

@@ -12,7 +12,7 @@ internal sealed partial class DurationTextBlock : Control
         set => SetValue(ContentProperty, value);
     }
 
-    private static readonly DependencyProperty ContentProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ContentProperty = DependencyProperty.Register(
         nameof(Content),
         typeof(object),
         typeof(DurationTextBlock),
@@ -25,7 +25,7 @@ internal sealed partial class DurationTextBlock : Control
         set => SetValue(IsRemainingDurationProperty, value);
     }
 
-    private static readonly DependencyProperty IsRemainingDurationProperty =
+    public static readonly DependencyProperty IsRemainingDurationProperty =
         DependencyProperty.Register(
             nameof(IsRemainingDuration),
             typeof(bool),
@@ -39,7 +39,7 @@ internal sealed partial class DurationTextBlock : Control
         set => SetValue(TextStyleProperty, value);
     }
 
-    private static readonly DependencyProperty TextStyleProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty TextStyleProperty = DependencyProperty.Register(
         nameof(TextStyle),
         typeof(Style),
         typeof(DurationTextBlock),
@@ -52,7 +52,7 @@ internal sealed partial class DurationTextBlock : Control
         set => SetValue(ViewModelProperty, value);
     }
 
-    private static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
         nameof(ViewModel),
         typeof(MediaPlayerViewModel),
         typeof(DurationTextBlock),

@@ -2,9 +2,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UntamedMediaPlayer.Services;
 
-
-
-
 namespace UntamedMediaPlayer.Controls;
 
 internal sealed partial class AppChrome : UserControl

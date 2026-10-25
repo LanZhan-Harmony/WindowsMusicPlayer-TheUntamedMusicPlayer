@@ -11,7 +11,7 @@ internal sealed partial class SortAndFilterControl : AppBarButton
         set => SetValue(SelectedItemProperty, value);
     }
 
-    private static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
         nameof(SelectedItem),
         typeof(object),
         typeof(SortAndFilterControl),

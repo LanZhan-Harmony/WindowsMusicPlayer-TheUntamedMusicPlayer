@@ -12,7 +12,7 @@ internal sealed class DropConfiguration : DependencyObject
         set => SetValue(AcceptedOperationProperty, value);
     }
 
-    private static readonly DependencyProperty AcceptedOperationProperty =
+    public static readonly DependencyProperty AcceptedOperationProperty =
         DependencyProperty.Register(
             nameof(AcceptedOperation),
             typeof(DataPackageOperation),
@@ -26,7 +26,7 @@ internal sealed class DropConfiguration : DependencyObject
         set => SetValue(AcceptedUIOverrideProperty, value);
     }
 
-    private static readonly DependencyProperty AcceptedUIOverrideProperty =
+    public static readonly DependencyProperty AcceptedUIOverrideProperty =
         DependencyProperty.Register(
             nameof(AcceptedUIOverride),
             typeof(DragAndDropUIOverride),
@@ -40,7 +40,7 @@ internal sealed class DropConfiguration : DependencyObject
         set => SetValue(RejectedUIOverrideProperty, value);
     }
 
-    private static readonly DependencyProperty RejectedUIOverrideProperty =
+    public static readonly DependencyProperty RejectedUIOverrideProperty =
         DependencyProperty.Register(
             nameof(RejectedUIOverride),
             typeof(DragAndDropUIOverride),
@@ -54,7 +54,7 @@ internal sealed class DropConfiguration : DependencyObject
         set => SetValue(CommandProperty, value);
     }
 
-    private static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
         nameof(Command),
         typeof(ICommand),
         typeof(DropConfiguration),

@@ -33,7 +33,7 @@ internal sealed partial class ViewportStateTrigger : StateTriggerBase, IDisposab
         set => SetValue(IsEnabledProperty, value);
     }
 
-    private static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register(
         nameof(IsEnabled),
         typeof(bool),
         typeof(ViewportStateTrigger),
@@ -46,7 +46,7 @@ internal sealed partial class ViewportStateTrigger : StateTriggerBase, IDisposab
         set => SetValue(StateProperty, value);
     }
 
-    private static readonly DependencyProperty StateProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty StateProperty = DependencyProperty.Register(
         nameof(State),
         typeof(string),
         typeof(ViewportStateTrigger),
@@ -59,7 +59,7 @@ internal sealed partial class ViewportStateTrigger : StateTriggerBase, IDisposab
         set => SetValue(PrimaryInteractionModeProperty, value);
     }
 
-    private static readonly DependencyProperty PrimaryInteractionModeProperty =
+    public static readonly DependencyProperty PrimaryInteractionModeProperty =
         DependencyProperty.Register(
             nameof(PrimaryInteractionMode),
             typeof(InteractionMode?),

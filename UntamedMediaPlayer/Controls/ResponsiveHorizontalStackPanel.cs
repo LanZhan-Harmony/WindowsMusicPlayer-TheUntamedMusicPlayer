@@ -19,7 +19,7 @@ internal sealed partial class ResponsiveHorizontalStackPanel : Panel
         obj.SetValue(StretchFactorProperty, value);
     }
 
-    private static readonly DependencyProperty StretchFactorProperty =
+    public static readonly DependencyProperty StretchFactorProperty =
         DependencyProperty.RegisterAttached(
             "StretchFactor",
             typeof(double),
@@ -37,7 +37,7 @@ internal sealed partial class ResponsiveHorizontalStackPanel : Panel
         obj.SetValue(UnstretchedWidthProperty, value);
     }
 
-    private static readonly DependencyProperty UnstretchedWidthProperty =
+    public static readonly DependencyProperty UnstretchedWidthProperty =
         DependencyProperty.RegisterAttached(
             "UnstretchedWidth",
             typeof(double),
@@ -55,7 +55,7 @@ internal sealed partial class ResponsiveHorizontalStackPanel : Panel
         obj.SetValue(FallOffOrderProperty, value);
     }
 
-    private static readonly DependencyProperty FallOffOrderProperty =
+    public static readonly DependencyProperty FallOffOrderProperty =
         DependencyProperty.RegisterAttached(
             "FallOffOrder",
             typeof(int),

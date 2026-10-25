@@ -15,7 +15,7 @@ internal sealed class CommandKeyboardAccelerator : DependencyObject
         set => SetValue(KeyProperty, value);
     }
 
-    private static readonly DependencyProperty KeyProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty KeyProperty = DependencyProperty.Register(
         nameof(Key),
         typeof(VirtualKey),
         typeof(CommandKeyboardAccelerator),
@@ -28,7 +28,7 @@ internal sealed class CommandKeyboardAccelerator : DependencyObject
         set => SetValue(KeyCodeProperty, value);
     }
 
-    private static readonly DependencyProperty KeyCodeProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty KeyCodeProperty = DependencyProperty.Register(
         nameof(KeyCode),
         typeof(int),
         typeof(CommandKeyboardAccelerator),
@@ -41,7 +41,7 @@ internal sealed class CommandKeyboardAccelerator : DependencyObject
         set => SetValue(ModifiersProperty, value);
     }
 
-    private static readonly DependencyProperty ModifiersProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ModifiersProperty = DependencyProperty.Register(
         nameof(Modifiers),
         typeof(VirtualKeyModifiers),
         typeof(CommandKeyboardAccelerator),
@@ -54,7 +54,7 @@ internal sealed class CommandKeyboardAccelerator : DependencyObject
         set => SetValue(CommandParameterProperty, value);
     }
 
-    private static readonly DependencyProperty CommandParameterProperty =
+    public static readonly DependencyProperty CommandParameterProperty =
         DependencyProperty.Register(
             nameof(CommandParameter),
             typeof(object),
@@ -68,7 +68,7 @@ internal sealed class CommandKeyboardAccelerator : DependencyObject
         set => SetValue(CommandProperty, value);
     }
 
-    private static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
         nameof(Command),
         typeof(ICommand),
         typeof(CommandKeyboardAccelerator),

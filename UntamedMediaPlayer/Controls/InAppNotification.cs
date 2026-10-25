@@ -14,7 +14,7 @@ internal sealed partial class InAppNotification : ContentControl
         set => SetValue(IsOpenProperty, value);
     }
 
-    private static readonly DependencyProperty IsOpenProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty IsOpenProperty = DependencyProperty.Register(
         nameof(IsOpen),
         typeof(bool),
         typeof(InAppNotification),

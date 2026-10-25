@@ -19,7 +19,7 @@ internal sealed class DragConfigurationBehavior : Behavior<ListViewBase>
         set => SetValue(CanDragItemsProperty, value);
     }
 
-    private static readonly DependencyProperty CanDragItemsProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty CanDragItemsProperty = DependencyProperty.Register(
         nameof(CanDragItems),
         typeof(bool),
         typeof(DragConfigurationBehavior),
@@ -32,7 +32,7 @@ internal sealed class DragConfigurationBehavior : Behavior<ListViewBase>
         set => SetValue(CommandProperty, value);
     }
 
-    private static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
         nameof(Command),
         typeof(ICommand),
         typeof(DragConfigurationBehavior),

@@ -12,7 +12,7 @@ internal sealed partial class CardItemPresenter : ListViewItemPresenter
         set => SetValue(TemplateProperty, value);
     }
 
-    private static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
         nameof(Template),
         typeof(ControlTemplate),
         typeof(CardItemPresenter),
@@ -25,7 +25,7 @@ internal sealed partial class CardItemPresenter : ListViewItemPresenter
         set => SetValue(IsWideImageProperty, value);
     }
 
-    private static readonly DependencyProperty IsWideImageProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty IsWideImageProperty = DependencyProperty.Register(
         nameof(IsWideImage),
         typeof(bool),
         typeof(CardItemPresenter),

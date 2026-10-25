@@ -14,7 +14,7 @@ internal sealed partial class ResponsiveListCardItemPresenter : ContentControl
         set => SetValue(ViewModelProperty, value);
     }
 
-    private static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
         nameof(ViewModel),
         typeof(object),
         typeof(ResponsiveListCardItemPresenter),
@@ -27,7 +27,7 @@ internal sealed partial class ResponsiveListCardItemPresenter : ContentControl
         set => SetValue(DisplayModeProperty, value);
     }
 
-    private static readonly DependencyProperty DisplayModeProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty DisplayModeProperty = DependencyProperty.Register(
         nameof(DisplayMode),
         typeof(string),
         typeof(ResponsiveListCardItemPresenter),

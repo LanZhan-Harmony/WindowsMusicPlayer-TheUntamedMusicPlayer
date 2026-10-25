@@ -14,7 +14,7 @@ internal sealed class ResponsiveListBreakpoint : DependencyObject
         set => SetValue(ColumnsProperty, value);
     }
 
-    private static readonly DependencyProperty ColumnsProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ColumnsProperty = DependencyProperty.Register(
         nameof(Columns),
         typeof(int),
         typeof(ResponsiveListBreakpoint),
@@ -27,7 +27,7 @@ internal sealed class ResponsiveListBreakpoint : DependencyObject
         set => SetValue(MinContainerWidthProperty, value);
     }
 
-    private static readonly DependencyProperty MinContainerWidthProperty =
+    public static readonly DependencyProperty MinContainerWidthProperty =
         DependencyProperty.Register(
             nameof(MinContainerWidth),
             typeof(double),
