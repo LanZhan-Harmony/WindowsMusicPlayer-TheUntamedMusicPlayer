@@ -11,7 +11,7 @@ internal sealed partial class MediaTypeIcon : Control
         set => SetValue(MediaTypeProperty, value);
     }
 
-    private static readonly DependencyProperty MediaTypeProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty MediaTypeProperty = DependencyProperty.Register(
         nameof(MediaType),
         typeof(object),
         typeof(MediaTypeIcon),
@@ -24,7 +24,7 @@ internal sealed partial class MediaTypeIcon : Control
         set => SetValue(IsPlayingProperty, value);
     }
 
-    private static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register(
         nameof(IsPlaying),
         typeof(bool),
         typeof(MediaTypeIcon),

@@ -13,7 +13,7 @@ internal sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(CommandIconProperty, value);
     }
 
-    private static readonly DependencyProperty CommandIconProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty CommandIconProperty = DependencyProperty.Register(
         nameof(CommandIcon),
         typeof(string),
         typeof(EmptyPageMessageControl),
@@ -26,7 +26,7 @@ internal sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(ImageSourceProperty, value);
     }
 
-    private static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(
         nameof(ImageSource),
         typeof(ImageSource),
         typeof(EmptyPageMessageControl),
@@ -39,7 +39,7 @@ internal sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(IsHomePageProperty, value);
     }
 
-    private static readonly DependencyProperty IsHomePageProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty IsHomePageProperty = DependencyProperty.Register(
         nameof(IsHomePage),
         typeof(bool),
         typeof(EmptyPageMessageControl),
@@ -52,7 +52,7 @@ internal sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(CommandAccessVirtualKeyProperty, value);
     }
 
-    private static readonly DependencyProperty CommandAccessVirtualKeyProperty =
+    public static readonly DependencyProperty CommandAccessVirtualKeyProperty =
         DependencyProperty.Register(
             nameof(CommandAccessVirtualKey),
             typeof(string),
@@ -66,7 +66,7 @@ internal sealed partial class EmptyPageMessageControl : UserControl
         set => SetValue(CommandButtonFlyoutProperty, value);
     }
 
-    private static readonly DependencyProperty CommandButtonFlyoutProperty =
+    public static readonly DependencyProperty CommandButtonFlyoutProperty =
         DependencyProperty.Register(
             nameof(CommandButtonFlyout),
             typeof(FlyoutBase),

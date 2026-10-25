@@ -8,7 +8,7 @@ namespace UntamedMediaPlayer.Controls.Extensions;
 /// </summary>
 internal static class UIElementEx
 {
-    private static readonly DependencyProperty DropConfigurationProperty =
+    public static readonly DependencyProperty DropConfigurationProperty =
         DependencyProperty.RegisterAttached(
             "DropConfiguration",
             typeof(DropConfiguration),

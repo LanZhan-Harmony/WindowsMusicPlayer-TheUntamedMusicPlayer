@@ -15,7 +15,7 @@ internal sealed partial class NavigationViewItemEx : NavigationViewItem
         set => SetValue(DropConfigurationProperty, value);
     }
 
-    private static readonly DependencyProperty DropConfigurationProperty =
+    public static readonly DependencyProperty DropConfigurationProperty =
         DependencyProperty.Register(
             nameof(DropConfiguration),
             typeof(DropConfiguration),

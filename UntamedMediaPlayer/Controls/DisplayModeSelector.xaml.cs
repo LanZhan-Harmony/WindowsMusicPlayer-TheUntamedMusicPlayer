@@ -11,7 +11,7 @@ internal sealed partial class DisplayModeSelector : UserControl
         set => SetValue(HeaderProperty, value);
     }
 
-    private static readonly DependencyProperty HeaderProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty HeaderProperty = DependencyProperty.Register(
         nameof(Header),
         typeof(object),
         typeof(DisplayModeSelector),

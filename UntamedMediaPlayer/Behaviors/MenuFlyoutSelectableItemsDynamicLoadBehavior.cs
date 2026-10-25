@@ -21,7 +21,7 @@ internal sealed class MenuFlyoutSelectableItemsDynamicLoadBehavior : Behavior<Ap
         set => SetValue(ConverterProperty, value);
     }
 
-    private static readonly DependencyProperty ConverterProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ConverterProperty = DependencyProperty.Register(
         nameof(Converter),
         typeof(IValueConverter),
         typeof(MenuFlyoutSelectableItemsDynamicLoadBehavior),

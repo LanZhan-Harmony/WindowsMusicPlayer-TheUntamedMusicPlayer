@@ -20,7 +20,7 @@ internal sealed class ResponsiveItemsRepeaterListDragConfigurationBehavior
         set => SetValue(CommandProperty, value);
     }
 
-    private static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
         nameof(Command),
         typeof(ICommand),
         typeof(ResponsiveItemsRepeaterListDragConfigurationBehavior),

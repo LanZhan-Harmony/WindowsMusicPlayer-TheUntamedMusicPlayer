@@ -11,7 +11,7 @@ internal sealed partial class AddFolderButton : UserControl
         set => SetValue(SupportNarrowModeProperty, value);
     }
 
-    private static readonly DependencyProperty SupportNarrowModeProperty =
+    public static readonly DependencyProperty SupportNarrowModeProperty =
         DependencyProperty.Register(
             nameof(SupportNarrowMode),
             typeof(bool),
@@ -25,7 +25,7 @@ internal sealed partial class AddFolderButton : UserControl
         set => SetValue(IsAccessKeyEnabledProperty, value);
     }
 
-    private static readonly DependencyProperty IsAccessKeyEnabledProperty =
+    public static readonly DependencyProperty IsAccessKeyEnabledProperty =
         DependencyProperty.Register(
             nameof(IsAccessKeyEnabled),
             typeof(bool),

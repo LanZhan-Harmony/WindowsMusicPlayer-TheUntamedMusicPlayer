@@ -12,7 +12,7 @@ internal sealed partial class MaxCountCollectionProxy
         IEnumerable<object>,
         INotifyCollectionChanged
 {
-    private static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
         nameof(Source),
         typeof(IEnumerable),
         typeof(MaxCountCollectionProxy),
@@ -25,7 +25,7 @@ internal sealed partial class MaxCountCollectionProxy
         set => SetValue(SourceProperty, value);
     }
 
-    private static readonly DependencyProperty MaxCountProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty MaxCountProperty = DependencyProperty.Register(
         nameof(MaxCount),
         typeof(int),
         typeof(MaxCountCollectionProxy),

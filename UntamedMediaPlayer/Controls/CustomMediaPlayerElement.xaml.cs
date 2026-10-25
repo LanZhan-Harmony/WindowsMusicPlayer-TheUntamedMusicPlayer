@@ -11,7 +11,7 @@ internal sealed partial class CustomMediaPlayerElement : MediaPlayerElement
         set => SetValue(MediaVisualizationProperty, value);
     }
 
-    private static readonly DependencyProperty MediaVisualizationProperty =
+    public static readonly DependencyProperty MediaVisualizationProperty =
         DependencyProperty.Register(
             nameof(MediaVisualization),
             typeof(UIElement),
@@ -25,7 +25,7 @@ internal sealed partial class CustomMediaPlayerElement : MediaPlayerElement
         set => SetValue(AreSubtitlesVisibleProperty, value);
     }
 
-    private static readonly DependencyProperty AreSubtitlesVisibleProperty =
+    public static readonly DependencyProperty AreSubtitlesVisibleProperty =
         DependencyProperty.Register(
             nameof(AreSubtitlesVisible),
             typeof(bool),

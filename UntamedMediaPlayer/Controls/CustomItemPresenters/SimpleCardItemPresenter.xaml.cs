@@ -12,7 +12,7 @@ internal sealed partial class SimpleCardItemPresenter : ListViewItemPresenter
         set => SetValue(TemplateProperty, value);
     }
 
-    private static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty TemplateProperty = DependencyProperty.Register(
         nameof(Template),
         typeof(ControlTemplate),
         typeof(SimpleCardItemPresenter),

@@ -20,7 +20,7 @@ internal sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(BreakpointsProperty, value);
     }
 
-    private static readonly DependencyProperty BreakpointsProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty BreakpointsProperty = DependencyProperty.Register(
         nameof(Breakpoints),
         typeof(ResponsiveListBreakpointCollection),
         typeof(ResponsiveItemsRepeaterList),
@@ -33,7 +33,7 @@ internal sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(CanDragItemsProperty, value);
     }
 
-    private static readonly DependencyProperty CanDragItemsProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty CanDragItemsProperty = DependencyProperty.Register(
         nameof(CanDragItems),
         typeof(bool),
         typeof(ResponsiveItemsRepeaterList),
@@ -46,7 +46,7 @@ internal sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(ColumnSpanProperty, value);
     }
 
-    private static readonly DependencyProperty ColumnSpanProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ColumnSpanProperty = DependencyProperty.Register(
         nameof(ColumnSpan),
         typeof(int),
         typeof(ResponsiveItemsRepeaterList),
@@ -59,7 +59,7 @@ internal sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(RowProperty, value);
     }
 
-    private static readonly DependencyProperty RowProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty RowProperty = DependencyProperty.Register(
         nameof(Row),
         typeof(int),
         typeof(ResponsiveItemsRepeaterList),
@@ -72,7 +72,7 @@ internal sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(DefaultColumnSpacingProperty, value);
     }
 
-    private static readonly DependencyProperty DefaultColumnSpacingProperty =
+    public static readonly DependencyProperty DefaultColumnSpacingProperty =
         DependencyProperty.Register(
             nameof(DefaultColumnSpacing),
             typeof(double),
@@ -86,7 +86,7 @@ internal sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(StretchContentProperty, value);
     }
 
-    private static readonly DependencyProperty StretchContentProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty StretchContentProperty = DependencyProperty.Register(
         nameof(StretchContent),
         typeof(bool),
         typeof(ResponsiveItemsRepeaterList),
@@ -99,7 +99,7 @@ internal sealed partial class ResponsiveItemsRepeaterList : UserControl
         set => SetValue(ItemsMenuFlyoutProperty, value);
     }
 
-    private static readonly DependencyProperty ItemsMenuFlyoutProperty =
+    public static readonly DependencyProperty ItemsMenuFlyoutProperty =
         DependencyProperty.Register(
             nameof(ItemsMenuFlyout),
             typeof(MenuFlyout),

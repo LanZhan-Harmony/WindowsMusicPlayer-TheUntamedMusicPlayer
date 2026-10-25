@@ -17,7 +17,7 @@ internal sealed class LanguageSelectionBehavior : Behavior<AppBarButton>
         set => SetValue(ViewModelProperty, value);
     }
 
-    private static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
         nameof(ViewModel),
         typeof(object),
         typeof(LanguageSelectionBehavior),

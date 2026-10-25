@@ -16,7 +16,7 @@ internal sealed class ListViewBaseItemsAccessVirtualKeyBehavior : Behavior<ListV
         set => SetValue(AccessVirtualKeyPrefixProperty, value);
     }
 
-    private static readonly DependencyProperty AccessVirtualKeyPrefixProperty =
+    public static readonly DependencyProperty AccessVirtualKeyPrefixProperty =
         DependencyProperty.Register(
             nameof(AccessVirtualKeyPrefix),
             typeof(string),

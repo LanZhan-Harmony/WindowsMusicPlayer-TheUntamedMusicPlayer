@@ -18,7 +18,7 @@ internal sealed partial class ListViewEx : ListView
         set => SetValue(UseCustomItemPresenterWithDisplayModeProperty, value);
     }
 
-    private static readonly DependencyProperty UseCustomItemPresenterWithDisplayModeProperty =
+    public static readonly DependencyProperty UseCustomItemPresenterWithDisplayModeProperty =
         DependencyProperty.Register(
             nameof(UseCustomItemPresenterWithDisplayMode),
             typeof(string),
@@ -32,7 +32,7 @@ internal sealed partial class ListViewEx : ListView
         set => SetValue(ItemsMenuFlyoutProperty, value);
     }
 
-    private static readonly DependencyProperty ItemsMenuFlyoutProperty =
+    public static readonly DependencyProperty ItemsMenuFlyoutProperty =
         DependencyProperty.Register(
             nameof(ItemsMenuFlyout),
             typeof(MenuFlyout),
@@ -46,7 +46,7 @@ internal sealed partial class ListViewEx : ListView
         set => SetValue(DropConfigurationProperty, value);
     }
 
-    private static readonly DependencyProperty DropConfigurationProperty =
+    public static readonly DependencyProperty DropConfigurationProperty =
         DependencyProperty.Register(
             nameof(DropConfiguration),
             typeof(DropConfiguration),

@@ -11,7 +11,7 @@ internal sealed partial class DetailsPageHeader : UserControl
         set => SetValue(ImageTypeProperty, value);
     }
 
-    private static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register(
         nameof(ImageType),
         typeof(string),
         typeof(DetailsPageHeader),
@@ -24,7 +24,7 @@ internal sealed partial class DetailsPageHeader : UserControl
         set => SetValue(TitleContentBarProperty, value);
     }
 
-    private static readonly DependencyProperty TitleContentBarProperty =
+    public static readonly DependencyProperty TitleContentBarProperty =
         DependencyProperty.Register(
             nameof(TitleContentBar),
             typeof(UIElement),

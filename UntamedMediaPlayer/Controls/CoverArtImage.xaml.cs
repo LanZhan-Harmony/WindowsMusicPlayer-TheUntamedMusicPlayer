@@ -18,7 +18,7 @@ internal sealed partial class CoverArtImage : Control
         set => SetValue(ImageContextProperty, value);
     }
 
-    private static readonly DependencyProperty ImageContextProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ImageContextProperty = DependencyProperty.Register(
         nameof(ImageContext),
         typeof(string),
         typeof(CoverArtImage),
@@ -31,7 +31,7 @@ internal sealed partial class CoverArtImage : Control
         set => SetValue(ImageTypeProperty, value);
     }
 
-    private static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register(
         nameof(ImageType),
         typeof(string),
         typeof(CoverArtImage),
@@ -44,7 +44,7 @@ internal sealed partial class CoverArtImage : Control
         set => SetValue(NormalizedCenterPointProperty, value);
     }
 
-    private static readonly DependencyProperty NormalizedCenterPointProperty =
+    public static readonly DependencyProperty NormalizedCenterPointProperty =
         DependencyProperty.Register(
             nameof(NormalizedCenterPoint),
             typeof(double),

@@ -13,7 +13,7 @@ internal sealed partial class PlayQueueDropCommandAdapter : DependencyObject, IC
         set => SetValue(OpenPlayPageProperty, value);
     }
 
-    private static readonly DependencyProperty OpenPlayPageProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty OpenPlayPageProperty = DependencyProperty.Register(
         nameof(OpenPlayPage),
         typeof(bool),
         typeof(PlayQueueDropCommandAdapter),

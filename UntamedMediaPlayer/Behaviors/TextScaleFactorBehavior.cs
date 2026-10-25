@@ -14,7 +14,7 @@ internal sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
         set => SetValue(MinHeightProperty, value);
     }
 
-    private static readonly DependencyProperty MinHeightProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty MinHeightProperty = DependencyProperty.Register(
         nameof(MinHeight),
         typeof(double),
         typeof(TextScaleFactorBehavior),
@@ -27,7 +27,7 @@ internal sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
         set => SetValue(WidthProperty, value);
     }
 
-    private static readonly DependencyProperty WidthProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty WidthProperty = DependencyProperty.Register(
         nameof(Width),
         typeof(double),
         typeof(TextScaleFactorBehavior),
@@ -40,7 +40,7 @@ internal sealed class TextScaleFactorBehavior : Behavior<FrameworkElement>
         set => SetValue(HeightProperty, value);
     }
 
-    private static readonly DependencyProperty HeightProperty = DependencyProperty.Register(
+    public static readonly DependencyProperty HeightProperty = DependencyProperty.Register(
         nameof(Height),
         typeof(double),
         typeof(TextScaleFactorBehavior),
