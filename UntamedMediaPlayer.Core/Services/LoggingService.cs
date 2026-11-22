@@ -90,9 +90,8 @@ public sealed class LoggingService : ILoggingService, IDisposable
 
     private string GetLogFilePath(DateTimeOffset timestamp, int sequence)
     {
-        string sequenceSuffix = sequence == 0 ? string.Empty : $"-{sequence}";
         string date = timestamp.ToLocalTime().ToString("yyyy-MM-dd");
-        return Path.Combine(_logFolderPath, $"{date}{sequenceSuffix}.log");
+        return Path.Combine(_logFolderPath, $"{date}-{sequence}.log");
     }
 
     private void DeleteExpiredLogFiles(int retentionDays)
