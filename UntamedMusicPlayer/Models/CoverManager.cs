@@ -74,8 +74,7 @@ public static class CoverManager
             try
             {
                 var bitmapImage = new BitmapImage { DecodePixelWidth = 160 };
-                using var stream = new MemoryStream(data);
-                _ = bitmapImage.SetSourceAsync(stream.AsRandomAccessStream());
+                _ = LoadAlbumCoverAsync(bitmapImage, data, path);
                 _songCovers[path] = new WeakReference<BitmapImage>(bitmapImage);
                 return bitmapImage;
             }
@@ -84,6 +83,20 @@ public static class CoverManager
                 _logger.ZLogWarning(ex, $"渲染封面失败: {path}");
                 return null;
             }
+        }
+    }
+
+    private static async Task LoadAlbumCoverAsync(BitmapImage image, byte[] data, string path)
+    {
+        try
+        {
+            using var stream = new MemoryStream(data, writable: false);
+            using var source = stream.AsRandomAccessStream();
+            await image.SetSourceAsync(source);
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogWarning(ex, $"渲染封面失败: {path}");
         }
     }
 
